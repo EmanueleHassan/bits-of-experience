@@ -136,13 +136,28 @@ TRANSLATIONS_PATTERN = '{path}.{lang}.{ext}'
 #          with a ``/``, otherwise end them with ``/index.html`` — or
 #          else they won’t be highlighted when active.
 
+# Below the  naviagtion links previously used with bnw theme.
+# NAVIGATION_LINKS = {
+#     DEFAULT_LANG: (
+#         ("/archive.html", "Archive"),
+#         ("/categories/", "Tags"),
+#         ("/rss.xml", "RSS feed"),
+#     ),
+# }
+
 NAVIGATION_LINKS = {
     DEFAULT_LANG: (
-        ("/archive.html", "Archive"),
-        ("/categories/", "Tags"),
-        ("/rss.xml", "RSS feed"),
-    ),
+        ('/pages/cv/', 'About me', 'fa fa-user'),
+        ('/pages/bits-of-experience-a-readable-view-on-my-study-adventures/', 'Home', 'fa fa-home'),
+        ## if u want to keep a folder with the posts of the year -> ('/archive.html', 'Archives', 'fa fa-folder-open'),
+        ('/index.html', 'Blog', 'fa fa-folder-open'),
+        ('/categories/index.html', 'Tags', 'fa fa-tags'),
+        ('https://github.com/MarcoHassan', 'My Github', 'fab fa-github'),
+        ('/rss.xml', 'RSS', 'fa fa-rss'),
+    )
 }
+
+DATE_FANCINESS = 2
 
 # Alternative navigation links. Works the same way NAVIGATION_LINKS does,
 # although themes may not always support them. (translatable)
@@ -152,7 +167,7 @@ NAVIGATION_ALT_LINKS = {
 }
 
 # Name of the theme to use.
-THEME = 'bnw' ## default theme: "bootblog4"
+THEME = 'zen' ## default theme: "bootblog4"
 
 # Primary color of your theme. This will be used to customize your theme.
 # Must be a HEX value.
@@ -889,7 +904,7 @@ IMAGE_FOLDERS = {'images': 'images'}
 # )
 
 # Show teasers (instead of full posts) in indexes? Defaults to False.
-# INDEX_TEASERS = False
+INDEX_TEASERS = True
 
 # HTML fragments with the Read more... links.
 # The following tags exist and are replaced for you:
