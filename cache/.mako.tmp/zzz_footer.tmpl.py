@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1564924999.6476874
+_modified_time = 1564925970.488041
 _enable_loop = True
 _template_filename = 'themes/bnw/templates/zzz_footer.tmpl'
 _template_uri = 'zzz_footer.tmpl'
@@ -42,13 +42,13 @@ def render_html_footer(context):
     try:
         _import_ns = {}
         _mako_get_namespace(context, 'base')._populate(_import_ns, ['*'])
-        email = _import_ns.get('email', context.get('email', UNDEFINED))
         twitter = _import_ns.get('twitter', context.get('twitter', UNDEFINED))
-        content_footer = _import_ns.get('content_footer', context.get('content_footer', UNDEFINED))
-        _link = _import_ns.get('_link', context.get('_link', UNDEFINED))
-        template_hooks = _import_ns.get('template_hooks', context.get('template_hooks', UNDEFINED))
-        github = _import_ns.get('github', context.get('github', UNDEFINED))
         lang = _import_ns.get('lang', context.get('lang', UNDEFINED))
+        _link = _import_ns.get('_link', context.get('_link', UNDEFINED))
+        content_footer = _import_ns.get('content_footer', context.get('content_footer', UNDEFINED))
+        email = _import_ns.get('email', context.get('email', UNDEFINED))
+        github = _import_ns.get('github', context.get('github', UNDEFINED))
+        template_hooks = _import_ns.get('template_hooks', context.get('template_hooks', UNDEFINED))
         __M_writer = context.writer()
         __M_writer('\n    <footer>\n        <div class="container">\n            <div class="social">\n')
         if email:

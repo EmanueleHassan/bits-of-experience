@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1564924999.6848228
+_modified_time = 1564925970.5211515
 _enable_loop = True
 _template_filename = 'themes/bnw/templates/index.tmpl'
 _template_uri = 'index.tmpl'
@@ -41,16 +41,16 @@ def render_body(context,**pageargs):
         __M_locals = __M_dict_builtin(pageargs=pageargs)
         _import_ns = {}
         _mako_get_namespace(context, 'header')._populate(_import_ns, ['*'])
-        math = _mako_get_namespace(context, 'math')
         _link = _import_ns.get('_link', context.get('_link', UNDEFINED))
+        math = _mako_get_namespace(context, 'math')
         helper = _mako_get_namespace(context, 'helper')
-        def content():
-            return render_content(context._locals(__M_locals))
         def extra_head():
             return render_extra_head(context._locals(__M_locals))
-        comments = _mako_get_namespace(context, 'comments')
         html_site_tagline = _import_ns.get('html_site_tagline', context.get('html_site_tagline', UNDEFINED))
+        comments = _mako_get_namespace(context, 'comments')
         posts = _import_ns.get('posts', context.get('posts', UNDEFINED))
+        def content():
+            return render_content(context._locals(__M_locals))
         __M_writer = context.writer()
         __M_writer('\n')
         __M_writer('\n')
@@ -77,10 +77,10 @@ def render_extra_head(context,**pageargs):
     try:
         _import_ns = {}
         _mako_get_namespace(context, 'header')._populate(_import_ns, ['*'])
+        posts = _import_ns.get('posts', context.get('posts', UNDEFINED))
         def extra_head():
             return render_extra_head(context)
         math = _mako_get_namespace(context, 'math')
-        posts = _import_ns.get('posts', context.get('posts', UNDEFINED))
         __M_writer = context.writer()
         __M_writer('\n')
         __M_writer(str(math.math_styles_ifposts(posts)))
@@ -95,14 +95,14 @@ def render_content(context,**pageargs):
     try:
         _import_ns = {}
         _mako_get_namespace(context, 'header')._populate(_import_ns, ['*'])
-        math = _mako_get_namespace(context, 'math')
         _link = _import_ns.get('_link', context.get('_link', UNDEFINED))
+        math = _mako_get_namespace(context, 'math')
         helper = _mako_get_namespace(context, 'helper')
+        html_site_tagline = _import_ns.get('html_site_tagline', context.get('html_site_tagline', UNDEFINED))
         comments = _mako_get_namespace(context, 'comments')
+        posts = _import_ns.get('posts', context.get('posts', UNDEFINED))
         def content():
             return render_content(context)
-        html_site_tagline = _import_ns.get('html_site_tagline', context.get('html_site_tagline', UNDEFINED))
-        posts = _import_ns.get('posts', context.get('posts', UNDEFINED))
         __M_writer = context.writer()
         __M_writer('\n    ')
         __M_writer(str(html_site_tagline()))
