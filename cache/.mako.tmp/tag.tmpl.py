@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1564922489.5901558
+_modified_time = 1564924999.6578946
 _enable_loop = True
 _template_filename = 'themes/bnw/templates/tag.tmpl'
 _template_uri = 'tag.tmpl'
@@ -28,24 +28,24 @@ def render_body(context,**pageargs):
     __M_caller = context.caller_stack._push_frame()
     try:
         __M_locals = __M_dict_builtin(pageargs=pageargs)
-        subcategories = context.get('subcategories', UNDEFINED)
-        len = context.get('len', UNDEFINED)
-        translations = context.get('translations', UNDEFINED)
-        generate_rss = context.get('generate_rss', UNDEFINED)
-        messages = context.get('messages', UNDEFINED)
-        def content():
-            return render_content(context._locals(__M_locals))
-        title = context.get('title', UNDEFINED)
-        def extra_head():
-            return render_extra_head(context._locals(__M_locals))
+        parent = context.get('parent', UNDEFINED)
         date_format = context.get('date_format', UNDEFINED)
-        sorted = context.get('sorted', UNDEFINED)
-        description = context.get('description', UNDEFINED)
         _link = context.get('_link', UNDEFINED)
         kind = context.get('kind', UNDEFINED)
+        messages = context.get('messages', UNDEFINED)
+        generate_rss = context.get('generate_rss', UNDEFINED)
+        subcategories = context.get('subcategories', UNDEFINED)
+        len = context.get('len', UNDEFINED)
+        def content():
+            return render_content(context._locals(__M_locals))
+        def extra_head():
+            return render_extra_head(context._locals(__M_locals))
+        description = context.get('description', UNDEFINED)
+        translations = context.get('translations', UNDEFINED)
+        title = context.get('title', UNDEFINED)
+        sorted = context.get('sorted', UNDEFINED)
         tag = context.get('tag', UNDEFINED)
         posts = context.get('posts', UNDEFINED)
-        parent = context.get('parent', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n\n')
         if 'parent' not in context._data or not hasattr(context._data['parent'], 'extra_head'):
@@ -66,15 +66,15 @@ def render_body(context,**pageargs):
 def render_extra_head(context,**pageargs):
     __M_caller = context.caller_stack._push_frame()
     try:
-        len = context.get('len', UNDEFINED)
-        translations = context.get('translations', UNDEFINED)
+        _link = context.get('_link', UNDEFINED)
+        kind = context.get('kind', UNDEFINED)
         generate_rss = context.get('generate_rss', UNDEFINED)
+        len = context.get('len', UNDEFINED)
         def extra_head():
             return render_extra_head(context)
+        translations = context.get('translations', UNDEFINED)
         sorted = context.get('sorted', UNDEFINED)
         tag = context.get('tag', UNDEFINED)
-        kind = context.get('kind', UNDEFINED)
-        _link = context.get('_link', UNDEFINED)
         parent = context.get('parent', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n    ')
@@ -107,19 +107,19 @@ def render_extra_head(context,**pageargs):
 def render_content(context,**pageargs):
     __M_caller = context.caller_stack._push_frame()
     try:
-        subcategories = context.get('subcategories', UNDEFINED)
-        len = context.get('len', UNDEFINED)
-        translations = context.get('translations', UNDEFINED)
-        generate_rss = context.get('generate_rss', UNDEFINED)
-        messages = context.get('messages', UNDEFINED)
-        def content():
-            return render_content(context)
-        title = context.get('title', UNDEFINED)
         date_format = context.get('date_format', UNDEFINED)
-        sorted = context.get('sorted', UNDEFINED)
-        description = context.get('description', UNDEFINED)
         _link = context.get('_link', UNDEFINED)
         kind = context.get('kind', UNDEFINED)
+        messages = context.get('messages', UNDEFINED)
+        generate_rss = context.get('generate_rss', UNDEFINED)
+        len = context.get('len', UNDEFINED)
+        def content():
+            return render_content(context)
+        subcategories = context.get('subcategories', UNDEFINED)
+        description = context.get('description', UNDEFINED)
+        translations = context.get('translations', UNDEFINED)
+        title = context.get('title', UNDEFINED)
+        sorted = context.get('sorted', UNDEFINED)
         tag = context.get('tag', UNDEFINED)
         posts = context.get('posts', UNDEFINED)
         __M_writer = context.writer()

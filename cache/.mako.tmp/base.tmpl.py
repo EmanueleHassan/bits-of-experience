@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1564922489.5051305
+_modified_time = 1564924999.595128
 _enable_loop = True
 _template_filename = 'themes/bnw/templates/base.tmpl'
 _template_uri = 'base.tmpl'
@@ -37,17 +37,17 @@ def render_body(context,**pageargs):
         _mako_get_namespace(context, 'zzz')._populate(_import_ns, ['*'])
         _mako_get_namespace(context, 'header')._populate(_import_ns, ['*'])
         _mako_get_namespace(context, 'footer')._populate(_import_ns, ['*'])
+        template_hooks = _import_ns.get('template_hooks', context.get('template_hooks', UNDEFINED))
+        footer = _mako_get_namespace(context, 'footer')
+        lang = _import_ns.get('lang', context.get('lang', UNDEFINED))
         set_locale = _import_ns.get('set_locale', context.get('set_locale', UNDEFINED))
-        zzz = _mako_get_namespace(context, 'zzz')
-        def content():
-            return render_content(context._locals(__M_locals))
         def extra_head():
             return render_extra_head(context._locals(__M_locals))
-        lang = _import_ns.get('lang', context.get('lang', UNDEFINED))
-        footer = _mako_get_namespace(context, 'footer')
-        header = _mako_get_namespace(context, 'header')
+        def content():
+            return render_content(context._locals(__M_locals))
         body_end = _import_ns.get('body_end', context.get('body_end', UNDEFINED))
-        template_hooks = _import_ns.get('template_hooks', context.get('template_hooks', UNDEFINED))
+        zzz = _mako_get_namespace(context, 'zzz')
+        header = _mako_get_namespace(context, 'header')
         __M_writer = context.writer()
         __M_writer('\n')
         __M_writer('\n')
