@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>PySpark Set-Up | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/pyspark-set-up/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../prova3/" title="Blogging in Org Mode" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="PySpark Set-Up">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/pyspark-set-up/">
+<meta property="og:description" content="This post aims at providing an overview of the necessary steps required in order to leverage Apache Spark through the Python API and the PySpark module.
+
+
+
+Despite the information is vastly reported o">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-08-05T23:51:11+02:00">
+<meta property="article:tag" content="Big Data">
+<meta property="article:tag" content="Spark">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-folder-open"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">PySpark Set-Up</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-08-05T23:51:11+02:00" itemprop="datePublished" title="2019-08-05 23:51">2019-08-05 23:51</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/big-data/" rel="tag">Big Data</a></li>
+            <li><a class="tag p-category" href="../../categories/spark/" rel="tag">Spark</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+This post aims at providing an overview of the necessary steps required in order to leverage Apache Spark through the Python API and the PySpark module.
+</p>
+
+<p>
+Despite the information is vastly reported over the internet my usual <i>procedere</i> when I deal with new tools and software is to write a short piece of note when learning new software that is intended as an overview over the tool and serve as a beginner cheat sheet.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">Disclaimer</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Ok, before starting let me underline that this post falls under the category <i>learn by posting</i>.
+As such it may contain a flawed theoretical understanding about the subject and some inaccuracies.
+</p>
+
+<p>
+You are can read more about this kind of posts on the home-page under <a href="https://marcohassan.github.io/bits-of-experience/pages/bits-of-experience-a-readable-view-on-my-study-adventures/">this link</a>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">PySpark - Why?</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+During my Internship as a Data Analyst at Expedia Group I had the opportunity to start working with big, messy data. 
+The amount of it is impressive and I recently was told that Expedia collects as much as 13 Terabyte of data each single day (don't quote me on this though as the claim was not verified).
+</p>
+
+<p>
+This enormous amount of data becomes <i>Big Data</i>, which is simply a huge amount of data that requires special technology and software to be treated as it can poorly be handled through standard hardware on local machines.
+</p>
+
+<p>
+Here <i>PySpark</i> comes to play. This is nothing else than a module that allows the user to connect to distributed files systems and leverage the Apache Spark infrastructure. The idea of this post is now not to give you an overview about the exact infrastructure architecture as, being a beginner in the field, this is still obscure to me.
+In contrast, the idea is to document the PySpark software installation and the basics data manipulation operations. In fact, after taking a brief look at the syntax I came to the realization that PySpark shares the most of the standard <i>Pandas</i> and <i>SQL</i> operations and hence I thought it might be good practice to start to use PySpark syntax universally even when working on small dataset locally to get use to its syntax and open up the doors of in memory big data operations at a later time point.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Software Download</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+lsfjslfjD
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../prova3/" rel="prev" title="Blogging in Org Mode">Previous post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2019         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
