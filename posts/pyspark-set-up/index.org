@@ -1,8 +1,8 @@
 #+BEGIN_COMMENT
-.. title: PySpark Set-Up
+.. title: PySpark Set-Up and Integration with Emacs
 .. slug: pyspark-set-up
 .. date: 2019-08-05 23:51:11 UTC+02:00
-.. tags: Big Data, Spark
+.. tags: Big Data, Spark, emacs
 .. category: 
 .. link: 
 .. description: 
@@ -10,6 +10,10 @@
 
 #+END_COMMENT
 
+#+BEGIN_HTML
+<br>
+<br>
+#+END_HTML
 
 This post aims at providing an overview of the necessary steps
 required in order to leverage Apache Spark through the Python API and
@@ -22,7 +26,7 @@ overview over the tool and serve as a beginner cheat sheet.
 
 {{{TEASER_END}}}
 
-** Disclaimer
+*** Disclaimer
 
 Ok, before starting let me underline that this post falls under the
 category /learn by posting/.  As such it may contain a flawed
@@ -75,6 +79,8 @@ leverages Apache Hadoop for both storage and processing. It uses HDFS
 (Hadoop Distributed File system) for storage and it can run Spark
 applications on YARN as well.
 
+
+
 ** Software Download
 
 Notice all of the code below was executed on Ubuntu Linux
@@ -86,13 +92,92 @@ Pyspark is an API leveraging a Java Virtual Machine for connecting and
 operating on Spark data frames. As such the proper installation of
 Java is necessary for the smooth operation of Pyspark.
 
-Install Java
+*Install Java*
 
-#+BEGIN_SRC sh
+#+BEGIN_EXAMPLE
 sudo apt install openjdk-8-jre-headless 
-#+END_SRC
+#+END_EXAMPLE
 
 /Notice:/ You used a different Javascript and runtime
 environment to the one mentioned online. Consider that if having
 integration issues at a later stage and rather install this Java SE
 runtime environment [[https://docs.oracle.com/en/java/javase/12/install/installation-jdk-linux-platforms.html#GUID-ADC9C14A-5F51-4C32-802C-9639A947317F][SE]].
+
+*** Spark installation
+
+Download the compressed spark software under [[https://www.apache.org/dyn/closer.lua/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz][this link.]]
+
+Unzip it in your repository of choice.
+
+
+#+BEGIN_EXAMPLE
+$ tar -xvf ~/Scaricati/spark-2.4.3-bin-hadoop2.7.tgz
+#+END_EXAMPLE
+
+Set Spark in your path and in the Py4j API path.
+
+#+BEGIN_EXAMPLE 
+$ export SPARK_HOME=<unziped file location>/spark-2.1.0-bin-hadoop2.7
+$ export PATH=$PATH:/home/hadoop/spark-2.1.0-bin-hadoop2.7/bin
+$ export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip:$PYTHONPATH
+$ export PATH=$SPARK_HOME/python:$PATH
+#+END_EXAMPLE
+
+After the above installation you should be able to run spark directly
+on a jupyter notebook.
+
+*** PySpark on Jupyter Notebook and Emacs Integration
+ :PROPERTIES:
+ :header-args:ipython: :session kernel-6455.json :results output
+ :END:
+
+In order to start and connect to pyspark on your local machine it will
+then just be necessary to start an ipython kernel by running
+
+#+BEGIN_EXAMPLE
+$ ipython kernel
+#+END_EXAMPLE
+
+This will prompt the name of a /.json/ file that contains the
+information (port, connection protocol etc.) to connect to the kernel
+in a similar way to the following message:
+
+#+BEGIN_QUOTE
+To connect another client to this kernel, use:
+    --existing kernel-5060.json
+#+END_QUOTE
+
+You can then specify your kernel.json as your session argument in
+=ob-ipython= and connect to the running kernel. At this point after
+installing findspark via
+
+#+BEGIN_EXAMPLE
+$ pip3 install --user findspark
+#+END_EXAMPLE
+
+you are good to import your pyspark module and leverage the Pyspark
+API on your favourite editor: /emacs/
+
+#+begin_src ipython :exports both
+  import findspark
+  findspark.init()
+  import pyspark
+  import random
+  sc = pyspark.SparkContext(appName="Pi")
+  num_samples = 100000000
+  def inside(p):     
+    x, y = random.random(), random.random()
+    return x*x + y*y < 1
+  count = sc.parallelize(range(0, num_samples)).filter(inside).count()
+  pi = 4 * count / num_samples
+  print (pi)
+  sc.stop()
+#+end_src
+
+#+RESULTS:
+: 3.14109952
+
+In the case you will want to leverage a more powerful machine and run
+your pyspark application on a server you might follow the logic
+explained in the following post keeping the structure outlined in the
+post. [[https://necromuralist.github.io/posts/programming/remote-jupyter-sessions-with-ob-ipython/][Connect to remote ipython kernel.]]
