@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1566428048.4736404
+_modified_time = 1566428094.5184171
 _enable_loop = True
 _template_filename = '/home/mhassan/Scrivania/py_venvs/nikola_build/lib/python3.6/site-packages/nikola/data/themes/base/templates/listing.tmpl'
 _template_uri = 'listing.tmpl'
@@ -32,14 +32,14 @@ def render_body(context,**pageargs):
         __M_locals = __M_dict_builtin(pageargs=pageargs)
         folders = context.get('folders', UNDEFINED)
         source_link = context.get('source_link', UNDEFINED)
-        messages = context.get('messages', UNDEFINED)
-        ui = _mako_get_namespace(context, 'ui')
-        files = context.get('files', UNDEFINED)
-        crumbs = context.get('crumbs', UNDEFINED)
         code = context.get('code', UNDEFINED)
-        title = context.get('title', UNDEFINED)
         def content():
             return render_content(context._locals(__M_locals))
+        files = context.get('files', UNDEFINED)
+        crumbs = context.get('crumbs', UNDEFINED)
+        title = context.get('title', UNDEFINED)
+        ui = _mako_get_namespace(context, 'ui')
+        messages = context.get('messages', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n')
         __M_writer('\n')
@@ -58,14 +58,14 @@ def render_content(context,**pageargs):
     try:
         folders = context.get('folders', UNDEFINED)
         source_link = context.get('source_link', UNDEFINED)
-        messages = context.get('messages', UNDEFINED)
-        ui = _mako_get_namespace(context, 'ui')
-        files = context.get('files', UNDEFINED)
-        crumbs = context.get('crumbs', UNDEFINED)
         code = context.get('code', UNDEFINED)
-        title = context.get('title', UNDEFINED)
         def content():
             return render_content(context)
+        files = context.get('files', UNDEFINED)
+        crumbs = context.get('crumbs', UNDEFINED)
+        title = context.get('title', UNDEFINED)
+        ui = _mako_get_namespace(context, 'ui')
+        messages = context.get('messages', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n')
         __M_writer(str(ui.breadcrumbs(crumbs)))
