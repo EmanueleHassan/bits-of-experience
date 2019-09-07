@@ -5,9 +5,9 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1567847582.971979
+_modified_time = 1567848477.6132383
 _enable_loop = True
-_template_filename = '/Users/marcohassan/Desktop/python_venv/nikola/lib/python3.7/site-packages/nikola/data/themes/base/templates/comments_helper_commento.tmpl'
+_template_filename = '/home/mhassan/Scrivania/py_venvs/nikola_build/lib/python3.6/site-packages/nikola/data/themes/base/templates/comments_helper_commento.tmpl'
 _template_uri = 'comments_helper_commento.tmpl'
 _source_encoding = 'utf-8'
 _exports = ['comment_form', 'comment_link', 'comment_link_script']
@@ -61,6 +61,6 @@ def render_comment_link_script(context):
 
 """
 __M_BEGIN_METADATA
-{"filename": "/Users/marcohassan/Desktop/python_venv/nikola/lib/python3.7/site-packages/nikola/data/themes/base/templates/comments_helper_commento.tmpl", "uri": "comments_helper_commento.tmpl", "source_encoding": "utf-8", "line_map": {"16": 0, "21": 6, "22": 9, "23": 12, "29": 2, "34": 2, "35": 5, "36": 5, "42": 8, "46": 8, "52": 11, "56": 11, "62": 56}}
+{"filename": "/home/mhassan/Scrivania/py_venvs/nikola_build/lib/python3.6/site-packages/nikola/data/themes/base/templates/comments_helper_commento.tmpl", "uri": "comments_helper_commento.tmpl", "source_encoding": "utf-8", "line_map": {"16": 0, "21": 6, "22": 9, "23": 12, "29": 2, "34": 2, "35": 5, "36": 5, "42": 8, "46": 8, "52": 11, "56": 11, "62": 56}}
 __M_END_METADATA
 """

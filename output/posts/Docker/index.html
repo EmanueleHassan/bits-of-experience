@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Docker | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/Docker/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../rdd-transformations-and-actions/" title="Spark Session Initialization, RDD: Transformations and Actions" type="text/html">
+<link rel="next" href="../Kubernetes/" title="Kubernetes" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Docker">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/Docker/">
+<meta property="og:description" content="The basic idea of Docker is to allow the possibility to save all of
+the configuration of an application in one single image. This should
+be considered as a safe environment that once properly set up c">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-09-02T18:21:43+02:00">
+<meta property="article:tag" content="IT Architecture">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-folder-open"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Docker</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-09-02T18:21:43+02:00" itemprop="datePublished" title="2019-09-02 18:21">2019-09-02 18:21</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/it-architecture/" rel="tag">IT Architecture</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <br><br><p>
+The basic idea of Docker is to allow the possibility to save all of
+the configuration of an application in one single image. This should
+be considered as a safe environment that once properly set up can be
+easily shared among different teams and once images are instantiated
+all of the different teams can be sure to operate and leverage the
+right configuration for running their application.
+</p>
+
+<p>
+A simple and straight forward overview about the advantage of Docker
+might be found in this sense at <a href="https://www.tutorialspoint.com/docker/docker_architecture.htm">docker architecture</a>.
+</p>
+
+<p>
+To sum up before starting the basic idea is to create images and to
+create containers based on that, which will run then the application
+as defined in the docker image.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">General theory</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Lifecycle: build, ship, run. -&gt; build ur application. Wrap it up in a
+container and ship it. Run it and scale it then. This allows portability. 
+</p>
+
+<p>
+Parts of docker:
+</p>
+</div>
+
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1">Image</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Read only. It is a snapshot of a container stored on a registry. U use it as a template for creating containers.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2">Container</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+This is the runtime instance of the image. A running copy of that.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3">Registry</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+This is essentially a repository where docker images are stored.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4">Docker Engine</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+This effectively run the containers. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5">Difference with VM</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+With virtual machine u leverage hypervisors that runs virtual
+machines. It is what virtualizes resources and makes them sharable.
+Up on the virtualized resources you build then ur different OS and
+specify all of the middleware necessary to run your application.
+</p>
+
+<p>
+In contrast to that with docker, u have a single host OS. Hypervisors
+are misssing and so OS is built on top of them. Notice moreover that
+docker does not require the entire Linux OS but rather simply its
+kernel. Important is moreover to notice that all the containers share
+the linux kernel here. 
+</p>
+
+<p>
+Docker tries to share resources. This means that if a layer is already
+running for an application a second application will leverage the
+instance of this exact lower layer and will ultimately save resources.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Basic commands</h2>
+<div class="outline-text-2" id="text-2">
+<div class="highlight"><pre><span></span><span class="c1"># To run a container:</span>
+$ docker run &lt;img name&gt;
+
+<span class="c1"># To list all of the containers running:</span>
+$ docker ps
+
+<span class="c1"># To list all of the containers on the system:</span>
+$ docker ps -a
+
+<span class="c1"># To see top processes within a running container:</span>
+$ docker top &lt;Container ID&gt;
+
+<span class="c1"># To stop a running container:</span>
+$ docker stop &lt;Container ID&gt;
+
+<span class="c1"># To remove container:</span>
+$ docker rm &lt;Container ID&gt;
+
+<span class="c1"># To see stats about disk usage, cpu etc of a running container:</span>
+$ docker stats &lt;Container ID&gt;
+
+<span class="c1"># To pause processes running on container:</span>
+$ docker pause &lt;Container ID&gt;
+
+<span class="c1"># To resume after the pause</span>
+$ docker unpause &lt;Container ID&gt;
+
+<span class="c1"># To kill procsses</span>
+$ docker <span class="nb">kill</span> &lt;Container ID&gt;
+
+<span class="c1"># To stop the docker deamon running in the background </span>
+$ service docker stop
+</pre></div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../rdd-transformations-and-actions/" rel="prev" title="Spark Session Initialization, RDD: Transformations and Actions">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../Kubernetes/" rel="next" title="Kubernetes">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2019         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
