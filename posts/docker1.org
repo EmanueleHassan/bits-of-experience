@@ -1,0 +1,107 @@
+#+BEGIN_COMMENT
+.. title: Docker
+.. slug: Docker
+.. date: 2019-09-02 18:21:43 UTC+02:00
+.. tags: emacs, parenthesis
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+
+The basic idea of Docker is to allow the possibility to save all of
+the configuration of an application in one single image. This should
+be considered as a safe environment that once properly set up can be
+easily shared among different teams and once images are instantiated
+all of the different teams can be sure to operate and leverage the
+right configuration for running their application.
+
+A simple and straight forward overview about the advantage of Docker
+might be found in this sense at [[https://www.tutorialspoint.com/docker/docker_architecture.htm][docker architecture]].
+
+To sum up before starting the basic idea is to create images and to
+create containers based on that, which will run then the application
+as defined in the docker image.
+
+{{{TEASER_END}}}
+
+** General theory
+
+Lifecycle: build, ship, run. -> build ur application. Wrap it up in a
+container and ship it. Run it and scale it then. This allows portability. 
+
+Parts of docker:
+
+*** Image 
+
+Read only. It is a snapshot of a container stored on a registry. U use it as a template for creating containers.
+
+*** Container
+
+This is the runtime instance of the image. A running copy of that.
+
+*** Registry
+
+This is essentially a repository where docker images are stored.
+
+*** Docker Engine
+
+This effectively run the containers. 
+
+
+*** Difference with VM
+
+With virtual machine u leverage hypervisors that runs virtual
+machines. It is what virtualizes resources and makes them sharable.
+Up on the virtualized resources you build then ur different OS and
+specify all of the middleware necessary to run your application.
+
+In contrast to that with docker, u have a single host OS. Hypervisors
+are misssing and so OS is built on top of them. Notice moreover that
+docker does not require the entire Linux OS but rather simply its
+kernel. Important is moreover to notice that all the containers share
+the linux kernel here. 
+
+Docker tries to share resources. This means that if a layer is already
+running for an application a second application will leverage the
+instance of this exact lower layer and will ultimately save resources.
+
+** Basic commands
+
+#+BEGIN_SRC sh
+  # To run a container:
+  $ docker run <img name>
+
+  # To list all of the containers running:
+  $ docker ps
+
+  # To list all of the containers on the system:
+  $ docker ps -a
+
+  # To see top processes within a running container:
+  $ docker top <Container ID>
+
+  # To stop a running container:
+  $ docker stop <Container ID>
+
+  # To remove container:
+  $ docker rm <Container ID>
+
+  # To see stats about disk usage, cpu etc of a running container:
+  $ docker stats <Container ID>
+
+  # To pause processes running on container:
+  $ docker pause <Container ID>
+
+  # To resume after the pause
+  $ docker unpause <Container ID>
+
+  # To kill procsses
+  $ docker kill <Container ID>
+
+  # To stop the docker deamon running in the background 
+  $ service docker stop
+#+END_SRC
+
