@@ -18,9 +18,9 @@
 A strong orchestrator tool that operates above the container level and
 allows to manage a cluster to handle containers.
 
-It is essentially the toolset that lets you manage containers.
+It is essentially the tool set that lets you manage containers.
 
-Enterprises can use it to manage the lifecycle of containerized apps
+Enterprises can use it to manage the life cycle of containerized apps
 in a cluster of nodes, which is a collection of worker machines such
 as virtual machines (VMs) or physical machines.
 
@@ -35,9 +35,85 @@ slightly different to the one of Big Data.
 While the virtual machine controlling other VMs is called master VM,
 the other are not called /workers/ but rather /nodes/.
 
-* Master
 
-The master has multiple components, all under the umbrella of a single /control plane/.
+** Architecture 
 
-The main componing is the API server. API server manages scheduling that goes through the REST services.
+The kubernetes architecture is rather simple. It consists of three major components:
 
+- *Docker running on a subnet:* this is the service used to run
+  encapsulated container applications. Important is however to notice
+  that the Docker service must run on a subnet /(available to each
+  node server/.
+
+- *Kubelet Service*: this communicates with the master components and
+  receive commands and work.
+
+- *Kube-Proxy Service*: this forwards requests to the correct containers,
+  balances the load and makes sure that the isolated networking
+  environment is predictable and accessible.
+
+In a more structured way we can say that there are multiple /Pods/
+available carrying multiple containers, managed by the /Docker
+Engine/, within them. These /Points of Delivery/ are modules of
+network, compute, storage bundled with the docker application
+containers that work together to deliver networking services.
+
+The Kube-proxy will then redirect network traffic into one of the
+various Pods.
+
+Kubelet is an agent responsible to communicate with the master what
+happens at node level. For this reason you will find a Kubelet for each
+node. If a Pod goes down than it is for instance responsibility of the
+Kubelet to communicate this so the master. This will then be
+responsible for restarting the Pod.
+
+
+** Master
+
+ Masters are responsible for an entire cluster, they are the one that
+ makes the decision on which node to schedule an application.
+
+ The master has multiple components, all under the umbrella of a single
+ /control plane/.
+
+ The main component is the API server. API server manages scheduling
+ that goes through the REST services. 
+
+ Three other important components are:
+
+ - the /Scheduler/, that interacts with the API server scheduling
+   piece but can as well interact directly with REST services. It
+   determines where to host new Pods in the cluster. This furthermore
+   coordinates with the Kubelet in order to determine the location of
+   the Pods based on the load.
+
+ - the /Replication Controllers/: these handle the replicas through the
+   API services.
+
+ - the /etcd/: manages state. It is the database of kubernetes. It
+   tells kubernetes who is available and what the state of all these
+   available things is.
+
+
+*** Operation
+
+The question that arise now is how do we specify the Master the tasks to be scheduled?
+
+The answer to the question is a /YAML/ file. Here the desired state
+for our application is specified and once fed to the Master the latter
+will make sure the state is guaranteed.
+
+
+** Helm
+
+Helm, the Kubernetes native package management system, is used for
+application management inside an IBM Cloud Private cluster. The Helm
+GitHub community curates and continuously expands a set of tested and
+preconfigured Kubernetes applications. Clients use the management
+console to select stable applications from a catalog and add them to
+their cluster.
+
+
+** Literature
+
+IBM - Journey to Cloud Series.
