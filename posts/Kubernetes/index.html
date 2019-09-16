@@ -12,7 +12,7 @@
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
 <link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/Kubernetes/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
-<link rel="prev" href="../Docker/" title="Docker" type="text/html">
+<link rel="prev" href="../Microservices/" title="Microservices" type="text/html">
 <link rel="next" href="../Apache%20Spark%20SQL/" title="Apache Spark SQL" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="Kubernetes">
@@ -22,11 +22,11 @@ allows to manage a cluster to handle containers.
 
 
 
-It is essentially the toolset that lets you manage containers.
+It is essentially the tool set that lets you manage containers.
 
 
 
-Enterprises">
+Enterprise">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2019-09-06T18:21:43+02:00">
 <meta property="article:tag" content="IT Architecture">
@@ -75,11 +75,11 @@ allows to manage a cluster to handle containers.
 </p>
 
 <p>
-It is essentially the toolset that lets you manage containers.
+It is essentially the tool set that lets you manage containers.
 </p>
 
 <p>
-Enterprises can use it to manage the lifecycle of containerized apps
+Enterprises can use it to manage the life cycle of containerized apps
 in a cluster of nodes, which is a collection of worker machines such
 as virtual machines (VMs) or physical machines.
 </p>
@@ -101,22 +101,143 @@ While the virtual machine controlling other VMs is called master VM,
 the other are not called <i>workers</i> but rather <i>nodes</i>.
 </p>
 
+
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1">Master</h2>
+<h2 id="sec-1">Architecture</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-The master has multiple components, all under the umbrella of a single <i>control plane</i>.
+The kubernetes architecture is rather simple. It consists of three major components:
+</p>
+
+<ul class="org-ul">
+<li>
+<b>Docker running on a subnet:</b> this is the service used to run
+encapsulated container applications. Important is however to notice
+that the Docker service must run on a subnet <i>(available to each
+node server</i>.
+</li>
+
+<li>
+<b>Kubelet Service</b>: this communicates with the master components and
+receive commands and work.
+</li>
+
+<li>
+<b>Kube-Proxy Service</b>: this forwards requests to the correct containers,
+balances the load and makes sure that the isolated networking
+environment is predictable and accessible.
+</li>
+</ul>
+<p>
+In a more structured way we can say that there are multiple <i>Pods</i>
+available carrying multiple containers, managed by the <i>Docker
+Engine</i>, within them. These <i>Points of Delivery</i> are modules of
+network, compute, storage bundled with the docker application
+containers that work together to deliver networking services.
 </p>
 
 <p>
-The main componing is the API server. API server manages scheduling that goes through the REST services.
+The Kube-proxy will then redirect network traffic into one of the
+various Pods.
+</p>
+
+<p>
+Kubelet is an agent responsible to communicate with the master what
+happens at node level. For this reason you will find a Kubelet for each
+node. If a Pod goes down than it is for instance responsibility of the
+Kubelet to communicate this so the master. This will then be
+responsible for restarting the Pod.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Master</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Masters are responsible for an entire cluster, they are the one that
+makes the decision on which node to schedule an application.
+</p>
+
+<p>
+The master has multiple components, all under the umbrella of a single
+<i>control plane</i>.
+</p>
+
+<p>
+The main component is the API server. API server manages scheduling
+that goes through the REST services. 
+</p>
+
+<p>
+Three other important components are:
+</p>
+
+<ul class="org-ul">
+<li>the <i>Scheduler</i>, that interacts with the API server scheduling
+piece but can as well interact directly with REST services. It
+determines where to host new Pods in the cluster. This furthermore
+coordinates with the Kubelet in order to determine the location of
+the Pods based on the load.
+</li>
+
+<li>the <i>Replication Controllers</i>: these handle the replicas through the
+API services.
+</li>
+
+<li>the <i>etcd</i>: manages state. It is the database of kubernetes. It
+tells kubernetes who is available and what the state of all these
+available things is.
+</li>
+</ul>
+</div>
+
+
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1">Operation</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The question that arise now is how do we specify the Master the tasks to be scheduled?
+</p>
+
+<p>
+The answer to the question is a <i>YAML</i> file. Here the desired state
+for our application is specified and once fed to the Master the latter
+will make sure the state is guaranteed.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Helm</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Helm, the Kubernetes native package management system, is used for
+application management inside an IBM Cloud Private cluster. The Helm
+GitHub community curates and continuously expands a set of tested and
+preconfigured Kubernetes applications. Clients use the management
+console to select stable applications from a catalog and add them to
+their cluster.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4">Literature</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+IBM - Journey to Cloud Series.
 </p>
 </div>
 </div>
     </div>
     <aside class="postpromonav"><nav><ul class="pager hidden-print">
 <li class="previous">
-                <a href="../Docker/" rel="prev" title="Docker">Previous post</a>
+                <a href="../Microservices/" rel="prev" title="Microservices">Previous post</a>
             </li>
             <li class="next">
                 <a href="../Apache%20Spark%20SQL/" rel="next" title="Apache Spark SQL">Next post</a>
