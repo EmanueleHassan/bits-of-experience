@@ -13,7 +13,7 @@
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="rss.xml">
 <link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/">
 <link rel="next" href="index-1.html" type="text/html">
-<!--[if lt IE 9]><script src="assets/js/html5shiv-printshiv.min.js"></script><![endif]--><link rel="prefetch" href="posts/analysis-of-variance-terminology/" type="text/html">
+<!--[if lt IE 9]><script src="assets/js/html5shiv-printshiv.min.js"></script><![endif]--><link rel="prefetch" href="posts/one-way-analysis-of-variance/" type="text/html">
 </head>
 <body>
     <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -36,7 +36,238 @@
 
     
 <div class="postindex">
-    <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/analysis-of-variance-terminology/" class="u-url">Analysis of Variance - Terminology</a></h1>
+    <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/one-way-analysis-of-variance/" class="u-url">One-way Analysis of Variance</a></h1>
+        <div class="metadata">
+            <p class="dateline"><a href="posts/one-way-analysis-of-variance/" rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-09-22T15:22:52+02:00" title="2019-09-22 15:22">2019-09-22 15:22</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                Marco Hassan
+            </span></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <br><br><p>
+This post discusses the comparison of different effects among
+different groups. It will start with a refresh of the <i>t-test</i> 
+used for <i>pair-wise</i> comparison among different groups and it extends
+the concept for situations with \(groups \geq 2\) in order to check
+whether results are statistically significant among them.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">T-test</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+As a brief reminder it is possible to compare the means of two
+independent groups using a <i>two sample t-test</i>. 
+</p>
+
+<p>
+The basic idea of the test is that assuming i.i.d. observation from
+two different groups \(X_1\) and \(X_2\) it is possible to compute summary
+statistics for the two.
+</p>
+
+<p>
+It is then possible to prove, that the computed mean from the
+i.i.d. observation converges in probability to the normal distribution
+due to the <i>Law of the Large Numbers</i> and the <i>Central Limit
+Theorem</i>. 
+</p>
+
+<p>
+\[ \bar{X} \overset{p}{\to} N (\mu, \sigma^2) \]
+</p>
+
+<p>
+Given the further fact that the linear combination of normal
+distributed variables is normal distributed it follows that the
+difference among the mean value of the groups of choice \(X_1\) and
+\(X_2\) is as well normal distributed with
+</p>
+
+<p>
+\[ \bar{X}_1 - \bar{X}_2 \overset{p}{\to} N (\mu_1 - \mu_2, \sigma_1^2 + \sigma_2^2) \]
+</p>
+
+<p>
+where the variance does not display the covariance between the two
+group observation as these were assumed to be independent.
+</p>
+
+<p>
+This is essentially the basic theory on which the t-test relies. The
+difference in the mean of two groups of choice is then simply
+counterpoised to the Null \(H_0\) and the normal distribution is
+replaced by the t-distribution due to the final sample of the
+observations.
+</p>
+
+<br>
+</div>
+</div>
+
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">The \(n \geq 2\) case</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+In case of existing groups \(n \geq 2\) it is not possible to directly
+apply the t-test outlined above. It is therefore necessary to expand
+the theory developed so far.
+</p>
+
+<p>
+Consider therefore <i>m</i> different groups containing each <i>n</i>
+observations. Assuming moreover that for each of the <i>m</i> different
+groups we observed a \(N(\mu_i, \sigma)\) response variable it is clear
+that we observe <i>m + 1</i> parameters, because of the <i>m</i> different means
+and the common variance shared among the groups.
+</p>
+
+<p>
+Notice now that albeit the different groups will display different
+means it is possible to rewrite their response variable disentangling
+the different effects affecting the response variables; namely in:
+</p>
+
+<ul class="org-ul">
+<li>a common component μ shared among all the response variables in
+the groups different groups
+</li>
+
+<li>a group specific α<sub>i</sub> component adjusting the effect of the
+common component μ to reflect the information of the group
+specific mean μ<sub>i</sub>
+</li>
+
+<li>a stochastic component ε<sub>ij</sub> ~ N (0, σ<sup>2</sup>). 
+</li>
+</ul>
+<p>
+It follows that 
+</p>
+
+<p>
+Notice however how an additional parameter was introduced. <i>m + 2</i>
+parameters result from the above equation. <i>We silently introduced an
+additional parameter</i> with the result that the problem is not
+<i>identifiable</i> anymore given that we currently have <i>m+1</i> parameters
+to mode <i>m</i> means. 
+</p>
+
+<p>
+In order to address the issue it is therefore necessary to add a side
+constant in order to add a further equality that will restore the
+<i>well specification</i> of the problem. 
+</p>
+
+<p>
+It is common to apply one of three major <i>side-constrains</i>:
+</p>
+
+<p>
+(notice that the table below is not well rendered in nikola. read the
+<a href="http://eyesfreelinux.ninja/posts/nikola-plugins.html">following post</a> or consider using latex tables.)
+</p>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup>
+<col class="left">
+<col class="left">
+<col class="left">
+<col class="left">
+</colgroup>
+<thead><tr>
+<th scope="col" class="left">Name</th>
+<th scope="col" class="left">Side-Constant</th>
+<th scope="col" class="left">Interpretation of μ</th>
+<th scope="col" class="left"><code>R-code</code></th>
+</tr></thead>
+<tbody>
+<tr>
+<td class="left">sum-to-zero</td>
+<td class="left">∑ α<sub>i</sub><sup>m</sup><sub>i=1</sub>  = 0</td>
+<td class="left">μ = \(frac{1}{m}\) ∑ μ<sub>i</sub>
+</td>
+<td class="left"> </td>
+</tr>
+<tr>
+<td class="left"> </td>
+<td class="left"> </td>
+<td class="left"> </td>
+<td class="left"> </td>
+</tr>
+<tr>
+<td class="left">reference group</td>
+<td class="left">α<sub>1</sub> = 0</td>
+<td class="left">μ = μ<sub>1</sub>
+</td>
+<td class="left"><code>contr.sum</code></td>
+</tr>
+<tr>
+<td class="left"> </td>
+<td class="left"> </td>
+<td class="left"> </td>
+<td class="left"> </td>
+</tr>
+<tr>
+<td class="left">weigthed sum-to-zero</td>
+<td class="left">∑<sup>m</sup><sub>i=1</sub> n<sub>i</sub> α<sub>i</sub> = 0</td>
+<td class="left">μ = \(\frac{1}{N}\) ∑ n<sub>i</sub> μ<sub>i</sub>
+</td>
+<td class="left"><code>contr.tratment</code></td>
+</tr>
+</tbody>
+</table>
+<p>
+Notice therefore that after adding the side-constant only <i>g-1</i>
+elements of the groups are allowed to vary freely and therefore we
+have <i>g-1</i> degrees of freedom.
+</p>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Variance Decomposition</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Given the decomposition above it is possible to set up the general
+framework for comparing the different effect of different treatments
+groups.
+</p>
+
+<p>
+First of all we notice that we estimate the <i>g-1</i> parameters of
+interest by the <b>least square method</b>.
+</p>
+
+<p>
+It follows therefore 
+</p>
+
+<p>
+\[ \hat{\mu} \textasciicircum{\alpha_i} = argmin_{\mu, \alpha_i} \sum^{m}_{i=1} \sum^{n}_{j=1} (y_{ij} - \mu - \alpha_i)^2   \]
+</p>
+
+
+
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4">Literature</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+<a href="https://stat.ethz.ch/lectures/as19/anova.php#course_materials">Applied Anaysis of Variance - ETH Lecture Notes - Autumn 2019</a>
+</p>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/analysis-of-variance-terminology/" class="u-url">Analysis of Variance - Terminology</a></h1>
         <div class="metadata">
             <p class="dateline"><a href="posts/analysis-of-variance-terminology/" rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-09-22T14:24:02+02:00" title="2019-09-22 14:24">2019-09-22 14:24</time></a></p>
             <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
@@ -318,24 +549,6 @@ system.
 <p class="more"><a href="posts/rdd-transformations-and-actions/">Read more…</a></p>
 </div>
     </div>
-    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/paredit/" class="u-url">Paredit</a></h1>
-        <div class="metadata">
-            <p class="dateline"><a href="posts/paredit/" rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-08-17T18:21:43+02:00" title="2019-08-17 18:21">2019-08-17 18:21</time></a></p>
-            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
-                Marco Hassan
-            </span></p>
-        </div>
-    </header><div class="p-summary entry-summary">
-    <div>
-<br><br><p>
-Paredit is a nice tool to quickly deal with parenthesis when
-coding. Thorough simple commands it lets you easily edit content
-wrapped in parenthesis, move quickly the parenthesis themselves 
-</p>
-
-<p class="more"><a href="posts/paredit/">Read more…</a></p>
-</div>
-    </div>
     </article>
 </div>
 
@@ -343,7 +556,19 @@ wrapped in parenthesis, move quickly the parenthesis themselves
 <li class="next">
                 <a href="index-1.html" rel="next">Older posts</a>
             </li>
-        </ul></nav><footer id="footer"><p>Contents © 2019         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+        </ul></nav><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha256-SDRP1VVYu+tgAGKhddBSl5+ezofHKZeI+OzxakbIe/Y=" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><footer id="footer"><p>Contents © 2019         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
         </footer>
 </div>
