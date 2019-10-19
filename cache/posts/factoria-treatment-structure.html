@@ -1,0 +1,297 @@
+<br>
+<br>
+
+<p>
+So far in the ANOVA series no special structure was assumed for the
+treatments but rather that each treatment corresponded to a single
+factor. This post starts to expand and relax the above assumption
+looking at the relation when a treatment is the result of various
+combination of individual factors. Think for instance of a plant being
+influenced both by <i>light exposure</i> and <i>fertilizer</i>.
+</p>
+
+<p>
+In case of the above structure we talk about a <i>factorial treatment
+structure</i> and this one will be explored next.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">Example and Terminology</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+If we see all possible combinations of the levels of two (or more)
+factors, we call them <i>crossed</i>. 
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## create dataset</span>
+<span class="n">acids</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">1.697</span><span class="p">,</span> <span class="m">1.601</span><span class="p">,</span> <span class="m">1.830</span><span class="p">,</span>
+	   <span class="m">2.032</span><span class="p">,</span> <span class="m">2.017</span><span class="p">,</span> <span class="m">2.409</span><span class="p">,</span>
+	   <span class="m">2.211</span><span class="p">,</span> <span class="m">1.673</span><span class="p">,</span> <span class="m">1.973</span><span class="p">,</span> 
+	   <span class="m">2.091</span><span class="p">,</span> <span class="m">2.255</span><span class="p">,</span> <span class="m">2.987</span><span class="p">)</span>
+<span class="n">R50</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="s">&quot;yes&quot;</span><span class="p">),</span> <span class="n">each</span> <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+<span class="n">R21</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="s">&quot;yes&quot;</span><span class="p">),</span> <span class="n">each</span> <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+<span class="n">cheddar</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">R50</span><span class="p">,</span> <span class="n">R21</span><span class="p">,</span> <span class="n">acids</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="c1">## In order to explore the strucutre and the combination of factors for each observation </span>
+<span class="c1">## you can leverage the xtabs () function in R</span>
+
+<span class="nf">xtabs </span><span class="p">(</span><span class="o">~</span> <span class="n">R50</span> <span class="o">+</span> <span class="n">R21</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">cheddar</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example">
+     R21
+R50   no yes
+  no   3   3
+  yes  3   3
+</pre>
+
+<p>
+Given the factorial structure questions arise of the individual effect
+of the single factor variables as well as the influence of the
+interplay.
+</p>
+
+<p>
+An exploratory solution in lower dimension to answer the above
+questions might be to look a the interaction plot. This gives a visual
+idea of the interplay and effect of single variables.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">with</span><span class="p">(</span><span class="n">cheddar</span><span class="p">,</span> <span class="nf">interaction.plot</span><span class="p">(</span><span class="n">x.factor</span> <span class="o">=</span> <span class="n">R50</span><span class="p">,</span> <span class="n">trace.factor</span> <span class="o">=</span> <span class="n">R21</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="n">acids</span><span class="p">))</span>
+<span class="c1">## standard way: interaction.plot(x.factor = cheddar$R50, trace.factor = cheddar$R21,</span>
+<span class="c1">##                                response = cheddar$acids)</span>
+
+<span class="c1">## Notice that the x-factor is the one being plotted on the x-axis</span>
+<span class="c1">## while the trace factor acts as a dummy.</span>
+</pre></div>
+
+<p>
+<img src="/images/interactionCheddar.svg" alt="nil"/> 
+</p>
+
+<p>
+As the line are parallel you can infer that the the effect of R50 is
+independent of R21.
+</p>
+
+<p>
+In order to display the single observations and look at the underlying
+noise and not simply drawing conclusion on averages you can leverage
+the ggplot2 package.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">library </span><span class="p">(</span><span class="n">gglot2</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">cheddar</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">R50</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">acids</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">R21</span><span class="p">))</span> <span class="o">+</span> <span class="nf">geom_point</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">stat_summary</span><span class="p">(</span><span class="n">fun.y</span> <span class="o">=</span> <span class="n">mean</span><span class="p">,</span> <span class="n">geom</span> <span class="o">=</span> <span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">group</span> <span class="o">=</span> <span class="n">R21</span><span class="p">),</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">()</span>
+</pre></div>
+
+<p>
+<img src="/images/interactionCheddarSingle.svg" alt="nil"/> 
+</p>
+
+
+<p>
+When data are to dense it might make sense to look at an aggregated
+picture such as a boxplot for the different underlying groups.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">cheddar</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">R50</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">acids</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">R21</span><span class="p">))</span> <span class="o">+</span> <span class="nf">geom_boxplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">stat_summary</span><span class="p">(</span><span class="n">fun.y</span> <span class="o">=</span> <span class="n">mean</span><span class="p">,</span> <span class="n">geom</span> <span class="o">=</span> <span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">group</span> <span class="o">=</span> <span class="n">R21</span><span class="p">),</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">()</span>
+</pre></div>
+
+<p>
+<img src="/images/interactionCheddarBox.svg" alt="nil"/> 
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Two-way ANOVA Model</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Consider a set-up with two factors A and B, with respectively <i>a</i> and
+<i>b</i> number of levels. Assume a <i>balanced</i> dataset with the same number <i>n</i>
+of data for every combination \(a_i b_j \ \forall i = 1,...., a; j =
+1,..., b\). Then you will have overall <i>N = a * b * n</i> of observations.
+</p>
+
+<p>
+The two-way anova with interaction is then specified by:
+</p>
+
+<p>
+where
+</p>
+
+<ul class="org-ul">
+<li>&alpha;<sub>i</sub> = main effect of factor A at level i
+</li>
+<li>&beta;<sub>j</sub> = main effect of factor B at level j
+</li>
+<li>&alpha; &beta;<sub>ij</sub> = interaction effect.
+</li>
+<li>&epsilon;<sub>ijk</sub> = i.i.d. N (0, &sigma;<sup>2</sup>) errors
+</li>
+</ul>
+
+<p>
+Typically for the same arguments outlined in the previous post we have
+to choose side-constraints in order to pose restrictions for the added
+variables.
+</p>
+
+<p>
+A typical choice consists in:
+</p>
+
+\begin{align*} 
+  \sum^a_{i=1} alpha_i &=  0\\
+
+  \sum^b_{j=1} \beta_j &=  0\\
+
+  \sum^a_{i=1} \alpha \beta_{ij} &=  0\\
+
+  \sum^b_{j=1} \alpha \beta_{ij} &=  0\\
+\end{align*}
+
+<p>
+It follows, that the main effects have <i>&alpha; -1</i>, <i>&beta; - 1</i> and
+(<i>&alpha; -1</i>) * (<i>&beta; - 1</i>). Important is especially to understand
+the latter term. This is because each constraint of a variable is
+associated with the full spectrum of the other factor constraints.
+</p>
+
+<p>
+Notice that as always the exact interpretation of the two-way anova
+with interaction terms depends on the choice of the applied
+constraints. 
+</p>
+
+<p>
+Given the above general framework it is possible to compare the
+effects of the factors and compare it to the model overall stochastic
+error to see if that is significant.
+</p>
+
+<p>
+The average expected value from the two-way anova is:
+</p>
+
+<p>
+\[ \bar{y}_{ij} = \hat{\mu} + \hat{\alpha_i} + \hat{\beta_j} + \hat{\alpha\beta_{ij}} \]
+</p>
+
+<p>
+As in the case of the one-way ANOVA one can decompose the sum of
+squared errors as:
+</p>
+
+<p>
+where,
+</p>
+
+<ul class="org-ul">
+<li>\(SS_A = \sum^{a}_{i=1} bn (\hat{a_i})^2\) and \(\hat{a_i} =
+  \frac{1}{a}\sum^{b}_{j=1}\sum^{n}_{k=1} y_{ijk} -
+  \frac{1}{nab}\sum^{n}_{k=1}\sum^{a}_{i=1}\sum^{b}_{j=1}y_{ijk}\) 
+</li>
+<li>\(SS_B = \sum^{b}_{j=1} an (\hat{\beta_j})^2\) and \(\hat{\beta_i} =
+  \frac{1}{b}\sum^{a}_{i=1}\sum^{n}_{k=1} y_{ijk} -
+  \frac{1}{nab}\sum^{n}_{k=1}\sum^{a}_{i=1}\sum^{b}_{j=1}y_{ijk}\) 
+</li>
+<li>\(SS_{AB} = \sum^{a}_{i=1}\sum^{b}_{j=1}n\hat{a_{ij}}^2\) and
+\(\hat{a_{ij}}^2 = (\frac{1}{ab}\sum^{b}_{j=1}\sum^{a}_{i=1} y_{ijk} + \frac{1}{nab}\sum^{n}_{k=1}\sum^{a}_{i=1}\sum^{b}_{j=1}y_{ijk} - \frac{1}{a}\sum^{b}_{j=1}\sum^{n}_{k=1} y_{ijk} - \frac{1}{b}\sum^{a}_{i=1}\sum^{n}_{k=1} y_{ijk})^2\) 
+</li>
+<li>\(SS_E = (\sum^{n}_{k=1}\sum^{a}_{i=1}\sum^{b}_{j=1}y_{ijk} -
+  \frac{1}{ab}\sum^{b}_{j=1}\sum^{a}_{i=1} y_{ijk})^2\) 
+</li>
+<li>\(SS_T = (\sum^{n}_{k=1}\sum^{a}_{i=1}\sum^{b}_{j=1}y_{ijk} -
+  \frac{1}{nab}\sum^{n}_{k=1}\sum^{a}_{i=1}\sum^{b}_{j=1}y_{ijk})^2\)
+</li>
+</ul>
+
+<blockquote>
+<p>
+Notice that the above is the exact reason why the exam might be
+annoying. You have to train the decomposition of the variance with all
+of the indices and get familiar with a fast exposition of the latter.
+</p>
+</blockquote>
+
+<p>
+From here on you can create the classical anova table. Being aware of
+the degrees of freedom.
+</p>
+
+<p>
+Especially it holds:
+</p>
+
+<ul class="org-ul">
+<li>df factor A = (a -1)
+</li>
+<li>df factor B = (b -1)
+</li>
+<li>df interaction AB = (a -1) (b-1)
+</li>
+<li>df error = (nab - (a-1) [A factor] - (b-1) [B factor] - (a-1) (b-1) [interaction] - 1 [overall mean]) = ab (n-1)
+</li>
+</ul>
+
+
+<p>
+Given the ANOVA table and the computed mean squared errors based on
+the sum of squares and degrees of freedom above it is possible to
+compare the single influence of each factor and the interaction term
+with the underlying stochastic noise.
+</p>
+
+<p>
+The following tests result:
+</p>
+
+<ul class="org-ul">
+<li>H<sub>0</sub>: \(\hat{a\beta_{ij}} = 0 \ \forall i,j\) vs. H<sub>A</sub>: \(\hat{a_{ij}} \neq
+  0\) for at least one <i>i,j</i>. 
+
+<p>
+Under the Null:
+</p>
+
+<p>
+$$ \frac{MS_{AB}}{MS_E} \mathtt{\sim} F_{(a-1) (b-1), ab (n-1)} $$
+</p>
+</li>
+
+<li>H<sub>0</sub>: \(\hat{a_{i}} = 0pp \ \forall  i\) vs. H<sub>A</sub>: \(\hat{a_{i}} \neq
+  0\) for at least one <i>i</i>. 
+
+<p>
+Under the Null:
+</p>
+
+<p>
+$$ \frac{MS_{A}}{MS_E} \mathtt{\sim} F_{(a-1), ab (n-1)} $$
+</p>
+</li>
+
+<li>H<sub>0</sub>: \(\hat{\beta_{j}} = 0 \ \forall j\) vs. H<sub>A</sub>: \(\hat{\beta_{j}} \neq
+  0\) for at least one <i>j</i>. 
+
+<p>
+Under the Null:
+</p>
+
+<p>
+$$ \frac{MS_{B}}{MS_E} \mathtt{\sim} F_{(b-1), ab (n-1)} $$
+</p>
+</li>
+</ul>
+</div>
+</div>
