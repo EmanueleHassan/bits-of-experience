@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bits of Experience (Posts about ANOVA)</title><link>https://marcohassan.github.io/bits-of-experience/</link><description></description><atom:link href="https://marcohassan.github.io/bits-of-experience/categories/anova.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:marco.hassan30@gmail.com"&gt;Marco Hassan&lt;/a&gt; </copyright><lastBuildDate>Tue, 08 Oct 2019 20:26:22 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>One-way Analysis of Variance</title><link>https://marcohassan.github.io/bits-of-experience/posts/one-way-analysis-of-variance/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;br&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bits of Experience (Posts about ANOVA)</title><link>https://marcohassan.github.io/bits-of-experience/</link><description></description><atom:link href="https://marcohassan.github.io/bits-of-experience/categories/anova.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2019 &lt;a href="mailto:marco.hassan30@gmail.com"&gt;Marco Hassan&lt;/a&gt; </copyright><lastBuildDate>Sat, 19 Oct 2019 07:54:45 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Contrasts and Multiple Testing</title><link>https://marcohassan.github.io/bits-of-experience/posts/contrasts-and-multiple-testing/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;br&gt;
+&lt;br&gt;
+
+&lt;p&gt;
+So far in the &lt;i&gt;ANOVA&lt;/i&gt; series we have encountered a simple one-way
+analysis of variance test. This was based on the idea of comparing the
+standardized sum of squares of the treatment effect and the one of the
+stochastic component. We did this with the &lt;i&gt;omnibus&lt;/i&gt; F-test testing
+the null of no-effect of the treatments.
+&lt;/p&gt;
+
+&lt;p&gt;
+What happens however when we have a rather specific question, such as
+the when we are concerned about the effect of a specific
+treatment/factor and we question whether this is significant?
+&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://marcohassan.github.io/bits-of-experience/posts/contrasts-and-multiple-testing/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>ANOVA</category><guid>https://marcohassan.github.io/bits-of-experience/posts/contrasts-and-multiple-testing/</guid><pubDate>Wed, 09 Oct 2019 16:02:38 GMT</pubDate></item><item><title>One-way Analysis of Variance</title><link>https://marcohassan.github.io/bits-of-experience/posts/one-way-analysis-of-variance/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;br&gt;
 &lt;br&gt;
 
 &lt;p&gt;
@@ -10,230 +27,13 @@ the concept for situations with \(groups \geq 2\) in order to check
 whether results are statistically significant among them.
 &lt;/p&gt;
 
-&lt;div id="outline-container-sec-1" class="outline-2"&gt;
-&lt;h2 id="sec-1"&gt;T-test&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-1"&gt;
 &lt;p&gt;
-As a brief reminder it is possible to compare the means of two
-independent groups using a &lt;i&gt;two sample t-test&lt;/i&gt;. 
+I will explore in this post the so called one-way analysis of
+variance, where the &lt;i&gt;one-way&lt;/i&gt; part results from the fact that a single
+&lt;i&gt;factor&lt;/i&gt; is analysed. Further posts will generalize the analysis.
 &lt;/p&gt;
 
-&lt;p&gt;
-The basic idea of the test is that assuming i.i.d. observation from
-two different groups \(X_1\) and \(X_2\) it is possible to compute summary
-statistics for the two.
-&lt;/p&gt;
-
-&lt;p&gt;
-It is then possible to prove, that the computed mean from the
-i.i.d. observation converges in probability to the normal distribution
-due to the &lt;i&gt;Law of the Large Numbers&lt;/i&gt; and the &lt;i&gt;Central Limit
-Theorem&lt;/i&gt;. 
-&lt;/p&gt;
-
-&lt;p&gt;
-\[ \bar{X} \overset{p}{\to} N (\mu, \sigma^2) \]
-&lt;/p&gt;
-
-&lt;p&gt;
-Given the further fact that the linear combination of normal
-distributed variables is normal distributed it follows that the
-difference among the mean value of the groups of choice \(X_1\) and
-\(X_2\) is as well normal distributed with
-&lt;/p&gt;
-
-&lt;p&gt;
-\[ \bar{X}_1 - \bar{X}_2 \overset{p}{\to} N (\mu_1 - \mu_2, \sigma_1^2 + \sigma_2^2) \]
-&lt;/p&gt;
-
-&lt;p&gt;
-where the variance does not display the covariance between the two
-group observation as these were assumed to be independent.
-&lt;/p&gt;
-
-&lt;p&gt;
-This is essentially the basic theory on which the t-test relies. The
-difference in the mean of two groups of choice is then simply
-counterpoised to the Null \(H_0\) and the normal distribution is
-replaced by the t-distribution due to the final sample of the
-observations.
-&lt;/p&gt;
-
-&lt;br&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-
-&lt;div id="outline-container-sec-2" class="outline-2"&gt;
-&lt;h2 id="sec-2"&gt;The \(n \geq 2\) case&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-2"&gt;
-&lt;p&gt;
-In case of existing groups \(n \geq 2\) it is not possible to directly
-apply the t-test outlined above. It is therefore necessary to expand
-the theory developed so far.
-&lt;/p&gt;
-
-&lt;p&gt;
-Consider therefore &lt;i&gt;m&lt;/i&gt; different groups containing each &lt;i&gt;n&lt;/i&gt;
-observations. Assuming moreover that for each of the &lt;i&gt;m&lt;/i&gt; different
-groups we observed a \(N(\mu_i, \sigma)\) response variable it is clear
-that we observe &lt;i&gt;m + 1&lt;/i&gt; parameters, because of the &lt;i&gt;m&lt;/i&gt; different means
-and the common variance shared among the groups.
-&lt;/p&gt;
-
-&lt;p&gt;
-Notice now that albeit the different groups will display different
-means it is possible to rewrite their response variable disentangling
-the different effects affecting the response variables; namely in:
-&lt;/p&gt;
-
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;a common component μ shared among all the response variables in
-the groups different groups
-&lt;/li&gt;
-
-&lt;li&gt;a group specific α&lt;sub&gt;i&lt;/sub&gt; component adjusting the effect of the
-common component μ to reflect the information of the group
-specific mean μ&lt;sub&gt;i&lt;/sub&gt;
-&lt;/li&gt;
-
-&lt;li&gt;a stochastic component ε&lt;sub&gt;ij&lt;/sub&gt; ~ N (0, σ&lt;sup&gt;2&lt;/sup&gt;). 
-&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;
-It follows that 
-&lt;/p&gt;
-
-&lt;p&gt;
-Notice however how an additional parameter was introduced. &lt;i&gt;m + 2&lt;/i&gt;
-parameters result from the above equation. &lt;i&gt;We silently introduced an
-additional parameter&lt;/i&gt; with the result that the problem is not
-&lt;i&gt;identifiable&lt;/i&gt; anymore given that we currently have &lt;i&gt;m+1&lt;/i&gt; parameters
-to mode &lt;i&gt;m&lt;/i&gt; means. 
-&lt;/p&gt;
-
-&lt;p&gt;
-In order to address the issue it is therefore necessary to add a side
-constant in order to add a further equality that will restore the
-&lt;i&gt;well specification&lt;/i&gt; of the problem. 
-&lt;/p&gt;
-
-&lt;p&gt;
-It is common to apply one of three major &lt;i&gt;side-constrains&lt;/i&gt;:
-&lt;/p&gt;
-
-&lt;p&gt;
-(notice that the table below is not well rendered in nikola. read the
-&lt;a href="http://eyesfreelinux.ninja/posts/nikola-plugins.html"&gt;following post&lt;/a&gt; or consider using latex tables.)
-&lt;/p&gt;
-
-
-&lt;table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides"&gt;
-
-
-&lt;colgroup&gt;
-&lt;col class="left"&gt;
-
-&lt;col class="left"&gt;
-
-&lt;col class="left"&gt;
-
-&lt;col class="left"&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope="col" class="left"&gt;Name&lt;/th&gt;
-&lt;th scope="col" class="left"&gt;Side-Constant&lt;/th&gt;
-&lt;th scope="col" class="left"&gt;Interpretation of μ&lt;/th&gt;
-&lt;th scope="col" class="left"&gt;&lt;code&gt;R-code&lt;/code&gt;&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class="left"&gt;sum-to-zero&lt;/td&gt;
-&lt;td class="left"&gt;∑ α&lt;sub&gt;i&lt;/sub&gt;&lt;sup&gt;m&lt;/sup&gt;&lt;sub&gt;i=1&lt;/sub&gt;  = 0&lt;/td&gt;
-&lt;td class="left"&gt;μ = \(frac{1}{m}\) ∑ μ&lt;sub&gt;i&lt;/sub&gt;&lt;/td&gt;
-&lt;td class="left"&gt; &lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td class="left"&gt; &lt;/td&gt;
-&lt;td class="left"&gt; &lt;/td&gt;
-&lt;td class="left"&gt; &lt;/td&gt;
-&lt;td class="left"&gt; &lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td class="left"&gt;reference group&lt;/td&gt;
-&lt;td class="left"&gt;α&lt;sub&gt;1&lt;/sub&gt; = 0&lt;/td&gt;
-&lt;td class="left"&gt;μ = μ&lt;sub&gt;1&lt;/sub&gt;&lt;/td&gt;
-&lt;td class="left"&gt;&lt;code&gt;contr.sum&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td class="left"&gt; &lt;/td&gt;
-&lt;td class="left"&gt; &lt;/td&gt;
-&lt;td class="left"&gt; &lt;/td&gt;
-&lt;td class="left"&gt; &lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td class="left"&gt;weigthed sum-to-zero&lt;/td&gt;
-&lt;td class="left"&gt;∑&lt;sup&gt;m&lt;/sup&gt;&lt;sub&gt;i=1&lt;/sub&gt; n&lt;sub&gt;i&lt;/sub&gt; α&lt;sub&gt;i&lt;/sub&gt; = 0&lt;/td&gt;
-&lt;td class="left"&gt;μ = \(\frac{1}{N}\) ∑ n&lt;sub&gt;i&lt;/sub&gt; μ&lt;sub&gt;i&lt;/sub&gt;&lt;/td&gt;
-&lt;td class="left"&gt;&lt;code&gt;contr.tratment&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;
-Notice therefore that after adding the side-constant only &lt;i&gt;g-1&lt;/i&gt;
-elements of the groups are allowed to vary freely and therefore we
-have &lt;i&gt;g-1&lt;/i&gt; degrees of freedom.
-&lt;/p&gt;
-
-&lt;br&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div id="outline-container-sec-3" class="outline-2"&gt;
-&lt;h2 id="sec-3"&gt;Variance Decomposition&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-3"&gt;
-&lt;p&gt;
-Given the decomposition above it is possible to set up the general
-framework for comparing the different effect of different treatments
-groups.
-&lt;/p&gt;
-
-&lt;p&gt;
-First of all we notice that we estimate the &lt;i&gt;g-1&lt;/i&gt; parameters of
-interest by the &lt;b&gt;least square method&lt;/b&gt;.
-&lt;/p&gt;
-
-&lt;p&gt;
-It follows therefore 
-&lt;/p&gt;
-
-&lt;p&gt;
-\[ \hat{\mu} \textasciicircum{\alpha_i} = argmin_{\mu, \alpha_i} \sum^{m}_{i=1} \sum^{n}_{j=1} (y_{ij} - \mu - \alpha_i)^2   \]
-&lt;/p&gt;
-
-
-
-
-&lt;br&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div id="outline-container-sec-4" class="outline-2"&gt;
-&lt;h2 id="sec-4"&gt;Literature&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-4"&gt;
-&lt;p&gt;
-&lt;a href="https://stat.ethz.ch/lectures/as19/anova.php#course_materials"&gt;Applied Anaysis of Variance - ETH Lecture Notes - Autumn 2019&lt;/a&gt;
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;</description><category>ANOVA</category><guid>https://marcohassan.github.io/bits-of-experience/posts/one-way-analysis-of-variance/</guid><pubDate>Sun, 22 Sep 2019 13:22:52 GMT</pubDate></item><item><title>Analysis of Variance - Terminology</title><link>https://marcohassan.github.io/bits-of-experience/posts/analysis-of-variance-terminology/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;br&gt;
+&lt;p&gt;&lt;a href="https://marcohassan.github.io/bits-of-experience/posts/one-way-analysis-of-variance/"&gt;Read more…&lt;/a&gt; (9 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>ANOVA</category><guid>https://marcohassan.github.io/bits-of-experience/posts/one-way-analysis-of-variance/</guid><pubDate>Sun, 22 Sep 2019 13:22:52 GMT</pubDate></item><item><title>Analysis of Variance - Terminology</title><link>https://marcohassan.github.io/bits-of-experience/posts/analysis-of-variance-terminology/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;br&gt;
 &lt;br&gt;
 
 &lt;p&gt;

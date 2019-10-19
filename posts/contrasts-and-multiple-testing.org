@@ -1,0 +1,99 @@
+#+BEGIN_COMMENT
+.. title: Contrasts and Multiple Testing
+.. slug: contrasts-and-multiple-testing
+.. date: 2019-10-09 18:02:38 UTC+02:00
+.. tags: ANOVA
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+.. status: 
+.. has_math: yes
+#+END_COMMENT
+
+#+BEGIN_HTML
+<br>
+<br>
+#+END_HTML
+
+#+LATEX_HEADER: \usepackage{math}
+#+LATEX_HEADER: \usepackage{asmath}
+
+So far in the /ANOVA/ series we have encountered a simple one-way
+analysis of variance test. This was based on the idea of comparing the
+standardized sum of squares of the treatment effect and the one of the
+stochastic component. We did this with the /omnibus/ F-test testing
+the null of no-effect of the treatments.
+
+What happens however when we have a rather specific question, such as
+the when we are concerned about the effect of a specific
+treatment/factor and we question whether this is significant?
+
+{{{TEASER_END}}}
+
+* Setting up Hypothesis
+
+In order to address our specific question we must set up an
+hypothesis. In this sense, we can formulate a vector containing our
+hypothesis.
+
+For instance assuming a dataset containing a factor with three levels
+such as the one encountered in the previous post. We might be
+interested in comparing the mean of two of the levels of the factor.
+We might then set up the hypothesis
+
+#+begin_comment
+interesting. note from below that the & in align is not required to go
+on the equal sign. any place will do. it simply guarantees consistency
+among the lines no matter where it is written.
+#+end_comment
+
+#+BEGIN_src latex :results drawer :exports results
+  \begin{align*}
+    \vec{c} = \begin{pmatrix} 1 \\ -1 \\ 0\end{pmatrix} ; & \hspace{10mm} \vec{\alpha} = \begin{pmatrix} \alpha_1 \\ \alpha_2 \\ \alpha_3 \end{pmatrix} \\ 
+
+    \\
+
+    H_0: \vec{c}^\intercal * \vec{\alpha} &= 0  \\
+
+    H_A: \vec{c}^\intercal * \vec{\alpha} &\neq 0 
+  \end{align*}
+#+END_src
+
+#+RESULTS:
+:RESULTS:
+\begin{align*}
+  \vec{c} = \begin{pmatrix} 1 \\ -1 \\ 0\end{pmatrix} ; & \hspace{10mm} \vec{\alpha} = \begin{pmatrix} \alpha_1 \\ \alpha_2 \\ \alpha_3 \end{pmatrix} \\ 
+
+  \\
+
+  H_0: \vec{c}^\intercal * \vec{\alpha} &= 0  \\
+
+  H_A: \vec{c}^\intercal * \vec{\alpha} &\neq 0 
+\end{align*}
+:END:
+
+#+BEGIN_HTML
+<br>
+#+END_HTML
+
+In the above case, we expressed the Null of equal treatment effects
+for the two first levels. In an analogous way we can formulate any
+other linear hypothesis.
+
+Notice that the above is called a contrast and we usually provide a
+side-constraint such that we ensure that the contrast above is testing
+the difference among the treatments rather than the overall level of
+the response. 
+
+$$\sum^{m}_{i=1} c_i = 0$$
+
+Notice however that if we are interested in the testing the difference
+in levels of the treatment groups a Null as:
+
+$$\vec{c} = \begin{pmatrix} 1 \\ 2 \\ 0 \end{pmatrix}$$
+
+might make completely sense.
+
+* Analysis of Variance and F-tests
+

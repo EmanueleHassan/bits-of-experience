@@ -12,6 +12,7 @@
 #+end_COMMENT
 
 #+LATEX_HEADER: \usepackage{math}
+#+LATEX_HEADER: \usepackage{asmath}
 
 #+BEGIN_HTML
 <br>
@@ -23,6 +24,12 @@ different groups. It will start with a refresh of the /t-test/
 used for /pair-wise/ comparison among different groups and it extends
 the concept for situations with $groups \geq 2$ in order to check
 whether results are statistically significant among them.
+
+I will explore in this post the so called one-way analysis of
+variance, where the /one-way/ part results from the fact that a single
+/factor/ is analysed. Further posts will generalize the analysis.
+
+{{{TEASER_END}}}
 
 *** T-test
 
@@ -74,7 +81,6 @@ observations.
 <br>
 #+END_HTML
 
-
 *** The $n \geq 2$ case
 
 In case of existing groups $n \geq 2$ it is not possible to directly
@@ -103,8 +109,13 @@ the different effects affecting the response variables; namely in:
 It follows that 
 
 #+BEGIN_src latex :results drawer :exports results
- \[ Y_{ij} = \mu + \alpha_i + \eplison_{ij} \].
+ \[ Y_{ij} = \mu + \alpha_i + \epsilon_{ij} \].
 #+END_src
+
+#+RESULTS:
+:RESULTS:
+\[ Y_{ij} = \mu + \alpha_i + \epsilon_{ij} \].
+:END:
 
 Notice however how an additional parameter was introduced. /m + 2/
 parameters result from the above equation. /We silently introduced an
@@ -118,17 +129,22 @@ constant in order to add a further equality that will restore the
 
 It is common to apply one of three major /side-constrains/:
 
+#+begin_comment
 (notice that the table below is not well rendered in nikola. read the
 [[http://eyesfreelinux.ninja/posts/nikola-plugins.html][following post]] or consider using latex tables.)
+#+end_comment
 
+#+begin_center
 
-| Name                 | Side-Constant                   | Interpretation of \mu              | ~R-code~         |
-|----------------------+---------------------------------+------------------------------------+------------------|
-| sum-to-zero          | \sum \alpha_i^{m}_{i=1}  = 0    | \mu = $frac{1}{m}$ \sum \mu_i      |                  |
-|                      |                                 |                                    |                  |
-| reference group      | \alpha_1 = 0                    | \mu = \mu_1                        | ~contr.sum~      |
-|                      |                                 |                                    |                  |
-| weigthed sum-to-zero | \sum^{m}_{i=1} n_i \alpha_i = 0 | \mu = $\frac{1}{N}$ \sum n_i \mu_i | ~contr.tratment~ | 
+| Name                 | Side-Constant                       | Interpretation of \mu              | ~R-code~         |
+|----------------------+-------------------------------------+------------------------------------+------------------|
+| sum-to-zero          | $$\sum^{m}_{i=1} \alpha_i = 0$$     | \mu = $\frac{1}{m}$ \mu_i          | ~contr.sum~      |
+|                      |                                     |                                    |                  |
+| reference group      | \alpha_1 = 0                        | \mu = \mu_1                        | ~contr.tratment~ |
+|                      |                                     |                                    |                  |
+| weigthed sum-to-zero | $$\sum^{m}_{i=1} n_i \alpha_i$$ = 0 | \mu = $\frac{1}{N}$ \sum n_i \mu_i |                  |
+
+#+end_center
 
 Notice therefore that after adding the side-constant only /g-1/
 elements of the groups are allowed to vary freely and therefore we
@@ -150,20 +166,382 @@ interest by the *least square method*.
 It follows therefore 
 
 #+BEGIN_src latex :results drawer :exports results
-\[ \hat{\mu} \textasciicircum{\alpha_i} = argmin_{\mu, \alpha_i} \sum^{m}_{i=1} \sum^{n}_{j=1} (y_{ij} - \mu - \alpha_i)^2   \]
+\[ \hat{\mu} \hat{\alpha_i} = argmin_{\mu, \alpha_i} \sum^{m}_{i=1} \sum^{n}_{j=1} (y_{ij} - \mu - \alpha_i)^2   \]
 #+END_src
 
 #+RESULTS:
 :RESULTS:
-\[ \hat{\mu} \textasciicircum{\alpha_i} = argmin_{\mu, \alpha_i} \sum^{m}_{i=1} \sum^{n}_{j=1} (y_{ij} - \mu - \alpha_i)^2   \]
+\[ \hat{\mu} \hat{\alpha_i} = argmin_{\mu, \alpha_i} \sum^{m}_{i=1} \sum^{n}_{j=1} (y_{ij} - \mu - \alpha_i)^2   \]
 :END:
 
+Given the above decomposition it is now possible to study the variance
+or sum of squares of our estimate.
 
+Given the estimated $\hat{mu}, \hat{\alpha_i}$ it follows that
 
- 
+#+begin_comment 
+notice align* is from package asmath.
+#+end_comment
+
+#+BEGIN_src latex :results drawer :exports results
+  \begin{align*} 
+    SS_T   &=  \sum^{m}_{i=1} \sum^{n_i}_{j=1} (y_{ij} - \frac{1}{N}\sum^{m}_{i=1} \sum^{n_i}_{j=1} y_{ij})^2 \\
+
+    SS_Trt &= \sum^{m}_{i=1} \sum^{n_i}_{j=1} (\frac{1}{n_i} \sum^{n_i}_{j=1} y_{ij} -  \frac{1}{N}\sum^{m}_{i=1} \sum^{n_i}_{j=1} y_{ij} )  \\
+
+    SS_E   &= \sum^{m}_{i=1} \sum^{n_i}_{j=1} (y_{ij} - \frac{1}{n_i} \sum{n_i}_{j=1} y_{ij}) \\
+  \end{align*}  
+#+END_src
+
+#+RESULTS:
+:RESULTS:
+\begin{align*} 
+  SS_T   &=  \sum^{m}_{i=1} \sum^{n_i}_{j=1} (y_{ij} - \frac{1}{N}\sum^{m}_{i=1} \sum^{n_i}_{j=1} y_{ij})^2 \\
+
+  SS_Trt &= \sum^{m}_{i=1} \sum^{n_i}_{j=1} (\frac{1}{n_i} \sum^{n_i}_{j=1} y_{ij} -  \frac{1}{N}\sum^{m}_{i=1} \sum^{n_i}_{j=1} y_{ij} )  \\
+
+  SS_E   &= \sum^{m}_{i=1} \sum^{n_i}_{j=1} (y_{ij} - \frac{1}{n_i} \sum{n_i}_{j=1} y_{ij}) \\
+\end{align*}
+:END:
+
 #+BEGIN_HTML
 <br>
 #+END_HTML
+
+So that it holds /SS_T = SS_Trt + SS_E/. In order to form hypothesis
+concerning the mean effect of treatment groups it is now necessary, as
+outlined in [[https://marcohassan.github.io/bits-of-experience/posts/analysis-of-variance-terminology/][this previous conceptual post]], to compare the difference
+in the treatment group effects with the *experimental error* to check
+whether the difference is statistically significant or might simply
+result from the stochastic component/randomness present in the data.
+
+The basic idea is therefore to compare the variation /between/ groups
+/SS_Trt/ to the variation /within/ groups /SS_E/. The intuition is
+that if the former is substantially larger than the latter, there must
+exist an effect of the treatment group, which is statistically
+significant.
+
+#+BEGIN_HTML
+<br>
+#+END_HTML
+
+*** Simple One-way ANOVA Test
+
+Given the methodology above, we turn to the analysis of the simple
+hypothesis:
+
+#+BEGIN_src latex :results drawer :exports results
+  \begin{align*}
+    H_0 &= \alpha_1 = ... = \alpha_m = 0 \\
+
+    H_A &= \alpha_ k \neq \alpha_l for at least one pair k \neq l
+  \end{align*}
+#+END_src
+
+#+RESULTS:
+:RESULTS:
+\begin{align*}
+  H_0 &= \alpha_1 = ... = \alpha_m = 0 \\
+
+  H_A &= \alpha_ k \neq \alpha_l for at least one pair k \neq l
+\end{align*}
+:END:
+
+We can formally question the hypothesis by checking whether the mean
+effect of the treatment for the groups substantially differs from the
+mean stochastic effect. If that is the case we conclude that our Null
+cannot be true and we reject it in favour of the alternative.
+
+Formally we construct the following table
+
+
+| *Source*  | *df* | *Sum of Squares (SS)* | *Mean Squares (MS)*   | *F-Ratio*              |
+|-----------+------+-----------------------+-----------------------+------------------------|
+| Treatment | m-1  | /SS_Trt/              | $$frac{SS_Trt}{m-1}$$ |                        |
+|           |      |                       |                       | $$frac{MS_Trt}{MS_E}$$ |
+| Error     | N-m  | /SS_E/                | $$frac{SS_E}{N-m}$$   |                        |
+
+Notice that the degrees of freedom are essential in this class.
+They work as follows:
+
+For the /treatment groups/ you have /m/ treatment variables
+\alpha_i. Among those you can freely chose /m-1/ due to the
+side-constrain. 
+
+For the /stochastic error/ you have /N/ observations all in all. We
+"used" some of the observations to calculate the overall means and the
+group specific treatment effect. So that the we again added
+implicitly constrains on our observed data. These results in /N - 1
+(total mean) - m-1 (estimated treatment effect)/, i.e. /N-m/ degrees
+of freedom.
+
+It can be further shown that under our Null
+
+#+BEGIN_src latex :results drawer :exports results
+\[ F = \frac{MSE_Trt}{MSE_E} ~ F_{m-1, N-m}  \]
+#+END_src
+
+#+RESULTS:
+:RESULTS:
+\[ F = \frac{MSE_Trt}{MSE_E} ~ F_{m-1, N-m}  \]
+:END:
+
+For which we can properly calculate our confidence intervals and other
+inference measures. Notice moreover, that the F-test is an *omnibus
+test* as it compares all the group means simultaneously.
+
+Notice moreover that the F-distribution is skewed and displays a long
+tail. Depending on the degrees of freedom the tail might be fat or
+not. The *denominator* degrees of freedom give in this sense and idea
+about the thickness of the tail. The lower the degree of freedom of
+the denominator, i.e. the lower the amount of data we can freely
+dispose of after calculating all of the necessary parameters, the
+fatter the tail. A fat tail is however an undesirable property as, it
+means that for a given confidence level \alpha the /(1- \alpha)/
+quantile will lie further in the away in the tail of the distribution
+and this increases the Type II errors (i.e. failing to reject the Null
+when this is false) in comparison to a distribution with the same
+confidence level but a larger error degree of freedom. 
+
+[[img-url:/images/F-quantiles-1.png]]
+
+For the reason above, and because of studies showing that the
+F-distribution flattens out with around 10 df in its denominator it is
+recommended as a rule of thumb to use insure that the denominator df
+is $\geq 10$.
+
+*** R-Code
+#+begin_comment
+ :Properties:
+ :header-args:R: :session anova :results output drawer :exports both
+ :end:
+#+end_comment
+
+This section outlines some useful code used in the lecture notes. You
+might need to know it for the exam.. unfortunately.
+
+**** Randomly permutating data
+
+~sample~
+
+#+begin_src R :exports both
+treat.ord <- rep(LETTERS [1:4], each = 5) ## could also use LETTERS[1:4]
+sample (treat.ord)
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+B
+A
+A
+D
+B
+A
+A
+D
+C
+A
+C
+C
+C
+B
+B
+D
+D
+B
+D
+C
+:END:
+
+**** Structure exploration
+
+~str~
+
+#+begin_src R :results output 
+library(datasets)
+data (PlantGrowth)
+str (PlantGrowth)
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+
+ [1] "B" "A" "A" "D" "B" "A" "A" "D" "C" "A" "C" "C" "C" "B" "B" "D" "D" "B" "D"
+[20] "C"
+
+'data.frame':	30 obs. of  2 variables:
+ $ weight: num  4.17 5.58 5.18 6.11 4.5 4.61 5.17 4.53 5.33 5.14 ...
+ $ group : Factor w/ 3 levels "ctrl","trt1",..: 1 1 1 1 1 1 1 1 1 1 ...
+:END:
+
+So it is possible to see one factor: group with three levels.
+
+In order to see the levels it is possible to leverage the ~levels~
+function
+
+#+begin_src R :results output
+levels (PlantGrowth$group)
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+[1] "ctrl" "trt1" "trt2"
+:END:
+
+You can furthermore visualize the data with 
+
+#+begin_src R :exports none
+# Open a svg file
+svg("../images/boxplot.svg") 
+# 2. Create a plot
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+
+Error in svg("../images/boxplot.svg") : unable to start device 'svg'
+Inoltre: Warning message:
+In svg("../images/boxplot.svg") :
+  cairo error 'error while writing to output stream'
+:END:
+
+#+begin_src R :cache yes :results code
+boxplot (weight ~ group, data = PlantGrowth)
+#+end_src
+
+#+RESULTS[0c2ac8f2790b9b4ae13c398c9972b94fe94b8c4e]:
+#+BEGIN_SRC R
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+:END:
+
+#+begin_src R :exports none
+# Close the pdf file
+dev.off()  
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+:END:
+
+[[img-url:/images/boxplot.svg]] 
+
+n**** Fit models with group specific treatment effects
+
+As outlined above it is possible to reframe the problem with a group
+specific mean \mu_i and an overall mean \mu. In order to estimate such
+model it is possible to leverage the ~aov~ function in R.
+
+#+begin_src R :results output 
+fit <- aov (weight ~ group, data = PlantGrowth)
+
+## Extracting and Printing the Coefficients
+coef (fit)
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+
+Error in svg("../images/boxplot.svg") : unable to start device 'svg'
+Inoltre: Warning message:
+In svg("../images/boxplot.svg") :
+  cairo error 'error while writing to output stream'
+
+Error in dev.off() : cannot shut down device 1 (the null device)
+
+(Intercept)   grouptrt1   grouptrt2 
+      5.032      -0.371       0.494
+:END:
+
+Notice that the above just renders the intercept and two of two of the
+group specific estimated treatment effects as the third one can be
+easily computed from the other two. Important is moreover to notice
+that the model uses ~contr.treatment~ as it's default constrain. This
+means it automatically sets the mean of the first level it encounters
+as being the overall mean.
+
+This can be further seen by looking at the mean group variables
+separately, leveraging the ~dummy.coef ()~ function
+
+#+begin_src R :results output
+dummy.coef (fit)
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+Full coefficients are 
+                                    
+(Intercept):     5.032              
+group:            ctrl   trt1   trt2
+                 0.000 -0.371  0.494
+:END:
+
+The default constrain value can be furthermore changed with the
+~options ()~ function before specifying the model fit via OLS
+
+#+begin_src R :results output
+options (contrasts = c ("contr.sum", "contr.poly"))
+fit2 <- aov (weight ~ group, data = PlantGrowth)
+dummy.coef (fit2)
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+
+Full coefficients are 
+                                    
+(Intercept):     5.073              
+group:            ctrl   trt1   trt2
+                -0.041 -0.412  0.453
+:END:
+
+You see now how all the different groups display different means, and
+how they sum up to 0.
+
+Finally with the above fitted value it is possible to check at the
+summary statistics to get the F-value testing the hypothesis tested in
+the conceptual framework above.
+
+#+begin_src R :results output table
+summary (fit)
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+            Df Sum Sq Mean Sq F value Pr(>F)  
+group        2  3.766  1.8832   4.846 0.0159 *
+Residuals   27 10.492  0.3886                 
+---
+codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+:END:
+
+Notice finally that as the global mean can be interpreted as a test
+for comparing two different models it is possible to write the model
+in terms of the ~anova ()~ general function that also allows to
+compare multiple models with multiple groups/factors.
+
+#+begin_src R :results output
+  fit.single <- aov (weight ~ 1, data = PlantGrowth) ## here we regress the weight on a single constant as from our Null
+
+  ## Compare the different models
+  anova (fit.single, fit)
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+
+Analysis of Variance Table
+
+Model 1: weight ~ 1
+Model 2: weight ~ group
+  Res.Df    RSS Df Sum of Sq      F  Pr(>F)  
+1     29 14.258                              
+2     27 10.492  2    3.7663 4.8461 0.01591 *
+---
+codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+:END:
 
 *** Literature
 

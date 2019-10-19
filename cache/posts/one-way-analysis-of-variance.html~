@@ -9,6 +9,14 @@ the concept for situations with \(groups \geq 2\) in order to check
 whether results are statistically significant among them.
 </p>
 
+<p>
+I will explore in this post the so called one-way analysis of
+variance, where the <i>one-way</i> part results from the fact that a single
+<i>factor</i> is analysed. Further posts will generalize the analysis.
+</p>
+
+<!-- TEASER_END -->
+
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1">T-test</h2>
 <div class="outline-text-2" id="text-1">
@@ -62,7 +70,6 @@ observations.
 </div>
 </div>
 
-
 <div id="outline-container-sec-2" class="outline-2">
 <h2 id="sec-2">The \(n \geq 2\) case</h2>
 <div class="outline-text-2" id="text-2">
@@ -105,6 +112,10 @@ It follows that
 </p>
 
 <p>
+\[ Y_{ij} = \mu + \alpha_i + \eplison_{ij} \].
+</p>
+
+<p>
 Notice however how an additional parameter was introduced. <i>m + 2</i>
 parameters result from the above equation. <i>We silently introduced an
 additional parameter</i> with the result that the problem is not
@@ -122,11 +133,10 @@ constant in order to add a further equality that will restore the
 It is common to apply one of three major <i>side-constrains</i>:
 </p>
 
+<div class="center">
 <p>
-(notice that the table below is not well rendered in nikola. read the
-<a href="http://eyesfreelinux.ninja/posts/nikola-plugins.html">following post</a> or consider using latex tables.)
-</p>
 
+</p>
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -151,9 +161,9 @@ It is common to apply one of three major <i>side-constrains</i>:
 <tbody>
 <tr>
 <td class="left">sum-to-zero</td>
-<td class="left">&sum; &alpha;<sub>i</sub><sup>m</sup><sub>i=1</sub>  = 0</td>
-<td class="left">&mu; = \(frac{1}{m}\) &sum; &mu;<sub>i</sub></td>
-<td class="left">&#xa0;</td>
+<td class="left">$$\sum^{m}_{i=1} \alpha_i = 0$$</td>
+<td class="left">&mu; = \(\frac{1}{m}\) &mu;<sub>i</sub></td>
+<td class="left"><code>contr.sum</code></td>
 </tr>
 
 <tr>
@@ -167,7 +177,7 @@ It is common to apply one of three major <i>side-constrains</i>:
 <td class="left">reference group</td>
 <td class="left">&alpha;<sub>1</sub> = 0</td>
 <td class="left">&mu; = &mu;<sub>1</sub></td>
-<td class="left"><code>contr.sum</code></td>
+<td class="left"><code>contr.tratment</code></td>
 </tr>
 
 <tr>
@@ -179,12 +189,13 @@ It is common to apply one of three major <i>side-constrains</i>:
 
 <tr>
 <td class="left">weigthed sum-to-zero</td>
-<td class="left">&sum;<sup>m</sup><sub>i=1</sub> n<sub>i</sub> &alpha;<sub>i</sub> = 0</td>
+<td class="left">$$\sum^{m}_{i=1} n_i \alpha_i$$ = 0</td>
 <td class="left">&mu; = \(\frac{1}{N}\) &sum; n<sub>i</sub> &mu;<sub>i</sub></td>
-<td class="left"><code>contr.tratment</code></td>
+<td class="left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
+</div>
 
 <p>
 Notice therefore that after adding the side-constant only <i>g-1</i>
@@ -215,22 +226,438 @@ It follows therefore
 </p>
 
 <p>
-\[ \^{\mu} \^{\alpha_i} = argmin_{\mu, \alpha_i} \sum^{m}_{i=1} \sum^{n}_{j=1} (y_{ij} - \mu - \alpha_i)^2   \]
+\[ \hat{\mu} \hat{\alpha_i} = argmin_{\mu, \alpha_i} \sum^{m}_{i=1} \sum^{n}_{j=1} (y_{ij} - \mu - \alpha_i)^2   \]
 </p>
 
+<p>
+Given the above decomposition it is now possible to study the variance
+or sum of squares of our estimate.
+</p>
 
+<p>
+Given the estimated \(\hat{mu}, \hat{\alpha_i}\) it follows that
+</p>
 
+\begin{align*} 
+  SS_T   &=  \sum^{m}_{i=1} \sum^{n_i}_{j=1} (y_{ij} - \frac{1}{N}\sum^{m}_{i=1} \sum^{n_i}_{j=1} y_{ij})^2 \\
 
+  SS_Trt &= \sum^{m}_{i=1} \sum^{n_i}_{j=1} (\frac{1}{n_i} \sum^{n_i}_{j=1} y_{ij} -  \frac{1}{N}\sum^{m}_{i=1} \sum^{n_i}_{j=1} y_{ij} )  \\
+
+  SS_E   &= \sum^{m}_{i=1} \sum^{n_i}_{j=1} (y_{ij} - \frac{1}{n_i} \sum{n_i}_{j=1} y_{ij}) \\
+\end{align*}
+
+<br>
+
+<p>
+So that it holds <i>SS<sub>T</sub> = SS<sub>Trt</sub> + SS<sub>E</sub></i>. In order to form hypothesis
+concerning the mean effect of treatment groups it is now necessary, as
+outlined in <a href="https://marcohassan.github.io/bits-of-experience/posts/analysis-of-variance-terminology/">this previous conceptual post</a>, to compare the difference
+in the treatment group effects with the <b>experimental error</b> to check
+whether the difference is statistically significant or might simply
+result from the stochastic component/randomness present in the data.
+</p>
+
+<p>
+The basic idea is therefore to compare the variation <i>between</i> groups
+<i>SS<sub>Trt</sub></i> to the variation <i>within</i> groups <i>SS<sub>E</sub></i>. The intuition is
+that if the former is substantially larger than the latter, there must
+exist an effect of the treatment group, which is statistically
+significant.
+</p>
 
 <br>
 </div>
 </div>
 
 <div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4">Literature</h2>
+<h2 id="sec-4">Simple One-way ANOVA Test</h2>
 <div class="outline-text-2" id="text-4">
+<p>
+Given the methodology above, we turn to the analysis of the simple
+hypothesis:
+</p>
+
+\begin{align*}
+  H_0 &= \alpha_1 = ... = \alpha_m = 0 \\
+
+  H_A &= \alpha_ k \neq \alpha_l for at least one pair k \neq l
+\end{align*}
+
+<p>
+We can formally question the hypothesis by checking whether the mean
+effect of the treatment for the groups substantially differs from the
+mean stochastic effect. If that is the case we conclude that our Null
+cannot be true and we reject it in favour of the alternative.
+</p>
+
+<p>
+Formally we construct the following table
+</p>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left"><b>Source</b></th>
+<th scope="col" class="left"><b>df</b></th>
+<th scope="col" class="left"><b>Sum of Squares (SS)</b></th>
+<th scope="col" class="left"><b>Mean Squares (MS)</b></th>
+<th scope="col" class="left"><b>F-Ratio</b></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">Treatment</td>
+<td class="left">m-1</td>
+<td class="left"><i>SS<sub>Trt</sub></i></td>
+<td class="left">$$frac{SS_Trt}{m-1}$$</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">$$frac{MS_Trt}{MS_E}$$</td>
+</tr>
+
+<tr>
+<td class="left">Error</td>
+<td class="left">N-m</td>
+<td class="left"><i>SS<sub>E</sub></i></td>
+<td class="left">$$frac{SS_E}{N-m}$$</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Notice that the degrees of freedom are essential in this class.
+They work as follows:
+</p>
+
+<p>
+For the <i>treatment groups</i> you have <i>m</i> treatment variables
+&alpha;<sub>i</sub>. Among those you can freely chose <i>m-1</i> due to the
+side-constrain. 
+</p>
+
+<p>
+For the <i>stochastic error</i> you have <i>N</i> observations all in all. We
+"used" some of the observations to calculate the overall means and the
+group specific treatment effect. So that the we again added
+implicitly constrains on our observed data. These results in <i>N - 1
+(total mean) - m-1 (estimated treatment effect)</i>, i.e. <i>N-m</i> degrees
+of freedom.
+</p>
+
+<p>
+It can be further shown that under our Null
+</p>
+
+<p>
+\[ F = \frac{MSE_Trt}{MSE_E} ~ F_{m-1, N-m}  \]
+</p>
+
+<p>
+For which we can properly calculate our confidence intervals and other
+inference measures. Notice moreover, that the F-test is an <b>omnibus
+test</b> as it compares all the group means simultaneously.
+</p>
+
+<p>
+Notice moreover that the F-distribution is skewed and displays a long
+tail. Depending on the degrees of freedom the tail might be fat or
+not. The <b>denominator</b> degrees of freedom give in this sense and idea
+about the thickness of the tail. The lower the degree of freedom of
+the denominator, i.e. the lower the amount of data we can freely
+dispose of after calculating all of the necessary parameters, the
+fatter the tail. A fat tail is however an undesirable property as, it
+means that for a given confidence level &alpha; the <i>(1- &alpha;)</i>
+quantile will lie further in the away in the tail of the distribution
+and this increases the Type II errors (i.e. failing to reject the Null
+when this is false) in comparison to a distribution with the same
+confidence level but a larger error degree of freedom. 
+</p>
+
+<p>
+<img src="/images/F-quantiles-1.png" alt="nil"/>
+</p>
+
+<p>
+For the reason above, and because of studies showing that the
+F-distribution flattens out with around 10 df in its denominator it is
+recommended as a rule of thumb to use insure that the denominator df
+is \(\geq 10\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5">R-Code</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+This section outlines some useful code used in the lecture notes. You
+might need to know it for the exam.. unfortunately.
+</p>
+</div>
+
+<div id="outline-container-sec-5-1" class="outline-3">
+<h3 id="sec-5-1">Randomly permutating data</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+<code>sample</code>
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">treat.ord</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="kc">LETTERS</span> <span class="n">[1</span><span class="o">:</span><span class="m">4</span><span class="n">]</span><span class="p">,</span> <span class="n">each</span> <span class="o">=</span> <span class="m">5</span><span class="p">)</span> <span class="c1">## could also use LETTERS[1:4]</span>
+<span class="nf">sample </span><span class="p">(</span><span class="n">treat.ord</span><span class="p">)</span>
+</pre></div>
+
+<p>
+B
+A
+A
+D
+B
+A
+A
+D
+C
+A
+C
+C
+C
+B
+B
+D
+D
+B
+D
+C
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-2" class="outline-3">
+<h3 id="sec-5-2">Structure exploration</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+<code>str</code>
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
+<span class="nf">data </span><span class="p">(</span><span class="n">PlantGrowth</span><span class="p">)</span>
+<span class="nf">str </span><span class="p">(</span><span class="n">PlantGrowth</span><span class="p">)</span>
+</pre></div>
+
+<p>
+
+</p>
+
+<p>
+<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup> "B" "A" "A" "D" "B" "A" "A" "D" "C" "A" "C" "C" "C" "B" "B" "D" "D" "B" "D"
+</p>
+
+<p>
+So it is possible to see one factor: group with three levels.
+</p>
+
+<p>
+In order to see the levels it is possible to leverage the <code>levels</code>
+function
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">levels </span><span class="p">(</span><span class="n">PlantGrowth</span><span class="o">$</span><span class="n">group</span><span class="p">)</span>
+</pre></div>
+
+
+<p>
+You can furthermore visualize the data with 
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">boxplot </span><span class="p">(</span><span class="n">weight</span> <span class="o">~</span> <span class="n">group</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">PlantGrowth</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span>
+</pre></div>
+
+<p>
+<img src="/images/boxplot.svg" alt="nil"/> 
+</p>
+
+<p>
+n**** Fit models with group specific treatment effects
+</p>
+
+<p>
+As outlined above it is possible to reframe the problem with a group
+specific mean &mu;<sub>i</sub> and an overall mean &mu;. In order to estimate such
+model it is possible to leverage the <code>aov</code> function in R.
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">fit</span> <span class="o">&lt;-</span> <span class="nf">aov </span><span class="p">(</span><span class="n">weight</span> <span class="o">~</span> <span class="n">group</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">PlantGrowth</span><span class="p">)</span>
+
+<span class="c1">## Extracting and Printing the Coefficients</span>
+<span class="nf">coef </span><span class="p">(</span><span class="n">fit</span><span class="p">)</span>
+</pre></div>
+
+<p>
+
+</p>
+
+<p>
+Error in svg("../images/boxplot.svg") : unable to start device 'svg'
+Inoltre: Warning message:
+In svg("../images/boxplot.svg") :
+  cairo error 'error while writing to output stream'
+</p>
+
+<p>
+Error in dev.off() : cannot shut down device 1 (the null device)
+</p>
+
+<p>
+(Intercept)   grouptrt1   grouptrt2 
+      5.032      -0.371       0.494
+</p>
+
+<p>
+Notice that the above just renders the intercept and two of two of the
+group specific estimated treatment effects as the third one can be
+easily computed from the other two. Important is moreover to notice
+that the model uses <code>contr.treatment</code> as it's default constrain. This
+means it automatically sets the mean of the first level it encounters
+as being the overall mean.
+</p>
+
+<p>
+This can be further seen by looking at the mean group variables
+separately, leveraging the <code>dummy.coef ()</code> function
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">dummy.coef </span><span class="p">(</span><span class="n">fit</span><span class="p">)</span>
+</pre></div>
+
+<p>
+Full coefficients are 
+</p>
+
+<p>
+(Intercept):     5.032              
+group:            ctrl   trt1   trt2
+                 0.000 -0.371  0.494
+</p>
+
+<p>
+The default constrain value can be furthermore changed with the
+<code>options ()</code> function before specifying the model fit via OLS
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">options </span><span class="p">(</span><span class="n">contrasts</span> <span class="o">=</span> <span class="nf">c </span><span class="p">(</span><span class="s">&quot;contr.sum&quot;</span><span class="p">,</span> <span class="s">&quot;contr.poly&quot;</span><span class="p">))</span>
+<span class="n">fit2</span> <span class="o">&lt;-</span> <span class="nf">aov </span><span class="p">(</span><span class="n">weight</span> <span class="o">~</span> <span class="n">group</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">PlantGrowth</span><span class="p">)</span>
+<span class="nf">dummy.coef </span><span class="p">(</span><span class="n">fit2</span><span class="p">)</span>
+</pre></div>
+
+<p>
+
+</p>
+
+<p>
+Full coefficients are 
+</p>
+
+<p>
+(Intercept):     5.073              
+group:            ctrl   trt1   trt2
+                -0.041 -0.412  0.453
+</p>
+
+<p>
+You see now how all the different groups display different means, and
+how they sum up to 0.
+</p>
+
+<p>
+Finally with the above fitted value it is possible to check at the
+summary statistics to get the F-value testing the hypothesis tested in
+the conceptual framework above.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">summary </span><span class="p">(</span><span class="n">fit</span><span class="p">)</span>
+</pre></div>
+
+<p>
+            Df Sum Sq Mean Sq F value Pr(&gt;F)  
+group        2  3.766  1.8832   4.846 0.0159 *
+Residuals   27 10.492  0.3886                 
+&#x2014;
+codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+</p>
+
+<p>
+Notice finally that as the global mean can be interpreted as a test
+for comparing two different models it is possible to write the model
+in terms of the <code>anova ()</code> general function that also allows to
+compare multiple models with multiple groups/factors.
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">fit.single</span> <span class="o">&lt;-</span> <span class="nf">aov </span><span class="p">(</span><span class="n">weight</span> <span class="o">~</span> <span class="m">1</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">PlantGrowth</span><span class="p">)</span> <span class="c1">## here we regress the weight on a single constant as from our Null</span>
+
+<span class="c1">## Compare the different models</span>
+<span class="nf">anova </span><span class="p">(</span><span class="n">fit.single</span><span class="p">,</span> <span class="n">fit</span><span class="p">)</span>
+</pre></div>
+
+<p>
+
+</p>
+
+<p>
+Analysis of Variance Table
+</p>
+
+<p>
+Model 1: weight ~ 1
+Model 2: weight ~ group
+  Res.Df    RSS Df Sum of Sq      F  Pr(&gt;F)  
+1     29 14.258                              
+2     27 10.492  2    3.7663 4.8461 0.01591 *
+&#x2014;
+codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6">Literature</h2>
+<div class="outline-text-2" id="text-6">
 <p>
 <a href="https://stat.ethz.ch/lectures/as19/anova.php#course_materials">Applied Anaysis of Variance - ETH Lecture Notes - Autumn 2019</a>
 </p>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+"ctrl" "trt1" "trt2"
+</p></div>
+
+
 </div>
 </div>
