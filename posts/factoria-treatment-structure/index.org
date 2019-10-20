@@ -332,3 +332,200 @@ The following tests result:
 
   $$ \frac{MS_{B}}{MS_E} \mathtt{\sim} F_{(b-1), ab (n-1)} $$
 
+*** Single Replicates
+
+Notice that if you have a /single/ observation for each level
+combination then, it is not possible anymore to make statistical
+inference with a model including an interaction term. The reason for
+that is being unable to disentangle the interaction term component
+from the stochastic error component \epsilon_{ijk}.
+
+While, it is theoretically possible to fit a /main effect model/ and
+estimate this accordingly, when the underlying data generating
+mechanism actually contains an interaction, we are fitting a /wrong/
+model. The consequence is that the /corresponding tests will be too conservative as attributing a higher standard error, and therefore p-values will be too large./ 
+As the Type I error will therefore be under control you can choose
+such an approach at the expense of a low power and an increased Type
+II error.
+
+Quite often however, it is possible to apply transformations to the
+independent variables. This will transform the multiplicative nature
+of the interaction term to an additive scheme on the log-scale, which
+can then be accordingly estimated.
+
+
+*** Unbalanced Data
+#+begin_comment
+ :Properties:
+ :header-args:R: :session anova :results output table :exports both
+ :end:
+#+end_comment
+
+So far, when looking at the two-way ANOVA model we have made the
+restrictive assumption of a /balanced/ data design. Each level
+combination displayed the same amount of observation. This led to the
+beneficial conclusion that when changing the level of a single factor,
+the resulting change in the response variable was affected directly by
+the factor level change. In regression terminology this is called an
+/orthogonal design/.
+
+Relaxing the assumption of a /balanced/ dataset the analysis of
+variance becomes more complex. A shift in factor level does not
+influence the response variable just directly but rather also
+indirectly due to the inherit dataset imbalances.
+
+Think about the following case for instance
+
+#+begin_src R
+running <- read.table("http://stat.ethz.ch/~meier/teaching/data/running.dat", header = TRUE)
+str(running)
+#+end_src
+
+#+RESULTS:
+: 
+: 'data.frame':	70 obs. of  3 variables:
+:  $ gender: Factor w/ 2 levels "female","male": 2 2 2 2 2 2 2 2 2 2 ...
+:  $ drink : Factor w/ 2 levels "A","B": 1 1 1 1 1 1 1 1 1 1 ...
+:  $ y     : num  40.6 49.7 42.1 42.2 39 44.2 44.1 43.1 44.7 46.3 ...
+
+#+begin_src R
+xtabs (~ gender + drink, data = running)
+#+end_src
+
+#+RESULTS:
+:         drink
+: gender    A  B
+:   female 10 40
+:   male   10 10
+
+
+The data reports a sports experiment using a factorial design with
+factor gender and factor energy drink (having two levels). Response
+was running time in seconds for a specific track. 
+
+As it is possible to see above the data is /unbalanced/ containing 50
+female and 20 male participants. 
+
+It follows that when changing the level of the drink factor for
+analyzing the effect of the drink component you automatically change
+the underlying structure of factor /gender/ due to the unbalanced
+dataset.
+
+The result is a intricate relation among the different factors and the
+end result that a decomposition of the sum of squared errors in the
+single components as in the previous section is not possible.
+
+In order to approach an unbalanced data scheme an alternative model
+comparison design is needed. In this sense the concept of /reduction
+of residual sum of squares/ is introduced.
+
+The /reduction of residuals sum of squares/ states how much the
+introduction of the factor reduces the sum of squares in comparison to
+a smaller restricted model.
+
+In order to see that consider again a one-way ANOVA model with
+
+$$ SS_T = SS_Trt + SS_E $$
+
+where 
+
+#+BEGIN_src latex :results drawer :exports results
+  \begin{align*} 
+    SS_T   &=  \sum^{m}_{i=1} \sum^{n_i}_{j=1} (y_{ij} - \frac{1}{N}\sum^{m}_{i=1} \sum^{n_i}_{j=1} y_{ij})^2 \\
+
+    SS_{Trt} &= \sum^{m}_{i=1} \sum^{n_i}_{j=1} (\frac{1}{n_i} \sum^{n_i}_{j=1} y_{ij} -  \frac{1}{N}\sum^{m}_{i=1} \sum^{n_i}_{j=1} y_{ij} )  \\
+
+    SS_E   &= \sum^{m}_{i=1} \sum^{n_i}_{j=1} (y_{ij} - \frac{1}{n_i} \sum{n_i}_{j=1} y_{ij}) \\
+  \end{align*}  
+#+END_src
+
+#+RESULTS:
+:RESULTS:
+\begin{align*} 
+  SS_T   &=  \sum^{m}_{i=1} \sum^{n_i}_{j=1} (y_{ij} - \frac{1}{N}\sum^{m}_{i=1} \sum^{n_i}_{j=1} y_{ij})^2 \\
+
+  SS_Trt &= \sum^{m}_{i=1} \sum^{n_i}_{j=1} (\frac{1}{n_i} \sum^{n_i}_{j=1} y_{ij} -  \frac{1}{N}\sum^{m}_{i=1} \sum^{n_i}_{j=1} y_{ij} )  \\
+
+  SS_E   &= \sum^{m}_{i=1} \sum^{n_i}_{j=1} (y_{ij} - \frac{1}{n_i} \sum{n_i}_{j=1} y_{ij}) \\
+\end{align*}
+:END:
+
+There the SS_{Trt} represented the reduction of the sum of squares
+(i.e. the error amount captured by the treatment specific mean
+effects) in comparison to the overall mean model. A similar
+interpretation is possible for the /reduction of residual sum of
+squares/ for the unbalanced case.
+
+
+It follows then that in an unbalanced test setting with multiple
+factors you can answer questions as: "Do we need factor =B= in the
+model if we already have factor =B=?"
+
+By sequentially building up a model and looking at the corresponding
+/reduction of residuals sum of squares/.
+
+#+BEGIN_HTML
+<br>
+#+END_HTML
+
+#+begin_quote
+Notation:
+
+We denote the residual sum of squares for factor B given factor A and
+an overall constant \mu as:
+
+~SS (B | 1, A)~. 
+
+This consists therefore in the reduction in the sum of squares between 
+
+~y ~ A + B~ and ~y ~ A~. 
+
+The sequential nature follows automatically from the definition above
+as we need the restricted model to compute the reduction in the
+squared errors. 
+#+end_quote
+
+#+BEGIN_HTML
+<br>
+#+END_HTML
+
+There are now different ways to or /types/ of model comparison
+approaches yielding different results. The choice of the model is
+highly debated in the academic literature and is still an open issue.
+
+- Model Comparison I: Sequentially building up a model by computing
+
+#+begin_center
+  =SS (A|1)= \\
+  =SS (B|1, A)= \\
+  =SS (AB|1, A, B)=
+#+end_center  
+
+- Model Comparison III: Control for /all/ other terms
+  
+#+begin_center
+  =SS (A|1, B, AB)= \\
+  =SS (B|1, A, AB)= \\
+  =SS (AB|1, A, B)=
+#+end_center  
+
+- Model Comparison II: Control the influence of the largest
+  /hierarchical/ model *not including the term of interest*. This
+  consists essentially in model III dropping the terms that are
+  /hierarchically/ lower than the factor for which the reduction in
+  residual sum of squares is being computed.
+  
+#+begin_center
+  =SS (A|1, B)= \\
+  =SS (B|1, A)= \\
+  =SS (AB|1, A, B)=
+#+end_center  
+
+/Some technical details are omitted here at the bottom. Very
+generically stated both in the script and in the slides and it is not worth the effort of mentioning them here/.  
+Have a look at them when preparing for the exam.
+
+
+*** Literature
+
+[[https://stat.ethz.ch/lectures/as19/anova.php#course_materials][Applied Anaysis of Variance - ETH Lecture Notes - Autumn 2019]]
