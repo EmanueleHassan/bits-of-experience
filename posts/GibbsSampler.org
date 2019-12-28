@@ -49,233 +49,231 @@ sampling from a bivariate distribution.
 
 {{{TEASER_END}}}
 
-** Generate from a Bivariate leveraging Cholesky
-:properties:
-:header-args:ipython: :session kernel-72924.json :async t :exports both
-:ORDERED:  t
-:end:
+*** Generate from a Bivariate leveraging Cholesky
+    :properties:
+    :header-args:ipython: :session kernel-72924.json :async t :exports both
+    :end:
 
-Import the 
+ Import the 
 
-#+begin_src ipython :exports code
-import numpy as np
-import seaborn as sns ## for plotting joint
+ #+begin_src ipython :exports code
+ import numpy as np
+ import seaborn as sns ## for plotting joint
 
-import matplotlib.pyplot as plt
-%matplotlib inline 
-%config InlineBackend.figure_format = 'png'
-#+end_src
+ import matplotlib.pyplot as plt
+ %matplotlib inline 
+ %config InlineBackend.figure_format = 'png'
+ #+end_src
 
-#+RESULTS:
-: # Out[391]:
+ #+RESULTS:
+ : # Out[391]:
 
-#+begin_src ipython :exports code
-rho = 0.6
+ #+begin_src ipython :exports code
+ rho = 0.6
 
-corr = np.array([[1, 0.8],[0.8, 1]])
-#+end_src
+ corr = np.array([[1, 0.8],[0.8, 1]])
+ #+end_src
 
-#+RESULTS:
-: # Out[143]:
+ #+RESULTS:
+ : # Out[143]:
 
-Generate a sample from a bivariate distribution with the above
-mentioned correlation structure.
+ Generate a sample from a bivariate distribution with the above
+ mentioned correlation structure.
 
-#+begin_src ipython :results output
-N = 1000
-np.random.seed(1) ## for reproduceability. 
+ #+begin_src ipython :results output
+ N = 1000
+ np.random.seed(1) ## for reproduceability. 
 
-## generate standard normal sample
-sn=np.column_stack([np.random.normal(0,1,N), np.random.normal(0,1,N)])
+ ## generate standard normal sample
+ sn=np.column_stack([np.random.normal(0,1,N), np.random.normal(0,1,N)])
 
-## convert it to generate a bivariate sample with the given
-## correlation structure.
+ ## convert it to generate a bivariate sample with the given
+ ## correlation structure.
 
-means = [0, 0]         # Mean values of each column
-sds = [1, 1]           # SD of each column
-sd = np.diag(sds)         # SD in a diagonal matrix for later operations
+ means = [0, 0]         # Mean values of each column
+ sds = [1, 1]           # SD of each column
+ sd = np.diag(sds)         # SD in a diagonal matrix for later operations
 
-cov_matrix = np.dot(sd, np.dot(corr, sd))   # The covariance matrix
+ cov_matrix = np.dot(sd, np.dot(corr, sd))   # The covariance matrix
 
-Chol = np.linalg.cholesky(cov_matrix)             # Cholesky decomposition
+ Chol = np.linalg.cholesky(cov_matrix)             # Cholesky decomposition
 
-sam_eq_mean = Chol .dot(sn.T)             # Generating random MVN (0, cov_matrix)
+ sam_eq_mean = Chol .dot(sn.T)             # Generating random MVN (0, cov_matrix)
 
-s = sam_eq_mean.transpose() + means               # Adding the means column wise
-samples = s.transpose()                           # Transposing back
+ s = sam_eq_mean.transpose() + means               # Adding the means column wise
+ samples = s.transpose()                           # Transposing back
 
-print(np.corrcoef(samples))                       # Checking correlation consistency.
+ print(np.corrcoef(samples))                       # Checking correlation consistency.
 
-#+end_src
+ #+end_src
 
-#+RESULTS:
-: [[1.         0.79080652]
-:  [0.79080652 1.        ]]
+ #+RESULTS:
+ : [[1.         0.79080652]
+ :  [0.79080652 1.        ]]
 
-#+begin_src ipython :results file
-sns.jointplot(x = samples[0, :], y = samples[1, :]) \
-   .plot_joint(sns.kdeplot, zorder=3, n_levels=6)
-#+end_src
+ #+begin_src ipython :results file
+ sns.jointplot(x = samples[0, :], y = samples[1, :]) \
+    .plot_joint(sns.kdeplot, zorder=3, n_levels=6)
+ #+end_src
 
-#+RESULTS:
-[[img-url:/images/obipy-resources/eTz0eo.png]]
+ #+RESULTS:
+ [[img-url:/images/obipy-resources/eTz0eo.png]]
 
-** Sample from a Bivariate Using Gibbs Sampler
-:properties:
-:header-args:ipython: :session kernel-72924.json :async t :exports both
-:ORDERED:  t
-:end:
+*** Sample from a Bivariate Using Gibbs Sampler
+    :properties:
+    :header-args:ipython: :session kernel-72924.json :async t :exports both
+    :end:
 
-Using Cholesky decomposition it is easy to derive the conditional 
-distribution of a bivariate distribution, as shown in [[https://www2.stat.duke.edu/courses/Spring12/sta104.1/Lectures/Lec22.pdf][this lecture]].
+ Using Cholesky decomposition it is easy to derive the conditional 
+ distribution of a bivariate distribution, as shown in [[https://www2.stat.duke.edu/courses/Spring12/sta104.1/Lectures/Lec22.pdf][this lecture]].
 
-Given such conditional distribution the Gibbs Sampler generates then a
-reversible Markov Chain by iterating over the following two steps:
+ Given such conditional distribution the Gibbs Sampler generates then a
+ reversible Markov Chain by iterating over the following two steps:
 
-- Generates $X^{t}_{I_t} ~ \phi_{I_t}{X^{t}_{I_t} | X{t-1}_{-I_t}}$,
-  following a deterministic or random process I_t = {1,2,...,k} where
-  k is large enough to sample from all the possible space of the
-  conditional distribution \phi and t=1,2... represent the epoch in ML
-  terms.
+ - Generates $X^{t}_{I_t} ~ \phi_{I_t}{X^{t}_{I_t} | X{t-1}_{-I_t}}$,
+   following a deterministic or random process I_t = {1,2,...,k} where
+   k is large enough to sample from all the possible space of the
+   conditional distribution \phi and t=1,2... represent the epoch in ML
+   terms.
 
-- Update X^{t-1}_{I_t-1} to X^{t}_{I_t} and continue to iterate over
-  the two steps according to the visiting schedule conditioning on the
-  updated vector containing the newer sampled variables.
+ - Update X^{t-1}_{I_t-1} to X^{t}_{I_t} and continue to iterate over
+   the two steps according to the visiting schedule conditioning on the
+   updated vector containing the newer sampled variables.
 
-Algorithmically in python this involves:
+ Algorithmically in python this involves:
 
-#+begin_src ipython :exports code
-## specify the two conditional distributions
+ #+begin_src ipython :exports code
+ ## specify the two conditional distributions
 
-def p_x_given_y(y, mean, covar):
-    mu = mean[0] + covar[1, 0] / covar[0, 0] * (y - mean[1])
-    sigma = covar[0, 0] - covar[1, 0] / covar[1, 1] * covar[1, 0]
-    return np.random.normal(mu, sigma)
+ def p_x_given_y(y, mean, covar):
+     mu = mean[0] + covar[1, 0] / covar[0, 0] * (y - mean[1])
+     sigma = covar[0, 0] - covar[1, 0] / covar[1, 1] * covar[1, 0]
+     return np.random.normal(mu, sigma)
 
 
-def p_y_given_x(x, mean, covar):
-    mu = mean[1] + covar[0, 1] / covar[1, 1] * (x - mean[0])
-    sigma = covar[1, 1] - covar[0, 1] / covar[0, 0] * covar[0, 1]
-    return np.random.normal(mu, sigma)
+ def p_y_given_x(x, mean, covar):
+     mu = mean[1] + covar[0, 1] / covar[1, 1] * (x - mean[0])
+     sigma = covar[1, 1] - covar[0, 1] / covar[0, 0] * covar[0, 1]
+     return np.random.normal(mu, sigma)
 
-## sample according to the defined vistiing schedule (here
-## deterministic ordered {1,2,...,k}
-def gibbs_sampling(init_Value, means, cov_matrix, iter=10000):
-    samples = np.zeros((iter, 2)) ## generate an empty vector.
-    y = init_Value ## set the initial value
+ ## sample according to the defined vistiing schedule (here
+ ## deterministic ordered {1,2,...,k}
+ def gibbs_sampling(init_Value, means, cov_matrix, iter=10000):
+     samples = np.zeros((iter, 2)) ## generate an empty vector.
+     y = init_Value ## set the initial value
 
-    for i in range(iter):
-        x = p_x_given_y(y, means, cov_matrix) ## notice how y gets
-                                              ## automatically updated
-                                              ## each at each
-                                              ## iteration with the
-                                              ## value below
-        y = p_y_given_x(x, means, cov_matrix)
-        samples[i, :] = [x, y]
+     for i in range(iter):
+         x = p_x_given_y(y, means, cov_matrix) ## notice how y gets
+                                               ## automatically updated
+                                               ## each at each
+                                               ## iteration with the
+                                               ## value below
+         y = p_y_given_x(x, means, cov_matrix)
+         samples[i, :] = [x, y]
 
-    return samples
-#+end_src
+     return samples
+ #+end_src
 
-#+RESULTS:
-: # Out[448]:
+ #+RESULTS:
+ : # Out[448]:
 
-#+begin_src ipython :exports code
-gibbsSamples = gibbs_sampling(5, means, cov_matrix, iter =1000)
-#+end_src
+ #+begin_src ipython :exports code
+ gibbsSamples = gibbs_sampling(5, means, cov_matrix, iter =1000)
+ #+end_src
 
-#+RESULTS:
-: # Out[541]:
+ #+RESULTS:
+ : # Out[541]:
 
-#+begin_src ipython :results file
-sns.jointplot(x = gibbsSamples.T[0, :], y = gibbsSamples.T[1, :]) \
-   .plot_joint(sns.kdeplot, zorder=3, n_levels=6)
-#+end_src
+ #+begin_src ipython :results file
+ sns.jointplot(x = gibbsSamples.T[0, :], y = gibbsSamples.T[1, :]) \
+    .plot_joint(sns.kdeplot, zorder=3, n_levels=6)
+ #+end_src
 
-#+RESULTS:
-[[img-url:/images/obipy-resources/t4dF4t.png]]
+ #+RESULTS:
+ [[img-url:/images/obipy-resources/t4dF4t.png]]
 
 
-The above looks graph does not display a bivariate distribution with
-the moments of the underlying distribution. This is because the first
-samples where the Markov Chain did not converge to the underlying
-distribution are included in the plotted samples with the result that
-the latter is in fact bias.
+ The above looks graph does not display a bivariate distribution with
+ the moments of the underlying distribution. This is because the first
+ samples where the Markov Chain did not converge to the underlying
+ distribution are included in the plotted samples with the result that
+ the latter is in fact bias.
 
-To obviate such a problem it is possible to inspect the times series
-plot for the two series and just include the observations for which
-the chain converged to the desired distribution and is hence mean
-stationary.
+ To obviate such a problem it is possible to inspect the times series
+ plot for the two series and just include the observations for which
+ the chain converged to the desired distribution and is hence mean
+ stationary.
 
-#+begin_src ipython :exports code
-from statsmodels.graphics.tsaplots import plot_acf
-#+end_src
+ #+begin_src ipython :exports code
+ from statsmodels.graphics.tsaplots import plot_acf
+ #+end_src
 
-#+RESULTS:
-: # Out[543]:
+ #+RESULTS:
+ : # Out[543]:
 
-#+begin_src ipython :results file
-plot_acf(gibbsSamples[:,0])
-plt.show()
-#+end_src
+ #+begin_src ipython :results file
+ plot_acf(gibbsSamples[:,0])
+ plt.show()
+ #+end_src
 
-#+RESULTS:
-[[file:# Out[572]:
-[[img-url:/images/obipy-resources/3vlKhV.png]]]]
+ #+RESULTS:
+ [[file:# Out[572]:
+ [[img-url:/images/obipy-resources/3vlKhV.png]]]]
 
 
-As expected the samples are autocorrelated due to the very nature of
-Markov Chains.
+ As expected the samples are autocorrelated due to the very nature of
+ Markov Chains.
 
-#+begin_src ipython :results file
-plt.plot(gibbsSamples[:,1])
-plt.show()
-#+end_src
+ #+begin_src ipython :results file
+ plt.plot(gibbsSamples[:,1])
+ plt.show()
+ #+end_src
 
-#+RESULTS:
-[[file:# Out[578]:
-[[img-url:/images/obipy-resources/ijg19g.png]]]]
+ #+RESULTS:
+ [[file:# Out[578]:
+ [[img-url:/images/obipy-resources/ijg19g.png]]]]
 
-#+begin_src ipython :results file
-sns.jointplot(x = gibbsSamples.T[0, 10:], y = gibbsSamples.T[1, 10:]) \
-   .plot_joint(sns.kdeplot, zorder=3, n_levels=6)
-#+end_src
+ #+begin_src ipython :results file
+ sns.jointplot(x = gibbsSamples.T[0, 10:], y = gibbsSamples.T[1, 10:]) \
+    .plot_joint(sns.kdeplot, zorder=3, n_levels=6)
+ #+end_src
 
-#+RESULTS:
-[[file:# Out[580]:
-: <seaborn.axisgrid.JointGrid at 0x13fb99c50>
-[[img-url:/images/obipy-resources/pU3V8t.png]]]]
+ #+RESULTS:
+ [[file:# Out[580]:
+ : <seaborn.axisgrid.JointGrid at 0x13fb99c50>
+ [[img-url:/images/obipy-resources/pU3V8t.png]]]]
 
 
-Confront the two empirical distributions w.r.t. the theoretical
-quantiles of a normal.
+ Confront the two empirical distributions w.r.t. the theoretical
+ quantiles of a normal.
 
-#+begin_src ipython :exports code
-import scipy.stats as stats
-#+end_src
+ #+begin_src ipython :exports code
+ import scipy.stats as stats
+ #+end_src
 
 
-#+RESULTS:
-: # Out[656]:
+ #+RESULTS:
+ : # Out[656]:
 
-#+begin_src ipython :results file
+ #+begin_src ipython :results file
 
-fig, ax = plt.subplots(2, 2, sharex='col', sharey='row')
+ fig, ax = plt.subplots(2, 2, sharex='col', sharey='row')
 
-stats.probplot(gibbsSamples.T[0, :], dist="norm", plot = plt.subplot(2, 2, 1))
-stats.probplot(gibbsSamples.T[1, :], dist="norm", plot = plt.subplot(2, 2, 2))
+ stats.probplot(gibbsSamples.T[0, :], dist="norm", plot = plt.subplot(2, 2, 1))
+ stats.probplot(gibbsSamples.T[1, :], dist="norm", plot = plt.subplot(2, 2, 2))
 
-stats.probplot(gibbsSamples.T[0, 10:], dist="norm", plot = plt.subplot(2, 2, 3))
-stats.probplot(gibbsSamples.T[1, 10:], dist="norm", plot = plt.subplot(2, 2, 4))
+ stats.probplot(gibbsSamples.T[0, 10:], dist="norm", plot = plt.subplot(2, 2, 3))
+ stats.probplot(gibbsSamples.T[1, 10:], dist="norm", plot = plt.subplot(2, 2, 4))
 
-plt.subplot(2,2,3).set_title("W/o Burn in")
-plt.subplot(2,2,4).set_title("W/o Burn in")
+ plt.subplot(2,2,3).set_title("W/o Burn in")
+ plt.subplot(2,2,4).set_title("W/o Burn in")
 
-plt.show()
+ plt.show()
 
-#+end_src
+ #+end_src
 
-#+RESULTS:
-[[file:# Out[667]:
-[[img-url:/images/obipy-resources/Du6NLL.png]]]]
+ #+RESULTS:
+ [[file:# Out[667]:
+ [[img-url:/images/obipy-resources/Du6NLL.png]]]]
 
 
