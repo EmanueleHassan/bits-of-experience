@@ -1,0 +1,140 @@
+<br>
+<br>
+
+<p>
+The basic idea of Docker is to allow the possibility to save all of
+the configuration of an application in one single image. This should
+be considered as a safe environment that once properly set up can be
+easily shared among different teams and once images are instantiated
+all of the different teams can be sure to operate and leverage the
+right configuration for running their application.
+</p>
+
+<p>
+A simple and straight forward overview about the advantage of Docker
+might be found in this sense at <a href="https://www.tutorialspoint.com/docker/docker_architecture.htm">docker architecture</a>.
+</p>
+
+<p>
+To sum up before starting the basic idea is to create images and to
+create containers based on that, which will run then the application
+as defined in the docker image.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">General theory</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Lifecycle: build, ship, run. -&gt; build ur application. Wrap it up in a
+container and ship it. Run it and scale it then. This allows portability. 
+</p>
+
+<p>
+Parts of docker:
+</p>
+</div>
+
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1">Image</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Read only. It is a snapshot of a container stored on a registry. U use it as a template for creating containers.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2">Container</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+This is the runtime instance of the image. A running copy of that.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3">Registry</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+This is essentially a repository where docker images are stored.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4">Docker Engine</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+This effectively run the containers. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5">Difference with VM</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+With virtual machine u leverage hypervisors that runs virtual
+machines. It is what virtualizes resources and makes them sharable.
+Up on the virtualized resources you build then ur different OS and
+specify all of the middleware necessary to run your application.
+</p>
+
+<p>
+In contrast to that with docker, u have a single host OS. Hypervisors
+are misssing and so OS is built on top of them. Notice moreover that
+docker does not require the entire Linux OS but rather simply its
+kernel. Important is moreover to notice that all the containers share
+the linux kernel here. 
+</p>
+
+<p>
+Docker tries to share resources. This means that if a layer is already
+running for an application a second application will leverage the
+instance of this exact lower layer and will ultimately save resources.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Basic commands</h2>
+<div class="outline-text-2" id="text-2">
+<div class="highlight"><pre><span></span><span class="c1"># To run a container:</span>
+$ docker run &lt;img name&gt;
+
+<span class="c1"># To list all of the containers running:</span>
+$ docker ps
+
+<span class="c1"># To list all of the containers on the system:</span>
+$ docker ps -a
+
+<span class="c1"># To see top processes within a running container:</span>
+$ docker top &lt;Container ID&gt;
+
+<span class="c1"># To stop a running container:</span>
+$ docker stop &lt;Container ID&gt;
+
+<span class="c1"># To remove container:</span>
+$ docker rm &lt;Container ID&gt;
+
+<span class="c1"># To see stats about disk usage, cpu etc of a running container:</span>
+$ docker stats &lt;Container ID&gt;
+
+<span class="c1"># To pause processes running on container:</span>
+$ docker pause &lt;Container ID&gt;
+
+<span class="c1"># To resume after the pause</span>
+$ docker unpause &lt;Container ID&gt;
+
+<span class="c1"># To kill procsses</span>
+$ docker <span class="nb">kill</span> &lt;Container ID&gt;
+
+<span class="c1"># To stop the docker deamon running in the background </span>
+$ service docker stop
+</pre></div>
+</div>
+</div>

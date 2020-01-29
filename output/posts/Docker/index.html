@@ -17,9 +17,17 @@
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="Docker">
 <meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/Docker/">
-<meta property="og:description" content="The basic idea of Docker is to allow the possibility to save all of
-the configuration of an application in one single image. This should
-be considered as a safe environment that once properly set up c">
+<meta property="og:description" content="&lt;br&gt;
+&lt;br&gt;
+
+
+
+
+
+Disclaimer; very much of the material under this page is directly copied from various sources on the internet. Check at the Literature section below to get to the source of the post.
+
+
+">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2019-09-02T18:21:43+02:00">
 <meta property="article:tag" content="IT Architecture">
@@ -62,7 +70,19 @@ be considered as a safe environment that once properly set up c">
 
         </div>
     </header><div class="e-content entry-content" itemprop="articleBody text">
-    <br><br><p>
+    <div class="HTML">
+<p>
+&lt;br&gt;
+&lt;br&gt;
+</p>
+
+</div>
+
+<p>
+<i>Disclaimer; very much of the material under this page is directly copied from various sources on the internet. Check at the Literature section below to get to the source of the post.</i>
+</p>
+
+<p>
 The basic idea of Docker is to allow the possibility to save all of
 the configuration of an application in one single image. This should
 be considered as a safe environment that once properly set up can be
@@ -84,9 +104,9 @@ as defined in the docker image.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1">General theory</h2>
-<div class="outline-text-2" id="text-1">
+<div id="outline-container-org40aef3a" class="outline-3">
+<h3 id="org40aef3a">General theory</h3>
+<div class="outline-text-3" id="text-org40aef3a">
 <p>
 Lifecycle: build, ship, run. -&gt; build ur application. Wrap it up in a
 container and ship it. Run it and scale it then. This allows portability. 
@@ -97,58 +117,57 @@ Parts of docker:
 </p>
 </div>
 
-<div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1">Image</h3>
-<div class="outline-text-3" id="text-1-1">
+<div id="outline-container-org143eedf" class="outline-4">
+<h4 id="org143eedf">Image</h4>
+<div class="outline-text-4" id="text-org143eedf">
 <p>
 Read only. It is a snapshot of a container stored on a registry. U use it as a template for creating containers.
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2">Container</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-orgd1ed6c9" class="outline-4">
+<h4 id="orgd1ed6c9">Container</h4>
+<div class="outline-text-4" id="text-orgd1ed6c9">
 <p>
 This is the runtime instance of the image. A running copy of that.
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-1-3" class="outline-3">
-<h3 id="sec-1-3">Registry</h3>
-<div class="outline-text-3" id="text-1-3">
+<div id="outline-container-orga0bbf52" class="outline-4">
+<h4 id="orga0bbf52">Registry</h4>
+<div class="outline-text-4" id="text-orga0bbf52">
 <p>
 This is essentially a repository where docker images are stored.
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-1-4" class="outline-3">
-<h3 id="sec-1-4">Docker Engine</h3>
-<div class="outline-text-3" id="text-1-4">
+<div id="outline-container-org7e0bd33" class="outline-4">
+<h4 id="org7e0bd33">Docker Engine</h4>
+<div class="outline-text-4" id="text-org7e0bd33">
 <p>
 This effectively run the containers. 
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-1-5" class="outline-3">
-<h3 id="sec-1-5">Difference with VM</h3>
-<div class="outline-text-3" id="text-1-5">
+<div id="outline-container-orgff0215a" class="outline-4">
+<h4 id="orgff0215a">Difference with VM</h4>
+<div class="outline-text-4" id="text-orgff0215a">
 <p>
-With virtual machine u leverage hypervisors that runs virtual
+With virtual machine you leverage hypervisors that runs virtual
 machines. It is what virtualizes resources and makes them sharable.
-Up on the virtualized resources you build then ur different OS and
+Up on the virtualized resources you build then your different OS and
 specify all of the middleware necessary to run your application.
 </p>
 
 <p>
-In contrast to that with docker, u have a single host OS. Hypervisors
-are misssing and so OS is built on top of them. Notice moreover that
-docker does not require the entire Linux OS but rather simply its
-kernel. Important is moreover to notice that all the containers share
-the linux kernel here. 
+In contrast to <i>virtual machines</i> that with docker, u have a single
+host OS. Notice moreover that docker does not require the entire Linux
+OS but rather simply its kernel. Important is moreover to notice that
+all the containers share the linux kernel here.
 </p>
 
 <p>
@@ -160,12 +179,113 @@ instance of this exact lower layer and will ultimately save resources.
 </div>
 </div>
 
+<div id="outline-container-orgdd5525f" class="outline-3">
+<h3 id="orgdd5525f">Basic commands</h3>
+<div class="outline-text-3" id="text-orgdd5525f">
+<p>
+Writing a Dockerfile is the first step to containerizing an
+application. You can think of these Dockerfile commands as a
+step-by-step recipe on how to build up our image. This one takes the
+following steps:
+</p>
 
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2">Basic commands</h2>
-<div class="outline-text-2" id="text-2">
-<div class="highlight"><pre><span></span><span class="c1"># To run a container:</span>
+<pre class="example">
+## Example of a Dockerfile
+
+FROM node:6.11.5    
+
+WORKDIR /usr/src/app
+COPY package.json .
+RUN npm install    
+COPY . .
+
+CMD [ "npm", "start" ]  
+
+</pre>
+
+<p>
+Notice;
+</p>
+
+<ul class="org-ul">
+<li>
+<code>FROM</code> start the pre-existing docker image <code>node:6.11.5</code>. This was
+cloned from the git repo used in the tutorial. It gives a grasp on
+the layered structure of docker, where you can start in the lower
+layer with basic images and run on top of them new images leveraging
+the basic ones.</li>
+
+<li>
+<code>WORKDIR</code> specifies that all the subsequent actions should be taken
+from the directory <code>/usr/src/app/</code> in your <b>image filesystem</b>.</li>
+
+<li>
+<code>COPY</code> the file <code>package.json</code> from your docker host to the present
+location <code>.</code> such that it is available in the image and the
+deployment can leverage it. Notice that the files passed with the
+<code>COPY</code> command will be used by the <code>$ docker build</code> command to
+create an image. To increase the build’s performance, exclude files
+and directories by adding a <code>.dockerignore</code>.</li>
+
+<li>
+<code>RUN</code> the command <code>npm install</code> inside your <b>image filesystem</b>.</li>
+
+<li>
+<code>COPY</code> the rest of your app's source code from your host to your
+image filesystem.</li>
+</ul>
+<p>
+You can see that <i>these are much the same steps you might have taken to
+set up and install your app on your host</i> - but capturing these as a
+Dockerfile allows us to do the same thing inside a portable, isolated
+Docker image.
+</p>
+
+<p>
+The final line with the <code>CMD</code> directive is the docker specific way of
+specifying some metadata in our image that describes how to run a
+container based off of the specified image.
+</p>
+
+<p>
+In this case, it’s saying that the containerized process that this
+image is meant to support is <code>npm start</code>.
+</p>
+
+
+<p>
+<i>Below a short list of commands. This is however just a way to write them down one time and start to memorize it. A convenient approach when looking forward to do smth is to leverage <code>docker --help</code> and search for the keyword of interest. You can then further inspect with <code>docker &lt;command&gt; --help</code>.</i>
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1"># To build an image from a Dockerfile and a context. The build’s</span>
+<span class="c1"># context is the set of files at a specified location PATH or URL (git</span>
+<span class="c1"># repository location).</span>
+
+<span class="c1"># if the dockerfile is not in the same repo as your context then.</span>
+      $ docker build -f &lt;dockerfile&gt; .
+<span class="c1"># else; if you are in your context repo and there is where the dockerfile is specified</span>
+      $ docker build .
+
+<span class="c1"># to build an image and associate it with a given tag you can leverage the -t flag</span>
+      $ docker build -t bullet_inboard:1.0 .
+
+
+<span class="c1"># To list all the avaialble images</span>
+$ docker image ls
+
+<span class="c1"># To run a container:</span>
 $ docker run &lt;img name&gt;
+
+<span class="c1"># Notice that there are multiple useful flags that further </span>
+$ docker container run --publish <span class="m">8000</span>:8080 --detach --name bb bulletinboard:1.0
+   <span class="c1">## --publich specifies the &lt;host port&gt;:&lt;docker port&gt; for</span>
+    <span class="c1"># communication. This assures that you can communicate with your</span>
+    <span class="c1"># docker container through port 8000 of your docker host. For</span>
+    <span class="c1"># instance it is then possible to look at your application in a</span>
+    <span class="c1"># browser of the host at localhost:8000.</span>
+  <span class="c1">## --detach ask docker to run the container in the background</span>
+  <span class="c1">## --name allows to specify a name (here bb) to access the container as this at a later stage.</span>
+
 
 <span class="c1"># To list all of the containers running:</span>
 $ docker ps
@@ -199,6 +319,20 @@ $ service docker stop
 </pre></div>
 </div>
 </div>
+
+
+<div id="outline-container-orgeca5a88" class="outline-2">
+<h2 id="orgeca5a88">Literature</h2>
+<div class="outline-text-2" id="text-orgeca5a88">
+<p>
+<a href="https://docs.docker.com/get-started/">https://docs.docker.com/get-started/</a>
+</p>
+
+<p>
+<a href="https://docs.docker.com/engine/reference/builder/">https://docs.docker.com/engine/reference/builder/</a>
+</p>
+</div>
+</div>
     </div>
     <aside class="postpromonav"><nav><ul class="pager hidden-print">
 <li class="previous">
@@ -207,7 +341,7 @@ $ service docker stop
             <li class="next">
                 <a href="../Microservices/" rel="next" title="Microservices">Next post</a>
             </li>
-        </ul></nav></aside></article><footer id="footer"><p>Contents © 2019         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2020         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
         </footer>
 </div>
