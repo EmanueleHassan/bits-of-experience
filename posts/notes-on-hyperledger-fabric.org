@@ -28,11 +28,15 @@ the technology.
 
 {{{TEASER_END}}}
 
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
 * Difference with permission-less Blockchain in a Nutshell
 
-The IBM blockchain registers the identity of the different people
-operating in the market through their digital certificates. This is a
-key difference with cryptocurrency blockchains where anonymization of
+Hyperledger Fabric registers the identity of the different people
+operating on the network through their digital certificates. This is a
+key difference with permission-less blockchains where anonymization of
 the stakeholder is guaranteed. 
 
 On the top of it, policies are one of the things that make Hyperledger
@@ -53,6 +57,10 @@ a third party). This stays in contrast to the proof of work based
 blockchain such as the bitcoin, which just requires the majority of
 the network to endorse the transaction.
 
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
 
 * Hyperledger Fabric
 
@@ -75,6 +83,11 @@ transparent nature.
 Finally, as a very personal - but common sense - opinion I prefer to
 code and learn Golang or JavaScript in comparison to Solidity.
 
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
 ** The basic idea
 
 The basic idea of the ledger is that you can have contracts between
@@ -93,7 +106,17 @@ accepted on the blockchain, can be a channel specific and does not
 have to conform to a single general protocol as in the more known
 permission-less Blockchains.
 
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
 ** Basic Components of Hyperledger Fabric
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
 *** Assets
 
     Assets defined in Hyperledger Fabric are represented as a collection of
@@ -102,8 +125,8 @@ permission-less Blockchains.
 
 *** Distributed Ledger
 
-    Each participant has a copy of the ledger to every Hyperledger Fabric
-    network they belong to. 
+    Each peers has a copy of the ledger of every Hyperledger Fabric
+    channel they belong to. 
 
     The /world state/ component describes *the state of the ledger at a given
     point in time*. It’s the database of the ledger. 
@@ -119,21 +142,22 @@ permission-less Blockchains.
     transaction history for each channel, and includes SQL-like query
     capability for efficient auditing and dispute resolution. 
 
-*** Consensus Mechanism
+*** Signing of Transactions
 
-    Hyperledger Fabric has been designed to allow network starters to
-    choose a consensus mechanism that best represents the relationships
-    that exist between participants. As with privacy, there is a spectrum
-    of needs; from networks that are highly structured in their
-    relationships to those that are more peer-to-peer. Peers validate
-    transactions against endorsement policies and enforce the policies.
+    This is possibly the centerpiece of Hyperledger, allowing your
+    network to be come a network of identifiable organizations and
+    rendering such network permissioned.
 
-    /Consensus is achieved ultimately when the order and results of a block’s transactions have met the explicit policy criteria checks/.  
-    These checks and balances take place during the lifecycle of a
-    transaction, and include the usage of endorsement policies to dictate
-    which specific members must endorse a certain transaction class, as
-    well as system chaincodes to ensure that these policies are enforced
-    and upheld. 
+    Different components of the blockchain network use
+    /certificates to identify themselves/ to each other as being from a
+    particular organization. 
+
+    That’s why there is usually more than one CA supporting a
+    blockchain network – different organizations often use different
+    CAs. Indeed, CAs are so important that Hyperledger Fabric provides
+    you with a *built-in one* (called Fabric-CA) to help you get
+    going. Though in practice, organizations will choose to use their
+    own CA.  
 
 *** Channels and Privacy
 
@@ -146,7 +170,7 @@ permission-less Blockchains.
     policies, access control lists, and other pertinent
     information. Peers dispose of an identity in the way that they are
     linked to the organization they belong via certificates issued by
-    the CA of the latter. These identities really matter because they
+    trusted CAs. These identities really matter because they
     /determine the exact permissions/ over resources and access to
     information that actors have in a blockchain network.
 
@@ -158,12 +182,12 @@ permission-less Blockchains.
     In the latter scenario, these participants would create a separate
     channel and thereby isolate/segregate their transactions and
     ledger. In order to solve scenarios that want to bridge the gap
-    between total transparency and privacy, /chaincode can be installed only on peers that need to access the asset states to perform reads
+    between total transparency and privacy, /chaincode (smart contracts) can be installed only on peers that need to access the asset states to perform reads
     and writes/ (in other words, if a chaincode is not installed on a peer,
     it will not be able to properly interface with the ledger). 
 
     When a subset of organizations on that channel need to keep their
-    transaction data confidential, a private data collection (collection)
+    transaction data confidential, a private data collection
     is used to segregate this data in a private database, logically
     separate from the channel ledger, accessible only to the authorized
     subset of organizations. 
@@ -200,9 +224,10 @@ permission-less Blockchains.
      configuration from this time onwards will have no direct effect on
      channel configuration.
 
+
 *** ChainCode/Smart Contracts
 
-    These are written in Go or JavaScript. You can imagine the
+    These are written in Golang or JavaScript. You can imagine the
     substantial benefit in comparison to writing down contracts in
     Solidity with all the further complexity layer consisting in
     mitigating the costs of the proof-of-work and the consistent
@@ -214,22 +239,22 @@ permission-less Blockchains.
     results in a set of asset key-value pairs that are committed to the
     ledger as creates, updates, or deletes.  
 
-*** Signing of Transactions
 
-    This is possibly the centerpiece of Hyperledger, allowing your
-    network to be come a network of identifiable organizations and
-    rendering such network permissioned.
+*** Consensus Mechanism
 
-    Different components of the blockchain network use
-    /certificates to identify themselves/ to each other as being from a
-    particular organization. 
+    Hyperledger Fabric has been designed to allow network starters to
+    choose a consensus mechanism that best represents the relationships
+    that exist between participants. As with privacy, there is a spectrum
+    of needs; from networks that are highly structured in their
+    relationships to those that are more peer-to-peer. Peers validate
+    transactions against endorsement policies and enforce the policies.
 
-    That’s why there is usually more than one CA supporting a
-    blockchain network – different organizations often use different
-    CAs. Indeed, CAs are so important that Hyperledger Fabric provides
-    you with a *built-in one* (called Fabric-CA) to help you get
-    going. Though in practice, organizations will choose to use their
-    own CA.  
+    /Consensus is achieved ultimately when the order and results of a block’s transactions have met the explicit policy criteria checks/.  
+    These checks and balances take place during the lifecycle of a
+    transaction, and include the usage of endorsement policies to dictate
+    which specific members must endorse a certain transaction class, as
+    well as system chaincodes to ensure that these policies are enforced
+    and upheld. 
 
 *** Ordering Services
 
@@ -292,6 +317,11 @@ permission-less Blockchains.
      I recommend [[https://developer.ibm.com/technologies/blockchain/articles/blockchain-hyperledger-fabric-ordering-decentralization/][this]] blogpost to put things in perspective. 
 
 
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+
 ** Transaction flow
 
    In Hyperledger Fabric the transaction flow is separated into three
@@ -335,55 +365,59 @@ permission-less Blockchains.
    appended to the chain.
 
 
-* Physical Layer
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
 
-  The above defined is the Logical Layer of the Blockchain Network. Once
-  this is defined with all of the necessary configurations, the ledger
-  within a channel is effectively distributed and /hosted/ among peers
-  as in the permission-less blockchain networks.
+** Physical Layer
 
-  Given the physical layer it is then possible to integrate applications
-  to your channel where the interaction of these and the peers is
-  managed by chaincode (i.e. smart contracts). In order to render this
-  possible a *chaincode package must be installed* on at least one peer
-  from the organization governing this. In such a way this will then be
-  able to implement the logic of the smart contract and distribute it
-  across the network.
+   The above defined is the Logical Layer of the Blockchain Network. Once
+   this is defined with all of the necessary configurations, the ledger
+   within a channel is effectively distributed and /hosted/ among peers
+   as in the permission-less blockchain networks.
 
-** Consensus, Transaction distribution at the Physical Layer
+   Given the physical layer it is then possible to integrate applications
+   to your channel where the interaction of these and the peers is
+   managed by chaincode (i.e. smart contracts). In order to render this
+   possible a *chaincode package must be installed* on at least one peer
+   from the organization governing this. In such a way this will then be
+   able to implement the logic of the smart contract and distribute it
+   across the network.
 
-   An organization must approve a chaincode definition in order to use
-   the installed smart contract to query the ledger and endorse
-   transactions. 
+*** Consensus, Transaction distribution at the Physical Layer
 
-   A sufficient number of organizations need to approve a chaincode
-   definition (A majority, by default) before the chaincode definition
-   can be committed to the channel and used to interact with the
-   channel ledger. Once the definition has been committed, the smart
-   contract can be invoked by client application - now and only now -.
+    An organization must approve a chaincode definition in order to use
+    the installed smart contract to query the ledger and endorse
+    transactions. 
 
-   Note that although every component on the channel can now access
-   the smart contract, they are not able to see its program
-   logic. This remains private to those nodes who have installed the
-   smart contract. Conceptually this means that it’s the smart
-   contract interface that is defined and committed to a channel, in
-   contrast to the smart contract implementation that is installed.
+    A sufficient number of organizations need to approve a chaincode
+    definition (A majority, by default) before the chaincode definition
+    can be committed to the channel and used to interact with the
+    channel ledger. Once the definition has been committed, the smart
+    contract can be invoked by client application - now and only now -.
 
-   To reinforce this idea; installing a smart contract shows how we
-   think of it being *physically* hosted on a peer, whereas a smart
-   contract that has been defined on a channel shows how we consider
-   it *logically* hosted by the channel.
+    Note that although every component on the channel can now access
+    the smart contract, they are not able to see its program
+    logic. This remains private to those nodes who have installed the
+    smart contract. Conceptually this means that it’s the smart
+    contract interface that is defined and committed to a channel, in
+    contrast to the smart contract implementation that is installed.
 
-   You should not think of peer nodes which do not have smart
-   contracts installed as being somehow inferior. It’s more the case
-   that peer nodes with smart contracts have a special power – to
-   help generate transactions. Note that all peer nodes can validate
-   and subsequently accept or reject transactions onto their copy of
-   the ledger. 
+    To reinforce this idea; installing a smart contract shows how we
+    think of it being *physically* hosted on a peer, whereas a smart
+    contract that has been defined on a channel shows how we consider
+    it *logically* hosted by the channel.
 
-   However, only peer nodes with a smart contract installed can take
-   part in the process of transaction endorsement which is central to
-   the generation of valid transactions. 
+    You should not think of peer nodes which do not have smart
+    contracts installed as being somehow inferior. It’s more the case
+    that peer nodes with smart contracts have a special power – to
+    help generate transactions. Note that all peer nodes can validate
+    and subsequently accept or reject transactions onto their copy of
+    the ledger. 
+
+    However, only peer nodes with a smart contract installed can take
+    part in the process of transaction endorsement which is central to
+    the generation of valid transactions. 
 
 
 * References
