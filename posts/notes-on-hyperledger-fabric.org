@@ -20,8 +20,8 @@ document basically consists of a structured /collage/ from the
 freely available resources concerning Hyperledger Fabric.
 
 The content for such document is not to subscribe to myself. The
-structure is and corresponds to the structure it naturally arose when
-getting to know the text. All the content stems from the
+structure is and corresponds to the structure that naturally arose when
+getting to know the content. All the content stems from the
 sources mentioned at the bottom in the /Resources/ section. You can
 refer to this is you are searching for a more thorough explanation of
 the technology. 
@@ -34,29 +34,25 @@ the technology.
 
 * Difference with permission-less Blockchain in a Nutshell
 
-Hyperledger Fabric registers the identity of the different people
+Hyperledger Fabric registers the identity of the different entities
 operating on the network through their digital certificates. This is a
 key difference with permission-less blockchains where anonymization of
 the stakeholder is guaranteed. 
 
 On the top of it, policies are one of the things that make Hyperledger
 Fabric different from other blockchains like Ethereum or Bitcoin. In
-those systems, transactions can be generated and validated by any node
-in the network. The policies that govern the network are fixed at any
-point in time and can only to be changed using the same process that
-governs the code. Because Fabric is a permissioned blockchain whose
-users are recognized by the underlying infrastructure, those users
-have the ability to decide on the governance of the network before it
-is launched, and change the governance of a running network.
+the latter systems, transactions can be generated and validated by any node
+in the network. In contrast, Fabric is a permissioned blockchain where
+the users have the ability to decide on the governance of the network, and
+change the governance of a running network. 
 
-Here the transactions are not visible to anyone but just to the people
-that should see it for security reasons. Moreover to verify the
+Finally, the transactions are not visible to anyone but just to the people
+that should see it for security reasons. Moreover, to verify the
 transaction on the blockchain a small group of participants have to
 endorse it (such as the parties involved in the transactions and maybe
 a third party). This stays in contrast to the proof of work based
 blockchain such as the bitcoin, which just requires the majority of
 the network to endorse the transaction.
-
 
 #+BEGIN_EXPORT html
 <br>
@@ -80,10 +76,6 @@ on it take a huge blow when it comes to scalability. Moreover
 confidential data cannot be upload on the blockchain due to its public
 transparent nature.
 
-Finally, as a very personal - but common sense - opinion I prefer to
-code and learn Golang or JavaScript in comparison to Solidity.
-
-
 #+BEGIN_EXPORT html
 <br>
 #+END_EXPORT
@@ -92,7 +84,7 @@ code and learn Golang or JavaScript in comparison to Solidity.
 
 The basic idea of the ledger is that you can have contracts between
 two parties that are visible just between the two of them. This is possible due
-to the modular structure of Hyperledger Fabric which allows to create
+to the modular structure of Hyperledger Fabric, which allows to create
 multiple isolated channels on a single network governed by *distinct*
 configuration settings. Such settings will ultimately govern the
 access rights to the channel by checking the digital identity of
@@ -177,14 +169,19 @@ permission-less Blockchains.
     A ledger exists in the scope of a channel — it can be shared across
     the entire network (assuming every participant is operating on one
     common channel) — or it can be privatized to include only a specific
-    set of participants. 
-
-    In the latter scenario, these participants would create a separate
+    set of participants. In this latter scenario, these participants would create a separate
     channel and thereby isolate/segregate their transactions and
-    ledger. In order to solve scenarios that want to bridge the gap
-    between total transparency and privacy, /chaincode (smart contracts) can be installed only on peers that need to access the asset states to perform reads
-    and writes/ (in other words, if a chaincode is not installed on a peer,
+    ledger. 
+
+*** On the possibility to go the half-way
+
+    In order to solve scenarios that want to bridge the gap
+    between total transparency and privacy, /chaincode (smart contracts) can be installed only on peers that need to access the
+    asset states to perform reads and writes/ (in other words, if a chaincode is not installed on a peer,
     it will not be able to properly interface with the ledger). 
+
+
+*** On the possibility to keep an Organization specific database
 
     When a subset of organizations on that channel need to keep their
     transaction data confidential, a private data collection
@@ -192,38 +189,12 @@ permission-less Blockchains.
     separated from the channel ledger, accessible only to the authorized
     subset of organizations. 
 
+*** On the possibility to encrypt smart contract entries and store the encrypted value on the Blockchain
+
     To further obfuscate the data, values within chaincode can be
     *encrypted*. Once encrypted data has been written to the ledger, it
     can be decrypted only by a user in possession of the corresponding key
     that was used to generate the cipher text. 
-
-**** How to create a Channel
-
-     In order to create a channel you have first to create a /consortium/. 
-
-     Why are consortia important? We can see that a consortium defines the
-     set of organizations in the network who share a need to transact with
-     one another.  
-
-     A channel is now the primary communications mechanism by which
-     the members of a consortium can communicate with each other.  
-
-     When creating a channel you have first to link it to an ordering
-     service, which will be comprehensively discussed in a moment. In
-     the next stage of network development, you are going to connect
-     components such as client applications and peer nodes. 
-
-     *Important* is that when creating a channel you have to create a new,
-     completely separate configuration for it. This will govern the extent
-     of the transactions within the channel.
-
-     Once a channel has been created, it is in a very real sense “free from
-     the network”. It is only organizations that are explicitly specified
-     in a channel configuration that have any control over it, from this
-     time forward into the future. Likewise, any updates to /base/ network
-     configuration from this time onwards will have no direct effect on
-     channel configuration.
-
 
 *** ChainCode/Smart Contracts
 
@@ -417,7 +388,33 @@ permission-less Blockchains.
 
     However, only peer nodes with a smart contract installed can take
     part in the process of transaction endorsement which is central to
-    the generation of valid transactions. 
+    the generation of valid transactions.
+
+*** How to create a Channel
+
+    In order to create a channel you have first to create a /consortium/. 
+
+    Why are consortia important? We can see that a consortium defines the
+    set of organizations in the network who share a need to transact with
+    one another.  
+
+    A channel is now the primary communications mechanism by which
+    the members of a consortium can communicate with each other.  
+
+    When creating a channel you have first to link it to an ordering
+    service. In the next stage of network development, you are going to connect
+    components such as client applications and peer nodes. 
+
+    *Important* is that when creating a channel you have to create a new,
+    completely separate configuration for it. This will govern the extent
+    of the transactions within the channel.
+
+    Once a channel has been created, it is in a very real sense “free from
+    the network”. It is only organizations that are explicitly specified
+    in a channel configuration that have any control over it, from this
+    time forward into the future. Likewise, any updates to /base/ network
+    configuration from this time onwards will have no direct effect on
+    channel configuration.
 
 
 * References
