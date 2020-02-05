@@ -12,8 +12,8 @@
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="rss.xml">
 <link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/">
-<link rel="next" href="index-1.html" type="text/html">
-<!--[if lt IE 9]><script src="assets/js/html5shiv-printshiv.min.js"></script><![endif]--><link rel="prefetch" href="posts/notes-on-hyperledger-fabric/" type="text/html">
+<link rel="next" href="index-2.html" type="text/html">
+<!--[if lt IE 9]><script src="assets/js/html5shiv-printshiv.min.js"></script><![endif]--><link rel="prefetch" href="posts/openshift-and-kubernetes-commands/" type="text/html">
 </head>
 <body>
     <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -36,7 +36,541 @@
 
     
 <div class="postindex">
-    <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/notes-on-hyperledger-fabric/" class="u-url">Notes on HyperLedger Fabric</a></h1>
+    <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/openshift-and-kubernetes-commands/" class="u-url">Openshift and Kubernetes Commands</a></h1>
+        <div class="metadata">
+            <p class="dateline"><a href="posts/openshift-and-kubernetes-commands/" rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2020-02-05T13:26:21+01:00" title="2020-02-05 13:26">2020-02-05 13:26</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                Marco Hassan
+            </span></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <br><br><p>
+This post outlines some of the commands to operate on your Kubernetes
+and Openshift cluster via CLI.
+</p>
+
+<br><div id="outline-container-orgba324ac" class="outline-2">
+<h2 id="orgba324ac">Kubernetes</h2>
+<div class="outline-text-2" id="text-orgba324ac">
+<p>
+Particularly useful when working with Kubernetes is the dashboard. It
+provides you a neat overview over your cluster. It allows to view and
+edit single <code>.yaml</code> files for each resource. 
+</p>
+
+<p>
+It is a powerful way to navigate your way through and get the
+structure. You can access it from the ibm cloud on your browser directly. INC4429361
+</p>
+</div>
+
+
+<div id="outline-container-org735ceae" class="outline-3">
+<h3 id="org735ceae">Configure your Kubeconfig file</h3>
+<div class="outline-text-3" id="text-org735ceae">
+<p>
+This is the foremost important step as you have to specify the
+kubernetes/openshift cluster you want to operate on.
+</p>
+
+<p>
+Kubectl is a command line tool for controlling Kubernetes
+clusters. 
+</p>
+
+<p>
+kubectl looks for a file named config in the $HOME/.kube
+directory. You can specify other kubeconfig files by setting the
+KUBECONFIG environment variable or by setting the –kubeconfig
+flag. 
+</p>
+
+<p>
+In this sense you can look up for instance the various clusters
+running on your IBM cloud by running
+</p>
+
+<div class="highlight"><pre><span></span>    ibmcloud ks cluster ls
+</pre></div>
+
+<p>
+You can then withdraw the specific configuration settings for a
+cluster by running
+</p>
+
+<div class="highlight"><pre><span></span>    ibmcloud ks cluster config &lt;cluster-ID&gt;
+</pre></div>
+
+<p>
+Finally you can export it and configuring the KUBECONFIG file by running.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span>/Users/marcohassan/.bluemix/plugins/container-service/clusters/&lt;cluster-id&gt;/&lt;configuration .yaml&gt;
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org0743a7a" class="outline-3">
+<h3 id="org0743a7a">General Clutster Info</h3>
+<div class="outline-text-3" id="text-org0743a7a">
+<div class="highlight"><pre><span></span>    kubectl cluster-info
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgad89c6d" class="outline-3">
+<h3 id="orgad89c6d">Look at the running pods and Namespaces</h3>
+<div class="outline-text-3" id="text-orgad89c6d">
+<p>
+In a similar way to Openshift; you can operate on your IKS cluster
+using the <code>kubectl</code> command. The important thing is that you properly
+configured and exported the <code>KUBECONFIG</code> yaml with the necessary
+information on the cluster you wish to operate in the first place.
+</p>
+
+<div class="highlight"><pre><span></span>    kubectl get pods
+
+    kubectl get namespaces 
+</pre></div>
+
+<p>
+In contrast to Openshift there is not a single command to change namespace
+in Kubernetes.
+</p>
+
+<p>
+In order to do that you can follow the steps under the following post: <a href="https://suraj.io/post/changing-k8s-ns/">link</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgeaaffa3" class="outline-3">
+<h3 id="orgeaaffa3">Apply changes to resource</h3>
+<div class="outline-text-3" id="text-orgeaaffa3">
+<p>
+With the <code>kubectl apply</code> command you are actually changing some
+<code>.yaml</code> file of your images. 
+</p>
+
+<p>
+This is for instance useful when you don't want to validate the
+input before sending it.
+</p>
+
+<div class="highlight"><pre><span></span>    kubectl apply --validate<span class="o">=</span><span class="nb">false</span> -f https://github.com/jetstack/cert-manager/releases/download/v0.10.0/cert-manager-openshift.yaml 
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org1631163" class="outline-3">
+<h3 id="org1631163">Gather more info for dealing with specific errors.</h3>
+<div class="outline-text-3" id="text-org1631163">
+<div class="highlight"><pre><span></span>    kubectl describe pod &lt;my-pod&gt;
+</pre></div>
+
+<p>
+This is for instance helpful when dealing with
+CrashloopBackOff. This happens when you have a pod starting,
+crashing, starting again, and then crashing again. 
+</p>
+
+<p>
+A quick Google search will show us that crash loop events can happen
+for a number of different reasons (and they happen frequently). Here
+are some of the umbrella causes for why they occur:
+</p>
+
+<p>
+The application inside the container keeps crashing Some type of
+parameters of the pod or container have been configured incorrectly An
+error has been made when deploying Kubernetes
+</p>
+
+<p>
+Doing a kubectl describe pod will give you more information on that
+pod. 
+</p>
+
+<p>
+There you can read the specific error code - for instance in a
+case of mine -  a <code>255 error</code>, which means that there likely is a
+file specification error and this could not be found.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf74f60e" class="outline-3">
+<h3 id="orgf74f60e">When disrupting the Kubernetes Backend</h3>
+<div class="outline-text-3" id="text-orgf74f60e">
+<p>
+It happened to me, when trying to debug Kubernetes issues that
+I somehow altered the kubernetes structure and got the following error.
+</p>
+
+<pre class="example">
+Error: could not get apiVersions from Kubernetes: unable to retrieve
+the complete list of server APIs:
+admission.certmanager.k8s.io/v1beta1: the server is currently unable
+to handle the request
+</pre>
+
+<p>
+This turned out to be the case when the api-services no longer have backends running.
+</p>
+
+<p>
+To fix it I run:
+</p>
+
+<div class="highlight"><pre><span></span>    kubectl get apiservice
+</pre></div>
+
+<p>
+This will list the kubernetes api services of your cluster and
+issues arises for ones where the AVAILABLE entry is False.
+</p>
+
+<p>
+If you don't need those APIs any more, delete them:
+</p>
+
+<div class="highlight"><pre><span></span>    kubectl delete apiservce &lt;service-name&gt;
+</pre></div>
+
+<p>
+You should be back to a normal behaving cluster then.
+</p>
+
+<br>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7623973" class="outline-2">
+<h2 id="org7623973">Openshift</h2>
+<div class="outline-text-2" id="text-org7623973">
+<p>
+Openshift is also a cluster management tool. This is a more well
+rounded management tool. Especially in monitoring the cluster and
+creating new services and resources it is particularly strong. 
+</p>
+
+<p>
+The GUI interface is very well done and comprehensive. This section
+looks at the CLI to directly operate on your openshift
+cluster. Here is important to configure your cluster as previously
+noted in the kubernetes section. The KUBECONFIG of your openshift
+cluster will allow you to directly operate on your cluster.
+</p>
+
+<p>
+Commands are pretty similar to Kubernetes CLI.
+</p>
+</div>
+
+<div id="outline-container-org556b536" class="outline-3">
+<h3 id="org556b536">General glimpse of Cluster</h3>
+<div class="outline-text-3" id="text-org556b536">
+<p>
+Look at the general settings of your cluster 
+</p>
+
+<div class="highlight"><pre><span></span>    oc config view
+</pre></div>
+
+<p>
+In order to list the current namespaces or pods make use of
+</p>
+</div>
+</div>
+
+<div id="outline-container-org712b2c7" class="outline-3">
+<h3 id="org712b2c7">Look at namespaces and pods</h3>
+<div class="outline-text-3" id="text-org712b2c7">
+<div class="highlight"><pre><span></span>    oc get pods
+
+    oc get namespace
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orge5681a2" class="outline-3">
+<h3 id="orge5681a2">Get satatus of running pods</h3>
+<div class="outline-text-3" id="text-orge5681a2">
+<div class="highlight"><pre><span></span>     oc status
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org7afb575" class="outline-3">
+<h3 id="org7afb575">Look at specific pod configuration</h3>
+<div class="outline-text-3" id="text-org7afb575">
+<div class="highlight"><pre><span></span>    oc edit pod &lt;pod-name&gt;
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgd9dcd7d" class="outline-3">
+<h3 id="orgd9dcd7d">Switch among namespaces</h3>
+<div class="outline-text-3" id="text-orgd9dcd7d">
+<p>
+To switch between different namespaces use
+</p>
+
+<div class="highlight"><pre><span></span>     oc project &lt;namespace&gt;
+</pre></div>
+
+<p>
+Look at the user configuration in the <code>kube config</code> file.
+</p>
+
+<div class="highlight"><pre><span></span>     oc get users
+</pre></div>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/helm/" class="u-url">Helm</a></h1>
+        <div class="metadata">
+            <p class="dateline"><a href="posts/helm/" rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2020-02-05T13:13:30+01:00" title="2020-02-05 13:13">2020-02-05 13:13</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                Marco Hassan
+            </span></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <br><br><p>
+This post contains the basic logic of Helm and should act as a
+repository listing the most important ways to work with Helm.
+</p>
+
+<br><div id="outline-container-orgdcb498c" class="outline-2">
+<h2 id="orgdcb498c">Helm - Why?</h2>
+<div class="outline-text-2" id="text-orgdcb498c">
+<p>
+Using virtualization capabilities ensures scaling, yes. Just keep in
+mind that an AMI, ARM (or a Docker container for that matter) you use
+to launch the app will be dependent on the Virtual Machine it is
+stored on and will be able to scale only the way the virtual machines
+are scaled — by adding more resources to the pool.
+</p>
+
+<p>
+With Helm, we have quite another picture. The application can be
+composed of clearly defined microservices and we can scale only the
+ones we need to scale, adding more Kubernetes nodes and pods to the
+cluster. Instead of working with a holistic image and growing all the
+resources, you operate a set of images and scale them independently.
+</p>
+
+<p>
+The problems begin when you want to launch a new instance of an
+application that runs, let’s say, 50 microservices. Starting and
+combining them all will be a laborious and error-prone task. However,
+with Helm, all you need to know is the name of the charts for the
+images responsible. Launching a new instance is the question of
+executing the corresponding Helm chart.
+</p>
+
+<p>
+Of course, the DevOps team can do the same using standard kubectl
+commands, yet working with Helm provides the ability to quickly
+define, cleanly manage and easily deploy the applications.
+</p>
+
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org52eddc6" class="outline-2">
+<h2 id="org52eddc6">Helm</h2>
+<div class="outline-text-2" id="text-org52eddc6">
+<p>
+General <a href="https://helm.sh/docs/intro/quickstart/">Helm Guide</a> with all of the necessary commands.
+</p>
+</div>
+
+
+<div id="outline-container-org20fd67a" class="outline-4">
+<h4 id="org20fd67a">Add a Charts Repository to your Helm Client</h4>
+<div class="outline-text-4" id="text-org20fd67a">
+<p>
+Add IBM-Kubernetes charts to your local helm 
+</p>
+
+<div class="highlight"><pre><span></span>    helm repo add iks-charts https://icr.io/helm/iks-charts
+</pre></div>
+
+
+<p>
+Other useful charts are the stable released charts. There you can
+find images for major databases, SDKs etc.
+</p>
+
+<div class="highlight"><pre><span></span>    helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+</pre></div>
+
+<p>
+You can moreover add the incubator charts for your local client
+</p>
+
+<div class="highlight"><pre><span></span>    helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
+</pre></div>
+
+<p>
+Remind that there is an intrinsic difference between <i>stable</i> and <i>incubator</i> charts.
+</p>
+
+<p>
+Stable Charts meet the criteria in the <a href="https://github.com/helm/charts/blob/master/CONTRIBUTING.md#technical-requirements">technical requirements</a>, which
+are a set of strict quality restrictions the Charts should comply with.
+</p>
+
+<p>
+Incubator Charts are those that do not meet these criteria. Having the
+incubator folder allows charts to be shared and improved on until they
+are ready to be moved into the stable folder. There are not simply
+incubator and stable charts. Also iks-charts that are IBM specific for
+instance.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org247b624" class="outline-4">
+<h4 id="org247b624">Install a Chart</h4>
+<div class="outline-text-4" id="text-org247b624">
+<div class="highlight"><pre><span></span> <span class="c1">## helm install &lt;yourchart&gt;</span>
+ helm install iks-charts/ibmcloud-data-shield
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgc841f98" class="outline-4">
+<h4 id="orgc841f98">Installing a Chart in Debug Mode might help</h4>
+<div class="outline-text-4" id="text-orgc841f98">
+<div class="highlight"><pre><span></span> helm install &lt;yourchart&gt; --dry-run --debug
+</pre></div>
+
+<p>
+This will print to stdout all the rendered templates in the chart (and won't install the chart)
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1a5b320" class="outline-4">
+<h4 id="org1a5b320">Altering some specific entries in the .yaml configuration of the chart</h4>
+<div class="outline-text-4" id="text-org1a5b320">
+<p>
+This can be achieved through the <code>--set</code> flag.
+</p>
+
+<p>
+For instance by running
+</p>
+
+<div class="highlight"><pre><span></span>    helm install iks-charts/ibmcloud-data-shield
+     --set global.OpenShiftEnabled<span class="o">=</span><span class="nb">true</span>
+</pre></div>
+
+<p>
+you specify that you want to run the chart on an Openshfit cluster.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb44d78c" class="outline-4">
+<h4 id="orgb44d78c">Don't forget to Update</h4>
+<div class="outline-text-4" id="text-orgb44d78c">
+<div class="highlight"><pre><span></span>    helm repo update
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgb5dee2e" class="outline-4">
+<h4 id="orgb5dee2e">View Running Charts</h4>
+<div class="outline-text-4" id="text-orgb5dee2e">
+<p>
+View installed charts on Helm
+</p>
+
+<div class="highlight"><pre><span></span>  helm ls
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orga2b533d" class="outline-4">
+<h4 id="orga2b533d">Information and Yaml for different Chart Repositories</h4>
+<div class="outline-text-4" id="text-orga2b533d">
+<p>
+The information is saved in the following folder on the local machine with your kubectl client.
+</p>
+
+<div class="highlight"><pre><span></span> ls /Users/marcohassan/Library/Caches/helm/repository/
+</pre></div>
+
+<p>
+There you see moreover the installed charts.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5bdf9cc" class="outline-4">
+<h4 id="org5bdf9cc">Info on Deployed Charts</h4>
+<div class="outline-text-4" id="text-org5bdf9cc">
+<div class="highlight"><pre><span></span>  helm status my-cert-manager
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgde3feb6" class="outline-4">
+<h4 id="orgde3feb6">Delete a Chart</h4>
+<div class="outline-text-4" id="text-orgde3feb6">
+<p>
+To delete one helm chart you can use the following command
+</p>
+
+<div class="highlight"><pre><span></span>  helm delete my-wordpress
+</pre></div>
+
+<p>
+This will clean all the pods associated with a given release.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8d0f9a7" class="outline-4">
+<h4 id="org8d0f9a7">Change Namespace</h4>
+<div class="outline-text-4" id="text-org8d0f9a7">
+<p>
+Look at this <a href="https://itnext.io/drastically-improve-your-kubernetes-deployments-with-helm-5323e7f11ef8">medium article</a> for a basic discussion on basic helm commands.
+</p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/ibm-cloud-commands/" class="u-url">IBM Cloud Commands</a></h1>
+        <div class="metadata">
+            <p class="dateline"><a href="posts/ibm-cloud-commands/" rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2020-02-05T13:09:09+01:00" title="2020-02-05 13:09">2020-02-05 13:09</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                Marco Hassan
+            </span></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<br><br><p>
+this blog contains the major IBM cloud CLI commands to operate with
+some of the data services in the cloud.
+</p>
+
+<p>
+It especially focus around DaaS and MLaaS. 
+</p>
+
+<p class="more"><a href="posts/ibm-cloud-commands/">Read more…</a></p>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/notes-on-hyperledger-fabric/" class="u-url">Notes on HyperLedger Fabric</a></h1>
         <div class="metadata">
             <p class="dateline"><a href="posts/notes-on-hyperledger-fabric/" rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2020-02-03T14:47:32+01:00" title="2020-02-03 14:47">2020-02-03 14:47</time></a></p>
             <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
@@ -268,99 +802,12 @@ OS was not straightforward.
 <p class="more"><a href="posts/monitor-driver-thinkpad-dock-usb-30/">Read more…</a></p>
 </div>
     </div>
-    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/contrasts-and-multiple-testing/" class="u-url">Contrasts and Multiple Testing</a></h1>
-        <div class="metadata">
-            <p class="dateline"><a href="posts/contrasts-and-multiple-testing/" rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-10-09T18:02:38+02:00" title="2019-10-09 18:02">2019-10-09 18:02</time></a></p>
-            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
-                Marco Hassan
-            </span></p>
-        </div>
-    </header><div class="p-summary entry-summary">
-    <div>
-<br><br><p>
-So far in the <i>ANOVA</i> series we have encountered a simple one-way
-analysis of variance test. This was based on the idea of comparing the
-standardized sum of squares of the treatment effect and the one of the
-stochastic component. We did this with the <i>omnibus</i> F-test testing
-the null of no-effect of the treatments.
-</p>
-
-<p>
-What happens however when we have a rather specific question, such as
-the when we are concerned about the effect of a specific
-treatment/factor and we question whether this is significant?
-</p>
-
-<p class="more"><a href="posts/contrasts-and-multiple-testing/">Read more…</a></p>
-</div>
-    </div>
-    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/one-way-analysis-of-variance/" class="u-url">One-way Analysis of Variance</a></h1>
-        <div class="metadata">
-            <p class="dateline"><a href="posts/one-way-analysis-of-variance/" rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-09-22T15:22:52+02:00" title="2019-09-22 15:22">2019-09-22 15:22</time></a></p>
-            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
-                Marco Hassan
-            </span></p>
-        </div>
-    </header><div class="p-summary entry-summary">
-    <div>
-<br><br><p>
-This post discusses the comparison of different effects among
-different groups. It will start with a refresh of the <i>t-test</i> 
-used for <i>pair-wise</i> comparison among different groups and it extends
-the concept for situations with \(groups \geq 2\) in order to check
-whether results are statistically significant among them.
-</p>
-
-<p>
-I will explore in this post the so called one-way analysis of
-variance, where the <i>one-way</i> part results from the fact that a single
-<i>factor</i> is analysed. Further posts will generalize the analysis.
-</p>
-
-<p class="more"><a href="posts/one-way-analysis-of-variance/">Read more…</a></p>
-</div>
-    </div>
-    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/analysis-of-variance-terminology/" class="u-url">Analysis of Variance - Terminology</a></h1>
-        <div class="metadata">
-            <p class="dateline"><a href="posts/analysis-of-variance-terminology/" rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-09-22T14:24:02+02:00" title="2019-09-22 14:24">2019-09-22 14:24</time></a></p>
-            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
-                Marco Hassan
-            </span></p>
-        </div>
-    </header><div class="p-summary entry-summary">
-    <div>
-<br><br><p>
-This is the first post making notes on the ANOVA - <i>analysis of
-variance</i>.
-</p>
-
-<p>
-The basic research question of the study of the ANOVA is how to
-compare different research outputs and how to assess whether the
-difference among two or more group outcomes are statistically
-significant or rather the result of randomness. In this sense a
-special attention is given to the <b>experimental error</b>, which
-represent the natural variation and error observed in an untouched
-environment from the unconditioned underlying data generating
-process. Just with this notion of "true/underlying" randomness the
-interpretation of the results is sensible.
-</p>
-
-<p>
-This first post, starts to explore the above by making the point of
-the difficulties underlying such studies and the importance of the
-experimental settings which the researcher is exposed to. 
-</p>
-
-<p class="more"><a href="posts/analysis-of-variance-terminology/">Read more…</a></p>
-</div>
-    </div>
     </article>
 </div>
 
         <nav class="postindexpager"><ul class="pager">
 <li class="next">
-                <a href="index-1.html" rel="next">Older posts</a>
+                <a href="index-2.html" rel="next">Older posts</a>
             </li>
         </ul></nav><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha256-SDRP1VVYu+tgAGKhddBSl5+ezofHKZeI+OzxakbIe/Y=" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
 MathJax.Hub.Config({
