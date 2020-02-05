@@ -1,0 +1,103 @@
+#+BEGIN_COMMENT
+.. title: IBM Cloud Commands
+.. slug: ibm-cloud-commands
+.. date: 2020-02-05 13:09:09 UTC+01:00
+.. tags: IBM Cloud Services
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+this blog contains the major IBM cloud CLI commands to operate with
+some of the data services in the cloud.
+
+It especially focus around DaaS and MLaaS. 
+
+{{{TEASER_END}}}
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+* Look at the ibmcloud connection set-ups
+
+#+BEGIN_SRC sh :results output
+## to check at general access configuration on IBM cloud
+bx target
+
+## to look at general macro characteristics of your account
+ibmcloud account show
+#+END_SRC
+
+
+* Interact with Watson ML 
+
+You can change your IBM cloud region by setting
+
+#+BEGIN_SRC sh
+ibmcloud target -r us-south
+
+## notice that depending on the region you might have different deployments. 
+## deployments live in ibm datacenters and are hence bounded regionally.
+
+## you can list your IBM Machine Learning Deployments using:
+
+bx ml list instances
+
+## In general bx ml is associated with CLI interaction with Watson
+## Machine learning services.
+
+## use the --help option whenever you are lost in the CLI 
+#+END_SRC 
+
+Notice that just because you have an existing instance ID it does not
+mean that it is already set on your ibmcloud CLI. In order to set it
+accordingly you have to specify it accordingly 
+
+#+begin_src sh
+bx ml set instance <instance-id>
+#+end_src
+
+
+* Object Storage
+
+To interact with object storage instances via CLI you must be sure the
+plug-in is installed.
+
+#+BEGIN_SRC sh
+ibmcloud plugin install cloud-object-storage
+#+END_SRC
+
+Once it is downloaded you will have to specify the way you want to interact with your Object Storage.
+
+One way to do that is to specify your HMAC credentials to your Object Storage instance
+
+#+BEGIN_SRC sh
+ ibmcloud cos config hmac
+#+END_SRC
+
+Once entered the necessary /aki key/ and /secret access key/ you will
+be able to access all of yours different buckets.
+
+#+begin_src sh
+ibmcloud cos list-buckets
+#+end_src
+
+For using the IAM authentification it is moreover possible to specify the
+
+#+begin_src sh
+ ibmcloud cos config crn
+#+end_src
+
+And enter the /resource_instance_id/ of the cloud object storage instance available in the cloud credentials. 
+
+
+* Cloudant
+
