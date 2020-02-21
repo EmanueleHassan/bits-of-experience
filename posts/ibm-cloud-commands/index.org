@@ -36,6 +36,95 @@ bx target
 ibmcloud account show
 #+END_SRC
 
+Important is that you might have different resources bounded to
+different data centers in different regions.
+
+When using a service from the =ibmcloud CLI= it is important that you
+make sure you are in the region where the resources and services are
+deployed.
+
+To change region you can make use of the following command
+
+#+BEGIN_SRC sh
+#ibmcloud target -r <region-name>
+ibmcloud target -r eu-de
+#+END_SRC
+
+
+* Cloud Foundry
+
+This allows to easily create and deploy cloud-native apps. 
+
+The first step in order to interact with your Cloud Foundry App and to
+deploy your local code on the cloud is to configure your =ibm CLI= to
+operate directly on the chosen CloudFoundry Organization where your
+team will deploy the app.
+
+In order to do that once you are in the proper region where your Cloud
+Foundry Organization is configured you can specify the Cloud Foundry
+organization you aim to interact with by running
+
+#+BEGIN_SRC sh
+ibmcloud target --cf
+#+END_SRC
+ 
+This will give you the possibility to interactively choose your
+CloudFoundry organization and space.
+
+An alternative is to set them separately by running
+
+#+BEGIN_SRC sh
+ibmcloud target -o myOrganization
+ibmcloud target -s myspace
+#+END_SRC
+
+Once the IBM cloud is properly connected with your CloudFoundry
+Organization it is possible to push your application via the following
+commands.
+
+#+BEGIN_SRC sh
+#ibmcloud cf push <app-name specified in the manifest file>
+ibmcloud cf push myapp
+#+END_SRC
+
+If successful you should be able then to see the running application
+by running.
+
+#+BEGIN_SRC sh
+ibmcloud cf apps 
+#+END_SRC
+
+#+RESULTS:
+| Invoking | 'cf       | apps'... |           |           |      |       |         |    |                         |
+|          |           |          |           |           |      |       |         |    |                         |
+| Getting  | apps      | in       | org       | myFirsOrg | /    | space | develop | as | marco.hassan@ibm.com... |
+| OK       |           |          |           |           |      |       |         |    |                         |
+|          |           |          |           |           |      |       |         |    |                         |
+| name     | requested | state    | instances | memory    | disk | urls  |         |    |                         |
+| minimal  | started   | 1/1      | 64M       | 1G        | xxx  |       |         |    |                         |
+| nluApp   | stopped   | 0/1      | 256M      | 1G        | xxx  |       |         |    |                         |
+
+Above you can see I have a minimal python application running as well
+as a stopped NLU application.
+
+You can find the specifics of how to set up a python application by
+reading [[https://docs.cloudfoundry.org/buildpacks/python/index.html][this]] cloud foundry official documentation. A thing that caused
+my some trouble the first time when deploying is that your Flask
+application should be set to listen on =PORT=8080=. This is because
+the Python buildpacks expects your Python Application to listen to
+this port.
+
+Important is moreover to specify all the necessary libraries your
+application will need in order to run in a =requirement.txt= file as
+well as the command that needs to be run in a =PROCFILE=. Finally you
+can specify the runtime version in the =runtime.txt= file. A manifest
+file should finally specify the memory and application name as well as
+the route and further parameters.
+
+Notice that a handy way to enter the required packages is to make use
+of the ~pip3 freeze~ command. This will return the installed packages
+on your virtual environment and you can copy these in your
+=requirement.txt=. 
 
 * Interact with Watson ML 
 
