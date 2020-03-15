@@ -1,0 +1,156 @@
+<br>
+<br>
+
+<p>
+There are many handy tools you can leverage when debugging your
+network. This is a brief list with possible commands to keep the
+performance of your network under track and to identify the piece of
+the network it is failing; i.e. whether it is a DNS, WebServer, DHCP
+error or whatever. 
+</p>
+
+<p>
+It moreover illustrates handy tools through which you can gain a
+better understanding of internet protocols as you are able to open
+individuals packages and frames at the different layers and observe
+their payloads and headers.
+</p>
+
+<!-- TEASER_END -->
+
+
+<br>
+
+<div id="outline-container-orgbe05dba" class="outline-2">
+<h2 id="orgbe05dba">Ping</h2>
+<div class="outline-text-2" id="text-orgbe05dba">
+<p>
+This is a UNIX command that checks whether a destination is reachable.
+</p>
+
+<p>
+As stated on Wikipedia:
+</p>
+
+<blockquote>
+<p>
+Ping operates by sending Internet Control Message Protocol echo
+request packets to the target host and waiting for an ICMP echo
+reply. The program reports errors, packet loss, and a statistical
+summary of the results, typically including the minimum, maximum, the
+mean round-trip times, and standard deviation of the mean. 
+</p>
+</blockquote>
+
+
+<p>
+Interesting is moreover the option to customize the ping command with
+the size of the payload, count of tests, the limit for the number of
+network hops (TTL) that probes traverse, interval between the requests
+and time to wait for a response.
+</p>
+
+<p>
+Many systems provide a companion utility ping6, for testing on
+Internet Protocol version 6 (IPv6) networks, which implement ICMPv6.
+</p>
+
+
+<div class="highlight"><pre><span></span>ping google.com
+</pre></div>
+
+
+<p>
+Setting the maximum amount of hops with the <code>-m</code> flag you can see for
+instance what happens when the maximum amount specified is exceeded.
+</p>
+
+<div class="highlight"><pre><span></span>ping google.com -m <span class="m">10</span>
+</pre></div>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org189a397" class="outline-2">
+<h2 id="org189a397">Traceroute</h2>
+<div class="outline-text-2" id="text-org189a397">
+<p>
+This is a computer network diagnostic commands for displaying the
+route (path) and measuring transit delays of packets across an
+Internet Protocol (IP) network
+</p>
+
+<p>
+The idea is the following: traceroute sends multiple, special packets
+toward that destinationn. As these packets work their way toward the
+destination, they pass through routers.
+When a router receives one of these packets, it sends back to the
+source a short message that contains the name annd address of the
+router. <i>(Computer Networking - A Top-Down Approach 7th Edition)</i>
+</p>
+
+
+<p>
+The source host sending the traceroute request records the time that
+elapses between when it sends a packet and when it receives the return
+message as well as the name and address of the router. In this way it
+is possible to record the route taken by the packet.
+<i>(Computer Networking - A Top-Down Approach 7th Edition)</i>
+</p>
+
+
+<div class="highlight"><pre><span></span>traceroute www.google.it
+</pre></div>
+
+<p>
+In the example above you can see that my house is served by a
+DSL. I am currently in Italy due to the extraordinary Coronavirus
+situation. Interesting is that my dad claims we have a <code>fiber-optic</code>
+internet connection contract. Would be fun to explore this further at
+some point as in fact the connection here is quite poor. 
+</p>
+
+<p>
+Notice that the index above states the router number the packet goes
+through.
+It is also important to notice that the traceroute does three trials,
+i.e. it sends three different packets at equal intervals and measures
+the round-trip for each. This can differ significantly. For instance
+for the third router the first packet took nearly 4 times as the
+second and 40 times as the third to complete the round-trip. This is
+due to the <b>varying queuing delay</b> in time a router experience.
+</p>
+
+<p>
+Finally, the asterisks at router 13vindicate that the target server
+did not respond as traceroute expected before a timeout occurred -
+this does not always indicate packet loss. If you suspect packet loss
+because of asterisks in the output you can attempt to ping the
+server. Probably on such networks there are Firewall settings that
+prevent it from being tracerouted in the specific case.
+</p>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-orgaa7597f" class="outline-2">
+<h2 id="orgaa7597f">Wireshark</h2>
+<div class="outline-text-2" id="text-orgaa7597f">
+<p>
+Wireshark intercepts traffic and converts that binary traffic into
+human-readable format. This makes it easy to identify what traffic is
+crossing your network, how much of it, how frequently, how much
+latency there is between certain hops, and so forth. This is for
+instance useful when learning the Networking protocols and the packets
+they exchage. For instance in the Dynamic Host Configuration Protocol
+for requesting an IP address.
+</p>
+
+<p>
+You can find an extensive guide to wireshark with hands-on exercises
+to understand better the internet networking under <a href="https://gaia.cs.umass.edu/kurose_ross/wireshark.htm">this webpage</a>.
+</p>
+</div>
+</div>
