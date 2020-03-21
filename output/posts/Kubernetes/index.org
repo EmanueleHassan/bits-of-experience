@@ -1,0 +1,488 @@
+#+BEGIN_COMMENT
+.. title: Kubernetes
+.. slug: Kubernetes
+.. date: 2019-09-06 18:21:43 UTC+02:00
+.. tags: IT Architecture
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+A strong orchestrator tool that operates above the container level and
+allows to manage a cluster to handle containers.
+
+It is essentially the tool set that lets you manage containers.
+
+Enterprises can use it to manage the life cycle of containerized apps
+in a cluster of nodes, which is a collection of worker machines such
+as virtual machines (VMs) or physical machines.
+
+In general kubernetes try to leverage clusters in order to avoid
+having a single point of failure.
+
+{{{TEASER_END}}}
+
+Note that in the world of Kubernetes the terminology of the cluster is
+slightly different to the one of Big Data.
+
+While the virtual machine controlling other VMs is called master VM,
+the other are not called /workers/ but rather /nodes/.
+
+* Theoretical Framework
+
+** Architecture 
+
+The kubernetes architecture is rather simple. It consists of three major components:
+
+- *Docker running on a subnet:* this is the service used to run
+  encapsulated container applications. Important is however to notice
+  that the Docker service must run on a subnet /(available to each
+  node server/.
+
+- *Kubelet Service*: this communicates with the master components and
+  receive commands and work.
+
+- *Kube-Proxy Service*: this forwards requests to the correct containers,
+  balances the load and makes sure that the isolated networking
+  environment is predictable and accessible.
+
+In a more structured way we can say that there are multiple /Pods/
+available carrying multiple containers, managed by the /Docker
+Engine/, within them. These /Points of Delivery/ are modules of
+network, compute, storage bundled with the docker application
+containers that work together to deliver networking services.
+
+The Kube-proxy will then redirect network traffic into one of the
+various Pods.
+
+Kubelet is an agent responsible to communicate with the master what
+happens at node level. For this reason you will find a Kubelet for each
+node. If a Pod goes down than it is for instance responsibility of the
+Kubelet to communicate this so the master. This will then be
+responsible for restarting the Pod.
+
+
+** Master
+
+ Masters are responsible for an entire cluster, they are the one that
+ makes the decision on which node to schedule an application.
+
+ The master has multiple components, all under the umbrella of a single
+ /control plane/.
+
+ The main component is the API server. API server manages scheduling
+ that goes through the REST services. 
+
+ Three other important components are:
+
+ - the /Scheduler/, that interacts with the API server scheduling
+   piece but can as well interact directly with REST services. It
+   determines where to host new Pods in the cluster. This furthermore
+   coordinates with the Kubelet in order to determine the location of
+   the Pods based on the load.
+
+ - the /Replication Controllers/: these handle the replicas through the
+   API services.
+
+ - the /etcd/: manages state. It is the database of kubernetes. It
+   tells kubernetes who is available and what the state of all these
+   available things is.
+
+
+*** Operation
+
+The question that arise now is how do we specify the Master the tasks to be scheduled?
+
+The answer to the question is a /YAML/ file. Here the desired state
+for our application is specified and once fed to the Master the latter
+will make sure the state is guaranteed.
+
+
+** Helm
+
+Helm, the Kubernetes native package management system, is used for
+application management inside an IBM Cloud Private cluster. The Helm
+GitHub community curates and continuously expands a set of tested and
+preconfigured Kubernetes applications. Clients use the management
+console to select stable applications from a catalog and add them to
+their cluster.
+
+
+* Code
+
+#+BEGIN_EXAMPLE
+## to view the cluster info
+$ kubectl cluster-info  
+
+## to look at the different available nodes and get info about their status and roles.
+$ kubectl get nodes
+#+END_EXAMPLE
+
+
+Once you have a running Kubernetes cluster, you can deploy your
+containerized applications on top of it. 
+
+To do so, you create a Kubernetes Deployment configuration. The
+Deployment instructs Kubernetes how to create and update instances of
+your application. Once you've created a Deployment, the Kubernetes
+master schedules mentioned application instances onto individual Nodes
+in the cluster.
+
+/Step 1: Create a Deployment/
+
+As a first step it is necessary to create the necessary deployment by
+providing a name for the deployment and uploading the docker image of
+interest you want to run on top of it.
+
+#+BEGIN_EXAMPLE
+$ kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1
+#+END_EXAMPLE
+
+You can then double check the successful creating of the deployment by running:
+
+#+BEGIN_EXAMPLE
+$ kubectl get deployments
+#+END_EXAMPLE
+
+Notice the following outputs:
+
+- The READY column shows the ratio of CURRENT to DESIRED replicas
+
+- CURRENT is the number of replicas running now
+
+- DESIRED is the configured number of replicas
+
+- The UP-TO-DATE is the number of replicas that were updated to match the desired (configured) state
+
+- The AVAILABLE state shows how many replicas are actually AVAILABLE to the users
+
+Once the application is deployed it is possible to interact with it
+through an kubernetes API endpoint.
+
+This is necessary as pods that are running inside Kubernetes are
+running on a private, /isolated network/. By default they are visible
+from other pods and services within the same kubernetes cluster, but
+not outside that network. The API overcomes such a barrier and allows
+to communicate with the application system wide.
+
+The kubectl command can create a proxy that will forward
+communications into the cluster-wide, private network.  
+
+We now have then /a connection between our host/ and the Kubernetes
+cluster. The proxy enables /direct access/ to the API from the host
+(the *terminal* in our case).  In order to do so it is possible to run
+
+#+BEGIN_SRC 
+$ kubectl proxy
+#+END_SRC
+
+Once the proxy is running it is possible to get the name of the host
+that have access to the API by running a ~curl~ command as
+
+#+BEGIN_SRC 
+$ curl http://localhost:8001/version
+#+END_SRC
+
+Important is moreover to understand that the API server will then
+automatically create an endpoint for each /Pod/ so that it is possible
+to communicate directly through the specific /Pod/ through your proxy.
+
+You can get a list of running Pods by running the following command
+
+#+BEGIN_SRC 
+$ kubectl get pods
+#+END_SRC
+
+To save the pod name you can run
+
+#+BEGIN_SRC 
+$ export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+#+END_SRC
+
+Once the name of the pod is there you can interact with and access the
+app deployed on it by leveraging your proxy.
+
+You can then make a ~curl~ query of the form
+
+#+BEGIN_SRC 
+## where the $POD_NAME has to be previously saved as above.
+curl http://localhost:8001/api/v1/namespaces/default/pods/$POD_NAME/proxy/
+#+END_SRC
+
+Recall that a a Pod models an application-specific "logical host" and
+can contain different application containers which are relatively
+tightly coupled. For example, a Pod might include both the container
+with your Node.js app as well as a different container that feeds the
+data to be published by the Node.js webserver. The containers in a Pod
+share an IP Address and port space, are always co-located and
+co-scheduled, and run in a shared context on the same Node.
+
+Pods are the *atomic unit* on the Kubernetes platform. When we create a
+Deployment on Kubernetes, that Deployment creates Pods with containers
+inside them (as opposed to creating containers directly). Each Pod is
+tied to the Node where it is scheduled, and remains there until
+termination (according to restart policy) or deletion. In case of a
+Node failure, identical Pods are scheduled on other available Nodes in
+the cluster.
+
+You can moreover get more specific information about each running pod by running
+
+#+BEGIN_SRC 
+$ kubectl describe pod
+#+END_SRC
+
+Notice moreover that it is possible to see standard output of an
+application running within a pod by inspecting the logging record
+within that Pod.  /This is possible as anything that the application would normally send to STDOUT becomes logs for the container within
+the Pod. We can retrieve these logs using the kubectl logs command/
+
+You can inspect such by running 
+
+#+BEGIN_SRC 
+$ kubectl logs
+#+END_SRC
+
+** Direct operating within a /Pod/
+
+Notice that as a Pod is used as a running isolated environment within
+a node it is possible to directly operate on it.
+
+This is possible through the API given the name of a specific running Pod. 
+
+For instance to run a bash session on the Pod it is possible to run:
+
+#+BEGIN_SRC 
+$ kubectl exec -ti $POD_NAME bash
+#+END_SRC
+
+This will open a proper bash session within the specified Pod.
+
+We can execute commands directly on the container once the Pod is up
+and running. For this, we use the exec command and use the name of the
+Pod as a parameter. Let’s list the environment variables
+
+** On Pod Lifecycle
+
+Up to know we have addressed the issues of accessing Pod locally from
+the kubernetes CLI.
+
+When we want to expose an application to the /"outside world"/ we need
+however to be careful. In order to see that think of the kubernetes
+lifecycle.
+
+Kubernetes Pods are mortal. Pods in fact have a lifecycle. When a
+worker node dies, the Pods running on the Node are also lost. A
+ReplicaSet might then dynamically drive the cluster back to desired
+state via creation of new Pods to keep your application running.
+
+This is in fact the strength of Kubernetes as an orchestration tool.
+
+Consider now an image-processing backend with 3 replicas. Those
+replicas are exchangeable; the front-end system should not care about
+backend replicas or even if a Pod is lost and recreated. That said,
+/each Pod in a Kubernetes cluster has a unique IP address/, even Pods on
+the same Node, so there needs to be a way of automatically reconciling
+changes among Pods so that your applications continue to function.
+
+A Service in Kubernetes is an abstraction which defines a logical set
+of Pods and a policy by which to access them. Services enable a loose
+coupling between dependent Pods. A Service is defined using YAML
+(preferred) or JSON, like all Kubernetes objects.
+
+/Example of a YAML/:
+
+Although each Pod has a unique IP address, those IPs are not exposed
+outside the cluster without a Service. Services allow your
+applications to receive traffic. Services can be exposed in different
+ways by specifying a ~type~ in the ServiceSpec:
+
+
+- ClusterIP (default) - Exposes the Service on an internal IP in the
+  cluster. This type makes the Service only reachable from within the
+  cluster.
+
+- NodePort - Exposes the Service on the same port of each selected
+  Node in the cluster using NAT. Makes a Service accessible from
+  outside the cluster using =<NodeIP>:<NodePort>=. Superset of
+  ClusterIP.
+
+- LoadBalancer - Creates an external load balancer in the current
+  cloud (if supported) and assigns a *fixed, external IP to the
+  Service.* Superset of NodePort.
+
+- ExternalName - Exposes the Service using an arbitrary name
+  (specified by externalName in the spec) by returning a CNAME record
+  with the name. No proxy is used. This type requires v1.7 or higher
+  of =kube-dns=.
+
+Moreover note that services are the abstraction that allow pods to die and
+replicate in Kubernetes without impacting your application. Discovery
+and routing among dependent Pods (such as the frontend and backend
+components in an application) is handled by Kubernetes Services.
+
+Services match a set of Pods using labels and selectors, a grouping
+primitive that allows logical operation on objects in
+Kubernetes. Labels are key/value pairs attached to objects and can be
+used in any number of ways:
+
+- Designate objects for development, test, and production
+- Embed version tags
+- Classify an object using tags
+
+To list the services running on your cluster you can run
+
+#+BEGIN_SRC 
+$ kubectl get services
+#+END_SRC
+
+To create a new service and expose it to the external traffic we'll
+use the expose command with NodePort as parameter. We choose this
+option as the tutorial runs through minikube and this does not support
+the /Loadbalancer/ option yet. Notice, however that in case this is
+available it is recommended working through such an option.
+
+#+BEGIN_SRC 
+$ kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080
+#+END_SRC
+
+You can verify that your Service was properly exposed by controlling
+with the ~$ kubectl get services~ option above.
+
+Once the service is deployed with the internal assigned port as
+specified above an external port is assigned to the service. You can
+get this by inspecting the service specific characteristics
+
+#+BEGIN_SRC 
+## kubectl describe services/<service name>
+$ kubectl describe services/kubernetes-bootcamp 
+#+END_SRC
+
+And you can save it in your environment through 
+
+#+BEGIN_SRC 
+$ export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')
+#+END_SRC
+
+You can then connect to the kubernetes app by any device by running
+
+#+BEGIN_SRC 
+$ curl $(minikube ip):$NODE_PORT
+#+END_SRC
+
+Notice, moreover that the deployment created automatically a /label/
+for our Pod. With the ~$ describe deployment~ command you can simply
+get to it.
+
+Given your label (/in the tutorial run=kubernetes-bootcamp/), you can then access your Pod directly thorough it.
+
+For instance the command
+
+#+BEGIN_SRC 
+## kubectl get services -l <label>
+$ kubectl get services -l run=kubernetes-bootcamp
+#+END_SRC
+
+will get you the services running on pods with the given label.
+
+You can add a label to a Pod by running
+
+#+BEGIN_SRC 
+$ kubectl label pod $POD_NAME app=v1
+#+END_SRC
+
+This will be then added to the label of the pod and will allow you to
+operate on the pod accordingly.
+
+You can finally delete an existing service through:
+
+#+BEGIN_SRC 
+## kubectl delete service -l <label>
+$ kubectl delete service -l run=kubernetes-bootcamp
+#+END_SRC
+
+You will see then that after deleting the service your app deployed on the specific pod will not be externally accessible anymore, i.e.
+
+#+BEGIN_SRC 
+$ curl $(minikube ip):$NODE_PORT
+#+END_SRC
+
+will fail. 
+
+Nonetheless the app can always be reached internally given the Pod
+name and the selected port deployment.
+
+
+** App scaling
+
+In the previous modules we created a Deployment, and then exposed it
+publicly via a Service. The Deployment created only one Pod for
+running our application. When traffic increases, we will need to scale
+the application to keep up with user demand.
+
+*Scaling is accomplished by changing the number of replicas in a
+Deployment*
+
+Scaling out a Deployment will ensure new Pods are created and
+scheduled to Nodes with available resources. Scaling will increase the
+number of Pods to the new desired state. Kubernetes also supports
+autoscaling of Pods, but it is outside of the scope of this
+tutorial. Scaling to zero is also possible, and it will terminate all
+Pods of the specified Deployment.
+
+Running multiple instances of an application will require a way to
+distribute the traffic to all of them. Services have an integrated
+load-balancer that will distribute network traffic to all Pods of an
+exposed Deployment. Services will monitor continuously the running
+Pods using endpoints, to ensure the traffic is sent only to available
+Pods.
+
+To scale an deployment it is then possible to scale it specifying the
+desired number of replicas by running
+
+#+BEGIN_SRC 
+$ kubectl scale deployments/<deployment name> --replicas=4
+#+END_SRC
+
+You can then verify that the number of pods have been updated by
+running the ~$ kubectl get pods~ command. 
+
+Notice that different pods have different internal IP addresses. You
+can read them through the ~$ kubectl describe services
+services/<service name>~ command.
+
+** New releases
+
+Users expect applications to be available all the time and developers
+are expected to deploy new versions of them several times a day. In
+Kubernetes this is done with rolling updates. Rolling updates allow
+Deployments' update to take place *with zero downtime* by incrementally
+updating Pods instances with new ones. The new Pods will be scheduled
+on Nodes with available resources.
+
+By default, the maximum number of Pods that can be unavailable during
+the update and the maximum number of new Pods that can be created, is
+one. Both options can be configured to either numbers or percentages
+(of Pods). In Kubernetes, updates are versioned and any Deployment
+update can be reverted to previous (stable) version.
+
+Similar to application Scaling, if a Deployment is exposed publicly,
+the Service will load-balance the traffic only to available Pods
+during the update. An available Pod is an instance that is available
+to the users of the application.
+
+** Literature
+
+IBM - Journey to Cloud Series.
+
+[[https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/][Kubernetes tutorial]]
+
+
+
+

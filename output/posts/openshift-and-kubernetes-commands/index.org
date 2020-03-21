@@ -1,0 +1,231 @@
+#+BEGIN_COMMENT
+.. title: Openshift and Kubernetes Commands
+.. slug: openshift-and-kubernetes-commands
+.. date: 2020-02-05 13:26:21 UTC+01:00
+.. tags: IT Architecture, Container Management
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+This post outlines some of the commands to operate on your Kubernetes
+and Openshift cluster via CLI.
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+{{{TEASER_END}}}
+
+** Kubernetes
+
+Particularly useful when working with Kubernetes is the dashboard. It
+provides you a neat overview over your cluster. It allows to view and
+edit single =.yaml= files for each resource. 
+
+It is a powerful way to navigate your way through and get the
+structure. You can access it from the ibm cloud on your browser directly. INC4429361
+
+
+*** Configure your Kubeconfig file 
+
+    This is the foremost important step as you have to specify the
+    kubernetes/openshift cluster you want to operate on.
+
+    Kubectl is a command line tool for controlling Kubernetes
+    clusters. 
+
+    kubectl looks for a file named config in the $HOME/.kube
+    directory. You can specify other kubeconfig files by setting the
+    KUBECONFIG environment variable or by setting the --kubeconfig
+    flag. 
+
+    In this sense you can look up for instance the various clusters
+    running on your IBM cloud by running
+
+    #+BEGIN_SRC sh :results output
+    ibmcloud ks cluster ls
+    #+END_SRC
+
+    #+RESULTS:
+    : OK
+    : Name          ID                     State    Created       Workers   Location    Version                   Resource Group Name   Provider   
+    : DATAiks       xxx                    normal   3 weeks ago   1         Frankfurt   1.14.9_1541*              Default               classic   
+    : myDataShild   YYY                    normal   1 month ago   1         Frankfurt   3.11.154_1533_openshift   Default               classic   
+
+    You can then withdraw the specific configuration settings for a
+    cluster by running
+
+    #+BEGIN_SRC sh
+    ibmcloud ks cluster config <cluster-ID>
+    #+END_SRC
+
+    Finally you can export it and configuring the KUBECONFIG file by running.
+
+    #+BEGIN_SRC sh
+    export KUBECONFIG=/Users/marcohassan/.bluemix/plugins/container-service/clusters/<cluster-id>/<configuration .yaml>
+    #+END_SRC
+
+*** General Clutster Info
+
+    #+BEGIN_SRC sh
+    kubectl cluster-info
+    #+END_SRC
+
+*** Look at the running pods and Namespaces
+
+    In a similar way to Openshift; you can operate on your IKS cluster
+    using the =kubectl= command. The important thing is that you properly
+    configured and exported the =KUBECONFIG= yaml with the necessary
+    information on the cluster you wish to operate in the first place.
+
+    #+BEGIN_SRC sh
+    kubectl get pods
+
+    kubectl get namespaces 
+    #+END_SRC
+
+    In contrast to Openshift there is not a single command to change namespace
+    in Kubernetes.
+
+    In order to do that you can follow the steps under the following post: [[https://suraj.io/post/changing-k8s-ns/][link]].
+
+*** Apply changes to resource
+
+    With the =kubectl apply= command you are actually changing some
+    =.yaml= file of your images. 
+
+    This is for instance useful when you don't want to validate the
+    input before sending it.
+
+    #+BEGIN_SRC sh
+    kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.10.0/cert-manager-openshift.yaml 
+    #+END_SRC
+
+
+*** Gather more info for dealing with specific errors.
+
+    #+BEGIN_SRC sh
+    kubectl describe pod <my-pod>
+    #+END_SRC
+
+    This is for instance helpful when dealing with
+    CrashloopBackOff. This happens when you have a pod starting,
+    crashing, starting again, and then crashing again. 
+
+    A quick Google search will show us that crash loop events can happen
+    for a number of different reasons (and they happen frequently). Here
+    are some of the umbrella causes for why they occur:
+
+    The application inside the container keeps crashing Some type of
+    parameters of the pod or container have been configured incorrectly An
+    error has been made when deploying Kubernetes
+
+    Doing a kubectl describe pod will give you more information on that
+    pod. 
+
+    There you can read the specific error code - for instance in a
+    case of mine -  a =255 error=, which means that there likely is a
+    file specification error and this could not be found.
+
+*** When disrupting the Kubernetes Backend
+
+    It happened to me, when trying to debug Kubernetes issues that
+    I somehow altered the kubernetes structure and got the following error.
+
+    #+BEGIN_EXAMPLE
+    Error: could not get apiVersions from Kubernetes: unable to retrieve
+    the complete list of server APIs:
+    admission.certmanager.k8s.io/v1beta1: the server is currently unable
+    to handle the request
+    #+END_EXAMPLE
+
+    This turned out to be the case when the api-services no longer have backends running.
+
+    To fix it I run:
+
+    #+BEGIN_SRC sh
+    kubectl get apiservice
+    #+END_SRC
+
+    This will list the kubernetes api services of your cluster and
+    issues arises for ones where the AVAILABLE entry is False.
+
+    If you don't need those APIs any more, delete them:
+
+    #+BEGIN_SRC sh
+    kubectl delete apiservce <service-name>
+    #+END_SRC
+
+    You should be back to a normal behaving cluster then.
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+** Openshift
+
+   Openshift is also a cluster management tool. This is a more well
+   rounded management tool. Especially in monitoring the cluster and
+   creating new services and resources it is particularly strong. 
+
+   The GUI interface is very well done and comprehensive. This section
+   looks at the CLI to directly operate on your openshift
+   cluster. Here is important to configure your cluster as previously
+   noted in the kubernetes section. The KUBECONFIG of your openshift
+   cluster will allow you to directly operate on your cluster.
+
+   Commands are pretty similar to Kubernetes CLI.
+
+*** General glimpse of Cluster
+
+    Look at the general settings of your cluster 
+
+    #+BEGIN_SRC sh
+    oc config view
+    #+END_SRC
+
+    In order to list the current namespaces or pods make use of
+
+*** Look at namespaces and pods
+
+    #+begin_src sh
+    oc get pods
+
+    oc get namespace
+    #+end_src
+   
+*** Get satatus of running pods
+
+     #+BEGIN_SRC sh
+     oc status
+     #+END_SRC
+
+*** Look at specific pod configuration
+
+    #+BEGIN_SRC sh
+    oc edit pod <pod-name>
+    #+END_SRC
+    
+*** Switch among namespaces
+
+     To switch between different namespaces use
+
+     #+BEGIN_SRC sh
+     oc project <namespace>
+     #+END_SRC
+
+     Look at the user configuration in the =kube config= file.
+
+     #+begin_src ipython
+     oc get users
+     #+end_src
+
+

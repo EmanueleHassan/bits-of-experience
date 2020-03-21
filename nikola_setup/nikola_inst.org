@@ -1,0 +1,101 @@
+#+TITLE: Nikola Set Up
+#+Author: Marco Hassan
+
+Nikola is a python package to automatically generate static
+webpages. This is more secure than operating through dynamic websites
+for non-expert users. Moreover the integration with org will allow you
+to easily generate blogs based on your org documents and this will
+prove to be especially useful given that you can work through
+literate programming through such format and publish interesting
+discoveries in an instantaneous way on your blog.
+
+** Virtual Environment
+
+Given that nikola is a python package you can easily install it
+through pip package manager. 
+
+It is therefore advisable to set up a virtual environment and install
+nikola and other useful packages for your blogging trial.
+
+I created my venv =nikola= in my virtual environment folder.
+There I installed the following packages:
+
+#+BEGIN_SRC 
+$ pip3 install requests
+$ pip3 install livereload
+$ pip3 install nikola
+#+END_SRC
+
+Remember to cancel and update to "Nikola[extras]". 
+
+** Customize
+   
+   I was not able to implement "c'est la z" theme yet. That is quite nice
+   and is theoretically available under the src branch of the forked
+   directory.
+   
+   Till now use another more user-friendly theme. 
+   
+   I like the =bnw= theme. The blog type is well described at the
+   following link [[https://themes.getnikola.com/v8/bnw/][nikola_bnw]].
+   
+   The installation is straightforward and can be followed using the
+   steps on the site. This is summarized below just to keep consistency.
+   
+***** Load the theme plugin
+      
+      #+BEGIN_SRC emacs-lisp
+      nikola.exe theme -i bnw
+      #+END_SRC
+      
+***** Set the theme 
+      
+      In =config.py= change the THEME to ~THEME = "bnw"~.
+      
+      Finally enable bundles. =USE_BUNDLES = "true"=.
+      
+** Add Org Mode
+   
+   In order for nikola to render pages written in org mode it is necessary to add the file extension to the compiler options.
+   This can be easily done by following the guidelines available under the following webpage: [[https://streakycobra.github.io/posts/blogging-in-org-mode-with-nikola][posting in org mode with nikola]].
+   
+   This basically consists of adding the following lines to your =conf.py= script.
+   
+   #+BEGIN_SRC 
+# Add the orgmode compiler to your COMPILERS dict.
+COMPILERS["orgmode"] = ('.org',)
+
+# Add org files to your POSTS, PAGES
+POSTS = POSTS + (("posts/*.org", "posts", "post.tmpl"),)
+PAGES = PAGES + (("stories/*.org", "stories", "story.tmpl"),)
+   #+END_SRC
+   
+   Moreover you will have to set the default editor if you have never done so on your machine.
+   This consists of adding the following line to the =/etc/environment= unix file
+   
+   #+BEGIN_SRC 
+EDITOR = "/usr/bin/emacs25" # or whatever version or editor.
+   #+END_SRC
+   
+   Once that is set it is needed to reboot and check the correct execution via
+   
+   #+BEGIN_SRC 
+ $ echo $EDITOR
+   #+END_SRC
+   
+   Finally it is  necessary to add the orgmode plugin to nikola via
+   #+BEGIN_SRC
+ $ nikola plugin -i orgmode
+   #+END_SRC
+
+** Write your first post
+   
+   You are set up. It is possible at this stage to start writing posts by simply calling
+   
+   #+BEGIN_SRC 
+$ nikola new_post -e -f orgmode
+   #+END_SRC
+   
+   This will prompt you with an emacs editor where you will be able to write your post.
+   
+   Save it, build your webpage via =nikola build=, deploy it via =nikola serve= and *boom you are done*.

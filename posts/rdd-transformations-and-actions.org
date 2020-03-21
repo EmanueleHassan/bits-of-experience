@@ -1,0 +1,112 @@
+#+BEGIN_COMMENT
+.. title: Spark Session Initialization, RDD: Transformations and Actions
+.. slug: rdd-transformations-and-actions
+.. date: 2019-08-21 23:31:02 UTC+02:00
+.. tags: Big Data, Spark
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+
+#+BEGIN_HTML
+<br>
+<br>
+#+END_HTML
+
+
+This second post present the basic set up of a Spark session and goes
+over the basic transformations and actions that applies to Spark
+RDDs. These are necessary given the immutability of RDDs.
+
+RDDs are saved in-memory by default. Nonetheless when the memory of
+the machine is not sufficient to handle the data, RDDs are splitted to
+disk.
+
+Finally, RDDs are lazy. This, means that only if the data is needed
+for a certain computation the data is read from the underlying storage
+system.
+
+{{{TEASER_END}}}
+
+** Session Set Up
+:properties:
+:header-args:ipython: :session kernel-11036.json :exports both :results output
+:end:
+
+First of all it is necessary to create entry point to programming
+Spark with the Dataset and DataFrame API. This is done through the
+SparkSession function of the pyspark module. This will allow you to
+create DataFrame, register DataFrame as tables, execute SQL over
+tables, cache tables, and read parquet files (a special kind of files
+particularly suited for big data storage and processing).
+
+When you initiate a spark session you can specify a multitude of
+arguments that will affect the general scope of your session. You can
+find a reference for session arguments under [[http://spark.apache.org/docs/latest/api/python/pyspark.sql.html#pyspark.sql.SparkSession][this official Spark link]].
+The configuration parameters specified will be passed from your Spark
+driver application to the SparkContext. Some of these parameters define properties of your
+Spark driver application and some are used by Spark to allocate
+resources on the cluster such as, the number, memory size and cores
+uses by the executors running on the workernodes.
+
+Among the other I underline:
+
+- master = ["local", "local[4]", “spark://master:7077”], where the
+  first element is setting the Spark master locally and the second
+  sets the Spark master locally with 4 cores, while the third option
+  is an example of selecting a Spark standalone cluster.
+
+- config = either a key value pair of an existing /SparkConf/ containing the
+  configuration arguments or the /SparkConf/ object itself.
+
+- getOrCreate() = Gets an existing SparkSession or, if there is no
+  existing one, creates a new one based on the options set in this
+  builder.
+
+#+begin_src ipython 
+  import findspark
+  findspark.init()
+
+  from pyspark.sql import SparkSession
+
+  spark = SparkSession \
+      .builder \
+      .master ("local") \
+      .appName("My first Spark Session") \
+      .getOrCreate()
+#+end_src
+
+Good you just created your first Spark Session. In the next section I
+will start to check at the different data import options and data tweaks.
+
+** Data import
+
+#+begin_src ipython
+  df = spark.sparkContext.parallelize([(1, 2, 3, 'a b c'),
+                                     (4, 5, 6, 'd e f'),
+                                     (7, 8, 9, 'g h i')]).toDF(['col1', 'col2', 'col3','col4'])
+
+  df.show ()
+#+end_src
+
+
+#+RESULTS:
+: +----+----+----+-----+
+: |col1|col2|col3| col4|
+: +----+----+----+-----+
+: |   1|   2|   3|a b c|
+: |   4|   5|   6|d e f|
+: |   7|   8|   9|g h i|
+: +----+----+----+-----+
+: 
+
+** Literature
+
+[[https://runawayhorse001.github.io/LearningApacheSpark/rdd.html]]
+
+[[https://blogs.msdn.microsoft.com/bigdatasupport/2015/09/14/understanding-sparks-sparkconf-sparkcontext-sqlcontext-and-hivecontext/]]
+
+[[http://spark.apache.org/docs/latest/api/python/pyspark.sql.html#pyspark.sql.SparkSession]]
