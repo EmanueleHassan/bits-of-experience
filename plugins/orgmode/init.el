@@ -116,6 +116,7 @@ contextual information."
   (cond
    ((eq format 'html)
     (format "<img src=\"%s\" alt=\"%s\"/>" path desc))))
+
 (org-add-link-type "img-url" nil 'org-custom-link-img-url-export)
 
 ;; Export function used by Nikola.
