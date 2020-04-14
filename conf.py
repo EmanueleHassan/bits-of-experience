@@ -145,14 +145,20 @@ TRANSLATIONS_PATTERN = '{path}.{lang}.{ext}'
 #     ),
 # }
 
+
+
+## find fa icons at https://fontawesome.com/v4.7.0/icons/
 NAVIGATION_LINKS = {
     DEFAULT_LANG: (
-        ('/pages/aboutme/', 'About me', 'fa fa-user'),
+        ('/pages/aboutme/', 'About me', 'fa fa-user-circle'),
         ('/pages/bits-of-experience-a-readable-view-on-my-study-adventures/', 'Home', 'fa fa-home'),
         ## if u want to keep a folder with the posts of the year -> ('/archive.html', 'Archives', 'fa fa-folder-open'),
-        ('/index.html', 'Blog', 'fa fa-folder-open'),
+        ('/index.html', 'Blog', 'fa fa-edit'),
         ('/categories/index.html', 'Tags', 'fa fa-tags'),
+        ('/pages/emacs/', 'A life Configuring Emacs', 'fa fa-code'),
+        ('/pages/papers/', 'Term and Research Papers', 'fa fa-university'),
         ('https://github.com/MarcoHassan', 'My Github', 'fab fa-github'),
+        ('https://stackoverflow.com/users/9731177/mhass', 'My Stack', 'fab fa-stack-overflow'),
         ('/rss.xml', 'RSS', 'fa fa-rss'),
     )
 }

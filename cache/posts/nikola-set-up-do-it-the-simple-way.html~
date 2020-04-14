@@ -1,0 +1,242 @@
+<p>
+Nikola is a python package to automatically generate static
+webpages. This is more secure than operating through dynamic websites
+for non-expert users. Moreover the integration with org will allow you
+to easily generate blogs based on your org documents and this will
+prove to be especially useful given that you can work following your
+literate programming workflow without bothering too much on the
+format.
+</p>
+
+<p>
+You can finally generate and publish interesting discoveries in an
+instantaneous way.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org2f443b7" class="outline-2">
+<h2 id="org2f443b7">Nikola Set Up</h2>
+<div class="outline-text-2" id="text-org2f443b7">
+</div>
+<div id="outline-container-orgbe0b04e" class="outline-3">
+<h3 id="orgbe0b04e">Virtual Environment</h3>
+<div class="outline-text-3" id="text-orgbe0b04e">
+<p>
+Given that nikola is a python package you can easily install it
+through pip package manager. 
+</p>
+
+<p>
+It is therefore advisable to set up a virtual environment for it and
+install nikola and other useful packages for your blogging trial.
+</p>
+
+<p>
+I created my venv <code>nikola</code> in my virtual environment folder.  There I
+installed the following packages:
+</p>
+
+<div class="highlight"><pre><span></span>   $ pip3 install requests
+   $ pip3 install livereload
+   $ pip3 install --upgrade pip3 &#39;Nikola[extras]&#39;
+</pre></div>
+
+<p>
+Remember to cancel and update to "Nikola[extras]". 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org274895d" class="outline-3">
+<h3 id="org274895d">Customize</h3>
+<div class="outline-text-3" id="text-org274895d">
+<p>
+I was not able to implement "c'est la z" theme yet. That is quite nice
+and is theoretically available under the src branch of the forked
+directory.
+</p>
+
+<p>
+Till now use another more user-friendly theme. I like the <code>bnw</code>
+theme. The blog type is well described at the following link
+<a href="https://themes.getnikola.com/v8/bnw/">nikola<sub>bnw</sub></a>.
+</p>
+
+<p>
+The installation is straightforward and can be followed using the
+steps on the site. This is summarized below just to keep consistency.
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="org1e12972"></a>Load the theme plugin<br />
+<div class="outline-text-6" id="text-org1e12972">
+<div class="highlight"><pre><span></span>      <span class="nv">nikola</span><span class="o">.</span><span class="nv">exe</span> <span class="nv">theme</span> <span class="nv">-i</span> <span class="nv">zen</span>
+</pre></div>
+</div>
+</li>
+
+<li><a id="org2cca899"></a>Set the theme<br />
+<div class="outline-text-6" id="text-org2cca899">
+<p>
+In <code>config.py</code> change the THEME to <code>THEME = "zen"</code>.
+</p>
+
+<p>
+Finally enable bundles. <code>USE_BUNDLES = "true"</code>.
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org12284b0" class="outline-3">
+<h3 id="org12284b0">Add Org Mode</h3>
+<div class="outline-text-3" id="text-org12284b0">
+<p>
+In order for nikola to render pages written in org mode it is necessary to add the file extension to the compiler options.
+This can be easily done by following the guidelines available under the following webpage: <a href="https://streakycobra.github.io/posts/blogging-in-org-mode-with-nikola">posting in org mode with nikola</a>.
+</p>
+
+<p>
+This basically consists of adding the following lines to your <code>conf.py</code> script.
+</p>
+
+<div class="highlight"><pre><span></span>   # Add the orgmode compiler to your COMPILERS dict.
+   COMPILERS[&quot;orgmode&quot;] = (&#39;.org&#39;,)
+
+   # Add org files to your POSTS, PAGES
+   POSTS = POSTS + ((&quot;posts/*.org&quot;, &quot;posts&quot;, &quot;post.tmpl&quot;),)
+   PAGES = PAGES + ((&quot;stories/*.org&quot;, &quot;stories&quot;, &quot;story.tmpl&quot;),)
+</pre></div>
+
+<p>
+Moreover you will have to set the default editor if you have never done so on your machine.
+This consists of adding the following line to the <code>/etc/environment</code> unix file
+</p>
+
+<div class="highlight"><pre><span></span>   EDITOR = &quot;/usr/bin/emacs25&quot; # or whatever version or editor.
+</pre></div>
+
+<p>
+Once that is set it is needed to reboot and check the correct execution via
+</p>
+
+<div class="highlight"><pre><span></span>   $ echo $EDITOR
+</pre></div>
+
+<p>
+Finally it is  necessary to add the orgmode plugin to nikola via
+</p>
+<div class="highlight"><pre><span></span>   $ nikola plugin -i orgmode
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org741388c" class="outline-3">
+<h3 id="org741388c">Write your first post</h3>
+<div class="outline-text-3" id="text-org741388c">
+<p>
+You are set up. It is possible at this stage to start writing posts by simply calling
+</p>
+
+<div class="highlight"><pre><span></span>   $ nikola new_post -f orgmode
+</pre></div>
+
+<p>
+Save it, build your webpage via <code>nikola build</code>, deploy it via
+<code>nikola serve</code> and <b>boom you are done</b>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1f54cac" class="outline-3">
+<h3 id="org1f54cac">Github Deployment</h3>
+<div class="outline-text-3" id="text-org1f54cac">
+<p>
+Nikola is moreover interesting as it allows a straightforward
+integration with Github pages. 
+</p>
+
+<p>
+You can simply specify the following parameters in your python
+configuration file
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="n">SITE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://marcohassan.github.io/bits-of-experience/&quot;</span>
+   <span class="n">GITHUB_SOURCE_BRANCH</span> <span class="o">=</span> <span class="s1">&#39;master&#39;</span>
+   <span class="n">GITHUB_DEPLOY_BRANCH</span> <span class="o">=</span> <span class="s1">&#39;gh-pages&#39;</span>
+
+   <span class="c1"># The name of the remote where you wish to push to, using github_deploy.</span>
+   <span class="n">GITHUB_REMOTE_NAME</span> <span class="o">=</span> <span class="s1">&#39;origin&#39;</span>
+
+   <span class="c1"># Whether or not github_deploy should commit to the source branch automatically</span>
+   <span class="c1"># before deploying.</span>
+   <span class="n">GITHUB_COMMIT_SOURCE</span> <span class="o">=</span> <span class="bp">True</span>
+</pre></div>
+
+<br>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org93095fb" class="outline-2">
+<h2 id="org93095fb">How to integrate PDFs and Videos</h2>
+<div class="outline-text-2" id="text-org93095fb">
+<p>
+You can integrate all of  the possible items you can integrate on
+standard <code>HTML</code> on the different browsers. 
+</p>
+
+<p>
+It is however important that you set you files in the <code>output</code>
+directory in your blog directory. 
+</p>
+
+<p>
+Then you find the source code 
+</p>
+
+<br>
+<br>
+
+<object data="../../pdfs/dummy.pdf" type="application/pdf"
+	width="100%" height="600px" align="center">
+  <iframe   jsname="L5Fo6c" jscontroller="usmiIb"
+	    jsaction="rcuQ6b:WYd;" class="YMEQtfL6cTce-purZT L6cTce-pSzOP"
+	    frameborder="0" allowfullscreen="" src="../../pdfs/dummy.pdf"
+	    width="100%" height="600px" align="center"/>
+
+</object>
+
+
+<br>
+<br>
+<br>
+<br>
+
+<video controls="controls" width="100%" height="100%" 
+name="Video Name" src="../../output/videos/Bildschirmvideo%20aufnehmen%202020-02-20%20um%2016.12.36.mov"></video>
+
+<br>
+<br>
+</div>
+</div>
+
+<div id="outline-container-orga9bd42e" class="outline-2">
+<h2 id="orga9bd42e">Render LaTex</h2>
+<div class="outline-text-2" id="text-orga9bd42e">
+<p>
+Just include the <code>.. has_math: yes</code> argument in your post arguments.
+</p>
+
+<p>
+Then you can render LaTex code
+</p>
+
+<p>
+\[ Y_{ijk} = \mu + \alpha_i + \beta_j + \alpha \beta_{ij} + \epsilon_{ijk} \]
+</p>
+</div>
+</div>

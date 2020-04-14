@@ -14,10 +14,14 @@ This is a private post outlying how to create posts with Nikola.
 
 {{{TEASER_END}}}
 
+A simpler way is to integrate directly is to save the ob-ipython
+generated source for the rendered images and copy them in the =output=
+directory. Then you do not have to make major changes and things will
+be formatted well quickly.
+
 * How to insert pictures in Python
 
 Prova a scrivere un poco in =verbatim=.
-
 
    #+BEGIN_SRC python :results file :exports both
      import matplotlib.pyplot as plt 
@@ -39,8 +43,59 @@ Prova a scrivere un poco in =verbatim=.
 Like this you can directly center etc using html. Not sure if it works
 on nikola though.
 
+
+* Insert video
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+
+
+  #+begin_export html
+<video controls="controls" width="600" height="400" 
+       name="Video Name" src="../../videos/Bildschirmvideo%20aufnehmen%202020-02-20%20um%2016.12.36.mov"></video>
+  #+end_export
+
+
+  #+begin_export html
+<br>
+<br>
+  #+end_export
+
+
+* Insert PDFs through Iframes
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+<object data="../../pdfs/AS87_HandIn.pdf" type="application/pdf"
+	width="100%" height="600px" align="center">
+  <iframe   jsname="L5Fo6c" jscontroller="usmiIb"
+	    jsaction="rcuQ6b:WYd;" class="YMEQtfL6cTce-purZT L6cTce-pSzOP"
+	    frameborder="0" allowfullscreen="" src="../../pdfs/AS87_HandIn.pdf"
+	    width="100%" height="600px" align="center"/>
+
+</object>
+#+end_export
+
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+Notice that you have to create the =pdfs= directory in the =output=
+directory in your blog directory. Then you have to insert the PDFs
+there that you want to display.
+
 * pictures on R
 
+  #+begin_example
 #+begin_src R :exports none
 # 1. Open a svg file
 svg("../images/boxplot.svg") 
@@ -54,9 +109,12 @@ dev.off()
 
 [[img-url:/images/boxplot.svg]] 
 
+  #+end_example
+
+
 * For latex integration
 
-Check at one of the posts with contrasts. There are the options in the
-comments.
+Check the source code of the posts with contrasts. There are the options in the
+=YAML= formatted comments.
 
 
