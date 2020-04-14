@@ -196,3 +196,47 @@ Then you can render LaTex code
 :results:
 \[ Y_{ijk} = \mu + \alpha_i + \beta_j + \alpha \beta_{ij} + \epsilon_{ijk} \]
 :end:
+
+* Supporting Script for Nikola Github Pages Auto Commit
+
+Albeit the solution so far outlined works well for local deployment or
+for a deployment over a PaaS infrastructure when working with the
+default autocommit option of =nikola= all the pdfs and videos are not
+automatically imported in the directory used for creating the github
+page =gh-pages= in my case. 
+
+To obviate such a problem I decided to create two directories =pdfs=
+and =vidoes= in the =Blog= directory where I keep my github repo. 
+
+There I created the following script
+
+#+begin_src sh
+#!/bin/sh
+
+cd bits-of-experience
+
+source ~/Desktop/python_venv/nikola/bin/activate
+
+nikola github_deploy
+
+git checkout gh-pages
+
+cp -r ../pdfs .
+
+cp -r ../videos .
+
+git add .
+
+git commit -m "add pdfs and videos"
+
+git push
+
+git checkout master
+
+#+end_src 
+
+Running the script you will both auto commit your changes and generate
+the =html= pages as well as automatically update the resources so
+that the Github page works as desired. 
+
+
