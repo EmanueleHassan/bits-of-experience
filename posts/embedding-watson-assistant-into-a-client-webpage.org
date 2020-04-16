@@ -1,0 +1,304 @@
+#+BEGIN_COMMENT
+.. title: Embedding Watson Assistant into a Client Webpage
+.. slug: embedding-watson-assistant-into-a-client-webpage
+.. date: 2020-04-16 14:47:05 UTC+02:00
+.. tags: IBM Work
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+
+
+This demo introduce the necessary steps in order to create an
+intelligent Watson Chatbot and deploy it in your/your client website.
+
+Please report any issues to marco.hassan@ibm.com
+
+{{{TEASER_END}}}
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+* Necessary Configuration
+
+For this demo you need to have an IBM Cloud working account. You can
+subscribe under [[https://cloud.ibm.com/login][this link]].
+
+Once you have your Cloud Account up and running you need to activate
+the following two services.
+
+#+BEGIN_EXPORT html
+<video controls="controls" width="600" height="400" 
+       name="Video Name" src="../../videos/WAneededservices.mov"></video>
+#+END_EXPORT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+<br>
+<br>
+#+END_EXPORT
+
+After that it is possible to enter the =WatsonAssistant= Service,
+launch the Watson Assistant and create a new assistant. 
+
+This will be an empty box to the stage. The content continues as
+follows:
+
+First, I will show how to integrate the assistant in the HTML of the
+client you might wish to showcase the product. 
+
+Secondly, I will show on how to manually create a simple dialog on the
+assistant. 
+
+Thirdly, I will show the integration with Watson Discovery - a powerful
+and unique product unique to the IBM offer as no other major cloud
+provider offers a similar service. 
+
+Lastly, I will briefly discuss on the potential of integrating the
+Assistant with your business specific content data through Salesforce,
+Databases or third party applications.
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+* How to integrate the assistant into a HTML page
+
+If you want to showcase your assistant to a client it will be useful
+to embed it into the client page.
+
+In order to do that you have to download the client webpage, activate
+the web chat integration and embed the javascript source code
+referring to your watson assistant service.  
+
+Notice, that the Web Chat Integration will also able to connect the
+Web Chat to a service desk solution so your assistant can transfer
+users to live agents.
+
+The steps are summed up in the following video:
+
+#+BEGIN_EXPORT html
+<video controls="controls" width="600" height="400" 
+       name="Video Name" src="../../videos/Bildschirmvideo%20aufnehmen%202020-04-16%20um%2011.14.59.mov"></video>
+#+END_EXPORT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+<br>
+<br>
+#+END_EXPORT
+
+* Create a Dialog
+
+Nice! You have now integrated your assistant to the client webpage. It
+is time now to add content to your assistant.
+
+In order to do that you have first to create a new skill to your
+assistant as follows.
+
+#+BEGIN_EXPORT html
+<video controls="controls" width="600" height="400" 
+name="Video Name" src="../../videos/Bildschirmvideo%20aufnehmen%202020-04-16%20um%2011.47.04.mov"></video>
+#+END_EXPORT
+
+It is important when creating the skill that you specify the language
+you want to use in your application as some training and built-in help
+functions will refer to that.
+
+Once that is done you will be ready to create your mock dialog.
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+** Creating Intents
+
+ For the official documentation, please refer to the [[https://cloud.ibm.com/docs/assistant?topic=assistant-intents][following webpage]].
+
+ Intents are general categories that Watson Assistant
+ recognizes. These are important as when you will subsequently create
+ a dialog, the assistant will reply to the customer based on intents
+ it recognizes from the customer demand.
+
+ For instance you can create an intent that recognizes that a client
+ wants to block a credit card. You would have then to enter five-ten
+ phrases that characterize such instance.
+
+ In my personal case I tried the following configuration
+ settings. Interesting is to see how the assistant manages to pretty
+ well generalize to examples that were not used in the training as
+ visible in the video below.
+
+ #+BEGIN_EXPORT html
+ <video controls="controls" width="600" height="400" 
+ name="Video Name" src="../../videos/Bildschirmvideo%20aufnehmen%202020-02-20%20um%2011.19.26.mov"></video>
+ #+END_EXPORT
+
+ #+BEGIN_EXPORT html
+ <br>
+ <br>
+ <br>
+ #+END_EXPORT
+
+ Recall always to test the trained dialog in order to see if the
+ provided samples were nicely generalized by Watson.
+
+** Defining Entities
+
+   Entities can also be used when creating a dialog. This represent as
+   the name suggest specific entities such as time, number, dates,
+   street addresses, geolocations; you name it.
+
+   Some entities are already avaiable out of the Box in Watson
+   Assistant. Some other have to be trained. 
+
+   You can further explore them under the [[https://cloud.ibm.com/docs/assistant?topic=assistant-entities][following link]]. For this
+   basic tutorial we will use pre-trained entities.
+
+** Create a Dialog with Child Nodes
+
+   Once you have the necessary requirements for creating a dialog, you
+   can create the following as in the video below. 
+
+   This video leverages the previously created =#blocking_card= intent
+   as well as the out-of-the-box available banking intents provided by
+   watson in the content catalog. Finally it leverages a second
+   created class =#assertive_answers=.
+
+   It uses then child nodes that checks whether the answer to the
+   chatbot is mapped to some intent or entity and according to that it
+   continues the dialog.
+
+ #+BEGIN_EXPORT html
+ <video controls="controls" width="600" height="400" 
+ name="Video Name" src="../../videos/Bildschirmvideo%20aufnehmen%202020-02-20%20um%2012.52.17.mov"></video>
+ #+END_EXPORT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+<br>
+<br>
+#+END_EXPORT
+
+** Important Note
+
+Notice that while the above example illustrates the intents and entity
+creation you can add multiple in one shot uploading csv files of up to
+10MB. You can furthermore leverage a richer setting of capabilities
+working directly with the API instead of working through the IBM GUI.
+
+#+begin_export html
+<br>
+#+end_export
+
+* Integrate your Assistant with your Business Databases and Watson Discovery
+
+Nice, you have a first mini-example of Watson Assistant running on a
+client Webpage. 
+
+The question that you might ask yourself and that your client is
+likely to ask you too is how to speed up the process of creating and
+customizing your Assistant Dialog. If you might well create a few
+standard dialogs to deal with the most common requests you might
+desire to set up a flexible solution.
+
+Luckily, Watson Assistant does not act as a stand-alone product but is
+rather intended to act and live in symbiosis to the rich set of Watson
+and non-Watson API out there. 
+
+In order to understand the context the [[https://medium.com/ibm-watson/integrate-watson-assistant-with-just-about-anything-695bc1d29875][following post]] might be
+useful. There you find the following great schema of the intended
+broader architecture for your Watson Assistant.
+
+[[file:~/Desktop/Screenshots/Bildschirmfoto 2020-04-16 um 12.00.11.png]]
+
+As the connection to client databases and client specific contents
+must be discussed directly with them, I will next focus on the Watson
+Discovery Service integration. The idea for the client content
+integration allows however to integrate web-hooks pointing to specific
+Business Application Endpoint and make the desired contents
+available. You can moreover turn on the disambiguation option in order
+for the Assistant to request further clarifications to the user before
+deciding on the desired action plan.
+
+Finally notice, that the above is just the tip of the iceberg. You
+might even fine-tune and train the correct classification of intents
+in your Assitant.
+
+** Creating Watson Discovery and Create a Web Crawl
+
+This section, briefly outlines the integration of the Watson Assistant
+with the Watson Discovery Service. Recall again that this is not
+intended to be an exhaustive guide - the service is really broad and
+powerful - but rather just to give a glimpse in the possibilities of
+such service. 
+
+Watson Discovery is a powerful service that allows to launch
+web-crawls and extract information from HTML pages. The idea is for
+the user to specify root HTML pages of interest and to specify the
+amount of hops (the number of related pages) that the service is
+allowed to visit from each root page.
+
+The Discovery Service, will then start to extract relevant information
+from the pages. The nice feature is that it will not simply extract
+plain text embedded in HTML tags but it will rather also download all
+the PDFs embedded in the pages. This might be especially, useful for
+instance to incorporate Blogs or News articles related to your
+company/institution/entity. 
+
+Moreover, it will allow to integrate important information described
+in PDFs and HTML pages to your Assistant that will be able to feed
+them to the user and refer him to the specific content page. 
+
+Notice that albeit the HTML content extraction might not be
+100% functional out of the box due to fancy =dynamic webpages= and
+javascript code integrations an IT specialist might always be able to
+filter the content and tags that the crawl will extract and process.
+
+Finally, notice that the content extracted via Watson Discovery might
+be further enriched and pre-processed by leveraging Natural Language
+Understanding Services, Watson Knowledge Studio as well as Smart
+Document Understanding - another neat product shipped with Discovery.
+
+** A quick Demo
+
+This video demonstrates a very quick demo for the Watson Discovery
+Integration with an Assistant for the case of the Zürich Kantonalbank. 
+
+This will let you experience a very rough integration and will let you
+understand its strength at best.
+
+ #+BEGIN_EXPORT html
+ <br>
+ #+END_EXPORT
+
+ #+BEGIN_EXPORT html
+ <video controls="controls" width="600" height="400" 
+ name="Video Name" src="../../videos/Bildschirmvideo%20aufnehmen%202020-04-16%20um%2014.31.49.mov"></video>
+ #+END_EXPORT
+
+ #+BEGIN_EXPORT html
+ <br>
+ <br>
+ <br>
+ <br>
+ #+END_EXPORT
+
+* Final Word
+
+This concludes this quick demo on Watson Assistant. It is important to
+stress that this is nothing but the tip of the iceberg. You are free
+to further explore the services at:
+
+[[https://www.ibm.com/cloud/watson-assistant/][IBM Watson Assistant]]
+
+[[https://www.ibm.com/cloud/watson-discovery][IBM Watson Discovery]]
+
