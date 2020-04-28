@@ -1,0 +1,135 @@
+#+BEGIN_COMMENT
+.. title: When creating a home-made ML model
+.. slug: when-creating-a-home_made-ml-model
+.. date: 2020-04-22 15:34:50 UTC+02:00
+.. tags: Machine Learning, Python, Sklearn
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+#+END_COMMENT
+
+
+In this post I go over some beginner mistake and set up the workflow for
+further works that involve some custom-created ML model.
+
+{{{TEASER_END}}}
+
+** The Story...
+
+ For a recent project I had to create a home-made ML model. It turned
+ out that after a month working on it I wanted to do some grid-search
+ for tuning some hyperparameters.
+
+ A self-constructed code snippet for doing that can be easily
+ implemented via nested functions, or even a less cumbersome snippet
+ using the =ParameterGrid= function in the =sklearn= package does the
+ job:
+
+ #+begin_src python
+ from sklearn.model_selection import ParameterGrid
+ import tqdm
+
+ grid_param = {
+     'hyp_weight_scale': [0.5,1,2], 
+     'hyp_weight_scale_question': [0.5,1,2],
+     'hyp_chosen_method': ['precision', 'f-measure'],
+     'hyp_ngram': [3,4],
+     'hyp_scale_one_leafs': [0.2, 0.4, 0.6, 0.8, 1, 1.5, 2],
+     'hyp_mix_weight_dict1': [0.25, 0.5, 0.75, 1],
+ }
+
+ hyp_grid = ParameterGrid(grid_param)
+ len(list(hyp_grid))
+
+ best_score = 0
+
+ for params in tqdm.tqdm(hyp_grid):
+
+     hyp_score = #<your function>#
+
+     if hyp_score > best_score:
+         best_param = params
+         best_score = hyp_score
+ #+end_src
+
+
+ I wanted something quicker. After all, the full mash of the above
+ hyperparameters resulted in 1008 combinations and the function to
+ maximize was quite computationally intense. 
+
+ Non-linear optimazion was at the time an overkill as I had no idea on
+ the functional shape of the target and wanted to understand first how
+ the function was reacting to some parameters tuning.
+
+ While the ParameterGrid function just removed some verbose lines from
+ the code, the above hyperparamter grid search above cannot compare to
+ the many well thought implementations.
+
+ The correct logic is mostly the one of [[https://en.wikipedia.org/wiki/Standing_on_the_shoulders_of_giants][standing on giant's
+ shoulders]]. Therefore, I wanted to integrate my home made function
+ with the sklearn library to leverage the [[https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html][GridsearchCV function]] to
+ distribute the processing on the 16 cores of my PC.
+
+ It turned out that to do that was quite nasty. I would have to
+ rewrite my entire function respecting the sklearn logic and API
+ [[https://scikit-learn.org/dev/developers/develop.html][discussed here]]. Under strict time constraint for delivering a new
+ release I had to postpone that. I therefore decided to rely on
+ non-linear optimization for finding the optimal hyperparameters using
+ the =powell algorithm=. 
+
+ #+BEGIN_EXPORT html
+ <br>
+ #+END_EXPORT
+
+** Lesson Learned
+
+   Whenever you start a big project it is not only worthy to spend a
+   lot of time looking at the different approaches to eventually
+   converge on one. It is rather as well important as to think in
+   terms of embedding your model in the bigger existing
+   ML-frameworks. 
+
+   This will allow to access and use out of the box the many valuable
+   functions available on the framework - be it at testing,
+   preprocessing or tuning time -.
+
+   Apart from the specific example mentioned above, it is clear that
+   when embedding your model into the bigger frameworks you can even
+   leverage the transformations available for creating your =data
+   pipelines=.
+
+   A final point, that is worth to stress as a further important
+   lesson learned is that embedding your model into a framework does
+   not simply give you an edge by providing you with a very vast set
+   of functions. It also tight you to the logic of the framework. 
+
+   It was then clear to me after reading of the sklearn API and how
+   all of the models are implemented there, that the logic of all of
+   the ML models is clearly split into its four components:
+
+   - estimator   - this is the first class citizen that instantiate
+                   your model with the hyperparameters and the 
+                   fitted, available, data.
+                   End of the story. For the prediction you have a
+                   separate layer.
+
+   - predictor   - your ML model prediction 
+
+   - transformer - for creating data pipelines
+
+   - model       - a module where you implement some goodness of fit.
+
+   By using a framework API you hence, also inherit by product the
+   logical level of the framework models. This might make you more
+   aware of the different components of your model.
+
+   Finally, once you understand the mathematical fundamentals of the
+   models available in the framework it is now clear to me that the
+   best way to learn a framework is learning its API and therefore its
+   ordered logic workflow. Master the API and you will master the
+   framework.
+
+   In this sense, it would be a helpful exercise for you in the future
+   to have a look at the [[https://databricks.com/session/extending-spark-machine-learning-adding-your-own-algorithms-and-tools][pyspark API]] and try to integrate a demo ML
+   algo there. This is left as a todo for times with more spare time.

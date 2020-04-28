@@ -1,0 +1,150 @@
+#+BEGIN_COMMENT
+.. title: Some Handy Python Tricks 
+.. slug: handy-python-packages
+.. date: 2020-04-14 15:15:50 UTC+02:00
+.. tags: Python, programming
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+.. status: private
+#+END_COMMENT
+
+** Save local Environment in Ipython and continue from where you left
+
+ How to save your local environment and continue from where you left on
+ Ipython:
+
+ [[https://www.reddit.com/r/IPython/comments/6reiqp/how_can_i_save_and_load_the_state_of_the_kernel/]]
+
+** Check at the source code of a function you are using in Python
+
+ #+BEGIN_SRC ipython :session :ipyfile  :exports both
+ import dill
+ import cProfile
+ print(dill.source.getsource(cProfile.Profile.print_stats))
+ #+END_SRC
+
+** Debugging Python within Emacs
+
+ [[https://www.masteringemacs.org/article/compiling-running-scripts-emacs]]
+
+ =M-x pdb= 
+
+ Then you enter the script you aim to debug.
+
+ =python3 -m pdb app_local.py=.
+
+ Finally you can enter =h= in the debugger to display all of the
+ available options for it.
+
+https://jakevdp.github.io/PythonDataScienceHandbook/01.06-errors-and-debugging.html
+
+** Reload changed module
+
+#+begin_src python
+import importlib
+importlib.reload(prova)
+#+end_src
+
+[[https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html][link on how to deal with import packages]]
+
+Another possibility if you have two modules called in the same way
+that are saved on different directories is to use the following
+schema:
+
+#+begin_src python
+def remove_module(module):
+    if module in sys.modules:  
+        del sys.modules[module]
+#+end_src
+
+This function can then be used in combination to another one where you
+remove the =path= to your module first. Like this when providing the
+new sys.path to import the module your Python interpreter will not do
+any confusion among the two.
+
+For instance in the snippet below I use a regular expression to remove
+all the modules that match from the sys.path. Then in a second step I
+delete all of the modules maintained by the interpreter.
+
+#+begin_src python
+r = re.compile("/Users/marcohassan/Desktop/IBM_projects/SchutzRettung/module-analytics/app/src/algorithms/.*")
+
+newlist = list(filter(r.match, sys.path)) # Read Note
+
+for element in newlist:
+    sys.path.remove(element)
+
+mod = ['ranking', 'preprocessingTree', 'extract_tokens',
+       'best_next_question', 'merge', 'rank_word']
+
+for i in mod:
+    remove_module(i)
+#+end_src
+
+** Profiling in Python
+
+[[https://docs.python.org/3.2/library/profile.html]]
+
+#+begin_src python
+import cProfile
+import pstats
+
+pr = cProfile.Profile()
+pr.enable()
+ 
+res = minimize(min_matched, x0 = x0, method='nelder-mead', 
+         options={'xatol': 1e-8, 'disp': True, 'maxiter' : 2,
+                  'maxfev' : 2})
+ 
+pr.disable()
+ 
+pstats.Stats(pr).strip_dirs().sort_stats('cumtime').print_stats(0.01)
+
+#+end_src
+
+Notice that the last argument - the =0.01= above - means that you will
+display only the top 1% percentile of the output. This is handy as
+often there are a zillion of minor functions your python interpreter
+calls that are probably not interesting to your analysis.
+
+** Loops with tqdm
+
+#+begin_src python
+import tqdm 
+
+#+end_src
+
+** Staticmethod for Class calls
+
+with staticmethod you do not have to refer to an class
+object. The argument self is omitted as a variable and you
+simply call it by using `unite_score.scale_scores()'. It is
+nothing more than a function defined inside a class. It is
+callable without instantiating the class first. It’s definition
+is immutable via inheritance.
+
+#+begin_src python
+@staticmethod
+def scale_scores(score_dictionary,
+                 scale = "max"):
+#+end_src
+
+** User interface for data analysis
+
+see saved item on 
+** Use pseudo code to keep track of what you do
+
+    When you write docstrings use pseudo code to document the logical
+    structure
+
+    #+begin_example
+    for ec in len(dict_levenshtein):
+	for path in ec:
+	    for question in path:
+	       do x
+	    for answer in path:
+	       do y
+    #+end_example
+
