@@ -1,3 +1,6 @@
+<div id="outline-container-orgfdacb7c" class="outline-2">
+<h2 id="orgfdacb7c">Save local Environment in Ipython and continue from where you left</h2>
+<div class="outline-text-2" id="text-orgfdacb7c">
 <p>
 How to save your local environment and continue from where you left on
 Ipython:
@@ -6,17 +9,24 @@ Ipython:
 <p>
 <a href="https://www.reddit.com/r/IPython/comments/6reiqp/how_can_i_save_and_load_the_state_of_the_kernel/">https://www.reddit.com/r/IPython/comments/6reiqp/how_can_i_save_and_load_the_state_of_the_kernel/</a>
 </p>
+</div>
+</div>
 
-<p>
-How to view the source code of modules and functions you import.
-</p>
-
-<div class="highlight"><pre><span></span>source_DF = dill.source.getsource(prova.prova_word)
-print (source_DF)
+<div id="outline-container-orgdf03b00" class="outline-2">
+<h2 id="orgdf03b00">Check at the source code of a function you are using in Python</h2>
+<div class="outline-text-2" id="text-orgdf03b00">
+<div class="highlight"><pre><span></span> import dill
+ import cProfile
+ print(dill.source.getsource(cProfile.Profile.print_stats))
 </pre></div>
+</div>
+</div>
 
+<div id="outline-container-orgf3091e6" class="outline-2">
+<h2 id="orgf3091e6">Debugging Python within Emacs</h2>
+<div class="outline-text-2" id="text-orgf3091e6">
 <p>
-Launch python debugger on emacs
+<a href="https://www.masteringemacs.org/article/compiling-running-scripts-emacs">https://www.masteringemacs.org/article/compiling-running-scripts-emacs</a>
 </p>
 
 <p>
@@ -36,9 +46,15 @@ Finally you can enter <code>h</code> in the debugger to display all of the
 available options for it.
 </p>
 
-<div id="outline-container-org1cf9f78" class="outline-2">
-<h2 id="org1cf9f78">Reload changed module</h2>
-<div class="outline-text-2" id="text-org1cf9f78">
+<p>
+<a href="https://jakevdp.github.io/PythonDataScienceHandbook/01.06-errors-and-debugging.html">https://jakevdp.github.io/PythonDataScienceHandbook/01.06-errors-and-debugging.html</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcac6b3b" class="outline-2">
+<h2 id="orgcac6b3b">Reload changed module</h2>
+<div class="outline-text-2" id="text-orgcac6b3b">
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">importlib</span>
 <span class="n">importlib</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">prova</span><span class="p">)</span>
 </pre></div>
@@ -46,5 +62,128 @@ available options for it.
 <p>
 <a href="https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html">link on how to deal with import packages</a>
 </p>
+
+<p>
+Another possibility if you have two modules called in the same way
+that are saved on different directories is to use the following
+schema:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">remove_module</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>  
+	<span class="k">del</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">module</span><span class="p">]</span>
+</pre></div>
+
+<p>
+This function can then be used in combination to another one where you
+remove the <code>path</code> to your module first. Like this when providing the
+new sys.path to import the module your Python interpreter will not do
+any confusion among the two.
+</p>
+
+<p>
+For instance in the snippet below I use a regular expression to remove
+all the modules that match from the sys.path. Then in a second step I
+delete all of the modules maintained by the interpreter.
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;/Users/marcohassan/Desktop/IBM_projects/SchutzRettung/module-analytics/app/src/algorithms/.*&quot;</span><span class="p">)</span>
+
+<span class="n">newlist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">match</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">))</span> <span class="c1"># Read Note</span>
+
+<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">newlist</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+
+<span class="n">mod</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ranking&#39;</span><span class="p">,</span> <span class="s1">&#39;preprocessingTree&#39;</span><span class="p">,</span> <span class="s1">&#39;extract_tokens&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;best_next_question&#39;</span><span class="p">,</span> <span class="s1">&#39;merge&#39;</span><span class="p">,</span> <span class="s1">&#39;rank_word&#39;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mod</span><span class="p">:</span>
+    <span class="n">remove_module</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org8b57dfe" class="outline-2">
+<h2 id="org8b57dfe">Profiling in Python</h2>
+<div class="outline-text-2" id="text-org8b57dfe">
+<p>
+<a href="https://docs.python.org/3.2/library/profile.html">https://docs.python.org/3.2/library/profile.html</a>
+</p>
+
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cProfile</span>
+<span class="kn">import</span> <span class="nn">pstats</span>
+
+<span class="n">pr</span> <span class="o">=</span> <span class="n">cProfile</span><span class="o">.</span><span class="n">Profile</span><span class="p">()</span>
+<span class="n">pr</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">min_matched</span><span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nelder-mead&#39;</span><span class="p">,</span> 
+	 <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;xatol&#39;</span><span class="p">:</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;maxiter&#39;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+		  <span class="s1">&#39;maxfev&#39;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">})</span>
+
+<span class="n">pr</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span>
+
+<span class="n">pstats</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="n">pr</span><span class="p">)</span><span class="o">.</span><span class="n">strip_dirs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="s1">&#39;cumtime&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">print_stats</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+</pre></div>
+
+<p>
+Notice that the last argument - the <code>0.01</code> above - means that you will
+display only the top 1% percentile of the output. This is handy as
+often there are a zillion of minor functions your python interpreter
+calls that are probably not interesting to your analysis.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1b58e77" class="outline-2">
+<h2 id="org1b58e77">Loops with tqdm</h2>
+<div class="outline-text-2" id="text-org1b58e77">
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tqdm</span> 
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgd715fc5" class="outline-2">
+<h2 id="orgd715fc5">Staticmethod for Class calls</h2>
+<div class="outline-text-2" id="text-orgd715fc5">
+<p>
+with staticmethod you do not have to refer to an class
+object. The argument self is omitted as a variable and you
+simply call it by using `unite<sub>score.scale</sub><sub>scores</sub>()'. It is
+nothing more than a function defined inside a class. It is
+callable without instantiating the class first. It’s definition
+is immutable via inheritance.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">scale_scores</span><span class="p">(</span><span class="n">score_dictionary</span><span class="p">,</span>
+		 <span class="n">scale</span> <span class="o">=</span> <span class="s2">&quot;max&quot;</span><span class="p">):</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgd0ba67a" class="outline-2">
+<h2 id="orgd0ba67a">User interface for data analysis</h2>
+<div class="outline-text-2" id="text-orgd0ba67a">
+<p>
+see saved item on 
+</p>
+</div>
+</div>
+<div id="outline-container-orga5320b1" class="outline-2">
+<h2 id="orga5320b1">Use pseudo code to keep track of what you do</h2>
+<div class="outline-text-2" id="text-orga5320b1">
+<p>
+When you write docstrings use pseudo code to document the logical
+structure
+</p>
+
+<pre class="example">
+for ec in len(dict_levenshtein):
+    for path in ec:
+	for question in path:
+	   do x
+	for answer in path:
+	   do y
+</pre>
 </div>
 </div>

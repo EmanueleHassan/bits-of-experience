@@ -1,0 +1,105 @@
+<p>
+In this post I go over some beginner mistake and set up the workflow for
+further works that involve some custom-created ML model.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org5488fc2" class="outline-2">
+<h2 id="org5488fc2">The Story&#x2026;</h2>
+<div class="outline-text-2" id="text-org5488fc2">
+<p>
+For a recent project I had to create a home-made ML model. It turned
+out that after a month working on it I wanted to do some grid-search
+for tuning some hyperparameters.
+</p>
+
+<p>
+While a self-constructed for doing that can be easily implemented via
+nested functions, or even using the <code>ParameterGrid</code> function in the
+<code>sklearn</code> package do the job:
+</p>
+
+<div class="highlight"><pre><span></span> <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">ParameterGrid</span>
+ <span class="kn">import</span> <span class="nn">tqdm</span>
+
+ <span class="n">grid_param</span> <span class="o">=</span> <span class="p">{</span>
+     <span class="s1">&#39;hyp_weight_scale&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> 
+     <span class="s1">&#39;hyp_weight_scale_question&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>
+     <span class="s1">&#39;hyp_chosen_method&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;precision&#39;</span><span class="p">,</span> <span class="s1">&#39;f-measure&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;hyp_ngram&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
+     <span class="s1">&#39;hyp_scale_one_leafs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+     <span class="s1">&#39;hyp_mix_weight_dict1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+ <span class="p">}</span>
+
+ <span class="n">hyp_grid</span> <span class="o">=</span> <span class="n">ParameterGrid</span><span class="p">(</span><span class="n">grid_param</span><span class="p">)</span>
+ <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">hyp_grid</span><span class="p">))</span>
+
+ <span class="n">best_score</span> <span class="o">=</span> <span class="mi">0</span>
+
+ <span class="k">for</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">hyp_grid</span><span class="p">):</span>
+
+     <span class="n">hyp_score</span> <span class="o">=</span> <span class="c1">#&lt;your function&gt;#</span>
+
+     <span class="k">if</span> <span class="n">hyp_score</span> <span class="o">&gt;</span> <span class="n">best_score</span><span class="p">:</span>
+	 <span class="n">best_param</span> <span class="o">=</span> <span class="n">params</span>
+	 <span class="n">best_score</span> <span class="o">=</span> <span class="n">hyp_score</span>
+</pre></div>
+
+
+<p>
+I wanted something quicker. After all, the full mash of the above
+hyperparameters resulted in 1008 combinations and the function to
+maximize was not the most quick. Non-linear optimazion was at the time
+an overkill as I had no idea on the functional shape of the target and
+wanted to understand first how the function was reacting to some
+parameters tuning.
+</p>
+
+<p>
+While the ParameterGrid function just removed some verbose lines from
+the code, the above hyperparamter grid search above cannot compare to
+the many well thought implementations.
+</p>
+
+<p>
+The correct logic is mostly the one of <a href="https://en.wikipedia.org/wiki/Standing_on_the_shoulders_of_giants">standing on giant's
+shoulders</a>. Therefore, I wanted to integrate my home made function with
+the sklearn library to leverage the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html">GridsearchCV function</a> to
+distribute the processing on the 16 cores of my laptop. 
+</p>
+
+<p>
+Turned out to be a quite nasty task to do as I would have to rewrite
+my entire function respecting the sklearn logic and API <a href="https://scikit-learn.org/dev/developers/develop.html">discussed
+here</a>. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org14e7d85" class="outline-2">
+<h2 id="org14e7d85">Lesson Learned</h2>
+<div class="outline-text-2" id="text-org14e7d85">
+<p>
+So far I had no time to refactor my model into the 
+</p>
+
+<p>
+TODO: write about also the benefits of leveraging the sklearn
+pipelines.
+</p>
+
+<p>
+TODO: write that when writing your custom model you should always
+think about the amount of data you may have to deal it. Integrate
+it also with pyspark API etc. 
+</p>
+
+<p>
+TODO: write about also the help of using the logic of the
+APIs&#x2026; There the models are splitted in fit, predict, transform
+steps and working with that ordered workflow might always be
+beneficial.
+</p>
+</div>
+</div>
