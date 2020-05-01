@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1588105429.710033
+_modified_time = 1588323577.788725
 _enable_loop = True
 _template_filename = 'themes/zen/templates/base.tmpl'
 _template_uri = 'base.tmpl'
@@ -38,26 +38,26 @@ def render_body(context,**pageargs):
         _mako_get_namespace(context, 'header')._populate(_import_ns, ['*'])
         _mako_get_namespace(context, 'footer')._populate(_import_ns, ['*'])
         messages = _import_ns.get('messages', context.get('messages', UNDEFINED))
-        base = _mako_get_namespace(context, 'base')
-        template_hooks = _import_ns.get('template_hooks', context.get('template_hooks', UNDEFINED))
+        abs_link = _import_ns.get('abs_link', context.get('abs_link', UNDEFINED))
+        lang = _import_ns.get('lang', context.get('lang', UNDEFINED))
+        blog_title = _import_ns.get('blog_title', context.get('blog_title', UNDEFINED))
+        footer = _mako_get_namespace(context, 'footer')
         _link = _import_ns.get('_link', context.get('_link', UNDEFINED))
+        date_fanciness = _import_ns.get('date_fanciness', context.get('date_fanciness', UNDEFINED))
+        logo_url = _import_ns.get('logo_url', context.get('logo_url', UNDEFINED))
+        set_locale = _import_ns.get('set_locale', context.get('set_locale', UNDEFINED))
+        template_hooks = _import_ns.get('template_hooks', context.get('template_hooks', UNDEFINED))
+        momentjs_locales = _import_ns.get('momentjs_locales', context.get('momentjs_locales', UNDEFINED))
+        base = _mako_get_namespace(context, 'base')
         def content():
             return render_content(context._locals(__M_locals))
-        lang = _import_ns.get('lang', context.get('lang', UNDEFINED))
-        def extra_head():
-            return render_extra_head(context._locals(__M_locals))
-        set_locale = _import_ns.get('set_locale', context.get('set_locale', UNDEFINED))
+        js_date_format = _import_ns.get('js_date_format', context.get('js_date_format', UNDEFINED))
         body_end = _import_ns.get('body_end', context.get('body_end', UNDEFINED))
-        footer = _mako_get_namespace(context, 'footer')
-        momentjs_locales = _import_ns.get('momentjs_locales', context.get('momentjs_locales', UNDEFINED))
+        search_form = _import_ns.get('search_form', context.get('search_form', UNDEFINED))
         def extra_js():
             return render_extra_js(context._locals(__M_locals))
-        logo_url = _import_ns.get('logo_url', context.get('logo_url', UNDEFINED))
-        js_date_format = _import_ns.get('js_date_format', context.get('js_date_format', UNDEFINED))
-        blog_title = _import_ns.get('blog_title', context.get('blog_title', UNDEFINED))
-        date_fanciness = _import_ns.get('date_fanciness', context.get('date_fanciness', UNDEFINED))
-        search_form = _import_ns.get('search_form', context.get('search_form', UNDEFINED))
-        abs_link = _import_ns.get('abs_link', context.get('abs_link', UNDEFINED))
+        def extra_head():
+            return render_extra_head(context._locals(__M_locals))
         __M_writer = context.writer()
         __M_writer('\n')
         __M_writer('\n')
