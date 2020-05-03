@@ -1,4 +1,81 @@
-<div class="HTML">
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Spark Session Initialization, RDD and DataFrames | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/spark-session-initalization/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../paredit/" title="Paredit" type="text/html">
+<link rel="next" href="../Docker/" title="Docker" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Spark Session Initialization, RDD and DataFrames">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/spark-session-initalization/">
+<meta property="og:description" content="&lt;br&gt;
+&lt;br&gt;
+
+
+
+
+
+
+This second post present the basic set up of a Spark session and goes
+over the basic of creating Spark RDDs, the first-class citizens of
+Spark. An RDD is a Resilient Distributed Datase">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-08-21T23:31:02+02:00">
+<meta property="article:tag" content="Big Data">
+<meta property="article:tag" content="Spark">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Spark Session Initialization, RDD and DataFrames</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-08-21T23:31:02+02:00" itemprop="datePublished" title="2019-08-21 23:31">2019-08-21 23:31</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/big-data/" rel="tag">Big Data</a></li>
+            <li><a class="tag p-category" href="../../categories/spark/" rel="tag">Spark</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div class="HTML">
 <p>
 &lt;br&gt;
 &lt;br&gt;
@@ -29,10 +106,7 @@ DataFrames and tries to clarify that.
 
 <!-- TEASER_END -->
 
-<br>
-
-
-<div id="outline-container-org18437d4" class="outline-2">
+<br><div id="outline-container-org18437d4" class="outline-2">
 <h2 id="org18437d4">Session Set Up</h2>
 <div class="outline-text-2" id="text-org18437d4">
 <p>
@@ -92,7 +166,6 @@ configuration arguments or the <i>SparkConf</i> object itself.</li>
 existing one, creates a new one based on the options set in this
 builder.</li>
 </ul>
-
 <div class="highlight"><pre><span></span>import findspark
 findspark.init()
 
@@ -100,8 +173,8 @@ from pyspark.sql import SparkSession
 
 spark = SparkSession \
     .builder \
-    .master (&quot;local&quot;) \
-    .appName(&quot;My first Spark Session&quot;) \
+    .master ("local") \
+    .appName("My first Spark Session") \
     .getOrCreate()
 </pre></div>
 
@@ -127,9 +200,9 @@ Here you use the parallelize method to a local Python
 collection to form an RDD.
 </p>
 
-<div class="highlight"><pre><span></span>spark.sparkContext.parallelize([(1, 2, 3, &#39;a b c&#39;),
-				(4, 5, 6, &#39;d e f&#39;),
-				(7, 8, 9, &#39;g h i&#39;)]).collect()
+<div class="highlight"><pre><span></span>spark.sparkContext.parallelize([(1, 2, 3, 'a b c'),
+				(4, 5, 6, 'd e f'),
+				(7, 8, 9, 'g h i')]).collect()
 </pre></div>
 
 <p>
@@ -138,9 +211,9 @@ one. This is done by entering the different partitions in a list and
 selecting the number of partitions.
 </p>
 
-<div class="highlight"><pre><span></span>rdd = spark.sparkContext.parallelize([(1, 2, 3, &#39;a b c&#39;),
-				   (4, 5, 6, &#39;d e f&#39;),
-				   (7, 8, 9, &#39;g h i&#39;)], 3)
+<div class="highlight"><pre><span></span>rdd = spark.sparkContext.parallelize([(1, 2, 3, 'a b c'),
+				   (4, 5, 6, 'd e f'),
+				   (7, 8, 9, 'g h i')], 3)
 
 print(rdd.getNumPartitions())
 
@@ -165,31 +238,32 @@ It is possible to create an RDD from multiple stable storage options.
 <i>Local File system:</i>
 </p>
 <ul class="org-ul">
-<li><code>file</code>: Read from the local file system.</li>
+<li>
+<code>file</code>: Read from the local file system.</li>
 </ul>
-
 <p>
 <i>HDFS:</i>
 </p>
 <ul class="org-ul">
-<li><code>hdfs</code>: Read from a Hadoop Distributed File System.</li>
+<li>
+<code>hdfs</code>: Read from a Hadoop Distributed File System.</li>
 </ul>
-
 <p>
 <i>Block Storage:</i>
 </p>
 <ul class="org-ul">
-<li><code>s3</code> : Read from AWS S3 Storage.</li>
-<li><code>wasb</code>: Read from Azure Blob Storage.</li>
+<li>
+<code>s3</code> : Read from AWS S3 Storage.</li>
+<li>
+<code>wasb</code>: Read from Azure Blob Storage.</li>
 </ul>
-
 <p>
 The blow illustrates such an example.
 </p>
 
 <div class="highlight"><pre><span></span><span class="c1"># sc is the Spark Context object automatically created for you</span>
-<span class="n">fruits</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">&#39;wasb:///example/data/fruits.txt&#39;</span><span class="p">)</span>
-<span class="n">yellowThings</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">&#39;wasb:///example/data/yellowthings.txt&#39;</span><span class="p">)</span>
+<span class="n">fruits</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">'wasb:///example/data/fruits.txt'</span><span class="p">)</span>
+<span class="n">yellowThings</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">'wasb:///example/data/yellowthings.txt'</span><span class="p">)</span>
 </pre></div>
 
 
@@ -249,21 +323,22 @@ A spark RDD can be created in multiple ways among the others by:
 
 
 <ul class="org-ul">
-<li><p>
+<li>
+<p>
 Transforming an existing RDD into a dataframe
 </p>
 
-<div class="highlight"><pre><span></span>    df = spark.sparkContext.parallelize([(1, 2, 3, &#39;a b c&#39;),
-					 (4, 5, 6, &#39;d e f&#39;),
-					 (7, 8, 9, &#39;g h i&#39;)]).toDF([&#39;col1&#39;, &#39;col2&#39;, &#39;col3&#39;,&#39;col4&#39;])
+<div class="highlight"><pre><span></span>    df = spark.sparkContext.parallelize([(1, 2, 3, 'a b c'),
+					 (4, 5, 6, 'd e f'),
+					 (7, 8, 9, 'g h i')]).toDF(['col1', 'col2', 'col3','col4'])
 
     df.show ()
-</pre></div></li>
+</pre></div>
+</li>
 </ul>
-
-
 <ul class="org-ul">
-<li><p>
+<li>
+<p>
 Importing your data as a RDD dataframe
 </p>
 
@@ -273,12 +348,12 @@ This is achieved through the <code>read ()</code> method of the
 to read data in as a DataFrame.
 </p>
 
-<div class="highlight"><pre><span></span>    df = spark.read.csv(&quot;file:///Users/marcohassan/Desktop/my_test.csv&quot;)
+<div class="highlight"><pre><span></span>    df = spark.read.csv("file:///Users/marcohassan/Desktop/my_test.csv")
 
     df.show ()
-</pre></div></li>
+</pre></div>
+</li>
 </ul>
-
 <p>
 Notice that you can read among the many different file formats and
 not just the classical tabular <code>csv</code> format.
@@ -347,8 +422,7 @@ the previous section. You can think it as follows:
 </p>
 
 <p>
-<img src="/images/Bildschirmfoto_2020-05-03_um_11.58.39.png" alt="nil"/>
-</p>
+<img src="../../images/Bildschirmfoto_2020-05-03_um_11.58.39.png" alt="nil"></p>
 </div>
 </div>
 
@@ -379,15 +453,15 @@ To see that consider the following <code>json</code>.
 </p>
 
 <div class="highlight"><pre><span></span>    {
-      &quot;First&quot;: &quot;Albert&quot;,
-      &quot;Last&quot;: &quot;Einstein&quot;,
-      &quot;Countries&quot;: [
-	&quot;D&quot;,
-	&quot;I&quot;,
-	&quot;CH&quot;,
-	&quot;A&quot;,
-	&quot;BE&quot;,
-	&quot;US&quot;
+      "First": "Albert",
+      "Last": "Einstein",
+      "Countries": [
+	"D",
+	"I",
+	"CH",
+	"A",
+	"BE",
+	"US"
       ]
     }
 </pre></div>
@@ -398,14 +472,14 @@ facilitating you to read it but it should be saved as a one liner
 for the spark API to correctly work.
 </p>
 
-<div class="highlight"><pre><span></span>    df = spark.read.json(&quot;file:///Users/marcohassan/Desktop/my_test.json&quot;)
+<div class="highlight"><pre><span></span>    df = spark.read.json("file:///Users/marcohassan/Desktop/my_test.json")
 
-    df.createOrReplaceTempView(&quot;dataset&quot;)
+    df.createOrReplaceTempView("dataset")
 
     ## note that the space at the end of each line is important for the
     ## SQL API
-    df2 = spark.sql(&quot;SELECT First,EXPlODE(Countries) &quot;
-		    &quot;FROM dataset &quot;)
+    df2 = spark.sql("SELECT First,EXPlODE(Countries) "
+		    "FROM dataset ")
 
     df2.show ()
 </pre></div>
@@ -421,40 +495,40 @@ The same holds for nested entries.
 </p>
 
 <div class="highlight"><pre><span></span>   {
-   &quot;Name&quot;: {
-   &quot;First&quot;: &quot;Albert&quot;,
-   &quot;Last&quot;: &quot;Einstein&quot;
+   "Name": {
+   "First": "Albert",
+   "Last": "Einstein"
    },
-   &quot;Countries&quot;: 6
+   "Countries": 6
    }
    {
-   &quot;Name&quot;: {
-   &quot;First&quot;: &quot;Srinivasa&quot;,
-   &quot;Last&quot;: &quot;Ramanujan&quot;
+   "Name": {
+   "First": "Srinivasa",
+   "Last": "Ramanujan"
    },
-   &quot;Countries&quot;: 2
+   "Countries": 2
    }
    {
-   &quot;Name&quot;: {
-   &quot;First&quot;: &quot;Kurt&quot;,
-   &quot;Last&quot;: &quot;Gödel&quot;
+   "Name": {
+   "First": "Kurt",
+   "Last": "Gödel"
    },
-   &quot;Countries&quot;: 1
+   "Countries": 1
    }
 </pre></div>
 
-<div class="highlight"><pre><span></span>   df = spark.read.json(&quot;file:///Users/marcohassan/Desktop/my_test.json&quot;)
+<div class="highlight"><pre><span></span>   df = spark.read.json("file:///Users/marcohassan/Desktop/my_test.json")
 
-   df.createOrReplaceTempView(&quot;dataset&quot;)
+   df.createOrReplaceTempView("dataset")
 
    ## note that the space at the end of each line is important for the
    ## SQL API
-   print (spark.sql(&quot;SELECT * &quot;
-		    &quot;FROM dataset &quot;).show ())
+   print (spark.sql("SELECT * "
+		    "FROM dataset ").show ())
 
 
-   df2 = spark.sql(&quot;SELECT Name.First &quot;
-		   &quot;FROM dataset &quot;)
+   df2 = spark.sql("SELECT Name.First "
+		   "FROM dataset ")
 
    df2.show ()
 </pre></div>
@@ -476,89 +550,74 @@ Consider the case when your data are heterogeneous as follows:
 </p>
 
 
-<div class="highlight"><pre><span></span>   { &quot;foo&quot; : 1, &quot;bar&quot; : true}
-   { &quot;foo&quot; : 2, &quot;bar&quot; : true}
-   { &quot;foo&quot; : [3, 4], &quot;bar&quot; : false}
-   { &quot;foo&quot; : 4, &quot;bar&quot; : true}
-   { &quot;foo&quot; : 5, &quot;bar&quot; : true}
-   { &quot;foo&quot; : 6, &quot;bar&quot; : false}
-   { &quot;foo&quot; : 7, &quot;bar&quot; : true}
+<div class="highlight"><pre><span></span>   { "foo" : 1, "bar" : true}
+   { "foo" : 2, "bar" : true}
+   { "foo" : [3, 4], "bar" : false}
+   { "foo" : 4, "bar" : true}
+   { "foo" : 5, "bar" : true}
+   { "foo" : 6, "bar" : false}
+   { "foo" : 7, "bar" : true}
 </pre></div>
 
-<div class="highlight"><pre><span></span>   df = spark.read.json(&quot;file:///Users/marcohassan/Desktop/my_test.json&quot;)
+<div class="highlight"><pre><span></span>   df = spark.read.json("file:///Users/marcohassan/Desktop/my_test.json")
 
-   df.createOrReplaceTempView(&quot;dataset&quot;)
+   df.createOrReplaceTempView("dataset")
 
    ## note that the space at the end of each line is important for the
    ## SQL API
-   df2 = spark.sql(&quot;SELECT *&quot;
-		   &quot;FROM dataset &quot;)
+   df2 = spark.sql("SELECT *"
+		   "FROM dataset ")
 
    df2.show ()
 </pre></div>
 <p>
-#+begin<sub>example</sub>
-</p>
+#+begin<sub>example</sub></p>
 <p>
-<del>-----</del>&#x2013;&#x2014;+
+<del>-----</del>–—+
 </p>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
 <colgroup>
-<col  class="org-left" />
-
-<col  class="org-left" />
+<col class="org-left">
+<col class="org-left">
 </colgroup>
-<tbody>
-<tr>
+<tbody><tr>
 <td class="org-left">bar</td>
 <td class="org-left">foo</td>
-</tr>
-</tbody>
+</tr></tbody>
 </table>
 <p>
-<del>-----</del>&#x2013;&#x2014;+
+<del>-----</del>–—+
 </p>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
 <colgroup>
-<col  class="org-left" />
-
-<col  class="org-right" />
+<col class="org-left">
+<col class="org-right">
 </colgroup>
 <tbody>
 <tr>
 <td class="org-left">true</td>
 <td class="org-right">1</td>
 </tr>
-
 <tr>
 <td class="org-left">true</td>
 <td class="org-right">2</td>
 </tr>
-
 <tr>
 <td class="org-left">false</td>
 <td class="org-right">[3,4]</td>
 </tr>
-
 <tr>
 <td class="org-left">true</td>
 <td class="org-right">4</td>
 </tr>
-
 <tr>
 <td class="org-left">true</td>
 <td class="org-right">5</td>
 </tr>
-
 <tr>
 <td class="org-left">false</td>
 <td class="org-right">6</td>
 </tr>
-
 <tr>
 <td class="org-left">true</td>
 <td class="org-right">7</td>
@@ -566,7 +625,7 @@ Consider the case when your data are heterogeneous as follows:
 </tbody>
 </table>
 <p>
-<del>-----</del>&#x2013;&#x2014;+
+<del>-----</del>–—+
 </p>
 
 <p>
@@ -622,21 +681,21 @@ The typical RDD lifecycle is as follows:
 <ul class="org-ul">
 <li>An RDDs is first created from stable storage or by some Python objects.</li>
 </ul>
-
 <p>
 RDDs offer then two types of operations: <b>transformations</b> and <b>actions</b>.
 </p>
 
 <ul class="org-ul">
-<li><b>Transformations</b> create a new RDD from an existing one.
+<li>
+<b>Transformations</b> create a new RDD from an existing one.
 Transformations are lazy, meaning that no transformation is executed
 until you execute an action.</li>
 
-<li><b>Actions</b> compute a result based on an RDD, and either return it to
+<li>
+<b>Actions</b> compute a result based on an RDD, and either return it to
 the driver program or save it to an external storage system (e.g.,
 HDFS). This is the end of the lifecycle.</li>
 </ul>
-
 <p>
 Transformations and actions are different because of the way Spark
 computes RDDs. Although you can define new RDDs any time, Spark
@@ -707,9 +766,9 @@ distinctFruitsAndYellowThings.collect()
 <div class="highlight"><pre><span></span># groupByKey
 yellowThingsByFirstLetter = yellowThings.map(lambda thing: (thing[0], thing)).groupByKey()
 for letter, lst in yellowThingsByFirstLetter.collect():
-	print(&quot;For letter&quot;, letter)
+	print("For letter", letter)
 	for obj in lst:
-		print(&quot; &gt; &quot;, obj)
+		print(" &gt; ", obj)
 </pre></div>
 
 <div class="highlight"><pre><span></span># reduceByKey
@@ -724,3 +783,27 @@ numFruitsByLength.collect()
 <div class="outline-text-2" id="text-org98036ee">
 </div>
 </div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../paredit/" rel="prev" title="Paredit">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../Docker/" rel="next" title="Docker">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2020         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

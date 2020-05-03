@@ -1,0 +1,120 @@
+#+BEGIN_COMMENT
+.. title: RDDs Transformations and Actions
+.. slug: rdds-transformations-and-actions
+.. date: 2020-05-03 15:51:24 UTC+02:00
+.. tags: BigData
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+.. status: private
+#+END_COMMENT
+
+This post continues the discussion started a few times ago on RDD and Spark.
+
+** On RDDs
+
+RDDs are lazy. This, means that only if the data is needed for a
+certain computation the data is read from the underlying storage
+system.
+
+An RDD in Spark is simply an immutable distributed collection of
+objects. Each RDD can be split into multiple partitions, which may be
+computed on different nodes of the cluster.
+
+The typical RDD lifecycle is as follows:
+
+- An RDDs is first created from stable storage or by some Python objects.
+
+RDDs offer then two types of operations: *transformations* and *actions*.
+
+- *Transformations* create a new RDD from an existing one.
+  Transformations are lazy, meaning that no transformation is executed
+  until you execute an action.
+
+- *Actions* compute a result based on an RDD, and either return it to
+  the driver program or save it to an external storage system (e.g.,
+  HDFS). This is the end of the lifecycle.
+
+Transformations and actions are different because of the way Spark
+computes RDDs. Although you can define new RDDs any time, Spark
+computes them only in a *lazy* fashion, that is, the first time they
+are used in an *action*.
+
+** Transformations
+:properties:
+:header-args:ein-python: :session http://127.0.0.1:8888/Spark.ipynb :results output
+:end:
+
+Following are examples of some of the common transformations
+available.
+
+For a detailed list, see [[https://spark.apache.org/docs/2.0.0/programming-guide.html#transformations][RDD Transformations]]
+
+Run some transformations below to understand this better.
+
+*Note:* If some of the queries are taking too long to complete, try
+restarting the kernel, and rerunning the cell /above/.
+
+#+BEGIN_SRC ein-python 
+# map
+fruitsReversed = fruits.map(lambda fruit: fruit[::-1])
+
+# Note: the `collect` command is NOT a Transformation, it is an Action
+# used here for the purposes of showing the results! Just use it when
+# you know that the action will be small enough to be handled by the
+# memeory of the machine you are working on. Otherwise, no chance you
+# will be able to display your results and you will better have to
+# save the results on a HDFS cluster.
+fruitsReversed.collect()
+#+END_SRC
+
+#+BEGIN_SRC ein-python
+# filter
+shortFruits = fruits.filter(lambda fruit: len(fruit) <= 5)
+shortFruits.collect()
+#+END_SRC
+
+#+BEGIN_SRC ein-python
+# flatMap
+characters = fruits.flatMap(lambda fruit: list(fruit))
+characters.collect()
+#+END_SRC
+
+#+BEGIN_SRC ein-python
+# union
+fruitsAndYellowThings = fruits.union(yellowThings)
+fruitsAndYellowThings.collect()
+#+END_SRC
+
+#+BEGIN_SRC ein-python
+# intersection
+yellowFruits = fruits.intersection(yellowThings)
+yellowFruits.collect()
+#+END_SRC
+
+#+BEGIN_SRC ein-python
+# distinct
+distinctFruitsAndYellowThings = fruitsAndYellowThings.distinct()
+distinctFruitsAndYellowThings.collect()
+#+END_SRC
+
+#+BEGIN_SRC ein-python
+# groupByKey
+yellowThingsByFirstLetter = yellowThings.map(lambda thing: (thing[0], thing)).groupByKey()
+for letter, lst in yellowThingsByFirstLetter.collect():
+        print("For letter", letter)
+        for obj in lst:
+                print(" > ", obj)
+#+END_SRC
+
+#+BEGIN_SRC ein-python
+# reduceByKey
+numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 1)).reduceByKey(lambda x, y: x + y)
+numFruitsByLength.collect()
+#+END_SRC
+
+** Actions
+:properties:
+:header-args:ein-python: :session http://127.0.0.1:8888/Spark.ipynb 
+:end:
