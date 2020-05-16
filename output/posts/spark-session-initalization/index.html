@@ -17,17 +17,9 @@
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="Spark Session Initialization, RDD and DataFrames">
 <meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/spark-session-initalization/">
-<meta property="og:description" content="&lt;br&gt;
-&lt;br&gt;
-
-
-
-
-
-
-This second post present the basic set up of a Spark session and goes
+<meta property="og:description" content="This second post present the basic set up of a Spark session and goes
 over the basic of creating Spark RDDs, the first-class citizens of
-Spark. An RDD is a Resilient Distributed Datase">
+Spark. An RDD is a Resilient Distributed Dataset. It is Resilie">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2019-08-21T23:31:02+02:00">
 <meta property="article:tag" content="Big Data">
@@ -75,16 +67,7 @@ Spark. An RDD is a Resilient Distributed Datase">
 
         </div>
     </header><div class="e-content entry-content" itemprop="articleBody text">
-    <div class="HTML">
-<p>
-&lt;br&gt;
-&lt;br&gt;
-</p>
-
-</div>
-
-
-<p>
+    <br><br><p>
 This second post present the basic set up of a Spark session and goes
 over the basic of creating Spark RDDs, the first-class citizens of
 Spark. An RDD is a <code>Resilient Distributed Dataset</code>. It is Resilient as
@@ -106,9 +89,9 @@ DataFrames and tries to clarify that.
 
 <!-- TEASER_END -->
 
-<br><div id="outline-container-org18437d4" class="outline-2">
-<h2 id="org18437d4">Session Set Up</h2>
-<div class="outline-text-2" id="text-org18437d4">
+<br><div id="outline-container-org935a07b" class="outline-2">
+<h2 id="org935a07b">Session Set Up</h2>
+<div class="outline-text-2" id="text-org935a07b">
 <p>
 First of all it is necessary to create entry point to programming
 Spark with the Dataset and DataFrame API. This is done through the
@@ -183,18 +166,30 @@ Good you just created your first Spark Session. In the next section I
 will start to check at the different data import options and data tweaks.
 </p>
 
+<p>
+Notice that to set the correct amount of cores to use on your local
+machine you can use the following command
+</p>
+
+<div class="highlight"><pre><span></span>sysctl hw.physicalcpu hw.logicalcpu
+</pre></div>
+
+<p>
+You can go as high as the number of your logical cpus.
+</p>
+
 <br>
 </div>
 </div>
 
-<div id="outline-container-orgf836b2c" class="outline-2">
-<h2 id="orgf836b2c">Data Creation</h2>
-<div class="outline-text-2" id="text-orgf836b2c">
+<div id="outline-container-org43e29bf" class="outline-2">
+<h2 id="org43e29bf">Data Creation</h2>
+<div class="outline-text-2" id="text-org43e29bf">
 </div>
 
-<div id="outline-container-org3add0e1" class="outline-3">
-<h3 id="org3add0e1">From Python objects</h3>
-<div class="outline-text-3" id="text-org3add0e1">
+<div id="outline-container-orga2feb3a" class="outline-3">
+<h3 id="orga2feb3a">From Python objects</h3>
+<div class="outline-text-3" id="text-orga2feb3a">
 <p>
 Here you use the parallelize method to a local Python
 collection to form an RDD.
@@ -204,6 +199,11 @@ collection to form an RDD.
 				(4, 5, 6, 'd e f'),
 				(7, 8, 9, 'g h i')]).collect()
 </pre></div>
+
+<pre class="example">
+[(1, 2, 3, 'a b c'), (4, 5, 6, 'd e f'), (7, 8, 9, 'g h i')]
+</pre>
+
 
 <p>
 You might even create different partitions of the RDDs when creating
@@ -220,6 +220,12 @@ print(rdd.getNumPartitions())
 print (rdd.glom ().collect())
 </pre></div>
 
+<pre class="example">
+3
+[[(1, 2, 3, 'a b c')], [(4, 5, 6, 'd e f')], [(7, 8, 9, 'g h i')]]
+</pre>
+
+
 <p>
 The <code>glom()</code> method above returns an RDD created by coalescing all
 elements within each partition into a list.
@@ -227,9 +233,9 @@ elements within each partition into a list.
 </div>
 </div>
 
-<div id="outline-container-orga953b8b" class="outline-3">
-<h3 id="orga953b8b">From a stable Storage</h3>
-<div class="outline-text-3" id="text-orga953b8b">
+<div id="outline-container-org759689b" class="outline-3">
+<h3 id="org759689b">From a stable Storage</h3>
+<div class="outline-text-3" id="text-org759689b">
 <p>
 It is possible to create an RDD from multiple stable storage options.
 </p>
@@ -267,22 +273,19 @@ The blow illustrates such an example.
 </pre></div>
 
 
-
-
-
 <br>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org74ee3c9" class="outline-2">
-<h2 id="org74ee3c9">RDD vs DataFrame</h2>
-<div class="outline-text-2" id="text-org74ee3c9">
+<div id="outline-container-org196a510" class="outline-2">
+<h2 id="org196a510">RDD vs DataFrame</h2>
+<div class="outline-text-2" id="text-org196a510">
 </div>
 
-<div id="outline-container-org91312b6" class="outline-3">
-<h3 id="org91312b6">The idea of DataFrames</h3>
-<div class="outline-text-3" id="text-org91312b6">
+<div id="outline-container-org2571ba4" class="outline-3">
+<h3 id="org2571ba4">The idea of DataFrames</h3>
+<div class="outline-text-3" id="text-org2571ba4">
 <p>
 The conversion from Spark RDDs to Dataframe came essentially with
 Spark 2.0. The idea was to bring Spark RDDs under the hood of SQL
@@ -314,9 +317,9 @@ and reduce the computation time.
 </div>
 </div>
 
-<div id="outline-container-orgb282472" class="outline-3">
-<h3 id="orgb282472">Creation of DataFrames</h3>
-<div class="outline-text-3" id="text-orgb282472">
+<div id="outline-container-orgf103b20" class="outline-3">
+<h3 id="orgf103b20">Creation of DataFrames</h3>
+<div class="outline-text-3" id="text-orgf103b20">
 <p>
 A spark RDD can be created in multiple ways among the others by:
 </p>
@@ -334,6 +337,17 @@ Transforming an existing RDD into a dataframe
 
     df.show ()
 </pre></div>
+
+<pre class="example">
++----+----+----+-----+
+|col1|col2|col3| col4|
++----+----+----+-----+
+|   1|   2|   3|a b c|
+|   4|   5|   6|d e f|
+|   7|   8|   9|g h i|
++----+----+----+-----+
+
+</pre>
 </li>
 </ul>
 <ul class="org-ul">
@@ -352,6 +366,15 @@ to read data in as a DataFrame.
 
     df.show ()
 </pre></div>
+
+<pre class="example">
++-----+------+-------+-------+
+|  _c0|   _c1|    _c2|    _c3|
++-----+------+-------+-------+
+|hello| world| hello2| world2|
++-----+------+-------+-------+
+
+</pre>
 </li>
 </ul>
 <p>
@@ -382,9 +405,9 @@ data.
 </div>
 </div>
 
-<div id="outline-container-org0e2713b" class="outline-3">
-<h3 id="org0e2713b">Schema Inference</h3>
-<div class="outline-text-3" id="text-org0e2713b">
+<div id="outline-container-orgb77bcdc" class="outline-3">
+<h3 id="orgb77bcdc">Schema Inference</h3>
+<div class="outline-text-3" id="text-orgb77bcdc">
 <p>
 An important question that arises is how to specify the schema of
 the tabular representation of the data you are
@@ -403,9 +426,9 @@ so should you even need that you can go into it.
 </div>
 </div>
 
-<div id="outline-container-org462382b" class="outline-3">
-<h3 id="org462382b">About the break of first-normal form</h3>
-<div class="outline-text-3" id="text-org462382b">
+<div id="outline-container-org4a11e07" class="outline-3">
+<h3 id="org4a11e07">About the break of first-normal form</h3>
+<div class="outline-text-3" id="text-org4a11e07">
 <p>
 It is clear that when importing tree-shaped data, your data might
 easily break the first-normal form.
@@ -426,18 +449,18 @@ the previous section. You can think it as follows:
 </div>
 </div>
 
-<div id="outline-container-orgb7c78cd" class="outline-3">
-<h3 id="orgb7c78cd">SQL commands</h3>
-<div class="outline-text-3" id="text-orgb7c78cd">
+<div id="outline-container-org0cfa52b" class="outline-3">
+<h3 id="org0cfa52b">SQL commands</h3>
+<div class="outline-text-3" id="text-org0cfa52b">
 <p>
 As your data are in tabular form you may now leverage the SQL
 syntax for querying your data.
 </p>
 </div>
 
-<div id="outline-container-orgc29d04c" class="outline-4">
-<h4 id="orgc29d04c">Array Objects</h4>
-<div class="outline-text-4" id="text-orgc29d04c">
+<div id="outline-container-org6d30130" class="outline-4">
+<h4 id="org6d30130">Array Objects</h4>
+<div class="outline-text-4" id="text-org6d30130">
 <p>
 Notice that it is now clear though that we have to extend the
 functions of SQL for dealing with such a cases.
@@ -483,13 +506,27 @@ for the spark API to correctly work.
 
     df2.show ()
 </pre></div>
+
+<pre class="example">
++------+---+
+| First|col|
++------+---+
+|Albert|  D|
+|Albert|  I|
+|Albert| CH|
+|Albert|  A|
+|Albert| BE|
+|Albert| US|
++------+---+
+
+</pre>
 </div>
 </div>
 
 
-<div id="outline-container-orgf010bc5" class="outline-4">
-<h4 id="orgf010bc5">Nested Objects</h4>
-<div class="outline-text-4" id="text-orgf010bc5">
+<div id="outline-container-org6fcbca3" class="outline-4">
+<h4 id="org6fcbca3">Nested Objects</h4>
+<div class="outline-text-4" id="text-org6fcbca3">
 <p>
 The same holds for nested entries.
 </p>
@@ -532,14 +569,32 @@ The same holds for nested entries.
 
    df2.show ()
 </pre></div>
+
+<pre class="example">
++---------+--------------------+
+|Countries|                Name|
++---------+--------------------+
+|        6|  [Albert, Einstein]|
+|        2|[Srinivasa, Raman...|
+|        1|       [Kurt, Gödel]|
++---------+--------------------+
+
+None
++---------+
+|    First|
++---------+
+|   Albert|
+|Srinivasa|
+|     Kurt|
++---------+
+</pre>
 </div>
 </div>
 </div>
 
-
-<div id="outline-container-orge740856" class="outline-3">
-<h3 id="orge740856">The heterogeneity flaw.</h3>
-<div class="outline-text-3" id="text-orge740856">
+<div id="outline-container-org2994b40" class="outline-3">
+<h3 id="org2994b40">The heterogeneity flaw.</h3>
+<div class="outline-text-3" id="text-org2994b40">
 <p>
 Notice that there is one last fundamental flaw when working with
 DataFrames API of spark.
@@ -570,63 +625,20 @@ Consider the case when your data are heterogeneous as follows:
 
    df2.show ()
 </pre></div>
-<p>
-#+begin<sub>example</sub></p>
-<p>
-<del>-----</del>–—+
-</p>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup>
-<col class="org-left">
-<col class="org-left">
-</colgroup>
-<tbody><tr>
-<td class="org-left">bar</td>
-<td class="org-left">foo</td>
-</tr></tbody>
-</table>
-<p>
-<del>-----</del>–—+
-</p>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup>
-<col class="org-left">
-<col class="org-right">
-</colgroup>
-<tbody>
-<tr>
-<td class="org-left">true</td>
-<td class="org-right">1</td>
-</tr>
-<tr>
-<td class="org-left">true</td>
-<td class="org-right">2</td>
-</tr>
-<tr>
-<td class="org-left">false</td>
-<td class="org-right">[3,4]</td>
-</tr>
-<tr>
-<td class="org-left">true</td>
-<td class="org-right">4</td>
-</tr>
-<tr>
-<td class="org-left">true</td>
-<td class="org-right">5</td>
-</tr>
-<tr>
-<td class="org-left">false</td>
-<td class="org-right">6</td>
-</tr>
-<tr>
-<td class="org-left">true</td>
-<td class="org-right">7</td>
-</tr>
-</tbody>
-</table>
-<p>
-<del>-----</del>–—+
-</p>
+
+<pre class="example">
++-----+-----+
+|  bar|  foo|
++-----+-----+
+| true|    1|
+| true|    2|
+|false|[3,4]|
+| true|    4|
+| true|    5|
+|false|    6|
+| true|    7|
++-----+-----+
+</pre>
 
 <p>
 It follows now that the inferred Schema of foo will be a string as
@@ -637,9 +649,9 @@ not an integer.
 </div>
 </div>
 
-<div id="outline-container-org7a19cdc" class="outline-2">
-<h2 id="org7a19cdc">Literature</h2>
-<div class="outline-text-2" id="text-org7a19cdc">
+<div id="outline-container-org677d292" class="outline-2">
+<h2 id="org677d292">Literature</h2>
+<div class="outline-text-2" id="text-org677d292">
 <p>
 <a href="https://runawayhorse001.github.io/LearningApacheSpark/rdd.html">https://runawayhorse001.github.io/LearningApacheSpark/rdd.html</a>
 </p>
@@ -655,132 +667,6 @@ not an integer.
 <p>
 <a href="https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material">https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material</a>
 </p>
-</div>
-</div>
-
-
-<div id="outline-container-org7567a03" class="outline-2">
-<h2 id="org7567a03">On RDDs</h2>
-<div class="outline-text-2" id="text-org7567a03">
-<p>
-RDDs are lazy. This, means that only if the data is needed for a
-certain computation the data is read from the underlying storage
-system.
-</p>
-
-<p>
-An RDD in Spark is simply an immutable distributed collection of
-objects. Each RDD can be split into multiple partitions, which may be
-computed on different nodes of the cluster.
-</p>
-
-<p>
-The typical RDD lifecycle is as follows:
-</p>
-
-<ul class="org-ul">
-<li>An RDDs is first created from stable storage or by some Python objects.</li>
-</ul>
-<p>
-RDDs offer then two types of operations: <b>transformations</b> and <b>actions</b>.
-</p>
-
-<ul class="org-ul">
-<li>
-<b>Transformations</b> create a new RDD from an existing one.
-Transformations are lazy, meaning that no transformation is executed
-until you execute an action.</li>
-
-<li>
-<b>Actions</b> compute a result based on an RDD, and either return it to
-the driver program or save it to an external storage system (e.g.,
-HDFS). This is the end of the lifecycle.</li>
-</ul>
-<p>
-Transformations and actions are different because of the way Spark
-computes RDDs. Although you can define new RDDs any time, Spark
-computes them only in a <b>lazy</b> fashion, that is, the first time they
-are used in an <b>action</b>.
-</p>
-</div>
-</div>
-
-<div id="outline-container-orge8301e3" class="outline-2">
-<h2 id="orge8301e3">Transformations</h2>
-<div class="outline-text-2" id="text-orge8301e3">
-<p>
-Following are examples of some of the common transformations
-available.
-</p>
-
-<p>
-For a detailed list, see <a href="https://spark.apache.org/docs/2.0.0/programming-guide.html#transformations">RDD Transformations</a>
-</p>
-
-<p>
-Run some transformations below to understand this better.
-</p>
-
-<p>
-<b>Note:</b> If some of the queries are taking too long to complete, try
-restarting the kernel, and rerunning the cell <i>above</i>.
-</p>
-
-<div class="highlight"><pre><span></span># map
-fruitsReversed = fruits.map(lambda fruit: fruit[::-1])
-
-# Note: the `collect` command is NOT a Transformation, it is an Action
-# used here for the purposes of showing the results! Just use it when
-# you know that the action will be small enough to be handled by the
-# memeory of the machine you are working on. Otherwise, no chance you
-# will be able to display your results and you will better have to
-# save the results on a HDFS cluster.
-fruitsReversed.collect()
-</pre></div>
-
-<div class="highlight"><pre><span></span># filter
-shortFruits = fruits.filter(lambda fruit: len(fruit) &lt;= 5)
-shortFruits.collect()
-</pre></div>
-
-<div class="highlight"><pre><span></span># flatMap
-characters = fruits.flatMap(lambda fruit: list(fruit))
-characters.collect()
-</pre></div>
-
-<div class="highlight"><pre><span></span># union
-fruitsAndYellowThings = fruits.union(yellowThings)
-fruitsAndYellowThings.collect()
-</pre></div>
-
-<div class="highlight"><pre><span></span># intersection
-yellowFruits = fruits.intersection(yellowThings)
-yellowFruits.collect()
-</pre></div>
-
-<div class="highlight"><pre><span></span># distinct
-distinctFruitsAndYellowThings = fruitsAndYellowThings.distinct()
-distinctFruitsAndYellowThings.collect()
-</pre></div>
-
-<div class="highlight"><pre><span></span># groupByKey
-yellowThingsByFirstLetter = yellowThings.map(lambda thing: (thing[0], thing)).groupByKey()
-for letter, lst in yellowThingsByFirstLetter.collect():
-	print("For letter", letter)
-	for obj in lst:
-		print(" &gt; ", obj)
-</pre></div>
-
-<div class="highlight"><pre><span></span># reduceByKey
-numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 1)).reduceByKey(lambda x, y: x + y)
-numFruitsByLength.collect()
-</pre></div>
-</div>
-</div>
-
-<div id="outline-container-org98036ee" class="outline-2">
-<h2 id="org98036ee">Actions</h2>
-<div class="outline-text-2" id="text-org98036ee">
 </div>
 </div>
     </div>

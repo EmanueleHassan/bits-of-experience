@@ -1,0 +1,128 @@
+<p>
+This post continues the discussion started a few times ago on RDD and Spark.
+</p>
+
+<div id="outline-container-org10059b8" class="outline-2">
+<h2 id="org10059b8">On RDDs</h2>
+<div class="outline-text-2" id="text-org10059b8">
+<p>
+RDDs are lazy. This, means that only if the data is needed for a
+certain computation the data is read from the underlying storage
+system.
+</p>
+
+<p>
+An RDD in Spark is simply an immutable distributed collection of
+objects. Each RDD can be split into multiple partitions, which may be
+computed on different nodes of the cluster.
+</p>
+
+<p>
+The typical RDD lifecycle is as follows:
+</p>
+
+<ul class="org-ul">
+<li>An RDDs is first created from stable storage or by some Python objects.</li>
+</ul>
+
+<p>
+RDDs offer then two types of operations: <b>transformations</b> and <b>actions</b>.
+</p>
+
+<ul class="org-ul">
+<li><b>Transformations</b> create a new RDD from an existing one.
+Transformations are lazy, meaning that no transformation is executed
+until you execute an action.</li>
+
+<li><b>Actions</b> compute a result based on an RDD, and either return it to
+the driver program or save it to an external storage system (e.g.,
+HDFS). This is the end of the lifecycle.</li>
+</ul>
+
+<p>
+Transformations and actions are different because of the way Spark
+computes RDDs. Although you can define new RDDs any time, Spark
+computes them only in a <b>lazy</b> fashion, that is, the first time they
+are used in an <b>action</b>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3b57b5b" class="outline-2">
+<h2 id="org3b57b5b">Transformations</h2>
+<div class="outline-text-2" id="text-org3b57b5b">
+<p>
+Following are examples of some of the common transformations
+available.
+</p>
+
+<p>
+For a detailed list, see <a href="https://spark.apache.org/docs/2.0.0/programming-guide.html#transformations">RDD Transformations</a>
+</p>
+
+<p>
+Run some transformations below to understand this better.
+</p>
+
+<p>
+<b>Note:</b> If some of the queries are taking too long to complete, try
+restarting the kernel, and rerunning the cell <i>above</i>.
+</p>
+
+<div class="highlight"><pre><span></span># map
+fruitsReversed = fruits.map(lambda fruit: fruit[::-1])
+
+# Note: the `collect` command is NOT a Transformation, it is an Action
+# used here for the purposes of showing the results! Just use it when
+# you know that the action will be small enough to be handled by the
+# memeory of the machine you are working on. Otherwise, no chance you
+# will be able to display your results and you will better have to
+# save the results on a HDFS cluster.
+fruitsReversed.collect()
+</pre></div>
+
+<div class="highlight"><pre><span></span># filter
+shortFruits = fruits.filter(lambda fruit: len(fruit) &lt;= 5)
+shortFruits.collect()
+</pre></div>
+
+<div class="highlight"><pre><span></span># flatMap
+characters = fruits.flatMap(lambda fruit: list(fruit))
+characters.collect()
+</pre></div>
+
+<div class="highlight"><pre><span></span># union
+fruitsAndYellowThings = fruits.union(yellowThings)
+fruitsAndYellowThings.collect()
+</pre></div>
+
+<div class="highlight"><pre><span></span># intersection
+yellowFruits = fruits.intersection(yellowThings)
+yellowFruits.collect()
+</pre></div>
+
+<div class="highlight"><pre><span></span># distinct
+distinctFruitsAndYellowThings = fruitsAndYellowThings.distinct()
+distinctFruitsAndYellowThings.collect()
+</pre></div>
+
+<div class="highlight"><pre><span></span># groupByKey
+yellowThingsByFirstLetter = yellowThings.map(lambda thing: (thing[0], thing)).groupByKey()
+for letter, lst in yellowThingsByFirstLetter.collect():
+	print(&quot;For letter&quot;, letter)
+	for obj in lst:
+		print(&quot; &gt; &quot;, obj)
+</pre></div>
+
+<div class="highlight"><pre><span></span># reduceByKey
+numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 1)).reduceByKey(lambda x, y: x + y)
+numFruitsByLength.collect()
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgc90fcb3" class="outline-2">
+<h2 id="orgc90fcb3">Actions</h2>
+<div class="outline-text-2" id="text-orgc90fcb3">
+</div>
+</div>
