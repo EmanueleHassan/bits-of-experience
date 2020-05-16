@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bits of Experience (Posts about BigData)</title><link>https://marcohassan.github.io/bits-of-experience/</link><description></description><atom:link href="https://marcohassan.github.io/bits-of-experience/categories/bigdata.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2020 &lt;a href="mailto:marco.hassan30@gmail.com"&gt;Marco Hassan&lt;/a&gt; </copyright><lastBuildDate>Sat, 16 May 2020 07:50:17 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>RDDs Transformations and Actions</title><link>https://marcohassan.github.io/bits-of-experience/posts/rdds-transformations-and-actions/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;br&gt;
+&lt;br&gt;
+
+
+&lt;p&gt;
+This post continues the discussion started a few times ago on &lt;a href="https://marcohassan.github.io/bits-of-experience/posts/spark-session-initalization/"&gt;RDD and
+Spark&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+I will try to go here in the lifecycle of an RDD and will present the
+major Transformation and Actions functions. I will moreover touch on
+the physical implementation of Spark as this will give you the mental
+tools to properly understand how to properly structure your Spark
+workflow in order to optimize the performance.   
+&lt;/p&gt;
+
+&lt;br&gt;
+
+&lt;div id="outline-container-orga21e98b" class="outline-2"&gt;
+&lt;h2 id="orga21e98b"&gt;On RDDs&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orga21e98b"&gt;
+&lt;p&gt;
+A brief overview on RDDs was given in the previous post and you are
+referred to it for a brief introduction.
+&lt;/p&gt;
+
+&lt;p&gt;
+RDDs are lazy. This, means that only if the data is needed for a
+certain computation the data is read from the underlying storage
+system.
+&lt;/p&gt;
+
+&lt;p&gt;
+An RDD in Spark is simply an immutable distributed collection of
+objects. Each RDD can be split into multiple partitions, which may be
+computed on different nodes of the cluster.
+&lt;/p&gt;
+
+&lt;p&gt;
+The typical RDD lifecycle is as follows:
+&lt;/p&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;An RDDs is first created from stable storage or by some Python objects.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+RDDs offer then two types of operations: &lt;b&gt;transformations&lt;/b&gt; and &lt;b&gt;actions&lt;/b&gt;.
+&lt;/p&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;&lt;b&gt;Transformations&lt;/b&gt; create a new RDD from an existing one.
+Transformations are lazy, meaning that no transformation is executed
+until you execute an action.&lt;/li&gt;
+
+&lt;li&gt;&lt;b&gt;Actions&lt;/b&gt; compute a result based on an RDD, and either return it to
+the driver program or save it to an external storage system (e.g.,
+HDFS). This is the end of the lifecycle.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+Transformations and actions are different because of the way Spark
+computes RDDs. Although you can define new RDDs any time, Spark
+computes them only in a &lt;b&gt;lazy&lt;/b&gt; fashion, that is, the first time they
+are used in an &lt;b&gt;action&lt;/b&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+For the creation of RDDs and the partitions of them please refer to
+the previous post I will now briefly introduce the physical execution
+of spark before illustrating some of the most the key transformations
+and actions.
+&lt;/p&gt;
+
+&lt;br&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div id="outline-container-orgbf524cc" class="outline-2"&gt;
+&lt;h2 id="orgbf524cc"&gt;&lt;span class="todo TODO"&gt;TODO&lt;/span&gt; On the physical Execution&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orgbf524cc"&gt;
+&lt;br&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div id="outline-container-orgc640147" class="outline-2"&gt;
+&lt;h2 id="orgc640147"&gt;Transformations&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orgc640147"&gt;
+&lt;p&gt;
+Following are examples of some of the common transformations
+available.
+&lt;/p&gt;
+
+&lt;p&gt;
+For a detailed list, see &lt;a href="https://spark.apache.org/docs/2.0.0/programming-guide.html#transformations"&gt;RDD Transformations&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+Run some transformations below to understand this better.
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;b&gt;Note:&lt;/b&gt; If some of the queries are taking too long to complete, try
+restarting the kernel, and rerunning the cell &lt;i&gt;above&lt;/i&gt;.
+&lt;/p&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;from pyspark.sql import SparkSession
+
+spark = SparkSession \
+    .builder \
+    .master ("local[8]") \
+    .appName("My first Spark Session") \
+    .getOrCreate()
+
+sc = spark.sparkContext
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;fruits = sc.textFile('wasb:///example/data/fruits.txt')
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;fruits.collect()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# map
+fruitsReversed = fruits.map(lambda fruit: fruit[::-1]) ## the fruit[::-1] inverts the letters of the word
+
+# Note: the `collect` command is NOT a Transformation, it is an Action
+# used here for the purposes of showing the results! Just use it when
+# you know that the action will be small enough to be handled by the
+# memeory of the machine you are working on. Otherwise, no chance you
+# will be able to display your results and you will better have to
+# save the results on a HDFS cluster.
+fruitsReversed.collect()
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# filter
+shortFruits = fruits.filter(lambda fruit: len(fruit) &amp;lt;= 5)
+shortFruits.collect()
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# flatMap
+characters = fruits.flatMap(lambda fruit: list(fruit))
+characters.collect()
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# union
+fruitsAndYellowThings = fruits.union(yellowThings)
+fruitsAndYellowThings.collect()
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# intersection
+yellowFruits = fruits.intersection(yellowThings)
+yellowFruits.collect()
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# distinct
+distinctFruitsAndYellowThings = fruitsAndYellowThings.distinct()
+distinctFruitsAndYellowThings.collect()
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# groupByKey
+yellowThingsByFirstLetter = yellowThings.map(lambda thing: (thing[0], thing)).groupByKey()
+for letter, lst in yellowThingsByFirstLetter.collect():
+	print("For letter", letter)
+	for obj in lst:
+		print(" &amp;gt; ", obj)
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# reduceByKey
+numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 1)).reduceByKey(lambda x, y: x + y)
+numFruitsByLength.collect()
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-org06929f2" class="outline-4"&gt;
+&lt;h4 id="org06929f2"&gt;Some quick note on reduce and reduceByKey&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org06929f2"&gt;
+&lt;p&gt;
+The logic of the reduce function is as follows
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;img src="https://marcohassan.github.io/bits-of-experience/images/Bildschirmfoto_2020-05-04_um_17.54.18.png" alt="nil"&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;  input_list = sc.parallelize(range(5))
+  sum_of_squares = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x + y)
+
+  print(sum_of_squares)
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+It is now clear from the examples below that the lambda function of
+the reduce by key function below takes as x the value of the key and
+as y the second value of the key. This in analogy to the reduce key
+above. It performs hence essentially the same function as the reduce
+option for each individual key.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;  fruits = sc.parallelize(["apple", "orange", "java", "call++"])
+
+  ## Example 1 ##
+
+  numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 2))
+  print(numFruitsByLength.collect())
+
+  numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
+  print(numFruitsByLength.collect())
+
+  ## Example 2 ##
+
+  numFruitsByLength = sc.parallelize([(5, 2), (6, 3), (4, 2), (6, 2)])
+  print(numFruitsByLength.collect())
+
+  numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
+  print(numFruitsByLength.collect())
+&lt;/pre&gt;&lt;/div&gt;
+
+
+
+&lt;br&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div id="outline-container-orgb5f1c1c" class="outline-4"&gt;
+&lt;h4 id="orgb5f1c1c"&gt;mapValues&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-orgb5f1c1c"&gt;
+&lt;p&gt;
+How to interpret &lt;code&gt;mapValues&lt;/code&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;print(test_entries.map(lambda x: (len(x["choices"]), x["choices"])).groupByKey().map(lambda x : (x[0], len(list(x[1])))).collect())
+
+print(test_entries.map(lambda x: (len(x["choices"]), x["choices"])).groupByKey().mapValues(len).collect())
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div id="outline-container-org5c349f6" class="outline-2"&gt;
+&lt;h2 id="org5c349f6"&gt;Actions&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org5c349f6"&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-org8d01edd" class="outline-3"&gt;
+&lt;h3 id="org8d01edd"&gt;Aggregate&lt;/h3&gt;
+&lt;div class="outline-text-3" id="text-org8d01edd"&gt;
+&lt;p&gt;
+&lt;a href="https://stackoverflow.com/questions/28240706/explain-the-aggregate-functionality-in-spark/38949457"&gt;Explaination of Aggregate&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;    seqOp = (lambda local_result, list_element: (local_result[0] + list_element, local_result[1] + 1) )
+    combOp = (lambda some_local_result, another_local_result: (some_local_result[0] + another_local_result[0], some_local_result[1] + another_local_result[1]) )
+
+    sc.parallelize([1, 2, 1, 2]).aggregate((0, 0), seqOp, combOp)
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
+
+&lt;div id="outline-container-org8ee7a4e" class="outline-2"&gt;
+&lt;h2 id="org8ee7a4e"&gt;Literature&lt;/h2&gt;
+&lt;/div&gt;</description><category>BigData</category><category>Spark</category><guid>https://marcohassan.github.io/bits-of-experience/posts/rdds-transformations-and-actions/</guid><pubDate>Sun, 03 May 2020 13:51:24 GMT</pubDate></item></channel></rss>

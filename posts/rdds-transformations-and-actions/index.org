@@ -2,17 +2,36 @@
 .. title: RDDs Transformations and Actions
 .. slug: rdds-transformations-and-actions
 .. date: 2020-05-03 15:51:24 UTC+02:00
-.. tags: BigData
+.. tags: BigData, Spark
 .. category: 
 .. link: 
 .. description: 
 .. type: text
-.. status: private
 #+END_COMMENT
 
-This post continues the discussion started a few times ago on RDD and Spark.
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+
+This post continues the discussion started a few times ago on [[https://marcohassan.github.io/bits-of-experience/posts/spark-session-initalization/][RDD and
+Spark]].
+
+I will try to go here in the lifecycle of an RDD and will present the
+major Transformation and Actions functions. I will moreover touch on
+the physical implementation of Spark as this will give you the mental
+tools to properly understand how to properly structure your Spark
+workflow in order to optimize the performance.   
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
 
 ** On RDDs
+
+A brief overview on RDDs was given in the previous post and you are
+referred to it for a brief introduction.
 
 RDDs are lazy. This, means that only if the data is needed for a
 certain computation the data is read from the underlying storage
@@ -41,6 +60,23 @@ computes RDDs. Although you can define new RDDs any time, Spark
 computes them only in a *lazy* fashion, that is, the first time they
 are used in an *action*.
 
+For the creation of RDDs and the partitions of them please refer to
+the previous post I will now briefly introduce the physical execution
+of spark before illustrating some of the most the key transformations
+and actions.
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+
+** TODO On the physical Execution
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+
 ** Transformations
 :properties:
 :header-args:ein-python: :session http://127.0.0.1:8888/Spark.ipynb :results output
@@ -56,9 +92,41 @@ Run some transformations below to understand this better.
 *Note:* If some of the queries are taking too long to complete, try
 restarting the kernel, and rerunning the cell /above/.
 
+
+#+NAME: 04795EA5-7FB2-4F84-8A23-D25ADDF13D25
+#+begin_src ein-python :results output
+  from pyspark.sql import SparkSession
+
+  spark = SparkSession \
+      .builder \
+      .master ("local[8]") \
+      .appName("My first Spark Session") \
+      .getOrCreate()
+
+  sc = spark.sparkContext
+#+end_src
+
+#+RESULTS: 04795EA5-7FB2-4F84-8A23-D25ADDF13D25
+
+
+#+NAME: CEAE9B99-8441-44CB-99D8-409B6E788758
+#+begin_src ein-python :results output
+fruits = sc.textFile('wasb:///example/data/fruits.txt')
+#+end_src
+
+#+RESULTS: CEAE9B99-8441-44CB-99D8-409B6E788758
+
+
+#+NAME: 06D28E67-59DA-4A52-977B-775105FC9F67
+#+begin_src ein-python :results output
+fruits.collect()
+#+end_src
+
+
 #+BEGIN_SRC ein-python 
+
 # map
-fruitsReversed = fruits.map(lambda fruit: fruit[::-1])
+fruitsReversed = fruits.map(lambda fruit: fruit[::-1]) ## the fruit[::-1] inverts the letters of the word
 
 # Note: the `collect` command is NOT a Transformation, it is an Action
 # used here for the purposes of showing the results! Just use it when
@@ -114,7 +182,102 @@ numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 1)).reduceByKey(lambda
 numFruitsByLength.collect()
 #+END_SRC
 
+**** Some quick note on reduce and reduceByKey
+
+  The logic of the reduce function is as follows
+
+  [[img-url:/images/Bildschirmfoto_2020-05-04_um_17.54.18.png]]
+
+  #+NAME: A1B8DF15-A6A1-430E-9ED2-871FC9AB0F2B
+  #+begin_src ein-python :results output
+  input_list = sc.parallelize(range(5))
+  sum_of_squares = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x + y)
+ 
+  print(sum_of_squares)
+  #+end_src
+
+  #+RESULTS: A1B8DF15-A6A1-430E-9ED2-871FC9AB0F2B
+  : 100
+
+  It is now clear from the examples below that the lambda function of
+  the reduce by key function below takes as x the value of the key and
+  as y the second value of the key. This in analogy to the reduce key
+  above. It performs hence essentially the same function as the reduce
+  option for each individual key.
+
+  #+NAME: F440D9E1-0F30-48FA-9F91-DA788BEFCCF8
+  #+begin_src ein-python :results output
+  fruits = sc.parallelize(["apple", "orange", "java", "call++"])
+
+  ## Example 1 ##
+
+  numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 2))
+  print(numFruitsByLength.collect())
+
+  numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
+  print(numFruitsByLength.collect())
+
+  ## Example 2 ##
+
+  numFruitsByLength = sc.parallelize([(5, 2), (6, 3), (4, 2), (6, 2)])
+  print(numFruitsByLength.collect())
+
+  numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
+  print(numFruitsByLength.collect())
+  #+end_src
+
+  #+RESULTS: F440D9E1-0F30-48FA-9F91-DA788BEFCCF8
+  : [(5, 2), (6, 2), (4, 2), (6, 2)]
+  : [(5, 2), (6, 4), (4, 2)]
+  : [(5, 2), (6, 3), (4, 2), (6, 2)]
+  : [(5, 2), (6, 5), (4, 2)]
+
+
+
+  #+BEGIN_EXPORT html
+  <br>
+  #+END_EXPORT
+
+
+**** mapValues
+
+How to interpret =mapValues=
+
+#+NAME: 9AB0E13E-5525-431A-AD72-DA3D4A39EDCC
+#+begin_src ein-python :results output
+  print(test_entries.map(lambda x: (len(x["choices"]), x["choices"])).groupByKey().map(lambda x : (x[0], len(list(x[1])))).collect())
+
+  print(test_entries.map(lambda x: (len(x["choices"]), x["choices"])).groupByKey().mapValues(len).collect())
+#+end_src
+
+#+RESULTS: 9AB0E13E-5525-431A-AD72-DA3D4A39EDCC
+: [(4, 19690), (2, 36730), (3, 29057), (5, 8893), (6, 3579), (7, 1332), (8, 455), (9, 163), (10, 58), (11, 43)]
+: 
+: [(4, 19690), (2, 36730), (3, 29057), (5, 8893), (6, 3579), (7, 1332), (8, 455), (9, 163), (10, 58), (11, 43)]
+
+
 ** Actions
 :properties:
 :header-args:ein-python: :session http://127.0.0.1:8888/Spark.ipynb 
 :end:
+    
+*** Aggregate
+    [[https://stackoverflow.com/questions/28240706/explain-the-aggregate-functionality-in-spark/38949457][Explaination of Aggregate]]
+
+    #+NAME: 7DA476A4-FDA8-44A0-B1BF-2FEF00050509
+    #+begin_src ein-python :results output
+    seqOp = (lambda local_result, list_element: (local_result[0] + list_element, local_result[1] + 1) )
+    combOp = (lambda some_local_result, another_local_result: (some_local_result[0] + another_local_result[0], some_local_result[1] + another_local_result[1]) )
+
+    sc.parallelize([1, 2, 1, 2]).aggregate((0, 0), seqOp, combOp)
+    #+end_src
+
+    #+RESULTS: 7DA476A4-FDA8-44A0-B1BF-2FEF00050509
+    : (6, 4)
+
+
+
+
+
+** Literature
+
