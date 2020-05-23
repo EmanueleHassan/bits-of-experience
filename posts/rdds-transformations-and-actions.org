@@ -110,22 +110,66 @@ restarting the kernel, and rerunning the cell /above/.
 
 #+RESULTS: 04795EA5-7FB2-4F84-8A23-D25ADDF13D25
 
+ #+NAME: CEAE9B99-8441-44CB-99D8-409B6E788758
+ #+begin_src ein-python :results output
+fruits = sc.textFile('file:///Users/marcohassan/Desktop/spark_files_data/fruit.txt')
+ #+end_src
 
-#+NAME: CEAE9B99-8441-44CB-99D8-409B6E788758
-#+begin_src ein-python :results output
-fruits = sc.textFile('wasb:///example/data/fruits.txt')
-#+end_src
+ #+RESULTS: CEAE9B99-8441-44CB-99D8-409B6E788758
 
-#+RESULTS: CEAE9B99-8441-44CB-99D8-409B6E788758
-
-
-#+NAME: 06D28E67-59DA-4A52-977B-775105FC9F67
-#+begin_src ein-python :results output
+ #+NAME: 06D28E67-59DA-4A52-977B-775105FC9F67
+ #+begin_src ein-python :results output
 fruits.collect()
+ #+end_src
+
+ #+RESULTS: 06D28E67-59DA-4A52-977B-775105FC9F67
+ : ['Peaches',
+ :  'Apples',
+ :  'Strawberries',
+ :  'Grapes',
+ :  'Oranges',
+ :  'Apples',
+ :  'Peaches',
+ :  'Melon']
+
+
+*** On the filter transformation
+
+ A further important transformation is the one allowing the projection
+ in relational algebra terms. This is taken care by the =filter=
+ transformation.
+
+ It just projects the RDDs objects satisfying the given criteria of
+ the boolean function specified within the =filter=.  
+
+ #+NAME: 11495232-50F9-48FE-A07A-E88A6FF8E749
+ #+BEGIN_SRC ein-python
+# filter
+shortFruits = fruits.filter(lambda fruit: len(fruit) <= 5)
+shortFruits.collect()
+ #+END_SRC
+
+ #+RESULTS: 11495232-50F9-48FE-A07A-E88A6FF8E749
+ : ['Melon']
+
+
+#+NAME: A3D28EF4-E0F5-46E2-A571-41D9022FCD91
+#+begin_src ein-python :results output
+shortFruits = fruits.filter(lambda fruit: fruit.lower() == "oranges")
+shortFruits.collect()
 #+end_src
 
+#+RESULTS: A3D28EF4-E0F5-46E2-A571-41D9022FCD91
+: ['Oranges']
 
-#+BEGIN_SRC ein-python 
+*** On the Map Transformation
+
+ The map function takes each element for the RDD and applies a
+ function =mapping= the element input to a transformed new RDD. It is
+ therefore an action.
+
+ #+NAME: 829260BD-5A81-4833-BEE4-FE4FE8931852
+ #+BEGIN_SRC ein-python 
 
 # map
 fruitsReversed = fruits.map(lambda fruit: fruit[::-1]) ## the fruit[::-1] inverts the letters of the word
@@ -137,103 +181,400 @@ fruitsReversed = fruits.map(lambda fruit: fruit[::-1]) ## the fruit[::-1] invert
 # will be able to display your results and you will better have to
 # save the results on a HDFS cluster.
 fruitsReversed.collect()
-#+END_SRC
+ #+END_SRC
 
-#+BEGIN_SRC ein-python
-# filter
-shortFruits = fruits.filter(lambda fruit: len(fruit) <= 5)
-shortFruits.collect()
-#+END_SRC
+ #+RESULTS: 829260BD-5A81-4833-BEE4-FE4FE8931852
+ : ['sehcaeP',
+ :  'selppA',
+ :  'seirrebwartS',
+ :  'separG',
+ :  'segnarO',
+ :  'selppA',
+ :  'sehcaeP',
+ :  'noleM']
 
-#+BEGIN_SRC ein-python
+ #+NAME: B048BAC2-36B7-4DEE-B2E1-447F6096C971
+ #+begin_src ein-python :results output
+# map
+fruitsReversed = fruits.map(lambda fruit: fruit + "bau" * 3) 
+
+fruitsReversed.collect()
+ #+end_src
+
+ #+RESULTS: B048BAC2-36B7-4DEE-B2E1-447F6096C971
+ : ['Peachesbaubaubau',
+ :  'Applesbaubaubau',
+ :  'Strawberriesbaubaubau',
+ :  'Grapesbaubaubau',
+ :  'Orangesbaubaubau',
+ :  'Applesbaubaubau',
+ :  'Peachesbaubaubau',
+ :  'Melonbaubaubau']
+
+
+*** On the FlatMap Function
+
+The =flatmap= transformation extends the =map= function giving the
+possibility to the users to return an object of higher dimension than
+the map input and then flattening it in one go.
+
+Important is to understand that here the object is /flattened/ and
+saved into a new RDD. So that you won't notice the different map
+output when observing the transformed RDD. I.e. you won't have
+different subsets indicating the higher dimensional objects returned
+by your flatmap.
+
+ #+NAME: F4ED9289-0B24-414E-97D1-5C0DD2E10DE1
+ #+BEGIN_SRC ein-python
 # flatMap
 characters = fruits.flatMap(lambda fruit: list(fruit))
 characters.collect()
-#+END_SRC
+ #+END_SRC
 
-#+BEGIN_SRC ein-python
+ #+RESULTS: F4ED9289-0B24-414E-97D1-5C0DD2E10DE1
+ #+begin_example
+ ['P',
+  'e',
+  'a',
+  'c',
+  'h',
+  'e',
+  's',
+  'A',
+  'p',
+  'p',
+  'l',
+  'e',
+  's',
+  'S',
+  't',
+  'r',
+  'a',
+  'w',
+  'b',
+  'e',
+  'r',
+  'r',
+  'i',
+  'e',
+  's',
+  'G',
+  'r',
+  'a',
+  'p',
+  'e',
+  's',
+  'O',
+  'r',
+  'a',
+  'n',
+  'g',
+  'e',
+  's',
+  'A',
+  'p',
+  'p',
+  'l',
+  'e',
+  's',
+  'P',
+  'e',
+  'a',
+  'c',
+  'h',
+  'e',
+  's',
+  'M',
+  'e',
+  'l',
+  'o',
+  'n']
+ #+end_example
+
+Notice how this stays in contrast to a simple map performing the same
+operation.
+
+#+NAME: 5EDC11C4-DCA8-4081-AF4B-835D4E2219EF
+#+begin_src ein-python :results output
+characters = fruits.map(lambda fruit: list(fruit))
+characters.collect()
+#+end_src
+
+#+RESULTS: 5EDC11C4-DCA8-4081-AF4B-835D4E2219EF
+: [['P', 'e', 'a', 'c', 'h', 'e', 's'],
+:  ['A', 'p', 'p', 'l', 'e', 's'],
+:  ['S', 't', 'r', 'a', 'w', 'b', 'e', 'r', 'r', 'i', 'e', 's'],
+:  ['G', 'r', 'a', 'p', 'e', 's'],
+:  ['O', 'r', 'a', 'n', 'g', 'e', 's'],
+:  ['A', 'p', 'p', 'l', 'e', 's'],
+:  ['P', 'e', 'a', 'c', 'h', 'e', 's'],
+:  ['M', 'e', 'l', 'o', 'n']]
+
+
+*** On the Union Transformation
+
+This returns the classical relational algebra union of two different
+RDDs.
+
+#+NAME: A3C9A25A-1246-4660-993A-F565ABF971BF
+#+begin_src ein-python :results output
+yellowThings = sc.textFile('file:///Users/marcohassan/Desktop/spark_files_data/yellow.txt')
+#+end_src
+
+#+RESULTS: A3C9A25A-1246-4660-993A-F565ABF971BF
+
+ #+NAME: 5E5561C4-4D79-4F38-9066-5A7D58A523AE
+ #+BEGIN_SRC ein-python
 # union
 fruitsAndYellowThings = fruits.union(yellowThings)
 fruitsAndYellowThings.collect()
-#+END_SRC
+ #+END_SRC
 
-#+BEGIN_SRC ein-python
+ #+RESULTS: 5E5561C4-4D79-4F38-9066-5A7D58A523AE
+ #+begin_example
+ ['Peaches',
+  'Apples',
+  'Strawberries',
+  'Grapes',
+  'Oranges',
+  'Apples',
+  'Peaches',
+  'Melon',
+  'giallo',
+  'biondo',
+  'yellow',
+  'gelb',
+  'gold',
+  'blond',
+  'jeune']
+ #+end_example
+
+*** On the intersection Transformation
+
+This returns the intersection for two RDDs. It is then clear that it
+is possible to obtain the relational algebra set difference from it.
+
+ #+NAME: 5B123E0D-FE0C-47EF-BB3A-9AA4759448D5
+ #+BEGIN_SRC ein-python
 # intersection
 yellowFruits = fruits.intersection(yellowThings)
 yellowFruits.collect()
-#+END_SRC
+ #+END_SRC
 
-#+BEGIN_SRC ein-python
+ #+RESULTS: 5B123E0D-FE0C-47EF-BB3A-9AA4759448D5
+ : []
+
+#+begin_src sh
+echo "Oranges" >> /Users/marcohassan/Desktop/spark_files_data/yellow.txt
+#+end_src
+
+#+RESULTS:
+
+#+NAME: CA3245F4-21D1-4DCC-9C2A-00BC6859E489
+#+begin_src ein-python :results output
+yellowFruits = fruits.intersection(yellowThings)
+yellowFruits.collect()
+#+end_src
+
+#+RESULTS: CA3245F4-21D1-4DCC-9C2A-00BC6859E489
+: ['Oranges']
+
+Get the set difference, i.e. the objects present in a RDD but not in
+the other
+
+#+NAME: 727750DB-7C61-4F12-90B8-4258EBAF8615
+#+begin_src ein-python :results output
+a = yellowFruits.collect()
+
+fruit = fruits.filter(lambda x: x not in a)
+fruit.collect()
+#+end_src
+
+#+RESULTS: 727750DB-7C61-4F12-90B8-4258EBAF8615
+: ['Peaches', 'Apples', 'Strawberries', 'Grapes', 'Apples', 'Peaches', 'Melon']
+
+
+*** On the distinct transformation
+
+This allows to take the distinct objects in an RDD
+
+ #+NAME: 09105F33-FC4E-4213-8A1E-1B07867409F2
+ #+BEGIN_SRC ein-python
 # distinct
 distinctFruitsAndYellowThings = fruitsAndYellowThings.distinct()
 distinctFruitsAndYellowThings.collect()
-#+END_SRC
+ #+END_SRC
 
-#+BEGIN_SRC ein-python
+ #+RESULTS: 09105F33-FC4E-4213-8A1E-1B07867409F2
+ #+begin_example
+ ['Peaches',
+  'Apples',
+  'Oranges',
+  'giallo',
+  'gelb',
+  'blond',
+  'Strawberries',
+  'jeune',
+  'Melon',
+  'biondo',
+  'yellow',
+  'gold',
+  'Grapes']
+ #+end_example
+
+*** Group by Key
+
+Notice that in spark, in contrast to MapReduce, the input must not be
+of key-value store type. But if you are dealing with key-value pairs
+objects such as hash-tables then there are plenty of functions that
+will help you to deal with and operate at the key level.
+
+One prominent example for the above is the =groupByKey= that allows
+you to perform a given function for each key.
+
+To understand that look at the following transformation
+
+
+#+NAME: 02514DDD-311A-41AB-9A1E-EF966158AFF6
+#+begin_src ein-python :results output
+yellowThingsByFirstLetter = yellowThings.map(lambda thing: (thing[0], thing)).groupByKey()
+
+print(yellowThingsByFirstLetter.collect())
+#+end_src
+
+#+RESULTS: 02514DDD-311A-41AB-9A1E-EF966158AFF6
+: [('g', <pyspark.resultiterable.ResultIterable object at 0x119ff27d0>), ('b', <pyspark.resultiterable.ResultIterable object at 0x119ff2490>), ('y', <pyspark.resultiterable.ResultIterable object at 0x119ff2550>), ('j', <pyspark.resultiterable.ResultIterable object at 0x119ff25d0>), ('O', <pyspark.resultiterable.ResultIterable object at 0x119ff2290>)]
+
+The above returned a set of tuples involving a key being the first
+letter and a value being an =iterable= spark object on which it is
+possible to perform the desired function.
+
+Notice that above we first applied a function generating our key-value tuple
+
+#+begin_src ein-python :results output
+print(yellowThings.map(lambda thing: (thing[0], thing)).collect())
+#+end_src
+
+
+#+RESULTS: D7D426C0-7FA0-4501-9380-9434C8A3DDF5
+: [('g', 'giallo'),
+:  ('b', 'biondo'),
+:  ('y', 'yellow'),
+:  ('g', 'gelb'),
+:  ('g', 'gold'),
+:  ('b', 'blond'),
+:  ('j', 'jeune'),
+:  ('O', 'Oranges')]
+
+and then grouping based on the keys of such newly transformed RDD.
+
+For the function you can apply, you can be as imaginative as you want
+
+ #+NAME: 3FC1EC30-1F62-4942-BFD5-9F707F444245
+ #+BEGIN_SRC ein-python
 # groupByKey
 yellowThingsByFirstLetter = yellowThings.map(lambda thing: (thing[0], thing)).groupByKey()
 for letter, lst in yellowThingsByFirstLetter.collect():
         print("For letter", letter)
         for obj in lst:
                 print(" > ", obj)
-#+END_SRC
+ #+END_SRC
 
-#+BEGIN_SRC ein-python
-# reduceByKey
-numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 1)).reduceByKey(lambda x, y: x + y)
-numFruitsByLength.collect()
-#+END_SRC
+ #+RESULTS: 3FC1EC30-1F62-4942-BFD5-9F707F444245
+ #+begin_example
+ For letter g
+  >  giallo
+  >  gelb
+  >  gold
+ For letter b
+  >  biondo
+  >  blond
+ For letter y
+  >  yellow
+ For letter j
+  >  jeune
+ For letter O
+  >  Oranges
+ #+end_example
 
-**** Some quick note on reduce and reduceByKey
+#+NAME: 93FC8C92-DA84-4BD0-827E-FFE49F603929
+#+begin_src ein-python :results output
+a = [1,2,3,4]
 
-  The logic of the reduce function is as follows
+list(map(lambda x: x+1, a))
+#+end_src
+
+#+RESULTS: 93FC8C92-DA84-4BD0-827E-FFE49F603929
+: [2, 3, 4, 5]
+
+
+#+NAME: 38AF2E3E-2F29-454A-9155-E7D7ED1D3D33
+#+begin_src ein-python :results output
+print(yellowThingsByFirstLetter.map(lambda x : (x[0], list(x[1]))).collect())
+
+print(yellowThingsByFirstLetter.map(lambda x : (x[0], [i + " " + i for i in list(x[1])] )).collect())
+
+## notice finally that maps exists in python also outside of spark
+## with the following syntax map(function, iterable object)
+## it is clear therefore that you can do games such as
+print(yellowThingsByFirstLetter.map(lambda x : (x[0], list(map(lambda y: y*2, list(x[1]))))).collect())
+#+end_src
+
+#+RESULTS: 38AF2E3E-2F29-454A-9155-E7D7ED1D3D33
+: [('g', ['giallo', 'gelb', 'gold']), ('b', ['biondo', 'blond']), ('y', ['yellow']), ('j', ['jeune']), ('O', ['Oranges'])]
+: [('g', ['giallo giallo', 'gelb gelb', 'gold gold']), ('b', ['biondo biondo', 'blond blond']), ('y', ['yellow yellow']), ('j', ['jeune jeune']), ('O', ['Oranges Oranges'])]
+: [('g', ['giallogiallo', 'gelbgelb', 'goldgold']), ('b', ['biondobiondo', 'blondblond']), ('y', ['yellowyellow']), ('j', ['jeunejeune']), ('O', ['OrangesOranges'])]
+
+
+*** On the Reduce Transformation
+
+  The reduce function is powerful albeit its logic is not
+  straight. You will have to exercise it at first. Its logic is as
+  follows
 
   [[img-url:/images/Bildschirmfoto_2020-05-04_um_17.54.18.png]]
 
   #+NAME: A1B8DF15-A6A1-430E-9ED2-871FC9AB0F2B
   #+begin_src ein-python :results output
   input_list = sc.parallelize(range(5))
-  sum_of_squares = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x + y)
+  print(input_list.collect())
+
+  print(input_list.map(lambda x: x ** 3).collect())
+
+  sum_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x + y)
+  product_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x * y)
  
-  print(sum_of_squares)
+  print("\nsum of cubes %s:" % sum_of_cubes)
+  print("product of cubes %s:" % product_of_cubes)
   #+end_src
 
   #+RESULTS: A1B8DF15-A6A1-430E-9ED2-871FC9AB0F2B
-  : 100
+  : [0, 1, 2, 3, 4]
+  : [0, 1, 8, 27, 64]
+  : 
+  : sum of cubes 100:
+  : product of cubes 0:
 
-  It is now clear from the examples below that the lambda function of
-  the reduce by key function below takes as x the value of the key and
-  as y the second value of the key. This in analogy to the reduce key
-  above. It performs hence essentially the same function as the reduce
-  option for each individual key.
+*** On the Reduce by Key Transformation
+
+  Given the above understanding of the Reduce transformation it is
+  clear that the reduce by key is essentially a reduce function on
+  each of the key iterable values.
 
   #+NAME: F440D9E1-0F30-48FA-9F91-DA788BEFCCF8
   #+begin_src ein-python :results output
   fruits = sc.parallelize(["apple", "orange", "java", "call++"])
 
-  ## Example 1 ##
-
   numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 2))
-  print(numFruitsByLength.collect())
+  print("Data : %s" % numFruitsByLength.collect())
 
   numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
-  print(numFruitsByLength.collect())
-
-  ## Example 2 ##
-
-  numFruitsByLength = sc.parallelize([(5, 2), (6, 3), (4, 2), (6, 2)])
-  print(numFruitsByLength.collect())
-
-  numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
-  print(numFruitsByLength.collect())
+  print("Sum value by keys: %s" % numFruitsByLength.collect())
   #+end_src
 
   #+RESULTS: F440D9E1-0F30-48FA-9F91-DA788BEFCCF8
-  : [(5, 2), (6, 2), (4, 2), (6, 2)]
-  : [(5, 2), (6, 4), (4, 2)]
-  : [(5, 2), (6, 3), (4, 2), (6, 2)]
-  : [(5, 2), (6, 5), (4, 2)]
-
+  : Data : [(5, 2), (6, 2), (4, 2), (6, 2)]
+  : Sum value by keys: [(4, 2), (5, 2), (6, 4)]
 
 
   #+BEGIN_EXPORT html
@@ -241,30 +582,102 @@ numFruitsByLength.collect()
   #+END_EXPORT
 
 
-**** mapValues
+*** On the Mapvalues Transformation
 
-How to interpret =mapValues=
+Mapvalues operates on PairRDDs, i.e. data of the key-value form,
+meaning RDDs of the form =RDD[(A, B)]=. In that case, mapValues
+operates on the value only (the second part of the tuple), while map
+operates on the entire record (tuple of key and value).
 
-#+NAME: 9AB0E13E-5525-431A-AD72-DA3D4A39EDCC
+#+NAME: 3E121661-7557-47F1-87C0-9CE0205FF556
 #+begin_src ein-python :results output
-  print(test_entries.map(lambda x: (len(x["choices"]), x["choices"])).groupByKey().map(lambda x : (x[0], len(list(x[1])))).collect())
+print("Original data: %s" % numFruitsByLength.collect())
 
-  print(test_entries.map(lambda x: (len(x["choices"]), x["choices"])).groupByKey().mapValues(len).collect())
+print("Mapvalued data: %s" % numFruitsByLength.mapValues(lambda x: x*3).collect())
 #+end_src
 
-#+RESULTS: 9AB0E13E-5525-431A-AD72-DA3D4A39EDCC
-: [(4, 19690), (2, 36730), (3, 29057), (5, 8893), (6, 3579), (7, 1332), (8, 455), (9, 163), (10, 58), (11, 43)]
-: 
-: [(4, 19690), (2, 36730), (3, 29057), (5, 8893), (6, 3579), (7, 1332), (8, 455), (9, 163), (10, 58), (11, 43)]
+#+RESULTS: 3E121661-7557-47F1-87C0-9CE0205FF556
+: Original data: [(4, 2), (5, 2), (6, 4)]
+: Mapvalued data: [(4, 6), (5, 6), (6, 12)]
 
+Notice that this might reduce by a product the complexity of your
+code. Think for instance at:
 
+#+NAME: F9CAE4A6-8710-4BBB-A439-12E695BD9C4B
+#+begin_src ein-python :results output
+aba = sc.parallelize([("hel", 7), ("hel", 9), ("bye", 5), ("bye", 1),  ("bye", 1)])
+
+print("Number per key: %s" % aba.groupByKey().map(lambda x : (x[0], len(list(x[1])))).collect())
+
+# vs.
+
+print("Number per key: %s" % abba.groupByKey().mapValues(len).collect())
+
+#+end_src
+
+#+RESULTS: F9CAE4A6-8710-4BBB-A439-12E695BD9C4B
+: Number per key: [('hel', 2), ('bye', 3)]
+: Number per key: [('hel', 2), ('bye', 2)]
+
+  
 ** Actions
 :properties:
 :header-args:ein-python: :session http://127.0.0.1:8888/Spark.ipynb 
 :end:
-    
+
+ As mentioned above Actions compute a result based on an RDD, and
+ either return it to the driver program or save it to an external
+ storage system (e.g., HDFS). This is the end of the lifecycle.
+
+ The most prominent example of an action is =collect()=. Important is
+ however to keep in mind that this should be used only when you are
+ sure that your local hardware might be able to deal with the
+ collected RDD. We are dealing with =Big Data= and therefore your
+ operations should have compressed enough your problem so that you
+ might able to collect something in a meaningful way. The alternative,
+ to save to HDFS might be otherwise necessary. 
+
+ Following are examples of some of the common actions available. For a
+ detailed list, see [[https://spark.apache.org/docs/2.3.0/programming-guide.html#actions][RDD Actions]].
+
+*** Count
+
+   #+NAME: 1ED8868E-A298-4589-9C79-CA60F326DEE7
+   #+begin_src ein-python :results output
+     # count
+     print("Data: %s" % fruits.collect())
+     numFruits = fruits.count()
+     numFruits
+   #+end_src
+
+   #+RESULTS: 1ED8868E-A298-4589-9C79-CA60F326DEE7
+   : Data: ['apple', 'orange', 'java', 'call++']
+   : 
+   : 4
+
+
+*** Take
+
+    This might be especially useful also given the issues when dealing
+    with =collect()= mentioned above.
+
+    It is essentially the =LIMIT= function of SQL
+
+    #+NAME: 121FB669-B86A-491E-9EBC-714CB3AECB98
+    #+begin_src ein-python :results output
+      # take
+      first3Fruits = fruits.take(3)
+      first3Fruits
+    #+end_src
+
+    #+RESULTS: 121FB669-B86A-491E-9EBC-714CB3AECB98
+    : ['apple', 'orange', 'java']
+
+
 *** Aggregate
-    [[https://stackoverflow.com/questions/28240706/explain-the-aggregate-functionality-in-spark/38949457][Explaination of Aggregate]]
+
+    This is again a tricky one. Please
+    refer to the link: [[https://stackoverflow.com/questions/28240706/explain-the-aggregate-functionality-in-spark/38949457][Explaination of Aggregate]]. 
 
     #+NAME: 7DA476A4-FDA8-44A0-B1BF-2FEF00050509
     #+begin_src ein-python :results output
@@ -278,8 +691,8 @@ How to interpret =mapValues=
     : (6, 4)
 
 
-
-
-
 ** Literature
 
+[[https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material][Big Data for Engineers - ETH course]]
+
+[[https://stackoverflow.com/questions/36696326/map-vs-mapvalues-in-spark][MapValues Stackoverflow]]
