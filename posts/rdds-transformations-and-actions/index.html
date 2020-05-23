@@ -86,9 +86,9 @@ workflow in order to optimize the performance.
 
 <!-- TEASER_END -->
 
-<br><div id="outline-container-org0fc5299" class="outline-2">
-<h2 id="org0fc5299">On RDDs</h2>
-<div class="outline-text-2" id="text-org0fc5299">
+<br><div id="outline-container-org206d25c" class="outline-2">
+<h2 id="org206d25c">On RDDs</h2>
+<div class="outline-text-2" id="text-org206d25c">
 <p>
 A brief overview on RDDs was given in the previous post and you are
 referred to it for a brief introduction.
@@ -147,18 +147,18 @@ and actions.
 </div>
 
 
-<div id="outline-container-org6451e01" class="outline-2">
-<h2 id="org6451e01">
+<div id="outline-container-orge0b9dbd" class="outline-2">
+<h2 id="orge0b9dbd">
 <span class="todo TODO">TODO</span> On the physical Execution</h2>
-<div class="outline-text-2" id="text-org6451e01">
+<div class="outline-text-2" id="text-orge0b9dbd">
 <br>
 </div>
 </div>
 
 
-<div id="outline-container-org335b177" class="outline-2">
-<h2 id="org335b177">Transformations</h2>
-<div class="outline-text-2" id="text-org335b177">
+<div id="outline-container-orgd641aed" class="outline-2">
+<h2 id="orgd641aed">Transformations</h2>
+<div class="outline-text-2" id="text-orgd641aed">
 <p>
 Following are examples of some of the common transformations
 available.
@@ -189,109 +189,299 @@ spark = SparkSession \
 sc = spark.sparkContext
 </pre></div>
 
-
-<div class="highlight"><pre><span></span>fruits = sc.textFile('wasb:///example/data/fruits.txt')
+<div class="highlight"><pre><span></span> fruits = sc.textFile('file:///Users/marcohassan/Desktop/spark_files_data/fruit.txt')
 </pre></div>
 
-
-<div class="highlight"><pre><span></span>fruits.collect()
-</pre></div>
-
-
-<div class="highlight"><pre><span></span># map
-fruitsReversed = fruits.map(lambda fruit: fruit[::-1]) ## the fruit[::-1] inverts the letters of the word
-
-# Note: the `collect` command is NOT a Transformation, it is an Action
-# used here for the purposes of showing the results! Just use it when
-# you know that the action will be small enough to be handled by the
-# memeory of the machine you are working on. Otherwise, no chance you
-# will be able to display your results and you will better have to
-# save the results on a HDFS cluster.
-fruitsReversed.collect()
-</pre></div>
-
-<div class="highlight"><pre><span></span># filter
-shortFruits = fruits.filter(lambda fruit: len(fruit) &lt;= 5)
-shortFruits.collect()
-</pre></div>
-
-<div class="highlight"><pre><span></span># flatMap
-characters = fruits.flatMap(lambda fruit: list(fruit))
-characters.collect()
-</pre></div>
-
-<div class="highlight"><pre><span></span># union
-fruitsAndYellowThings = fruits.union(yellowThings)
-fruitsAndYellowThings.collect()
-</pre></div>
-
-<div class="highlight"><pre><span></span># intersection
-yellowFruits = fruits.intersection(yellowThings)
-yellowFruits.collect()
-</pre></div>
-
-<div class="highlight"><pre><span></span># distinct
-distinctFruitsAndYellowThings = fruitsAndYellowThings.distinct()
-distinctFruitsAndYellowThings.collect()
-</pre></div>
-
-<div class="highlight"><pre><span></span># groupByKey
-yellowThingsByFirstLetter = yellowThings.map(lambda thing: (thing[0], thing)).groupByKey()
-for letter, lst in yellowThingsByFirstLetter.collect():
-	print("For letter", letter)
-	for obj in lst:
-		print(" &gt; ", obj)
-</pre></div>
-
-<div class="highlight"><pre><span></span># reduceByKey
-numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 1)).reduceByKey(lambda x, y: x + y)
-numFruitsByLength.collect()
+<div class="highlight"><pre><span></span> fruits.collect()
 </pre></div>
 </div>
 
-<div id="outline-container-orgcb6757e" class="outline-4">
-<h4 id="orgcb6757e">Some quick note on reduce and reduceByKey</h4>
-<div class="outline-text-4" id="text-orgcb6757e">
+
+<div id="outline-container-org618d7e3" class="outline-3">
+<h3 id="org618d7e3">On the filter transformation</h3>
+<div class="outline-text-3" id="text-org618d7e3">
 <p>
-The logic of the reduce function is as follows
+A further important transformation is the one allowing the projection
+in relational algebra terms. This is taken care by the <code>filter</code>
+transformation.
+</p>
+
+<p>
+It just projects the RDDs objects satisfying the given criteria of
+the boolean function specified within the <code>filter</code>.  
+</p>
+
+<div class="highlight"><pre><span></span> # filter
+ shortFruits = fruits.filter(lambda fruit: len(fruit) &lt;= 5)
+ shortFruits.collect()
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>shortFruits = fruits.filter(lambda fruit: fruit.lower() == "oranges")
+shortFruits.collect()
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org85ff520" class="outline-3">
+<h3 id="org85ff520">On the Map Transformation</h3>
+<div class="outline-text-3" id="text-org85ff520">
+<p>
+The map function takes each element for the RDD and applies a
+function <code>mapping</code> the element input to a transformed new RDD. It is
+therefore an action.
+</p>
+
+<div class="highlight"><pre><span></span> # map
+ fruitsReversed = fruits.map(lambda fruit: fruit[::-1]) ## the fruit[::-1] inverts the letters of the word
+
+ # Note: the `collect` command is NOT a Transformation, it is an Action
+ # used here for the purposes of showing the results! Just use it when
+ # you know that the action will be small enough to be handled by the
+ # memeory of the machine you are working on. Otherwise, no chance you
+ # will be able to display your results and you will better have to
+ # save the results on a HDFS cluster.
+ fruitsReversed.collect()
+</pre></div>
+
+<div class="highlight"><pre><span></span> # map
+ fruitsReversed = fruits.map(lambda fruit: fruit + "bau" * 3) 
+
+ fruitsReversed.collect()
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org81cbbe2" class="outline-3">
+<h3 id="org81cbbe2">On the FlatMap Function</h3>
+<div class="outline-text-3" id="text-org81cbbe2">
+<p>
+The <code>flatmap</code> transformation extends the <code>map</code> function giving the
+possibility to the users to return an object of higher dimension than
+the map input and then flattening it in one go.
+</p>
+
+<p>
+Important is to understand that here the object is <i>flattened</i> and
+saved into a new RDD. So that you won't notice the different map
+output when observing the transformed RDD. I.e. you won't have
+different subsets indicating the higher dimensional objects returned
+by your flatmap.
+</p>
+
+<div class="highlight"><pre><span></span> # flatMap
+ characters = fruits.flatMap(lambda fruit: list(fruit))
+ characters.collect()
+</pre></div>
+
+<p>
+Notice how this stays in contrast to a simple map performing the same
+operation.
+</p>
+
+<div class="highlight"><pre><span></span>characters = fruits.map(lambda fruit: list(fruit))
+characters.collect()
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org52465ee" class="outline-3">
+<h3 id="org52465ee">On the Union Transformation</h3>
+<div class="outline-text-3" id="text-org52465ee">
+<p>
+This returns the classical relational algebra union of two different
+RDDs.
+</p>
+
+<div class="highlight"><pre><span></span>yellowThings = sc.textFile('file:///Users/marcohassan/Desktop/spark_files_data/yellow.txt')
+</pre></div>
+
+<div class="highlight"><pre><span></span> # union
+ fruitsAndYellowThings = fruits.union(yellowThings)
+ fruitsAndYellowThings.collect()
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org78c813e" class="outline-3">
+<h3 id="org78c813e">On the intersection Transformation</h3>
+<div class="outline-text-3" id="text-org78c813e">
+<p>
+This returns the intersection for two RDDs. It is then clear that it
+is possible to obtain the relational algebra set difference from it.
+</p>
+
+<div class="highlight"><pre><span></span> # intersection
+ yellowFruits = fruits.intersection(yellowThings)
+ yellowFruits.collect()
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s2">"Oranges"</span> &gt;&gt; /Users/marcohassan/Desktop/spark_files_data/yellow.txt
+</pre></div>
+
+<div class="highlight"><pre><span></span>yellowFruits = fruits.intersection(yellowThings)
+yellowFruits.collect()
+</pre></div>
+
+<p>
+Get the set difference, i.e. the objects present in a RDD but not in
+the other
+</p>
+
+<div class="highlight"><pre><span></span>a = yellowFruits.collect()
+
+fruit = fruits.filter(lambda x: x not in a)
+fruit.collect()
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org2c682aa" class="outline-3">
+<h3 id="org2c682aa">On the distinct transformation</h3>
+<div class="outline-text-3" id="text-org2c682aa">
+<p>
+This allows to take the distinct objects in an RDD
+</p>
+
+<div class="highlight"><pre><span></span> # distinct
+ distinctFruitsAndYellowThings = fruitsAndYellowThings.distinct()
+ distinctFruitsAndYellowThings.collect()
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgf06372f" class="outline-3">
+<h3 id="orgf06372f">Group by Key</h3>
+<div class="outline-text-3" id="text-orgf06372f">
+<p>
+Notice that in spark, in contrast to MapReduce, the input must not be
+of key-value store type. But if you are dealing with key-value pairs
+objects such as hash-tables then there are plenty of functions that
+will help you to deal with and operate at the key level.
+</p>
+
+<p>
+One prominent example for the above is the <code>groupByKey</code> that allows
+you to perform a given function for each key.
+</p>
+
+<p>
+To understand that look at the following transformation
+</p>
+
+
+<div class="highlight"><pre><span></span>yellowThingsByFirstLetter = yellowThings.map(lambda thing: (thing[0], thing)).groupByKey()
+
+print(yellowThingsByFirstLetter.collect())
+</pre></div>
+
+<p>
+The above returned a set of tuples involving a key being the first
+letter and a value being an <code>iterable</code> spark object on which it is
+possible to perform the desired function.
+</p>
+
+<p>
+Notice that above we first applied a function generating our key-value tuple
+</p>
+
+<div class="highlight"><pre><span></span>print(yellowThings.map(lambda thing: (thing[0], thing)).collect())
+</pre></div>
+
+
+<pre class="example">
+[('g', 'giallo'),
+ ('b', 'biondo'),
+ ('y', 'yellow'),
+ ('g', 'gelb'),
+ ('g', 'gold'),
+ ('b', 'blond'),
+ ('j', 'jeune'),
+ ('O', 'Oranges')]
+</pre>
+
+
+<p>
+and then grouping based on the keys of such newly transformed RDD.
+</p>
+
+<p>
+For the function you can apply, you can be as imaginative as you want
+</p>
+
+<div class="highlight"><pre><span></span> # groupByKey
+ yellowThingsByFirstLetter = yellowThings.map(lambda thing: (thing[0], thing)).groupByKey()
+ for letter, lst in yellowThingsByFirstLetter.collect():
+	 print("For letter", letter)
+	 for obj in lst:
+		 print(" &gt; ", obj)
+</pre></div>
+
+<div class="highlight"><pre><span></span>a = [1,2,3,4]
+
+list(map(lambda x: x+1, a))
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>print(yellowThingsByFirstLetter.map(lambda x : (x[0], list(x[1]))).collect())
+
+print(yellowThingsByFirstLetter.map(lambda x : (x[0], [i + " " + i for i in list(x[1])] )).collect())
+
+## notice finally that maps exists in python also outside of spark
+## with the following syntax map(function, iterable object)
+## it is clear therefore that you can do games such as
+print(yellowThingsByFirstLetter.map(lambda x : (x[0], list(map(lambda y: y*2, list(x[1]))))).collect())
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org7716d61" class="outline-3">
+<h3 id="org7716d61">On the Reduce Transformation</h3>
+<div class="outline-text-3" id="text-org7716d61">
+<p>
+The reduce function is powerful albeit its logic is not
+straight. You will have to exercise it at first. Its logic is as
+follows
 </p>
 
 <p>
 <img src="../../images/Bildschirmfoto_2020-05-04_um_17.54.18.png" alt="nil"></p>
 
 <div class="highlight"><pre><span></span>  input_list = sc.parallelize(range(5))
-  sum_of_squares = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x + y)
+  print(input_list.collect())
 
-  print(sum_of_squares)
+  print(input_list.map(lambda x: x ** 3).collect())
+
+  sum_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x + y)
+  product_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x * y)
+
+  print("\nsum of cubes %s:" % sum_of_cubes)
+  print("product of cubes %s:" % product_of_cubes)
 </pre></div>
+</div>
+</div>
 
+<div id="outline-container-orgf86351b" class="outline-3">
+<h3 id="orgf86351b">On the Reduce by Key Transformation</h3>
+<div class="outline-text-3" id="text-orgf86351b">
 <p>
-It is now clear from the examples below that the lambda function of
-the reduce by key function below takes as x the value of the key and
-as y the second value of the key. This in analogy to the reduce key
-above. It performs hence essentially the same function as the reduce
-option for each individual key.
+Given the above understanding of the Reduce transformation it is
+clear that the reduce by key is essentially a reduce function on
+each of the key iterable values.
 </p>
 
 <div class="highlight"><pre><span></span>  fruits = sc.parallelize(["apple", "orange", "java", "call++"])
 
-  ## Example 1 ##
-
   numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 2))
-  print(numFruitsByLength.collect())
+  print("Data : %s" % numFruitsByLength.collect())
 
   numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
-  print(numFruitsByLength.collect())
-
-  ## Example 2 ##
-
-  numFruitsByLength = sc.parallelize([(5, 2), (6, 3), (4, 2), (6, 2)])
-  print(numFruitsByLength.collect())
-
-  numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
-  print(numFruitsByLength.collect())
+  print("Sum value by keys: %s" % numFruitsByLength.collect())
 </pre></div>
-
 
 
 <br>
@@ -299,32 +489,102 @@ option for each individual key.
 </div>
 
 
-<div id="outline-container-org2ae6db7" class="outline-4">
-<h4 id="org2ae6db7">mapValues</h4>
-<div class="outline-text-4" id="text-org2ae6db7">
+<div id="outline-container-org6f99903" class="outline-3">
+<h3 id="org6f99903">On the Mapvalues Transformation</h3>
+<div class="outline-text-3" id="text-org6f99903">
 <p>
-How to interpret <code>mapValues</code>
+Mapvalues operates on PairRDDs, i.e. data of the key-value form,
+meaning RDDs of the form <code>RDD[(A, B)]</code>. In that case, mapValues
+operates on the value only (the second part of the tuple), while map
+operates on the entire record (tuple of key and value).
 </p>
 
-<div class="highlight"><pre><span></span>print(test_entries.map(lambda x: (len(x["choices"]), x["choices"])).groupByKey().map(lambda x : (x[0], len(list(x[1])))).collect())
+<div class="highlight"><pre><span></span>print("Original data: %s" % numFruitsByLength.collect())
 
-print(test_entries.map(lambda x: (len(x["choices"]), x["choices"])).groupByKey().mapValues(len).collect())
+print("Mapvalued data: %s" % numFruitsByLength.mapValues(lambda x: x*3).collect())
+</pre></div>
+
+<p>
+Notice that this might reduce by a product the complexity of your
+code. Think for instance at:
+</p>
+
+<div class="highlight"><pre><span></span>aba = sc.parallelize([("hel", 7), ("hel", 9), ("bye", 5), ("bye", 1),  ("bye", 1)])
+
+print("Number per key: %s" % aba.groupByKey().map(lambda x : (x[0], len(list(x[1])))).collect())
+
+# vs.
+
+print("Number per key: %s" % abba.groupByKey().mapValues(len).collect())
 </pre></div>
 </div>
 </div>
 </div>
 
 
-<div id="outline-container-orgef7b5f5" class="outline-2">
-<h2 id="orgef7b5f5">Actions</h2>
-<div class="outline-text-2" id="text-orgef7b5f5">
+<div id="outline-container-orgf31d2df" class="outline-2">
+<h2 id="orgf31d2df">Actions</h2>
+<div class="outline-text-2" id="text-orgf31d2df">
+<p>
+As mentioned above Actions compute a result based on an RDD, and
+either return it to the driver program or save it to an external
+storage system (e.g., HDFS). This is the end of the lifecycle.
+</p>
+
+<p>
+The most prominent example of an action is <code>collect()</code>. Important is
+however to keep in mind that this should be used only when you are
+sure that your local hardware might be able to deal with the
+collected RDD. We are dealing with <code>Big Data</code> and therefore your
+operations should have compressed enough your problem so that you
+might able to collect something in a meaningful way. The alternative,
+to save to HDFS might be otherwise necessary. 
+</p>
+
+<p>
+Following are examples of some of the common actions available. For a
+detailed list, see <a href="https://spark.apache.org/docs/2.3.0/programming-guide.html#actions">RDD Actions</a>.
+</p>
 </div>
 
-<div id="outline-container-org4106627" class="outline-3">
-<h3 id="org4106627">Aggregate</h3>
-<div class="outline-text-3" id="text-org4106627">
+<div id="outline-container-orgeeb5012" class="outline-3">
+<h3 id="orgeeb5012">Count</h3>
+<div class="outline-text-3" id="text-orgeeb5012">
+<div class="highlight"><pre><span></span>   # count
+   print("Data: %s" % fruits.collect())
+   numFruits = fruits.count()
+   numFruits
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org1e72638" class="outline-3">
+<h3 id="org1e72638">Take</h3>
+<div class="outline-text-3" id="text-org1e72638">
 <p>
-<a href="https://stackoverflow.com/questions/28240706/explain-the-aggregate-functionality-in-spark/38949457">Explaination of Aggregate</a>
+This might be especially useful also given the issues when dealing
+with <code>collect()</code> mentioned above.
+</p>
+
+<p>
+It is essentially the <code>LIMIT</code> function of SQL
+</p>
+
+<div class="highlight"><pre><span></span>    # take
+    first3Fruits = fruits.take(3)
+    first3Fruits
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org7402000" class="outline-3">
+<h3 id="org7402000">Aggregate</h3>
+<div class="outline-text-3" id="text-org7402000">
+<p>
+This is again a tricky one. Please
+refer to the link: <a href="https://stackoverflow.com/questions/28240706/explain-the-aggregate-functionality-in-spark/38949457">Explaination of Aggregate</a>. 
 </p>
 
 <div class="highlight"><pre><span></span>    seqOp = (lambda local_result, list_element: (local_result[0] + list_element, local_result[1] + 1) )
@@ -337,11 +597,17 @@ print(test_entries.map(lambda x: (len(x["choices"]), x["choices"])).groupByKey()
 </div>
 
 
+<div id="outline-container-orgf9e2ad3" class="outline-2">
+<h2 id="orgf9e2ad3">Literature</h2>
+<div class="outline-text-2" id="text-orgf9e2ad3">
+<p>
+<a href="https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material">Big Data for Engineers - ETH course</a>
+</p>
 
-
-
-<div id="outline-container-org6b19358" class="outline-2">
-<h2 id="org6b19358">Literature</h2>
+<p>
+<a href="https://stackoverflow.com/questions/36696326/map-vs-mapvalues-in-spark">MapValues Stackoverflow</a>
+</p>
+</div>
 </div>
     </div>
     <aside class="postpromonav"><nav><ul class="pager hidden-print">
