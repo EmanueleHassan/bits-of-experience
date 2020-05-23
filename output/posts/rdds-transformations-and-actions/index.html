@@ -86,9 +86,9 @@ workflow in order to optimize the performance.
 
 <!-- TEASER_END -->
 
-<br><div id="outline-container-org0824d02" class="outline-2">
-<h2 id="org0824d02">On RDDs</h2>
-<div class="outline-text-2" id="text-org0824d02">
+<br><div id="outline-container-org33ddcbc" class="outline-2">
+<h2 id="org33ddcbc">On RDDs</h2>
+<div class="outline-text-2" id="text-org33ddcbc">
 <p>
 A brief overview on RDDs was given in the previous post and you are
 referred to it for a brief introduction.
@@ -147,9 +147,9 @@ and actions.
 </div>
 
 
-<div id="outline-container-orgdbec995" class="outline-2">
-<h2 id="orgdbec995">Transformations</h2>
-<div class="outline-text-2" id="text-orgdbec995">
+<div id="outline-container-org049bbdd" class="outline-2">
+<h2 id="org049bbdd">Transformations</h2>
+<div class="outline-text-2" id="text-org049bbdd">
 <p>
 Following are examples of some of the common transformations
 available.
@@ -169,21 +169,21 @@ restarting the kernel, and rerunning the cell <i>above</i>.
 </p>
 
 
-<div class="highlight"><pre><span></span>from pyspark.sql import SparkSession
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
 
-spark = SparkSession \
-    .builder \
-    .master ("local[8]") \
-    .appName("My first Spark Session") \
-    .getOrCreate()
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span> \
+    <span class="o">.</span><span class="n">builder</span> \
+    <span class="o">.</span><span class="n">master</span> <span class="p">(</span><span class="s2">"local[8]"</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">"My first Spark Session"</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
 
-sc = spark.sparkContext
+<span class="n">sc</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sparkContext</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span> fruits = sc.textFile('file:///Users/marcohassan/Desktop/spark_files_data/fruit.txt')
+<div class="highlight"><pre><span></span> <span class="n">fruits</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">'file:///Users/marcohassan/Desktop/spark_files_data/fruit.txt'</span><span class="p">)</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span> fruits.collect()
+<div class="highlight"><pre><span></span> <span class="n">fruits</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </pre></div>
 
 <pre class="example">
@@ -199,9 +199,9 @@ sc = spark.sparkContext
 </div>
 
 
-<div id="outline-container-orgcfc606c" class="outline-3">
-<h3 id="orgcfc606c">On the filter transformation</h3>
-<div class="outline-text-3" id="text-orgcfc606c">
+<div id="outline-container-org64dd5aa" class="outline-3">
+<h3 id="org64dd5aa">On the filter transformation</h3>
+<div class="outline-text-3" id="text-org64dd5aa">
 <p>
 A further important transformation is the one allowing the projection
 in relational algebra terms. This is taken care by the <code>filter</code>
@@ -213,9 +213,9 @@ It just projects the RDDs objects satisfying the given criteria of
 the boolean function specified within the <code>filter</code>.  
 </p>
 
-<div class="highlight"><pre><span></span> # filter
- shortFruits = fruits.filter(lambda fruit: len(fruit) &lt;= 5)
- shortFruits.collect()
+<div class="highlight"><pre><span></span> <span class="c1"># filter</span>
+ <span class="n">shortFruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">fruit</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">)</span>
+ <span class="n">shortFruits</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </pre></div>
 
 <pre class="example">
@@ -224,8 +224,8 @@ the boolean function specified within the <code>filter</code>.
 
 
 
-<div class="highlight"><pre><span></span>shortFruits = fruits.filter(lambda fruit: fruit.lower() == "oranges")
-shortFruits.collect()
+<div class="highlight"><pre><span></span><span class="n">shortFruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="n">fruit</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"oranges"</span><span class="p">)</span>
+<span class="n">shortFruits</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </pre></div>
 
 <pre class="example">
@@ -234,25 +234,25 @@ shortFruits.collect()
 </div>
 </div>
 
-<div id="outline-container-org5842da7" class="outline-3">
-<h3 id="org5842da7">On the Map Transformation</h3>
-<div class="outline-text-3" id="text-org5842da7">
+<div id="outline-container-org29c0ba2" class="outline-3">
+<h3 id="org29c0ba2">On the Map Transformation</h3>
+<div class="outline-text-3" id="text-org29c0ba2">
 <p>
 The map function takes each element for the RDD and applies a
 function <code>mapping</code> the element input to a transformed new RDD. It is
 therefore an action.
 </p>
 
-<div class="highlight"><pre><span></span> # map
- fruitsReversed = fruits.map(lambda fruit: fruit[::-1]) ## the fruit[::-1] inverts the letters of the word
+<div class="highlight"><pre><span></span> <span class="c1"># map</span>
+ <span class="n">fruitsReversed</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="n">fruit</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="c1">## the fruit[::-1] inverts the letters of the word</span>
 
- # Note: the `collect` command is NOT a Transformation, it is an Action
- # used here for the purposes of showing the results! Just use it when
- # you know that the action will be small enough to be handled by the
- # memeory of the machine you are working on. Otherwise, no chance you
- # will be able to display your results and you will better have to
- # save the results on a HDFS cluster.
- fruitsReversed.collect()
+ <span class="c1"># Note: the `collect` command is NOT a Transformation, it is an Action</span>
+ <span class="c1"># used here for the purposes of showing the results! Just use it when</span>
+ <span class="c1"># you know that the action will be small enough to be handled by the</span>
+ <span class="c1"># memeory of the machine you are working on. Otherwise, no chance you</span>
+ <span class="c1"># will be able to display your results and you will better have to</span>
+ <span class="c1"># save the results on a HDFS cluster.</span>
+ <span class="n">fruitsReversed</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </pre></div>
 
 <pre class="example">
@@ -267,10 +267,10 @@ therefore an action.
 </pre>
 
 
-<div class="highlight"><pre><span></span> # map
- fruitsReversed = fruits.map(lambda fruit: fruit + "bau" * 3) 
+<div class="highlight"><pre><span></span> <span class="c1"># map</span>
+ <span class="n">fruitsReversed</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="n">fruit</span> <span class="o">+</span> <span class="s2">"bau"</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> 
 
- fruitsReversed.collect()
+ <span class="n">fruitsReversed</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </pre></div>
 
 <pre class="example">
@@ -287,9 +287,9 @@ therefore an action.
 </div>
 
 
-<div id="outline-container-org83361cc" class="outline-3">
-<h3 id="org83361cc">On the FlatMap Function</h3>
-<div class="outline-text-3" id="text-org83361cc">
+<div id="outline-container-org6aee774" class="outline-3">
+<h3 id="org6aee774">On the FlatMap Function</h3>
+<div class="outline-text-3" id="text-org6aee774">
 <p>
 The <code>flatmap</code> transformation extends the <code>map</code> function giving the
 possibility to the users to return an object of higher dimension than
@@ -304,9 +304,9 @@ different subsets indicating the higher dimensional objects returned
 by your flatmap.
 </p>
 
-<div class="highlight"><pre><span></span> # flatMap
- characters = fruits.flatMap(lambda fruit: list(fruit))
- characters.collect()
+<div class="highlight"><pre><span></span> <span class="c1"># flatMap</span>
+ <span class="n">characters</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">flatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">fruit</span><span class="p">))</span>
+ <span class="n">characters</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </pre></div>
 
 <pre class="example">
@@ -373,8 +373,8 @@ Notice how this stays in contrast to a simple map performing the same
 operation.
 </p>
 
-<div class="highlight"><pre><span></span>characters = fruits.map(lambda fruit: list(fruit))
-characters.collect()
+<div class="highlight"><pre><span></span><span class="n">characters</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">fruit</span><span class="p">))</span>
+<span class="n">characters</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </pre></div>
 
 <pre class="example">
@@ -391,20 +391,20 @@ characters.collect()
 </div>
 
 
-<div id="outline-container-org7f361ab" class="outline-3">
-<h3 id="org7f361ab">On the Union Transformation</h3>
-<div class="outline-text-3" id="text-org7f361ab">
+<div id="outline-container-org5828c56" class="outline-3">
+<h3 id="org5828c56">On the Union Transformation</h3>
+<div class="outline-text-3" id="text-org5828c56">
 <p>
 This returns the classical relational algebra union of two different
 RDDs.
 </p>
 
-<div class="highlight"><pre><span></span>yellowThings = sc.textFile('file:///Users/marcohassan/Desktop/spark_files_data/yellow.txt')
+<div class="highlight"><pre><span></span><span class="n">yellowThings</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">'file:///Users/marcohassan/Desktop/spark_files_data/yellow.txt'</span><span class="p">)</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span> # union
- fruitsAndYellowThings = fruits.union(yellowThings)
- fruitsAndYellowThings.collect()
+<div class="highlight"><pre><span></span> <span class="c1"># union</span>
+ <span class="n">fruitsAndYellowThings</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">yellowThings</span><span class="p">)</span>
+ <span class="n">fruitsAndYellowThings</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </pre></div>
 
 <pre class="example">
@@ -427,17 +427,17 @@ RDDs.
 </div>
 </div>
 
-<div id="outline-container-org573bcc9" class="outline-3">
-<h3 id="org573bcc9">On the intersection Transformation</h3>
-<div class="outline-text-3" id="text-org573bcc9">
+<div id="outline-container-org8970f7d" class="outline-3">
+<h3 id="org8970f7d">On the intersection Transformation</h3>
+<div class="outline-text-3" id="text-org8970f7d">
 <p>
 This returns the intersection for two RDDs. It is then clear that it
 is possible to obtain the relational algebra set difference from it.
 </p>
 
-<div class="highlight"><pre><span></span> # intersection
- yellowFruits = fruits.intersection(yellowThings)
- yellowFruits.collect()
+<div class="highlight"><pre><span></span> <span class="c1"># intersection</span>
+ <span class="n">yellowFruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">yellowThings</span><span class="p">)</span>
+ <span class="n">yellowFruits</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </pre></div>
 
 <pre class="example">
@@ -448,8 +448,8 @@ is possible to obtain the relational algebra set difference from it.
 <div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s2">"Oranges"</span> &gt;&gt; /Users/marcohassan/Desktop/spark_files_data/yellow.txt
 </pre></div>
 
-<div class="highlight"><pre><span></span>yellowFruits = fruits.intersection(yellowThings)
-yellowFruits.collect()
+<div class="highlight"><pre><span></span><span class="n">yellowFruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">yellowThings</span><span class="p">)</span>
+<span class="n">yellowFruits</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </pre></div>
 
 <pre class="example">
@@ -462,10 +462,10 @@ Get the set difference, i.e. the objects present in a RDD but not in
 the other
 </p>
 
-<div class="highlight"><pre><span></span>a = yellowFruits.collect()
+<div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">yellowFruits</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 
-fruit = fruits.filter(lambda x: x not in a)
-fruit.collect()
+<span class="n">fruit</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">a</span><span class="p">)</span>
+<span class="n">fruit</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </pre></div>
 
 <pre class="example">
@@ -475,16 +475,16 @@ fruit.collect()
 </div>
 
 
-<div id="outline-container-orgb99f95a" class="outline-3">
-<h3 id="orgb99f95a">On the distinct transformation</h3>
-<div class="outline-text-3" id="text-orgb99f95a">
+<div id="outline-container-orge90916d" class="outline-3">
+<h3 id="orge90916d">On the distinct transformation</h3>
+<div class="outline-text-3" id="text-orge90916d">
 <p>
 This allows to take the distinct objects in an RDD
 </p>
 
-<div class="highlight"><pre><span></span> # distinct
- distinctFruitsAndYellowThings = fruitsAndYellowThings.distinct()
- distinctFruitsAndYellowThings.collect()
+<div class="highlight"><pre><span></span> <span class="c1"># distinct</span>
+ <span class="n">distinctFruitsAndYellowThings</span> <span class="o">=</span> <span class="n">fruitsAndYellowThings</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span>
+ <span class="n">distinctFruitsAndYellowThings</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </pre></div>
 
 <pre class="example">
@@ -505,9 +505,9 @@ This allows to take the distinct objects in an RDD
 </div>
 </div>
 
-<div id="outline-container-org750bc1a" class="outline-3">
-<h3 id="org750bc1a">On the Reduce Transformation</h3>
-<div class="outline-text-3" id="text-org750bc1a">
+<div id="outline-container-org28ea440" class="outline-3">
+<h3 id="org28ea440">On the Reduce Transformation</h3>
+<div class="outline-text-3" id="text-org28ea440">
 <p>
 The reduce function is powerful albeit its logic is not
 straight. You will have to exercise it at first. Its logic is as
@@ -517,16 +517,16 @@ follows
 <p>
 <img src="../../images/Bildschirmfoto_2020-05-04_um_17.54.18.png" alt="nil"></p>
 
-<div class="highlight"><pre><span></span>  input_list = sc.parallelize(range(5))
-  print(input_list.collect())
+<div class="highlight"><pre><span></span>  <span class="n">input_list</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+  <span class="k">print</span><span class="p">(</span><span class="n">input_list</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 
-  print(input_list.map(lambda x: x ** 3).collect())
+  <span class="k">print</span><span class="p">(</span><span class="n">input_list</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 
-  sum_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x + y)
-  product_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x * y)
+  <span class="n">sum_of_cubes</span> <span class="o">=</span> <span class="n">input_list</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+  <span class="n">product_of_cubes</span> <span class="o">=</span> <span class="n">input_list</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
 
-  print("\nsum of cubes %s:" % sum_of_cubes)
-  print("product of cubes %s:" % product_of_cubes)
+  <span class="k">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">sum of cubes </span><span class="si">%s</span><span class="s2">:"</span> <span class="o">%</span> <span class="n">sum_of_cubes</span><span class="p">)</span>
+  <span class="k">print</span><span class="p">(</span><span class="s2">"product of cubes </span><span class="si">%s</span><span class="s2">:"</span> <span class="o">%</span> <span class="n">product_of_cubes</span><span class="p">)</span>
 </pre></div>
 
 <pre class="example">
@@ -545,9 +545,9 @@ product of cubes 0:
 </div>
 
 
-<div id="outline-container-org827223f" class="outline-2">
-<h2 id="org827223f">Working with <i>key-value</i> pairs</h2>
-<div class="outline-text-2" id="text-org827223f">
+<div id="outline-container-orgac96fc6" class="outline-2">
+<h2 id="orgac96fc6">Working with <i>key-value</i> pairs</h2>
+<div class="outline-text-2" id="text-orgac96fc6">
 <p>
 Spark provides special operations on RDDs containing key/value pairs.
 These RDDs are called <i>pair RDDs</i>. Pair RDDs are a useful building
@@ -557,9 +557,9 @@ block in many programs, as they expose operations that allow you to
 </div>
 
 
-<div id="outline-container-org043005b" class="outline-3">
-<h3 id="org043005b">Group by Key</h3>
-<div class="outline-text-3" id="text-org043005b">
+<div id="outline-container-org46652b3" class="outline-3">
+<h3 id="org46652b3">Group by Key</h3>
+<div class="outline-text-3" id="text-org46652b3">
 <p>
 Notice that in spark, in contrast to MapReduce, the input must not be
 of key-value store type. But if you are dealing with key-value pairs
@@ -577,9 +577,9 @@ To understand that look at the following transformation
 </p>
 
 
-<div class="highlight"><pre><span></span>yellowThingsByFirstLetter = yellowThings.map(lambda thing: (thing[0], thing)).groupByKey()
+<div class="highlight"><pre><span></span><span class="n">yellowThingsByFirstLetter</span> <span class="o">=</span> <span class="n">yellowThings</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">thing</span><span class="p">:</span> <span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">thing</span><span class="p">))</span><span class="o">.</span><span class="n">groupByKey</span><span class="p">()</span>
 
-print(yellowThingsByFirstLetter.collect())
+<span class="k">print</span><span class="p">(</span><span class="n">yellowThingsByFirstLetter</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 </pre></div>
 
 <pre class="example">
@@ -597,7 +597,7 @@ possible to perform the desired function.
 Notice that above we first applied a function generating our key-value tuple
 </p>
 
-<div class="highlight"><pre><span></span>print(yellowThings.map(lambda thing: (thing[0], thing)).collect())
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">yellowThings</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">thing</span><span class="p">:</span> <span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">thing</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 </pre></div>
 
 
@@ -621,12 +621,12 @@ and then grouping based on the keys of such newly transformed RDD.
 For the function you can apply, you can be as imaginative as you want
 </p>
 
-<div class="highlight"><pre><span></span> # groupByKey
- yellowThingsByFirstLetter = yellowThings.map(lambda thing: (thing[0], thing)).groupByKey()
- for letter, lst in yellowThingsByFirstLetter.collect():
-	 print("For letter", letter)
-	 for obj in lst:
-		 print(" &gt; ", obj)
+<div class="highlight"><pre><span></span> <span class="c1"># groupByKey</span>
+ <span class="n">yellowThingsByFirstLetter</span> <span class="o">=</span> <span class="n">yellowThings</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">thing</span><span class="p">:</span> <span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">thing</span><span class="p">))</span><span class="o">.</span><span class="n">groupByKey</span><span class="p">()</span>
+ <span class="k">for</span> <span class="n">letter</span><span class="p">,</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">yellowThingsByFirstLetter</span><span class="o">.</span><span class="n">collect</span><span class="p">():</span>
+	 <span class="k">print</span><span class="p">(</span><span class="s2">"For letter"</span><span class="p">,</span> <span class="n">letter</span><span class="p">)</span>
+	 <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+		 <span class="k">print</span><span class="p">(</span><span class="s2">" &gt; "</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
 </pre></div>
 
 <pre class="example">
@@ -645,9 +645,9 @@ For letter O
  &gt;  Oranges
 </pre>
 
-<div class="highlight"><pre><span></span>a = [1,2,3,4]
+<div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
 
-list(map(lambda x: x+1, a))
+<span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="p">))</span>
 </pre></div>
 
 <pre class="example">
@@ -656,14 +656,14 @@ list(map(lambda x: x+1, a))
 
 
 
-<div class="highlight"><pre><span></span>print(yellowThingsByFirstLetter.map(lambda x : (x[0], list(x[1]))).collect())
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">yellowThingsByFirstLetter</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 
-print(yellowThingsByFirstLetter.map(lambda x : (x[0], [i + " " + i for i in list(x[1])] )).collect())
+<span class="k">print</span><span class="p">(</span><span class="n">yellowThingsByFirstLetter</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span> <span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 
-## notice finally that maps exists in python also outside of spark
-## with the following syntax map(function, iterable object)
-## it is clear therefore that you can do games such as
-print(yellowThingsByFirstLetter.map(lambda x : (x[0], list(map(lambda y: y*2, list(x[1]))))).collect())
+<span class="c1">## notice finally that maps exists in python also outside of spark</span>
+<span class="c1">## with the following syntax map(function, iterable object)</span>
+<span class="c1">## it is clear therefore that you can do games such as</span>
+<span class="k">print</span><span class="p">(</span><span class="n">yellowThingsByFirstLetter</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])))))</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 </pre></div>
 
 <pre class="example">
@@ -675,9 +675,9 @@ print(yellowThingsByFirstLetter.map(lambda x : (x[0], list(map(lambda y: y*2, li
 </div>
 
 
-<div id="outline-container-orge17a695" class="outline-3">
-<h3 id="orge17a695">On the Mapvalues Transformation</h3>
-<div class="outline-text-3" id="text-orge17a695">
+<div id="outline-container-orgd044a1e" class="outline-3">
+<h3 id="orgd044a1e">On the Mapvalues Transformation</h3>
+<div class="outline-text-3" id="text-orgd044a1e">
 <p>
 Mapvalues operates on PairRDDs, i.e. data of the key-value form,
 meaning RDDs of the form <code>RDD[(A, B)]</code>. In that case, mapValues
@@ -685,9 +685,9 @@ operates on the value only (the second part of the tuple), while map
 operates on the entire record (tuple of key and value).
 </p>
 
-<div class="highlight"><pre><span></span>print("Original data: %s" % numFruitsByLength.collect())
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">"Original data: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">numFruitsByLength</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 
-print("Mapvalued data: %s" % numFruitsByLength.mapValues(lambda x: x*3).collect())
+<span class="k">print</span><span class="p">(</span><span class="s2">"Mapvalued data: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">numFruitsByLength</span><span class="o">.</span><span class="n">mapValues</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 </pre></div>
 
 <pre class="example">
@@ -701,13 +701,13 @@ Notice that this might reduce by a product the complexity of your
 code. Think for instance at:
 </p>
 
-<div class="highlight"><pre><span></span>aba = sc.parallelize([("hel", 7), ("hel", 9), ("bye", 5), ("bye", 1),  ("bye", 1)])
+<div class="highlight"><pre><span></span><span class="n">aba</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([(</span><span class="s2">"hel"</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="s2">"hel"</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="p">(</span><span class="s2">"bye"</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="s2">"bye"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="p">(</span><span class="s2">"bye"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
 
-print("Number per key: %s" % aba.groupByKey().map(lambda x : (x[0], len(list(x[1])))).collect())
+<span class="k">print</span><span class="p">(</span><span class="s2">"Number per key: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">aba</span><span class="o">.</span><span class="n">groupByKey</span><span class="p">()</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))))</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 
-# vs.
+<span class="c1"># vs.</span>
 
-print("Number per key: %s" % abba.groupByKey().mapValues(len).collect())
+<span class="k">print</span><span class="p">(</span><span class="s2">"Number per key: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">abba</span><span class="o">.</span><span class="n">groupByKey</span><span class="p">()</span><span class="o">.</span><span class="n">mapValues</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 </pre></div>
 
 <pre class="example">
@@ -718,22 +718,22 @@ Number per key: [('hel', 2), ('bye', 2)]
 </div>
 
 
-<div id="outline-container-orgcfe9e12" class="outline-3">
-<h3 id="orgcfe9e12">On the Reduce by Key Transformation</h3>
-<div class="outline-text-3" id="text-orgcfe9e12">
+<div id="outline-container-org5b6ddb1" class="outline-3">
+<h3 id="org5b6ddb1">On the Reduce by Key Transformation</h3>
+<div class="outline-text-3" id="text-org5b6ddb1">
 <p>
 Given the above understanding of the Reduce transformation it is
 clear that the reduce by key is essentially a reduce function on
 each of the key iterable values.
 </p>
 
-<div class="highlight"><pre><span></span>  fruits = sc.parallelize(["apple", "orange", "java", "call++"])
+<div class="highlight"><pre><span></span>  <span class="n">fruits</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="s2">"apple"</span><span class="p">,</span> <span class="s2">"orange"</span><span class="p">,</span> <span class="s2">"java"</span><span class="p">,</span> <span class="s2">"call++"</span><span class="p">])</span>
 
-  numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 2))
-  print("Data : %s" % numFruitsByLength.collect())
+  <span class="n">numFruitsByLength</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fruit</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+  <span class="k">print</span><span class="p">(</span><span class="s2">"Data : </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">numFruitsByLength</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 
-  numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
-  print("Sum value by keys: %s" % numFruitsByLength.collect())
+  <span class="n">numFruitsByLength</span> <span class="o">=</span> <span class="n">numFruitsByLength</span><span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+  <span class="k">print</span><span class="p">(</span><span class="s2">"Sum value by keys: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">numFruitsByLength</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
 </pre></div>
 
 <pre class="example">
@@ -748,9 +748,9 @@ Sum value by keys: [(4, 2), (5, 2), (6, 4)]
 </div>
 </div>
 
-<div id="outline-container-orga646536" class="outline-2">
-<h2 id="orga646536">Actions</h2>
-<div class="outline-text-2" id="text-orga646536">
+<div id="outline-container-org9efa239" class="outline-2">
+<h2 id="org9efa239">Actions</h2>
+<div class="outline-text-2" id="text-org9efa239">
 <p>
 As mentioned above Actions compute a result based on an RDD, and
 either return it to the driver program or save it to an external
@@ -773,13 +773,13 @@ detailed list, see <a href="https://spark.apache.org/docs/2.3.0/programming-guid
 </p>
 </div>
 
-<div id="outline-container-org811f61c" class="outline-3">
-<h3 id="org811f61c">Count</h3>
-<div class="outline-text-3" id="text-org811f61c">
-<div class="highlight"><pre><span></span>   # count
-   print("Data: %s" % fruits.collect())
-   numFruits = fruits.count()
-   numFruits
+<div id="outline-container-org2988e24" class="outline-3">
+<h3 id="org2988e24">Count</h3>
+<div class="outline-text-3" id="text-org2988e24">
+<div class="highlight"><pre><span></span>   <span class="c1"># count</span>
+   <span class="k">print</span><span class="p">(</span><span class="s2">"Data: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">fruits</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+   <span class="n">numFruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+   <span class="n">numFruits</span>
 </pre></div>
 
 <pre class="example">
@@ -791,9 +791,9 @@ Data: ['apple', 'orange', 'java', 'call++']
 </div>
 
 
-<div id="outline-container-orga15368d" class="outline-3">
-<h3 id="orga15368d">Take</h3>
-<div class="outline-text-3" id="text-orga15368d">
+<div id="outline-container-org9e718a4" class="outline-3">
+<h3 id="org9e718a4">Take</h3>
+<div class="outline-text-3" id="text-org9e718a4">
 <p>
 This might be especially useful also given the issues when dealing
 with <code>collect()</code> mentioned above.
@@ -803,9 +803,9 @@ with <code>collect()</code> mentioned above.
 It is essentially the <code>LIMIT</code> function of SQL
 </p>
 
-<div class="highlight"><pre><span></span>    # take
-    first3Fruits = fruits.take(3)
-    first3Fruits
+<div class="highlight"><pre><span></span>    <span class="c1"># take</span>
+    <span class="n">first3Fruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">first3Fruits</span>
 </pre></div>
 
 <pre class="example">
@@ -815,18 +815,18 @@ It is essentially the <code>LIMIT</code> function of SQL
 </div>
 
 
-<div id="outline-container-org857150c" class="outline-3">
-<h3 id="org857150c">Aggregate</h3>
-<div class="outline-text-3" id="text-org857150c">
+<div id="outline-container-org978add3" class="outline-3">
+<h3 id="org978add3">Aggregate</h3>
+<div class="outline-text-3" id="text-org978add3">
 <p>
 This is again a tricky one. Please
 refer to the link: <a href="https://stackoverflow.com/questions/28240706/explain-the-aggregate-functionality-in-spark/38949457">Explaination of Aggregate</a>. 
 </p>
 
-<div class="highlight"><pre><span></span>    seqOp = (lambda local_result, list_element: (local_result[0] + list_element, local_result[1] + 1) )
-    combOp = (lambda some_local_result, another_local_result: (some_local_result[0] + another_local_result[0], some_local_result[1] + another_local_result[1]) )
+<div class="highlight"><pre><span></span>    <span class="n">seqOp</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">local_result</span><span class="p">,</span> <span class="n">list_element</span><span class="p">:</span> <span class="p">(</span><span class="n">local_result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">list_element</span><span class="p">,</span> <span class="n">local_result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">combOp</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">some_local_result</span><span class="p">,</span> <span class="n">another_local_result</span><span class="p">:</span> <span class="p">(</span><span class="n">some_local_result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">another_local_result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">some_local_result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">another_local_result</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
 
-    sc.parallelize([1, 2, 1, 2]).aggregate((0, 0), seqOp, combOp)
+    <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">aggregate</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">seqOp</span><span class="p">,</span> <span class="n">combOp</span><span class="p">)</span>
 </pre></div>
 
 <pre class="example">
@@ -842,7 +842,7 @@ refer to the link: <a href="https://stackoverflow.com/questions/28240706/explain
 </div>
 
 
-<div id="outline-container-orgda1b005" class="outline-2">
+<div id="outline-container-org0fdb1cd" class="outline-2">
 <h2 id="persistence-caching">Persistence (Caching)</h2>
 <div class="outline-text-2" id="text-persistence-caching">
 <p>
@@ -887,9 +887,9 @@ cache.
 </div>
 </div>
 
-<div id="outline-container-org65798f5" class="outline-2">
-<h2 id="org65798f5">Literature</h2>
-<div class="outline-text-2" id="text-org65798f5">
+<div id="outline-container-org6ca5441" class="outline-2">
+<h2 id="org6ca5441">Literature</h2>
+<div class="outline-text-2" id="text-org6ca5441">
 <p>
 <a href="https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material">Big Data for Engineers - ETH course</a>
 </p>

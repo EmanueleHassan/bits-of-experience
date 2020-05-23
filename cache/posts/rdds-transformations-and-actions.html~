@@ -19,9 +19,9 @@ workflow in order to optimize the performance.
 
 <br>
 
-<div id="outline-container-org082191b" class="outline-2">
-<h2 id="org082191b">On RDDs</h2>
-<div class="outline-text-2" id="text-org082191b">
+<div id="outline-container-org0824d02" class="outline-2">
+<h2 id="org0824d02">On RDDs</h2>
+<div class="outline-text-2" id="text-org0824d02">
 <p>
 A brief overview on RDDs was given in the previous post and you are
 referred to it for a brief introduction.
@@ -80,9 +80,9 @@ and actions.
 </div>
 
 
-<div id="outline-container-org22e020a" class="outline-2">
-<h2 id="org22e020a">Transformations</h2>
-<div class="outline-text-2" id="text-org22e020a">
+<div id="outline-container-orgdbec995" class="outline-2">
+<h2 id="orgdbec995">Transformations</h2>
+<div class="outline-text-2" id="text-orgdbec995">
 <p>
 Following are examples of some of the common transformations
 available.
@@ -118,12 +118,23 @@ sc = spark.sparkContext
 
 <div class="highlight"><pre><span></span> fruits.collect()
 </pre></div>
+
+<pre class="example">
+['Peaches',
+ 'Apples',
+ 'Strawberries',
+ 'Grapes',
+ 'Oranges',
+ 'Apples',
+ 'Peaches',
+ 'Melon']
+</pre>
 </div>
 
 
-<div id="outline-container-org4e3ea84" class="outline-3">
-<h3 id="org4e3ea84">On the filter transformation</h3>
-<div class="outline-text-3" id="text-org4e3ea84">
+<div id="outline-container-orgcfc606c" class="outline-3">
+<h3 id="orgcfc606c">On the filter transformation</h3>
+<div class="outline-text-3" id="text-orgcfc606c">
 <p>
 A further important transformation is the one allowing the projection
 in relational algebra terms. This is taken care by the <code>filter</code>
@@ -140,16 +151,25 @@ the boolean function specified within the <code>filter</code>.
  shortFruits.collect()
 </pre></div>
 
+<pre class="example">
+['Melon']
+</pre>
+
+
 
 <div class="highlight"><pre><span></span>shortFruits = fruits.filter(lambda fruit: fruit.lower() == &quot;oranges&quot;)
 shortFruits.collect()
 </pre></div>
+
+<pre class="example">
+['Oranges']
+</pre>
 </div>
 </div>
 
-<div id="outline-container-org350aebf" class="outline-3">
-<h3 id="org350aebf">On the Map Transformation</h3>
-<div class="outline-text-3" id="text-org350aebf">
+<div id="outline-container-org5842da7" class="outline-3">
+<h3 id="org5842da7">On the Map Transformation</h3>
+<div class="outline-text-3" id="text-org5842da7">
 <p>
 The map function takes each element for the RDD and applies a
 function <code>mapping</code> the element input to a transformed new RDD. It is
@@ -168,18 +188,41 @@ therefore an action.
  fruitsReversed.collect()
 </pre></div>
 
+<pre class="example">
+['sehcaeP',
+ 'selppA',
+ 'seirrebwartS',
+ 'separG',
+ 'segnarO',
+ 'selppA',
+ 'sehcaeP',
+ 'noleM']
+</pre>
+
+
 <div class="highlight"><pre><span></span> # map
  fruitsReversed = fruits.map(lambda fruit: fruit + &quot;bau&quot; * 3) 
 
  fruitsReversed.collect()
 </pre></div>
+
+<pre class="example">
+['Peachesbaubaubau',
+ 'Applesbaubaubau',
+ 'Strawberriesbaubaubau',
+ 'Grapesbaubaubau',
+ 'Orangesbaubaubau',
+ 'Applesbaubaubau',
+ 'Peachesbaubaubau',
+ 'Melonbaubaubau']
+</pre>
 </div>
 </div>
 
 
-<div id="outline-container-orgc47e609" class="outline-3">
-<h3 id="orgc47e609">On the FlatMap Function</h3>
-<div class="outline-text-3" id="text-orgc47e609">
+<div id="outline-container-org83361cc" class="outline-3">
+<h3 id="org83361cc">On the FlatMap Function</h3>
+<div class="outline-text-3" id="text-org83361cc">
 <p>
 The <code>flatmap</code> transformation extends the <code>map</code> function giving the
 possibility to the users to return an object of higher dimension than
@@ -199,6 +242,65 @@ by your flatmap.
  characters.collect()
 </pre></div>
 
+<pre class="example">
+['P',
+ 'e',
+ 'a',
+ 'c',
+ 'h',
+ 'e',
+ 's',
+ 'A',
+ 'p',
+ 'p',
+ 'l',
+ 'e',
+ 's',
+ 'S',
+ 't',
+ 'r',
+ 'a',
+ 'w',
+ 'b',
+ 'e',
+ 'r',
+ 'r',
+ 'i',
+ 'e',
+ 's',
+ 'G',
+ 'r',
+ 'a',
+ 'p',
+ 'e',
+ 's',
+ 'O',
+ 'r',
+ 'a',
+ 'n',
+ 'g',
+ 'e',
+ 's',
+ 'A',
+ 'p',
+ 'p',
+ 'l',
+ 'e',
+ 's',
+ 'P',
+ 'e',
+ 'a',
+ 'c',
+ 'h',
+ 'e',
+ 's',
+ 'M',
+ 'e',
+ 'l',
+ 'o',
+ 'n']
+</pre>
+
 <p>
 Notice how this stays in contrast to a simple map performing the same
 operation.
@@ -207,13 +309,24 @@ operation.
 <div class="highlight"><pre><span></span>characters = fruits.map(lambda fruit: list(fruit))
 characters.collect()
 </pre></div>
+
+<pre class="example">
+[['P', 'e', 'a', 'c', 'h', 'e', 's'],
+ ['A', 'p', 'p', 'l', 'e', 's'],
+ ['S', 't', 'r', 'a', 'w', 'b', 'e', 'r', 'r', 'i', 'e', 's'],
+ ['G', 'r', 'a', 'p', 'e', 's'],
+ ['O', 'r', 'a', 'n', 'g', 'e', 's'],
+ ['A', 'p', 'p', 'l', 'e', 's'],
+ ['P', 'e', 'a', 'c', 'h', 'e', 's'],
+ ['M', 'e', 'l', 'o', 'n']]
+</pre>
 </div>
 </div>
 
 
-<div id="outline-container-orga2dafbe" class="outline-3">
-<h3 id="orga2dafbe">On the Union Transformation</h3>
-<div class="outline-text-3" id="text-orga2dafbe">
+<div id="outline-container-org7f361ab" class="outline-3">
+<h3 id="org7f361ab">On the Union Transformation</h3>
+<div class="outline-text-3" id="text-org7f361ab">
 <p>
 This returns the classical relational algebra union of two different
 RDDs.
@@ -226,12 +339,30 @@ RDDs.
  fruitsAndYellowThings = fruits.union(yellowThings)
  fruitsAndYellowThings.collect()
 </pre></div>
+
+<pre class="example">
+['Peaches',
+ 'Apples',
+ 'Strawberries',
+ 'Grapes',
+ 'Oranges',
+ 'Apples',
+ 'Peaches',
+ 'Melon',
+ 'giallo',
+ 'biondo',
+ 'yellow',
+ 'gelb',
+ 'gold',
+ 'blond',
+ 'jeune']
+</pre>
 </div>
 </div>
 
-<div id="outline-container-orgbb8d357" class="outline-3">
-<h3 id="orgbb8d357">On the intersection Transformation</h3>
-<div class="outline-text-3" id="text-orgbb8d357">
+<div id="outline-container-org573bcc9" class="outline-3">
+<h3 id="org573bcc9">On the intersection Transformation</h3>
+<div class="outline-text-3" id="text-org573bcc9">
 <p>
 This returns the intersection for two RDDs. It is then clear that it
 is possible to obtain the relational algebra set difference from it.
@@ -242,12 +373,22 @@ is possible to obtain the relational algebra set difference from it.
  yellowFruits.collect()
 </pre></div>
 
+<pre class="example">
+[]
+</pre>
+
+
 <div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s2">&quot;Oranges&quot;</span> &gt;&gt; /Users/marcohassan/Desktop/spark_files_data/yellow.txt
 </pre></div>
 
 <div class="highlight"><pre><span></span>yellowFruits = fruits.intersection(yellowThings)
 yellowFruits.collect()
 </pre></div>
+
+<pre class="example">
+['Oranges']
+</pre>
+
 
 <p>
 Get the set difference, i.e. the objects present in a RDD but not in
@@ -259,13 +400,17 @@ the other
 fruit = fruits.filter(lambda x: x not in a)
 fruit.collect()
 </pre></div>
+
+<pre class="example">
+['Peaches', 'Apples', 'Strawberries', 'Grapes', 'Apples', 'Peaches', 'Melon']
+</pre>
 </div>
 </div>
 
 
-<div id="outline-container-org1d540ac" class="outline-3">
-<h3 id="org1d540ac">On the distinct transformation</h3>
-<div class="outline-text-3" id="text-org1d540ac">
+<div id="outline-container-orgb99f95a" class="outline-3">
+<h3 id="orgb99f95a">On the distinct transformation</h3>
+<div class="outline-text-3" id="text-orgb99f95a">
 <p>
 This allows to take the distinct objects in an RDD
 </p>
@@ -274,12 +419,28 @@ This allows to take the distinct objects in an RDD
  distinctFruitsAndYellowThings = fruitsAndYellowThings.distinct()
  distinctFruitsAndYellowThings.collect()
 </pre></div>
+
+<pre class="example">
+['Peaches',
+ 'Apples',
+ 'Oranges',
+ 'giallo',
+ 'gelb',
+ 'blond',
+ 'Strawberries',
+ 'jeune',
+ 'Melon',
+ 'biondo',
+ 'yellow',
+ 'gold',
+ 'Grapes']
+</pre>
 </div>
 </div>
 
-<div id="outline-container-org3490e3f" class="outline-3">
-<h3 id="org3490e3f">On the Reduce Transformation</h3>
-<div class="outline-text-3" id="text-org3490e3f">
+<div id="outline-container-org750bc1a" class="outline-3">
+<h3 id="org750bc1a">On the Reduce Transformation</h3>
+<div class="outline-text-3" id="text-org750bc1a">
 <p>
 The reduce function is powerful albeit its logic is not
 straight. You will have to exercise it at first. Its logic is as
@@ -302,15 +463,25 @@ follows
   print(&quot;product of cubes %s:&quot; % product_of_cubes)
 </pre></div>
 
+<pre class="example">
+[0, 1, 2, 3, 4]
+[0, 1, 8, 27, 64]
+
+sum of cubes 100:
+product of cubes 0:
+</pre>
+
+
 
 <br>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgcb0927c" class="outline-2">
-<h2 id="orgcb0927c">Working with <i>key-value</i> pairs</h2>
-<div class="outline-text-2" id="text-orgcb0927c">
+
+<div id="outline-container-org827223f" class="outline-2">
+<h2 id="org827223f">Working with <i>key-value</i> pairs</h2>
+<div class="outline-text-2" id="text-org827223f">
 <p>
 Spark provides special operations on RDDs containing key/value pairs.
 These RDDs are called <i>pair RDDs</i>. Pair RDDs are a useful building
@@ -320,9 +491,9 @@ block in many programs, as they expose operations that allow you to
 </div>
 
 
-<div id="outline-container-org2d23cfd" class="outline-3">
-<h3 id="org2d23cfd">Group by Key</h3>
-<div class="outline-text-3" id="text-org2d23cfd">
+<div id="outline-container-org043005b" class="outline-3">
+<h3 id="org043005b">Group by Key</h3>
+<div class="outline-text-3" id="text-org043005b">
 <p>
 Notice that in spark, in contrast to MapReduce, the input must not be
 of key-value store type. But if you are dealing with key-value pairs
@@ -344,6 +515,11 @@ To understand that look at the following transformation
 
 print(yellowThingsByFirstLetter.collect())
 </pre></div>
+
+<pre class="example">
+[('g', &lt;pyspark.resultiterable.ResultIterable object at 0x119ff27d0&gt;), ('b', &lt;pyspark.resultiterable.ResultIterable object at 0x119ff2490&gt;), ('y', &lt;pyspark.resultiterable.ResultIterable object at 0x119ff2550&gt;), ('j', &lt;pyspark.resultiterable.ResultIterable object at 0x119ff25d0&gt;), ('O', &lt;pyspark.resultiterable.ResultIterable object at 0x119ff2290&gt;)]
+</pre>
+
 
 <p>
 The above returned a set of tuples involving a key being the first
@@ -387,10 +563,31 @@ For the function you can apply, you can be as imaginative as you want
 		 print(&quot; &gt; &quot;, obj)
 </pre></div>
 
+<pre class="example">
+For letter g
+ &gt;  giallo
+ &gt;  gelb
+ &gt;  gold
+For letter b
+ &gt;  biondo
+ &gt;  blond
+For letter y
+ &gt;  yellow
+For letter j
+ &gt;  jeune
+For letter O
+ &gt;  Oranges
+</pre>
+
 <div class="highlight"><pre><span></span>a = [1,2,3,4]
 
 list(map(lambda x: x+1, a))
 </pre></div>
+
+<pre class="example">
+[2, 3, 4, 5]
+</pre>
+
 
 
 <div class="highlight"><pre><span></span>print(yellowThingsByFirstLetter.map(lambda x : (x[0], list(x[1]))).collect())
@@ -402,13 +599,19 @@ print(yellowThingsByFirstLetter.map(lambda x : (x[0], [i + &quot; &quot; + i for
 ## it is clear therefore that you can do games such as
 print(yellowThingsByFirstLetter.map(lambda x : (x[0], list(map(lambda y: y*2, list(x[1]))))).collect())
 </pre></div>
+
+<pre class="example">
+[('g', ['giallo', 'gelb', 'gold']), ('b', ['biondo', 'blond']), ('y', ['yellow']), ('j', ['jeune']), ('O', ['Oranges'])]
+[('g', ['giallo giallo', 'gelb gelb', 'gold gold']), ('b', ['biondo biondo', 'blond blond']), ('y', ['yellow yellow']), ('j', ['jeune jeune']), ('O', ['Oranges Oranges'])]
+[('g', ['giallogiallo', 'gelbgelb', 'goldgold']), ('b', ['biondobiondo', 'blondblond']), ('y', ['yellowyellow']), ('j', ['jeunejeune']), ('O', ['OrangesOranges'])]
+</pre>
 </div>
 </div>
 
 
-<div id="outline-container-org5920956" class="outline-3">
-<h3 id="org5920956">On the Mapvalues Transformation</h3>
-<div class="outline-text-3" id="text-org5920956">
+<div id="outline-container-orge17a695" class="outline-3">
+<h3 id="orge17a695">On the Mapvalues Transformation</h3>
+<div class="outline-text-3" id="text-orge17a695">
 <p>
 Mapvalues operates on PairRDDs, i.e. data of the key-value form,
 meaning RDDs of the form <code>RDD[(A, B)]</code>. In that case, mapValues
@@ -420,6 +623,12 @@ operates on the entire record (tuple of key and value).
 
 print(&quot;Mapvalued data: %s&quot; % numFruitsByLength.mapValues(lambda x: x*3).collect())
 </pre></div>
+
+<pre class="example">
+Original data: [(4, 2), (5, 2), (6, 4)]
+Mapvalued data: [(4, 6), (5, 6), (6, 12)]
+</pre>
+
 
 <p>
 Notice that this might reduce by a product the complexity of your
@@ -434,13 +643,18 @@ print(&quot;Number per key: %s&quot; % aba.groupByKey().map(lambda x : (x[0], le
 
 print(&quot;Number per key: %s&quot; % abba.groupByKey().mapValues(len).collect())
 </pre></div>
+
+<pre class="example">
+Number per key: [('hel', 2), ('bye', 3)]
+Number per key: [('hel', 2), ('bye', 2)]
+</pre>
 </div>
 </div>
 
 
-<div id="outline-container-org4147c30" class="outline-3">
-<h3 id="org4147c30">On the Reduce by Key Transformation</h3>
-<div class="outline-text-3" id="text-org4147c30">
+<div id="outline-container-orgcfe9e12" class="outline-3">
+<h3 id="orgcfe9e12">On the Reduce by Key Transformation</h3>
+<div class="outline-text-3" id="text-orgcfe9e12">
 <p>
 Given the above understanding of the Reduce transformation it is
 clear that the reduce by key is essentially a reduce function on
@@ -456,6 +670,12 @@ each of the key iterable values.
   print(&quot;Sum value by keys: %s&quot; % numFruitsByLength.collect())
 </pre></div>
 
+<pre class="example">
+Data : [(5, 2), (6, 2), (4, 2), (6, 2)]
+Sum value by keys: [(4, 2), (5, 2), (6, 4)]
+</pre>
+
+
 
 <br>
 
@@ -465,9 +685,9 @@ each of the key iterable values.
 </div>
 </div>
 
-<div id="outline-container-org9d484f0" class="outline-2">
-<h2 id="org9d484f0">Actions</h2>
-<div class="outline-text-2" id="text-org9d484f0">
+<div id="outline-container-orga646536" class="outline-2">
+<h2 id="orga646536">Actions</h2>
+<div class="outline-text-2" id="text-orga646536">
 <p>
 As mentioned above Actions compute a result based on an RDD, and
 either return it to the driver program or save it to an external
@@ -490,21 +710,27 @@ detailed list, see <a href="https://spark.apache.org/docs/2.3.0/programming-guid
 </p>
 </div>
 
-<div id="outline-container-org8b1911b" class="outline-3">
-<h3 id="org8b1911b">Count</h3>
-<div class="outline-text-3" id="text-org8b1911b">
+<div id="outline-container-org811f61c" class="outline-3">
+<h3 id="org811f61c">Count</h3>
+<div class="outline-text-3" id="text-org811f61c">
 <div class="highlight"><pre><span></span>   # count
    print(&quot;Data: %s&quot; % fruits.collect())
    numFruits = fruits.count()
    numFruits
 </pre></div>
+
+<pre class="example">
+Data: ['apple', 'orange', 'java', 'call++']
+
+4
+</pre>
 </div>
 </div>
 
 
-<div id="outline-container-org4146600" class="outline-3">
-<h3 id="org4146600">Take</h3>
-<div class="outline-text-3" id="text-org4146600">
+<div id="outline-container-orga15368d" class="outline-3">
+<h3 id="orga15368d">Take</h3>
+<div class="outline-text-3" id="text-orga15368d">
 <p>
 This might be especially useful also given the issues when dealing
 with <code>collect()</code> mentioned above.
@@ -518,13 +744,17 @@ It is essentially the <code>LIMIT</code> function of SQL
     first3Fruits = fruits.take(3)
     first3Fruits
 </pre></div>
+
+<pre class="example">
+['apple', 'orange', 'java']
+</pre>
 </div>
 </div>
 
 
-<div id="outline-container-orga88b87b" class="outline-3">
-<h3 id="orga88b87b">Aggregate</h3>
-<div class="outline-text-3" id="text-orga88b87b">
+<div id="outline-container-org857150c" class="outline-3">
+<h3 id="org857150c">Aggregate</h3>
+<div class="outline-text-3" id="text-org857150c">
 <p>
 This is again a tricky one. Please
 refer to the link: <a href="https://stackoverflow.com/questions/28240706/explain-the-aggregate-functionality-in-spark/38949457">Explaination of Aggregate</a>. 
@@ -536,6 +766,11 @@ refer to the link: <a href="https://stackoverflow.com/questions/28240706/explain
     sc.parallelize([1, 2, 1, 2]).aggregate((0, 0), seqOp, combOp)
 </pre></div>
 
+<pre class="example">
+(6, 4)
+</pre>
+
+
 
 
 <br>
@@ -544,7 +779,7 @@ refer to the link: <a href="https://stackoverflow.com/questions/28240706/explain
 </div>
 
 
-<div id="outline-container-org4511fa7" class="outline-2">
+<div id="outline-container-orgda1b005" class="outline-2">
 <h2 id="persistence-caching">Persistence (Caching)</h2>
 <div class="outline-text-2" id="text-persistence-caching">
 <p>
@@ -591,9 +826,9 @@ cache.
 </div>
 </div>
 
-<div id="outline-container-org58810b9" class="outline-2">
-<h2 id="org58810b9">Literature</h2>
-<div class="outline-text-2" id="text-org58810b9">
+<div id="outline-container-org65798f5" class="outline-2">
+<h2 id="org65798f5">Literature</h2>
+<div class="outline-text-2" id="text-org65798f5">
 <p>
 <a href="https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material">Big Data for Engineers - ETH course</a>
 </p>
