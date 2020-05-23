@@ -72,13 +72,6 @@ and actions.
 #+END_EXPORT
 
 
-** TODO On the physical Execution
-
-#+BEGIN_EXPORT html
-<br>
-#+END_EXPORT
-
-
 ** Transformations
 :properties:
 :header-args:ein-python: :session http://127.0.0.1:8888/Spark.ipynb :results output
@@ -422,6 +415,48 @@ distinctFruitsAndYellowThings.collect()
   'Grapes']
  #+end_example
 
+*** On the Reduce Transformation
+
+  The reduce function is powerful albeit its logic is not
+  straight. You will have to exercise it at first. Its logic is as
+  follows
+
+  [[img-url:/images/Bildschirmfoto_2020-05-04_um_17.54.18.png]]
+
+  #+NAME: A1B8DF15-A6A1-430E-9ED2-871FC9AB0F2B
+  #+begin_src ein-python :results output
+  input_list = sc.parallelize(range(5))
+  print(input_list.collect())
+
+  print(input_list.map(lambda x: x ** 3).collect())
+
+  sum_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x + y)
+  product_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x * y)
+ 
+  print("\nsum of cubes %s:" % sum_of_cubes)
+  print("product of cubes %s:" % product_of_cubes)
+  #+end_src
+
+  #+RESULTS: A1B8DF15-A6A1-430E-9ED2-871FC9AB0F2B
+  : [0, 1, 2, 3, 4]
+  : [0, 1, 8, 27, 64]
+  : 
+  : sum of cubes 100:
+  : product of cubes 0:
+
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+** Working with /key-value/ pairs
+
+Spark provides special operations on RDDs containing key/value pairs.
+These RDDs are called /pair RDDs/. Pair RDDs are a useful building
+block in many programs, as they expose operations that allow you to
+*act on each key in parallel* or regroup data across the network.
+
+
 *** Group by Key
 
 Notice that in spark, in contrast to MapReduce, the input must not be
@@ -525,63 +560,7 @@ print(yellowThingsByFirstLetter.map(lambda x : (x[0], list(map(lambda y: y*2, li
 : [('g', ['giallo giallo', 'gelb gelb', 'gold gold']), ('b', ['biondo biondo', 'blond blond']), ('y', ['yellow yellow']), ('j', ['jeune jeune']), ('O', ['Oranges Oranges'])]
 : [('g', ['giallogiallo', 'gelbgelb', 'goldgold']), ('b', ['biondobiondo', 'blondblond']), ('y', ['yellowyellow']), ('j', ['jeunejeune']), ('O', ['OrangesOranges'])]
 
-
-*** On the Reduce Transformation
-
-  The reduce function is powerful albeit its logic is not
-  straight. You will have to exercise it at first. Its logic is as
-  follows
-
-  [[img-url:/images/Bildschirmfoto_2020-05-04_um_17.54.18.png]]
-
-  #+NAME: A1B8DF15-A6A1-430E-9ED2-871FC9AB0F2B
-  #+begin_src ein-python :results output
-  input_list = sc.parallelize(range(5))
-  print(input_list.collect())
-
-  print(input_list.map(lambda x: x ** 3).collect())
-
-  sum_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x + y)
-  product_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x * y)
- 
-  print("\nsum of cubes %s:" % sum_of_cubes)
-  print("product of cubes %s:" % product_of_cubes)
-  #+end_src
-
-  #+RESULTS: A1B8DF15-A6A1-430E-9ED2-871FC9AB0F2B
-  : [0, 1, 2, 3, 4]
-  : [0, 1, 8, 27, 64]
-  : 
-  : sum of cubes 100:
-  : product of cubes 0:
-
-*** On the Reduce by Key Transformation
-
-  Given the above understanding of the Reduce transformation it is
-  clear that the reduce by key is essentially a reduce function on
-  each of the key iterable values.
-
-  #+NAME: F440D9E1-0F30-48FA-9F91-DA788BEFCCF8
-  #+begin_src ein-python :results output
-  fruits = sc.parallelize(["apple", "orange", "java", "call++"])
-
-  numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 2))
-  print("Data : %s" % numFruitsByLength.collect())
-
-  numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
-  print("Sum value by keys: %s" % numFruitsByLength.collect())
-  #+end_src
-
-  #+RESULTS: F440D9E1-0F30-48FA-9F91-DA788BEFCCF8
-  : Data : [(5, 2), (6, 2), (4, 2), (6, 2)]
-  : Sum value by keys: [(4, 2), (5, 2), (6, 4)]
-
-
-  #+BEGIN_EXPORT html
-  <br>
-  #+END_EXPORT
-
-
+  
 *** On the Mapvalues Transformation
 
 Mapvalues operates on PairRDDs, i.e. data of the key-value form,
@@ -619,7 +598,38 @@ print("Number per key: %s" % abba.groupByKey().mapValues(len).collect())
 : Number per key: [('hel', 2), ('bye', 3)]
 : Number per key: [('hel', 2), ('bye', 2)]
 
-  
+
+*** On the Reduce by Key Transformation
+
+  Given the above understanding of the Reduce transformation it is
+  clear that the reduce by key is essentially a reduce function on
+  each of the key iterable values.
+
+  #+NAME: F440D9E1-0F30-48FA-9F91-DA788BEFCCF8
+  #+begin_src ein-python :results output
+  fruits = sc.parallelize(["apple", "orange", "java", "call++"])
+
+  numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 2))
+  print("Data : %s" % numFruitsByLength.collect())
+
+  numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
+  print("Sum value by keys: %s" % numFruitsByLength.collect())
+  #+end_src
+
+  #+RESULTS: F440D9E1-0F30-48FA-9F91-DA788BEFCCF8
+  : Data : [(5, 2), (6, 2), (4, 2), (6, 2)]
+  : Sum value by keys: [(4, 2), (5, 2), (6, 4)]
+
+
+  #+BEGIN_EXPORT html
+  <br>
+  #+END_EXPORT
+
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
 ** Actions
 :properties:
 :header-args:ein-python: :session http://127.0.0.1:8888/Spark.ipynb 
@@ -690,6 +700,53 @@ print("Number per key: %s" % abba.groupByKey().mapValues(len).collect())
     #+RESULTS: 7DA476A4-FDA8-44A0-B1BF-2FEF00050509
     : (6, 4)
 
+
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+
+** Persistence (Caching)
+   :PROPERTIES:
+   :CUSTOM_ID: persistence-caching
+   :END:
+
+Spark's RDDs are by default recomputed each time you run an action on
+them. 
+
+This is however suboptiomal. Just think of the following situation:
+
+#+begin_export html
+ <img width="100%" height="100%" src="../../images/Bildschirmfoto_2020-05-23_um_14.01.28.png" class="center">
+#+end_export
+
+Then it is clear that no matter the final RDD transformation, you will
+have to do the same set of operations. In such a case recomputing the
+entire DAG makes no sense and persisting the result that is
+continuously used makes sense.
+
+This is done using =RDD.persist()=. After computing it the first time,
+Spark will store the RDD contents in memory (partitioned across the
+machines in your cluster), and reuse them in future actions.
+Persisting RDDs *on disk* instead of *memory* is also possible.
+
+If you attempt to cache too much data to fit in memory, Spark will
+automatically evict old partitions using a Least Recently Used (LRU)
+cache policy. This practically means, that for the *memory-only
+storage* levnels, it will recompute these partitions the next time they
+are accessed, while for the *memory-and-disk ones*, it will write them
+out to disk. In either case, this means that you don't have to worry
+about your job breaking if you ask Spark to cache toxo much
+data. However, caching unnecessary data can lead to eviction of useful
+data and more recomputation time. Finally, RDDs come with a method
+called =unpersist()= that lets you manually remove them from the
+cache.
+
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
 
 ** Literature
 

@@ -86,9 +86,9 @@ workflow in order to optimize the performance.
 
 <!-- TEASER_END -->
 
-<br><div id="outline-container-org206d25c" class="outline-2">
-<h2 id="org206d25c">On RDDs</h2>
-<div class="outline-text-2" id="text-org206d25c">
+<br><div id="outline-container-org082191b" class="outline-2">
+<h2 id="org082191b">On RDDs</h2>
+<div class="outline-text-2" id="text-org082191b">
 <p>
 A brief overview on RDDs was given in the previous post and you are
 referred to it for a brief introduction.
@@ -147,18 +147,9 @@ and actions.
 </div>
 
 
-<div id="outline-container-orge0b9dbd" class="outline-2">
-<h2 id="orge0b9dbd">
-<span class="todo TODO">TODO</span> On the physical Execution</h2>
-<div class="outline-text-2" id="text-orge0b9dbd">
-<br>
-</div>
-</div>
-
-
-<div id="outline-container-orgd641aed" class="outline-2">
-<h2 id="orgd641aed">Transformations</h2>
-<div class="outline-text-2" id="text-orgd641aed">
+<div id="outline-container-org22e020a" class="outline-2">
+<h2 id="org22e020a">Transformations</h2>
+<div class="outline-text-2" id="text-org22e020a">
 <p>
 Following are examples of some of the common transformations
 available.
@@ -197,9 +188,9 @@ sc = spark.sparkContext
 </div>
 
 
-<div id="outline-container-org618d7e3" class="outline-3">
-<h3 id="org618d7e3">On the filter transformation</h3>
-<div class="outline-text-3" id="text-org618d7e3">
+<div id="outline-container-org4e3ea84" class="outline-3">
+<h3 id="org4e3ea84">On the filter transformation</h3>
+<div class="outline-text-3" id="text-org4e3ea84">
 <p>
 A further important transformation is the one allowing the projection
 in relational algebra terms. This is taken care by the <code>filter</code>
@@ -223,9 +214,9 @@ shortFruits.collect()
 </div>
 </div>
 
-<div id="outline-container-org85ff520" class="outline-3">
-<h3 id="org85ff520">On the Map Transformation</h3>
-<div class="outline-text-3" id="text-org85ff520">
+<div id="outline-container-org350aebf" class="outline-3">
+<h3 id="org350aebf">On the Map Transformation</h3>
+<div class="outline-text-3" id="text-org350aebf">
 <p>
 The map function takes each element for the RDD and applies a
 function <code>mapping</code> the element input to a transformed new RDD. It is
@@ -253,9 +244,9 @@ therefore an action.
 </div>
 
 
-<div id="outline-container-org81cbbe2" class="outline-3">
-<h3 id="org81cbbe2">On the FlatMap Function</h3>
-<div class="outline-text-3" id="text-org81cbbe2">
+<div id="outline-container-orgc47e609" class="outline-3">
+<h3 id="orgc47e609">On the FlatMap Function</h3>
+<div class="outline-text-3" id="text-orgc47e609">
 <p>
 The <code>flatmap</code> transformation extends the <code>map</code> function giving the
 possibility to the users to return an object of higher dimension than
@@ -287,9 +278,9 @@ characters.collect()
 </div>
 
 
-<div id="outline-container-org52465ee" class="outline-3">
-<h3 id="org52465ee">On the Union Transformation</h3>
-<div class="outline-text-3" id="text-org52465ee">
+<div id="outline-container-orga2dafbe" class="outline-3">
+<h3 id="orga2dafbe">On the Union Transformation</h3>
+<div class="outline-text-3" id="text-orga2dafbe">
 <p>
 This returns the classical relational algebra union of two different
 RDDs.
@@ -305,9 +296,9 @@ RDDs.
 </div>
 </div>
 
-<div id="outline-container-org78c813e" class="outline-3">
-<h3 id="org78c813e">On the intersection Transformation</h3>
-<div class="outline-text-3" id="text-org78c813e">
+<div id="outline-container-orgbb8d357" class="outline-3">
+<h3 id="orgbb8d357">On the intersection Transformation</h3>
+<div class="outline-text-3" id="text-orgbb8d357">
 <p>
 This returns the intersection for two RDDs. It is then clear that it
 is possible to obtain the relational algebra set difference from it.
@@ -339,9 +330,9 @@ fruit.collect()
 </div>
 
 
-<div id="outline-container-org2c682aa" class="outline-3">
-<h3 id="org2c682aa">On the distinct transformation</h3>
-<div class="outline-text-3" id="text-org2c682aa">
+<div id="outline-container-org1d540ac" class="outline-3">
+<h3 id="org1d540ac">On the distinct transformation</h3>
+<div class="outline-text-3" id="text-org1d540ac">
 <p>
 This allows to take the distinct objects in an RDD
 </p>
@@ -353,9 +344,51 @@ This allows to take the distinct objects in an RDD
 </div>
 </div>
 
-<div id="outline-container-orgf06372f" class="outline-3">
-<h3 id="orgf06372f">Group by Key</h3>
-<div class="outline-text-3" id="text-orgf06372f">
+<div id="outline-container-org3490e3f" class="outline-3">
+<h3 id="org3490e3f">On the Reduce Transformation</h3>
+<div class="outline-text-3" id="text-org3490e3f">
+<p>
+The reduce function is powerful albeit its logic is not
+straight. You will have to exercise it at first. Its logic is as
+follows
+</p>
+
+<p>
+<img src="../../images/Bildschirmfoto_2020-05-04_um_17.54.18.png" alt="nil"></p>
+
+<div class="highlight"><pre><span></span>  input_list = sc.parallelize(range(5))
+  print(input_list.collect())
+
+  print(input_list.map(lambda x: x ** 3).collect())
+
+  sum_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x + y)
+  product_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x * y)
+
+  print("\nsum of cubes %s:" % sum_of_cubes)
+  print("product of cubes %s:" % product_of_cubes)
+</pre></div>
+
+
+<br>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcb0927c" class="outline-2">
+<h2 id="orgcb0927c">Working with <i>key-value</i> pairs</h2>
+<div class="outline-text-2" id="text-orgcb0927c">
+<p>
+Spark provides special operations on RDDs containing key/value pairs.
+These RDDs are called <i>pair RDDs</i>. Pair RDDs are a useful building
+block in many programs, as they expose operations that allow you to
+<b>act on each key in parallel</b> or regroup data across the network.
+</p>
+</div>
+
+
+<div id="outline-container-org2d23cfd" class="outline-3">
+<h3 id="org2d23cfd">Group by Key</h3>
+<div class="outline-text-3" id="text-org2d23cfd">
 <p>
 Notice that in spark, in contrast to MapReduce, the input must not be
 of key-value store type. But if you are dealing with key-value pairs
@@ -439,59 +472,9 @@ print(yellowThingsByFirstLetter.map(lambda x : (x[0], list(map(lambda y: y*2, li
 </div>
 
 
-<div id="outline-container-org7716d61" class="outline-3">
-<h3 id="org7716d61">On the Reduce Transformation</h3>
-<div class="outline-text-3" id="text-org7716d61">
-<p>
-The reduce function is powerful albeit its logic is not
-straight. You will have to exercise it at first. Its logic is as
-follows
-</p>
-
-<p>
-<img src="../../images/Bildschirmfoto_2020-05-04_um_17.54.18.png" alt="nil"></p>
-
-<div class="highlight"><pre><span></span>  input_list = sc.parallelize(range(5))
-  print(input_list.collect())
-
-  print(input_list.map(lambda x: x ** 3).collect())
-
-  sum_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x + y)
-  product_of_cubes = input_list.map(lambda x: x ** 3).reduce(lambda x, y: x * y)
-
-  print("\nsum of cubes %s:" % sum_of_cubes)
-  print("product of cubes %s:" % product_of_cubes)
-</pre></div>
-</div>
-</div>
-
-<div id="outline-container-orgf86351b" class="outline-3">
-<h3 id="orgf86351b">On the Reduce by Key Transformation</h3>
-<div class="outline-text-3" id="text-orgf86351b">
-<p>
-Given the above understanding of the Reduce transformation it is
-clear that the reduce by key is essentially a reduce function on
-each of the key iterable values.
-</p>
-
-<div class="highlight"><pre><span></span>  fruits = sc.parallelize(["apple", "orange", "java", "call++"])
-
-  numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 2))
-  print("Data : %s" % numFruitsByLength.collect())
-
-  numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
-  print("Sum value by keys: %s" % numFruitsByLength.collect())
-</pre></div>
-
-
-<br>
-</div>
-</div>
-
-
-<div id="outline-container-org6f99903" class="outline-3">
-<h3 id="org6f99903">On the Mapvalues Transformation</h3>
-<div class="outline-text-3" id="text-org6f99903">
+<div id="outline-container-org5920956" class="outline-3">
+<h3 id="org5920956">On the Mapvalues Transformation</h3>
+<div class="outline-text-3" id="text-org5920956">
 <p>
 Mapvalues operates on PairRDDs, i.e. data of the key-value form,
 meaning RDDs of the form <code>RDD[(A, B)]</code>. In that case, mapValues
@@ -519,12 +502,35 @@ print("Number per key: %s" % abba.groupByKey().mapValues(len).collect())
 </pre></div>
 </div>
 </div>
+
+
+<div id="outline-container-org4147c30" class="outline-3">
+<h3 id="org4147c30">On the Reduce by Key Transformation</h3>
+<div class="outline-text-3" id="text-org4147c30">
+<p>
+Given the above understanding of the Reduce transformation it is
+clear that the reduce by key is essentially a reduce function on
+each of the key iterable values.
+</p>
+
+<div class="highlight"><pre><span></span>  fruits = sc.parallelize(["apple", "orange", "java", "call++"])
+
+  numFruitsByLength = fruits.map(lambda fruit: (len(fruit), 2))
+  print("Data : %s" % numFruitsByLength.collect())
+
+  numFruitsByLength = numFruitsByLength.reduceByKey(lambda x, y: x + y)
+  print("Sum value by keys: %s" % numFruitsByLength.collect())
+</pre></div>
+
+
+<br><br>
+</div>
+</div>
 </div>
 
-
-<div id="outline-container-orgf31d2df" class="outline-2">
-<h2 id="orgf31d2df">Actions</h2>
-<div class="outline-text-2" id="text-orgf31d2df">
+<div id="outline-container-org9d484f0" class="outline-2">
+<h2 id="org9d484f0">Actions</h2>
+<div class="outline-text-2" id="text-org9d484f0">
 <p>
 As mentioned above Actions compute a result based on an RDD, and
 either return it to the driver program or save it to an external
@@ -547,9 +553,9 @@ detailed list, see <a href="https://spark.apache.org/docs/2.3.0/programming-guid
 </p>
 </div>
 
-<div id="outline-container-orgeeb5012" class="outline-3">
-<h3 id="orgeeb5012">Count</h3>
-<div class="outline-text-3" id="text-orgeeb5012">
+<div id="outline-container-org8b1911b" class="outline-3">
+<h3 id="org8b1911b">Count</h3>
+<div class="outline-text-3" id="text-org8b1911b">
 <div class="highlight"><pre><span></span>   # count
    print("Data: %s" % fruits.collect())
    numFruits = fruits.count()
@@ -559,9 +565,9 @@ detailed list, see <a href="https://spark.apache.org/docs/2.3.0/programming-guid
 </div>
 
 
-<div id="outline-container-org1e72638" class="outline-3">
-<h3 id="org1e72638">Take</h3>
-<div class="outline-text-3" id="text-org1e72638">
+<div id="outline-container-org4146600" class="outline-3">
+<h3 id="org4146600">Take</h3>
+<div class="outline-text-3" id="text-org4146600">
 <p>
 This might be especially useful also given the issues when dealing
 with <code>collect()</code> mentioned above.
@@ -579,9 +585,9 @@ It is essentially the <code>LIMIT</code> function of SQL
 </div>
 
 
-<div id="outline-container-org7402000" class="outline-3">
-<h3 id="org7402000">Aggregate</h3>
-<div class="outline-text-3" id="text-org7402000">
+<div id="outline-container-orga88b87b" class="outline-3">
+<h3 id="orga88b87b">Aggregate</h3>
+<div class="outline-text-3" id="text-orga88b87b">
 <p>
 This is again a tricky one. Please
 refer to the link: <a href="https://stackoverflow.com/questions/28240706/explain-the-aggregate-functionality-in-spark/38949457">Explaination of Aggregate</a>. 
@@ -592,14 +598,63 @@ refer to the link: <a href="https://stackoverflow.com/questions/28240706/explain
 
     sc.parallelize([1, 2, 1, 2]).aggregate((0, 0), seqOp, combOp)
 </pre></div>
+
+
+
+<br>
 </div>
 </div>
 </div>
 
 
-<div id="outline-container-orgf9e2ad3" class="outline-2">
-<h2 id="orgf9e2ad3">Literature</h2>
-<div class="outline-text-2" id="text-orgf9e2ad3">
+<div id="outline-container-org4511fa7" class="outline-2">
+<h2 id="persistence-caching">Persistence (Caching)</h2>
+<div class="outline-text-2" id="text-persistence-caching">
+<p>
+Spark's RDDs are by default recomputed each time you run an action on
+them. 
+</p>
+
+<p>
+This is however suboptiomal. Just think of the following situation:
+</p>
+
+<img width="100%" height="100%" src="../../images/Bildschirmfoto_2020-05-23_um_14.01.28.png" class="center"><p>
+Then it is clear that no matter the final RDD transformation, you will
+have to do the same set of operations. In such a case recomputing the
+entire DAG makes no sense and persisting the result that is
+continuously used makes sense.
+</p>
+
+<p>
+This is done using <code>RDD.persist()</code>. After computing it the first time,
+Spark will store the RDD contents in memory (partitioned across the
+machines in your cluster), and reuse them in future actions.
+Persisting RDDs <b>on disk</b> instead of <b>memory</b> is also possible.
+</p>
+
+<p>
+If you attempt to cache too much data to fit in memory, Spark will
+automatically evict old partitions using a Least Recently Used (LRU)
+cache policy. This practically means, that for the <b>memory-only
+storage</b> levnels, it will recompute these partitions the next time they
+are accessed, while for the <b>memory-and-disk ones</b>, it will write them
+out to disk. In either case, this means that you don't have to worry
+about your job breaking if you ask Spark to cache toxo much
+data. However, caching unnecessary data can lead to eviction of useful
+data and more recomputation time. Finally, RDDs come with a method
+called <code>unpersist()</code> that lets you manually remove them from the
+cache.
+</p>
+
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org58810b9" class="outline-2">
+<h2 id="org58810b9">Literature</h2>
+<div class="outline-text-2" id="text-org58810b9">
 <p>
 <a href="https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material">Big Data for Engineers - ETH course</a>
 </p>
