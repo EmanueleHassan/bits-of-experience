@@ -13,16 +13,16 @@
 <link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/mapreduce/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
 <link rel="prev" href="../yarn/" title="YARN" type="text/html">
+<link rel="next" href="../spark-architecture/" title="Spark Architecture" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="MapReduce">
 <meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/mapreduce/">
 <meta property="og:description" content="This post go briefly over the key idea of using MapReduce as a way to
-distribute key-value operations over multiple machines. 
+parallelize operations over multiple distributed machines. 
 
 
 
-This was in fact the first tool that was developed for parallelizing
-c">
+This was in fact the first tool that was developed for parallelizin">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2020-05-23T14:25:10+02:00">
 <meta property="article:tag" content="Big Data">
@@ -70,7 +70,7 @@ c">
     </header><div class="e-content entry-content" itemprop="articleBody text">
     <br><br><p>
 This post go briefly over the key idea of using MapReduce as a way to
-distribute key-value operations over multiple machines. 
+parallelize operations over multiple distributed machines. 
 </p>
 
 <p>
@@ -81,9 +81,9 @@ machines for the storage layer.
 
 <!-- TEASER_END -->
 
-<br><div id="outline-container-org487f4b0" class="outline-2">
-<h2 id="org487f4b0">The logical Layer</h2>
-<div class="outline-text-2" id="text-org487f4b0">
+<br><div id="outline-container-orgb38c3b5" class="outline-2">
+<h2 id="orgb38c3b5">The logical Layer</h2>
+<div class="outline-text-2" id="text-orgb38c3b5">
 <p>
 The basic idea of MapReduce is to take the data from the storage
 layer (be it in on block-storage, HDFS, the local file system) and
@@ -155,9 +155,9 @@ each step a key with the corresponding value is identifiable.
 </div>
 
 
-<div id="outline-container-orgdde233c" class="outline-2">
-<h2 id="orgdde233c">Internal Operations of MapReduce Job</h2>
-<div class="outline-text-2" id="text-orgdde233c">
+<div id="outline-container-org348fb11" class="outline-2">
+<h2 id="org348fb11">Internal Operations of MapReduce Job</h2>
+<div class="outline-text-2" id="text-org348fb11">
 <p>
 Important is to understand what goes on under the hood when you
 launch a Hadoop MapReduce job.
@@ -192,9 +192,9 @@ partitioned keys on which the <code>reducer</code> is applied.
 </div>
 </div>
 
-<div id="outline-container-org2af7180" class="outline-2">
-<h2 id="org2af7180">The physical Layer / Architecture</h2>
-<div class="outline-text-2" id="text-org2af7180">
+<div id="outline-container-org348d382" class="outline-2">
+<h2 id="org348d382">The physical Layer / Architecture</h2>
+<div class="outline-text-2" id="text-org348d382">
 <p>
 MapReduce acted originall right on top of <code>HDFS</code>. It leveraged
 therefore the existing <b>master-slave</b> architecture for assigning the
@@ -266,9 +266,9 @@ servers. This is where the expensive shuffling takes place.</li>
 </div>
 </div>
 
-<div id="outline-container-orgfb5f445" class="outline-2">
-<h2 id="orgfb5f445">On Shuffling Optimization</h2>
-<div class="outline-text-2" id="text-orgfb5f445">
+<div id="outline-container-orgd4a66dc" class="outline-2">
+<h2 id="orgd4a66dc">On Shuffling Optimization</h2>
+<div class="outline-text-2" id="text-orgd4a66dc">
 <p>
 It is clear that shuffling is expensive. The coordination game is
 expensive, the network bandwidth is used and the waiting time for each
@@ -308,9 +308,9 @@ aggregate the operations.</li>
 </div>
 </div>
 
-<div id="outline-container-org26d3133" class="outline-2">
-<h2 id="org26d3133">Literature</h2>
-<div class="outline-text-2" id="text-org26d3133">
+<div id="outline-container-orgf987f9e" class="outline-2">
+<h2 id="orgf987f9e">Literature</h2>
+<div class="outline-text-2" id="text-orgf987f9e">
 <p>
 <a href="https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material">Big Data for Engineers - ETH course</a>
 </p>
@@ -320,6 +320,9 @@ aggregate the operations.</li>
     <aside class="postpromonav"><nav><ul class="pager hidden-print">
 <li class="previous">
                 <a href="../yarn/" rel="prev" title="YARN">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../spark-architecture/" rel="next" title="Spark Architecture">Next post</a>
             </li>
         </ul></nav></aside></article><footer id="footer"><p>Contents © 2020         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
