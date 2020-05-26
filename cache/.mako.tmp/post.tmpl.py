@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1590504896.73064
+_modified_time = 1590506092.470051
 _enable_loop = True
 _template_filename = 'themes/zen/templates/post.tmpl'
 _template_uri = 'post.tmpl'
@@ -39,17 +39,17 @@ def render_body(context,**pageargs):
     __M_caller = context.caller_stack._push_frame()
     try:
         __M_locals = __M_dict_builtin(pageargs=pageargs)
-        pheader = _mako_get_namespace(context, 'pheader')
-        site_has_comments = context.get('site_has_comments', UNDEFINED)
         smartjoin = context.get('smartjoin', UNDEFINED)
-        helper = _mako_get_namespace(context, 'helper')
+        pheader = _mako_get_namespace(context, 'pheader')
         def content():
             return render_content(context._locals(__M_locals))
-        post = context.get('post', UNDEFINED)
+        parent = context.get('parent', UNDEFINED)
         messages = context.get('messages', UNDEFINED)
         def extra_head():
             return render_extra_head(context._locals(__M_locals))
-        parent = context.get('parent', UNDEFINED)
+        post = context.get('post', UNDEFINED)
+        site_has_comments = context.get('site_has_comments', UNDEFINED)
+        helper = _mako_get_namespace(context, 'helper')
         comments = _mako_get_namespace(context, 'comments')
         math = _mako_get_namespace(context, 'math')
         __M_writer = context.writer()
@@ -77,11 +77,11 @@ def render_extra_head(context,**pageargs):
     __M_caller = context.caller_stack._push_frame()
     try:
         smartjoin = context.get('smartjoin', UNDEFINED)
-        post = context.get('post', UNDEFINED)
+        parent = context.get('parent', UNDEFINED)
+        helper = _mako_get_namespace(context, 'helper')
         def extra_head():
             return render_extra_head(context)
-        helper = _mako_get_namespace(context, 'helper')
-        parent = context.get('parent', UNDEFINED)
+        post = context.get('post', UNDEFINED)
         math = _mako_get_namespace(context, 'math')
         __M_writer = context.writer()
         __M_writer('\n    ')
@@ -126,14 +126,14 @@ def render_content(context,**pageargs):
     __M_caller = context.caller_stack._push_frame()
     try:
         pheader = _mako_get_namespace(context, 'pheader')
-        site_has_comments = context.get('site_has_comments', UNDEFINED)
-        helper = _mako_get_namespace(context, 'helper')
         def content():
             return render_content(context)
-        post = context.get('post', UNDEFINED)
-        messages = context.get('messages', UNDEFINED)
-        comments = _mako_get_namespace(context, 'comments')
         math = _mako_get_namespace(context, 'math')
+        messages = context.get('messages', UNDEFINED)
+        post = context.get('post', UNDEFINED)
+        site_has_comments = context.get('site_has_comments', UNDEFINED)
+        helper = _mako_get_namespace(context, 'helper')
+        comments = _mako_get_namespace(context, 'comments')
         __M_writer = context.writer()
         __M_writer('\n<article class="post-')
         __M_writer(str(post.meta('type')))
