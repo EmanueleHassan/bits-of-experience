@@ -18,6 +18,9 @@
 This post outlines some of the commands to operate on your Kubernetes
 and Openshift cluster via CLI.
 
+It does not contain any Kubernetes or Openshift theoretical content
+which is rather available at the [[https://marcohassan.github.io/bits-of-experience/posts/Kubernetes/][following post]].
+
 #+BEGIN_EXPORT html
 <br>
 #+END_EXPORT
@@ -32,7 +35,6 @@ edit single =.yaml= files for each resource.
 
 It is a powerful way to navigate your way through and get the
 structure. You can access it from the ibm cloud on your browser directly. INC4429361
-
 
 *** Configure your Kubeconfig file 
 
@@ -73,6 +75,51 @@ structure. You can access it from the ibm cloud on your browser directly. INC442
     export KUBECONFIG=/Users/marcohassan/.bluemix/plugins/container-service/clusters/<cluster-id>/<configuration .yaml>
     #+END_SRC
 
+    Notice that by exporting multiple kubeconfig files you can handle
+    multiple customers/applications from the same machine and through
+    the same CLI.
+
+    An important thing in this context is on how to handle different
+    kubernetes clusters contemporarily. You can refer to this [[https://medium.com/faun/using-different-kubectl-versions-with-multiple-kubernetes-clusters-a3ad8707b87b][nice
+    intro]].
+
+*** On Kubernetes Contexts
+
+    To view your configuration file with all of its contexts and users use:
+
+    #+BEGIN_SRC sh :results drawer
+    kubectl config view -o json
+    #+END_SRC
+
+    The KUBECONFIG file contains several things of interest including the
+    cluster information so that kubectl is executing commands on the
+    correct cluster. It also stores authentication information such as
+    username/passwords, certificates or tokens. Lastly, the KUBECONFIG
+    file stores contexts.
+
+    Contexts group access information under an easily recognizable
+    name. So a context would include a cluster, a user and a
+    namespace. Now you can use KUBECONFIG and context to set our default
+    namespaces. No more logging in and being dumped into the default
+    namespace.
+
+    What if you do not need a context anymore 
+
+    #+BEGIN_SRC sh
+    kubectl config get-contexts
+    #+END_SRC
+
+    #+RESULTS:
+    | CURRENT                                                                             | NAME                                        | CLUSTER                                                              | AUTHINFO                                              | NAMESPACE |
+    | ibm-cert-store/c100-e-eu-de-containers-cloud-ibm-com:31633/IAM#marco.hassan@ibm.com | c100-e-eu-de-containers-cloud-ibm-com:31633 | IAM#marco.hassan@ibm.com/c100-e-eu-de-containers-cloud-ibm-com:31633 | ibm-cert-store                                        |           |
+
+    #+BEGIN_SRC sh
+   kubectl config unset contexts.ibm-cert-store/c100-e-eu-de-containers-cloud-ibm-com:31633/IAM#marco.hassan@ibm.com
+    #+END_SRC
+
+    #+RESULTS:
+    : contexts.ibm-cert-store/c100-e-eu-de-containers-cloud-ibm-com:31633/IAM#marco.hassan@ibm.com
+
 *** General Clutster Info
 
     #+BEGIN_SRC sh
@@ -108,7 +155,6 @@ structure. You can access it from the ibm cloud on your browser directly. INC442
     #+BEGIN_SRC sh
     kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.10.0/cert-manager-openshift.yaml 
     #+END_SRC
-
 
 *** Gather more info for dealing with specific errors.
 
@@ -170,6 +216,7 @@ structure. You can access it from the ibm cloud on your browser directly. INC442
 <br>
 #+END_EXPORT
 
+
 ** Openshift
 
    Openshift is also a cluster management tool. This is a more well
@@ -183,6 +230,7 @@ structure. You can access it from the ibm cloud on your browser directly. INC442
    cluster will allow you to directly operate on your cluster.
 
    Commands are pretty similar to Kubernetes CLI.
+
 
 *** General glimpse of Cluster
 
