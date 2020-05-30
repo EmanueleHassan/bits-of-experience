@@ -73,14 +73,33 @@ running for an application a second application will leverage the
 instance of this exact lower layer and will ultimately save resources.
 
 
-** Basic commands
 
-Writing a Dockerfile is the first step to containerizing an
-application. You can think of these Dockerfile commands as a
-step-by-step recipe on how to build up our image. This one takes the
-following steps:
 
-#+BEGIN_EXAMPLE
+** Create Images with Dockerfiles
+
+*** General Workflow
+
+ The first thing to do is to create your working directory. Don't use
+ the root directory as it will expose your container to security
+ vulnerabilities.
+
+ Within that directory create then the =Dockerfile= that will include
+ all of the set of instructions necessary to create your image.
+ Important is that in the Dockerfile each instruction is executed in
+ order. So consider that carefully when specifying the commands. 
+
+ You can comment dockerfiles with the comments by =#=.
+
+ Finally use the ~docker build~ command to create the image.
+
+*** Commands for Dockerfile image
+
+ Writing a Dockerfile is the first step to containerizing an
+ application. You can think of these Dockerfile commands as a
+ step-by-step recipe on how to build up our image. This one takes the
+ following steps:
+
+ #+BEGIN_EXAMPLE
 ## Example of a Dockerfile
 
 FROM node:6.11.5    
@@ -92,35 +111,32 @@ COPY . .
 
 CMD [ "npm", "start" ]  
 
-#+END_EXAMPLE
+ #+END_EXAMPLE
 
-Notice;
+ Notice;
 
-- =FROM= start the pre-existing docker image =node:6.11.5=. This was
-  cloned from the git repo used in the tutorial. It gives a grasp on
-  the layered structure of docker, where you can start in the lower
-  layer with basic images and run on top of them new images leveraging
-  the basic ones.
+ - =FROM= start the pre-existing docker image =node:6.11.5=. This was
+   cloned from the git repo used in the tutorial. It gives a grasp on
+   the layered structure of docker, where you can start in the lower
+   layer with basic images and run on top of them new images leveraging
+   the basic ones.
 
-- =WORKDIR= specifies that all the subsequent actions should be taken
-  from the directory =/usr/src/app/= in your *image filesystem*.
+ - =WORKDIR= specifies that all the subsequent actions should be taken
+   from the directory =/usr/src/app/= in your *image filesystem*.
 
-- =COPY= the file =package.json= from your docker host to the present
-  location =.= such that it is available in the image and the
-  deployment can leverage it. Notice that the files passed with the
-  =COPY= command will be used by the ~$ docker build~ command to
-  create an image. To increase the build’s performance, exclude files
-  and directories by adding a =.dockerignore=.
+ - =COPY= the file =package.json= from your docker host to the present
+   location =.= such that it is available in the image and the
+   deployment can leverage it. Notice that the files passed with the
+   =COPY= command will be used by the ~$ docker build~ command to
+   create an image. To increase the build’s performance, exclude files
+   and directories by adding a =.dockerignore=.
 
-- =RUN= the command =npm install= inside your *image filesystem*.
+ - =RUN= the command =npm install= inside your *image filesystem*. This
+   in general executes commands.
 
-- =COPY= the rest of your app's source code from your host to your
-  image filesystem.
-
-You can see that /these are much the same steps you might have taken to
-set up and install your app on your host/ - but capturing these as a
-Dockerfile allows us to do the same thing inside a portable, isolated
-Docker image.
+ - =COPY= the rest of your app's source code from your host to your
+   image filesystem. I.e. it allows you to copy files from your host
+   filesystem to your image filesystem.
 
 The final line with the =CMD= directive is the docker specific way of
 specifying some metadata in our image that describes how to run a
@@ -129,8 +145,60 @@ container based off of the specified image.
 In this case, it’s saying that the containerized process that this
 image is meant to support is =npm start=.
 
+Important that the =CMD= commands will run in relation to the image
+entrypoint which is discussed here below. If you do not specify any
+entrypoint the default is the ~/bin/sh -c~ and therefore you can run
+standard bash commands as above.
 
-/Below a short list of commands. This is however just a way to write them down one time and start to memorize it. A convenient approach when looking forward to do smth is to leverage =docker --help= and search for the keyword of interest. You can then further inspect with =docker <command> --help=./
+ Further instructions are:
+
+ - =LABEL= this is metadata. it is a key-value pair that can be used
+   later for filtering the containers.
+
+ - =MAINTAINER= also metadata where you can for instance enter the
+   e-mail of the maintainer.
+
+ - =EXPOSE= it specifies the port used for the process running on the
+   container. 
+
+ - =ENV= it is specifying environment variables. 
+
+ - =ADD= it adds files from remote places to your container.
+   an example for it might be ~ADD http:/link/of/picture /tmp~. Notice
+   that add has the capability of *untar* files while the =COPY=
+   command does not offer that capability. 
+
+ - =USER= it will allow you to specify the user through which the
+   commands specified in the =Dockefile= will be run. Recall commands
+   are sequential in docker. 
+
+ - =ENTRYPOINT= specifies the entrypoint of the container. the default
+   is ~/bin/sh -c~
+
+ You can see that /these are much the same steps you might have taken to
+ set up and install your app on your host/ - but capturing these as a
+ Dockerfile allows us to do the same thing inside a portable, isolated
+ Docker image.
+
+** Image Layering
+
+Notice that each time you =RUN= a Dockerfile it will create a further
+layer. If the image has too many layers the image will rapidly grow in
+size and you would obtain a very big and heavy image which is not the
+goal of Docker.
+
+In order to reduce the layers of an image it makes therefore sense to
+leverage the ~&&~ bash command to sequentially execute two bash
+commands in one =RUN= instruction such that you will keep your image
+lightweight. You can use the split line ~\~ to increase readability.
+
+** Docker images Management
+
+Below a short list of commands. This is however just a way to write
+them down one time and start to memorize it. A convenient approach
+when looking forward to do smth is to leverage =docker --help= and
+search for the keyword of interest. You can then further inspect with
+=docker <command> --help=.
 
 #+BEGIN_SRC sh
   # To build an image from a Dockerfile and a context. The build’s
@@ -143,8 +211,7 @@ image is meant to support is =npm start=.
 	$ docker build .
 
   # to build an image and associate it with a given tag you can leverage the -t flag
-	$ docker build -t bullet_inboard:1.0 .
-
+	$ docker build -t bullet_inboard:1.0 <directory where the dockerfile is>
 
   # To list all the avaialble images
   $ docker image ls
@@ -191,9 +258,8 @@ image is meant to support is =npm start=.
   $ docker kill <Container ID>
 
   # To stop the docker deamon running in the background 
-  $ service docker stop
+  $ servce docker stop
 #+END_SRC
-
 
 
 * Literature

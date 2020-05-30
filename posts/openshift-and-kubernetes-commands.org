@@ -34,7 +34,25 @@ provides you a neat overview over your cluster. It allows to view and
 edit single =.yaml= files for each resource. 
 
 It is a powerful way to navigate your way through and get the
-structure. You can access it from the ibm cloud on your browser directly. INC4429361
+structure. You can access it from the ibm cloud on your browser
+directly. 
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+ #+begin_export html
+ <iframe width="800" height="400"
+ src="https://www.youtube.com/embed/K1HuOLzPSpU">
+ </iframe>
+ #+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
 
 *** Configure your Kubeconfig file 
 
@@ -221,7 +239,9 @@ structure. You can access it from the ibm cloud on your browser directly. INC442
 
    Openshift is also a cluster management tool. This is a more well
    rounded management tool. Especially in monitoring the cluster and
-   creating new services and resources it is particularly strong. 
+   creating new services and resources it is particularly
+   strong. Openshift sits in fact on top of kubernetes adding feature
+   functionalities to it.
 
    The GUI interface is very well done and comprehensive. This section
    looks at the CLI to directly operate on your openshift
@@ -229,7 +249,13 @@ structure. You can access it from the ibm cloud on your browser directly. INC442
    noted in the kubernetes section. The KUBECONFIG of your openshift
    cluster will allow you to directly operate on your cluster.
 
-   Commands are pretty similar to Kubernetes CLI.
+   Commands are pretty similar to Kubernetes CLI in fact you might
+   even use =kubectl= command. 
+
+   Interesting is that instead of Docker for administrating the
+   containers Openshift uses Podman. This is another open source tool
+   for managing containers and container images and interacting with
+   image registries.
 
 
 *** General glimpse of Cluster
@@ -249,6 +275,13 @@ structure. You can access it from the ibm cloud on your browser directly. INC442
 
     oc get namespace
     #+end_src
+
+    If you want more detail instructions on a given pod you can run
+
+    #+BEGIN_SRC sh
+    oc describe pod <my-pod>
+    #+END_SRC
+
    
 *** Get satatus of running pods
 
@@ -275,5 +308,134 @@ structure. You can access it from the ibm cloud on your browser directly. INC442
      #+begin_src ipython
      oc get users
      #+end_src
+
+*** Searching for Images via Podman
+
+    #+BEGIN_SRC sh
+    sudo podman search rhel
+    #+END_SRC
+
+    #+RESULTS:
+    
+    Important is that you can configure the registries (be it Docker
+    Hub or whatever) the podman will search your images in. 
+
+    After you found the image of your desire you can download the
+    image via podman through
+
+    #+BEGIN_SRC sh
+    sudo podman pull rhel
+    #+END_SRC
+
+    The usual structure of an image is:
+    =registry_name/user_name/image_name:tag= if you do not specify a
+    tag manually the default is *latest*.
+
+*** Run an Image via Podman
+
+    You can run an image after you downloaded it via podman through
+
+    #+BEGIN_SRC sh
+    sudo podman run <image_name>:<tag> 
+    #+END_SRC
+
+    You can even run it as demon if the image deployment will be long
+
+    #+BEGIN_SRC sh
+    sudo podman run -d <image_name>:<tag> 
+    #+END_SRC
+
+    Further important options are the ~--name~ to specify a name for
+    the container.
+
+    You can finally pass environment variables that might be necessary
+    to specify in Relation to the image (for instance a database user,
+    table, password) with the ~-e~ flag.
+
+*** Running an Interactive shell on a container
+
+    An important option is the ~-t~ flag used to create a pseudo
+    terminal. 
+
+    For instance to open a shell within a container you can use
+
+    #+BEGIN_SRC sh
+    sudo oc exec -it <container-name> /bin/bash
+
+    ## also possible via podman.
+    sudo podman exec -it <container-name> /bin/bash
+    #+END_SRC
+
+*** Get the services of the Cluster
+
+   #+BEGIN_SRC sh
+   oc get svc
+   #+END_SRC
+
+   This will allow to see the IP of the service and you might expose
+   it to the world wide web via routes.
+
+   To expose a service via a route *DNS host name* you can run
+
+   #+BEGIN_SRC sh
+   oc expose service svc/<service-name>
+   #+END_SRC
+
+   This would basically expose a DNS host name, for instance
+   www.mypod.com, to the WLAN and the DNS host name can redirect the
+   outside traffic to the different services pods. Finally the service
+   will point and load balance to the different pods running the
+   containers.
+
+   The DNS host name is of the form:
+   =route-name-project-name.default-domain=.
+
+   To get detailed information about a route after it was created you
+   can use 
+
+   #+BEGIN_SRC sh
+   oc describe route <route-name>
+   #+END_SRC
+
+   To better understand this workflow check at the following video:
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+ #+begin_export html
+ <iframe width="800" height="400"
+ src="https://www.youtube.com/embed/tTYY1Iz9DGw">
+ </iframe>
+ #+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+ #+begin_export html
+ <iframe width="800" height="400"
+ src="https://www.youtube.com/embed/ohSUtEfDefc">
+ </iframe>
+ #+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+*** Oc new-app
+
+    A nice command since openshift 4.0 is ~oc new-app~. This allows
+    you to enter the link of a github repository and openshift will
+    automatically infer the languages you are using and create a
+    dockerfile running the application there.
 
 

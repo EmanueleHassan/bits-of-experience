@@ -6,13 +6,18 @@ This post outlines some of the commands to operate on your Kubernetes
 and Openshift cluster via CLI.
 </p>
 
+<p>
+It does not contain any Kubernetes or Openshift theoretical content
+which is rather available at the <a href="https://marcohassan.github.io/bits-of-experience/posts/Kubernetes/">following post</a>.
+</p>
+
 <br>
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org537e41d" class="outline-2">
-<h2 id="org537e41d">Kubernetes</h2>
-<div class="outline-text-2" id="text-org537e41d">
+<div id="outline-container-org53e912b" class="outline-2">
+<h2 id="org53e912b">Kubernetes</h2>
+<div class="outline-text-2" id="text-org53e912b">
 <p>
 Particularly useful when working with Kubernetes is the dashboard. It
 provides you a neat overview over your cluster. It allows to view and
@@ -21,14 +26,25 @@ edit single <code>.yaml</code> files for each resource.
 
 <p>
 It is a powerful way to navigate your way through and get the
-structure. You can access it from the ibm cloud on your browser directly. INC4429361
+structure. You can access it from the ibm cloud on your browser
+directly. 
 </p>
+
+<br>
+<br>
+
+<iframe width="800" height="400"
+src="https://www.youtube.com/embed/K1HuOLzPSpU">
+</iframe>
+
+<br>
+<br>
 </div>
 
 
-<div id="outline-container-org1c3b5d9" class="outline-3">
-<h3 id="org1c3b5d9">Configure your Kubeconfig file</h3>
-<div class="outline-text-3" id="text-org1c3b5d9">
+<div id="outline-container-org27746d4" class="outline-3">
+<h3 id="org27746d4">Configure your Kubeconfig file</h3>
+<div class="outline-text-3" id="text-org27746d4">
 <p>
 This is the foremost important step as you have to specify the
 kubernetes/openshift cluster you want to operate on.
@@ -68,20 +84,70 @@ Finally you can export it and configuring the KUBECONFIG file by running.
 
 <div class="highlight"><pre><span></span>    <span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span>/Users/marcohassan/.bluemix/plugins/container-service/clusters/&lt;cluster-id&gt;/&lt;configuration .yaml&gt;
 </pre></div>
+
+<p>
+Notice that by exporting multiple kubeconfig files you can handle
+multiple customers/applications from the same machine and through
+the same CLI.
+</p>
+
+<p>
+An important thing in this context is on how to handle different
+kubernetes clusters contemporarily. You can refer to this <a href="https://medium.com/faun/using-different-kubectl-versions-with-multiple-kubernetes-clusters-a3ad8707b87b">nice
+intro</a>.
+</p>
 </div>
 </div>
 
-<div id="outline-container-orgc0460e5" class="outline-3">
-<h3 id="orgc0460e5">General Clutster Info</h3>
-<div class="outline-text-3" id="text-orgc0460e5">
+<div id="outline-container-orge33f4c7" class="outline-3">
+<h3 id="orge33f4c7">On Kubernetes Contexts</h3>
+<div class="outline-text-3" id="text-orge33f4c7">
+<p>
+To view your configuration file with all of its contexts and users use:
+</p>
+
+<div class="highlight"><pre><span></span>    kubectl config view -o json
+</pre></div>
+
+<p>
+The KUBECONFIG file contains several things of interest including the
+cluster information so that kubectl is executing commands on the
+correct cluster. It also stores authentication information such as
+username/passwords, certificates or tokens. Lastly, the KUBECONFIG
+file stores contexts.
+</p>
+
+<p>
+Contexts group access information under an easily recognizable
+name. So a context would include a cluster, a user and a
+namespace. Now you can use KUBECONFIG and context to set our default
+namespaces. No more logging in and being dumped into the default
+namespace.
+</p>
+
+<p>
+What if you do not need a context anymore 
+</p>
+
+<div class="highlight"><pre><span></span>    kubectl config get-contexts
+</pre></div>
+
+<div class="highlight"><pre><span></span>    kubectl config <span class="nb">unset</span> contexts.ibm-cert-store/c100-e-eu-de-containers-cloud-ibm-com:31633/IAM#marco.hassan@ibm.com
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org29391ec" class="outline-3">
+<h3 id="org29391ec">General Clutster Info</h3>
+<div class="outline-text-3" id="text-org29391ec">
 <div class="highlight"><pre><span></span>    kubectl cluster-info
 </pre></div>
 </div>
 </div>
 
-<div id="outline-container-org87a3052" class="outline-3">
-<h3 id="org87a3052">Look at the running pods and Namespaces</h3>
-<div class="outline-text-3" id="text-org87a3052">
+<div id="outline-container-orgec4a4f8" class="outline-3">
+<h3 id="orgec4a4f8">Look at the running pods and Namespaces</h3>
+<div class="outline-text-3" id="text-orgec4a4f8">
 <p>
 In a similar way to Openshift; you can operate on your IKS cluster
 using the <code>kubectl</code> command. The important thing is that you properly
@@ -105,9 +171,9 @@ In order to do that you can follow the steps under the following post: <a href="
 </div>
 </div>
 
-<div id="outline-container-org3718f15" class="outline-3">
-<h3 id="org3718f15">Apply changes to resource</h3>
-<div class="outline-text-3" id="text-org3718f15">
+<div id="outline-container-orgf1223cd" class="outline-3">
+<h3 id="orgf1223cd">Apply changes to resource</h3>
+<div class="outline-text-3" id="text-orgf1223cd">
 <p>
 With the <code>kubectl apply</code> command you are actually changing some
 <code>.yaml</code> file of your images. 
@@ -123,10 +189,9 @@ input before sending it.
 </div>
 </div>
 
-
-<div id="outline-container-orgee6deea" class="outline-3">
-<h3 id="orgee6deea">Gather more info for dealing with specific errors.</h3>
-<div class="outline-text-3" id="text-orgee6deea">
+<div id="outline-container-org3ada5c0" class="outline-3">
+<h3 id="org3ada5c0">Gather more info for dealing with specific errors.</h3>
+<div class="outline-text-3" id="text-org3ada5c0">
 <div class="highlight"><pre><span></span>    kubectl describe pod &lt;my-pod&gt;
 </pre></div>
 
@@ -161,9 +226,9 @@ file specification error and this could not be found.
 </div>
 </div>
 
-<div id="outline-container-orgf87e147" class="outline-3">
-<h3 id="orgf87e147">When disrupting the Kubernetes Backend</h3>
-<div class="outline-text-3" id="text-orgf87e147">
+<div id="outline-container-orgeb8ece3" class="outline-3">
+<h3 id="orgeb8ece3">When disrupting the Kubernetes Backend</h3>
+<div class="outline-text-3" id="text-orgeb8ece3">
 <p>
 It happened to me, when trying to debug Kubernetes issues that
 I somehow altered the kubernetes structure and got the following error.
@@ -208,13 +273,16 @@ You should be back to a normal behaving cluster then.
 </div>
 </div>
 
-<div id="outline-container-org34bb7fa" class="outline-2">
-<h2 id="org34bb7fa">Openshift</h2>
-<div class="outline-text-2" id="text-org34bb7fa">
+
+<div id="outline-container-org9790599" class="outline-2">
+<h2 id="org9790599">Openshift</h2>
+<div class="outline-text-2" id="text-org9790599">
 <p>
 Openshift is also a cluster management tool. This is a more well
 rounded management tool. Especially in monitoring the cluster and
-creating new services and resources it is particularly strong. 
+creating new services and resources it is particularly
+strong. Openshift sits in fact on top of kubernetes adding feature
+functionalities to it.
 </p>
 
 <p>
@@ -226,13 +294,22 @@ cluster will allow you to directly operate on your cluster.
 </p>
 
 <p>
-Commands are pretty similar to Kubernetes CLI.
+Commands are pretty similar to Kubernetes CLI in fact you might
+even use <code>kubectl</code> command. 
+</p>
+
+<p>
+Interesting is that instead of Docker for administrating the
+containers Openshift uses Podman. This is another open source tool
+for managing containers and container images and interacting with
+image registries.
 </p>
 </div>
 
-<div id="outline-container-org0584166" class="outline-3">
-<h3 id="org0584166">General glimpse of Cluster</h3>
-<div class="outline-text-3" id="text-org0584166">
+
+<div id="outline-container-org96e0eb5" class="outline-3">
+<h3 id="org96e0eb5">General glimpse of Cluster</h3>
+<div class="outline-text-3" id="text-org96e0eb5">
 <p>
 Look at the general settings of your cluster 
 </p>
@@ -246,35 +323,43 @@ In order to list the current namespaces or pods make use of
 </div>
 </div>
 
-<div id="outline-container-orgd040e16" class="outline-3">
-<h3 id="orgd040e16">Look at namespaces and pods</h3>
-<div class="outline-text-3" id="text-orgd040e16">
+<div id="outline-container-org6d6b684" class="outline-3">
+<h3 id="org6d6b684">Look at namespaces and pods</h3>
+<div class="outline-text-3" id="text-org6d6b684">
 <div class="highlight"><pre><span></span>    oc get pods
 
     oc get namespace
 </pre></div>
+
+<p>
+If you want more detail instructions on a given pod you can run
+</p>
+
+<div class="highlight"><pre><span></span>    oc describe pod &lt;my-pod&gt;
+</pre></div>
 </div>
 </div>
 
-<div id="outline-container-org608c4ed" class="outline-3">
-<h3 id="org608c4ed">Get satatus of running pods</h3>
-<div class="outline-text-3" id="text-org608c4ed">
+
+<div id="outline-container-orgc1813f6" class="outline-3">
+<h3 id="orgc1813f6">Get satatus of running pods</h3>
+<div class="outline-text-3" id="text-orgc1813f6">
 <div class="highlight"><pre><span></span>     oc status
 </pre></div>
 </div>
 </div>
 
-<div id="outline-container-orgb45eb77" class="outline-3">
-<h3 id="orgb45eb77">Look at specific pod configuration</h3>
-<div class="outline-text-3" id="text-orgb45eb77">
+<div id="outline-container-org8dce34d" class="outline-3">
+<h3 id="org8dce34d">Look at specific pod configuration</h3>
+<div class="outline-text-3" id="text-org8dce34d">
 <div class="highlight"><pre><span></span>    oc edit pod &lt;pod-name&gt;
 </pre></div>
 </div>
 </div>
 
-<div id="outline-container-org11247ab" class="outline-3">
-<h3 id="org11247ab">Switch among namespaces</h3>
-<div class="outline-text-3" id="text-org11247ab">
+<div id="outline-container-org887c3e7" class="outline-3">
+<h3 id="org887c3e7">Switch among namespaces</h3>
+<div class="outline-text-3" id="text-org887c3e7">
 <p>
 To switch between different namespaces use
 </p>
@@ -288,6 +373,147 @@ Look at the user configuration in the <code>kube config</code> file.
 
 <div class="highlight"><pre><span></span>     oc get users
 </pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgc369e54" class="outline-3">
+<h3 id="orgc369e54">Searching for Images via Podman</h3>
+<div class="outline-text-3" id="text-orgc369e54">
+<div class="highlight"><pre><span></span>    sudo podman search rhel
+</pre></div>
+
+<p>
+Important is that you can configure the registries (be it Docker
+Hub or whatever) the podman will search your images in. 
+</p>
+
+<p>
+After you found the image of your desire you can download the
+image via podman through
+</p>
+
+<div class="highlight"><pre><span></span>    sudo podman pull rhel
+</pre></div>
+
+<p>
+The usual structure of an image is:
+<code>registry_name/user_name/image_name:tag</code> if you do not specify a
+tag manually the default is <b>latest</b>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8c6f66e" class="outline-3">
+<h3 id="org8c6f66e">Run an Image via Podman</h3>
+<div class="outline-text-3" id="text-org8c6f66e">
+<p>
+You can run an image after you downloaded it via podman through
+</p>
+
+<div class="highlight"><pre><span></span>    sudo podman run &lt;image_name&gt;:&lt;tag&gt; 
+</pre></div>
+
+<p>
+You can even run it as demon if the image deployment will be long
+</p>
+
+<div class="highlight"><pre><span></span>    sudo podman run -d &lt;image_name&gt;:&lt;tag&gt; 
+</pre></div>
+
+<p>
+Further important options are the <code>--name</code> to specify a name for
+the container.
+</p>
+
+<p>
+You can finally pass environment variables that might be necessary
+to specify in Relation to the image (for instance a database user,
+table, password) with the <code>-e</code> flag.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org658cbd5" class="outline-3">
+<h3 id="org658cbd5">Running an Interactive shell on a container</h3>
+<div class="outline-text-3" id="text-org658cbd5">
+<p>
+An important option is the <code>-t</code> flag used to create a pseudo
+terminal. 
+</p>
+
+<p>
+For instance to open a shell within a container you can use
+</p>
+
+<div class="highlight"><pre><span></span>    sudo oc <span class="nb">exec</span> -it &lt;container-name&gt; /bin/bash
+
+    <span class="c1">## also possible via podman.</span>
+    sudo podman <span class="nb">exec</span> -it &lt;container-name&gt; /bin/bash
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgcdeb0b1" class="outline-3">
+<h3 id="orgcdeb0b1">Get the services of the Cluster</h3>
+<div class="outline-text-3" id="text-orgcdeb0b1">
+<div class="highlight"><pre><span></span>   oc get svc
+</pre></div>
+
+<p>
+This will allow to see the IP of the service and you might expose
+it to the world wide web via routes.
+</p>
+
+<p>
+To expose a service via a route <b>DNS host name</b> you can run
+</p>
+
+<div class="highlight"><pre><span></span>   oc expose service &lt;service-name&gt;
+</pre></div>
+
+<p>
+This would basically expose a DNS host name, for instance
+www.mypod.com, to the WLAN and the DNS host name can redirect the
+outside traffic to the different services pods. Finally the service
+will point and load balance to the different pods running the
+containers.
+</p>
+
+<p>
+To better understand this workflow check at the following video:
+</p>
+
+<br>
+<br>
+
+<iframe width="800" height="400"
+src="https://www.youtube.com/embed/tTYY1Iz9DGw">
+</iframe>
+
+<br>
+<br>
+
+<br>
+<br>
+
+<iframe width="800" height="400"
+src="https://www.youtube.com/embed/ohSUtEfDefc">
+</iframe>
+
+<br>
+<br>
+</div>
+</div>
+
+<div id="outline-container-orgece1248" class="outline-3">
+<h3 id="orgece1248">Oc new-app</h3>
+<div class="outline-text-3" id="text-orgece1248">
+<p>
+A nice command since openshift 4.0 is <code>oc new-app</code>. This allows
+you to enter the link of a github repository and openshift will
+automatically infer the languages you are using and create a
+dockerfile running the application there.
+</p>
 </div>
 </div>
 </div>

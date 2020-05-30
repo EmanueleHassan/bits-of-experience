@@ -27,9 +27,9 @@ as defined in the docker image.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org928451e" class="outline-3">
-<h3 id="org928451e">General theory</h3>
-<div class="outline-text-3" id="text-org928451e">
+<div id="outline-container-org9b81cd4" class="outline-3">
+<h3 id="org9b81cd4">General theory</h3>
+<div class="outline-text-3" id="text-org9b81cd4">
 <p>
 Lifecycle: build, ship, run. -&gt; build ur application. Wrap it up in a
 container and ship it. Run it and scale it then. This allows portability. 
@@ -40,45 +40,45 @@ Parts of docker:
 </p>
 </div>
 
-<div id="outline-container-org4b33054" class="outline-4">
-<h4 id="org4b33054">Image</h4>
-<div class="outline-text-4" id="text-org4b33054">
+<div id="outline-container-org32784c8" class="outline-4">
+<h4 id="org32784c8">Image</h4>
+<div class="outline-text-4" id="text-org32784c8">
 <p>
 Read only. It is a snapshot of a container stored on a registry. U use it as a template for creating containers.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgbcb1823" class="outline-4">
-<h4 id="orgbcb1823">Container</h4>
-<div class="outline-text-4" id="text-orgbcb1823">
+<div id="outline-container-orgbef43a1" class="outline-4">
+<h4 id="orgbef43a1">Container</h4>
+<div class="outline-text-4" id="text-orgbef43a1">
 <p>
 This is the runtime instance of the image. A running copy of that.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org1289d70" class="outline-4">
-<h4 id="org1289d70">Registry</h4>
-<div class="outline-text-4" id="text-org1289d70">
+<div id="outline-container-orgd79f1a7" class="outline-4">
+<h4 id="orgd79f1a7">Registry</h4>
+<div class="outline-text-4" id="text-orgd79f1a7">
 <p>
 This is essentially a repository where docker images are stored.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org148a6c8" class="outline-4">
-<h4 id="org148a6c8">Docker Engine</h4>
-<div class="outline-text-4" id="text-org148a6c8">
+<div id="outline-container-orge0ced37" class="outline-4">
+<h4 id="orge0ced37">Docker Engine</h4>
+<div class="outline-text-4" id="text-orge0ced37">
 <p>
 This effectively run the containers. 
 </p>
 </div>
 </div>
 
-<div id="outline-container-orga51f0d4" class="outline-4">
-<h4 id="orga51f0d4">Difference with VM</h4>
-<div class="outline-text-4" id="text-orga51f0d4">
+<div id="outline-container-orgdd201c0" class="outline-4">
+<h4 id="orgdd201c0">Difference with VM</h4>
+<div class="outline-text-4" id="text-orgdd201c0">
 <p>
 With virtual machine you leverage hypervisors that runs virtual
 machines. It is what virtualizes resources and makes them sharable.
@@ -103,9 +103,41 @@ instance of this exact lower layer and will ultimately save resources.
 </div>
 
 
-<div id="outline-container-org81979f9" class="outline-3">
-<h3 id="org81979f9">Basic commands</h3>
-<div class="outline-text-3" id="text-org81979f9">
+
+
+<div id="outline-container-orga01cd8b" class="outline-3">
+<h3 id="orga01cd8b">Create Images with Dockerfiles</h3>
+<div class="outline-text-3" id="text-orga01cd8b">
+</div>
+<div id="outline-container-orgf48645c" class="outline-4">
+<h4 id="orgf48645c">General Workflow</h4>
+<div class="outline-text-4" id="text-orgf48645c">
+<p>
+The first thing to do is to create your working directory. Don't use
+the root directory as it will expose your container to security
+vulnerabilities.
+</p>
+
+<p>
+Within that directory create then the <code>Dockerfile</code> that will include
+all of the set of instructions necessary to create your image.
+Important is that in the Dockerfile each instruction is executed in
+order. So consider that carefully when specifying the commands. 
+</p>
+
+<p>
+You can comment dockerfiles with the comments by <code>#</code>.
+</p>
+
+<p>
+Finally use the <code>docker build</code> command to create the image.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge126ac7" class="outline-4">
+<h4 id="orge126ac7">Commands for Dockerfile image</h4>
+<div class="outline-text-4" id="text-orge126ac7">
 <p>
 Writing a Dockerfile is the first step to containerizing an
 application. You can think of these Dockerfile commands as a
@@ -148,18 +180,13 @@ deployment can leverage it. Notice that the files passed with the
 create an image. To increase the build’s performance, exclude files
 and directories by adding a <code>.dockerignore</code>.</li>
 
-<li><code>RUN</code> the command <code>npm install</code> inside your <b>image filesystem</b>.</li>
+<li><code>RUN</code> the command <code>npm install</code> inside your <b>image filesystem</b>. This
+in general executes commands.</li>
 
 <li><code>COPY</code> the rest of your app's source code from your host to your
-image filesystem.</li>
+image filesystem. I.e. it allows you to copy files from your host
+filesystem to your image filesystem.</li>
 </ul>
-
-<p>
-You can see that <i>these are much the same steps you might have taken to
-set up and install your app on your host</i> - but capturing these as a
-Dockerfile allows us to do the same thing inside a portable, isolated
-Docker image.
-</p>
 
 <p>
 The final line with the <code>CMD</code> directive is the docker specific way of
@@ -172,9 +199,80 @@ In this case, it’s saying that the containerized process that this
 image is meant to support is <code>npm start</code>.
 </p>
 
+<p>
+Important that the <code>CMD</code> commands will run in relation to the image
+entrypoint which is discussed here below. If you do not specify any
+entrypoint the default is the <code>/bin/sh -c</code> and therefore you can run
+standard bash commands as above.
+</p>
 
 <p>
-<i>Below a short list of commands. This is however just a way to write them down one time and start to memorize it. A convenient approach when looking forward to do smth is to leverage <code>docker --help</code> and search for the keyword of interest. You can then further inspect with <code>docker &lt;command&gt; --help</code>.</i>
+Further instructions are:
+</p>
+
+<ul class="org-ul">
+<li><code>LABEL</code> this is metadata. it is a key-value pair that can be used
+later for filtering the containers.</li>
+
+<li><code>MAINTAINER</code> also metadata where you can for instance enter the
+e-mail of the maintainer.</li>
+
+<li><code>EXPOSE</code> it specifies the port used for the process running on the
+container.</li>
+
+<li><code>ENV</code> it is specifying environment variables.</li>
+
+<li><code>ADD</code> it adds files from remote places to your container.
+an example for it might be <code>ADD http:/link/of/picture /tmp</code>. Notice
+that add has the capability of <b>untar</b> files while the <code>COPY</code>
+command does not offer that capability.</li>
+
+<li><code>USER</code> it will allow you to specify the user through which the
+commands specified in the <code>Dockefile</code> will be run. Recall commands
+are sequential in docker.</li>
+
+<li><code>ENTRYPOINT</code> specifies the entrypoint of the container. the default
+is <code>/bin/sh -c</code></li>
+</ul>
+
+<p>
+You can see that <i>these are much the same steps you might have taken to
+set up and install your app on your host</i> - but capturing these as a
+Dockerfile allows us to do the same thing inside a portable, isolated
+Docker image.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org93803d8" class="outline-3">
+<h3 id="org93803d8">Image Layering</h3>
+<div class="outline-text-3" id="text-org93803d8">
+<p>
+Notice that each time you <code>RUN</code> a Dockerfile it will create a further
+layer. If the image has too many layers the image will rapidly grow in
+size and you would obtain a very big and heavy image which is not the
+goal of Docker.
+</p>
+
+<p>
+In order to reduce the layers of an image it makes therefore sense to
+leverage the <code>&amp;&amp;</code> bash command to sequentially execute two bash
+commands in one <code>RUN</code> instruction such that you will keep your image
+lightweight. You can use the split line <code>\</code> to increase readability.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5049179" class="outline-3">
+<h3 id="org5049179">Docker images Management</h3>
+<div class="outline-text-3" id="text-org5049179">
+<p>
+Below a short list of commands. This is however just a way to write
+them down one time and start to memorize it. A convenient approach
+when looking forward to do smth is to leverage <code>docker --help</code> and
+search for the keyword of interest. You can then further inspect with
+<code>docker &lt;command&gt; --help</code>.
 </p>
 
 <div class="highlight"><pre><span></span><span class="c1"># To build an image from a Dockerfile and a context. The build’s</span>
@@ -187,8 +285,7 @@ image is meant to support is <code>npm start</code>.
       $ docker build .
 
 <span class="c1"># to build an image and associate it with a given tag you can leverage the -t flag</span>
-      $ docker build -t bullet_inboard:1.0 .
-
+      $ docker build -t bullet_inboard:1.0 &lt;directory where the dockerfile is&gt;
 
 <span class="c1"># To list all the avaialble images</span>
 $ docker image ls
@@ -235,16 +332,15 @@ $ docker unpause &lt;Container ID&gt;
 $ docker <span class="nb">kill</span> &lt;Container ID&gt;
 
 <span class="c1"># To stop the docker deamon running in the background </span>
-$ service docker stop
+$ servce docker stop
 </pre></div>
 </div>
 </div>
 
 
-
-<div id="outline-container-org500142c" class="outline-2">
-<h2 id="org500142c">Literature</h2>
-<div class="outline-text-2" id="text-org500142c">
+<div id="outline-container-orge4b850b" class="outline-2">
+<h2 id="orge4b850b">Literature</h2>
+<div class="outline-text-2" id="text-orge4b850b">
 <p>
 <a href="https://docs.docker.com/get-started/">https://docs.docker.com/get-started/</a>
 </p>
