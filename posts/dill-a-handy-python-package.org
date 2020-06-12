@@ -30,7 +30,6 @@
 	   exec('del {}'.format(i))
    #+end_src
 
-
 ** Check at the source code of a function you are using in Python
 
  #+BEGIN_SRC ipython :session :ipyfile  :exports both
@@ -54,7 +53,7 @@
   Finally you can enter =h= in the debugger to display all of the
   available options for it.
 
-  https://jakevdp.github.io/PythonDataScienceHandbook/01.06-errors-and-debugging.html
+  https://jakevdp.github.io/PythonDataScienceHandbook/01.06-errors-and-debugging.HTML
 
 *** Ipython
 
@@ -186,3 +185,37 @@ see saved item on
    View the second answer for the bester explaination.
 
    https://stackoverflow.com/questions/1537202/difference-between-variables-inside-and-outside-of-init
+** Access global variable within a function / a flask route
+
+#+begin_src python
+first_call = True
+
+app = Flask(__name__)
+
+@app.route('/api/test', methods=['GET'])
+def hello():
+    global first_call # means
+
+    print(first_call)
+
+    first_call = False
+
+    return str(first_call)
+#+end_src
+** Web server
+
+   When working with flask always double check that you are not using
+   the built-in =Werkzeug= server that is not suited for
+   production. You can check at the server by making a call to an
+   endpoint and analyzing the headers.
+
+   #+begin_src python
+   res = requests.post('url', data = json.dumps(payload))
+   res.headers
+   #+end_src
+
+#+RESULTS:
+#+begin_example
+{'X-Backside-Transport': 'OK OK', 'Connection': 'Keep-Alive', 'Transfer-Encoding': 'chunked', 'Content-Type': 'application/json', 'Date': 'Mon, 08 Jun 2020 09:48:14 GMT', 'Server': 'Werkzeug/1.0.1 Python/3.8.2', 'X-Global-Transaction-ID': '...'}a
+#+end_example
+
