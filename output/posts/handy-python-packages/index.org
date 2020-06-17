@@ -218,4 +218,85 @@ def hello():
 #+begin_example
 {'X-Backside-Transport': 'OK OK', 'Connection': 'Keep-Alive', 'Transfer-Encoding': 'chunked', 'Content-Type': 'application/json', 'Date': 'Mon, 08 Jun 2020 09:48:14 GMT', 'Server': 'Werkzeug/1.0.1 Python/3.8.2', 'X-Global-Transaction-ID': '...'}a
 #+end_example
+** Low level memory issues
+
+   I recently incurred into a very low level issue. When you want to
+   inspect how python manages objects and when an object simply points
+   to another one or when a new variable is created you can use the
+   =id ()= function. 
+
+#+begin_src python :session help
+ll = [x for x in range (10)]
+#+end_src
+
+#+RESULTS:
+
+#+begin_src python :session help
+la = ll
+#+end_src
+
+#+RESULTS:
+
+#+begin_src python :session help :results output
+print (id (la))
+print (id (ll))
+#+end_src
+
+#+RESULTS:
+: 4531254984
+: 4531254984
+: 
+: 
+
+
+#+begin_src python :session help
+ll.append (1)
+#+end_src
+
+#+RESULTS:
+
+#+begin_src python :session help :results output
+print (ll); print (la)
+#+end_src
+
+#+RESULTS:
+: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1]
+: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1]
+: 
+: 
+
+
+#+begin_src python :session help
+la = [x for x in range (8)]
+#+end_src
+
+#+RESULTS:
+
+#+begin_src python :session help :results output
+print (id (la))
+print (id (ll))
+#+end_src
+
+#+RESULTS:
+: 4530999096
+: 4531254984
+: 
+: 
+
+#+begin_src python :session help
+la.append (1)
+#+end_src
+
+#+RESULTS:
+
+#+begin_src python :session help :results output
+print (ll); print (la)
+#+end_src
+
+#+RESULTS:
+: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1]
+: [0, 1, 2, 3, 4, 5, 6, 7, 1]
+: 
+: 
+
 

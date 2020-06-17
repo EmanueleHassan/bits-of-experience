@@ -92,7 +92,6 @@ to secure data encryption in use for containers deployed there.
  The provision of the cluster might take some time. You will receive an
  e-mail once it is done.
 
-
 ** Install the necessary Software CLIs
 
   Install the /[[https://cloud.ibm.com/docs/cli?topic=cloud-cli-getting-started][IBM CLI]]/
@@ -196,6 +195,9 @@ to secure data encryption in use for containers deployed there.
    on the IBM cloud as in the following video:
 
    *TODO - insert video*
+
+   *TODO - for kubernetes go on zugriff an copy the command ibmcloud
+   ks cluster config --cluster brjn8bff0sum0quk1fg0*
 
    After that when looking at your =.kube= file configuration
    responsible for your kubectl CLI you will observe the new entry:
@@ -526,6 +528,13 @@ to secure data encryption in use for containers deployed there.
 
   Documentation may be found at https://console.bluemix.net/docs/services/data-shield/index.html
   #+END_SRC
+
+  #+begin_src sh
+  helm install mydatashield iks-charts/ibmcloud-data-shield --set enclaveos-chart.Manager.AdminEmail=Marco.Hassan@ibm.com --set enclaveos-chart.Manager.AdminName=Marco.Hassan@ibm.com --set enclaveos-chart.Manager.AdminIBMAccountId=75c4c4ebbaff40a3935f069bfcec65a9 --set global.IngressDomain=kubernetes-data-shield-f9bf7c7800de9856ddeffe14aad922a5-0000 --set converter-chart.Converter.DockerConfigSecret=converter-docker-config
+  #+end_src
+
+
+
 
   When looking in your cloud GUI you should then be able to see the
   datashield service up and running.
