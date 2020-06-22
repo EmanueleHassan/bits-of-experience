@@ -1,0 +1,719 @@
+#+BEGIN_COMMENT
+.. title: Reinforcement Learning
+.. slug: reinforcement-learning
+.. date: 2020-06-22 15:25:17 UTC+02:00
+.. tags: 
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+.. has_math: yes
+#+END_COMMENT
+
+#+LATEX_HEADER: \usepackage{math}
+#+LATEX_HEADER: \usepackage{asmath}
+
+Here are some notes based on the /Artificial Intelligence:
+Reinforcement Learning in Python/ Udemy course.
+
+This are very personal notes that do not intend to substitute the
+course. The guy is good. I recommend his courses. I am enjoying and
+the way he teaches with minor exercises that makes you well think is
+good. 
+
+Note that the code presented is open sourced and can be found [[https://github.com/lazyprogrammer/machine_learning_examples/tree/master/rl][here]].
+
+{{{TEASER_END}}}
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+
+* Reinforcement Learning
+   :properties:
+   :header-args:ein-python: :session http://127.0.0.1:8888/ReinforcementLearning.ipynb  :results output
+   :end:
+
+Here the idea is to play with two opposite forces.
+
+Given a problem you are interesting of finding the optimal solution
+for it balancing two forces:
+
+- exploration
+
+here the goal is to collect as many data as possible and as wide as
+possible in order to explore the problem and all of its possible
+outcomes. you don't want to be *greedy*, i.e. you do not want to use
+just immediately available information as the basis of your decision/
+i.e. you don't want to make locally optimal choices at each stage but
+you rather want to go to the global optimal solution as quickly as
+possible.
+
+- exploitation
+
+you don't want to explore states and outcomes that are not beneficial
+to you. you have therefore to balance the way in which you explore the
+states in such a way that you collect information without harming
+yourself too much. 
+
+the above is called the *exploit-explore-dilemma*.
+
+** Epsilon Greedy Theory
+
+Here the idea is that you take the MLE action maximizing your outcome
+(1- \epsilon) of the times. While with \epsilon probability you simply
+do something random (i.e. you explore the space in a non-greedy way).
+
+The pseudo-code for that would look approximately as this:
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="100%" height="100%" src="../../images/Bildschirmfoto_2020-06-22_um_09.59.32.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+Finally, it is important that even when using this epsilon random
+component you might not be interested in exploring the space
+continuously. This especially for static problems not evolving over
+time.
+
+It is namely true, that for such systems you might have explored the
+space sufficiently and you observed one particular state to be the
+most performing among the many. Then at each exploration you loose
+some benefit from deviating from the optimum decision.
+
+It is therefore necessary that once you have built up trust and you
+deem to have explored the system sufficiently you just focus on the
+*exploitation* component and shrunk your epsilon to zero.
+
+You can model the way to do that as needed in your business case.
+
+In practice, some \epsilon is often modeled as decaying in
+time. I.e. at the beginning you explore the space the most and then
+gradually you explore the more and more rarely.
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="100%" height="100%" src="../../images/Bildschirmfoto_2020-06-22_um_11.02.57.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+*** Epsilon-Greedy Example  
+   :properties:
+   :header-args:ein-python: :session http://127.0.0.1:8888/ReinforcementLearning.ipynb  :results output
+   :end:
+
+#+NAME: 9A53170B-E735-43DF-AA67-F6C2EC1FB205
+#+begin_src ein-python :results output
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+#+end_src
+
+Global Parameters
+
+#+NAME: 8C15B09F-DB77-40B0-8471-ED3A8FDFD0A1
+#+begin_src ein-python :results output
+NUM_TRIALS = 10000
+EPS = 0.1
+BANDIT_PROBABILITIES = [0.2, 0.5, 0.75]
+#+end_src
+
+
+Define the data generation model for your bandit machine:
+
+#+NAME: 37DEC79D-0236-482D-88D7-58EB98A2C083
+#+begin_src ein-python :results output
+class Bandit:
+  def __init__(self, p):
+    # p: the win rate
+    self.p = p
+    self.p_estimate = 0
+    self.N = 0
+    self.correct = 0
+
+  def pull(self):
+    # draw a 1 with probability p
+    return np.random.random() < self.p
+
+  def update(self, x):
+    self.N +=1
+    self.correct += self.pull()
+    self.p_estimate = self.correct/self.N
+#+end_src
+
+#+NAME: E704DFBF-48F3-4048-B045-D6199B868810
+#+begin_src ein-python :results output
+def experiment(BANDIT_PROBABILITIES):
+  bandits = [Bandit(p) for p in BANDIT_PROBABILITIES]
+
+  rewards = np.zeros(NUM_TRIALS) ## initialize zero vector
+  num_times_explored = 0
+  num_times_exploited = 0
+  num_optimal = 0
+  optimal_j = np.argmax([b.p for b in bandits])
+  print("optimal j:", optimal_j)
+
+  for i in range(NUM_TRIALS):
+
+    # use epsilon-greedy to select the next bandit
+    if np.random.random() < EPS:
+      num_times_explored += 1
+      j = np.random.randint(len(bandits))
+    else:
+      num_times_exploited += 1
+      j = np.argmax([b.p_estimate for b in bandits])
+
+    if j == optimal_j:
+      num_optimal += 1
+
+    # pull the arm for the bandit with the largest sample
+    x = bandits[j].pull()
+
+    # update rewards log
+    rewards[i] = x
+
+    # update the distribution for the bandit whose arm we just pulled
+    bandits[j].update(x)
+
+  ## log the performance of your epsilon greedy model
+
+  # print mean estimates for each bandit
+  for b in bandits:
+    print("mean estimate:", b.p_estimate)
+
+  # print total reward
+  print("total reward earned:", rewards.sum())
+  print("overall win rate:", rewards.sum() / NUM_TRIALS)
+  print("num_times_explored:", num_times_explored)
+  print("num_times_exploited:", num_times_exploited)
+  print("num times selected optimal bandit:", num_optimal)
+
+  # plot the results
+  cumulative_rewards = np.cumsum(rewards)
+  win_rates = cumulative_rewards / (np.arange(NUM_TRIALS) + 1)
+  plt.plot(win_rates)
+  plt.plot(np.ones(NUM_TRIALS)*np.max(BANDIT_PROBABILITIES))
+  plt.show()
+#+end_src
+
+#+NAME: 92DEEA05-0963-4810-B8A6-900A67A6764A
+#+begin_src ein-python :results output
+experiment([0.2, 0.5, 0.75])
+#+end_src
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="100%" height="100%" src="../../images/ob-ein-b336295bb0cecce62fa035b851c1fdaf.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+So we are close to the real world means so that we well explored the
+states.
+
+Moreover our win rate is 0.7235; hence we are not that far from the
+CLT average when always selecting the best possible machine. In this
+sense the epsilon greedy algorithm performs a good job balancing the
+*exploitation-exploration trade off*.
+
+Important in the above is also the choice of the \epsilon
+parameter. Here the idea is that if you want to quickly explore the
+space and have fast convergence to the most profitable machine then
+you have to select a rather big epsilon. In contrast, if you are
+willing to slowly reach converge to the optimal machine but have a
+long-run cumulative reward (as then the deviation is small) you should
+choose a small \epsilon.
+
+** Optimistic Initial Values Method
+
+This is a second approach to deal with the *exploitation-exploration
+trade-off*. The idea here is that instead of starting with an expected
+value of zero for the mean reward of each machine you would set very
+high values for the expected reward of each machine.
+
+By setting a high initial value, the model would try to leverage on
+the high expected profit for the particular machine by repeatedly
+"exploiting it". It is then true that as time goes by you would
+eventually learn the true moment of the machine and the expected gain
+would shrink towards the true moment.
+
+Important is therefore to understand that for such an algorithm you do
+not leverage any random exploration but rather set an initial value
+determining the extent to which you would explore a particular
+machine. It is straightforward to see that:
+
+#+begin_quote
+the higher the initial value the higher the exploration on a
+praticular machine
+#+end_quote
+
+Finally, notice that we do not have any consistency property for such
+algorithm. I.e. while the estimated mean of each machine converged to
+the true mean for the epsilon-greedy algorithm asymptotically, here we
+stop to explore a particular machine as soon as its expected mean is
+below the one of the other machines. 
+
+It is therefore true that as the highest true mean will set an anchor
+on the level of the max(expected mean) of the machines we expected
+that for different machines the asymptotic mean is below such anchor
+but did not converge as we eventually stopped exploring such machines
+and converged to the most rewarding machine.
+
+*** Initial Optimal Value Example
+
+Global HyperParameters
+
+#+NAME: C58D525F-0B8F-4440-AC97-47802EA68E1E
+#+begin_src ein-python :results output
+NUM_TRIALS = 10000
+EPS = 0.1
+BANDIT_PROBABILITIES = [0.2, 0.5, 0.75]
+#+end_src
+
+Data generating process
+
+#+NAME: BE7FBE48-6186-4C25-81B7-9E91BECF9F38
+#+begin_src ein-python :results output
+class Bandit:
+  def __init__(self, p):
+    # p: the win rate
+    self.p = p
+    self.p_estimate = 10
+    self.N = 1.
+
+  def pull(self):
+    # draw a 1 with probability p
+    return np.random.random() < self.p
+
+  def update(self, x):
+    self.N += 1.
+    self.p_estimate = ((self.N - 1)*self.p_estimate + x) / self.N
+#+end_src
+
+#+NAME: F302C888-0AA8-49EB-87AE-BB8FCFE7194C
+#+begin_src ein-python :results output
+def experiment():
+  bandits = [Bandit(p) for p in BANDIT_PROBABILITIES]
+
+  rewards = np.zeros(NUM_TRIALS)
+  for i in range(NUM_TRIALS):
+    # use optimistic initial values to select the next bandit
+    j = np.argmax([b.p_estimate for b in bandits])
+
+    # pull the arm for the bandit with the largest sample
+    x = bandits[j].pull()
+
+    # update rewards log
+    rewards[i] = x
+
+    # update the distribution for the bandit whose arm we just pulled
+    bandits[j].update(x)
+
+
+  # print mean estimates for each bandit
+  for b in bandits:
+    print("mean estimate:", b.p_estimate)
+
+  # print total reward
+  print("total reward earned:", rewards.sum())
+  print("overall win rate:", rewards.sum() / NUM_TRIALS)
+  print("num times selected each bandit:", [b.N for b in bandits])
+
+  # plot the results
+  cumulative_rewards = np.cumsum(rewards)
+  win_rates = cumulative_rewards / (np.arange(NUM_TRIALS) + 1)
+  plt.ylim([0, 1])
+  plt.plot(win_rates)
+  plt.plot(np.ones(NUM_TRIALS)*np.max(BANDIT_PROBABILITIES))
+  plt.show()
+#+end_src
+
+#+NAME: 03C867CB-8ED9-4EA6-A9D6-8527AC40CD9F
+#+begin_src ein-python :results output
+experiment()
+#+end_src
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="100%" height="100%" src="../../images/ob-ein-e6ad5beee2c95ea8c5dacc1181790e54.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+** Upper Confidence Bound
+
+This builds on the ideas of optimistic initial value.
+
+The idea is to model probabilistically the upper bound instead of
+guessing from the CLT property as in the optimistically initial value
+algorithm. 
+
+The idea here is to choose the machine =j= not simply by taking the
+$\max {(expected reward)} $ at any given time, but rather to select the
+machine based on the expected reward itself and the measurement error
+for the specific machine; i.e. exploit:
+
+$$\max{f(\bar{X_{j}}, \epsilon (X_{j}))}$$
+
+The question is now on how to model the expected reward.
+
+The idea of the authors of such model was the one of leveraging the
+*Hoeffding's inequality* where the bias for your sample estimation
+converges exponentially fast to zero.
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="100%" height="100%" src="../../images/Bildschirmfoto_2020-06-22_um_15.35.17.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+You would then get an estimate for your error for a particular machine
+at each point of time =t= by setting the left hand side equation to
+some constant and then solving the equation for t. (in order to see
+that look at the left hand side inequality in the inequality)
+
+It is then possible to see that with p = $\frac{1}{N^{4}}$ you
+would obtain:
+
+$$ t = \sqrt{2\frac{log (N)}{n_j}} $$
+
+You would then select your most rewarding machine as 
+
+$$ j = arg_j \max{\bar{X_j} + \sqrt{2\frac{log (N)}{n_j}}} $$
+
+It is then clear from the formula that you would explore more:
+
+- a machine that has never been explored 
+
+- a machine with high expected reward
+
+And that when you sampled enough observations the denominator will
+tend to override the effect of the denominator and you would exploit
+the highest rewarding machine.
+
+*** UCB Example
+
+#+NAME: 5F40DC67-5676-437B-96A8-B27240AA5583
+#+begin_src ein-python :results output
+class Bandit:
+  def __init__(self, p):
+    # p: the win rate
+    self.p = p
+    self.p_estimate = 0.
+    self.N = 0. # num samples collected so far
+
+  def pull(self):
+    # draw a 1 with probability p
+    return np.random.random() < self.p
+
+  def update(self, x):
+    self.N += 1.
+    self.p_estimate = ((self.N - 1)*self.p_estimate + x) / self.N
+#+end_src
+
+
+#+NAME: A7F12A6F-1EEC-4084-B5BD-682A4E958736
+#+begin_src ein-python :results output
+def ucb(mean, n, nj):
+  return (mean + (math.log(n)/nj)**0.5)
+
+
+def run_experiment():
+  bandits = [Bandit(p) for p in BANDIT_PROBABILITIES]
+  rewards = np.empty(NUM_TRIALS)
+  total_plays = 0
+
+  # initialization: play each bandit once
+  for j in range(len(bandits)):
+    x = bandits[j].pull()
+    total_plays += 1
+    bandits[j].update(x)
+  
+  for i in range(NUM_TRIALS):
+    
+    j = np.argmax([ucb(b.p_estimate, total_plays, b.N) for b in bandits])
+    x = bandits[j].pull()
+    total_plays += 1
+    bandits[j].update(x)
+
+    # for the plot
+    rewards[i] = x
+  cumulative_average = np.cumsum(rewards) / (np.arange(NUM_TRIALS) + 1)
+
+  # plot moving average ctr
+  plt.plot(cumulative_average)
+  plt.plot(np.ones(NUM_TRIALS)*np.max(BANDIT_PROBABILITIES))
+  plt.xscale('log')
+  plt.show()
+
+  # plot moving average ctr linear
+  plt.plot(cumulative_average)
+  plt.plot(np.ones(NUM_TRIALS)*np.max(BANDIT_PROBABILITIES))
+  plt.show()
+
+  for b in bandits:
+    print(b.p_estimate)
+
+  print("total reward earned:", rewards.sum())
+  print("overall win rate:", rewards.sum() / NUM_TRIALS)
+  print("num times selected each bandit:", [b.N for b in bandits])
+
+  return cumulative_average
+#+end_src
+
+
+#+NAME: 087D4DDC-A525-41EE-BD83-8F73CC133F4A
+#+begin_src ein-python :results output
+run_experiment()
+#+end_src
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="100%" height="100%" src="../../images/ob-ein-089592f8c70f571f8112c1c3f8af6c66.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+** Bayesian Bandits - Thompson Sampling Theory
+
+Here the idea is the one to operate in fully bayesian setting. Please
+refer to the following notes if you want to [[https://marcohassan.github.io/bits-of-experience/pages/papers/#bayesian][well appreciate the
+section]].
+
+The idea here is that instead balancing the exploiting-exploring
+trade-off via a probabilistic argument as the one above which
+leverages some threshold properties for the expected value bias, you
+might well model the prior distribution of each machine as a beta and
+the conditional likelihood of the data given the unknown parameter as
+a bernoulli. 
+
+#+BEGIN_src latex :results drawer :exports results
+p(X|\theta) =  \prod^{N}_{i=1}{\theta^{x_j}(1-\theta)^{1-x_j}}
+#+END_src
+
+Where \theta represents the true expected reward for the modeled
+machine and k_j represents the number of times the modeled machine was
+exploited and therefore the number of observations collected for it.
+
+Given that we are dealing here with the beta exponential family it is
+easy to show that in such a case the resulting posterior resulting
+from the likelihood distribution of the data and the prior is a beta
+distribution itself with the following moments:
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="100%" height="100%" src="../../images/Bildschirmfoto_2020-06-22_um_17.48.29.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+and choosing a uninformative prior such as the uniform distribution,
+which results in a Beta(1,1) distribution you would get that:
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="100%" height="100%" src="../../images/Bildschirmfoto_2020-06-22_um_17.55.41.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+
+Hence you see that the distribution adapts to fit your data.
+
+The idea of the Thompson Sampling is now the following:
+
+1. sample from the prior distribution at the first iteration
+
+2. choose the machine with the highest sample as from 1. (3.) generate a
+   new posterior for the machine.
+
+3. sample from the three machine distribution (prior if no data
+   available) posterior otherwise. go back to 2.
+
+
+*** Thompson Sampling - Bandit Example
+
+ #+NAME: 4431C60E-35DC-4AED-A583-EE3ED4F3DCB5
+ #+begin_src ein-python :results output
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.stats import beta
+
+
+# np.random.seed(2)
+NUM_TRIALS = 2000
+BANDIT_PROBABILITIES = [0.2, 0.5, 0.75]
+ #+end_src
+
+ #+NAME: 0D6097EE-8B91-427C-9AB3-679A3665893D
+ #+begin_src ein-python :results output
+class Bandit:
+  def __init__(self, p):
+    self.p = p
+    self.a = 1
+    self.b = 1
+    self.N = 0 # for information only
+
+  def pull(self):
+    return np.random.random() < self.p
+
+  def sample(self):
+    return np.random.beta(self.a, self.b) 
+
+  def update(self, x):
+    self.a += x
+    self.b += 1 - x
+    self.N += 1
+ #+end_src
+
+#+NAME: 506A5C8A-3929-4899-98FC-AA8F3F70C703
+#+begin_src ein-python :results output
+def plot(bandits, trial, idx):
+  x = np.linspace(0, 1, 200)
+  plt.subplot(5,5,idx)
+  for b in bandits:
+    y = beta.pdf(x, b.a, b.b)
+    plt.plot(x, y, label=f"real p: {b.p:.4f}, win rate = {b.a - 1}/{b.N}")
+  plt.title(f"Bandit distributions after {trial} trials")
+  plt.legend()
+
+def experiment():
+
+  idx = 0
+  bandits = [Bandit(p) for p in BANDIT_PROBABILITIES]
+
+  sample_points = [5,10,20,50,100,200,500,1000,1500,1999]
+  rewards = np.zeros(NUM_TRIALS)
+
+
+  f, axes = plt.subplots(figsize = (30, 30))
+  for i in range(NUM_TRIALS):
+    # Thompson sampling
+    j = np.argmax([b.sample() for b in bandits])
+
+    # plot the posteriors
+    if i in sample_points:
+      idx += 1
+      plot(bandits, i, idx)
+
+    # pull the arm for the bandit with the largest sample
+    x = bandits[j].pull()
+
+    # update rewards
+    rewards[i] = x
+
+    # update the distribution for the bandit whose arm we just pulled
+    bandits[j].update(x)
+  
+  plt.show()
+
+  # print total reward
+  print("total reward earned:", rewards.sum())
+  print("overall win rate:", rewards.sum() / NUM_TRIALS)
+  print("num times selected each bandit:", [b.N for b in bandits])
+#+end_src
+
+#+RESULTS: 506A5C8A-3929-4899-98FC-AA8F3F70C703
+
+#+NAME: 2D769F52-D074-4CFE-B189-77354E9608EE
+#+begin_src ein-python :results output
+experiment()
+#+end_src
+
+#+RESULTS: 2D769F52-D074-4CFE-B189-77354E9608EE
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="100%" height="100%" src="../../images/ob-ein-88099e21985dfc2e30f01dd8a97bafd0.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+: total reward earned: 1533.0
+: overall win rate: 0.7665
+: num times selected each bandit: [13, 44, 1943]
+
+From the above you see that as you sample more from the most rewarding
+function then your beta parameters adapt. At the beginning as you have
+just a few samples and you have no successful draws for machine 1,2
+the distribution of them has a distribution with mean < 0.5 and is
+strongly skewed in favour of expected reward = 0 where the most of the
+samples would generate. I.e. we already tend to exploit the machine
+with the highest reward: machine 3.
+
+As you get more samples the distributions adapts according to the
+data. It is clear that already after 200 samples the distribution for
+the third machine is quite concentrated around its mean and therefore
+the probability of sampling a higher number for the third machine and
+therefore exploiting the third machine is already consistent. In fact
+between obs = 200 and obs = 500 we "exploit" the first machine just 2
+more times and 7 times the second machine, therefore correctly
+exploiting the 3 machine 293/300 times.
