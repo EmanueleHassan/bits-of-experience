@@ -10,6 +10,16 @@
 .. has_math: yes
 #+END_COMMENT
 
+#+begin_export html
+<style>
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+#+end_export
+
 #+LATEX_HEADER: \usepackage{math}
 #+LATEX_HEADER: \usepackage{asmath}
 
@@ -108,7 +118,7 @@ gradually you explore the more and more rarely.
 #+END_EXPORT
 
 #+begin_export html
- <img width="100%" height="100%" src="../../images/Bildschirmfoto_2020-06-22_um_11.02.57.png" class="center">
+ <img width="50%" height="100%" src="../../images/Bildschirmfoto_2020-06-22_um_11.02.57.png" class="center">
 #+end_export
 
 #+BEGIN_EXPORT html
@@ -226,7 +236,7 @@ experiment([0.2, 0.5, 0.75])
 #+END_EXPORT
 
 #+begin_export html
- <img width="100%" height="100%" src="../../images/ob-ein-b336295bb0cecce62fa035b851c1fdaf.png" class="center">
+ <img width="50%" height="100%" src="../../images/ob-ein-b336295bb0cecce62fa035b851c1fdaf.png" class="center">
 #+end_export
 
 #+BEGIN_EXPORT html
@@ -365,7 +375,7 @@ experiment()
 #+END_EXPORT
 
 #+begin_export html
- <img width="100%" height="100%" src="../../images/ob-ein-e6ad5beee2c95ea8c5dacc1181790e54.png" class="center">
+ <img width="50%" height="100%" src="../../images/ob-ein-e6ad5beee2c95ea8c5dacc1181790e54.png" class="center">
 #+end_export
 
 #+BEGIN_EXPORT html
@@ -400,7 +410,7 @@ converges exponentially fast to zero.
 #+END_EXPORT
 
 #+begin_export html
- <img width="100%" height="100%" src="../../images/Bildschirmfoto_2020-06-22_um_15.35.17.png" class="center">
+ <img width="30%" height="100%" src="../../images/Bildschirmfoto_2020-06-22_um_15.35.17.png" class="center">
 #+end_export
 
 #+BEGIN_EXPORT html
@@ -514,7 +524,7 @@ run_experiment()
 #+END_EXPORT
 
 #+begin_export html
- <img width="100%" height="100%" src="../../images/ob-ein-089592f8c70f571f8112c1c3f8af6c66.png" class="center">
+ <img width="50%" height="100%" src="../../images/ob-ein-089592f8c70f571f8112c1c3f8af6c66.png" class="center">
 #+end_export
 
 #+BEGIN_EXPORT html
@@ -554,7 +564,7 @@ distribution itself with the following moments:
 #+END_EXPORT
 
 #+begin_export html
- <img width="100%" height="100%" src="../../images/Bildschirmfoto_2020-06-22_um_17.48.29.png" class="center">
+ <img width="50%" height="100%" src="../../images/Bildschirmfoto_2020-06-22_um_17.48.29.png" class="center">
 #+end_export
 
 #+BEGIN_EXPORT html
@@ -717,3 +727,409 @@ therefore exploiting the third machine is already consistent. In fact
 between obs = 200 and obs = 500 we "exploit" the first machine just 2
 more times and 7 times the second machine, therefore correctly
 exploiting the 3 machine 293/300 times.
+
+Notice finally that you can expand the above to have a different
+reward likelihood as the bernoulli. Depending on your case you might
+well want to model the likelihood in a different way - it is however
+always recommended that you set up your model to come out with
+conjugate priors distributions -. The thompson sampling approach is
+therefore generalizable and it is just a matter of properly specifying
+the proper distributions of your likelihood and prior and come up with
+the posterior (as said ideally a conjugate distribution).
+
+** The General Reinforcement Learning Setting
+
+The idea here is to expand on the simple bandit problem seen so far,
+where you just confronted with the case of action (choice of machine)
+-> reward.
+
+In a general RL framework the situation is more complex. The idea is
+that you would have a setting:
+
+#+begin_src plantuml :file uml.svg :exports none
+@startuml
+(*) -down-> "states (possibly related)"
+
+-right-> [influencing] actions 
+
+--> [giving rise] rewards
+
+--> [affecting the states] "states (possibly related)"
+@enduml
+#+end_src
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="50%" height="100%" src="../../images/reinforcement.svg" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+The environment, i.e. the states, is generally modeled through a grid,
+that would save the different states and the rewards in each cell. On
+such a state grid you would base your action which would determine the
+obtained reward and finally influence the new gridworld matrix. The
+function mapping a state change to an action is termed a
+*policy*. Notice that such policy might well be deterministic or
+probabilistic. 
+
+Another important term in the RL world is the one of an
+*episode*. This is an iteration of the game that is being played. It
+is similar to an epoch in Deep Learning so to say. Notice that a game
+end not after each iteration but rather once the terminal state is
+reached - for instance in a finance application if you lost X% of
+value of your wallet; or in barrier options if the barrier was
+triggered -.
+
+Notice, that in contrast to the examples for *episodic tasks* above
+mentioned with clearly defined terminating states, some games might be
+*non-episodic* such that no terminal state exists.
+
+Summing all of the components up your have the following model
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="50%" height="100%" src="../../images/Bildschirmfoto_2020-06-23_um_11.18.13.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+Then with the notation
+
+s' = s_{t+1}, r = r_{t+1}, s = s_t, a = a_t
+
+where the lower notation denotes that the above are actual
+realizations of the random variables: S_{t+1}, R_{t+1}, S_t, A_t.
+
+You can model the probability of the expected reward and state in t+1
+as:
+
+$$ S_{t+1}, R_{t+1} \mathtt{\sim} p(s', r | s,a) $$
+
+this will be in fact the job in RL and your role is to define such
+probability for the transition to state_{t+1}. Notice that this is the
+more general formulation where the reward is stochastic given the
+state and the action taken. This is useful when you deal with systems
+where you do not have perfect information. 
+
+You might have many systems where this is not the case so that the
+general framework would look as:
+
+$$ S_{t+1} \mathtt{\sim} p(s'| s,a) $$
+
+and the reward r would be simply determined by {s,a} and therefore
+does not enter the equation above.
+
+Notice moreover that the state s_t does not have to be defined by a
+single observation. You might well have multiple observation to define
+a state (think for instance a set of images in a video such that it is
+possible from it to derive motion for the single components). 
+
+Notice finally, that the above is analogous to a markov model with the
+additional variables (a,r). This is in fact what contrast a Markov
+Decision Process from a Markov Process. In an MDP you condition on the
+action taken and not simply on the state. 
+
+Notice that for small systems you might represent Markov Decision
+Processes via *State-Action-Diagrams*. 
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="50%" height="100%" src="../../images/Bildschirmfoto_2020-06-23_um_11.53.38.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+
+*** Objective
+
+Given the general setting above it is now clear that in reinforcement
+learning the goal would be for the agent to decide on the action to
+take that will lead to the possibility of maximizing the sum of
+/future/ rewards for the episode.
+
+$$ G(t) = \sum_{\tau = 0}^{T} R(t + \tau + 1) $$
+
+Moreover, it is usual in reinforcement learning to discount rewards
+into the feature by a discount factor \gamma. This is a very much
+finance alike approach and the intuition there is that being the model
+probabilistic estimates for rewards into the future are more uncertain
+and you should therefore weight them less.
+
+$$ G(t) = \sum_{\tau = 0}^{T} \gamma^{\tau} R(t + \tau + 1) $$
+
+The question is then on how to decide on the discount factor. This is
+usually set as a hyperparameter and tuned by simulation when domain
+knowledge is missing.
+
+Notice, now that the future rewards might not be possible to be
+determined ex-ante at period t. This is why in general we aim at
+maximizing:
+
+$$ V_\pi(s) = E_\pi [G(t) | S_{t} = s] $$
+
+This is the final objective function we aim to maximize in
+reinforcement learning.
+
+*** Bellmann Equation
+
+Notice now that as G(t) is recursive you might well write
+
+
+$$ G(t + 1) = \sum_{\tau = 0}^{T} \gamma^{\tau} R((t+1) + \tau + 1) $$
+
+
+such that
+
+$$ G(t) = R(t+1) + \gamma G(t+1) $$
+
+and 
+
+$$ V_\pi(s) = E_\pi [R(t+1) + \gamma G(t+1) | S_{t} = s] $$
+
+Given the law of iterated expectation (tower rule) it is then possible
+to write the above as
+
+
+$$ V_\pi(s) = E_\pi [R(t+1)| S_{t} = s] + \gamma E_\pi[G(t+1) | S_{t} = s] $$
+
+$$ V_\pi(s) = E_\pi [R(t+1)| S_{t} = s] + \gamma E_\pi[E_\pi[G(t+1) | S_{t+1} = s'] | S_{t} = s]] $$
+
+$$ V_\pi(s) = E_\pi [R(t+1) + \gamma V_\pi(s+1) | S_{t} = s]] $$
+
+Hence the objective function has as well recursive structure.
+
+This practically means that for solving the objective function in a
+particular state you do not have to solve recursively to get G(t) and
+therefore compute each individual r(t+k), but you rather need only the
+objective function in the next period. 
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="50%" height="100%" src="../../images/Bildschirmfoto_2020-06-23_um_14.24.26.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+and with the other two analogous equations for the other states you
+are back to linear algebra such that you can solve a system of
+equations and get the objective function at each state so that you can
+compute the value function for a specific state.
+
+Finally, notice in the above you are working with the expected E_\pi,
+i.e. you are taking the average among all of the actions for a
+particular state. This might be useful for systems where the agent
+does not control the action decision.
+
+However, in case of taking a specific action the system has to decide
+on your value function would rather looks as
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="50%" height="100%" src="../../images/Bildschirmfoto_2020-06-23_um_14.46.07.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+
+This Q-Function; i.e. action-value objective function would be the one
+you minimize. 
+
+So that it finally holds:
+
+$$ V_\pi(s) = \sum_a \pi{(a|s)} Q_\pi(s,a) $$
+
+*** Which Objective Value function is better
+
+Notice that in machine learning you have a single ending state so that
+it is easy to define if one particular parameter vector is better than
+another one by simple determine the loss function of the two and
+minimizing it.
+
+In reinforcement learning it is not that trivial to define when a
+policy (i.e. $\phi: S \mapsto A$) is better than another one as you do
+not simply have to have a higher value for the state you landed in but
+rather 
+
+$$ \pi_1 \geq \pi_2 iff V_{\pi_1} \geq V{\pi_2} \forall s \in S $$
+
+This given the stochastic nature of the transition to a state given an
+action and the previous state.
+
+It follows now that you should base your decision for the policy \pi
+and for your action based on:
+
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="50%" height="100%" src="../../images/Bildschirmfoto_2020-06-23_um_15.15.43.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+Recall now that as 
+
+$$ V_\pi(s) = E_\pi [R(t+1) + \gamma V_\pi(s+1) | S_{t} = s]] $$
+
+and 
+
+$$ V_\pi^{*} (s) = max_\pi E_\pi [R(t+1) + \gamma V_\pi(s+1) | S_{t} = s]] $$
+
+
+with \pi $\Longleftrightarrow$ \phi: S $\mapsto$ A,
+
+$$ V_\pi^{*} (s) = max_a [R(t+1) + \gamma V_\pi(s+1) | S_{t} = s]] $$
+
+finally you have:
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="50%" height="100%" src="../../images/Bildschirmfoto_2020-06-23_um_15.40.51.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+Given the above it now follows that for deciding on which policy to
+take you can leverage one of the two:
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+
+#+begin_export html
+<style>
+ {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 0px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+</style>
+
+<div class="row">
+  <div class="column">
+    <img style="width:100%" src="../../images/Bildschirmfoto_2020-06-23_um_15.43.52.png">
+  </div>
+  <div class="column">
+    <img style="width:100%" src="../../images/Bildschirmfoto_2020-06-23_um_15.44.09.png">
+  </div>
+</div>
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+Albeit in practice it would probably make sense to use the left option
+to compute the optimal policy, in practice in RL you will often work
+with the right hand side equation as it is less cumbersome and
+computationally faster.
+
+This in fact does not require you to sum over two random variables (s'
+and r) for many different action possibilities but rather simply to
+take the maximum value in your Q-table.
+
+This leaves us with the following outline that will be the basic
+approach for each RL algorithm we are going to explore next.
+
+I.e. do:
+
+- find V(s) for a given policy (evaluation / prediction problem)
+
+- find the best policy by finding Q^{*} (control problem)
+
+*** On the Evaluation / Prediction Problem
+
+The previous sections outlined the entire theory behind reinforcement
+learning. We defined an objective function we aim to maximize - i.e
+the bellman value function equation -.
+
+As we saw in the previous section you might solve for each value
+function by solving a linear system of equations. However, in the case
+the state numbers would be big - think for instance to the well known
+alpha go case - this approach would be difficult to treat.
+
+A second solution consists in leveraging an iterative optimization
+approach as in the idea of the following pseudo code:
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="50%" height="100%" src="../../images/Bildschirmfoto_2020-06-23_um_16.08.10.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+The idea is that at each iteration you get closer to the true value
+V(s) as each V(s') increases and therefore you gradually approach your
+desired solution.
+
+ 
