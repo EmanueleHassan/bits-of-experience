@@ -7,8 +7,15 @@
 .. link: 
 .. description: 
 .. type: text
-.. status: private
+.. status: 
 #+END_COMMENT
+
+This is a general file where I keep some useful tricks when
+programming in Python / new things I learn in the language that helps
+me to be more productive or write better code
+
+{{{TEASER_END}}}
+
 
 ** Save local Environment in Ipython and continue from where you left
 
@@ -36,6 +43,10 @@
  import dill
  import cProfile
  print(dill.source.getsource(cProfile.Profile.print_stats))
+ 
+ ## moreover to check at the docstring for the function, which should
+ ## be detailed for important packages use
+ help (<function>)
  #+END_SRC
 
 ** Debugging Python within Emacs
@@ -73,100 +84,111 @@
 	print(i)
     #+end_example    
 
+
 ** Reload changed module
 
-#+begin_src python
-import importlib
-importlib.reload(prova)
-#+end_src
+    #+begin_src python
+    import importlib
+    importlib.reload(prova)
+    #+end_src
 
-[[https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html][link on how to deal with import packages]]
+    [[https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html][link on how to deal with import packages]]
 
-Another possibility if you have two modules called in the same way
-that are saved on different directories is to use the following
-schema:
+    Another possibility if you have two modules called in the same way
+    that are saved on different directories is to use the following
+    schema:
 
-#+begin_src python
-def remove_module(module):
-    if module in sys.modules:  
-        del sys.modules[module]
-#+end_src
+    #+begin_src python
+    def remove_module(module):
+	if module in sys.modules:  
+	    del sys.modules[module]
+    #+end_src
 
-This function can then be used in combination to another one where you
-remove the =path= to your module first. Like this when providing the
-new sys.path to import the module your Python interpreter will not do
-any confusion among the two.
+    This function can then be used in combination to another one where you
+    remove the =path= to your module first. Like this when providing the
+    new sys.path to import the module your Python interpreter will not do
+    any confusion among the two.
 
-For instance in the snippet below I use a regular expression to remove
-all the modules that match from the sys.path. Then in a second step I
-delete all of the modules maintained by the interpreter.
+    For instance in the snippet below I use a regular expression to remove
+    all the modules that match from the sys.path. Then in a second step I
+    delete all of the modules maintained by the interpreter.
 
-#+begin_src python
-r = re.compile("/Users/marcohassan/Desktop/IBM_projects/SchutzRettung/module-analytics/app/src/algorithms/.*")
+    #+begin_src python
+    r = re.compile("/Users/marcohassan/Desktop/IBM_projects/SchutzRettung/module-analytics/app/src/algorithms/.*")
 
-newlist = list(filter(r.match, sys.path)) # Read Note
+    newlist = list(filter(r.match, sys.path)) # Read Note
 
-for element in newlist:
-    sys.path.remove(element)
+    for element in newlist:
+	sys.path.remove(element)
 
-mod = ['ranking', 'preprocessingTree', 'extract_tokens',
-       'best_next_question', 'merge', 'rank_word']
+    mod = ['ranking', 'preprocessingTree', 'extract_tokens',
+	   'best_next_question', 'merge', 'rank_word']
 
-for i in mod:
-    remove_module(i)
-#+end_src
+    for i in mod:
+	remove_module(i)
+    #+end_src
 
 ** Profiling in Python
 
-[[https://docs.python.org/3.2/library/profile.html]]
+    [[https://docs.python.org/3.2/library/profile.html]]
 
-#+begin_src python
-import cProfile
-import pstats
+    #+begin_src python
+    import cProfile
+    import pstats
 
-pr = cProfile.Profile()
-pr.enable()
- 
-res = minimize(min_matched, x0 = x0, method='nelder-mead', 
-         options={'xatol': 1e-8, 'disp': True, 'maxiter' : 2,
-                  'maxfev' : 2})
- 
-pr.disable()
- 
-pstats.Stats(pr).strip_dirs().sort_stats('cumtime').print_stats(0.01)
+    pr = cProfile.Profile()
+    pr.enable()
 
-#+end_src
+    res = minimize(min_matched, x0 = x0, method='nelder-mead', 
+	     options={'xatol': 1e-8, 'disp': True, 'maxiter' : 2,
+		      'maxfev' : 2})
 
-Notice that the last argument - the =0.01= above - means that you will
-display only the top 1% percentile of the output. This is handy as
-often there are a zillion of minor functions your python interpreter
-calls that are probably not interesting to your analysis.
+    pr.disable()
+
+    pstats.Stats(pr).strip_dirs().sort_stats('cumtime').print_stats(0.01)
+
+    #+end_src
+
+    Notice that the last argument - the =0.01= above - means that you will
+    display only the top 1% percentile of the output. This is handy as
+    often there are a zillion of minor functions your python interpreter
+    calls that are probably not interesting to your analysis.
 
 ** Loops with tqdm
 
-#+begin_src python
-import tqdm 
+Displays progress on the loop; time taken of average per loop and
+iteration.
 
+#+begin_src python :results output
+import tqdm 
+import time
+
+for i in tqdm.tqdm (range (20)):
+    time.sleep (1)
 #+end_src
+
+#+begin_example
+ 25%|████████████████████████████▎                                                                                    | 5/20 [00:05<00:15,  1.00s/it]
+C^
+#+end_example
 
 ** Staticmethod for Class calls
 
-with staticmethod you do not have to refer to an class
-object. The argument self is omitted as a variable and you
-simply call it by using `unite_score.scale_scores()'. It is
-nothing more than a function defined inside a class. It is
-callable without instantiating the class first. It’s definition
-is immutable via inheritance.
+   with staticmethod you do not have to refer to an class object. The
+   argument self is omitted as a variable and you simply call it by
+   using `unite_score.scale_scores()', where unite_score is your class
+   not an object of your class. 
 
-#+begin_src python
-@staticmethod
-def scale_scores(score_dictionary,
-                 scale = "max"):
-#+end_src
+   It is nothing more than a function defined inside a class. It is
+   callable without instantiating the class first. It’s definition is
+   immutable via inheritance.
 
-** User interface for data analysis
+   #+begin_src python
+   @staticmethod
+   def scale_scores(score_dictionary,
+		    scale = "max"):
+   #+end_src
 
-see saved item on 
 ** Use pseudo code to keep track of what you do
 
     When you write docstrings use pseudo code to document the logical
@@ -180,28 +202,31 @@ see saved item on
 	    for answer in path:
 	       do y
     #+end_example
-** Difference of variable inside or outside the __init__ method.
 
-   View the second answer for the bester explaination.
+** Difference of variable with or without self. in the __init__ method.
+
+   View the second answer for the best of the explanation.
 
    https://stackoverflow.com/questions/1537202/difference-between-variables-inside-and-outside-of-init
+
 ** Access global variable within a function / a flask route
 
-#+begin_src python
-first_call = True
+  #+begin_src python
+  first_call = True
 
-app = Flask(__name__)
+  app = Flask(__name__)
 
-@app.route('/api/test', methods=['GET'])
-def hello():
-    global first_call # means
+  @app.route('/api/test', methods=['GET'])
+  def hello():
+      global first_call # means
 
-    print(first_call)
+      print(first_call)
 
-    first_call = False
+      first_call = False
 
-    return str(first_call)
-#+end_src
+      return str(first_call)
+  #+end_src
+
 ** Web server
 
    When working with flask always double check that you are not using
@@ -214,11 +239,21 @@ def hello():
    res.headers
    #+end_src
 
-#+RESULTS:
-#+begin_example
-{'X-Backside-Transport': 'OK OK', 'Connection': 'Keep-Alive', 'Transfer-Encoding': 'chunked', 'Content-Type': 'application/json', 'Date': 'Mon, 08 Jun 2020 09:48:14 GMT', 'Server': 'Werkzeug/1.0.1 Python/3.8.2', 'X-Global-Transaction-ID': '...'}a
-#+end_example
+   #+BEGIN_SRC json
+   {'X-Backside-Transport': 'OK OK',
+    'Connection': 'Keep-Alive',
+    'Transfer-Encoding': 'chunked',
+    'Content-Type': 'application/json',
+    'Date': 'Mon, 08 Jun 2020 09:48:14 GMT',
+    'Server': 'Werkzeug/1.0.1 Python/3.8.2',
+    'X-Global-Transaction-ID': '...'}
+   #+END_SRC
+
 ** Low level memory issues
+:properties:
+:header-args:python: :exports both
+:end:
+
 
    I recently incurred into a very low level issue. When you want to
    inspect how python manages objects and when an object simply points
@@ -245,8 +280,6 @@ print (id (ll))
 #+RESULTS:
 : 4531254984
 : 4531254984
-: 
-: 
 
 
 #+begin_src python :session help
@@ -262,8 +295,7 @@ print (ll); print (la)
 #+RESULTS:
 : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1]
 : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1]
-: 
-: 
+
 
 
 #+begin_src python :session help
@@ -280,8 +312,7 @@ print (id (ll))
 #+RESULTS:
 : 4530999096
 : 4531254984
-: 
-: 
+
 
 #+begin_src python :session help
 la.append (1)
@@ -296,7 +327,6 @@ print (ll); print (la)
 #+RESULTS:
 : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1]
 : [0, 1, 2, 3, 4, 5, 6, 7, 1]
-: 
-: 
+
 
 
