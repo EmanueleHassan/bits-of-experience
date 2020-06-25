@@ -2,7 +2,7 @@
 .. title: Reinforcement Learning
 .. slug: reinforcement-learning
 .. date: 2020-06-22 15:25:17 UTC+02:00
-.. tags: 
+.. tags: Reinforcement Learning
 .. category: 
 .. link: 
 .. description: 
@@ -32,6 +32,11 @@ the way he teaches with minor exercises that makes you well think is
 good. 
 
 Note that the code presented is open sourced and can be found [[https://github.com/lazyprogrammer/machine_learning_examples/tree/master/rl][here]].
+
+Notice that this course follows pretty much the structure and the
+content of /Reinforcement Learning - An introduction/ of (Sutton and
+Barto). Check at it if you want to go [[http://incompleteideas.net/book/RLbook2018.pdf][over the book]] and if you want
+to expand on the section on approximation methods.
 
 {{{TEASER_END}}}
 
@@ -1096,9 +1101,9 @@ approach for each RL algorithm we are going to explore next.
 
 I.e. do:
 
-- find V(s) for a given policy (evaluation / prediction problem)
+- find V(s) for a given policy (evaluation / *prediction problem*)
 
-- find the best policy by finding Q^{*} (control problem)
+- find the best policy by finding Q^{*} (*control problem*)
 
 *** On the Evaluation / Prediction Problem
 
@@ -1111,25 +1116,244 @@ function by solving a linear system of equations. However, in the case
 the state numbers would be big - think for instance to the well known
 alpha go case - this approach would be difficult to treat.
 
-A second solution consists in leveraging an iterative optimization
-approach as in the idea of the following pseudo code:
+The next section goes over four different methods to circumvent the
+difficulty. These are
 
-#+BEGIN_EXPORT html
-<br>
-<br>
-#+END_EXPORT
+- dynamic Programming
 
-#+begin_export html
- <img width="50%" height="100%" src="../../images/Bildschirmfoto_2020-06-23_um_16.08.10.png" class="center">
-#+end_export
+- Monte Carlo Simulation
 
-#+BEGIN_EXPORT html
-<br>
-<br>
-#+END_EXPORT
+- Temporal Difference Learning
 
-The idea is that at each iteration you get closer to the true value
-V(s) as each V(s') increases and therefore you gradually approach your
-desired solution.
+- Approximation Methods
 
- 
+The general outline foe all of the different methods will be.
+
+1. Solve the *Prediction Problem*; i.e. find the value function given a
+   policy \pi
+
+2. Solve the *Control Problem*; i.e. find the optimal policy.
+
+Important is to notice that the methods will grow in complexity and
+will build up on each other.
+
+- dynamic programming: it is good in that it solves the problems by
+  iteration and does not rely on solving the entire linear system in
+  standard ways. It is however not that practical as it doesn't learn
+  from experience and assumes that we know all of the relevant
+  distributions p(s' | s,a).
+
+- monte carlo methods: are good in the way that it does not requires
+  to specify p(s'| s,a) as it rather relies on the mean gains obtained
+  for each episode. I.e. it learns from experience rather than
+  learning from a probability that has to be fully specified. 
+
+  It does require lots of simulation and has the disadvantage of not
+  being fully online. I.e. you don't learn in an iterative way where
+  the previous result might be used immediately on the next
+  computation but you rather require to run an entire episode to get a
+  single new data point.
+
+- temporal difference learning: this combines the idea of the two
+  approaches above; i.e. it will use bootstrapping such that it will
+  be possible to update estimates based on other estimates as we will
+  shortly see. Moreover it does learn from experience. 
+
+- approximation methods: albeit all of the methods above improve the
+  situation in comparison of solving a huge linear system of equations
+  which involves inverting a huge matrix, all of them might still be
+  infeasible for large state spaces. In this sense approximation
+  methods try to compress the value function by expressing it by some
+  feature variables and therefore reduce the dimension of the
+  problem making it tractable.
+
+** Solving the Prediction and Control Problem
+
+*** Dynamic Programming
+
+ A first solution for solving the prediction problem and the control
+ problem is the one of leveraging iterative optimization methods, aka
+ dynamic programming.
+
+
+**** Prediction Problem - Iterative Policy Evaluation
+
+One iterative method to solve the prediction problem; i.e. solve for
+the value function given a policy would look as follows:
+
+  #+BEGIN_EXPORT html
+  <br>
+  <br>
+  #+END_EXPORT
+
+  #+begin_export html
+   <img width="50%" height="100%" src="../../images/Bildschirmfoto_2020-06-23_um_16.08.10.png" class="center">
+  #+end_export
+
+  #+BEGIN_EXPORT html
+  <br>
+  <br>
+  #+END_EXPORT
+
+  The idea is that at each iteration you get closer to the true value
+  V(s) as each V(s') increases and therefore you gradually approach your
+  desired solution.
+
+  Important is to notice that in the equation above if you would
+  strictly look at the Bellmann Equation:
+
+  #+BEGIN_EXPORT html
+  <br>
+  <br>
+  #+END_EXPORT
+
+  #+begin_export html
+   <img width="60%" height="100%" src="../../images/Bildschirmfoto_2020-06-24_um_16.32.03.png" class="center">
+  #+end_export
+
+  #+BEGIN_EXPORT html
+  <br>
+  <br>
+  #+END_EXPORT
+
+  You would have to adapt the value function in a particular state /s/
+  from the value function V(s') in the previous iteration. It was
+  however showed that replacing in "place" i.e. already using computed
+  V(s')_{k+1} in the right hand side of the equation above leads to
+  faster convergence. It is therefore recommended that you do so in
+  practice. 
+
+**** Control Problem -  Policy iteration
+
+     The idea of this section is to solve the control problem; i.e. to
+     find the best performing policy \pi^{*}. 
+
+     This method works as follows. 
+
+     First recall that:
+
+     #+BEGIN_EXPORT html
+     <br>
+     <br>
+     #+END_EXPORT
+
+     #+begin_export html
+      <img width="60%" height="100%" src="../../images/Bildschirmfoto_2020-06-24_um_16.53.47.png" class="center">
+     #+end_export
+
+     #+BEGIN_EXPORT html
+     <br>
+     <br>
+     #+END_EXPORT
+
+     Then it is clear that given the recursive property of return 
+
+     $$ Q(s,a) = \sum_{s'}\sum_r p(s',r |s,a) {r + \gamma V(s')} $$
+
+     moreover, noticing that using the policy used in the evaluation
+     step (say \pi_{s}) you would have 
+
+     $$ V_\pi(s) =  Q(s,\pi_{s}) = \sum_{s'}\sum_r p(s',r |s,a) {r + \gamma V(s')} $$
+
+     So that given that you have computed V(s') in the policy
+     evaluation step you could now try an iterative method where you
+     would alter just a *single state* i.e. alter a single /a/ for the
+     policy \pi_{s} and you would then look whether:
+
+     $$ Q_\pi(s,a) > Q(s,\pi_{s}) $$
+
+     and if it does set the new policy with the changed action as the
+     new policy \pi'_{s}. You would then repeat the above exercise for
+     all of the policies in a particular state and get 
+
+     $$ \pi'(s) = arg_a max Q_\pi (s,a) $$ 
+
+     Combining this with the policy evaluation iteration method above
+     you would have the following pseudo code for solving the bellman
+     equation
+
+     #+begin_example
+     V(s) = 0 \forall s \in S, where S = all_states
+     policy(s) = randomly initialized
+
+     while True:
+
+	do_policy_evaluation_ as_in_pseudo_code_above_given_a_policy
+
+	policy_changed = False
+
+	for s \in S:
+	   old_a = policy(s)
+
+	   policy(s) = argmax[a] {sum[s',r] {p(s',r | s,a)[r + \gamma * V(s')]}}
+
+	   if policy(s) != old_a:
+	      policy_changed = True
+
+	if not policy_changed:
+	    break
+     #+end_example
+
+
+     A further improvement on the above is the idea that the policy
+     evaluation step stops when V_{k+1}(s) converges. As in
+     reinforcement learning we are however interested in the solution
+     to the *control problem* and we use the *prediction problem* just
+     a *mean* to get there. Recall that we are interested in the
+     policy such that we can map states to actions and make our Agent
+     responsive to the Environment maximizing the expected value of
+     discounted returns.
+
+     The question in this section is whether it is necessary to have
+     convergence in the Value function to have convergence to the
+     optimal policy - the object of interest -.
+
+     It was proven empirically that this is the case so that you might
+     further improve the above by just running a few iterations and
+     then stop. It is not clear after how many steps convergence
+     occurs so just break for big computationally intense applications.
+
+     Notice that while it is possible to solve the bellman equation in a
+     fully iterative way using the above technique it is inefficient as it
+     uses two nested loops. The following shows on how to further compress
+     the iterative procedure to avoid such double looping and save in
+     the necessary computational power.
+
+
+
+**** Value Iteration
+
+     This is as said a more direct way to solve the control problem
+     in comparison to the policy iteration. 
+     
+     The idea is that instead of searching the best policy at each
+     step - i.e. for each policy evaluation run - ; you simply take
+     the maximum policy evaluation among all of the actions at each
+     run and you extract the optimal policy *one-single-time* at the
+     end once you have found the maximum value function.
+
+     #+BEGIN_EXPORT html
+     <br>
+     <br>
+     #+END_EXPORT
+
+     #+begin_export html
+      <img width="80%" height="100%" src="../../images/Bildschirmfoto_2020-06-25_um_08.59.30.png" class="center">
+     #+end_export
+
+     #+BEGIN_EXPORT html
+     <br>
+     <br>
+     #+END_EXPORT
+
+     
+     This is then analogous to policy iteration method in that by
+     finding the max_a you are actually finding the argmax_a for the
+     policy at each step as in the policy iteration method above.
+
+
+*** Monte Carlo Simulation
+
+*** Temporal Difference Learning
+
+*** Approximation Methods
