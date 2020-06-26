@@ -1272,7 +1272,101 @@ We will look at both in turn
     
 
 
-    
+** XML Keys    
 
+   This section goes briefly over the concept of keys in XML. The idea
+   is that you might want to specify a =primary key= similar to the
+   SQL concept so that two elements can be identified by it and must
+   be unique.
 
-    
+   This can be done through the =<xs:key>= XLS type.
+
+   Consider first
+
+   #+BEGIN_SRC nxml
+    <? xml version = "1.0" encoding = "UTF-8"?>
+    <xs:schema
+      xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+      <xs:complexType name="JustElements">
+	<xs:sequence>
+	  <xs:element name= "bau"/>
+	  <xs:element name= "miao"/>
+	</xs:sequence>
+      </xs:complexType>
+
+      <xs:element name="foo" type="JustElements"/>
+
+    </xs:schema>
+   #+END_SRC
+
+   #+BEGIN_SRC nxml
+     <foo>
+       <bau>
+          <dog>
+             labrador
+          </dog>
+          <dog>
+             maltese
+          </dog>
+       </bau>
+      <miao/>
+     </foo>
+   #+END_SRC
+
+   Consider now the specification of the following schema
+
+   #+BEGIN_SRC nxml
+    <? xml version = "1.0" encoding = "UTF-8"?>
+     <xs:schema
+     xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+     <xs:element name="foo">
+       <xs:complexType>
+	 <xs:sequence>
+	   <xs:element name= "dogs"/>
+	   <xs:element name= "miao"/>
+	 </xs:sequence>
+       </xs:complexType>
+       <xs:key name= "bau-name">
+	 <xs:selector xpath = "dogs/bau"/>
+	 <xs:field xpath = "@id"/>
+       </xs:key>
+     </xs:element>
+
+   </xs:schema>
+   #+END_SRC
+
+   Then you would get an error with a document as the one above as a
+   (primary) key is missing
+
+   #+BEGIN_SRC nxml
+     <foo>
+       <dogs>
+          <bau>
+             labrador
+          </bau>
+          <bau>
+             maltese
+          </bau>
+       </dogs>
+      <miao/>
+     </foo>
+   #+END_SRC
+
+   However the following document would be valid
+
+   #+BEGIN_SRC nxml
+     <foo>
+       <dogs>
+          <bau id = "1">
+             labrador
+          </bau>
+          <bau id = "2">
+             maltese
+          </bau>
+       </dogs>
+      <miao/>
+     </foo>
+   #+END_SRC
+
