@@ -12,6 +12,7 @@
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
 <link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/python-pipelines/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../on-the-architecture-of-query-engines-batch-vs-streaming/" title="On the Architecture of Query Engines - Batch vs Streaming" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="Python Pipelines">
 <meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/python-pipelines/">
@@ -82,9 +83,9 @@ to combine the three together in easy to use Pipelines.
 
 <!-- TEASER_END -->
 
-<br><br><div id="outline-container-orgcb09f76" class="outline-2">
-<h2 id="orgcb09f76">The general Case</h2>
-<div class="outline-text-2" id="text-orgcb09f76">
+<br><br><div id="outline-container-org0d00816" class="outline-2">
+<h2 id="org0d00816">The general Case</h2>
+<div class="outline-text-2" id="text-org0d00816">
 <p>
 In fact, all of the ML models in the sklearn and Spark-ML libraries -
 for instance RandomForest, SVM, LogisticRegression etc. - are built
@@ -117,9 +118,9 @@ with in production.
 </div>
 
 
-<div id="outline-container-org9f7871e" class="outline-2">
-<h2 id="org9f7871e">An Example with Pipeline Understanding</h2>
-<div class="outline-text-2" id="text-org9f7871e">
+<div id="outline-container-org761a657" class="outline-2">
+<h2 id="org761a657">An Example with Pipeline Understanding</h2>
+<div class="outline-text-2" id="text-org761a657">
 <p>
 A simple basic example that aims to provide your with the general
 workflow is the following:
@@ -157,6 +158,7 @@ workflow is the following:
 <span class="c1"># create your pipeline that you can apply directly to your data. you</span>
 <span class="c1"># can then fit the pipeline and predict using it.</span>
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">"scaler"</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span> <span class="c1">## standardize your</span>
+
 					       <span class="c1">## data according to</span>
 					       <span class="c1">## the normal</span>
 					       <span class="c1">## standardization. </span>
@@ -191,6 +193,11 @@ workflow is the following:
 <span class="n">y_pred</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="sa">r</span><span class="s1">'R^2=</span><span class="si">%.2f</span><span class="s1">, MAE=</span><span class="si">%.2f</span><span class="s1">'</span><span class="o">%</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">),</span> <span class="n">median_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)))</span>
 </pre></div>
+
+<pre class="example">
+R^2=0.75, MAE=1.51
+</pre>
+
 
 <p>
 Notice that you could have performed the above also without pipelining
@@ -254,7 +261,6 @@ all of the different methods
 <span class="c1"># print (scaled_X)</span>
 </pre></div>
 
-
 <p>
 Notice that the results for the above are comparable to the one
 obtained above. So you get the idea of what is behind a pipeline.
@@ -267,8 +273,98 @@ your data and you compute the metrics on the original scaled data.
 </p>
 </div>
 </div>
+
+
+
+<div id="outline-container-orgb89231c" class="outline-2">
+<h2 id="orgb89231c">Why you should always work through Pipelines</h2>
+<div class="outline-text-2" id="text-orgb89231c">
+<p>
+It is recommended that you always work with pipelines for your
+workflow. 
+</p>
+
+<p>
+This will help you to clearly define your workflow. On top of it you
+might access and perform the usual transform and fit operations on
+specific transformers /  models.
+</p>
+
+<p>
+In order to see that consider the following example:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## load the boston dataset</span>
+<span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">boston</span><span class="p">[</span><span class="s1">'data'</span><span class="p">],</span> <span class="n">boston</span><span class="p">[</span><span class="s1">'target'</span><span class="p">]</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">boston</span><span class="p">[</span><span class="s1">'feature_names'</span><span class="p">]</span>
+
+<span class="c1"># split in training and testing dataset - i.e. look at generalization</span>
+<span class="c1"># of your model out of sample</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># create your pipeline that you can apply directly to your data. you</span>
+<span class="c1"># can then fit the pipeline and predict using it.</span>
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">"scaler"</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span> <span class="c1">## standardize your</span>
+
+					       <span class="c1">## data according to</span>
+					       <span class="c1">## the normal</span>
+					       <span class="c1">## standardization. </span>
+		 <span class="p">(</span><span class="s2">"featsel"</span><span class="p">,</span> <span class="n">SelectKBest</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)),</span> <span class="c1">## notice that this</span>
+						 <span class="c1">## selectes the 10</span>
+						 <span class="c1">## feutures that</span>
+						 <span class="c1">## explain the most</span>
+						 <span class="c1">## of the variance in</span>
+						 <span class="c1">## the predictor</span>
+						 <span class="c1">## variable. it is</span>
+						 <span class="c1">## based on a</span>
+						 <span class="c1">## multiple ANOVA</span>
+						 <span class="c1">## given the</span>
+						 <span class="c1">## different</span>
+						 <span class="c1">## features.</span>
+		 <span class="p">(</span><span class="s2">"rf"</span><span class="p">,</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">20</span><span class="p">))])</span> <span class="c1">## specify</span>
+								 <span class="c1">## a</span>
+								 <span class="c1">## fit</span>
+								 <span class="c1">## via</span>
+								 <span class="c1">## a</span>
+								 <span class="c1">## RandomForest</span>
+								 <span class="c1">## with</span>
+								 <span class="c1">## 20</span>
+								 <span class="c1">## estimated</span>
+								 <span class="c1">## bootstrapped</span>
+								 <span class="c1">## trees</span>
+
+
+<span class="n">scaled_fit</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">[</span><span class="s1">'scaler'</span><span class="p">]</span><span class="o">.</span><span class="n">fit</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">379</span><span class="p">,</span><span class="mi">1</span><span class="p">))))</span>
+
+<span class="n">scaled</span> <span class="o">=</span> <span class="n">scaled_fit</span><span class="o">.</span><span class="n">transform</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">379</span><span class="p">,</span><span class="mi">1</span><span class="p">))))</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="n">scaled</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example">
+[[-0.3906002   0.42637011 -0.74491444 ...  0.34049624  0.82212111
+  -0.44484602]
+ [-0.40127639  0.5525335  -0.84901832 ...  0.42774893 -0.46241699
+  -0.32575001]
+ [-0.40110543  1.18335044 -0.66648002 ...  0.34184377 -0.90310809
+   1.14670973]
+ ...
+ [-0.3954927  -0.49882807 -0.15309105 ...  0.40091059 -0.31227617
+  -0.36905765]
+ [-0.38599992 -0.49882807 -0.59517599 ...  0.38103449  0.86938766
+  -0.6505573 ]
+ [-0.39692832 -0.49882807 -1.003035   ...  0.42774893  0.29801844
+   0.05319184]]
+</pre>
+</div>
+</div>
     </div>
-    <aside class="postpromonav"><nav></nav></aside></article><footer id="footer"><p>Contents © 2020         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../on-the-architecture-of-query-engines-batch-vs-streaming/" rel="prev" title="On the Architecture of Query Engines - Batch vs Streaming">Previous post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2020         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
         </footer>
 </div>
