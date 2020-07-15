@@ -52,8 +52,6 @@ x_2 = np.random.randn(N) * 3 + 2
 x_3 = np.random.randn(N) * 3 + -2
 #+end_src
 
-#+RESULTS: F7E22CAC-CB72-4675-A4E3-E543629F59D9
-
 * Work with pandas
    :properties:
    :header-args:ein-python: :session http://127.0.0.1:8888/visualization.ipynb  :results output
@@ -89,6 +87,11 @@ mydat = pd.DataFrame ({'x':X.flatten(), 'y': y.flatten()})
 mydat.describe ()
 #+end_src
 
+- sort multiple variables in pandas data frames.
+
+#+begin_src python
+df.sort_values(['Year', "Happiness_Score"], ascending=[True, False], inplace=True)
+#+end_src
 
 - Set the name of the columns
 
@@ -190,7 +193,6 @@ print (mydat[['sum', 'negmean']][filt])
 #+end_src
 
 
-
 - remove duplicates
 
 #+NAME: 66AC1B55-FDF1-496A-9A1C-EC03BDFDC01A
@@ -198,6 +200,22 @@ print (mydat[['sum', 'negmean']][filt])
 print (np.matrix ([[1,2,1],[3,3,3]]).transpose ())
 
 pd.DataFrame (np.matrix ([[1,2,1],[3,3,3]]).transpose ()).iloc[:,1].unique ()
+#+end_src
+
+another possibility that addresses data frame wide duplicates and not
+simply column duplicates is by leveraging =.duplicated ()= method:
+
+#+begin_src python :results output
+import pandas as pd
+
+romeo = pd.DataFrame({'a': [1,1,3], 'b' : [2,2,3]})
+
+print(romeo)
+print(romeo.duplicated())
+
+romeo = pd.DataFrame({'a': [1,1,3], 'b' : [2,4,3]})
+print(romeo)
+print(romeo.duplicated())
 #+end_src
 
 - on the difference between =.iloc= and =.loc=
@@ -269,6 +287,400 @@ To view the category types
 #+begin_src ein-python :results output
 mydat.category.cat.categories
 #+end_src
+
+To check for missing values =NaN= 
+
+#+begin_src python :exports both
+## check if there are null values for stream_id column
+df_streams[['stream_id']].isnull().values.any()
+
+## get the null values
+df_streams[np.array(df_streams[['stream_id']].isnull())]
+#+end_src
+
+In order to apply a function sequentially to each entry in a column
+dataframe you can use the =apply= function on pandas dataframe.
+
+For instance for the following dataframe
+
+#+begin_src python :session sparse :results output
+cust_id.head()
+#+end_src
+
+Then you could specify a function return the years since the date in
+column dob
+
+#+begin_src python
+def age(x):
+    datetime_object = datetime.strptime(x, '%m/%d/%y')
+
+    datetime_now = datetime.today()
+
+    return datetime_now.year - datetime_object.year
+#+end_src
+
+Finally you can pass the =apply= function to each row of your
+pandas dataframe column by
+
+#+begin_src python
+print(cust_id['dob'].apply (lambda row: age(row)))
+
+cust_id['age'] = cust_id['dob'].apply (lambda row: age(row))
+
+cust_id.head()
+#+end_src
+
+#+begin_example
+        dob  1            2        3               4  5              6  \
+0  07/30/98  1         Todd    Kasen  South Carolina  m  united_states  
+1  04/12/89  2        Garza   Ensley            None  f      singapore
+2  09/12/97  3        Carey  Lillian         Alabama  f  united_states
+3  01/28/99  4  Christensen     Beau        New York  m  united_states
+4  03/23/98  5       Gibson  Ernesto            None  m      singapore 
+
+age  
+22  
+31  
+23  
+21  
+22  
+#+end_example
+
+- deleting missing data
+
+In order to delete missing data you can simply rely on the 
+
+#+begin_src python :results output :exports both :session hello
+import pandas as pd
+from numpy import nan
+
+df = pd.DataFrame({'name':['apple','banana','orange'],
+                   'price':[1.95, 3.00, nan], 'inventory':[nan, 12, 23]})
+
+
+print(df)
+
+print ("\nAfter deleting missing values:")
+print(df.dropna())
+#+end_src
+
+In the above you eliminate the entire *row* where the missing value
+occurred.
+
+The above is particular important when missing observations occurs
+randomly such that you might safely ignore individual observations
+without increasing the bias of your analysis given your data.
+
+A second possibility, when dealing with missing data consists in
+deleting entire features (i.e. columns). You can do that by setting
+the argument ='columns'= in your =.dropna ()= method
+
+#+begin_src python :results output :exports both :session hello
+print(df)
+
+print ("\nAfter deleting missing values:")
+
+print(df.dropna(axis = 'columns'))
+#+end_src
+
+- impute missing data
+
+a different approach on handling missing data is to *impute* missing
+data. This means that instead of removing the data observations you
+try to replace them with some meaningful information.
+
+This might be useful for instance when understanding that data are not
+missing at random and you might use the dependency on other features -
+i.e. a predictive model based on that - to impute missing variables. 
+
+Other simpler methods might involve taking simple features means as a
+data-filler or some simple analogous measure. An example in this sense
+might be 
+
+#+begin_src python :results output :exports both :session hello
+from sklearn.impute import SimpleImputer
+
+print (df)
+
+features = ['price', 'inventory']
+imp = SimpleImputer()
+
+# Use .values attribute bc sklearn works with arrays rather than DataFrames
+imp.fit(df[features].values)
+
+print(imp.transform(df[features].values))
+#+end_src
+
+where notice that in the above the simple average was taken to replace
+missing values. Notice moreover how the standard sklearn API applies -
+i.e. the =.fit ()= and =.transform ()= methods.
+
+** New dataset
+   :properties:
+   :header-args:python: :session pandas
+   :end:
+
+For the next sections I will use the following new dataset
+
+#+begin_src python
+import re
+import numpy as np
+import pandas as pd
+#+end_src
+
+#+NAME: D5E71680-E3E5-4FBD-B754-061941C9C71D
+#+begin_src ein-python
+df = pd.read_csv("~/Desktop/Learning/AI_workflow_Coursera/Visualization/world-happiness.csv",index_col=0)
+print("df: {} x {}".format(df.shape[0],df.shape[1]))
+
+## clean up the column names and remove some
+df.columns = [re.sub("\s+","_",col) for col in df.columns.tolist()]
+df.head(n=4)
+#+end_src
+
+#+RESULTS:
+:        Country                           Region  Happiness_Rank  ...  Generosity  Dystopia_Residual  Year
+: 0  Afghanistan                    Southern Asia           153.0  ...     0.36510            1.95210  2015
+: 1      Albania       Central and Eastern Europe            95.0  ...     0.14272            1.89894  2015
+: 2      Algeria  Middle East and Northern Africa            68.0  ...     0.07822            2.43209  2015
+: 3       Angola               Sub-Saharan Africa           137.0  ...     0.12344            1.94939  2015
+: 
+: [4 rows x 12 columns]
+
+
+ - view a review of all of the null values
+
+ #+begin_src python
+## missing values summary
+print("Missing Value Summary\n{}".format("-"*35))
+print(df.isnull().sum(axis = 0))
+ #+end_src
+
+ #+begin_example
+Missing Value Summary
+-----------------------------------
+Country                           0
+Region                            0
+Happiness_Rank                   25
+Happiness_Score                  25
+Economy_(GDP_per_Capita)         25
+Family                           25
+Health_(Life_Expectancy)         25
+Freedom                          25
+Trust_(Government_Corruption)    25
+Generosity                       25
+Dystopia_Residual                25
+Year                              0
+dtype: int64
+ #+end_example
+
+
+- pivot data frame and create aggregate measures for them (similar to
+  mutate in =dplyr=)
+
+  #+begin_src python
+columns_to_show = ["Happiness_Score","Health_(Life_Expectancy)"]
+pd.pivot_table(df, index= 'Year',values=columns_to_show,aggfunc='mean').round(3)
+  #+end_src
+
+
+- groupby
+
+analogously to the previous version one can compute aggregated
+measures using the groupby command
+
+   #+begin_src python
+   df.groupby(['Year'])[columns_to_show].mean().round(3)
+   #+end_src
+
+
+Aggregating by multiple columns is straightforward.
+
+#+begin_src python 
+pd.pivot_table(df, index = ['Region', 'Year'], values=columns_to_show).round(3)
+## or
+# df.groupby(['Region', 'Year'])[columns_to_show].mean().round(3)
+#+end_src
+
+Finally you can pass a column entry instead of displaying the results
+as above. This is more user friendly in case you might have to merge
+the results into other data frames.
+
+#+begin_src python
+pd.pivot_table(df,index='Region',columns='Year',values="Happiness_Score")
+#+end_src
+
+
+
+- create factor variables out of continuous variables through the
+  =cut= method.
+
+#+begin_src python 
+pd.cut (df['Happiness_Rank'], bins = 4)
+#+end_src
+
+- append a column to a dataframe
+
+#+begin_src python 
+pd.concat(objs = [df, pd.cut (df['Happiness_Rank'], bins = 4)], 
+          axis = 1)
+#+end_src
+
+* Sparse Matrices
+:properties:
+:header-args:python: :session sparse :results output :exports both
+:end:
+
+It is essential for data engineers and data scientists to know how to
+work with sparse matrices. This are matrices with many =0= entries and
+just a few non-zero entries. 
+
+Instead of representing these kind of matrices in their =dense
+representation= i.e. with a bunch of =0= entries you might save the
+information in a more compressed way. This will allow to save on
+memory on your machines and to effectively work with huge matrices.
+
+Sparse matrices are moreover important for the development of ML
+jobs. The idea is that once you found a well performing ML model you
+might create data pipelines that extract transform and load data to
+your ML model in the desired shape.
+
+At the beginning, when you are exploring the data and trying to come
+up with a meaningful model it does not make sense to create such data
+pipelines as the job of coming up with them might be time-consuming
+and you might end up with no business value added from your ML
+application. 
+
+It is therefore important to postpone the creation of such time
+consuming tasks at the end. when you have a production ready ML
+model. 
+
+Before of that it is advisable to leverage dumps of data and to
+explore your system through them. In this sense sparse matrices are
+especially beneficial when data can be efficiently represented through
+them. These allow you to store a huge amount of data due to their
+efficient memory management - i.e. by saving just the relevant portion
+of your data -.
+
+In python you can work with sparse matrices via:
+
+#+begin_src python 
+import numpy as np
+from scipy import sparse
+#+end_src
+
+Notice that a matrix, is said to be sparse if more than 50% of its
+entries are 0.
+
+For instance the following matrix is sparse
+
+#+begin_src python
+A = np.random.randint(0,2,100000).reshape(100,1000)
+sparcity = 1.0 - (np.count_nonzero(A) / A.size)
+print(round(sparcity,4))
+#+end_src
+
+There are essentially four types of sparse matrices used for
+computation.
+
+CSC (Compressed Sparse Column) and CSR (Compressed Sparse Row) are
+more compact and efficient, but difficult to construct "from
+scratch". 
+
+Coo (Coordinate) and DOK (Dictionary of Keys) are easier to construct,
+and can then be converted to CSC or CSR via matrix.tocsc() or
+matrix.tocsr().
+
+CSC is more efficient at accessing *column-vectors or column
+operations*, generally, as it is stored as arrays of columns and their
+value at each row.
+
+CSR matrices are the opposite; stored as arrays of rows and their
+values at each column, and are *more efficient at accessing row-vectors
+or row operations*.
+
+[[https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.coo_matrix.html#scipy.sparse.coo_matrix][coo matrix]]
+
+#+begin_src python
+A = np.random.poisson(0.3, (10,100))
+B = sparse.coo_matrix(A)
+C = B.todense()
+
+print("A",type(A),A.shape,"\n"
+      "B",type(B),B.shape,"\n"
+      "C",type(C),C.shape,"\n")
+#+end_src
+
+You see that you can transform back and forth from dense matrices to
+sparse matrices.
+
+Coo sparse matrix built from the COOrdinates and values of the
+non-zero entries.
+
+#+begin_src python
+print(B)
+#+end_src
+
+
+[[https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html#scipy.sparse.csc_matrix][csc_matrix]]
+
+#+begin_src python
+B = sparse.csc_matrix(A)
+
+print(B)
+#+end_src
+
+See that the above respects the column array storage. I.e. the
+non-zero coordinates are returned column by column.
+
+[[https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix][csr_matrix]]
+
+Like the CSC format there is a CSR format to account for data that
+repeat along the rows
+
+#+begin_src python
+B = sparse.csr_matrix(A)
+print(B)
+#+end_src
+
+See that the above respects the row array storage. I.e. the
+non-zero coordinates are returned row by row.
+
+*Notice:* that many np.<methods> used for performing matrix operations
+do not work on sparse matrices. You might refer to [[https://docs.scipy.org/doc/scipy/reference/sparse.html][this link]] for
+checking on how to deal with that. A solution proposed is to
+transform the sparse matrix in an array.
+
+Finally, it is easy to populate a sparse matrix by
+
+#+begin_src python
+rows = [0,1,2,8] ## coodinates
+cols = [1,0,4,8]
+vals = [1,2,1,4]
+
+A = sparse.coo_matrix((vals, (rows, cols)))
+print(A.todense())
+print()
+print(A.tocsr())
+#+end_src
+
+you can finally stack two sparse matrices, be it horizontally or
+vertically together.
+
+#+begin_src python
+C = sparse.csr_matrix(np.array([0,1,0,0,2,0,0,0,1]).reshape(1,9))
+print(A.shape,C.shape)
+
+
+print("adding horizontally") 
+D = sparse.vstack([A,C])
+print(D.todense())
+
+print("adding vertically") 
+D = sparse.hstack([A,C.reshape(9,1)])
+print(D.todense())
+#+end_src
+
 
 * MatplotLib
    :properties:
@@ -350,12 +762,8 @@ plt.hist([mydat[mydat.bitwise == True].nomean,
 * Seaborn
    :properties:
    :header-args:ein-python: :session http://127.0.0.1:8888/visualization.ipynb  :results output
+   :header-args:python: :session pandas :results output
    :end:
-
-#+NAME: 9F787342-7A7B-475E-9C2E-499E27ECBB01
-#+begin_src ein-python :results output
-import seaborn as sns
-#+end_src
 
 #+NAME: 05C46A89-D1D4-4DFE-9E2A-01CEC3634EAE
 #+begin_src ein-python :results output
@@ -386,8 +794,6 @@ mydat.head ()
 g = sns.lmplot(x="posmean", y="sum", data = mydat)
 #+end_src
 
-#+RESULTS: FBDCB0BF-41E2-4642-BC31-C41CCEDD1F97
-
 #+BEGIN_EXPORT html
 <br>
 <br>
@@ -408,8 +814,6 @@ import statsmodels
 g = sns.lmplot(x="posmean", y="sum", col="bitwise", hue="bitwise", data=mydat,
                y_jitter=.02,  truncate=False)
 #+end_src
-
-#+RESULTS: 484343C4-2E49-4800-AF8E-EDFC576D1E1E
 
 #+BEGIN_EXPORT html
 <br>
@@ -580,8 +984,6 @@ k1 = sns.kdeplot(mydat.posmean, mydat.nomean, ax = axes[0], cmap = 'Greens')
 k2 = sns.kdeplot(mydat.posmean, mydat.negmean, ax = axes[1], cmap = 'Greens')
 #+end_src
 
-#+RESULTS: B93D66F2-8C49-4C99-B9E0-FE71FEAF668E
-
 #+BEGIN_EXPORT html
 <br>
 <br>
@@ -606,12 +1008,6 @@ k1 = sns.kdeplot(mydat.posmean, mydat.nomean, ax = axes[0,1], cmap = 'Greens')
 k2 = sns.kdeplot(mydat.posmean, mydat.negmean, ax = axes[1,0], cmap = 'Greens')
 #+end_src
 
-#+RESULTS: 5E915FC1-4336-43F0-AC81-E6D4606DB7DC
-#+BEGIN_EXPORT html
-<br>
-<br>
-#+END_EXPORT
-
 #+begin_export html
  <img width="60%" height="100%" src="../../images/ob-ein-67a82e7e06d0dbde403da30e12915fb0.png" class="center">
 #+end_export
@@ -630,12 +1026,6 @@ tells you how many datapoints falls into each level for each category
 #+begin_src ein-python :results output
 k1 = sns.violinplot(data = mydat, x = 'bitwise', y = 'nomean')
 #+end_src
-
-#+RESULTS: 7127AD7E-0D11-4E74-8D13-7E39AD57BE3C
-#+BEGIN_EXPORT html
-<br>
-<br>
-#+END_EXPORT
 
 #+begin_export html
  <img width="60%" height="100%" src="../../images/ob-ein-76e27ae206053454189960ae1872c755.png" class="center">
@@ -665,32 +1055,11 @@ mydat['extreme'] = pd.Series(category).astype('category')
 mydat.info()
 #+end_src
 
-#+RESULTS: 3C0D07B1-EACF-4670-8F81-A6A4C63368BE
-#+begin_example
-<class 'pandas.core.frame.DataFrame'>
-RangeIndex: 200 entries, 0 to 199
-Data columns (total 7 columns):
- #   Column   Non-Null Count  Dtype   
----  ------   --------------  -----   
- 0   nomean   200 non-null    float64 
- 1   posmean  200 non-null    float64 
- 2   negmean  200 non-null    float64 
- 3   sum      200 non-null    float64 
- 4   bitwise  200 non-null    bool    
- 5   year     200 non-null    category
- 6   extreme  200 non-null    category
-dtypes: bool(1), category(2), float64(4)
-memory usage: 7.1 KB
-#+end_example
-
 
 #+NAME: 350A97B1-7BF7-491E-A074-D32855FDFC2B
 #+begin_src ein-python :results output
 set(['posExtreme' if x > 2 else 'normal' if x < -2 else 'negExtreme' for x in rand])
 #+end_src
-
-#+RESULTS: 350A97B1-7BF7-491E-A074-D32855FDFC2B
-: {'negExtreme', 'normal', 'posExtreme'}
 
 
 #+NAME: 9D15BE1A-47B1-4165-A2C5-B82E0738FBB5
@@ -708,7 +1077,150 @@ g.map(plt.scatter, x = 'nomean', y = 'posmean')
  <img width="60%" height="100%" src="../../images/ob-ein-0b867ca8bdca2f2900ea9cfed8557013.png" class="center">
 #+end_export
 
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
 
 
+- pairs plot
 
+#+begin_src ein-python :session http://127.0.0.1:8888/data-visualization.ipynb
+sns.set(style="ticks", color_codes=True)
+
+## make a pair plot
+columns = ['Happiness_Score','Economy_(GDP_per_Capita)', 'Family', 'Health_(Life_Expectancy)',
+           'Freedom', 'Trust_(Government_Corruption)']
+
+axes = sns.pairplot(df,vars=columns,hue="Year",palette="husl")
+#+end_src
+
+#+RESULTS: 0C7B2019-492C-4BF5-8008-C98ECC1B2A26
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="60%" height="100%" src="../../images/ob-ein-3a2a26107ad61803388d9c611a423e28.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+- correlation matrix plot
+
+#+NAME: C42D6014-CB8C-494C-858F-0B9FC5034166
+#+begin_src ein-python :results output  :session http://127.0.0.1:8888/data-visualization.ipynb
+# Compute the correlation matrix
+corr = df.corr()
+
+# Generate a mask for the upper triangle
+mask = np.triu(np.ones_like(corr, dtype=np.bool))
+
+# Set up the matplotlib figure
+f, ax = plt.subplots(figsize=(11, 9))
+
+# Generate a custom diverging colormap
+cmap = sns.diverging_palette(220, 10, as_cmap=True)
+
+# Draw the heatmap with the mask and correct aspect ratio
+sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
+            square=True, linewidths=.5, cbar_kws={"shrink": .5})
+#+end_src
+
+#+RESULTS: C42D6014-CB8C-494C-858F-0B9FC5034166
+
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="60%" height="100%" src="../../images/ob-ein-bd9b1dfc192e85b5422d813cc082a59d.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+
+- On PairGrid
+
+This is a very interesting option to compute different visualization
+according to pair plots
+
+#+NAME: CDFB4918-09FE-49EA-AA84-95DA766B060B
+#+begin_src ein-python :results output :session http://127.0.0.1:8888/data_visualization_self_done.ipynb
+df = pd.read_csv("~/Desktop/Learning/AI_workflow_Coursera/Visualization/Visualization_2.csv")
+
+df.columns
+
+df = df.dropna(axis= 0)
+
+#+end_src
+
+#+RESULTS: CDFB4918-09FE-49EA-AA84-95DA766B060B
+: Index(['customer_id', 'country_name', 'age', 'customer_name', 'is_subscriber',
+:        'subscriber_type', 'num_streams'],
+:       dtype='object')
+
+
+#+NAME: F86A78CB-D318-4828-88E8-A1F7C73A4B30
+#+begin_src ein-python :results output :session http://127.0.0.1:8888/data_visualization_self_done.ipynb
+g = sns.PairGrid(df[['age', 'num_streams', 'is_subscriber']], hue = 'is_subscriber')
+g = g.map_upper(sns.scatterplot)
+g = g.map_lower(sns.kdeplot, colors="C0")
+g = g.map_diag(sns.kdeplot, lw=2).add_legend()
+#+end_src
+
+#+RESULTS: F86A78CB-D318-4828-88E8-A1F7C73A4B30
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="60%" height="100%" src="../../images/ob-ein-6d0a3dbe8709898e545dbecff8afb91b.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+You can then specify pretty much everything that you want on the upper
+and lower diagonal matrix entries. Check at this link to [[https://seaborn.pydata.org/generated/seaborn.PairGrid.html][get inspiration]].
+
+You might even combine pyplot and seaborn elements
+
+#+NAME: AAF6B0F8-46A5-40ED-8187-969386ED60AF
+#+begin_src ein-python :results output :session http://127.0.0.1:8888/data_visualization_self_done.ipynb
+g = sns.PairGrid(df[['age', 'num_streams', 'is_subscriber']], hue = 'is_subscriber')
+g = g.map_upper(sns.scatterplot, alpha = 0.3)
+g = g.map_lower(sns.kdeplot)
+g = g.map_diag(plt.hist, lw=2, alpha = 0.2)
+#+end_src
+
+#+RESULTS: AAF6B0F8-46A5-40ED-8187-969386ED60AF
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_export html
+ <img width="60%" height="100%" src="../../images/ob-ein-6d61b403db2296406af36083af76f80a.png" class="center">
+#+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
 
