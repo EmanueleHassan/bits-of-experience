@@ -21,6 +21,8 @@ first appeared through the implementation of ML tasks sklearn. There
 the design setting of the maintainer of the library was to desi">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2020-07-02T12:44:32+02:00">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="Python">
 </head>
 <body>
     <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -53,10 +55,18 @@ the design setting of the maintainer of the library was to desi">
             
 
             
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/machine-learning/" rel="tag">Machine Learning</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">Python</a></li>
+        </ul>
+</div>
 
         </div>
     </header><div class="e-content entry-content" itemprop="articleBody text">
-    <p>
+    <br><p>
 Pipelines are important when working on ML projects in python. They
 first appeared through the implementation of ML tasks sklearn. There
 the design setting of the maintainer of the library was to design a
@@ -83,9 +93,9 @@ to combine the three together in easy to use Pipelines.
 
 <!-- TEASER_END -->
 
-<br><br><div id="outline-container-org0d00816" class="outline-2">
-<h2 id="org0d00816">The general Case</h2>
-<div class="outline-text-2" id="text-org0d00816">
+<br><br><div id="outline-container-org0fa1f09" class="outline-2">
+<h2 id="org0fa1f09">The general Case</h2>
+<div class="outline-text-2" id="text-org0fa1f09">
 <p>
 In fact, all of the ML models in the sklearn and Spark-ML libraries -
 for instance RandomForest, SVM, LogisticRegression etc. - are built
@@ -117,10 +127,9 @@ with in production.
 </div>
 </div>
 
-
-<div id="outline-container-org761a657" class="outline-2">
-<h2 id="org761a657">An Example with Pipeline Understanding</h2>
-<div class="outline-text-2" id="text-org761a657">
+<div id="outline-container-orgc4efe6e" class="outline-2">
+<h2 id="orgc4efe6e">An Example with Pipeline Understanding</h2>
+<div class="outline-text-2" id="text-orgc4efe6e">
 <p>
 A simple basic example that aims to provide your with the general
 workflow is the following:
@@ -271,14 +280,16 @@ You fit all of the transformers and your predictor given your training
 data. You then apply such fit to the training data. You scale back
 your data and you compute the metrics on the original scaled data.
 </p>
+
+
+
+<br>
 </div>
 </div>
 
-
-
-<div id="outline-container-orgb89231c" class="outline-2">
-<h2 id="orgb89231c">Why you should always work through Pipelines</h2>
-<div class="outline-text-2" id="text-orgb89231c">
+<div id="outline-container-org2260fbb" class="outline-2">
+<h2 id="org2260fbb">Why you should always work through Pipelines</h2>
+<div class="outline-text-2" id="text-org2260fbb">
 <p>
 It is recommended that you always work with pipelines for your
 workflow. 
@@ -357,6 +368,71 @@ In order to see that consider the following example:
  [-0.39692832 -0.49882807 -1.003035   ...  0.42774893  0.29801844
    0.05319184]]
 </pre>
+
+
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-orgb35792e" class="outline-2">
+<h2 id="orgb35792e">Differentiated Pipelines for different variables</h2>
+<div class="outline-text-2" id="text-orgb35792e">
+<p>
+The process previously described performs the same transformations to
+all of the variables passed to the pipeline. 
+</p>
+
+<p>
+It is obvious that we might often need different pipelines treating
+different variables in a different way. For instance it is obvious
+that when you are dealing with <b>categorical</b> and <b>numerical</b> variables
+you might well want to transform such variables in different ways. 
+</p>
+
+<p>
+Even in the case of working on the same <b>numerical</b> variables you
+might desire to pre-process the variables differently. Think for
+instance at using different normalization techniques or at filling up
+missing values differently. 
+</p>
+
+<p>
+In such a case you can specify the column names of the features that
+you want to treat differently and pass a list with them to specific
+pipelines through the <code>ColumnTransformer</code> as shown in the below case
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## preprocessing pipeline</span>
+<span class="n">numeric_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'age'</span><span class="p">,</span> <span class="s1">'num_streams'</span><span class="p">]</span>
+
+<span class="c1"># a more elegant option for the above - especially when you have very</span>
+<span class="c1"># numerous features</span>
+<span class="n">numeric_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+<span class="c1"># notice that in this script you add a simpleimputer despite the fact</span>
+<span class="c1"># that no values are missing. This is a sensible solution as you might</span>
+<span class="c1"># want your slution to stay strong even in production when the data</span>
+<span class="c1"># that you might gather might be empty or in general when null values</span>
+<span class="c1"># might well easily occur.</span>
+
+<span class="n">numeric_transformer</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">(</span><span class="s1">'imputer'</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">'mean'</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">'scaler'</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">())])</span>
+
+<span class="n">categorical_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'country'</span><span class="p">,</span> <span class="s1">'subscriber_type'</span><span class="p">]</span>
+
+<span class="n">categorical_transformer</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">(</span><span class="s1">'imputer'</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">'constant'</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s1">'missing'</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">'onehot'</span><span class="p">,</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">handle_unknown</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">))])</span>
+
+<span class="n">preprocessor</span> <span class="o">=</span> <span class="n">ColumnTransformer</span><span class="p">(</span>
+    <span class="n">transformers</span><span class="o">=</span><span class="p">[</span>
+	<span class="p">(</span><span class="s1">'num'</span><span class="p">,</span> <span class="n">numeric_transformer</span><span class="p">,</span> <span class="n">numeric_features</span><span class="p">),</span>
+	<span class="p">(</span><span class="s1">'cat'</span><span class="p">,</span> <span class="n">categorical_transformer</span><span class="p">,</span> <span class="n">categorical_features</span><span class="p">)])</span>
+
+<span class="n">preprocessor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
     </div>

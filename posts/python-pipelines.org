@@ -2,13 +2,16 @@
 .. title: Python Pipelines
 .. slug: python-pipelines
 .. date: 2020-07-02 12:44:32 UTC+02:00
-.. tags: 
+.. tags: Python, Machine Learning
 .. category: 
 .. link: 
 .. description: 
 .. type: text
-
 #+END_COMMENT
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
 
 Pipelines are important when working on ML projects in python. They
 first appeared through the implementation of ML tasks sklearn. There
@@ -66,7 +69,6 @@ with in production.
 #+BEGIN_EXPORT html
 <br>
 #+END_EXPORT
-
 
 * An Example with Pipeline Understanding
 :properties:
@@ -223,6 +225,10 @@ your data and you compute the metrics on the original scaled data.
 
 
 
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
 * Why you should always work through Pipelines
 :properties:
 :header-args:python: :session pipeline :results output :exports both
@@ -303,4 +309,67 @@ print (scaled)
  [-0.39692832 -0.49882807 -1.003035   ...  0.42774893  0.29801844
    0.05319184]]
 #+end_example
+
+
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+* Differentiated Pipelines for different variables
+:properties:
+:header-args:python: :session pipeline :results output :exports both
+:end:
+
+The process previously described performs the same transformations to
+all of the variables passed to the pipeline. 
+
+It is obvious that we might often need different pipelines treating
+different variables in a different way. For instance it is obvious
+that when you are dealing with *categorical* and *numerical* variables
+you might well want to transform such variables in different ways. 
+
+Even in the case of working on the same *numerical* variables you
+might desire to pre-process the variables differently. Think for
+instance at using different normalization techniques or at filling up
+missing values differently. 
+
+In such a case you can specify the column names of the features that
+you want to treat differently and pass a list with them to specific
+pipelines through the =ColumnTransformer= as shown in the below case
+
+#+begin_src python
+## preprocessing pipeline
+numeric_features = ['age', 'num_streams']
+
+# a more elegant option for the above - especially when you have very
+# numerous features
+numeric_features = list(df.describe().columns)
+
+# notice that in this script you add a simpleimputer despite the fact
+# that no values are missing. This is a sensible solution as you might
+# want your slution to stay strong even in production when the data
+# that you might gather might be empty or in general when null values
+# might well easily occur.
+
+numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', StandardScaler())])
+
+categorical_features = ['country', 'subscriber_type']
+
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))])
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features)])
+
+preprocessor.fit(df)
+
+#+end_src
+
+
 
