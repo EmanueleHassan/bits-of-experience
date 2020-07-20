@@ -16,34 +16,51 @@ Here some python visualization dummy scripts are saved
 <br>
 <br>
 
-<div id="outline-container-org38cbe4f" class="outline-2">
-<h2 id="org38cbe4f">Data</h2>
-<div class="outline-text-2" id="text-org38cbe4f">
-<div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
-%matplotlib inline 
-%config InlineBackend.figure_format = &#39;png&#39;
-import numpy as np
+<div id="outline-container-orged971c2" class="outline-2">
+<h2 id="orged971c2">Data</h2>
+<div class="outline-text-2" id="text-orged971c2">
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span> 
+<span class="o">%</span><span class="n">config</span> <span class="n">InlineBackend</span><span class="o">.</span><span class="n">figure_format</span> <span class="o">=</span> <span class="s1">&#39;png&#39;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>N = 30
-x_1 = np.random.randn(N) * 3
-x_2 = np.random.randn(N) * 3 + 2
-x_3 = np.random.randn(N) * 3 + -2
+<div class="highlight"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">x_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span>
+<span class="n">x_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="n">x_3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="o">-</span><span class="mi">2</span>
 </pre></div>
 </div>
 </div>
 
-<div id="outline-container-orgbf3db5a" class="outline-2">
-<h2 id="orgbf3db5a">Work with pandas</h2>
-<div class="outline-text-2" id="text-orgbf3db5a">
-<div class="highlight"><pre><span></span>import pandas as pd
+<div id="outline-container-org8864f56" class="outline-2">
+<h2 id="org8864f56">Work with pandas</h2>
+<div class="outline-text-2" id="text-org8864f56">
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+</pre></div>
+
+<p>
+First of all you should display the default way through which Ipython
+Notebooks should display pandas dataframes
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_columns&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.width&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+
+<p>
+Analogously when working with numpy you could reach that by
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
 </pre></div>
 
 <ul class="org-ul">
 <li>create data from numpy matrix</li>
 </ul>
 
-<div class="highlight"><pre><span></span>mydat = pd.DataFrame (np.matrix ([x_1,x_2,x_3]).transpose ())
+<div class="highlight"><pre><span></span><span class="n">mydat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span> <span class="p">([</span><span class="n">x_1</span><span class="p">,</span><span class="n">x_2</span><span class="p">,</span><span class="n">x_3</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span> <span class="p">())</span>
 </pre></div>
 
 <ul class="org-ul">
@@ -54,10 +71,10 @@ x_3 = np.random.randn(N) * 3 + -2
 here you need to flatten the arrays first
 </p>
 
-<div class="highlight"><pre><span></span>X = 2 * np.random.rand(100,1)
-y = 4 +3 * X+np.random.randn(100,1)
+<div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">+</span><span class="mi">3</span> <span class="o">*</span> <span class="n">X</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 
-mydat = pd.DataFrame ({&#39;x&#39;:X.flatten(), &#39;y&#39;: y.flatten()})
+<span class="n">mydat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span><span class="n">X</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()})</span>
 </pre></div>
 
 
@@ -107,7 +124,7 @@ Now see the example.
 <li>describe the data</li>
 </ul>
 
-<div class="highlight"><pre><span></span>mydat.describe ()
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">describe</span> <span class="p">()</span>
 </pre></div>
 
 <ul class="org-ul">
@@ -121,22 +138,22 @@ Now see the example.
 <li>Set the name of the columns</li>
 </ul>
 
-<div class="highlight"><pre><span></span>mydat.columns = [&quot;nomean&quot;, &quot;posmean&quot;, &quot;negmean&quot;]
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;nomean&quot;</span><span class="p">,</span> <span class="s2">&quot;posmean&quot;</span><span class="p">,</span> <span class="s2">&quot;negmean&quot;</span><span class="p">]</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>mydat.columns
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">columns</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>plt.plot(mydat.nomean, c = &quot;lightblue&quot;, ls = &#39;--&#39;, marker = &quot;o&quot;,
-	 ms = 6, label =&quot;nomean&quot;)
-plt.plot(mydat.posmean, c = &quot;darkorange&quot;, ls = &#39;--&#39;, marker = &quot;s&quot;,
-	 ms = 6, label =&quot;posmean&quot;) # ms = marker size
-plt.plot(mydat.negmean, c = &quot;lightgreen&quot;, ls = &#39;--&#39;, marker = &quot;^&quot;,
-	 ms = 6, label =&quot;negmean&quot;)
-plt.legend(loc = &#39;upper right&#39;,bbox_to_anchor = (1,1))
-plt.xticks(list(range(20)), rotation = &#39;vertical&#39;) # sets the ticks on
-						   # x-axis and puts
-						   # them vertically.
+<div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;lightblue&quot;</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span>
+	 <span class="n">ms</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span><span class="s2">&quot;nomean&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;darkorange&quot;</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s2">&quot;s&quot;</span><span class="p">,</span>
+	 <span class="n">ms</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span><span class="s2">&quot;posmean&quot;</span><span class="p">)</span> <span class="c1"># ms = marker size</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">negmean</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;lightgreen&quot;</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s2">&quot;^&quot;</span><span class="p">,</span>
+	 <span class="n">ms</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span><span class="s2">&quot;negmean&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">&#39;upper right&#39;</span><span class="p">,</span><span class="n">bbox_to_anchor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)),</span> <span class="n">rotation</span> <span class="o">=</span> <span class="s1">&#39;vertical&#39;</span><span class="p">)</span> <span class="c1"># sets the ticks on</span>
+						   <span class="c1"># x-axis and puts</span>
+						   <span class="c1"># them vertically.</span>
 </pre></div>
 
 
@@ -144,64 +161,64 @@ plt.xticks(list(range(20)), rotation = &#39;vertical&#39;) # sets the ticks on
 <li>get the entry (x,y) in your relational table</li>
 </ul>
 
-<div class="highlight"><pre><span></span>mydat.head (5)
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">head</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>mydat.iloc[2,1]
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 
 <ul class="org-ul">
 <li>slicing the data</li>
 </ul>
 
-<div class="highlight"><pre><span></span>mydat[0:4]
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
 </pre></div>
 
 <ul class="org-ul">
 <li>get by column</li>
 </ul>
 
-<div class="highlight"><pre><span></span>mydat[[&#39;nomean&#39;, &#39;posmean&#39;]].head (3)
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="p">[[</span><span class="s1">&#39;nomean&#39;</span><span class="p">,</span> <span class="s1">&#39;posmean&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span> <span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
 <ul class="org-ul">
 <li>get by row and column</li>
 </ul>
 
-<div class="highlight"><pre><span></span>mydat[[&#39;nomean&#39;, &#39;posmean&#39;]][::2]
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="p">[[</span><span class="s1">&#39;nomean&#39;</span><span class="p">,</span> <span class="s1">&#39;posmean&#39;</span><span class="p">]][::</span><span class="mi">2</span><span class="p">]</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>print(mydat[[&#39;nomean&#39;, &#39;posmean&#39;]].iloc [0,1])
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">mydat</span><span class="p">[[</span><span class="s1">&#39;nomean&#39;</span><span class="p">,</span> <span class="s1">&#39;posmean&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">iloc</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 
 <ul class="org-ul">
 <li>new column</li>
 </ul>
 
-<div class="highlight"><pre><span></span>mydat[&#39;sum&#39;] = mydat[&#39;nomean&#39;] + mydat[&#39;posmean&#39;] + mydat[&#39;negmean&#39;]
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">[</span><span class="s1">&#39;nomean&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">mydat</span><span class="p">[</span><span class="s1">&#39;posmean&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">mydat</span><span class="p">[</span><span class="s1">&#39;negmean&#39;</span><span class="p">]</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>mydat.columns
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">columns</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>mydat2 = mydat
-mydat.head ()
+<div class="highlight"><pre><span></span><span class="n">mydat2</span> <span class="o">=</span> <span class="n">mydat</span>
+<span class="n">mydat</span><span class="o">.</span><span class="n">head</span> <span class="p">()</span>
 </pre></div>
 
 <ul class="org-ul">
 <li>drop a column</li>
 </ul>
 
-<div class="highlight"><pre><span></span>mydat2.drop (&#39;sum&#39;, axis = 1).head ()
+<div class="highlight"><pre><span></span><span class="n">mydat2</span><span class="o">.</span><span class="n">drop</span> <span class="p">(</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">head</span> <span class="p">()</span>
 </pre></div>
 
 <ul class="org-ul">
 <li>filter through booleans</li>
 </ul>
 
-<div class="highlight"><pre><span></span>filt = mydat.nomean &lt; 0
+<div class="highlight"><pre><span></span><span class="n">filt</span> <span class="o">=</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span> <span class="o">&lt;</span> <span class="mi">0</span>
 
-print (mydat[[&#39;sum&#39;, &#39;negmean&#39;]][filt])
+<span class="k">print</span> <span class="p">(</span><span class="n">mydat</span><span class="p">[[</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;negmean&#39;</span><span class="p">]][</span><span class="n">filt</span><span class="p">])</span>
 </pre></div>
 
 
@@ -209,9 +226,9 @@ print (mydat[[&#39;sum&#39;, &#39;negmean&#39;]][filt])
 <li>remove duplicates</li>
 </ul>
 
-<div class="highlight"><pre><span></span>print (np.matrix ([[1,2,1],[3,3,3]]).transpose ())
+<div class="highlight"><pre><span></span><span class="k">print</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span> <span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]])</span><span class="o">.</span><span class="n">transpose</span> <span class="p">())</span>
 
-pd.DataFrame (np.matrix ([[1,2,1],[3,3,3]]).transpose ()).iloc[:,1].unique ()
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span> <span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]])</span><span class="o">.</span><span class="n">transpose</span> <span class="p">())</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span> <span class="p">()</span>
 </pre></div>
 
 <p>
@@ -253,23 +270,23 @@ The difference is the following.
 </p>
 
 
-<div class="highlight"><pre><span></span>print (mydat)
-mydat.at[0, &#39;negmean&#39;]
+<div class="highlight"><pre><span></span><span class="k">print</span> <span class="p">(</span><span class="n">mydat</span><span class="p">)</span>
+<span class="n">mydat</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;negmean&#39;</span><span class="p">]</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>mydat.iat[0,2]
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">iat</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
 </pre></div>
 
 <p>
 To further understand the thing consider
 </p>
 
-<div class="highlight"><pre><span></span>mydat2 = mydat[::2]
-mydat2
+<div class="highlight"><pre><span></span><span class="n">mydat2</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">mydat2</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>print (mydat2.at[6, &#39;nomean&#39;]) ## this by real index independent of the axis
-print (mydat2.iat[6, 0]) ## this sixth row in the matrix
+<div class="highlight"><pre><span></span><span class="k">print</span> <span class="p">(</span><span class="n">mydat2</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;nomean&#39;</span><span class="p">])</span> <span class="c1">## this by real index independent of the axis</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">mydat2</span><span class="o">.</span><span class="n">iat</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="c1">## this sixth row in the matrix</span>
 </pre></div>
 
 <ul class="org-ul">
@@ -281,20 +298,20 @@ This is important for treating them as dummies in regression as well
 for facet<sub>wraps</sub>. 
 </p>
 
-<div class="highlight"><pre><span></span>mydat.head ()
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">head</span> <span class="p">()</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>mydat[&quot;category&quot;] = np.repeat (range (4), 5)
-mydat.info ()
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span> <span class="p">(</span><span class="nb">range</span> <span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">mydat</span><span class="o">.</span><span class="n">info</span> <span class="p">()</span>
 </pre></div>
 
 <p>
 To transform this into a category use
 </p>
 
-<div class="highlight"><pre><span></span>mydat.category = mydat.category.astype (&#39;category&#39;)
-mydat.info ()
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">category</span> <span class="o">=</span> <span class="n">mydat</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">astype</span> <span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+<span class="n">mydat</span><span class="o">.</span><span class="n">info</span> <span class="p">()</span>
 </pre></div>
 
 
@@ -302,7 +319,7 @@ mydat.info ()
 To view the category types
 </p>
 
-<div class="highlight"><pre><span></span>mydat.category.cat.categories
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span>
 </pre></div>
 
 <p>
@@ -456,9 +473,9 @@ i.e. the <code>.fit ()</code> and <code>.transform ()</code> methods.
 </p>
 </div>
 
-<div id="outline-container-orgffd81a9" class="outline-3">
-<h3 id="orgffd81a9">New dataset</h3>
-<div class="outline-text-3" id="text-orgffd81a9">
+<div id="outline-container-orgbc14df3" class="outline-3">
+<h3 id="orgbc14df3">New dataset</h3>
+<div class="outline-text-3" id="text-orgbc14df3">
 <p>
 For the next sections I will use the following new dataset
 </p>
@@ -468,12 +485,12 @@ For the next sections I will use the following new dataset
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>df = pd.read_csv(&quot;~/Desktop/Learning/AI_workflow_Coursera/Visualization/world-happiness.csv&quot;,index_col=0)
-print(&quot;df: {} x {}&quot;.format(df.shape[0],df.shape[1]))
+<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;~/Desktop/Learning/AI_workflow_Coursera/Visualization/world-happiness.csv&quot;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;df: {} x {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 
-## clean up the column names and remove some
-df.columns = [re.sub(&quot;\s+&quot;,&quot;_&quot;,col) for col in df.columns.tolist()]
-df.head(n=4)
+<span class="c1">## clean up the column names and remove some</span>
+<span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span><span class="s2">&quot;_&quot;</span><span class="p">,</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 
 <pre class="example">
@@ -580,9 +597,9 @@ the results into other data frames.
 </div>
 </div>
 
-<div id="outline-container-org47b1e44" class="outline-2">
-<h2 id="org47b1e44">Sparse Matrices</h2>
-<div class="outline-text-2" id="text-org47b1e44">
+<div id="outline-container-org09aae1c" class="outline-2">
+<h2 id="org09aae1c">Sparse Matrices</h2>
+<div class="outline-text-2" id="text-org09aae1c">
 <p>
 It is essential for data engineers and data scientists to know how to
 work with sparse matrices. This are matrices with many <code>0</code> entries and
@@ -992,20 +1009,19 @@ adding vertically
 </div>
 </div>
 
-
-<div id="outline-container-org304ce28" class="outline-2">
-<h2 id="org304ce28">MatplotLib</h2>
-<div class="outline-text-2" id="text-org304ce28">
-<div class="highlight"><pre><span></span>plt.plot(x_1, c = &quot;lightblue&quot;, ls = &#39;--&#39;, marker = &quot;o&quot;,
-	 ms = 6, label =&quot;nomean&quot;)
-plt.plot(x_2, c = &quot;darkorange&quot;, ls = &#39;--&#39;, marker = &quot;s&quot;,
-	 ms = 6, label =&quot;posmean&quot;) # ms = marker size
-plt.plot(x_3, c = &quot;lightgreen&quot;, ls = &#39;--&#39;, marker = &quot;^&quot;,
-	 ms = 6, label =&quot;negmean&quot;)
-plt.legend(loc = &#39;upper right&#39;,bbox_to_anchor = (1,1))
-plt.xticks(list(range(20)), rotation = &#39;vertical&#39;) # sets the ticks on
-						   # x-axis and puts
-						   # them vertically.
+<div id="outline-container-org5da6a07" class="outline-2">
+<h2 id="org5da6a07">MatplotLib</h2>
+<div class="outline-text-2" id="text-org5da6a07">
+<div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_1</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;lightblue&quot;</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span>
+	 <span class="n">ms</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span><span class="s2">&quot;nomean&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_2</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;darkorange&quot;</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s2">&quot;s&quot;</span><span class="p">,</span>
+	 <span class="n">ms</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span><span class="s2">&quot;posmean&quot;</span><span class="p">)</span> <span class="c1"># ms = marker size</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_3</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;lightgreen&quot;</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s2">&quot;^&quot;</span><span class="p">,</span>
+	 <span class="n">ms</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span><span class="s2">&quot;negmean&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">&#39;upper right&#39;</span><span class="p">,</span><span class="n">bbox_to_anchor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)),</span> <span class="n">rotation</span> <span class="o">=</span> <span class="s1">&#39;vertical&#39;</span><span class="p">)</span> <span class="c1"># sets the ticks on</span>
+						   <span class="c1"># x-axis and puts</span>
+						   <span class="c1"># them vertically.</span>
 </pre></div>
 
 <br>
@@ -1020,8 +1036,8 @@ plt.xticks(list(range(20)), rotation = &#39;vertical&#39;) # sets the ticks on
 <li>stacked histograms via matplotlib</li>
 </ul>
 
-<div class="highlight"><pre><span></span>plt.hist([mydat[mydat.bitwise == True].nomean,
-	  mydat[mydat.bitwise == False].posmean])
+<div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">([</span><span class="n">mydat</span><span class="p">[</span><span class="n">mydat</span><span class="o">.</span><span class="n">bitwise</span> <span class="o">==</span> <span class="bp">True</span><span class="p">]</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span>
+	  <span class="n">mydat</span><span class="p">[</span><span class="n">mydat</span><span class="o">.</span><span class="n">bitwise</span> <span class="o">==</span> <span class="bp">False</span><span class="p">]</span><span class="o">.</span><span class="n">posmean</span><span class="p">])</span>
 </pre></div>
 
 <br>
@@ -1032,9 +1048,9 @@ plt.xticks(list(range(20)), rotation = &#39;vertical&#39;) # sets the ticks on
 <br>
 <br>
 
-<div class="highlight"><pre><span></span>plt.hist([mydat[mydat.bitwise == True].nomean,
-	  mydat[mydat.bitwise == False].posmean],
-	 stacked = True)
+<div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">([</span><span class="n">mydat</span><span class="p">[</span><span class="n">mydat</span><span class="o">.</span><span class="n">bitwise</span> <span class="o">==</span> <span class="bp">True</span><span class="p">]</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span>
+	  <span class="n">mydat</span><span class="p">[</span><span class="n">mydat</span><span class="o">.</span><span class="n">bitwise</span> <span class="o">==</span> <span class="bp">False</span><span class="p">]</span><span class="o">.</span><span class="n">posmean</span><span class="p">],</span>
+	 <span class="n">stacked</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
 </pre></div>
 
 <br>
@@ -1047,10 +1063,10 @@ plt.xticks(list(range(20)), rotation = &#39;vertical&#39;) # sets the ticks on
 </div>
 </div>
 
-<div id="outline-container-org3a32314" class="outline-2">
-<h2 id="org3a32314">Seaborn</h2>
-<div class="outline-text-2" id="text-org3a32314">
-<div class="highlight"><pre><span></span>sns.distplot (mydat[&#39;nomean&#39;])
+<div id="outline-container-org3f6bb05" class="outline-2">
+<h2 id="org3f6bb05">Seaborn</h2>
+<div class="outline-text-2" id="text-org3f6bb05">
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">distplot</span> <span class="p">(</span><span class="n">mydat</span><span class="p">[</span><span class="s1">&#39;nomean&#39;</span><span class="p">])</span>
 </pre></div>
 
 <br>
@@ -1061,10 +1077,10 @@ plt.xticks(list(range(20)), rotation = &#39;vertical&#39;) # sets the ticks on
 <br>
 <br>
 
-<div class="highlight"><pre><span></span>mydat.head ()
+<div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">head</span> <span class="p">()</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>g = sns.lmplot(x=&quot;posmean&quot;, y=&quot;sum&quot;, data = mydat)
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;posmean&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">)</span>
 </pre></div>
 
 <br>
@@ -1075,9 +1091,9 @@ plt.xticks(list(range(20)), rotation = &#39;vertical&#39;) # sets the ticks on
 <br>
 <br>
 
-<div class="highlight"><pre><span></span>import statsmodels
-g = sns.lmplot(x=&quot;posmean&quot;, y=&quot;sum&quot;, col=&quot;bitwise&quot;, hue=&quot;bitwise&quot;, data=mydat,
-	       y_jitter=.02,  truncate=False)
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">statsmodels</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;posmean&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;bitwise&quot;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;bitwise&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">mydat</span><span class="p">,</span>
+	       <span class="n">y_jitter</span><span class="o">=.</span><span class="mo">02</span><span class="p">,</span>  <span class="n">truncate</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 
 <br>
@@ -1094,8 +1110,8 @@ To further inspect different visualization techniques check at the
 </p>
 
 
-<div class="highlight"><pre><span></span>g = sns.lmplot(x=&quot;posmean&quot;, y=&quot;sum&quot;, data = mydat, 
-	       hue = &#39;bitwise&#39;, fit_reg = False)
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;posmean&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">,</span> 
+	       <span class="n">hue</span> <span class="o">=</span> <span class="s1">&#39;bitwise&#39;</span><span class="p">,</span> <span class="n">fit_reg</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
 </pre></div>
 
 <br>
@@ -1112,14 +1128,14 @@ To further inspect different visualization techniques check at the
 </ul>
 
 
-<div class="highlight"><pre><span></span>g = sns.jointplot (data = mydat, x = &#39;posmean&#39;, y = &#39;negmean&#39;)
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">jointplot</span> <span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;posmean&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;negmean&#39;</span><span class="p">)</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>g = sns.jointplot (data = mydat, x = &#39;posmean&#39;, y = &#39;negmean&#39;, kind = &#39;hex&#39;)
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">jointplot</span> <span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;posmean&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;negmean&#39;</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;hex&#39;</span><span class="p">)</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span>sns.jointplot (data = mydat, x = &#39;posmean&#39;, y = &#39;negmean&#39;). \
-    plot_joint(sns.kdeplot, zorder=3, n_levels=6) ## add isolines
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">jointplot</span> <span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;posmean&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;negmean&#39;</span><span class="p">)</span><span class="o">.</span> \
+    <span class="n">plot_joint</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_levels</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="c1">## add isolines</span>
 </pre></div>
 
 <br>
@@ -1134,7 +1150,7 @@ To further inspect different visualization techniques check at the
 <li>kdeplot without data</li>
 </ul>
 
-<div class="highlight"><pre><span></span>sns.kdeplot (mydat.posmean, mydat.nomean)
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span> <span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">)</span>
 </pre></div>
 
 <br>
@@ -1149,8 +1165,8 @@ To further inspect different visualization techniques check at the
 To draw the isolines via colour scale use the shade bool
 </p>
 
-<div class="highlight"><pre><span></span>sns.kdeplot (mydat.posmean, mydat.nomean,
-	     shade = True)
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span> <span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span>
+	     <span class="n">shade</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
 </pre></div>
 
 <br>
@@ -1165,8 +1181,8 @@ To draw the isolines via colour scale use the shade bool
 To still see the grids
 </p>
 
-<div class="highlight"><pre><span></span>sns.kdeplot (mydat.posmean, mydat.nomean,
-	     shade = True, shade_lowest = False)
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span> <span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span>
+	     <span class="n">shade</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">shade_lowest</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
 </pre></div>
 
 <br>
@@ -1181,8 +1197,8 @@ To still see the grids
 <li>change the background style</li>
 </ul>
 
-<div class="highlight"><pre><span></span>sns.set(style=&quot;darkgrid&quot;)
-sns.kdeplot (mydat.posmean, mydat.nomean)
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span> <span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">)</span>
 </pre></div>
 
 <br>
@@ -1197,10 +1213,10 @@ sns.kdeplot (mydat.posmean, mydat.nomean)
 <li>create subplots</li>
 </ul>
 
-<div class="highlight"><pre><span></span>## specify your R par(mfrow=c(x,y))
-f, axes = plt.subplots(1,2, figsize = (12, 6))
-k1 = sns.kdeplot(mydat.posmean, mydat.nomean, ax = axes[0], cmap = &#39;Greens&#39;)
-k2 = sns.kdeplot(mydat.posmean, mydat.negmean, ax = axes[1], cmap = &#39;Greens&#39;)
+<div class="highlight"><pre><span></span><span class="c1">## specify your R par(mfrow=c(x,y))</span>
+<span class="n">f</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">k1</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;Greens&#39;</span><span class="p">)</span>
+<span class="n">k2</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">negmean</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;Greens&#39;</span><span class="p">)</span>
 </pre></div>
 
 <br>
@@ -1215,10 +1231,10 @@ k2 = sns.kdeplot(mydat.posmean, mydat.negmean, ax = axes[1], cmap = &#39;Greens&
 with more columns the axis index becomes more complex.
 </p>
 
-<div class="highlight"><pre><span></span>## specify your R par(mfrow=c(x,y))
-f, axes = plt.subplots(2,2, figsize = (12, 6))
-k1 = sns.kdeplot(mydat.posmean, mydat.nomean, ax = axes[0,1], cmap = &#39;Greens&#39;)
-k2 = sns.kdeplot(mydat.posmean, mydat.negmean, ax = axes[1,0], cmap = &#39;Greens&#39;)
+<div class="highlight"><pre><span></span><span class="c1">## specify your R par(mfrow=c(x,y))</span>
+<span class="n">f</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">k1</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;Greens&#39;</span><span class="p">)</span>
+<span class="n">k2</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">negmean</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;Greens&#39;</span><span class="p">)</span>
 </pre></div>
 
 <img width="60%" height="100%" src="../../images/ob-ein-67a82e7e06d0dbde403da30e12915fb0.png" class="center">
@@ -1235,7 +1251,7 @@ same information as boxplot. on top of it you have the width that
 tells you how many datapoints falls into each level for each category
 </p>
 
-<div class="highlight"><pre><span></span>k1 = sns.violinplot(data = mydat, x = &#39;bitwise&#39;, y = &#39;nomean&#39;)
+<div class="highlight"><pre><span></span><span class="n">k1</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;bitwise&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;nomean&#39;</span><span class="p">)</span>
 </pre></div>
 
 <img width="60%" height="100%" src="../../images/ob-ein-76e27ae206053454189960ae1872c755.png" class="center">
@@ -1256,23 +1272,23 @@ properties for different categories.
 you might do that as follows
 </p>
 
-<div class="highlight"><pre><span></span>## create some more categories
-rand = np.random.randn(200)
-category = [&#39;2008&#39; if x &gt; 0 else &#39;2009&#39; for x in rand]
-mydat[&#39;year&#39;] = pd.Series(category).astype(&#39;category&#39;)
-category = [&#39;posExtreme&#39; if x &gt; 2 else &#39;normal&#39; if x &lt; 2 else &#39;negExtreme&#39; for x in rand]
-mydat[&#39;extreme&#39;] = pd.Series(category).astype(&#39;category&#39;)
+<div class="highlight"><pre><span></span><span class="c1">## create some more categories</span>
+<span class="n">rand</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">category</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;2008&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;2009&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rand</span><span class="p">]</span>
+<span class="n">mydat</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">category</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+<span class="n">category</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;posExtreme&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s1">&#39;normal&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s1">&#39;negExtreme&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rand</span><span class="p">]</span>
+<span class="n">mydat</span><span class="p">[</span><span class="s1">&#39;extreme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">category</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
 
-mydat.info()
+<span class="n">mydat</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>set([&#39;posExtreme&#39; if x &gt; 2 else &#39;normal&#39; if x &lt; -2 else &#39;negExtreme&#39; for x in rand])
+<div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">([</span><span class="s1">&#39;posExtreme&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s1">&#39;normal&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">2</span> <span class="k">else</span> <span class="s1">&#39;negExtreme&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rand</span><span class="p">])</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>g =  sns.FacetGrid(data = mydat, row = &#39;year&#39;, col = &#39;extreme&#39;, hue = &#39;year&#39;)
-g.map(plt.scatter, x = &#39;nomean&#39;, y = &#39;posmean&#39;)
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span>  <span class="n">sns</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">,</span> <span class="n">row</span> <span class="o">=</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="s1">&#39;extreme&#39;</span><span class="p">,</span> <span class="n">hue</span> <span class="o">=</span> <span class="s1">&#39;year&#39;</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;nomean&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;posmean&#39;</span><span class="p">)</span>
 </pre></div>
 
 <br>
@@ -1288,13 +1304,13 @@ g.map(plt.scatter, x = &#39;nomean&#39;, y = &#39;posmean&#39;)
 <li>pairs plot</li>
 </ul>
 
-<div class="highlight"><pre><span></span>sns.set(style=&quot;ticks&quot;, color_codes=True)
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;ticks&quot;</span><span class="p">,</span> <span class="n">color_codes</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-## make a pair plot
-columns = [&#39;Happiness_Score&#39;,&#39;Economy_(GDP_per_Capita)&#39;, &#39;Family&#39;, &#39;Health_(Life_Expectancy)&#39;,
-	   &#39;Freedom&#39;, &#39;Trust_(Government_Corruption)&#39;]
+<span class="c1">## make a pair plot</span>
+<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Happiness_Score&#39;</span><span class="p">,</span><span class="s1">&#39;Economy_(GDP_per_Capita)&#39;</span><span class="p">,</span> <span class="s1">&#39;Family&#39;</span><span class="p">,</span> <span class="s1">&#39;Health_(Life_Expectancy)&#39;</span><span class="p">,</span>
+	   <span class="s1">&#39;Freedom&#39;</span><span class="p">,</span> <span class="s1">&#39;Trust_(Government_Corruption)&#39;</span><span class="p">]</span>
 
-axes = sns.pairplot(df,vars=columns,hue=&quot;Year&quot;,palette=&quot;husl&quot;)
+<span class="n">axes</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="nb">vars</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;Year&quot;</span><span class="p">,</span><span class="n">palette</span><span class="o">=</span><span class="s2">&quot;husl&quot;</span><span class="p">)</span>
 </pre></div>
 
 <br>
@@ -1309,21 +1325,21 @@ axes = sns.pairplot(df,vars=columns,hue=&quot;Year&quot;,palette=&quot;husl&quot
 <li>correlation matrix plot</li>
 </ul>
 
-<div class="highlight"><pre><span></span># Compute the correlation matrix
-corr = df.corr()
+<div class="highlight"><pre><span></span><span class="c1"># Compute the correlation matrix</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
 
-# Generate a mask for the upper triangle
-mask = np.triu(np.ones_like(corr, dtype=np.bool))
+<span class="c1"># Generate a mask for the upper triangle</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">))</span>
 
-# Set up the matplotlib figure
-f, ax = plt.subplots(figsize=(11, 9))
+<span class="c1"># Set up the matplotlib figure</span>
+<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
 
-# Generate a custom diverging colormap
-cmap = sns.diverging_palette(220, 10, as_cmap=True)
+<span class="c1"># Generate a custom diverging colormap</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">diverging_palette</span><span class="p">(</span><span class="mi">220</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">as_cmap</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-# Draw the heatmap with the mask and correct aspect ratio
-sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
-	    square=True, linewidths=.5, cbar_kws={&quot;shrink&quot;: .5})
+<span class="c1"># Draw the heatmap with the mask and correct aspect ratio</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=.</span><span class="mi">3</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+	    <span class="n">square</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span> <span class="n">cbar_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;shrink&quot;</span><span class="p">:</span> <span class="o">.</span><span class="mi">5</span><span class="p">})</span>
 </pre></div>
 
 
@@ -1345,18 +1361,18 @@ This is a very interesting option to compute different visualization
 according to pair plots
 </p>
 
-<div class="highlight"><pre><span></span>df = pd.read_csv(&quot;~/Desktop/Learning/AI_workflow_Coursera/Visualization/Visualization_2.csv&quot;)
+<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;~/Desktop/Learning/AI_workflow_Coursera/Visualization/Visualization_2.csv&quot;</span><span class="p">)</span>
 
-df.columns
+<span class="n">df</span><span class="o">.</span><span class="n">columns</span>
 
-df = df.dropna(axis= 0)
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>g = sns.PairGrid(df[[&#39;age&#39;, &#39;num_streams&#39;, &#39;is_subscriber&#39;]], hue = &#39;is_subscriber&#39;)
-g = g.map_upper(sns.scatterplot)
-g = g.map_lower(sns.kdeplot, colors=&quot;C0&quot;)
-g = g.map_diag(sns.kdeplot, lw=2).add_legend()
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">PairGrid</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;num_streams&#39;</span><span class="p">,</span> <span class="s1">&#39;is_subscriber&#39;</span><span class="p">]],</span> <span class="n">hue</span> <span class="o">=</span> <span class="s1">&#39;is_subscriber&#39;</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">map_upper</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">map_lower</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">map_diag</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">add_legend</span><span class="p">()</span>
 </pre></div>
 
 <br>
@@ -1376,10 +1392,10 @@ and lower diagonal matrix entries. Check at this link to <a href="https://seabor
 You might even combine pyplot and seaborn elements
 </p>
 
-<div class="highlight"><pre><span></span>g = sns.PairGrid(df[[&#39;age&#39;, &#39;num_streams&#39;, &#39;is_subscriber&#39;]], hue = &#39;is_subscriber&#39;)
-g = g.map_upper(sns.scatterplot, alpha = 0.3)
-g = g.map_lower(sns.kdeplot)
-g = g.map_diag(plt.hist, lw=2, alpha = 0.2)
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">PairGrid</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;num_streams&#39;</span><span class="p">,</span> <span class="s1">&#39;is_subscriber&#39;</span><span class="p">]],</span> <span class="n">hue</span> <span class="o">=</span> <span class="s1">&#39;is_subscriber&#39;</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">map_upper</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">map_lower</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">map_diag</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">)</span>
 </pre></div>
 
 <br>

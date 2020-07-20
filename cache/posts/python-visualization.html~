@@ -16,9 +16,9 @@ Here some python visualization dummy scripts are saved
 <br>
 <br>
 
-<div id="outline-container-org363bb14" class="outline-2">
-<h2 id="org363bb14">Data</h2>
-<div class="outline-text-2" id="text-org363bb14">
+<div id="outline-container-org38cbe4f" class="outline-2">
+<h2 id="org38cbe4f">Data</h2>
+<div class="outline-text-2" id="text-org38cbe4f">
 <div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
 %matplotlib inline 
 %config InlineBackend.figure_format = &#39;png&#39;
@@ -33,9 +33,9 @@ x_3 = np.random.randn(N) * 3 + -2
 </div>
 </div>
 
-<div id="outline-container-org7156d6e" class="outline-2">
-<h2 id="org7156d6e">Work with pandas</h2>
-<div class="outline-text-2" id="text-org7156d6e">
+<div id="outline-container-orgbf3db5a" class="outline-2">
+<h2 id="orgbf3db5a">Work with pandas</h2>
+<div class="outline-text-2" id="text-orgbf3db5a">
 <div class="highlight"><pre><span></span>import pandas as pd
 </pre></div>
 
@@ -59,6 +59,49 @@ y = 4 +3 * X+np.random.randn(100,1)
 
 mydat = pd.DataFrame ({&#39;x&#39;:X.flatten(), &#39;y&#39;: y.flatten()})
 </pre></div>
+
+
+<ul class="org-ul">
+<li>on reshape -1</li>
+</ul>
+
+<p>
+The criterion to satisfy for providing the new shape is that <b>The new
+shape should be compatible with the original shape</b>
+</p>
+
+<p>
+Numpy allow us to give one of new shape parameter as -1 (eg: (2,-1) or
+(-1,3) but not (-1, -1)). It simply means that it is an unknown
+dimension and we want numpy to figure it out. And numpy will figure
+tchis by looking at the 'length of the array and remaining dimensions'
+and making sure it satisfies the above mentioned criteria
+</p>
+
+<p>
+Now see the example.
+</p>
+
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+	 <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>
+	 <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]])</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+
+<span class="k">print</span> <span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">reshape</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">reshape</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example">
+(3, 4)
+(12,)
+(6, 2)
+</pre>
+
 
 <ul class="org-ul">
 <li>describe the data</li>
@@ -413,9 +456,9 @@ i.e. the <code>.fit ()</code> and <code>.transform ()</code> methods.
 </p>
 </div>
 
-<div id="outline-container-org9d21818" class="outline-3">
-<h3 id="org9d21818">New dataset</h3>
-<div class="outline-text-3" id="text-org9d21818">
+<div id="outline-container-orgffd81a9" class="outline-3">
+<h3 id="orgffd81a9">New dataset</h3>
+<div class="outline-text-3" id="text-orgffd81a9">
 <p>
 For the next sections I will use the following new dataset
 </p>
@@ -537,9 +580,9 @@ the results into other data frames.
 </div>
 </div>
 
-<div id="outline-container-org78957e5" class="outline-2">
-<h2 id="org78957e5">Sparse Matrices</h2>
-<div class="outline-text-2" id="text-org78957e5">
+<div id="outline-container-org47b1e44" class="outline-2">
+<h2 id="org47b1e44">Sparse Matrices</h2>
+<div class="outline-text-2" id="text-org47b1e44">
 <p>
 It is essential for data engineers and data scientists to know how to
 work with sparse matrices. This are matrices with many <code>0</code> entries and
@@ -605,6 +648,11 @@ For instance the following matrix is sparse
 <span class="k">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">sparcity</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
 </pre></div>
 
+<pre class="example">
+0.4974
+</pre>
+
+
 <p>
 There are essentially four types of sparse matrices used for
 computation.
@@ -647,6 +695,13 @@ or row operations</b>.
       <span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">C</span><span class="p">),</span><span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
+<pre class="example">
+A &lt;class 'numpy.ndarray'&gt; (10, 100) 
+B &lt;class 'scipy.sparse.coo.coo_matrix'&gt; (10, 100) 
+C &lt;class 'numpy.matrix'&gt; (10, 100)
+</pre>
+
+
 <p>
 You see that you can transform back and forth from dense matrices to
 sparse matrices.
@@ -660,6 +715,60 @@ non-zero entries.
 <div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
 </pre></div>
 
+<pre class="example">
+(0, 1)	2
+  (0, 2)	1
+  (0, 6)	1
+  (0, 8)	1
+  (0, 9)	1
+  (0, 10)	1
+  (0, 13)	1
+  (0, 18)	1
+  (0, 19)	2
+  (0, 21)	1
+  (0, 23)	1
+  (0, 24)	2
+  (0, 29)	1
+  (0, 31)	1
+  (0, 34)	1
+  (0, 42)	1
+  (0, 50)	1
+  (0, 51)	1
+  (0, 62)	3
+  (0, 69)	1
+  (0, 70)	1
+  (0, 71)	2
+  (0, 72)	1
+  (0, 78)	1
+  (0, 80)	1
+  :	:
+  (9, 8)	1
+  (9, 9)	2
+  (9, 11)	1
+  (9, 24)	2
+  (9, 26)	2
+  (9, 27)	1
+  (9, 37)	1
+  (9, 38)	1
+  (9, 44)	1
+  (9, 45)	1
+  (9, 49)	1
+  (9, 50)	1
+  (9, 51)	1
+  (9, 55)	1
+  (9, 57)	1
+  (9, 58)	1
+  (9, 59)	1
+  (9, 62)	1
+  (9, 66)	1
+  (9, 74)	1
+  (9, 79)	3
+  (9, 80)	1
+  (9, 82)	1
+  (9, 92)	1
+  (9, 96)	1
+</pre>
+
 
 <p>
 <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html#scipy.sparse.csc_matrix">csc<sub>matrix</sub></a>
@@ -669,6 +778,60 @@ non-zero entries.
 
 <span class="k">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
 </pre></div>
+
+<pre class="example">
+(6, 0)	2
+  (0, 1)	2
+  (3, 1)	1
+  (0, 2)	1
+  (8, 2)	1
+  (5, 3)	1
+  (1, 4)	1
+  (9, 4)	1
+  (5, 5)	1
+  (6, 5)	1
+  (0, 6)	1
+  (1, 6)	1
+  (6, 6)	1
+  (9, 6)	1
+  (3, 7)	1
+  (5, 7)	1
+  (7, 7)	1
+  (8, 7)	1
+  (9, 7)	1
+  (0, 8)	1
+  (6, 8)	1
+  (9, 8)	1
+  (0, 9)	1
+  (1, 9)	1
+  (3, 9)	2
+  :	:
+  (3, 90)	2
+  (6, 90)	1
+  (7, 90)	1
+  (8, 90)	1
+  (0, 91)	1
+  (2, 91)	1
+  (4, 91)	1
+  (5, 91)	1
+  (6, 92)	1
+  (7, 92)	1
+  (9, 92)	1
+  (8, 93)	1
+  (0, 94)	1
+  (1, 94)	1
+  (4, 94)	1
+  (0, 95)	1
+  (1, 95)	1
+  (3, 95)	1
+  (5, 95)	1
+  (5, 96)	1
+  (9, 96)	1
+  (1, 97)	1
+  (4, 98)	1
+  (1, 99)	1
+  (3, 99)	1
+</pre>
 
 <p>
 See that the above respects the column array storage. I.e. the
@@ -687,6 +850,60 @@ repeat along the rows
 <div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
 </pre></div>
+
+<pre class="example">
+(0, 1)	2
+  (0, 2)	1
+  (0, 6)	1
+  (0, 8)	1
+  (0, 9)	1
+  (0, 10)	1
+  (0, 13)	1
+  (0, 18)	1
+  (0, 19)	2
+  (0, 21)	1
+  (0, 23)	1
+  (0, 24)	2
+  (0, 29)	1
+  (0, 31)	1
+  (0, 34)	1
+  (0, 42)	1
+  (0, 50)	1
+  (0, 51)	1
+  (0, 62)	3
+  (0, 69)	1
+  (0, 70)	1
+  (0, 71)	2
+  (0, 72)	1
+  (0, 78)	1
+  (0, 80)	1
+  :	:
+  (9, 8)	1
+  (9, 9)	2
+  (9, 11)	1
+  (9, 24)	2
+  (9, 26)	2
+  (9, 27)	1
+  (9, 37)	1
+  (9, 38)	1
+  (9, 44)	1
+  (9, 45)	1
+  (9, 49)	1
+  (9, 50)	1
+  (9, 51)	1
+  (9, 55)	1
+  (9, 57)	1
+  (9, 58)	1
+  (9, 59)	1
+  (9, 62)	1
+  (9, 66)	1
+  (9, 74)	1
+  (9, 79)	3
+  (9, 80)	1
+  (9, 82)	1
+  (9, 92)	1
+  (9, 96)	1
+</pre>
 
 <p>
 See that the above respects the row array storage. I.e. the
@@ -714,6 +931,23 @@ Finally, it is easy to populate a sparse matrix by
 <span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">tocsr</span><span class="p">())</span>
 </pre></div>
 
+<pre class="example">
+[[0 1 0 0 0 0 0 0 0]
+ [2 0 0 0 0 0 0 0 0]
+ [0 0 0 0 1 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 4]]
+
+  (0, 1)	1
+  (1, 0)	2
+  (2, 4)	1
+  (8, 8)	4
+</pre>
+
 <p>
 you can finally stack two sparse matrices, be it horizontally or
 vertically together.
@@ -722,22 +956,46 @@ vertically together.
 <div class="highlight"><pre><span></span><span class="n">C</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">9</span><span class="p">))</span>
 <span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
-
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;adding horizontally&quot;</span><span class="p">)</span> 
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;adding horizontally/by row&quot;</span><span class="p">)</span> 
 <span class="n">D</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">A</span><span class="p">,</span><span class="n">C</span><span class="p">])</span>
 <span class="k">print</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;adding vertically&quot;</span><span class="p">)</span> 
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;adding vertically/by column&quot;</span><span class="p">)</span> 
 <span class="n">D</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">A</span><span class="p">,</span><span class="n">C</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">1</span><span class="p">)])</span>
 <span class="k">print</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
 </pre></div>
+
+<pre class="example">
+(9, 9) (1, 9)
+adding horizontally
+[[0 1 0 0 0 0 0 0 0]
+ [2 0 0 0 0 0 0 0 0]
+ [0 0 0 0 1 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 4]
+ [0 1 0 0 2 0 0 0 1]]
+adding vertically
+[[0 1 0 0 0 0 0 0 0 0]
+ [2 0 0 0 0 0 0 0 0 1]
+ [0 0 0 0 1 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0 2]
+ [0 0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 4 1]]
+</pre>
 </div>
 </div>
 
 
-<div id="outline-container-org87ecf87" class="outline-2">
-<h2 id="org87ecf87">MatplotLib</h2>
-<div class="outline-text-2" id="text-org87ecf87">
+<div id="outline-container-org304ce28" class="outline-2">
+<h2 id="org304ce28">MatplotLib</h2>
+<div class="outline-text-2" id="text-org304ce28">
 <div class="highlight"><pre><span></span>plt.plot(x_1, c = &quot;lightblue&quot;, ls = &#39;--&#39;, marker = &quot;o&quot;,
 	 ms = 6, label =&quot;nomean&quot;)
 plt.plot(x_2, c = &quot;darkorange&quot;, ls = &#39;--&#39;, marker = &quot;s&quot;,
@@ -789,9 +1047,9 @@ plt.xticks(list(range(20)), rotation = &#39;vertical&#39;) # sets the ticks on
 </div>
 </div>
 
-<div id="outline-container-orge137d65" class="outline-2">
-<h2 id="orge137d65">Seaborn</h2>
-<div class="outline-text-2" id="text-orge137d65">
+<div id="outline-container-org3a32314" class="outline-2">
+<h2 id="org3a32314">Seaborn</h2>
+<div class="outline-text-2" id="text-org3a32314">
 <div class="highlight"><pre><span></span>sns.distplot (mydat[&#39;nomean&#39;])
 </pre></div>
 

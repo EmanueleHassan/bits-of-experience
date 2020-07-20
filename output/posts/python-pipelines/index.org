@@ -253,6 +253,16 @@ features = boston['feature_names']
 # of your model out of sample
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
 
+## notice that the split was not stratified here. 
+
+# This stratify parameter makes a split so that the proportion of
+# values in the sample produced will be the same as the proportion of
+# values provided to parameter stratify.
+# For example, if variable y is a binary categorical variable with
+# values 0 and 1 and there are 25% of zeros and 75% of ones,
+# stratify=y will make sure that your random split has 25% of 0's and
+# 75% of 1's.
+
 # create your pipeline that you can apply directly to your data. you
 # can then fit the pipeline and predict using it.
 pipe = Pipeline([("scaler", StandardScaler()), ## standardize your
@@ -371,5 +381,48 @@ preprocessor.fit(df)
 
 #+end_src
 
+Notice finally that you can combine Pipelines in new Pipelines. This
+is what happened under the hood in the =ColumnTransformer= above. To
+make it more explicit you might then create a final Pipeline for the
+above case implementing a ML implementation:
+
+#+begin_src python :exports both
+## Baseline
+param_grid_svm = {
+    'svm__C': [0.01,0.1,0.5,1.0,1.5,5.0,10.0],
+    'svm__gamma': [0.001,0.01,0.1]
+}
+
+best_params = {}
+pipe_svm = Pipeline(steps=[('pre', preprocessor),
+                           ('svm',SVC(kernel='rbf',
+                                      class_weight='balanced'))])
+
+# svc_fit = pipe_svm.fit(X_train, y_train)
+
+# y_pred = svc_fit.predict(X_test)
+
+grid = GridSearchCV(pipe_svm,
+                    param_grid=param_grid_svm,
+                    cv=5)
+
+grid.fit(X_train, y_train)
+
+y_pred = grid.predict(X_test)
+
+best_params = grid.best_params_
+
+print("Fitted Pipeline\n" + "-->".join(pipe_svm.named_steps.keys()) + "\n{}\n".format("="*35))
+print("f1_score",round(f1_score(y_test, y_pred,average='binary'),3))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Fitted Pipeline
+pre-->svm
+===================================
+
+f1_score 0.634
+#+end_example
 
 
