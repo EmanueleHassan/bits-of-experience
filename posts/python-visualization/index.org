@@ -37,7 +37,7 @@ Here some python visualization dummy scripts are saved
    
 
 #+NAME: 34EAA941-EAD4-468F-8FED-B9E16FDF0717
-#+begin_src ein-python :results output
+#+begin_src python :results output
 import matplotlib.pyplot as plt
 %matplotlib inline 
 %config InlineBackend.figure_format = 'png'
@@ -45,7 +45,7 @@ import numpy as np
 #+end_src
 
 #+NAME: F7E22CAC-CB72-4675-A4E3-E543629F59D9
-#+begin_src ein-python :results output
+#+begin_src python :results output
 N = 30
 x_1 = np.random.randn(N) * 3
 x_2 = np.random.randn(N) * 3 + 2
@@ -58,14 +58,29 @@ x_3 = np.random.randn(N) * 3 + -2
    :end:
 
 #+NAME: 75F79485-A875-4FE1-82A3-C97987A8104B
-#+begin_src ein-python :results output
+#+begin_src python :results output
 import pandas as pd
+#+end_src
+
+First of all you should display the default way through which Ipython
+Notebooks should display pandas dataframes
+
+#+begin_src python
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
+#+end_src
+
+Analogously when working with numpy you could reach that by
+
+#+begin_src python
+np.set_printoptions(threshold=np.inf)
 #+end_src
 
 - create data from numpy matrix
 
 #+NAME: B4B1951C-33E1-4583-BC59-8A5A1FD88259
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat = pd.DataFrame (np.matrix ([x_1,x_2,x_3]).transpose ())
 #+end_src
 
@@ -73,7 +88,7 @@ mydat = pd.DataFrame (np.matrix ([x_1,x_2,x_3]).transpose ())
 
 here you need to flatten the arrays first
 
-#+begin_src ein-python :results output
+#+begin_src python :results output
 X = 2 * np.random.rand(100,1)
 y = 4 +3 * X+np.random.randn(100,1)
 
@@ -117,7 +132,7 @@ print (z.reshape (-1,2).shape)
 - describe the data
 
 #+NAME: 62E7CBD5-4D53-4C5E-A1AC-70E42CBA1F0A
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat.describe ()
 #+end_src
 
@@ -130,17 +145,17 @@ df.sort_values(['Year', "Happiness_Score"], ascending=[True, False], inplace=Tru
 - Set the name of the columns
 
 #+NAME: DDDA7E5F-FC2A-4A7D-BC7B-D7CF473D3C49
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat.columns = ["nomean", "posmean", "negmean"]
 #+end_src
 
 #+NAME: A30028B2-C614-406C-AF97-2DF4F99E1648
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat.columns
 #+end_src
 
 #+NAME: 665F633A-521D-4384-84FF-677EF7633056
-#+begin_src ein-python :results file
+#+begin_src python :results file
 plt.plot(mydat.nomean, c = "lightblue", ls = '--', marker = "o",
          ms = 6, label ="nomean")
 plt.plot(mydat.posmean, c = "darkorange", ls = '--', marker = "s",
@@ -157,55 +172,55 @@ plt.xticks(list(range(20)), rotation = 'vertical') # sets the ticks on
 - get the entry (x,y) in your relational table
 
 #+NAME: D3530789-6ACE-490F-A62F-1F738ABE00D3
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat.head (5)
 #+end_src
 
 #+NAME: E45EF453-DF18-4DA7-8510-1E6B2480F4A7
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat.iloc[2,1]
 #+end_src
 
 - slicing the data
 
 #+NAME: 392E582F-AFE3-4B9A-BF7A-18B9D55B15F6
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat[0:4]
 #+end_src
 
 - get by column
 
 #+NAME: 72EFF5A5-8589-4813-A918-91547491D259
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat[['nomean', 'posmean']].head (3)
 #+end_src
 
 - get by row and column
 
 #+NAME: D0ECAD01-5802-45DE-B009-8C0ED8926068
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat[['nomean', 'posmean']][::2]
 #+end_src
 
 #+NAME: 7EE3C177-63AE-46F2-80AE-6FC33912E63E
-#+begin_src ein-python :results output
+#+begin_src python :results output
 print(mydat[['nomean', 'posmean']].iloc [0,1])
 #+end_src
 
 - new column
 
 #+NAME: C7AEAA0C-FE4F-44F1-B4E2-941105BD1F9C
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat['sum'] = mydat['nomean'] + mydat['posmean'] + mydat['negmean']
 #+end_src
 
 #+NAME: E676C563-E1E9-43EB-8C63-8EA4C417C995
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat.columns
 #+end_src
 
 #+NAME: 74B65603-E9C1-4760-82AA-780263961A4C
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat2 = mydat
 mydat.head ()
 #+end_src
@@ -213,14 +228,14 @@ mydat.head ()
 - drop a column
 
 #+NAME: 4C89C61A-D2C8-4720-9357-021883EC97FE
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat2.drop ('sum', axis = 1).head ()
 #+end_src
 
 - filter through booleans
 
 #+NAME: FE3A32A6-A5AD-41B5-A156-A8FF68D0BE85
-#+begin_src ein-python :results output
+#+begin_src python :results output
 filt = mydat.nomean < 0
 
 print (mydat[['sum', 'negmean']][filt])
@@ -230,7 +245,7 @@ print (mydat[['sum', 'negmean']][filt])
 - remove duplicates
 
 #+NAME: 66AC1B55-FDF1-496A-9A1C-EC03BDFDC01A
-#+begin_src ein-python :results output
+#+begin_src python :results output
 print (np.matrix ([[1,2,1],[3,3,3]]).transpose ())
 
 pd.DataFrame (np.matrix ([[1,2,1],[3,3,3]]).transpose ()).iloc[:,1].unique ()
@@ -265,26 +280,26 @@ The difference is the following.
 
 
 #+NAME: 9F6C4632-2087-4EF2-BE4D-6C4E948FA712
-#+begin_src ein-python :results output
+#+begin_src python :results output
 print (mydat)
 mydat.at[0, 'negmean']
 #+end_src
 
 #+NAME: A0ABCC18-127A-4686-ADC1-E131136EE271
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat.iat[0,2]
 #+end_src
 
 To further understand the thing consider
 
 #+NAME: 67DEF99A-FF5E-4AFC-8F45-C713CDBE0A4F
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat2 = mydat[::2]
 mydat2
 #+end_src
 
 #+NAME: 50340226-FF1D-4B09-BDE9-7CE3DF62C058
-#+begin_src ein-python :results output
+#+begin_src python :results output
 print (mydat2.at[6, 'nomean']) ## this by real index independent of the axis
 print (mydat2.iat[6, 0]) ## this sixth row in the matrix
 #+end_src
@@ -295,13 +310,13 @@ This is important for treating them as dummies in regression as well
 for facet_wraps. 
 
 #+NAME: 7BCD560B-E1CB-4B0C-B8A6-92B4D3BFC054
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat.head ()
 #+end_src
 
 
 #+NAME: B5E0FFC5-18B4-421C-AB89-9A83A3FD8FBD
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat["category"] = np.repeat (range (4), 5)
 mydat.info ()
 #+end_src
@@ -309,7 +324,7 @@ mydat.info ()
 To transform this into a category use
 
 #+NAME: 3C08E5B6-01FF-4D91-9F28-7BB440385BB5
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat.category = mydat.category.astype ('category')
 mydat.info ()
 #+end_src
@@ -318,7 +333,7 @@ mydat.info ()
 To view the category types
 
 #+NAME: 6A930BF7-8560-4027-B1A6-D105861E9B24
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat.category.cat.categories
 #+end_src
 
@@ -463,7 +478,7 @@ import pandas as pd
 #+end_src
 
 #+NAME: D5E71680-E3E5-4FBD-B754-061941C9C71D
-#+begin_src ein-python
+#+begin_src python
 df = pd.read_csv("~/Desktop/Learning/AI_workflow_Coursera/Visualization/world-happiness.csv",index_col=0)
 print("df: {} x {}".format(df.shape[0],df.shape[1]))
 
@@ -933,7 +948,6 @@ adding vertically
  [0 0 0 0 0 0 0 0 4 1]]
 #+end_example
 
-
 * MatplotLib
    :properties:
    :header-args:ein-python: :session http://127.0.0.1:8888/visualization.ipynb  :results output
@@ -941,7 +955,7 @@ adding vertically
 
 
 #+NAME: 7B605A9A-38A5-40A9-991B-EE6B0A394437
-#+begin_src ein-python :results output
+#+begin_src python :results output
 plt.plot(x_1, c = "lightblue", ls = '--', marker = "o",
          ms = 6, label ="nomean")
 plt.plot(x_2, c = "darkorange", ls = '--', marker = "s",
@@ -971,7 +985,7 @@ plt.xticks(list(range(20)), rotation = 'vertical') # sets the ticks on
 - stacked histograms via matplotlib
 
 #+NAME: C5CFE08C-0A8D-4CDE-8B30-6878D058AE31
-#+begin_src ein-python :results output
+#+begin_src python :results output
 plt.hist([mydat[mydat.bitwise == True].nomean,
           mydat[mydat.bitwise == False].posmean])
 #+end_src
@@ -991,7 +1005,7 @@ plt.hist([mydat[mydat.bitwise == True].nomean,
 #+END_EXPORT
 
 #+NAME: DED50857-0468-45BE-8BDC-7EF70F426AFC
-#+begin_src ein-python :results output
+#+begin_src python :results output
 plt.hist([mydat[mydat.bitwise == True].nomean,
           mydat[mydat.bitwise == False].posmean],
          stacked = True)
@@ -1018,7 +1032,7 @@ plt.hist([mydat[mydat.bitwise == True].nomean,
    :end:
 
 #+NAME: 05C46A89-D1D4-4DFE-9E2A-01CEC3634EAE
-#+begin_src ein-python :results output
+#+begin_src python :results output
 sns.distplot (mydat['nomean'])
 #+end_src
 
@@ -1037,12 +1051,12 @@ sns.distplot (mydat['nomean'])
 #+END_EXPORT
 
 #+NAME: CEEFDC10-1359-478E-97FB-A3B03C01C59E
-#+begin_src ein-python :results output
+#+begin_src python :results output
 mydat.head ()
 #+end_src
 
 #+NAME: FBDCB0BF-41E2-4642-BC31-C41CCEDD1F97
-#+begin_src ein-python :results output
+#+begin_src python :results output
 g = sns.lmplot(x="posmean", y="sum", data = mydat)
 #+end_src
 
@@ -1061,7 +1075,7 @@ g = sns.lmplot(x="posmean", y="sum", data = mydat)
 #+END_EXPORT
 
 #+NAME: 484343C4-2E49-4800-AF8E-EDFC576D1E1E
-#+begin_src ein-python :results output
+#+begin_src python :results output
 import statsmodels
 g = sns.lmplot(x="posmean", y="sum", col="bitwise", hue="bitwise", data=mydat,
                y_jitter=.02,  truncate=False)
@@ -1086,7 +1100,7 @@ To further inspect different visualization techniques check at the
 
 
 #+NAME: AAC523C6-CCD2-43EE-84AC-10A2227BE562
-#+begin_src ein-python :results output
+#+begin_src python :results output
 g = sns.lmplot(x="posmean", y="sum", data = mydat, 
                hue = 'bitwise', fit_reg = False)
 #+end_src
@@ -1110,17 +1124,17 @@ g = sns.lmplot(x="posmean", y="sum", data = mydat,
 
 
 #+NAME: C2CD0FFE-51BF-44EA-B24E-A7E8C45D37F5
-#+begin_src ein-python :results output
+#+begin_src python :results output
 g = sns.jointplot (data = mydat, x = 'posmean', y = 'negmean')
 #+end_src
 
 #+NAME: DB58737D-A14C-4118-AAD8-C4D6A69287BE
-#+begin_src ein-python :results output
+#+begin_src python :results output
 g = sns.jointplot (data = mydat, x = 'posmean', y = 'negmean', kind = 'hex')
 #+end_src
 
 #+NAME: 53BA694B-7746-427C-8CD7-20505E9B70FA
-#+begin_src ein-python :results output
+#+begin_src python :results output
 sns.jointplot (data = mydat, x = 'posmean', y = 'negmean'). \
     plot_joint(sns.kdeplot, zorder=3, n_levels=6) ## add isolines
 #+end_src
@@ -1142,7 +1156,7 @@ sns.jointplot (data = mydat, x = 'posmean', y = 'negmean'). \
 - kdeplot without data
 
 #+NAME: 454BEFE2-3E0C-4F18-BF9A-582B2BA3534E
-#+begin_src ein-python :results output
+#+begin_src python :results output
  sns.kdeplot (mydat.posmean, mydat.nomean)
 #+end_src
 
@@ -1163,7 +1177,7 @@ sns.jointplot (data = mydat, x = 'posmean', y = 'negmean'). \
 To draw the isolines via colour scale use the shade bool
 
 #+NAME: 7F1664FF-89F4-42EA-9EB5-3FCE7CC06B3E
-#+begin_src ein-python :results output
+#+begin_src python :results output
  sns.kdeplot (mydat.posmean, mydat.nomean,
               shade = True)
 #+end_src
@@ -1185,7 +1199,7 @@ To draw the isolines via colour scale use the shade bool
 To still see the grids
 
 #+NAME: CB2014DE-0554-4DCE-8DD1-6F60498379E3
-#+begin_src ein-python :results output
+#+begin_src python :results output
  sns.kdeplot (mydat.posmean, mydat.nomean,
               shade = True, shade_lowest = False)
 #+end_src
@@ -1207,7 +1221,7 @@ To still see the grids
 - change the background style
 
 #+NAME: F8E12BC0-D8F9-4663-AC65-CACACA118F56
-#+begin_src ein-python :results output
+#+begin_src python :results output
 sns.set(style="darkgrid")
 sns.kdeplot (mydat.posmean, mydat.nomean)
 #+end_src
@@ -1229,7 +1243,7 @@ sns.kdeplot (mydat.posmean, mydat.nomean)
 - create subplots
 
 #+NAME: B93D66F2-8C49-4C99-B9E0-FE71FEAF668E
-#+begin_src ein-python :results output
+#+begin_src python :results output
 ## specify your R par(mfrow=c(x,y))
 f, axes = plt.subplots(1,2, figsize = (12, 6))
 k1 = sns.kdeplot(mydat.posmean, mydat.nomean, ax = axes[0], cmap = 'Greens')
@@ -1253,7 +1267,7 @@ k2 = sns.kdeplot(mydat.posmean, mydat.negmean, ax = axes[1], cmap = 'Greens')
 with more columns the axis index becomes more complex.
 
 #+NAME: 5E915FC1-4336-43F0-AC81-E6D4606DB7DC
-#+begin_src ein-python :results output
+#+begin_src python :results output
 ## specify your R par(mfrow=c(x,y))
 f, axes = plt.subplots(2,2, figsize = (12, 6))
 k1 = sns.kdeplot(mydat.posmean, mydat.nomean, ax = axes[0,1], cmap = 'Greens')
@@ -1275,7 +1289,7 @@ same information as boxplot. on top of it you have the width that
 tells you how many datapoints falls into each level for each category
 
 #+NAME: 7127AD7E-0D11-4E74-8D13-7E39AD57BE3C
-#+begin_src ein-python :results output
+#+begin_src python :results output
 k1 = sns.violinplot(data = mydat, x = 'bitwise', y = 'nomean')
 #+end_src
 
@@ -1296,7 +1310,7 @@ properties for different categories.
 you might do that as follows
 
 #+NAME: 3C0D07B1-EACF-4670-8F81-A6A4C63368BE
-#+begin_src ein-python :results output
+#+begin_src python :results output
 ## create some more categories
 rand = np.random.randn(200)
 category = ['2008' if x > 0 else '2009' for x in rand]
@@ -1309,13 +1323,13 @@ mydat.info()
 
 
 #+NAME: 350A97B1-7BF7-491E-A074-D32855FDFC2B
-#+begin_src ein-python :results output
+#+begin_src python :results output
 set(['posExtreme' if x > 2 else 'normal' if x < -2 else 'negExtreme' for x in rand])
 #+end_src
 
 
 #+NAME: 9D15BE1A-47B1-4165-A2C5-B82E0738FBB5
-#+begin_src ein-python :results output
+#+begin_src python :results output
 g =  sns.FacetGrid(data = mydat, row = 'year', col = 'extreme', hue = 'year')
 g.map(plt.scatter, x = 'nomean', y = 'posmean')
 #+end_src
@@ -1337,7 +1351,7 @@ g.map(plt.scatter, x = 'nomean', y = 'posmean')
 
 - pairs plot
 
-#+begin_src ein-python :session http://127.0.0.1:8888/data-visualization.ipynb
+#+begin_src python :session http://127.0.0.1:8888/data-visualization.ipynb
 sns.set(style="ticks", color_codes=True)
 
 ## make a pair plot
@@ -1366,7 +1380,7 @@ axes = sns.pairplot(df,vars=columns,hue="Year",palette="husl")
 - correlation matrix plot
 
 #+NAME: C42D6014-CB8C-494C-858F-0B9FC5034166
-#+begin_src ein-python :results output  :session http://127.0.0.1:8888/data-visualization.ipynb
+#+begin_src python :results output  :session http://127.0.0.1:8888/data-visualization.ipynb
 # Compute the correlation matrix
 corr = df.corr()
 
@@ -1408,7 +1422,7 @@ This is a very interesting option to compute different visualization
 according to pair plots
 
 #+NAME: CDFB4918-09FE-49EA-AA84-95DA766B060B
-#+begin_src ein-python :results output :session http://127.0.0.1:8888/data_visualization_self_done.ipynb
+#+begin_src python :results output :session http://127.0.0.1:8888/data_visualization_self_done.ipynb
 df = pd.read_csv("~/Desktop/Learning/AI_workflow_Coursera/Visualization/Visualization_2.csv")
 
 df.columns
@@ -1424,7 +1438,7 @@ df = df.dropna(axis= 0)
 
 
 #+NAME: F86A78CB-D318-4828-88E8-A1F7C73A4B30
-#+begin_src ein-python :results output :session http://127.0.0.1:8888/data_visualization_self_done.ipynb
+#+begin_src python :results output :session http://127.0.0.1:8888/data_visualization_self_done.ipynb
 g = sns.PairGrid(df[['age', 'num_streams', 'is_subscriber']], hue = 'is_subscriber')
 g = g.map_upper(sns.scatterplot)
 g = g.map_lower(sns.kdeplot, colors="C0")
@@ -1453,7 +1467,7 @@ and lower diagonal matrix entries. Check at this link to [[https://seaborn.pydat
 You might even combine pyplot and seaborn elements
 
 #+NAME: AAF6B0F8-46A5-40ED-8187-969386ED60AF
-#+begin_src ein-python :results output :session http://127.0.0.1:8888/data_visualization_self_done.ipynb
+#+begin_src python :results output :session http://127.0.0.1:8888/data_visualization_self_done.ipynb
 g = sns.PairGrid(df[['age', 'num_streams', 'is_subscriber']], hue = 'is_subscriber')
 g = g.map_upper(sns.scatterplot, alpha = 0.3)
 g = g.map_lower(sns.kdeplot)
