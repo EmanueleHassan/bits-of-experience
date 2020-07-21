@@ -16,9 +16,9 @@ Here some python visualization dummy scripts are saved
 <br>
 <br>
 
-<div id="outline-container-orged971c2" class="outline-2">
-<h2 id="orged971c2">Data</h2>
-<div class="outline-text-2" id="text-orged971c2">
+<div id="outline-container-orgb5e054b" class="outline-2">
+<h2 id="orgb5e054b">Data</h2>
+<div class="outline-text-2" id="text-orgb5e054b">
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span> 
 <span class="o">%</span><span class="n">config</span> <span class="n">InlineBackend</span><span class="o">.</span><span class="n">figure_format</span> <span class="o">=</span> <span class="s1">&#39;png&#39;</span>
@@ -33,9 +33,9 @@ Here some python visualization dummy scripts are saved
 </div>
 </div>
 
-<div id="outline-container-org8864f56" class="outline-2">
-<h2 id="org8864f56">Work with pandas</h2>
-<div class="outline-text-2" id="text-org8864f56">
+<div id="outline-container-orgc2b2a30" class="outline-2">
+<h2 id="orgc2b2a30">Work with pandas</h2>
+<div class="outline-text-2" id="text-orgc2b2a30">
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 </pre></div>
 
@@ -314,17 +314,16 @@ To transform this into a category use
 <span class="n">mydat</span><span class="o">.</span><span class="n">info</span> <span class="p">()</span>
 </pre></div>
 
-
-<p>
-To view the category types
-</p>
+<ul class="org-ul">
+<li>To view the category types</li>
+</ul>
 
 <div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span>
 </pre></div>
 
-<p>
-To check for missing values <code>NaN</code> 
-</p>
+<ul class="org-ul">
+<li>To check for missing values <code>NaN</code></li>
+</ul>
 
 <div class="highlight"><pre><span></span><span class="c1">## check if there are null values for stream_id column</span>
 <span class="n">df_streams</span><span class="p">[[</span><span class="s1">&#39;stream_id&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
@@ -332,6 +331,17 @@ To check for missing values <code>NaN</code>
 <span class="c1">## get the null values</span>
 <span class="n">df_streams</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_streams</span><span class="p">[[</span><span class="s1">&#39;stream_id&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">isnull</span><span class="p">())]</span>
 </pre></div>
+
+<ul class="org-ul">
+<li>to replace the nulls by a string in case of categorical variables</li>
+</ul>
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Description</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Description</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;no_description&#39;</span>
+</pre></div>
+
+<ul class="org-ul">
+<li>To make row-wise modification</li>
+</ul>
 
 <p>
 In order to apply a function sequentially to each entry in a column
@@ -473,9 +483,9 @@ i.e. the <code>.fit ()</code> and <code>.transform ()</code> methods.
 </p>
 </div>
 
-<div id="outline-container-orgbc14df3" class="outline-3">
-<h3 id="orgbc14df3">New dataset</h3>
-<div class="outline-text-3" id="text-orgbc14df3">
+<div id="outline-container-orgc2e4705" class="outline-3">
+<h3 id="orgc2e4705">New dataset</h3>
+<div class="outline-text-3" id="text-orgc2e4705">
 <p>
 For the next sections I will use the following new dataset
 </p>
@@ -595,11 +605,84 @@ the results into other data frames.
 </pre></div>
 </div>
 </div>
+
+
+
+
+<div id="outline-container-orgf9ac3eb" class="outline-3">
+<h3 id="orgf9ac3eb">Work With SQL on top of Pandas</h3>
+<div class="outline-text-3" id="text-orgf9ac3eb">
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pandasql</span> <span class="kn">import</span> <span class="n">sqldf</span>
+<span class="n">nba</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">sqldf</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="n">q</span> <span class="o">=</span> \
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">SELECT country, sum(price) as tot_revenue</span>
+<span class="sd">FROM df </span>
+<span class="sd">GROUP BY country</span>
+<span class="sd">ORDER BY tot_revenue DESC</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="n">nba</span> <span class="p">(</span><span class="n">q</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example">
+                 country   tot_revenue
+0         United Kingdom  3.521514e+06
+1                   EIRE  1.070692e+05
+2                Germany  4.927182e+04
+3                 France  4.056514e+04
+4                 Norway  3.849475e+04
+5                  Spain  1.604099e+04
+6              Hong Kong  1.445257e+04
+7               Portugal  1.352867e+04
+8              Singapore  1.317592e+04
+9            Netherlands  1.232280e+04
+10               Belgium  1.119061e+04
+11           Switzerland  9.284050e+03
+12                Sweden  7.876760e+03
+13       Channel Islands  7.610120e+03
+14             Australia  6.872630e+03
+15                 Malta  6.085340e+03
+16                 Italy  5.910190e+03
+17                Cyprus  4.976300e+03
+18               Austria  3.390890e+03
+19               Finland  3.364650e+03
+20                   RSA  3.105750e+03
+21           Unspecified  3.045360e+03
+22                Greece  2.437370e+03
+23  United Arab Emirates  2.400210e+03
+24               Denmark  1.818510e+03
+25                Poland  1.510710e+03
+26                   USA  1.185100e+03
+27                 Japan  1.083120e+03
+28                Canada  1.053100e+03
+29               Iceland  5.098600e+02
+30             Lithuania  4.944100e+02
+31                Israel  4.575900e+02
+32               Bahrain  4.394900e+02
+33               Lebanon  3.586100e+02
+34    European Community  2.940500e+02
+35                Brazil  2.563100e+02
+36              Thailand  2.279700e+02
+37                 Korea  1.502400e+02
+38           West Indies  1.227700e+02
+39               Nigeria  1.092800e+02
+40               Bermuda  8.470000e+01
+41        Czech Republic  3.183000e+01
+42          Saudi Arabia  2.411000e+01
+</pre>
+</div>
+</div>
 </div>
 
-<div id="outline-container-org09aae1c" class="outline-2">
-<h2 id="org09aae1c">Sparse Matrices</h2>
-<div class="outline-text-2" id="text-org09aae1c">
+
+
+<div id="outline-container-orgd6d9255" class="outline-2">
+<h2 id="orgd6d9255">Sparse Matrices</h2>
+<div class="outline-text-2" id="text-orgd6d9255">
 <p>
 It is essential for data engineers and data scientists to know how to
 work with sparse matrices. This are matrices with many <code>0</code> entries and
@@ -1009,9 +1092,9 @@ adding vertically
 </div>
 </div>
 
-<div id="outline-container-org5da6a07" class="outline-2">
-<h2 id="org5da6a07">MatplotLib</h2>
-<div class="outline-text-2" id="text-org5da6a07">
+<div id="outline-container-org29ca374" class="outline-2">
+<h2 id="org29ca374">MatplotLib</h2>
+<div class="outline-text-2" id="text-org29ca374">
 <div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_1</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;lightblue&quot;</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span>
 	 <span class="n">ms</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span><span class="s2">&quot;nomean&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_2</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;darkorange&quot;</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s2">&quot;s&quot;</span><span class="p">,</span>
@@ -1063,9 +1146,9 @@ adding vertically
 </div>
 </div>
 
-<div id="outline-container-org3f6bb05" class="outline-2">
-<h2 id="org3f6bb05">Seaborn</h2>
-<div class="outline-text-2" id="text-org3f6bb05">
+<div id="outline-container-org345feb0" class="outline-2">
+<h2 id="org345feb0">Seaborn</h2>
+<div class="outline-text-2" id="text-org345feb0">
 <div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">distplot</span> <span class="p">(</span><span class="n">mydat</span><span class="p">[</span><span class="s1">&#39;nomean&#39;</span><span class="p">])</span>
 </pre></div>
 
