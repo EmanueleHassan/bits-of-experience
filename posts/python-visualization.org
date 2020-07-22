@@ -1,6 +1,6 @@
 #+BEGIN_COMMENT
-.. title: Python Visualization
-.. slug: python-visualization
+.. title: Python EDA
+.. slug: python-eda
 .. date: 2020-03-19 14:02:40 UTC+02:00
 .. tags: Python
 .. category: 
@@ -20,8 +20,8 @@ margin-right: auto;
 </style>
 #+end_export
 
-
-Here some python visualization dummy scripts are saved
+Here some python introduction on how to work with data in the tabular
+form and visualization dummy scripts are saved.
 
 {{{TEASER_END}}}
 
@@ -1582,4 +1582,46 @@ g = g.map_diag(plt.hist, lw=2, alpha = 0.2)
 <br>
 <br>
 #+END_EXPORT
+
+- ordered categorical plot
+
+In case that you have a category that you want to keep ordered when
+plotting you can achieve this as follows
+
+#+begin_src python :results output
+cat_dtype = pd.api.types.CategoricalDtype(
+   categories=[x for x in range(1,13)], ordered=True)
+
+# notice the conversion to int first as the dtype was object and the
+# assignment to the int in the provided list was not functioning
+# automatically
+df_rev_year["month"] = df_rev_year.month.astype('int').astype(cat_dtype)
+#+end_src
+
+
+- insert easily a plot with single index in order to plot quickly via
+  looping
+
+#+NAME: ACA2AB65-285F-4486-BD8E-4AC270039B69
+#+begin_src ein-python :results output
+## specify your R par(mfrow=c(x,y))
+f, axes = plt.subplots(figsize = (12, 6))
+
+idx = 1
+
+for country in max_countries:
+    plt.subplot (2, tot_countries/2, idx)
+    k1 = sns.distplot(df_aggregate[df_aggregate.country == country][["revenue"]], 
+                      kde = False ,fit = stats.lognorm)
+    k1.title.set_text(country)
+    idx += 1
+
+plt.show ()
+#+end_src
+
+#+RESULTS: ACA2AB65-285F-4486-BD8E-4AC270039B69
+
+#+begin_export html
+ <img width="60%" height="100%" src="../../images/ob-ein-a219c53734d648b70a33b9b20ae607cf.png" class="center">
+#+end_export
 
