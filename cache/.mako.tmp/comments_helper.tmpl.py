@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1596629903.909562
+_modified_time = 1596629947.4241972
 _enable_loop = True
 _template_filename = '/Users/marcohassan/Desktop/python_venv/nikola/lib/python3.7/site-packages/nikola/data/themes/base/templates/comments_helper.tmpl'
 _template_uri = 'comments_helper.tmpl'
@@ -62,11 +62,11 @@ def render_comment_form(context,url,title,identifier):
     __M_caller = context.caller_stack._push_frame()
     try:
         facebook = _mako_get_namespace(context, 'facebook')
-        intensedebate = _mako_get_namespace(context, 'intensedebate')
         commento = _mako_get_namespace(context, 'commento')
         comment_system = context.get('comment_system', UNDEFINED)
-        disqus = _mako_get_namespace(context, 'disqus')
         isso = _mako_get_namespace(context, 'isso')
+        intensedebate = _mako_get_namespace(context, 'intensedebate')
+        disqus = _mako_get_namespace(context, 'disqus')
         muut = _mako_get_namespace(context, 'muut')
         __M_writer = context.writer()
         __M_writer('\n')
@@ -103,11 +103,11 @@ def render_comment_link(context,link,identifier):
     __M_caller = context.caller_stack._push_frame()
     try:
         facebook = _mako_get_namespace(context, 'facebook')
-        intensedebate = _mako_get_namespace(context, 'intensedebate')
         commento = _mako_get_namespace(context, 'commento')
         comment_system = context.get('comment_system', UNDEFINED)
-        disqus = _mako_get_namespace(context, 'disqus')
         isso = _mako_get_namespace(context, 'isso')
+        intensedebate = _mako_get_namespace(context, 'intensedebate')
+        disqus = _mako_get_namespace(context, 'disqus')
         muut = _mako_get_namespace(context, 'muut')
         __M_writer = context.writer()
         __M_writer('\n')
@@ -144,11 +144,11 @@ def render_comment_link_script(context):
     __M_caller = context.caller_stack._push_frame()
     try:
         facebook = _mako_get_namespace(context, 'facebook')
-        intensedebate = _mako_get_namespace(context, 'intensedebate')
         commento = _mako_get_namespace(context, 'commento')
         comment_system = context.get('comment_system', UNDEFINED)
-        disqus = _mako_get_namespace(context, 'disqus')
         isso = _mako_get_namespace(context, 'isso')
+        intensedebate = _mako_get_namespace(context, 'intensedebate')
+        disqus = _mako_get_namespace(context, 'disqus')
         muut = _mako_get_namespace(context, 'muut')
         __M_writer = context.writer()
         __M_writer('\n')
