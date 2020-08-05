@@ -111,9 +111,6 @@ me to be more productive or write better code
    : hello
 
 
-
-
-
 ** Good to know data types
 
 #+BEGIN_SRC python  :results output :exports both
@@ -147,7 +144,6 @@ Traceback (most recent call last):
   File "<stdin>", line 3, in <module>
 KeyError: 'bar'
 #+end_example
-
 
 ** Reload changed module
 
@@ -236,6 +232,57 @@ for i in tqdm.tqdm (range (20)):
 C^
 #+end_example
 
+** Passing Parameters through a dictionary
+
+    #+begin_src python
+    ## Specify parameters and model
+    params = {'C':1.0,'kernel':'linear','gamma':0.5}
+
+    ## notice that with **params you are passing a dictionary as the parameters.
+    clf = svm.SVC(**params,probability=True)
+    #+end_src
+
+    Notice that the double asterisk is the key. As such when you
+    define a function passing the =**kwargs= will lead to the
+    following
+
+#+begin_src python :results output
+def bar(**kwargs):
+    for a in kwargs:
+        print('{}: {}'.format(a, kwargs[a]))
+
+bar(name = "marco", nickname = "sultan")
+bar({"hello" : "world"})
+#+end_src
+
+    #+RESULTS:
+
+    Similarly a single asterisk will allow the arguments to be
+    interpreted as a single tuple:
+
+#+begin_src python :results output
+def bar(*dlf):
+    for a in dlf:
+        print(a)
+
+bar(1,23,4)
+print()
+bar({"hello" : "world"}, {"mamma" : "mia"})
+#+end_src
+
+#+RESULTS:
+: 1
+: 23
+: 4
+: 
+: {'hello': 'world'}
+: {'hello': 'world'}
+
+    Notice finally that above you do not specify the amount of
+    parameters. As such =*args= means that there can be any number of
+    extra positional arguments, and =**kwargs= means there can be any
+    number of extra named parameters.
+
 ** Staticmethod for Class calls
 
    with staticmethod you do not have to refer to an class object. The
@@ -272,6 +319,10 @@ C^
    View the second answer for the best of the explanation.
 
    https://stackoverflow.com/questions/1537202/difference-between-variables-inside-and-outside-of-init
+
+** On python path for importing packages and how the interpreter works with files
+
+   Read [[https://www.devdungeon.com/content/python-import-syspath-and-pythonpath-tutorial][this post]].
 
 ** Access global variable within a function / a flask route
 

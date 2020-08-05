@@ -19,9 +19,9 @@ workflow in order to optimize the performance.
 
 <br>
 
-<div id="outline-container-org780afbe" class="outline-2">
-<h2 id="org780afbe">On RDDs</h2>
-<div class="outline-text-2" id="text-org780afbe">
+<div id="outline-container-org476903c" class="outline-2">
+<h2 id="org476903c">On RDDs</h2>
+<div class="outline-text-2" id="text-org476903c">
 <p>
 A brief overview on RDDs was given in the previous post and you are
 referred to it for a brief introduction.
@@ -80,9 +80,9 @@ and actions.
 </div>
 
 
-<div id="outline-container-orgdd44b41" class="outline-2">
-<h2 id="orgdd44b41">Transformations</h2>
-<div class="outline-text-2" id="text-orgdd44b41">
+<div id="outline-container-org681453c" class="outline-2">
+<h2 id="org681453c">Transformations</h2>
+<div class="outline-text-2" id="text-org681453c">
 <p>
 Following are examples of some of the common transformations
 available.
@@ -132,9 +132,9 @@ restarting the kernel, and rerunning the cell <i>above</i>.
 </div>
 
 
-<div id="outline-container-org966e751" class="outline-3">
-<h3 id="org966e751">On the filter transformation</h3>
-<div class="outline-text-3" id="text-org966e751">
+<div id="outline-container-org02482a9" class="outline-3">
+<h3 id="org02482a9">On the filter transformation</h3>
+<div class="outline-text-3" id="text-org02482a9">
 <p>
 A further important transformation is the one allowing the projection
 in relational algebra terms. This is taken care by the <code>filter</code>
@@ -167,9 +167,9 @@ the boolean function specified within the <code>filter</code>.
 </div>
 </div>
 
-<div id="outline-container-org32bf39f" class="outline-3">
-<h3 id="org32bf39f">On the Map Transformation</h3>
-<div class="outline-text-3" id="text-org32bf39f">
+<div id="outline-container-orgc83b33f" class="outline-3">
+<h3 id="orgc83b33f">On the Map Transformation</h3>
+<div class="outline-text-3" id="text-orgc83b33f">
 <p>
 The map function takes each element for the RDD and applies a
 function <code>mapping</code> the element input to a transformed new RDD. It is
@@ -220,9 +220,9 @@ therefore an action.
 </div>
 
 
-<div id="outline-container-org7726937" class="outline-3">
-<h3 id="org7726937">On the FlatMap Function</h3>
-<div class="outline-text-3" id="text-org7726937">
+<div id="outline-container-org5f73606" class="outline-3">
+<h3 id="org5f73606">On the FlatMap Function</h3>
+<div class="outline-text-3" id="text-org5f73606">
 <p>
 The <code>flatmap</code> transformation extends the <code>map</code> function giving the
 possibility to the users to return an object of higher dimension than
@@ -324,9 +324,9 @@ operation.
 </div>
 
 
-<div id="outline-container-orga190400" class="outline-3">
-<h3 id="orga190400">On the Union Transformation</h3>
-<div class="outline-text-3" id="text-orga190400">
+<div id="outline-container-org9e97164" class="outline-3">
+<h3 id="org9e97164">On the Union Transformation</h3>
+<div class="outline-text-3" id="text-org9e97164">
 <p>
 This returns the classical relational algebra union of two different
 RDDs.
@@ -360,9 +360,9 @@ RDDs.
 </div>
 </div>
 
-<div id="outline-container-orgc0e64a4" class="outline-3">
-<h3 id="orgc0e64a4">On the intersection Transformation</h3>
-<div class="outline-text-3" id="text-orgc0e64a4">
+<div id="outline-container-org0114538" class="outline-3">
+<h3 id="org0114538">On the intersection Transformation</h3>
+<div class="outline-text-3" id="text-org0114538">
 <p>
 This returns the intersection for two RDDs. It is then clear that it
 is possible to obtain the relational algebra set difference from it.
@@ -407,10 +407,9 @@ the other
 </div>
 </div>
 
-
-<div id="outline-container-org30b5911" class="outline-3">
-<h3 id="org30b5911">On the distinct transformation</h3>
-<div class="outline-text-3" id="text-org30b5911">
+<div id="outline-container-orgb61dcd8" class="outline-3">
+<h3 id="orgb61dcd8">On the distinct transformation</h3>
+<div class="outline-text-3" id="text-orgb61dcd8">
 <p>
 This allows to take the distinct objects in an RDD
 </p>
@@ -438,9 +437,9 @@ This allows to take the distinct objects in an RDD
 </div>
 </div>
 
-<div id="outline-container-orgc6f1649" class="outline-3">
-<h3 id="orgc6f1649">On the Reduce Transformation</h3>
-<div class="outline-text-3" id="text-orgc6f1649">
+<div id="outline-container-org9296eb1" class="outline-3">
+<h3 id="org9296eb1">On the Reduce Transformation</h3>
+<div class="outline-text-3" id="text-org9296eb1">
 <p>
 The reduce function is powerful albeit its logic is not
 straight. You will have to exercise it at first. Its logic is as
@@ -476,12 +475,73 @@ product of cubes 0:
 <br>
 </div>
 </div>
+
+<div id="outline-container-orgbb4596e" class="outline-3">
+<h3 id="orgbb4596e">On the Sort By Transformation</h3>
+<div class="outline-text-3" id="text-orgbb4596e">
+<p>
+Notice that for sorting multiple elements through the spark API you
+should pack them into a single array.
+</p>
+
+<div class="highlight"><pre><span></span>entries.filter (lambda x: x[&quot;guess&quot;] == x[&quot;target&quot;]).sortBy (lambda x: [x[&quot;target&quot;], x[&quot;country&quot;], x[&quot;date&quot;] ] , 1).take (5)
+</pre></div>
+
+<p>
+Notice how the final element states if it should be ascending or
+descending.
+</p>
+</div>
 </div>
 
+<div id="outline-container-org1ebe998" class="outline-3">
+<h3 id="org1ebe998">On Joins Transformation Syntax</h3>
+<div class="outline-text-3" id="text-org1ebe998">
+<div class="highlight"><pre><span></span><span class="n">heroes</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
 
-<div id="outline-container-org916f0eb" class="outline-2">
-<h2 id="org916f0eb">Working with <i>key-value</i> pairs</h2>
-<div class="outline-text-2" id="text-org916f0eb">
+<pre class="example">
++--------+---+
+|    name| id|
++--------+---+
+|Deadpool|  3|
+|Iron man|  1|
+|   Groot|  7|
++--------+---+
+</pre>
+
+
+<div class="highlight"><pre><span></span><span class="n">races</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example">
++----------+---+
+|      race| id|
++----------+---+
+|Kryptonian|  5|
+|    Mutant|  3|
+|     Human|  1|
++----------+---+
+</pre>
+
+<div class="highlight"><pre><span></span><span class="n">heroes</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">races</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example">
++---+--------+------+ 
+| id|    name|  race|
++---+--------+------+
+|  1|Iron man| Human|
+|  3|Deadpool|Mutant|
++---+--------+------+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6087119" class="outline-2">
+<h2 id="org6087119">Working with <i>key-value</i> pairs</h2>
+<div class="outline-text-2" id="text-org6087119">
 <p>
 Spark provides special operations on RDDs containing key/value pairs.
 These RDDs are called <i>pair RDDs</i>. Pair RDDs are a useful building
@@ -491,9 +551,9 @@ block in many programs, as they expose operations that allow you to
 </div>
 
 
-<div id="outline-container-org1d53073" class="outline-3">
-<h3 id="org1d53073">Group by Key</h3>
-<div class="outline-text-3" id="text-org1d53073">
+<div id="outline-container-org523224a" class="outline-3">
+<h3 id="org523224a">Group by Key</h3>
+<div class="outline-text-3" id="text-org523224a">
 <p>
 Notice that in spark, in contrast to MapReduce, the input must not be
 of key-value store type. But if you are dealing with key-value pairs
@@ -609,9 +669,9 @@ For letter O
 </div>
 
 
-<div id="outline-container-orgabac9e7" class="outline-3">
-<h3 id="orgabac9e7">On the Mapvalues Transformation</h3>
-<div class="outline-text-3" id="text-orgabac9e7">
+<div id="outline-container-org8c35a32" class="outline-3">
+<h3 id="org8c35a32">On the Mapvalues Transformation</h3>
+<div class="outline-text-3" id="text-org8c35a32">
 <p>
 Mapvalues operates on PairRDDs, i.e. data of the key-value form,
 meaning RDDs of the form <code>RDD[(A, B)]</code>. In that case, mapValues
@@ -652,9 +712,9 @@ Number per key: [('hel', 2), ('bye', 2)]
 </div>
 
 
-<div id="outline-container-org13d3ff5" class="outline-3">
-<h3 id="org13d3ff5">On the Reduce by Key Transformation</h3>
-<div class="outline-text-3" id="text-org13d3ff5">
+<div id="outline-container-orgf9cab18" class="outline-3">
+<h3 id="orgf9cab18">On the Reduce by Key Transformation</h3>
+<div class="outline-text-3" id="text-orgf9cab18">
 <p>
 Given the above understanding of the Reduce transformation it is
 clear that the reduce by key is essentially a reduce function on
@@ -685,9 +745,9 @@ Sum value by keys: [(4, 2), (5, 2), (6, 4)]
 </div>
 </div>
 
-<div id="outline-container-org9e1543b" class="outline-2">
-<h2 id="org9e1543b">Actions</h2>
-<div class="outline-text-2" id="text-org9e1543b">
+<div id="outline-container-orgfbd0172" class="outline-2">
+<h2 id="orgfbd0172">Actions</h2>
+<div class="outline-text-2" id="text-orgfbd0172">
 <p>
 As mentioned above Actions compute a result based on an RDD, and
 either return it to the driver program or save it to an external
@@ -710,9 +770,9 @@ detailed list, see <a href="https://spark.apache.org/docs/2.3.0/programming-guid
 </p>
 </div>
 
-<div id="outline-container-org3170b2a" class="outline-3">
-<h3 id="org3170b2a">Count</h3>
-<div class="outline-text-3" id="text-org3170b2a">
+<div id="outline-container-org56339e3" class="outline-3">
+<h3 id="org56339e3">Count</h3>
+<div class="outline-text-3" id="text-org56339e3">
 <div class="highlight"><pre><span></span>   <span class="c1"># count</span>
    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Data: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">fruits</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
    <span class="n">numFruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
@@ -728,9 +788,9 @@ Data: ['apple', 'orange', 'java', 'call++']
 </div>
 
 
-<div id="outline-container-org7d933d4" class="outline-3">
-<h3 id="org7d933d4">Take</h3>
-<div class="outline-text-3" id="text-org7d933d4">
+<div id="outline-container-org2bb9364" class="outline-3">
+<h3 id="org2bb9364">Take</h3>
+<div class="outline-text-3" id="text-org2bb9364">
 <p>
 This might be especially useful also given the issues when dealing
 with <code>collect()</code> mentioned above.
@@ -752,9 +812,9 @@ It is essentially the <code>LIMIT</code> function of SQL
 </div>
 
 
-<div id="outline-container-org4018aa4" class="outline-3">
-<h3 id="org4018aa4">Aggregate</h3>
-<div class="outline-text-3" id="text-org4018aa4">
+<div id="outline-container-orgeda2660" class="outline-3">
+<h3 id="orgeda2660">Aggregate</h3>
+<div class="outline-text-3" id="text-orgeda2660">
 <p>
 This is again a tricky one. Please
 refer to the link: <a href="https://stackoverflow.com/questions/28240706/explain-the-aggregate-functionality-in-spark/38949457">Explaination of Aggregate</a>. 
@@ -778,8 +838,7 @@ refer to the link: <a href="https://stackoverflow.com/questions/28240706/explain
 </div>
 </div>
 
-
-<div id="outline-container-org1bd1b64" class="outline-2">
+<div id="outline-container-orgabc2413" class="outline-2">
 <h2 id="persistence-caching">Persistence (Caching)</h2>
 <div class="outline-text-2" id="text-persistence-caching">
 <p>
@@ -826,9 +885,9 @@ cache.
 </div>
 </div>
 
-<div id="outline-container-orgb16123f" class="outline-2">
-<h2 id="orgb16123f">Literature</h2>
-<div class="outline-text-2" id="text-orgb16123f">
+<div id="outline-container-orga32e343" class="outline-2">
+<h2 id="orga32e343">Literature</h2>
+<div class="outline-text-2" id="text-orga32e343">
 <p>
 <a href="https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material">Big Data for Engineers - ETH course</a>
 </p>

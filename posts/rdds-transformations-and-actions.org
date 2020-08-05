@@ -386,7 +386,6 @@ fruit.collect()
 #+RESULTS: 727750DB-7C61-4F12-90B8-4258EBAF8615
 : ['Peaches', 'Apples', 'Strawberries', 'Grapes', 'Apples', 'Peaches', 'Melon']
 
-
 *** On the distinct transformation
 
 This allows to take the distinct objects in an RDD
@@ -449,6 +448,61 @@ distinctFruitsAndYellowThings.collect()
 <br>
 #+END_EXPORT
 
+*** On the Sort By Transformation 
+
+    Notice that for sorting multiple elements through the spark API you
+    should pack them into a single array.
+
+#+begin_src ein-python :results output
+entries.filter (lambda x: x["guess"] == x["target"]).sortBy (lambda x: [x["target"], x["country"], x["date"] ] , 1).take (5)
+#+end_src
+
+    Notice how the final element states if it should be ascending or
+    descending.
+
+*** On Joins Transformation Syntax
+
+#+begin_src python
+heroes.show()
+#+end_src
+
+#+begin_example
++--------+---+
+|    name| id|
++--------+---+
+|Deadpool|  3|
+|Iron man|  1|
+|   Groot|  7|
++--------+---+
+#+end_example
+
+
+#+begin_src python
+races.show()
+#+END_SRC
+
+#+begin_example
++----------+---+
+|      race| id|
++----------+---+
+|Kryptonian|  5|
+|    Mutant|  3|
+|     Human|  1|
++----------+---+
+#+end_example
+
+#+BEGIN_SRC python  
+heroes.join(races, on='id', how='inner').show()
+#+end_src
+
+#+begin_example
++---+--------+------+ 
+| id|    name|  race|
++---+--------+------+
+|  1|Iron man| Human|
+|  3|Deadpool|Mutant|
++---+--------+------+
+#+end_example
 
 ** Working with /key-value/ pairs
 :properties:
@@ -709,7 +763,6 @@ print("Number per key: %s" % abba.groupByKey().mapValues(len).collect())
 #+BEGIN_EXPORT html
 <br>
 #+END_EXPORT
-
 
 ** Persistence (Caching)
    :PROPERTIES:
