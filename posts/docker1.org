@@ -42,7 +42,8 @@ Parts of docker:
 
 *** Image 
 
-Read only. It is a snapshot of a container stored on a registry. U use it as a template for creating containers.
+Read only. It is a snapshot of a container stored on a registry. U use
+it as a template for creating containers.
 
 *** Container
 
@@ -73,8 +74,6 @@ running for an application a second application will leverage the
 instance of this exact lower layer and will ultimately save resources.
 
 
-
-
 ** Create Images with Dockerfiles
 
 *** General Workflow
@@ -92,6 +91,7 @@ instance of this exact lower layer and will ultimately save resources.
 
  Finally use the ~docker build~ command to create the image.
 
+ 
 *** Commands for Dockerfile image
 
  Writing a Dockerfile is the first step to containerizing an
@@ -206,12 +206,16 @@ search for the keyword of interest. You can then further inspect with
   # repository location).
 
   # if the dockerfile is not in the same repo as your context then.
-	$ docker build -f <dockerfile> .
+  $ docker build -f <dockerfile> .
   # else; if you are in your context repo and there is where the dockerfile is specified
-	$ docker build .
+  $ docker build .
 
   # to build an image and associate it with a given tag you can leverage the -t flag
-	$ docker build -t bullet_inboard:1.0 <directory where the dockerfile is>
+  # the tag is how you name your images. you can then call them by tag.
+  $ docker build -t bullet_inboard:1.0 <directory where the dockerfile is>
+  # notice again that is common practice to name the images as
+  # <hostname>/<repository>:<image tag>; where hostname = hostname of
+  # registry where you will save your image
 
   # To list all the avaialble images
   $ docker image ls
@@ -259,6 +263,23 @@ search for the keyword of interest. You can then further inspect with
 
   # To stop the docker deamon running in the background 
   $ servce docker stop
+
+
+  # If you want to use the image in another context and differentiate
+  # the image you can use the docker tag command
+  $ docker tag my-app:v1 second-app:v1
+  # then you will have a new image tag that refers to the same
+  # image. you should be able to see the both if running docker images ls
+  # notice that the image IDs will be the same.
+
+  # To push an image to a registry you can then simply use the command
+  $ docker push my-app:v1
+  # notice that here no registry hostname is specified so that by
+  # default you would push it to the defualt docker registry.
+  # I created a public registry on dockerhub. with the following <hostname>/<registry> combination
+  # marcohassan/publicrepomahass. Then after tagging an image marcohassan/publicrepomahass:<name_chosen>
+  # I was able to push it there with
+  $  docker push marcohassan/publicrepomahass:coursera_workflow_01
 #+END_SRC
 
 

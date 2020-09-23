@@ -128,6 +128,7 @@ for our application is specified and once fed to the Master the latter
 will make sure the state is guaranteed.
 
 
+
 ** Helm
 
 Helm, the Kubernetes native package management system, is used for
@@ -138,6 +139,26 @@ console to select stable applications from a catalog and add them to
 their cluster.
 
 
+** Image Registry
+
+   Here is where you save your images. Registries can be either public
+   or private. Once you push an image to a registry is can then be
+   pulled by a kubernetes cluster needing the image or in general any
+   possible client in need for the image.
+
+   Usually the naming convention when creating a new image is as
+   follows:
+
+   #+BEGIN_SRC sh
+   <hostname>/<repository>:<image tag>
+   #+END_SRC
+
+   Notice that here the hostname is the hostname of the image
+   registry, for instance =docker.io=.
+
+   
+
+
 * Commands
 
 #+BEGIN_EXAMPLE
@@ -146,6 +167,9 @@ $ kubectl cluster-info
 
 ## to look at the different available nodes and get info about their status and roles.
 $ kubectl get nodes
+
+## to get the specifications on where all of your clusters are running.
+$ kubectl config get-contexts
 #+END_EXAMPLE
 
 Once you have a running Kubernetes cluster, you can deploy your
@@ -160,7 +184,7 @@ in the cluster.
 /Step 1: Create a Deployment/
 
 As a first step it is necessary to create the necessary deployment by
-providing a name for the deployment and uploading the docker image of
+providing a name for the deployment and pulling the docker image of
 interest you want to run on top of it.
 
 #+BEGIN_EXAMPLE
@@ -498,6 +522,382 @@ the Service will load-balance the traffic only to available Pods
 during the update. An available Pod is an instance that is available
 to the users of the application.
 
+** Cluster Exposure to Public Internet
+
+Since there are three replicas of this application deployed in the
+cluster, Kubernetes will load balance requests across these three
+instances. 
+
+Let's expose our application to the internet and see how Kubernetes
+load balances requests.
+
+In order to access the application, we have to expose it to the
+internet using a Kubernetes Service.  
+
+#+BEGIN_SRC sh
+kubectl expose deployment/hello-world --type=NodePort --port=8080 --name=hello-world --target-port=8080
+#+END_SRC
+
+This command creates what is called a *NodePort Service*. This will
+open up a port on the worker node to allow the application to be
+accessed the application using that port and the IP address of the node.
+
+List Services in order to see that this service was created.
+
+#+BEGIN_SRC sh
+kubectl get services
+#+END_SRC
+
+Two things are needed to access this application: a worker node IP
+address and the correct port. 
+
+To get a worker node IP, rerun the get pods command with the wide
+option and note any one of the node IP addresses (from the column
+entitled NODE): 
+
+#+BEGIN_SRC sh
+kubectl get pods -o wide 
+#+END_SRC
+
+Here is some sample output.
+
+#+begin_example
+NAME                          READY   STATUS    RESTARTS   AGE   IP               NODE            NOMINATED NODE   READINESS GATES
+hello-world-dd6b5d745-f9xjk   1/1     Running   0          7m    172.30.104.185   10.114.85.153   <none>           <none>
+hello-world-dd6b5d745-m89fc   1/1     Running   0          7m    172.30.165.182   10.114.85.151   <none>           <none>
+hello-world-dd6b5d745-qvs9t   1/1     Running   0          7m    172.30.69.68     10.114.85.172   <none>           <none>
+Using this sample output, you could choose 10.114.85.153, 10.114.85.151, or 10.114.85.172 for the node IP address.
+#+end_example
+
+Export the node IP address as an environment variable. 
+Make sure to substitute the copied IP address into this command.
+
+#+BEGIN_SRC sh
+# export NODE_IP=<node_ip>
+# Using the sample output, one correct command would be 
+export NODE_IP=10.114.85.153.
+#+END_SRC
+
+To get the port number, run the following command and note the port:
+
+#+BEGIN_SRC sh
+kubectl get services
+#+END_SRC
+
+Here is some sample output. In this sample, the port number we need is 31758.
+
+#+begin_example
+NAME          TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+hello-world   NodePort   172.21.121.84   <none>        8080:31758/TCP   58s
+#+end_example
+
+Export the port as an environment variable. Make sure to substitute
+the copied port into this command.
+
+#+BEGIN_SRC sh
+## export NODE_PORT=<node_port>
+## Using the sample output, the correct command would be export NODE_PORT=31758
+export NODE_PORT=31758
+#+END_SRC
+
+
+Ping the application to get a response.
+
+#+BEGIN_SRC sh
+curl $NODE_IP:$NODE_PORT
+#+END_SRC
+
+Notice that this output includes the Pod name. Run the command ten
+times and note the *different Pod names* in each line of output.  
+
+#+BEGIN_SRC sh
+for i in `seq 10`; do curl $NODE_IP:$NODE_PORT; done
+#+END_SRC
+
+You should see more than one Pod name, and quite possibly all three
+Pod names, in the output. This is because Kubernetes load balances the
+requests across the three replicas, so each request could hit a
+different instance of our application.
+
+
+** App Scaling, new releases, cluster configuration - Implementation
+
+*** Replicasets
+
+It manages your pods ensuring the right number of pods are always up
+and running. This can mean adding or deleting pods as
+needed. ReplicaSets provide the ability to replicate pods and restart
+or spin up new pods when existing ones fail.
+
+A ReplicaSet can pick an existing pod to add to the deployment or
+create a new one if there are no existing pods. It does so by asking
+for a list of pods from the Kubernetes API and then filtering on the
+labels, as defined in the descriptor.
+
+The ReplicaSet does not own any of the pods; instead it uses the pod
+labels to decide which pods to acquire when bringing a deployment to
+the desired state. The template metadata inside the YAML spec defines
+the labels of potential pod candidates to add or delete.
+
+An example of a ReplicaSet YAML would look as follows.
+
+#+BEGIN_SRC yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: frontend
+  labels: ## here you specify the labels on which to match your
+          ## Replica and apply the defined replica conditions
+    app: guestbook
+    tier: frontend
+spec:     ## here you specify the number of replicas you desire
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+  template:   ## here your pass your image and label it accordingls.
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: php-redis
+        image: gcr.io/google_samples/gb-frontend:v3
+#+END_SRC
+
+Notice that Replicasets are automatically created when creating
+*Deployments*. You can get a list of running Replicasets in your
+cluster for the specific namespace you are working in by using:
+
+#+BEGIN_SRC sh
+kubectl get replicaset
+kubectl get rs ## also accepted. alias.
+#+END_SRC
+
+Once a replicaset is running you can change the number of replicas in
+an imperative way running
+
+#+BEGIN_SRC sh
+kubectl scale deploy <deployment-name> --replicas=4
+#+END_SRC
+
+*** Autoscaling
+
+Horizontal Pod Autoscaler, or HPA, enables the application to increase
+the number of pods based on traffic.
+
+You can configure the desired state in HPA (for example, the CPU and
+memory).  
+
+The master node will periodically check pod metrics and
+scale to meet the desired state by updating the replicas field of the
+scaled resource, such as ReplicaSets or deployment.
+
+For instance consider the following deployment
+
+#+begin_src yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-apache
+spec:
+  selector:
+    matchLabels:
+      run: php-apache
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: php-apache
+    spec:
+      containers:
+      - name: php-apache
+        image: k8s.gcr.io/hpa-example
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
+#+end_src
+
+You can then create a Horizonatal Pod Autoscaler imperatively using
+
+#+BEGIN_SRC sh
+kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10  
+#+END_SRC
+
+The following command will create a Horizontal Pod Autoscaler that
+maintains between 1 and 10 replicas of the Pods controlled by the
+php-apache deployment we created in the first step of these
+instructions. Roughly speaking, HPA will increase and decrease the
+number of replicas (via the deployment) to maintain an average CPU
+utilization across all Pods of 50%
+
+The other way, working in a declarative way, would look as follows
+
+#+begin_src yaml
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: php-apache
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: php-apache
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+#+end_src
+
+
+
+*** Rolling Updates
+
+Rolling updates provide a way to roll out app changes in an automated
+and controlled fashion throughout your pods.  Rolling updates work
+with pod templates such as deployments.  Rolling updates allow for
+rollback if something goes wrong.
+
+An example for a Rolling update would be as follows
+
+#+BEGIN_SRC yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: linuxsys-deploy
+  name: linuxsys-deploy
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: linuxsys-deploy
+  minReadySeconds: 5 ## wait 5 seconds before moving on to the next
+                     ## pod in the rollout stage.
+  strategy: 
+       type: RollingUpdate
+       rollingUpdate:
+         maxSurge: 25% ## there can just be at maximum 1.25 *
+                       ## <specified number replicas> replicas while
+                       ## performing the rollout.
+         maxUnavailable: 25% ## 75% of the pods must always be available.
+  template:
+    metadata:
+      labels:
+        app: linuxsys-deploy
+    spec:
+      containers:
+      - image: nginx:1.17-perl
+        name: nginx
+        ports:
+        - containerPort: 80
+#+END_SRC
+
+
+*** Config Maps and Secrets
+
+As software developers, we know it’s a good practice not to hard-code
+configuration variables in code.
+
+We keep them separate so that any changes in configuration do not
+require code changes.  
+
+Examples of these variables can include non-sensitive information like
+environments (for example, dev, test, and prod) or sensitive
+information such as API keys and account IDs.
+
+ConfigMaps give us a way to provide configuration data to pods and
+deployments so we don't have to hard-code that data in the application
+code.
+
+You can also reuse these ConfigMaps and Secrets for multiple
+deployments, thereby decoupling the environment from the deployments
+themselves!
+
+Secrets work similarly to ConfigMaps but are meant for sensitive
+information.
+
+An example to do that is the following
+
+#+begin_src yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+spec:
+  selector:
+    matchLabels:
+      run: hello-world
+  template:
+    metadata:
+      labels:
+        run: hello-world
+    spec:
+      containers:
+      - name: hello-world
+        image: us.icr.io/sn-labs-marcohassan/hello-world:3
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: app-config ## here you specify that environment
+                             ## variables should be specified in a
+                             ## ConfigMap named app-config
+      imagePullSecrets:
+        - name: icr
+#+end_src
+
+Then you can have an app with the following code
+
+#+begin_src javascript
+var express = require('express')
+var os = require("os");
+var hostname = os.hostname();
+var app = express()
+
+app.get('/', function(req, res) {
+    res.send(process.env.MESSAGE + '\n')    
+})
+app.listen(8080, function() {
+  console.log('Sample app is listening on port 8080.')
+})
+#+end_src
+
+Notice now that the MESSAGE variable should come from the app-config
+Configmap specified above.
+
+You can then specify it with the following command
+
+#+BEGIN_SRC sh
+kubectl create configmap app-config --from-literal=MESSAGE="This message came from a ConfigMap!"
+#+END_SRC
+
+Now after applying the deployment
+
+#+BEGIN_SRC sh
+kubectl apply -f deployment-configmap-env-var.yaml
+#+END_SRC
+
+And deploying the new image with the new app code
+
+#+BEGIN_SRC sh
+docker build -t us.icr.io/$MY_NAMESPACE/hello-world:3 . && docker push us.icr.io/$MY_NAMESPACE/hello-world:3
+#+END_SRC
+
+You would get the configmap text when accessing your application
+running on the cluster.
+
+
+
 ** Literature
 
 IBM - Journey to Cloud Series.
@@ -507,3 +907,15 @@ IBM - Journey to Cloud Series.
 
 
 
+
+
+
+- problem
+
+- research question
+
+- methodology
+
+- results 
+
+- lesson learned
