@@ -33,13 +33,13 @@ While the virtual machine controlling other VMs is called master VM,
 the other are not called <i>workers</i> but rather <i>nodes</i>.
 </p>
 
-<div id="outline-container-org50fb16d" class="outline-2">
-<h2 id="org50fb16d">Theoretical Framework</h2>
-<div class="outline-text-2" id="text-org50fb16d">
+<div id="outline-container-org307d1b6" class="outline-2">
+<h2 id="org307d1b6">Theoretical Framework</h2>
+<div class="outline-text-2" id="text-org307d1b6">
 </div>
-<div id="outline-container-org705d071" class="outline-3">
-<h3 id="org705d071">Architecture</h3>
-<div class="outline-text-3" id="text-org705d071">
+<div id="outline-container-orgc56da45" class="outline-3">
+<h3 id="orgc56da45">Architecture</h3>
+<div class="outline-text-3" id="text-orgc56da45">
 <p>
 The kubernetes architecture is rather simple. It consists of three major components:
 </p>
@@ -105,9 +105,9 @@ looking at the following three videos
 </div>
 
 
-<div id="outline-container-org1ac84fc" class="outline-3">
-<h3 id="org1ac84fc">Master</h3>
-<div class="outline-text-3" id="text-org1ac84fc">
+<div id="outline-container-org5ce3151" class="outline-3">
+<h3 id="org5ce3151">Master</h3>
+<div class="outline-text-3" id="text-org5ce3151">
 <p>
 Masters are responsible for an entire cluster, they are the one that
 makes the decision on which node to schedule an application.
@@ -144,9 +144,9 @@ available things is.</li>
 </div>
 
 
-<div id="outline-container-org0094422" class="outline-4">
-<h4 id="org0094422">Operation</h4>
-<div class="outline-text-4" id="text-org0094422">
+<div id="outline-container-orgcf03656" class="outline-4">
+<h4 id="orgcf03656">Operation</h4>
+<div class="outline-text-4" id="text-orgcf03656">
 <p>
 The question that arise now is how do we specify the Master the tasks to be scheduled?
 </p>
@@ -161,9 +161,10 @@ will make sure the state is guaranteed.
 </div>
 
 
-<div id="outline-container-org3fd9cdf" class="outline-3">
-<h3 id="org3fd9cdf">Helm</h3>
-<div class="outline-text-3" id="text-org3fd9cdf">
+
+<div id="outline-container-org2e4d313" class="outline-3">
+<h3 id="org2e4d313">Helm</h3>
+<div class="outline-text-3" id="text-org2e4d313">
 <p>
 Helm, the Kubernetes native package management system, is used for
 application management inside an IBM Cloud Private cluster. The Helm
@@ -174,18 +175,49 @@ their cluster.
 </p>
 </div>
 </div>
+
+
+<div id="outline-container-org2b4dc2f" class="outline-3">
+<h3 id="org2b4dc2f">Image Registry</h3>
+<div class="outline-text-3" id="text-org2b4dc2f">
+<p>
+Here is where you save your images. Registries can be either public
+or private. Once you push an image to a registry is can then be
+pulled by a kubernetes cluster needing the image or in general any
+possible client in need for the image.
+</p>
+
+<p>
+Usually the naming convention when creating a new image is as
+follows:
+</p>
+
+<div class="highlight"><pre><span></span>   &lt;hostname&gt;/&lt;repository&gt;:&lt;image tag&gt;
+</pre></div>
+
+<p>
+Notice that here the hostname is the hostname of the image
+registry, for instance <code>docker.io</code>.
+</p>
+</div>
+</div>
 </div>
 
 
-<div id="outline-container-orgcf7687d" class="outline-2">
-<h2 id="orgcf7687d">Commands</h2>
-<div class="outline-text-2" id="text-orgcf7687d">
+
+
+<div id="outline-container-org278bf06" class="outline-2">
+<h2 id="org278bf06">Commands</h2>
+<div class="outline-text-2" id="text-org278bf06">
 <pre class="example">
 ## to view the cluster info
 $ kubectl cluster-info  
 
 ## to look at the different available nodes and get info about their status and roles.
 $ kubectl get nodes
+
+## to get the specifications on where all of your clusters are running.
+$ kubectl config get-contexts
 </pre>
 
 <p>
@@ -207,7 +239,7 @@ in the cluster.
 
 <p>
 As a first step it is necessary to create the necessary deployment by
-providing a name for the deployment and uploading the docker image of
+providing a name for the deployment and pulling the docker image of
 interest you want to run on top of it.
 </p>
 
@@ -349,9 +381,9 @@ You can inspect such by running
 </pre></div>
 </div>
 
-<div id="outline-container-org83ab110" class="outline-3">
-<h3 id="org83ab110">Direct operating within a <i>Pod</i></h3>
-<div class="outline-text-3" id="text-org83ab110">
+<div id="outline-container-orgc87e2e0" class="outline-3">
+<h3 id="orgc87e2e0">Direct operating within a <i>Pod</i></h3>
+<div class="outline-text-3" id="text-orgc87e2e0">
 <p>
 Notice that as a Pod is used as a running isolated environment within
 a node it is possible to directly operate on it.
@@ -380,9 +412,9 @@ Pod as a parameter. Let’s list the environment variables
 </div>
 </div>
 
-<div id="outline-container-orgf4fef57" class="outline-3">
-<h3 id="orgf4fef57">On Pod Lifecycle</h3>
-<div class="outline-text-3" id="text-orgf4fef57">
+<div id="outline-container-org14ed64d" class="outline-3">
+<h3 id="org14ed64d">On Pod Lifecycle</h3>
+<div class="outline-text-3" id="text-org14ed64d">
 <p>
 Up to know we have addressed the issues of accessing Pod locally from
 the kubernetes CLI.
@@ -580,9 +612,9 @@ name and the selected port deployment.
 </div>
 </div>
 
-<div id="outline-container-org27bb1ac" class="outline-3">
-<h3 id="org27bb1ac">App scaling</h3>
-<div class="outline-text-3" id="text-org27bb1ac">
+<div id="outline-container-org9859001" class="outline-3">
+<h3 id="org9859001">App scaling</h3>
+<div class="outline-text-3" id="text-org9859001">
 <p>
 In the previous modules we created a Deployment, and then exposed it
 publicly via a Service. The Deployment created only one Pod for
@@ -634,9 +666,9 @@ services/&lt;service name&gt;</code> command.
 </div>
 </div>
 
-<div id="outline-container-org57d4f38" class="outline-3">
-<h3 id="org57d4f38">New releases</h3>
-<div class="outline-text-3" id="text-org57d4f38">
+<div id="outline-container-orge9d46d9" class="outline-3">
+<h3 id="orge9d46d9">New releases</h3>
+<div class="outline-text-3" id="text-orge9d46d9">
 <p>
 Users expect applications to be available all the time and developers
 are expected to deploy new versions of them several times a day. In
@@ -663,9 +695,469 @@ to the users of the application.
 </div>
 </div>
 
-<div id="outline-container-orgfc8046e" class="outline-3">
-<h3 id="orgfc8046e">Literature</h3>
-<div class="outline-text-3" id="text-orgfc8046e">
+<div id="outline-container-orga4ba117" class="outline-3">
+<h3 id="orga4ba117">Cluster Exposure to Public Internet</h3>
+<div class="outline-text-3" id="text-orga4ba117">
+<p>
+Since there are three replicas of this application deployed in the
+cluster, Kubernetes will load balance requests across these three
+instances. 
+</p>
+
+<p>
+Let's expose our application to the internet and see how Kubernetes
+load balances requests.
+</p>
+
+<p>
+In order to access the application, we have to expose it to the
+internet using a Kubernetes Service.  
+</p>
+
+<div class="highlight"><pre><span></span>kubectl expose deployment/hello-world --type<span class="o">=</span>NodePort --port<span class="o">=</span><span class="m">8080</span> --name<span class="o">=</span>hello-world --target-port<span class="o">=</span><span class="m">8080</span>
+</pre></div>
+
+<p>
+This command creates what is called a <b>NodePort Service</b>. This will
+open up a port on the worker node to allow the application to be
+accessed the application using that port and the IP address of the node.
+</p>
+
+<p>
+List Services in order to see that this service was created.
+</p>
+
+<div class="highlight"><pre><span></span>kubectl get services
+</pre></div>
+
+<p>
+Two things are needed to access this application: a worker node IP
+address and the correct port. 
+</p>
+
+<p>
+To get a worker node IP, rerun the get pods command with the wide
+option and note any one of the node IP addresses (from the column
+entitled NODE): 
+</p>
+
+<div class="highlight"><pre><span></span>kubectl get pods -o wide 
+</pre></div>
+
+<p>
+Here is some sample output.
+</p>
+
+<pre class="example">
+NAME                          READY   STATUS    RESTARTS   AGE   IP               NODE            NOMINATED NODE   READINESS GATES
+hello-world-dd6b5d745-f9xjk   1/1     Running   0          7m    172.30.104.185   10.114.85.153   &lt;none&gt;           &lt;none&gt;
+hello-world-dd6b5d745-m89fc   1/1     Running   0          7m    172.30.165.182   10.114.85.151   &lt;none&gt;           &lt;none&gt;
+hello-world-dd6b5d745-qvs9t   1/1     Running   0          7m    172.30.69.68     10.114.85.172   &lt;none&gt;           &lt;none&gt;
+Using this sample output, you could choose 10.114.85.153, 10.114.85.151, or 10.114.85.172 for the node IP address.
+</pre>
+
+<p>
+Export the node IP address as an environment variable. 
+Make sure to substitute the copied IP address into this command.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1"># export NODE_IP=&lt;node_ip&gt;</span>
+<span class="c1"># Using the sample output, one correct command would be </span>
+<span class="nb">export</span> <span class="nv">NODE_IP</span><span class="o">=</span><span class="m">10</span>.114.85.153.
+</pre></div>
+
+<p>
+To get the port number, run the following command and note the port:
+</p>
+
+<div class="highlight"><pre><span></span>kubectl get services
+</pre></div>
+
+<p>
+Here is some sample output. In this sample, the port number we need is 31758.
+</p>
+
+<pre class="example">
+NAME          TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+hello-world   NodePort   172.21.121.84   &lt;none&gt;        8080:31758/TCP   58s
+</pre>
+
+<p>
+Export the port as an environment variable. Make sure to substitute
+the copied port into this command.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## export NODE_PORT=&lt;node_port&gt;</span>
+<span class="c1">## Using the sample output, the correct command would be export NODE_PORT=31758</span>
+<span class="nb">export</span> <span class="nv">NODE_PORT</span><span class="o">=</span><span class="m">31758</span>
+</pre></div>
+
+
+<p>
+Ping the application to get a response.
+</p>
+
+<div class="highlight"><pre><span></span>curl <span class="nv">$NODE_IP</span>:<span class="nv">$NODE_PORT</span>
+</pre></div>
+
+<p>
+Notice that this output includes the Pod name. Run the command ten
+times and note the <b>different Pod names</b> in each line of output.  
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">for</span> i in <span class="sb">`</span>seq <span class="m">10</span><span class="sb">`</span><span class="p">;</span> <span class="k">do</span> curl <span class="nv">$NODE_IP</span>:<span class="nv">$NODE_PORT</span><span class="p">;</span> <span class="k">done</span>
+</pre></div>
+
+<p>
+You should see more than one Pod name, and quite possibly all three
+Pod names, in the output. This is because Kubernetes load balances the
+requests across the three replicas, so each request could hit a
+different instance of our application.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org99f10b2" class="outline-3">
+<h3 id="org99f10b2">App Scaling, new releases, cluster configuration - Implementation</h3>
+<div class="outline-text-3" id="text-org99f10b2">
+</div>
+<div id="outline-container-orgc33d86c" class="outline-4">
+<h4 id="orgc33d86c">Replicasets</h4>
+<div class="outline-text-4" id="text-orgc33d86c">
+<p>
+It manages your pods ensuring the right number of pods are always up
+and running. This can mean adding or deleting pods as
+needed. ReplicaSets provide the ability to replicate pods and restart
+or spin up new pods when existing ones fail.
+</p>
+
+<p>
+A ReplicaSet can pick an existing pod to add to the deployment or
+create a new one if there are no existing pods. It does so by asking
+for a list of pods from the Kubernetes API and then filtering on the
+labels, as defined in the descriptor.
+</p>
+
+<p>
+The ReplicaSet does not own any of the pods; instead it uses the pod
+labels to decide which pods to acquire when bringing a deployment to
+the desired state. The template metadata inside the YAML spec defines
+the labels of potential pod candidates to add or delete.
+</p>
+
+<p>
+An example of a ReplicaSet YAML would look as follows.
+</p>
+
+<div class="highlight"><pre><span></span>apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: frontend
+  labels: ## here you specify the labels on which to match your
+	  ## Replica and apply the defined replica conditions
+    app: guestbook
+    tier: frontend
+spec:     ## here you specify the number of replicas you desire
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+  template:   ## here your pass your image and label it accordingls.
+    metadata:
+      labels:
+	tier: frontend
+    spec:
+      containers:
+      - name: php-redis
+	image: gcr.io/google_samples/gb-frontend:v3
+</pre></div>
+
+<p>
+Notice that Replicasets are automatically created when creating
+<b>Deployments</b>. You can get a list of running Replicasets in your
+cluster for the specific namespace you are working in by using:
+</p>
+
+<div class="highlight"><pre><span></span>kubectl get replicaset
+kubectl get rs <span class="c1">## also accepted. alias.</span>
+</pre></div>
+
+<p>
+Once a replicaset is running you can change the number of replicas in
+an imperative way running
+</p>
+
+<div class="highlight"><pre><span></span>kubectl scale deploy &lt;deployment-name&gt; --replicas<span class="o">=</span><span class="m">4</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgb82c427" class="outline-4">
+<h4 id="orgb82c427">Autoscaling</h4>
+<div class="outline-text-4" id="text-orgb82c427">
+<p>
+Horizontal Pod Autoscaler, or HPA, enables the application to increase
+the number of pods based on traffic.
+</p>
+
+<p>
+You can configure the desired state in HPA (for example, the CPU and
+memory).  
+</p>
+
+<p>
+The master node will periodically check pod metrics and
+scale to meet the desired state by updating the replicas field of the
+scaled resource, such as ReplicaSets or deployment.
+</p>
+
+<p>
+For instance consider the following deployment
+</p>
+
+<div class="highlight"><pre><span></span>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-apache
+spec:
+  selector:
+    matchLabels:
+      run: php-apache
+  replicas: 1
+  template:
+    metadata:
+      labels:
+	run: php-apache
+    spec:
+      containers:
+      - name: php-apache
+	image: k8s.gcr.io/hpa-example
+	ports:
+	- containerPort: 80
+	resources:
+	  limits:
+	    cpu: 500m
+	  requests:
+	    cpu: 200m
+</pre></div>
+
+<p>
+You can then create a Horizonatal Pod Autoscaler imperatively using
+</p>
+
+<div class="highlight"><pre><span></span>kubectl autoscale deployment php-apache --cpu-percent<span class="o">=</span><span class="m">50</span> --min<span class="o">=</span><span class="m">1</span> --max<span class="o">=</span><span class="m">10</span>  
+</pre></div>
+
+<p>
+The following command will create a Horizontal Pod Autoscaler that
+maintains between 1 and 10 replicas of the Pods controlled by the
+php-apache deployment we created in the first step of these
+instructions. Roughly speaking, HPA will increase and decrease the
+number of replicas (via the deployment) to maintain an average CPU
+utilization across all Pods of 50%
+</p>
+
+<p>
+The other way, working in a declarative way, would look as follows
+</p>
+
+<div class="highlight"><pre><span></span>apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: php-apache
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: php-apache
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+	type: Utilization
+	averageUtilization: 50
+</pre></div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org493e511" class="outline-4">
+<h4 id="org493e511">Rolling Updates</h4>
+<div class="outline-text-4" id="text-org493e511">
+<p>
+Rolling updates provide a way to roll out app changes in an automated
+and controlled fashion throughout your pods.  Rolling updates work
+with pod templates such as deployments.  Rolling updates allow for
+rollback if something goes wrong.
+</p>
+
+<p>
+An example for a Rolling update would be as follows
+</p>
+
+<div class="highlight"><pre><span></span>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: linuxsys-deploy
+  name: linuxsys-deploy
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: linuxsys-deploy
+  minReadySeconds: 5 ## wait 5 seconds before moving on to the next
+		     ## pod in the rollout stage.
+  strategy: 
+       type: RollingUpdate
+       rollingUpdate:
+	 maxSurge: 25% ## there can just be at maximum 1.25 *
+		       ## &lt;specified number replicas&gt; replicas while
+		       ## performing the rollout.
+	 maxUnavailable: 25% ## 75% of the pods must always be available.
+  template:
+    metadata:
+      labels:
+	app: linuxsys-deploy
+    spec:
+      containers:
+      - image: nginx:1.17-perl
+	name: nginx
+	ports:
+	- containerPort: 80
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbd433ba" class="outline-4">
+<h4 id="orgbd433ba">Config Maps and Secrets</h4>
+<div class="outline-text-4" id="text-orgbd433ba">
+<p>
+As software developers, we know it’s a good practice not to hard-code
+configuration variables in code.
+</p>
+
+<p>
+We keep them separate so that any changes in configuration do not
+require code changes.  
+</p>
+
+<p>
+Examples of these variables can include non-sensitive information like
+environments (for example, dev, test, and prod) or sensitive
+information such as API keys and account IDs.
+</p>
+
+<p>
+ConfigMaps give us a way to provide configuration data to pods and
+deployments so we don't have to hard-code that data in the application
+code.
+</p>
+
+<p>
+You can also reuse these ConfigMaps and Secrets for multiple
+deployments, thereby decoupling the environment from the deployments
+themselves!
+</p>
+
+<p>
+Secrets work similarly to ConfigMaps but are meant for sensitive
+information.
+</p>
+
+<p>
+An example to do that is the following
+</p>
+
+<div class="highlight"><pre><span></span>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+spec:
+  selector:
+    matchLabels:
+      run: hello-world
+  template:
+    metadata:
+      labels:
+	run: hello-world
+    spec:
+      containers:
+      - name: hello-world
+	image: us.icr.io/sn-labs-marcohassan/hello-world:3
+	ports:
+	- containerPort: 8080
+	envFrom:
+	- configMapRef:
+	    name: app-config ## here you specify that environment
+			     ## variables should be specified in a
+			     ## ConfigMap named app-config
+      imagePullSecrets:
+	- name: icr
+</pre></div>
+
+<p>
+Then you can have an app with the following code
+</p>
+
+<div class="highlight"><pre><span></span>var express = require(&#39;express&#39;)
+var os = require(&quot;os&quot;);
+var hostname = os.hostname();
+var app = express()
+
+app.get(&#39;/&#39;, function(req, res) {
+    res.send(process.env.MESSAGE + &#39;\n&#39;)    
+})
+app.listen(8080, function() {
+  console.log(&#39;Sample app is listening on port 8080.&#39;)
+})
+</pre></div>
+
+<p>
+Notice now that the MESSAGE variable should come from the app-config
+Configmap specified above.
+</p>
+
+<p>
+You can then specify it with the following command
+</p>
+
+<div class="highlight"><pre><span></span>kubectl create configmap app-config --from-literal<span class="o">=</span><span class="nv">MESSAGE</span><span class="o">=</span><span class="s2">&quot;This message came from a ConfigMap!&quot;</span>
+</pre></div>
+
+<p>
+Now after applying the deployment
+</p>
+
+<div class="highlight"><pre><span></span>kubectl apply -f deployment-configmap-env-var.yaml
+</pre></div>
+
+<p>
+And deploying the new image with the new app code
+</p>
+
+<div class="highlight"><pre><span></span>docker build -t us.icr.io/<span class="nv">$MY_NAMESPACE</span>/hello-world:3 . <span class="o">&amp;&amp;</span> docker push us.icr.io/<span class="nv">$MY_NAMESPACE</span>/hello-world:3
+</pre></div>
+
+<p>
+You would get the configmap text when accessing your application
+running on the cluster.
+</p>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org354c216" class="outline-3">
+<h3 id="org354c216">Literature</h3>
+<div class="outline-text-3" id="text-org354c216">
 <p>
 IBM - Journey to Cloud Series.
 </p>
@@ -673,6 +1165,24 @@ IBM - Journey to Cloud Series.
 <p>
 <a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/">Kubernetes tutorial</a>
 </p>
+
+
+
+
+
+
+
+<ul class="org-ul">
+<li>problem</li>
+
+<li>research question</li>
+
+<li>methodology</li>
+
+<li>results</li>
+
+<li>lesson learned</li>
+</ul>
 </div>
 </div>
 </div>

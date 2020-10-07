@@ -9,9 +9,9 @@ stay as they are here.
 <br>
 <br>
 
-<div id="outline-container-orgdcb8dd9" class="outline-2">
-<h2 id="orgdcb8dd9">Neural Networks Times Series</h2>
-<div class="outline-text-2" id="text-orgdcb8dd9">
+<div id="outline-container-org14b23de" class="outline-2">
+<h2 id="org14b23de">Neural Networks Times Series</h2>
+<div class="outline-text-2" id="text-org14b23de">
 <p>
 Best explaination in the world wide web for <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">LSTM models architecture</a>.  
 </p>
@@ -24,13 +24,13 @@ scripts for other Neural Networks Architectures.
 </div>
 
 
-<div id="outline-container-org22a427b" class="outline-2">
-<h2 id="org22a427b">Regression Methods</h2>
-<div class="outline-text-2" id="text-org22a427b">
+<div id="outline-container-org58a9acb" class="outline-2">
+<h2 id="org58a9acb">Regression Methods</h2>
+<div class="outline-text-2" id="text-org58a9acb">
 </div>
-<div id="outline-container-orga2be1fc" class="outline-3">
-<h3 id="orga2be1fc">Support Vector Regression.</h3>
-<div class="outline-text-3" id="text-orga2be1fc">
+<div id="outline-container-org931fdc6" class="outline-3">
+<h3 id="org931fdc6">Support Vector Regression.</h3>
+<div class="outline-text-3" id="text-org931fdc6">
 <p>
 This is an interesting technique. <a href="https://www.mathworks.com/help/stats/understanding-support-vector-machine-regression.html">It draws on the idea of SVM</a>.
 </p>
@@ -39,86 +39,6 @@ This is an interesting technique. <a href="https://www.mathworks.com/help/stats/
 </div>
 
 
-<div id="outline-container-org2d2e690" class="outline-2">
-<h2 id="org2d2e690">Outlier Detection</h2>
-<div class="outline-text-2" id="text-org2d2e690">
-</div>
-<div id="outline-container-org80adac6" class="outline-3">
-<h3 id="org80adac6">Isolation Forest</h3>
-<div class="outline-text-3" id="text-org80adac6">
-<div class="highlight"><pre><span></span>#!START_LIB
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.ensemble import IsolationForest
-#!END_LIB
-</pre></div>
-
-
-<div class="highlight"><pre><span></span>rng = np.random.RandomState(42)
-
-X = 0.3 * rng.randn(100, 2)
-X_train = np.r_[X + 2, X - 2]
-</pre></div>
-
-<div class="highlight"><pre><span></span># Generate some regular novel observations
-X = 0.3 * rng.randn(20, 2)
-X_test = np.r_[X + 2, X - 2]
-# Generate some abnormal novel observations
-X_outliers = rng.uniform(low=-4, high=4, size=(20, 2))
-</pre></div>
-
-<p>
-Obviously from the generated process you would have quite values &gt;= 3,
-which knowing the basics of the normal should be quite rare
-observations in our train sample.
-</p>
-
-<div class="highlight"><pre><span></span># fit the model
-clf = IsolationForest(max_samples=100, random_state=rng)
-clf.fit(X_train)
-y_pred_train = clf.predict(X_train)
-y_pred_test = clf.predict(X_test)
-y_pred_outliers = clf.predict(X_outliers)
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="c1"># plot the line, the samples, and the nearest vectors to the plane</span>
-<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
-<span class="n">Z</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">decision_function</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">xx</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">ravel</span><span class="p">()])</span>
-<span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">xx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="c1"># fit the model</span>
-<span class="n">clf</span> <span class="o">=</span> <span class="n">IsolationForest</span><span class="p">(</span><span class="n">max_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
-<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
-<span class="n">y_pred_train</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
-<span class="n">y_pred_test</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-<span class="n">y_pred_outliers</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_outliers</span><span class="p">)</span>
-
-<span class="c1"># plot the line, the samples, and the nearest vectors to the plane</span>
-<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
-<span class="n">Z</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">decision_function</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">xx</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">ravel</span><span class="p">()])</span>
-<span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">xx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;IsolationForest&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Blues_r</span><span class="p">)</span>
-
-<span class="n">b1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_train</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_train</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span>
-		 <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
-<span class="n">b2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_test</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_test</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span>
-		 <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
-<span class="n">c</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_outliers</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_outliers</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span>
-		<span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">((</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">c</span><span class="p">],</span>
-	   <span class="p">[</span><span class="s2">&quot;training observations&quot;</span><span class="p">,</span>
-	    <span class="s2">&quot;new regular observations&quot;</span><span class="p">,</span> <span class="s2">&quot;new abnormal observations&quot;</span><span class="p">],</span>
-	   <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
+<div id="outline-container-orgd18d26c" class="outline-2">
+<h2 id="orgd18d26c">Outlier Detection</h2>
 </div>
