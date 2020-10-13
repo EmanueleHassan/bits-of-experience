@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1602608223.336138
+_modified_time = 1602608407.706986
 _enable_loop = True
 _template_filename = '/Users/marcohassan/Desktop/python_venv/nikola/lib/python3.7/site-packages/nikola/data/themes/base/templates/listing.tmpl'
 _template_uri = 'listing.tmpl'
@@ -33,13 +33,13 @@ def render_body(context,**pageargs):
         files = context.get('files', UNDEFINED)
         def content():
             return render_content(context._locals(__M_locals))
-        title = context.get('title', UNDEFINED)
-        ui = _mako_get_namespace(context, 'ui')
-        source_link = context.get('source_link', UNDEFINED)
-        code = context.get('code', UNDEFINED)
         folders = context.get('folders', UNDEFINED)
-        crumbs = context.get('crumbs', UNDEFINED)
+        ui = _mako_get_namespace(context, 'ui')
+        code = context.get('code', UNDEFINED)
         messages = context.get('messages', UNDEFINED)
+        crumbs = context.get('crumbs', UNDEFINED)
+        source_link = context.get('source_link', UNDEFINED)
+        title = context.get('title', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n')
         __M_writer('\n')
@@ -59,13 +59,13 @@ def render_content(context,**pageargs):
         files = context.get('files', UNDEFINED)
         def content():
             return render_content(context)
-        title = context.get('title', UNDEFINED)
-        ui = _mako_get_namespace(context, 'ui')
-        source_link = context.get('source_link', UNDEFINED)
-        code = context.get('code', UNDEFINED)
         folders = context.get('folders', UNDEFINED)
-        crumbs = context.get('crumbs', UNDEFINED)
+        ui = _mako_get_namespace(context, 'ui')
+        code = context.get('code', UNDEFINED)
         messages = context.get('messages', UNDEFINED)
+        crumbs = context.get('crumbs', UNDEFINED)
+        source_link = context.get('source_link', UNDEFINED)
+        title = context.get('title', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n')
         __M_writer(str(ui.breadcrumbs(crumbs)))
