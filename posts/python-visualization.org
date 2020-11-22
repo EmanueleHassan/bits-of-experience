@@ -77,39 +77,40 @@ Analogously when working with numpy you could reach that by
 np.set_printoptions(threshold=np.inf)
 #+end_src
 
-- create data from numpy matrix
+** create data from numpy matrix
 
-#+NAME: B4B1951C-33E1-4583-BC59-8A5A1FD88259
-#+begin_src python :results output
+ #+NAME: B4B1951C-33E1-4583-BC59-8A5A1FD88259
+ #+begin_src python :results output
 mydat = pd.DataFrame (np.matrix ([x_1,x_2,x_3]).transpose ())
-#+end_src
+ #+end_src
 
-- create data from two numpy arrays
 
-here you need to flatten the arrays first
+**  create data from two numpy arrays
 
-#+begin_src python :results output
+ here you need to flatten the arrays first
+
+ #+begin_src python :results output
 X = 2 * np.random.rand(100,1)
 y = 4 +3 * X+np.random.randn(100,1)
 
 mydat = pd.DataFrame ({'x':X.flatten(), 'y': y.flatten()})
-#+end_src
+ #+end_src
 
 
-- on reshape -1
+** on reshape -1
 
-The criterion to satisfy for providing the new shape is that *The new
-shape should be compatible with the original shape*
+ The criterion to satisfy for providing the new shape is that *The new
+ shape should be compatible with the original shape*
 
-Numpy allow us to give one of new shape parameter as -1 (eg: (2,-1) or
-(-1,3) but not (-1, -1)). It simply means that it is an unknown
-dimension and we want numpy to figure it out. And numpy will figure
-tchis by looking at the 'length of the array and remaining dimensions'
-and making sure it satisfies the above mentioned criteria
+ Numpy allow us to give one of new shape parameter as -1 (eg: (2,-1) or
+ (-1,3) but not (-1, -1)). It simply means that it is an unknown
+ dimension and we want numpy to figure it out. And numpy will figure
+ tchis by looking at the 'length of the array and remaining dimensions'
+ and making sure it satisfies the above mentioned criteria
 
-Now see the example.
+ Now see the example.
 
-#+begin_src python :results output :exports both
+ #+begin_src python :results output :exports both
 import numpy as np
 
 z = np.array([[1, 2, 3, 4],
@@ -122,40 +123,40 @@ print (z.shape)
 print (z.reshape (-1).shape)
 
 print (z.reshape (-1,2).shape)
-#+end_src
+ #+end_src
 
-#+RESULTS:
-: (3, 4)
-: (12,)
-: (6, 2)
+ #+RESULTS:
+ : (3, 4)
+ : (12,)
+ : (6, 2)
 
-- describe the data
+** describe the data
 
-#+NAME: 62E7CBD5-4D53-4C5E-A1AC-70E42CBA1F0A
-#+begin_src python :results output
+ #+NAME: 62E7CBD5-4D53-4C5E-A1AC-70E42CBA1F0A
+ #+begin_src python :results output
 mydat.describe ()
-#+end_src
+ #+end_src
 
-- sort multiple variables in pandas data frames.
+** sort multiple variables in pandas data frames.
 
-#+begin_src python
+ #+begin_src python
 df.sort_values(['Year', "Happiness_Score"], ascending=[True, False], inplace=True)
-#+end_src
+ #+end_src
 
-- Set the name of the columns
+ - Set the name of the columns
 
-#+NAME: DDDA7E5F-FC2A-4A7D-BC7B-D7CF473D3C49
-#+begin_src python :results output
+ #+NAME: DDDA7E5F-FC2A-4A7D-BC7B-D7CF473D3C49
+ #+begin_src python :results output
 mydat.columns = ["nomean", "posmean", "negmean"]
-#+end_src
+ #+end_src
 
-#+NAME: A30028B2-C614-406C-AF97-2DF4F99E1648
-#+begin_src python :results output
+ #+NAME: A30028B2-C614-406C-AF97-2DF4F99E1648
+ #+begin_src python :results output
 mydat.columns
-#+end_src
+ #+end_src
 
-#+NAME: 665F633A-521D-4384-84FF-677EF7633056
-#+begin_src python :results file
+ #+NAME: 665F633A-521D-4384-84FF-677EF7633056
+ #+begin_src python :results file
 plt.plot(mydat.nomean, c = "lightblue", ls = '--', marker = "o",
          ms = 6, label ="nomean")
 plt.plot(mydat.posmean, c = "darkorange", ls = '--', marker = "s",
@@ -166,95 +167,95 @@ plt.legend(loc = 'upper right',bbox_to_anchor = (1,1))
 plt.xticks(list(range(20)), rotation = 'vertical') # sets the ticks on
                                                    # x-axis and puts
                                                    # them vertically.
-#+end_src
+ #+end_src
 
 
-- get the entry (x,y) in your relational table
+** get the entry (x,y) in your relational table
 
-#+NAME: D3530789-6ACE-490F-A62F-1F738ABE00D3
-#+begin_src python :results output
+ #+NAME: D3530789-6ACE-490F-A62F-1F738ABE00D3
+ #+begin_src python :results output
 mydat.head (5)
-#+end_src
+ #+end_src
 
-#+NAME: E45EF453-DF18-4DA7-8510-1E6B2480F4A7
-#+begin_src python :results output
+ #+NAME: E45EF453-DF18-4DA7-8510-1E6B2480F4A7
+ #+begin_src python :results output
 mydat.iloc[2,1]
-#+end_src
+ #+end_src
 
-- slicing the data
+** slicing the data
 
-#+NAME: 392E582F-AFE3-4B9A-BF7A-18B9D55B15F6
-#+begin_src python :results output
+ #+NAME: 392E582F-AFE3-4B9A-BF7A-18B9D55B15F6
+ #+begin_src python :results output
 mydat[0:4]
-#+end_src
+ #+end_src
 
-- get by column
+** get by column
 
-#+NAME: 72EFF5A5-8589-4813-A918-91547491D259
-#+begin_src python :results output
+ #+NAME: 72EFF5A5-8589-4813-A918-91547491D259
+ #+begin_src python :results output
 mydat[['nomean', 'posmean']].head (3)
-#+end_src
+ #+end_src
 
-- get by row and column
+** get by row and column
 
-#+NAME: D0ECAD01-5802-45DE-B009-8C0ED8926068
-#+begin_src python :results output
+ #+NAME: D0ECAD01-5802-45DE-B009-8C0ED8926068
+ #+begin_src python :results output
 mydat[['nomean', 'posmean']][::2]
-#+end_src
+ #+end_src
 
-#+NAME: 7EE3C177-63AE-46F2-80AE-6FC33912E63E
-#+begin_src python :results output
+ #+NAME: 7EE3C177-63AE-46F2-80AE-6FC33912E63E
+ #+begin_src python :results output
 print(mydat[['nomean', 'posmean']].iloc [0,1])
-#+end_src
+ #+end_src
 
-- new column
+** new column
 
-#+NAME: C7AEAA0C-FE4F-44F1-B4E2-941105BD1F9C
-#+begin_src python :results output
+ #+NAME: C7AEAA0C-FE4F-44F1-B4E2-941105BD1F9C
+ #+begin_src python :results output
 mydat['sum'] = mydat['nomean'] + mydat['posmean'] + mydat['negmean']
-#+end_src
+ #+end_src
 
-#+NAME: E676C563-E1E9-43EB-8C63-8EA4C417C995
-#+begin_src python :results output
+ #+NAME: E676C563-E1E9-43EB-8C63-8EA4C417C995
+ #+begin_src python :results output
 mydat.columns
-#+end_src
+ #+end_src
 
-#+NAME: 74B65603-E9C1-4760-82AA-780263961A4C
-#+begin_src python :results output
+ #+NAME: 74B65603-E9C1-4760-82AA-780263961A4C
+ #+begin_src python :results output
 mydat2 = mydat
 mydat.head ()
-#+end_src
+ #+end_src
 
-- drop a column
+** drop a column
 
-#+NAME: 4C89C61A-D2C8-4720-9357-021883EC97FE
-#+begin_src python :results output
+ #+NAME: 4C89C61A-D2C8-4720-9357-021883EC97FE
+ #+begin_src python :results output
 mydat2.drop ('sum', axis = 1).head ()
-#+end_src
+ #+end_src
 
-- filter through booleans
+** filter through booleans
 
-#+NAME: FE3A32A6-A5AD-41B5-A156-A8FF68D0BE85
-#+begin_src python :results output
+ #+NAME: FE3A32A6-A5AD-41B5-A156-A8FF68D0BE85
+ #+begin_src python :results output
 filt = mydat.nomean < 0
 
 print (mydat[['sum', 'negmean']][filt])
-#+end_src
+ #+end_src
 
 
-- remove duplicates
+** remove duplicates
 
-#+NAME: 66AC1B55-FDF1-496A-9A1C-EC03BDFDC01A
-#+begin_src python :results output
+ #+NAME: 66AC1B55-FDF1-496A-9A1C-EC03BDFDC01A
+ #+begin_src python :results output
 print (np.matrix ([[1,2,1],[3,3,3]]).transpose ())
 
 pd.DataFrame (np.matrix ([[1,2,1],[3,3,3]]).transpose ()).iloc[:,1].unique ()
-#+end_src
+ #+end_src
 
-another possibility that addresses data frame wide duplicates and not
-simply column duplicates is by leveraging =.duplicated ()= method:
+ another possibility that addresses data frame wide duplicates and not
+ simply column duplicates is by leveraging =.duplicated ()= method:
 
-#+begin_src python :results output
+ #+begin_src python :results output
 import pandas as pd
 
 romeo = pd.DataFrame({'a': [1,1,3], 'b' : [2,2,3]})
@@ -265,128 +266,270 @@ print(romeo.duplicated())
 romeo = pd.DataFrame({'a': [1,1,3], 'b' : [2,4,3]})
 print(romeo)
 print(romeo.duplicated())
-#+end_src
+ #+end_src
 
-- on the difference between =.iloc= and =.loc=
+** on the difference between =.iloc= and =.loc=
 
-notice by the way that this are outdated. by now you should use =.iat=
-and =.at=.
+ notice by the way that this are outdated. by now you should use =.iat=
+ and =.at=.
 
-The difference is the following.
+ The difference is the following.
 
-=.iat= : uses the strict position in the matrix
+ =.iat= : uses the strict position in the matrix
 
-=.at= : search by index and column names
+ =.at= : search by index and column names
 
 
-#+NAME: 9F6C4632-2087-4EF2-BE4D-6C4E948FA712
-#+begin_src python :results output
+ #+NAME: 9F6C4632-2087-4EF2-BE4D-6C4E948FA712
+ #+begin_src python :results output
 print (mydat)
 mydat.at[0, 'negmean']
-#+end_src
+ #+end_src
 
-#+NAME: A0ABCC18-127A-4686-ADC1-E131136EE271
-#+begin_src python :results output
+ #+NAME: A0ABCC18-127A-4686-ADC1-E131136EE271
+ #+begin_src python :results output
 mydat.iat[0,2]
-#+end_src
+ #+end_src
 
-To further understand the thing consider
+ To further understand the thing consider
 
-#+NAME: 67DEF99A-FF5E-4AFC-8F45-C713CDBE0A4F
-#+begin_src python :results output
+ #+NAME: 67DEF99A-FF5E-4AFC-8F45-C713CDBE0A4F
+ #+begin_src python :results output
 mydat2 = mydat[::2]
 mydat2
-#+end_src
+ #+end_src
 
-#+NAME: 50340226-FF1D-4B09-BDE9-7CE3DF62C058
-#+begin_src python :results output
+ #+NAME: 50340226-FF1D-4B09-BDE9-7CE3DF62C058
+ #+begin_src python :results output
 print (mydat2.at[6, 'nomean']) ## this by real index independent of the axis
 print (mydat2.iat[6, 0]) ## this sixth row in the matrix
-#+end_src
+ #+end_src
 
-- categorical variables
+** categorical variables
 
-This is important for treating them as dummies in regression as well
-for facet_wraps. 
+ This is important for treating them as dummies in regression as well
+ for facet_wraps. 
 
-#+NAME: 7BCD560B-E1CB-4B0C-B8A6-92B4D3BFC054
-#+begin_src python :results output
+ #+NAME: 7BCD560B-E1CB-4B0C-B8A6-92B4D3BFC054
+ #+begin_src python :results output
 mydat.head ()
-#+end_src
+ #+end_src
 
 
-#+NAME: B5E0FFC5-18B4-421C-AB89-9A83A3FD8FBD
-#+begin_src python :results output
+ #+NAME: B5E0FFC5-18B4-421C-AB89-9A83A3FD8FBD
+ #+begin_src python :results output
 mydat["category"] = np.repeat (range (4), 5)
 mydat.info ()
-#+end_src
+ #+end_src
 
-To transform this into a category use
+ To transform this into a category use
 
-#+NAME: 3C08E5B6-01FF-4D91-9F28-7BB440385BB5
-#+begin_src python :results output
+ #+NAME: 3C08E5B6-01FF-4D91-9F28-7BB440385BB5
+ #+begin_src python :results output
 mydat.category = mydat.category.astype ('category')
 mydat.info ()
-#+end_src
+ #+end_src
 
-- To view the category types
+*** To view the category types
 
-#+NAME: 6A930BF7-8560-4027-B1A6-D105861E9B24
-#+begin_src python :results output
+  #+NAME: 6A930BF7-8560-4027-B1A6-D105861E9B24
+  #+begin_src python :results output
 mydat.category.cat.categories
+  #+end_src
+
+*** Cut with the same bins
+
+
+Notice dataset not here... just pasted
+
+#+begin_src ein-python :results output
+Bins = pd.cut(data_seq.r_platelet_admission, bins  = 5).cat.categories
 #+end_src
 
-- To check for missing values =NaN= 
+#+RESULTS: DA1CF17C-7F32-44A3-B57D-2B6BFFE90562
 
-#+begin_src python :exports both
+Ok so  idea  working.
+
+#+NAME: 1E66AD8E-FDA5-4E35-9FAE-960C70D54D19
+#+begin_src ein-python :results output
+inspect = pd.concat([data_seq.loc[:, ['r_platelet_admission', 'r_platelet_24h']], 
+                     data_seq.loc[:, ['r_platelet_admission', 'r_platelet_24h']].apply(pd.cut, bins=Bins)],
+                    axis = 1)
+
+
+## so you see... very different intervals... 
+
+#+end_src
+
+#+RESULTS: 1E66AD8E-FDA5-4E35-9FAE-960C70D54D19
+
+Notice however the issue that then at 24h you have just survivals on
+given categories
+
+#+NAME: 4C28D75C-EFFE-45BF-9584-6CB4FFB7993F
+#+begin_src ein-python :results output
+inspect.iloc[:,-1].value_counts()
+#+end_src
+
+#+RESULTS: 4C28D75C-EFFE-45BF-9584-6CB4FFB7993F
+: (13.401, 535.8]     1217
+: (535.8, 1055.6]        1
+: (2095.2, 2615.0]       0
+: (1575.4, 2095.2]       0
+: (1055.6, 1575.4]       0
+: Name: r_platelet_24h, dtype: int64
+
+
+** Conversion dataframe into series
+
+   For pandas you can use some of the functions just on pandas
+   =Series= but not on pandas =DataFrames=.
+
+   One such function is =cut=. Interesting the ~df.column_name~ gives you
+   a =Series= while the ~df.loc[: [column_name]]~, gives you a dataframe.
+
+   You can convert between the two with the following:
+
+#+begin_src ein-python :results output
+pd.qcut(data_seq.loc[:,['r_hematocrite_admission']].squeeze(), 5).cat.categories
+#+end_src
+
+
+** Missing data
+
+*** To check for missing values =NaN= 
+
+  #+begin_src python :exports both
 ## check if there are null values for stream_id column
 df_streams[['stream_id']].isnull().values.any()
 
 ## get the null values
 df_streams[np.array(df_streams[['stream_id']].isnull())]
-#+end_src
+  #+end_src
 
-- to replace the nulls by a string in case of categorical variables
+*** deleting missing data
 
-#+begin_src python
+  In order to delete missing data you can simply rely on the 
+
+  #+begin_src python :results output :exports both :session hello
+import pandas as pd
+from numpy import nan
+
+df = pd.DataFrame({'name':['apple','banana','orange'],
+                   'price':[1.95, 3.00, nan], 'inventory':[nan, 12, 23]})
+
+
+print(df)
+
+print ("\nAfter deleting missing values:")
+print(df.dropna())
+  #+end_src
+
+  In the above you eliminate the entire *row* where the missing value
+  occurred.
+
+  The above is particular important when missing observations occurs
+  randomly such that you might safely ignore individual observations
+  without increasing the bias of your analysis given your data.
+
+  A second possibility, when dealing with missing data consists in
+  deleting entire features (i.e. columns). You can do that by setting
+  the argument ='columns'= in your =.dropna ()= method
+
+  #+begin_src python :results output :exports both :session hello
+print(df)
+
+print ("\nAfter deleting missing values:")
+
+print(df.dropna(axis = 'columns'))
+  #+end_src
+
+*** impute missing data
+
+  a different approach on handling missing data is to *impute* missing
+  data. This means that instead of removing the data observations you
+  try to replace them with some meaningful information.
+
+  This might be useful for instance when understanding that data are not
+  missing at random and you might use the dependency on other features -
+  i.e. a predictive model based on that - to impute missing variables. 
+
+  Other simpler methods might involve taking simple features means as a
+  data-filler or some simple analogous measure. An example in this sense
+  might be 
+
+  #+begin_src python :results output :exports both :session hello
+from sklearn.impute import SimpleImputer
+
+print (df)
+
+features = ['price', 'inventory']
+imp = SimpleImputer()
+
+# Use .values attribute bc sklearn works with arrays rather than DataFrames
+imp.fit(df[features].values)
+
+print(imp.transform(df[features].values))
+  #+end_src
+
+  where notice that in the above the simple average was taken to replace
+  missing values. Notice moreover how the standard sklearn API applies -
+  i.e. the =.fit ()= and =.transform ()= methods.
+
+
+
+*** to replace the nulls by a string in case of categorical variables
+
+  #+begin_src python
 df.loc[df.Description[df.Description.isnull()].index, "Description"] = 'no_description'
+  #+end_src
+
+*** Missing data on categorical series
+
+    Assume m is a categorical  series  with 5 categories and 'Nan'
+    then you can just replace =Nan= with one of the existing
+    categories. If you want to create a new category for it you should
+    work through
+
+#+begin_src ein-python :results output
+m = m.cat.add_categories(0).fillna(0)
 #+end_src
 
-- To make row-wise modification
+** To make row-wise modification - Apply Function
 
-In order to apply a function sequentially to each entry in a column
-dataframe you can use the =apply= function on pandas dataframe.
+ In order to apply a function sequentially to each entry in a column
+ dataframe you can use the =apply= function on pandas dataframe.
 
-For instance for the following dataframe
+ For instance for the following dataframe
 
-#+begin_src python :session sparse :results output
+ #+begin_src python :session sparse :results output
 cust_id.head()
-#+end_src
+ #+end_src
 
-Then you could specify a function return the years since the date in
-column dob
+ Then you could specify a function return the years since the date in
+ column dob
 
-#+begin_src python
+ #+begin_src python
 def age(x):
     datetime_object = datetime.strptime(x, '%m/%d/%y')
 
     datetime_now = datetime.today()
 
     return datetime_now.year - datetime_object.year
-#+end_src
+ #+end_src
 
-Finally you can pass the =apply= function to each row of your
-pandas dataframe column by
+ Finally you can pass the =apply= function to each row of your
+ pandas dataframe column by
 
-#+begin_src python
+ #+begin_src python
 print(cust_id['dob'].apply (lambda row: age(row)))
 
 cust_id['age'] = cust_id['dob'].apply (lambda row: age(row))
 
 cust_id.head()
-#+end_src
+ #+end_src
 
-#+begin_example
+ #+begin_example
         dob  1            2        3               4  5              6  \
 0  07/30/98  1         Todd    Kasen  South Carolina  m  united_states  
 1  04/12/89  2        Garza   Ensley            None  f      singapore
@@ -400,76 +543,7 @@ age
 23  
 21  
 22  
-#+end_example
-
-- deleting missing data
-
-In order to delete missing data you can simply rely on the 
-
-#+begin_src python :results output :exports both :session hello
-import pandas as pd
-from numpy import nan
-
-df = pd.DataFrame({'name':['apple','banana','orange'],
-                   'price':[1.95, 3.00, nan], 'inventory':[nan, 12, 23]})
-
-
-print(df)
-
-print ("\nAfter deleting missing values:")
-print(df.dropna())
-#+end_src
-
-In the above you eliminate the entire *row* where the missing value
-occurred.
-
-The above is particular important when missing observations occurs
-randomly such that you might safely ignore individual observations
-without increasing the bias of your analysis given your data.
-
-A second possibility, when dealing with missing data consists in
-deleting entire features (i.e. columns). You can do that by setting
-the argument ='columns'= in your =.dropna ()= method
-
-#+begin_src python :results output :exports both :session hello
-print(df)
-
-print ("\nAfter deleting missing values:")
-
-print(df.dropna(axis = 'columns'))
-#+end_src
-
-- impute missing data
-
-a different approach on handling missing data is to *impute* missing
-data. This means that instead of removing the data observations you
-try to replace them with some meaningful information.
-
-This might be useful for instance when understanding that data are not
-missing at random and you might use the dependency on other features -
-i.e. a predictive model based on that - to impute missing variables. 
-
-Other simpler methods might involve taking simple features means as a
-data-filler or some simple analogous measure. An example in this sense
-might be 
-
-#+begin_src python :results output :exports both :session hello
-from sklearn.impute import SimpleImputer
-
-print (df)
-
-features = ['price', 'inventory']
-imp = SimpleImputer()
-
-# Use .values attribute bc sklearn works with arrays rather than DataFrames
-imp.fit(df[features].values)
-
-print(imp.transform(df[features].values))
-#+end_src
-
-where notice that in the above the simple average was taken to replace
-missing values. Notice moreover how the standard sklearn API applies -
-i.e. the =.fit ()= and =.transform ()= methods.
+ #+end_example
 
 ** New dataset
    :properties:
@@ -573,7 +647,6 @@ pd.pivot_table(df,index='Region',columns='Year',values="Happiness_Score")
 #+end_src
 
 
-
 - create factor variables out of continuous variables through the
   =cut= method.
 
@@ -587,10 +660,6 @@ pd.cut (df['Happiness_Rank'], bins = 4)
 pd.concat(objs = [df, pd.cut (df['Happiness_Rank'], bins = 4)], 
           axis = 1)
 #+end_src
-
-
-
-
 
 ** Work With SQL on top of Pandas
    :properties:
@@ -672,7 +741,6 @@ nba (q)
 41        Czech Republic  3.183000e+01
 42          Saudi Arabia  2.411000e+01
 #+end_example
-
 
 
 * Sparse Matrices
