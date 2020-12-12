@@ -84,7 +84,6 @@ np.set_printoptions(threshold=np.inf)
 mydat = pd.DataFrame (np.matrix ([x_1,x_2,x_3]).transpose ())
  #+end_src
 
-
 **  create data from two numpy arrays
 
  here you need to flatten the arrays first
@@ -95,7 +94,6 @@ y = 4 +3 * X+np.random.randn(100,1)
 
 mydat = pd.DataFrame ({'x':X.flatten(), 'y': y.flatten()})
  #+end_src
-
 
 ** on reshape -1
 
@@ -169,7 +167,6 @@ plt.xticks(list(range(20)), rotation = 'vertical') # sets the ticks on
                                                    # them vertically.
  #+end_src
 
-
 ** get the entry (x,y) in your relational table
 
  #+NAME: D3530789-6ACE-490F-A62F-1F738ABE00D3
@@ -195,6 +192,40 @@ mydat[0:4]
  #+begin_src python :results output
 mydat[['nomean', 'posmean']].head (3)
  #+end_src
+
+** Get by column through numerical index
+
+This is a thing that I noticed I use quite much when coding. 
+
+In the specific I want often to be able to select the columns as in
+=R= with the syntax ~df[, c (1,3,4)]~.
+
+Up to now I used some different methods. However I forget them all the
+time and it took me this 5 min. each time.
+
+Now with this syntax it is easy to do 
+ 
+#+begin_src ein-python :results output
+res_test.iloc[:, np.r_[2:6,res_test.shape[1] - 1]]
+#+end_src
+
+#+begin_example
+         ph potassium sodium   ffp  tod72h
+130       1      1001   1002    16    1020
+131    1000      1001   1002    16    1020
+132    1000      1001   1002    16    1020
+133    1000      1001   1002    16    1020
+134    1000      1001   1002    16    1020
+...     ...       ...    ...   ...     ...
+18494     1        10     11    16    1020
+18495  1000        10     11    16    1020
+18496  1000        10     11  1003    1020
+18497  1000      1001   1002  1003    1020
+18498  1000      1001   1002  1003    1021
+
+[981 rows x 5 columns]
+#+end_example
+
 
 ** get by row and column
 
@@ -242,6 +273,75 @@ filt = mydat.nomean < 0
 print (mydat[['sum', 'negmean']][filt])
  #+end_src
 
+** filter through regex
+
+#+begin_src ein-python :results output
+df.filter(regex='ing|Date')
+#+end_src
+
+#+begin_example
+        Date	        Running Chasing	Climbing 	Foraging
+0	10142018	False	False	False		False
+1	10062018	True	False	False		False
+2	10102018	False	False	True		False
+3	10182018	False	False	True		False
+4	10182018	False	False	False		False
+…	…	…	…	…	…	
+3018	10072018	False	False	False		True
+3019	10132018	False	False	False		True
+3020	10122018	False	False	False		True
+3021	10102018	False	False	False		False
+3022	10122018	False	False	False		True
+#+end_example
+
+** filter through lambda in iloc
+:Properties:
+:header-args:ein-python: :session http://127.0.0.1:8888/usz_marco.ipynb :tangle ~/Desktop/IBM_projects/USZ_development/USZ_Medical_Decision_Support/scripts/data_processing.py
+:end:
+
+
+#+NAME: 6F11E092-26F3-40CA-955D-32452E1A11AF
+#+begin_src ein-python :results output
+# reading the data
+series = [('Stranger Things', 3, 'Millie'),
+          ('Game of Thrones', 8, 'Emilia'), ('La Casa De Papel', 4, 'Sergio'),
+          ('Westworld', 3, 'Evan Rachel'), ('Stranger Things', 3, 'Millie'),
+         ('La Casa De Papel', 4, 'Sergio')]
+
+# Create a DataFrame object
+dfObj = pd.DataFrame(series, columns=['Name', 'Seasons', 'Actor'])
+
+df = pd.DataFrame(dfObj)
+
+df.iloc[np.array (df.Seasons.apply (lambda x: x % 2 == 0)), :]
+#+end_src
+
+#+RESULTS: 6F11E092-26F3-40CA-955D-32452E1A11AF
+:                Name  Seasons   Actor
+: 1   Game of Thrones        8  Emilia
+: 2  La Casa De Papel        4  Sergio
+: 5  La Casa De Papel        4  Sergio
+
+
+
+#+NAME: C6372628-2DC1-46C0-A214-20782B8D8DEC
+#+BEGIN_SRC ein-python  :results output
+dfObj
+#+END_SRC
+
+#+RESULTS: C6372628-2DC1-46C0-A214-20782B8D8DEC
+:                Name  Seasons        Actor
+: 0   Stranger Things        3       Millie
+: 1   Game of Thrones        8       Emilia
+: 2  La Casa De Papel        4       Sergio
+: 3         Westworld        3  Evan Rachel
+: 4   Stranger Things        3       Millie
+: 5  La Casa De Papel        4       Sergio
+
+** Notice
+
+   Often it makes sense to create a dictionary for selecting the
+   columns of the dataframes by index and get the corresponding name
 
 ** remove duplicates
 
@@ -379,7 +479,6 @@ inspect.iloc[:,-1].value_counts()
 : (1055.6, 1575.4]       0
 : Name: r_platelet_24h, dtype: int64
 
-
 ** Conversion dataframe into series
 
    For pandas you can use some of the functions just on pandas
@@ -393,7 +492,6 @@ inspect.iloc[:,-1].value_counts()
 #+begin_src ein-python :results output
 pd.qcut(data_seq.loc[:,['r_hematocrite_admission']].squeeze(), 5).cat.categories
 #+end_src
-
 
 ** Missing data
 
