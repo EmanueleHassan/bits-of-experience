@@ -156,7 +156,7 @@ NAVIGATION_LINKS = {
         ('/index.html', 'Blog', 'fa fa-edit'),
         ('/pages/emacs/', 'A life Configuring Emacs', 'fa fa-code'),
         ('/pages/papers/', 'Term and Research Papers', 'fa fa-university'),
-        ('/pages/video_blog/', 'Video Blog', 'fa fa-play-circle'),        
+        ('/pages/video-blog/', 'Video Blog', 'fa fa-play-circle'),        
         ('https://github.com/MarcoHassan', 'My Github', 'fab fa-github'),
         ('https://stackoverflow.com/users/9731177/mhass', 'My Stack', 'fab fa-stack-overflow'),
         ('/rss.xml', 'RSS', 'fa fa-rss'),
