@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1610129347.549408
+_modified_time = 1610132621.5495548
 _enable_loop = True
 _template_filename = '/Users/marcohassan/Desktop/python_venv/nikola/lib/python3.7/site-packages/nikola/data/themes/base/templates/listing.tmpl'
 _template_uri = 'listing.tmpl'
@@ -31,14 +31,14 @@ def render_body(context,**pageargs):
     try:
         __M_locals = __M_dict_builtin(pageargs=pageargs)
         title = context.get('title', UNDEFINED)
-        files = context.get('files', UNDEFINED)
+        ui = _mako_get_namespace(context, 'ui')
+        folders = context.get('folders', UNDEFINED)
         crumbs = context.get('crumbs', UNDEFINED)
+        code = context.get('code', UNDEFINED)
         def content():
             return render_content(context._locals(__M_locals))
-        code = context.get('code', UNDEFINED)
         messages = context.get('messages', UNDEFINED)
-        folders = context.get('folders', UNDEFINED)
-        ui = _mako_get_namespace(context, 'ui')
+        files = context.get('files', UNDEFINED)
         source_link = context.get('source_link', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n')
@@ -57,14 +57,14 @@ def render_content(context,**pageargs):
     __M_caller = context.caller_stack._push_frame()
     try:
         title = context.get('title', UNDEFINED)
-        files = context.get('files', UNDEFINED)
+        ui = _mako_get_namespace(context, 'ui')
+        folders = context.get('folders', UNDEFINED)
         crumbs = context.get('crumbs', UNDEFINED)
+        code = context.get('code', UNDEFINED)
         def content():
             return render_content(context)
-        code = context.get('code', UNDEFINED)
         messages = context.get('messages', UNDEFINED)
-        folders = context.get('folders', UNDEFINED)
-        ui = _mako_get_namespace(context, 'ui')
+        files = context.get('files', UNDEFINED)
         source_link = context.get('source_link', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n')
