@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1612536904.72803
+_modified_time = 1612650305.7982998
 _enable_loop = True
 _template_filename = '/Users/marcohassan/Desktop/python_venv/nikola/lib/python3.7/site-packages/nikola/data/themes/base/templates/pagination_helper.tmpl'
 _template_uri = 'pagination_helper.tmpl'
@@ -28,8 +28,8 @@ def render_page_navigation(context,current_page,page_links,prevlink,nextlink,pre
     __M_caller = context.caller_stack._push_frame()
     try:
         len = context.get('len', UNDEFINED)
-        abs = context.get('abs', UNDEFINED)
         enumerate = context.get('enumerate', UNDEFINED)
+        abs = context.get('abs', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n<div class="page-navigation">\n')
         for i, link in enumerate(page_links):
