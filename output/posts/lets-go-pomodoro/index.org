@@ -75,20 +75,36 @@
    as follows given that you are using the =use-package= package. 
 
  #+begin_src emacs-lisp 
-(use-package pomodoro
-  :ensure t
-  :init (pomodoro-add-to-mode-line))
+;; could not find it normally.
+;; (use-package pomodoro
+;;   :ensure t
+;;   :init (pomodoro-add-to-mode-line))
+
+
+;; use the quelpa mirror because of that
+ (use-package pomodoro
+   :quelpa (pomodoro :fetcher github :repo "emacsmirror/pomodoro")
+   :config (pomodoro-add-to-mode-line)
+   :bind (("C-c C-v s-p" . pomodoro-start)
+	  ("C-c C-v s-s" . pomodoro-stop))
+          ("C-c C-x s-p" . pomodoro-pause)
+	  ("C-c C-x s-r" . pomodoro-resume))
+   )
  #+end_src 
 
  #+RESULTS:
 
-   In theory the documentations and forums say that once you do that
-   you should have a =start-pomodoro= function. I do not see it in my
-   emacs at the moment. A pity cause apparently through such a package
-   you should also see the expiration time until the pomodoro on your
-   bottom bar of your emacs.
 
-   Anyways, another option that directly integrates with emacs org
+   Good with the above quelpa mirror you managed to install it. Notice
+   that here the functions to start your pomodoro timer is
+   =pomodoro-start=. There are then a couple of functions to =pause=,
+   =resume= etc. your pomodoro. Notice that here the time with the
+   add-to-mode-line above is displayed in little on the bottom left of
+   your mode-line. That is fine. Use this in general and not when
+   editing org files. For this there is a better option that we will
+   explore next.
+
+   Another option that directly integrates with emacs org
    mode clocks previously described is the =org-pomodoro=
    package. That starts a clock as the =clock-in= command above and
    after 25 min. it should expire. I read that the notification when
