@@ -5,9 +5,9 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1612797738.4189382
+_modified_time = 1612986507.824322
 _enable_loop = True
-_template_filename = '/Users/marcohassan/Desktop/python_venv/nikola/lib/python3.7/site-packages/nikola/data/themes/base/templates/listing.tmpl'
+_template_filename = '/Users/marcohassan/Desktop/python_venv/nikola/lib/python3.9/site-packages/nikola/data/themes/base/templates/listing.tmpl'
 _template_uri = 'listing.tmpl'
 _source_encoding = 'utf-8'
 _exports = ['content']
@@ -30,16 +30,16 @@ def render_body(context,**pageargs):
     __M_caller = context.caller_stack._push_frame()
     try:
         __M_locals = __M_dict_builtin(pageargs=pageargs)
-        folders = context.get('folders', UNDEFINED)
-        code = context.get('code', UNDEFINED)
-        messages = context.get('messages', UNDEFINED)
-        source_link = context.get('source_link', UNDEFINED)
-        files = context.get('files', UNDEFINED)
-        crumbs = context.get('crumbs', UNDEFINED)
-        ui = _mako_get_namespace(context, 'ui')
-        title = context.get('title', UNDEFINED)
         def content():
             return render_content(context._locals(__M_locals))
+        messages = context.get('messages', UNDEFINED)
+        source_link = context.get('source_link', UNDEFINED)
+        title = context.get('title', UNDEFINED)
+        crumbs = context.get('crumbs', UNDEFINED)
+        files = context.get('files', UNDEFINED)
+        code = context.get('code', UNDEFINED)
+        ui = _mako_get_namespace(context, 'ui')
+        folders = context.get('folders', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n')
         __M_writer('\n')
@@ -56,16 +56,16 @@ def render_body(context,**pageargs):
 def render_content(context,**pageargs):
     __M_caller = context.caller_stack._push_frame()
     try:
-        folders = context.get('folders', UNDEFINED)
-        code = context.get('code', UNDEFINED)
-        messages = context.get('messages', UNDEFINED)
-        source_link = context.get('source_link', UNDEFINED)
-        files = context.get('files', UNDEFINED)
-        crumbs = context.get('crumbs', UNDEFINED)
-        ui = _mako_get_namespace(context, 'ui')
-        title = context.get('title', UNDEFINED)
         def content():
             return render_content(context)
+        messages = context.get('messages', UNDEFINED)
+        source_link = context.get('source_link', UNDEFINED)
+        title = context.get('title', UNDEFINED)
+        crumbs = context.get('crumbs', UNDEFINED)
+        files = context.get('files', UNDEFINED)
+        code = context.get('code', UNDEFINED)
+        ui = _mako_get_namespace(context, 'ui')
+        folders = context.get('folders', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n')
         __M_writer(str(ui.breadcrumbs(crumbs)))
@@ -105,6 +105,6 @@ def render_content(context,**pageargs):
 
 """
 __M_BEGIN_METADATA
-{"filename": "/Users/marcohassan/Desktop/python_venv/nikola/lib/python3.7/site-packages/nikola/data/themes/base/templates/listing.tmpl", "uri": "listing.tmpl", "source_encoding": "utf-8", "line_map": {"23": 3, "29": 0, "44": 2, "45": 3, "50": 24, "56": 4, "70": 4, "71": 5, "72": 5, "73": 6, "74": 7, "75": 8, "76": 9, "77": 9, "78": 9, "79": 9, "80": 9, "81": 11, "82": 12, "83": 12, "84": 12, "85": 12, "86": 12, "87": 14, "88": 16, "89": 17, "90": 17, "91": 17, "92": 18, "93": 19, "94": 19, "95": 19, "96": 19, "97": 19, "98": 21, "99": 22, "100": 22, "106": 100}}
+{"filename": "/Users/marcohassan/Desktop/python_venv/nikola/lib/python3.9/site-packages/nikola/data/themes/base/templates/listing.tmpl", "uri": "listing.tmpl", "source_encoding": "utf-8", "line_map": {"23": 3, "29": 0, "44": 2, "45": 3, "50": 24, "56": 4, "70": 4, "71": 5, "72": 5, "73": 6, "74": 7, "75": 8, "76": 9, "77": 9, "78": 9, "79": 9, "80": 9, "81": 11, "82": 12, "83": 12, "84": 12, "85": 12, "86": 12, "87": 14, "88": 16, "89": 17, "90": 17, "91": 17, "92": 18, "93": 19, "94": 19, "95": 19, "96": 19, "97": 19, "98": 21, "99": 22, "100": 22, "106": 100}}
 __M_END_METADATA
 """
