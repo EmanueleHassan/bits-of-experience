@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1613394738.416985
+_modified_time = 1613395093.8446238
 _enable_loop = True
 _template_filename = '/Users/marcohassan/Desktop/python_venv/nikola/lib/python3.9/site-packages/nikola/data/themes/base/templates/story.tmpl'
 _template_uri = 'story.tmpl'
@@ -41,12 +41,12 @@ def render_body(context,**pageargs):
         __M_locals = __M_dict_builtin(pageargs=pageargs)
         def content():
             return render_content(context._locals(__M_locals))
-        post = context.get('post', UNDEFINED)
-        math = _mako_get_namespace(context, 'math')
-        pheader = _mako_get_namespace(context, 'pheader')
-        enable_comments = context.get('enable_comments', UNDEFINED)
         messages = context.get('messages', UNDEFINED)
         comments = _mako_get_namespace(context, 'comments')
+        math = _mako_get_namespace(context, 'math')
+        enable_comments = context.get('enable_comments', UNDEFINED)
+        post = context.get('post', UNDEFINED)
+        pheader = _mako_get_namespace(context, 'pheader')
         site_has_comments = context.get('site_has_comments', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n')
@@ -69,12 +69,12 @@ def render_content(context,**pageargs):
     try:
         def content():
             return render_content(context)
-        post = context.get('post', UNDEFINED)
-        math = _mako_get_namespace(context, 'math')
-        pheader = _mako_get_namespace(context, 'pheader')
-        enable_comments = context.get('enable_comments', UNDEFINED)
         messages = context.get('messages', UNDEFINED)
         comments = _mako_get_namespace(context, 'comments')
+        math = _mako_get_namespace(context, 'math')
+        enable_comments = context.get('enable_comments', UNDEFINED)
+        post = context.get('post', UNDEFINED)
+        pheader = _mako_get_namespace(context, 'pheader')
         site_has_comments = context.get('site_has_comments', UNDEFINED)
         __M_writer = context.writer()
         __M_writer('\n<article class="post-')
