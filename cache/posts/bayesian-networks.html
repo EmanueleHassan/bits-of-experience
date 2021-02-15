@@ -25,9 +25,9 @@ Models - Principles and Techniques</i> (<a href="https://www.amazon.de/Probabili
 <!-- TEASER_END -->
 
 
-<div id="outline-container-orgdffcc86" class="outline-2">
-<h2 id="orgdffcc86">Bayesian Networks</h2>
-<div class="outline-text-2" id="text-orgdffcc86">
+<div id="outline-container-org12ecd33" class="outline-2">
+<h2 id="org12ecd33">Bayesian Networks</h2>
+<div class="outline-text-2" id="text-org12ecd33">
 <p>
 The general outlook.
 </p>
@@ -92,9 +92,9 @@ problem going quickly towards more complex situations.
 </p>
 </div>
 
-<div id="outline-container-orge0540db" class="outline-3">
-<h3 id="orge0540db">Representation</h3>
-<div class="outline-text-3" id="text-orge0540db">
+<div id="outline-container-org9514d2f" class="outline-3">
+<h3 id="org9514d2f">Representation</h3>
+<div class="outline-text-3" id="text-org9514d2f">
 <p>
 As mentioned bayesian networks allow us to express the joint
 through less parameters.
@@ -133,14 +133,142 @@ Notice there that instead of needing 2 (Diff) * 2 (Int) * 3
 (Grade) * 2 (Sat) * 2 (Let) = 48 parameters to describe the joint
 you simply need 2 + 2 + 12 + 6 = 22.
 </p>
+
+<p>
+Given this understanding it is immediate to see that Bayesian
+Networks are defined as above, i.e. as a graph data structure to
+which <i>local probabilities</i> are applied. In the specific each RV in
+the graph is associated with <i>conditional probability distributions
+(CPD)</i> that specify the distribution given each possible joint
+assignment of values to its parents. And the graph structure
+together with the CPD specifies the Bayesian Network.
+</p>
+
+<p>
+A <b>second</b> representation/ definition of Bayesian Networks is to
+define it via a <i>global probability P</i> together with the independence
+relations determined by the graph.
+</p>
+
+<p>
+To determine independence relations in graphs you can use standard
+logic where the argument is essentially the following:
+</p>
+
+<blockquote>
+<p>
+Our intuition tells us that the parents of a variable “shield” it
+from probabilistic influence that is causal in nature. In other
+words, once I know the value of the parents, no information
+relating directly or indirectly to its parents or other ancestors
+can influence my beliefs about it. However, information about its
+descendants can change my beliefs about it, via an evidential
+reasoning process. (Koller and Friedman)
+</p>
+</blockquote>
+
+<p>
+Such that you would have the following <i>local independence
+structures</i>:
+</p>
+
+<p>
+\[ For each variable X_i : (X_i \perp NonDescendants X_i | Parents
+   X_i) \]
+</p>
+
+<p>
+Notice that such set of independence is called an I-map for a
+probability distribution <i>P</i>. You then say that a graph <i>G</i> is an
+I-map for <i>P</i> if it satisfies the I-map relations specified <i>I(P)</i>.
+</p>
+
+<p>
+And you would ultimately have the following definition:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-02-15_um_14.50.38.png">
+
+<p>
+So that you basically take here the opposite direction, from a
+joint distribution <i>P</i> and the local independence structure you
+have a fully specified Bayesian Network.
+</p>
+
+<p>
+<b>Note</b> that you can go from one representation to the other and the
+BN is defined <b>if and only if</b> you can from one to the other.
+</p>
+</div>
+
+<div id="outline-container-orgaaf5130" class="outline-4">
+<h4 id="orgaaf5130">On Graph Dependencies and D-separation</h4>
+<div class="outline-text-4" id="text-orgaaf5130">
+<p>
+Given the above discussion and the fact that it is possible to
+determine the BN given a joint density and a Graph structure, the
+question now is on how to extract the conditional independence
+structures implied by a graph, i.e. to extract the I-map
+relations.
+</p>
+
+<p>
+In order to do that a simple algorithm exists the <i>d-separation
+algorithm</i>.
+</p>
+
+<p>
+The idea here is the following. You know that for three nodes X,
+Y, Z there exists a dependence structure between X and Y if one of
+the following conditions <b>hold</b>:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-02-15_um_15.18.31.png">
+
+<p>
+This is quite intuitive.
+</p>
+
+<p>
+It follows now that we can quickly assess whether two variables
+are generally conditionally independent by making reasonings
+leveraging the active trails as above.
+</p>
+
+<p>
+I.e. for two variables to be <b>dependent</b> there must be an active
+trail as defined by the conditions above.
+</p>
+
+<p>
+Notice that for instance in the student BN you can investigate
+the conditional independence between SAT and Difficulty as
+follows:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-02-15_um_15.25.30.png">
+
+
+<p>
+Generally it holds:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-02-15_um_15.26.42.png">
+
+<p>
+You can then find in the book an algorithm for checking
+d-separation, if interested at any point in time. Notice that
+there is are also reasonings about <i>completeness</i> and <i>soundness</i>
+of d-separation. I.e. how well that covers and fully specifies
+independence structures of <i>P</i>. 
+</p>
 </div>
 </div>
+</div>
 
-
-
-<div id="outline-container-orgde16974" class="outline-3">
-<h3 id="orgde16974">Inference</h3>
-<div class="outline-text-3" id="text-orgde16974">
+<div id="outline-container-orgae97fcf" class="outline-3">
+<h3 id="orgae97fcf">Inference</h3>
+<div class="outline-text-3" id="text-orgae97fcf">
 <p>
 An important exercise for inference is to query
 distributions. I.e. as said the task is to compute the probability
