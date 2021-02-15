@@ -1,0 +1,205 @@
+#+BEGIN_COMMENT
+.. title: Bayesian Networks
+.. slug: bayesian-networks
+.. date: 2021-02-15 11:23:13 UTC+01:00
+.. tags: Bayesian Networks
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+.. has_math: yes
+.. status: public
+#+END_COMMENT
+
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+</style>
+#+end_export
+
+
+Here are some Notes about the topic of my Master Thesis - Bayesian
+Networks.
+
+Note that most of these Notes are based on /Probabilistic Graphical
+Models - Principles and Techniques/ ([[https://www.amazon.de/Probabilistic-Graphical-Models-Principles-Computation/dp/0262013193][Koller and Friedman]]).
+
+{{{TEASER_END}}}
+
+
+* Bayesian Networks
+  :LOGBOOK:
+  CLOCK: [2021-02-15 Mon 12:50]--[2021-02-15 Mon 13:15] =>  0:25
+  CLOCK: [2021-02-15 Mon 11:27]--[2021-02-15 Mon 11:52] =>  0:25
+  :END:
+  
+The general outlook.
+
+So recall that in general you have three elements in Bayesian
+Networks:
+
+- Representation
+
+  - how do you represent the joint probability of the events as a
+    network (i.e. as a graph data structure)? Can such structure
+    represent the joint in a compact way due to the conditional
+    independence relations?
+
+    *Note 1:* that such compact formulation is one of the key benefits of
+    Bayesian Networks as it really gives the possibility of shrinking
+    the amount of parameters needed to describe the full joint
+    probability leveraging the independence structure among the RVs.
+
+    *Note 2:* this formulation is /transparent/, i.e. highly
+    understandable also to non-AI experts. It is so to say highly
+    explainable and in this new buzz of /explainable AI/ a solid
+    option.
+  
+- Inference
+
+  - given some information about some Parent variables, how can I
+    infer/compute the distribution of the children in the Network?
+  
+- Learning
+
+  - given some observed data, how can I use such information to
+    construct / (infer) / learn the  /structure/ of the network?
+
+  - given some observed data, how can I learn the /parameters/ of the
+    network? I.e. how can I use the information content of the data to
+    derive some plausible parameterization of the network.
+
+
+So these are the main tasks you have to deal with in Bayesian
+Networks. Basically you can do all of the three in a very simple way,
+which is from a theoretical standpoint very concrete and
+straightforward or you can start to consider all the aspects of the
+problem going quickly towards more complex situations.
+
+** Representation
+
+   As mentioned bayesian networks allow us to express the joint
+   through less parameters.
+
+   The idea is that you factorize the joint as a product of the
+   conditionals and given the parameterization of the conditionals you
+   fully specify the joint. Given the independence structures the
+   number of factorization of conditional terms is limited and the
+   overall necessary parameters to specify the joint small.
+
+   For instance if a Variable D is fully determined by its parents B,
+   C in this graph
+
+
+
+   #+begin_src plantuml :file ~/Desktop/Blog/images/bayesNet1.svg :exports none
+   @startuml
+   circle A
+   circle B
+   circle C
+   circle D
+
+
+   A --> B
+   A --> C
+
+   B --> D
+   C --> D
+   @enduml
+   #+end_src
+
+   #+RESULTS:
+   [[file:~/Desktop/Blog/images/bayesNet1.svg]]
+
+   #+begin_export html
+   <img src="../../images/bayesNet1.png" >
+   #+end_export
+
+   Then you might well understand that given B, C you do not need
+   P(D | A, B, C) parameters as P(D | B, C) suffices.
+
+   A concrete example is the following:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-02-15_um_13.21.25.png">
+#+end_export
+
+   Notice there that instead of needing 2 (Diff) * 2 (Int) * 3
+   (Grade) * 2 (Sat) * 2 (Let) = 48 parameters to describe the joint
+   you simply need 2 + 2 + 12 + 6 = 22.
+
+   
+
+** Inference
+
+   An important exercise for inference is to query
+   distributions. I.e. as said the task is to compute the probability
+   of the occurrence of some RV given some evidence /E/, i.e. a subset
+   of RVs that is observed.
+
+   So in general the task is to determine:
+
+   $$ P (Y | E = e) $$
+
+   where =Y = query variable= and =E = evidence=.
+
+   Given such definition of probability queries it is possible to
+   introduce the *first type* of query: /MAP queries/.
+
+   $$ MAP (W| e) = \operatorname*{argmax}_w P (w,e)$$
+
+   where W = all non-observed RV.
+
+   #+begin_quote
+   I.e. in MAP queries you are interested in finding the most likely
+   joint assignment of the non-observed variables given the evidence.
+
+   If you perform MAP queries for a single RV Y then you are basically
+   computing a probability query for all of the possible realizations
+   y and selecting the most probable one.
+
+   Notice that the joint prob. maximizing the likelihood might well
+   differ from the individual RV maximizing realization.
+   #+end_quote
+
+
+   A *second type of query* is: /Marginal MAP Query/:
+
+   The idea of this is well explained in the book via example.
+
+   Imagine you have a class of disease. You want to find the most
+   likely disease given your evidence. Assume that you observe a
+   subset of symptoms E = e. You want to find the MAP assignment of
+   the disease Y.
+
+   The issue is now that you have non-observed symptoms: Z.
+
+   If you now have a disease that has just a small number of
+   associated symptoms with high probability, and you observe such
+   symptoms, then your MAP query will likely select this realization
+   as most likely.
+
+   In reality there might well be a more likely realization - i.e. a
+   different RV that is associated with a lot of symptoms with small
+   probability. The result is that when taking that into account and
+   therefore considering the possible influence of non-observed
+   symptoms the conclusion might be well different.
+
+   For this it makes sense to consider /marginal MAP/ that tries in
+   fact to adjust for the presence of the other *non-observed RVs
+   influencing the outcome*.
+
+   $$ marginal MAP (Y | e) = \operatorname*{argmax}_Y  \sum_{Z}{P (Y,
+   Z | e)} $$
+
+   
+

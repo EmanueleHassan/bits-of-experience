@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Bayesian Networks | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/bayesian-networks/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../swagger-and-openapi/" title="Swagger and OpenAPI" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Bayesian Networks">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/bayesian-networks/">
+<meta property="og:description" content="img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+
+
+
+Here are some Notes about the topic of my Master Thes">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-02-15T11:23:13+01:00">
+<meta property="article:tag" content="Bayesian Networks">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Bayesian Networks</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2021-02-15T11:23:13+01:00" itemprop="datePublished" title="2021-02-15 11:23">2021-02-15 11:23</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/bayesian-networks/" rel="tag">Bayesian Networks</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+</style>
+<p>
+Here are some Notes about the topic of my Master Thesis - Bayesian
+Networks.
+</p>
+
+<p>
+Note that most of these Notes are based on <i>Probabilistic Graphical
+Models - Principles and Techniques</i> (<a href="https://www.amazon.de/Probabilistic-Graphical-Models-Principles-Computation/dp/0262013193">Koller and Friedman</a>).
+</p>
+
+<!-- TEASER_END -->
+
+
+<div id="outline-container-org5868c39" class="outline-2">
+<h2 id="org5868c39">Bayesian Networks</h2>
+<div class="outline-text-2" id="text-org5868c39">
+<p>
+The general outlook.
+</p>
+
+<p>
+So recall that in general you have three elements in Bayesian
+Networks:
+</p>
+
+<ul class="org-ul">
+<li>Representation
+
+<ul class="org-ul">
+<li>
+<p>
+how do you represent the joint probability of the events as a
+network (i.e. as a graph data structure)? Can such structure
+represent the joint in a compact way due to the conditional
+independence relations?
+</p>
+
+<p>
+<b>Note 1:</b> that such compact formulation is one of the key benefits of
+Bayesian Networks as it really gives the possibility of shrinking
+the amount of parameters needed to describe the full joint
+probability leveraging the independence structure among the RVs.
+</p>
+
+<p>
+<b>Note 2:</b> this formulation is <i>transparent</i>, i.e. highly
+understandable also to non-AI experts. It is so to say highly
+explainable and in this new buzz of <i>explainable AI</i> a solid
+option.
+</p>
+</li>
+</ul>
+</li>
+
+<li>Inference
+
+<ul class="org-ul">
+<li>given some information about some Parent variables, how can I
+infer/compute the distribution of the children in the Network?</li>
+</ul>
+</li>
+
+<li>Learning
+
+<ul class="org-ul">
+<li>given some observed data, how can I use such information to
+construct / (infer) / learn the  <i>structure</i> of the network?</li>
+
+<li>given some observed data, how can I learn the <i>parameters</i> of the
+network? I.e. how can I use the information content of the data to
+derive some plausible parameterization of the network.</li>
+</ul>
+</li>
+</ul>
+<p>
+So these are the main tasks you have to deal with in Bayesian
+Networks. Basically you can do all of the three in a very simple way,
+which is from a theoretical standpoint very concrete and
+straightforward or you can start to consider all the aspects of the
+problem going quickly towards more complex situations.
+</p>
+</div>
+
+<div id="outline-container-org2ae6d86" class="outline-3">
+<h3 id="org2ae6d86">Representation</h3>
+<div class="outline-text-3" id="text-org2ae6d86">
+<p>
+As mentioned bayesian networks allow us to express the joint
+through less parameters.
+</p>
+
+<p>
+The idea is that you factorize the joint as a product of the
+conditionals and given the parameterization of the conditionals you
+fully specify the joint. Given the independence structures the
+number of factorization of conditional terms is limited and the
+overall necessary parameters to specify the joint small.
+</p>
+
+<p>
+For instance if a Variable D is fully determined by its parents B,
+C in this graph
+</p>
+
+
+
+<img src="../../images/bayesNet1.png"><p>
+Then you might well understand that given B, C you do not need
+P(D | A, B, C) parameters as P(D | B, C) suffices.
+</p>
+
+<p>
+A concrete example is the following:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-02-15_um_13.21.25.png"><p>
+Notice there that instead of needing 2 (Diff) * 2 (Int) * 3
+(Grade) * 2 (Sat) * 2 (Let) = 48 parameters to describe the joint
+you simply need 2 + 2 + 12 + 6 = 22.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgc59dd24" class="outline-3">
+<h3 id="orgc59dd24">Inference</h3>
+<div class="outline-text-3" id="text-orgc59dd24">
+<p>
+An important exercise for inference is to query
+distributions. I.e. as said the task is to compute the probability
+of the occurrence of some RV given some evidence <i>E</i>, i.e. a subset
+of RVs that is observed.
+</p>
+
+<p>
+So in general the task is to determine:
+</p>
+
+<p>
+\[ P (Y | E = e) \]
+</p>
+
+<p>
+where <code>Y = query variable</code> and <code>E = evidence</code>.
+</p>
+
+<p>
+Given such definition of probability queries it is possible to
+introduce the <b>first type</b> of query: <i>MAP queries</i>.
+</p>
+
+<p>
+\[ MAP (W| e) = \operatorname*{argmax}_w P (w,e)\]
+</p>
+
+<p>
+where W = all non-observed RV.
+</p>
+
+<blockquote>
+<p>
+I.e. in MAP queries you are interested in finding the most likely
+joint assignment of the non-observed variables given the evidence.
+</p>
+
+<p>
+If you perform MAP queries for a single RV Y then you are basically
+computing a probability query for all of the possible realizations
+y and selecting the most probable one.
+</p>
+
+<p>
+Notice that the joint prob. maximizing the likelihood might well
+differ from the individual RV maximizing realization.
+</p>
+</blockquote>
+
+
+<p>
+A <b>second type of query</b> is: <i>Marginal MAP Query</i>:
+</p>
+
+<p>
+The idea of this is well explained in the book via example.
+</p>
+
+<p>
+Imagine you have a class of disease. You want to find the most
+likely disease given your evidence. Assume that you observe a
+subset of symptoms E = e. You want to find the MAP assignment of
+the disease Y.
+</p>
+
+<p>
+The issue is now that you have non-observed symptoms: Z.
+</p>
+
+<p>
+If you now have a disease that has just a small number of
+associated symptoms with high probability, and you observe such
+symptoms, then your MAP query will likely select this realization
+as most likely.
+</p>
+
+<p>
+In reality there might well be a more likely realization - i.e. a
+different RV that is associated with a lot of symptoms with small
+probability. The result is that when taking that into account and
+therefore considering the possible influence of non-observed
+symptoms the conclusion might be well different.
+</p>
+
+<p>
+For this it makes sense to consider <i>marginal MAP</i> that tries in
+fact to adjust for the presence of the other <b>non-observed RVs
+influencing the outcome</b>.
+</p>
+
+<p>
+\[ marginal MAP (Y | e) = \operatorname*{argmax}_Y  \sum_{Z}{P (Y,
+   Z | e)} \]
+</p>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../swagger-and-openapi/" rel="prev" title="Swagger and OpenAPI">Previous post</a>
+            </li>
+        </ul></nav></aside><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script></article><footer id="footer"><p>Contents © 2021         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

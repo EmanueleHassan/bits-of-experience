@@ -1,0 +1,242 @@
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+</style>
+
+
+<p>
+Here are some Notes about the topic of my Master Thesis - Bayesian
+Networks.
+</p>
+
+<p>
+Note that most of these Notes are based on <i>Probabilistic Graphical
+Models - Principles and Techniques</i> (<a href="https://www.amazon.de/Probabilistic-Graphical-Models-Principles-Computation/dp/0262013193">Koller and Friedman</a>).
+</p>
+
+<!-- TEASER_END -->
+
+
+<div id="outline-container-org8c2fa77" class="outline-2">
+<h2 id="org8c2fa77">Bayesian Networks</h2>
+<div class="outline-text-2" id="text-org8c2fa77">
+<p>
+The general outlook.
+</p>
+
+<p>
+So recall that in general you have three elements in Bayesian
+Networks:
+</p>
+
+<ul class="org-ul">
+<li>Representation
+
+<ul class="org-ul">
+<li><p>
+how do you represent the joint probability of the events as a
+network (i.e. as a graph data structure)? Can such structure
+represent the joint in a compact way due to the conditional
+independence relations?
+</p>
+
+<p>
+<b>Note 1:</b> that such compact formulation is one of the key benefits of
+Bayesian Networks as it really gives the possibility of shrinking
+the amount of parameters needed to describe the full joint
+probability leveraging the independence structure among the RVs.
+</p>
+
+<p>
+<b>Note 2:</b> this formulation is <i>transparent</i>, i.e. highly
+understandable also to non-AI experts. It is so to say highly
+explainable and in this new buzz of <i>explainable AI</i> a solid
+option.
+</p></li>
+</ul></li>
+
+<li>Inference
+
+<ul class="org-ul">
+<li>given some information about some Parent variables, how can I
+infer/compute the distribution of the children in the Network?</li>
+</ul></li>
+
+<li>Learning
+
+<ul class="org-ul">
+<li>given some observed data, how can I use such information to
+construct / (infer) / learn the  <i>structure</i> of the network?</li>
+
+<li>given some observed data, how can I learn the <i>parameters</i> of the
+network? I.e. how can I use the information content of the data to
+derive some plausible parameterization of the network.</li>
+</ul></li>
+</ul>
+
+
+<p>
+So these are the main tasks you have to deal with in Bayesian
+Networks. Basically you can do all of the three in a very simple way,
+which is from a theoretical standpoint very concrete and
+straightforward or you can start to consider all the aspects of the
+problem going quickly towards more complex situations.
+</p>
+</div>
+
+<div id="outline-container-org619f2e5" class="outline-3">
+<h3 id="org619f2e5">Representation</h3>
+<div class="outline-text-3" id="text-org619f2e5">
+<p>
+As mentioned bayesian networks allow us to express the joint
+through less parameters.
+</p>
+
+<p>
+The idea is that you factorize the joint as a product of the
+conditionals and given the parameterization of the conditionals you
+fully specify the joint. Given the independence structures the
+number of factorization of conditional terms is limited and the
+overall necessary parameters to specify the joint small.
+</p>
+
+<p>
+For instance if a Variable D is fully determined by its parents B,
+C in this graph
+</p>
+
+
+
+<img src="../../images/bayesNet1.png" >
+</div>
+</div>
+
+<div id="outline-container-orgdc91f46" class="outline-3">
+<h3 id="orgdc91f46">Inference</h3>
+<div class="outline-text-3" id="text-orgdc91f46">
+<p>
+An important exercise for inference is to query
+distributions. I.e. as said the task is to compute the probability
+of the occurrence of some RV given some evidence <i>E</i>, i.e. a subset
+of RVs that is observed.
+</p>
+
+<p>
+So in general the task is to determine:
+</p>
+
+<p>
+\[ P (Y | E = e) \]
+</p>
+
+<p>
+where <code>Y = query variable</code> and <code>E = evidence</code>.
+</p>
+
+<p>
+Given such definition of probability queries it is possible to
+introduce the <b>first type</b> of query: <i>MAP queries</i>.
+</p>
+
+<p>
+\[ MAP (W| e) = \operatorname*{argmax}_w P (w,e)\]
+</p>
+
+<p>
+where W = all non-observed RV.
+</p>
+
+<blockquote>
+<p>
+I.e. in MAP queries you are interested in finding the most likely
+joint assignment of the non-observed variables given the evidence.
+</p>
+
+<p>
+If you perform MAP queries for a single RV Y then you are basically
+computing a probability query for all of the possible realizations
+y and selecting the most probable one.
+</p>
+
+<p>
+Notice that the joint prob. maximizing the likelihood might well
+differ from the individual RV maximizing realization.
+</p>
+</blockquote>
+
+
+<p>
+A <b>second type of query</b> is: <i>Marginal MAP Query</i>:
+</p>
+
+<p>
+The idea of this is well explained in the book via example.
+</p>
+
+<p>
+Imagine you have a class of disease. You want to find the most
+likely disease given your evidence. Assume that you observe a
+subset of symptoms E = e. You want to find the MAP assignment of
+the disease Y.
+</p>
+
+<p>
+The issue is now that you have non-observed symptoms: Z.
+</p>
+
+<p>
+If you now have a disease that has just a small number of
+associated symptoms with high probability, and you observe such
+symptoms, then your MAP query will likely select this realization
+as most likely.
+</p>
+
+<p>
+In reality there might well be a more likely realization - i.e. a
+different RV that is associated with a lot of symptoms with small
+probability. The result is that when taking that into account and
+therefore considering the possible influence of non-observed
+symptoms the conclusion might be well different.
+</p>
+
+<p>
+For this it makes sense to consider <i>marginal MAP</i> that tries in
+fact to adjust for the presence of the other <b>non-observed RVs
+influencing the outcome</b>.
+</p>
+
+<p>
+\[ marginal MAP (Y | e) = \operatorname*{argmax}_Y  \sum_{Z}{P (Y,
+   Z | e)} \]
+</p>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org7afb2e1" class="outline-2">
+<h2 id="org7afb2e1">Local var</h2>
+<div class="outline-text-2" id="text-org7afb2e1">
+<p>
+Understand at some point why that is not working
+</p>
+
+<pre class="example" id="org41df300">
+# Local Variables:
+# eval: (add-hook 'after-save-hook 'org-icalendar-export-to-ics nil t)
+# eval: (add-hook 'after-save-hook 'write-buffer "test.org")
+# End:
+
+with just one comment mark it functions.
+</pre>
+</div>
+</div>

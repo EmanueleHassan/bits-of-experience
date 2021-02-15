@@ -33,9 +33,9 @@ pomodoro.
 </p>
 
 
-<div id="outline-container-org2aaeab1" class="outline-2">
-<h2 id="org2aaeab1">Org-Clocks</h2>
-<div class="outline-text-2" id="text-org2aaeab1">
+<div id="outline-container-org5287705" class="outline-2">
+<h2 id="org5287705">Org-Clocks</h2>
+<div class="outline-text-2" id="text-org5287705">
 <p>
 So the basic thing is to log all of your work. I.e. check how much
 time you needed to compute tasks. After all: <i>just if you can
@@ -70,9 +70,9 @@ tool. Quick usage through the shortcuts.
 </div>
 </div>
 
-<div id="outline-container-org2f03374" class="outline-2">
-<h2 id="org2f03374">Pomodoro</h2>
-<div class="outline-text-2" id="text-org2f03374">
+<div id="outline-container-orge5a30bf" class="outline-2">
+<h2 id="orge5a30bf">Pomodoro</h2>
+<div class="outline-text-2" id="text-orge5a30bf">
 <p>
 Let's go back to the pomodoro technique, the thing for which you
 actually started to dig into such time management tools. So
@@ -87,21 +87,37 @@ So the most popular package is the pomodoro one. You can install it
 as follows given that you are using the <code>use-package</code> package. 
 </p>
 
-<div class="highlight"><pre><span></span> <span class="p">(</span><span class="nf">use-package</span> <span class="nv">pomodoro</span>
-   <span class="nv">:ensure</span> <span class="nv">t</span>
-   <span class="nv">:init</span> <span class="p">(</span><span class="nf">pomodoro-add-to-mode-line</span><span class="p">))</span>
+<div class="highlight"><pre><span></span> <span class="c1">;; could not find it normally.</span>
+ <span class="c1">;; (use-package pomodoro</span>
+ <span class="c1">;;   :ensure t</span>
+ <span class="c1">;;   :init (pomodoro-add-to-mode-line))</span>
+
+
+ <span class="c1">;; use the quelpa mirror because of that</span>
+  <span class="p">(</span><span class="nf">use-package</span> <span class="nv">pomodoro</span>
+    <span class="nv">:quelpa</span> <span class="p">(</span><span class="nf">pomodoro</span> <span class="nv">:fetcher</span> <span class="nv">github</span> <span class="nv">:repo</span> <span class="s">&quot;emacsmirror/pomodoro&quot;</span><span class="p">)</span>
+    <span class="nv">:config</span> <span class="p">(</span><span class="nf">pomodoro-add-to-mode-line</span><span class="p">)</span>
+    <span class="nv">:bind</span> <span class="p">((</span><span class="s">&quot;C-c C-v s-p&quot;</span> <span class="o">.</span> <span class="nv">pomodoro-start</span><span class="p">)</span>
+	   <span class="p">(</span><span class="s">&quot;C-c C-v s-s&quot;</span> <span class="o">.</span> <span class="nv">pomodoro-stop</span><span class="p">))</span>
+	   <span class="p">(</span><span class="s">&quot;C-c C-x s-p&quot;</span> <span class="o">.</span> <span class="nv">pomodoro-pause</span><span class="p">)</span>
+	   <span class="p">(</span><span class="s">&quot;C-c C-x s-r&quot;</span> <span class="o">.</span> <span class="nv">pomodoro-resume</span><span class="p">))</span>
+    <span class="p">)</span>
 </pre></div>
 
+
 <p>
-In theory the documentations and forums say that once you do that
-you should have a <code>start-pomodoro</code> function. I do not see it in my
-emacs at the moment. A pity cause apparently through such a package
-you should also see the expiration time until the pomodoro on your
-bottom bar of your emacs.
+Good with the above quelpa mirror you managed to install it. Notice
+that here the functions to start your pomodoro timer is
+<code>pomodoro-start</code>. There are then a couple of functions to <code>pause</code>,
+<code>resume</code> etc. your pomodoro. Notice that here the time with the
+add-to-mode-line above is displayed in little on the bottom left of
+your mode-line. That is fine. Use this in general and not when
+editing org files. For this there is a better option that we will
+explore next.
 </p>
 
 <p>
-Anyways, another option that directly integrates with emacs org
+Another option that directly integrates with emacs org
 mode clocks previously described is the <code>org-pomodoro</code>
 package. That starts a clock as the <code>clock-in</code> command above and
 after 25 min. it should expire. I read that the notification when
