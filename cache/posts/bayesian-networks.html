@@ -25,9 +25,9 @@ Models - Principles and Techniques</i> (<a href="https://www.amazon.de/Probabili
 <!-- TEASER_END -->
 
 
-<div id="outline-container-orgb3bfefe" class="outline-2">
-<h2 id="orgb3bfefe">Bayesian Networks</h2>
-<div class="outline-text-2" id="text-orgb3bfefe">
+<div id="outline-container-orgd743f61" class="outline-2">
+<h2 id="orgd743f61">Bayesian Networks</h2>
+<div class="outline-text-2" id="text-orgd743f61">
 <p>
 The general outlook.
 </p>
@@ -92,9 +92,9 @@ problem going quickly towards more complex situations.
 </p>
 </div>
 
-<div id="outline-container-org09f3fb6" class="outline-3">
-<h3 id="org09f3fb6">Representation</h3>
-<div class="outline-text-3" id="text-org09f3fb6">
+<div id="outline-container-orgaa826bf" class="outline-3">
+<h3 id="orgaa826bf">Representation</h3>
+<div class="outline-text-3" id="text-orgaa826bf">
 <br>
 <br>
 
@@ -236,9 +236,9 @@ BN is defined <b>if and only if</b> you can from one to the other.
 </p>
 </div>
 
-<div id="outline-container-org12338fa" class="outline-4">
-<h4 id="org12338fa">On Graph Dependencies and D-separation</h4>
-<div class="outline-text-4" id="text-org12338fa">
+<div id="outline-container-orgf689337" class="outline-4">
+<h4 id="orgf689337">On Graph Dependencies and D-separation</h4>
+<div class="outline-text-4" id="text-orgf689337">
 <p>
 Given the above discussion and the fact that it is possible to
 determine the BN given a joint density and a Graph structure, the
@@ -295,15 +295,456 @@ You can then find in the book an algorithm for checking
 d-separation, if interested at any point in time. Notice that
 there is are also reasonings about <i>completeness</i> and <i>soundness</i>
 of d-separation. I.e. how well that covers and fully specifies
-independence structures of <i>P</i>. 
+independence structures of <i>P</i>.
 </p>
-</div>
+
+<p>
+I write in here the definition of <i>completeness</i> and <i>soundness</i>
+should it be of interest at any point at a later stage:
+</p>
+
+<p>
+<i>Soundness</i>:
+</p>
+
+<p>
+If two nodes X and Y are d-separated given some Z, then we are
+guaranteed that they are, conditionally independent given Z.
+</p>
+
+<p>
+<i>Completeness</i>:
+</p>
+
+<p>
+D-separation is complete if it detects all of the possible
+independencies. I.e. if two variables X and Y are independent
+given Z, then they are d-separated.
+</p>
+
+<p>
+Formally:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-02-19_um_09.32.33.png">
 </div>
 </div>
 
-<div id="outline-container-orga607d88" class="outline-3">
-<h3 id="orga607d88">Inference</h3>
-<div class="outline-text-3" id="text-orga607d88">
+<div id="outline-container-org867b37d" class="outline-4">
+<h4 id="org867b37d">On CPD</h4>
+<div class="outline-text-4" id="text-org867b37d">
+<p>
+So far we discussed the possibility of representing the
+high-dimensional joint distribution into a product of
+lower-dimensional CPDs or factors, i.e. a product of local
+probabilities models.
+</p>
+
+<p>
+In this section we explore more into the detail the possibility of
+representing such CPDs.
+</p>
+</div>
+
+
+<ul class="org-ul">
+<li><a id="org99d22e3"></a>Tabular CPD<br />
+<div class="outline-text-5" id="text-org99d22e3">
+<p>
+This is the most basics form of CPD. It works for spaces composed
+solely of <b>discrete</b> valued RV.
+</p>
+
+<p>
+It consists in expressing the \(P(X | PA_X)\) as a table that
+contains the joint probability of \(X \and PA_X\).
+</p>
+
+<p>
+This is essentially what was given in the example above.
+</p>
+
+<p>
+<b>Note:</b> it is important to realize that the number of joint
+probabilities that you have to express is given by
+</p>
+
+<p>
+\[|Val(PA_X)| * |Val(X)|\]
+</p>
+
+<p>
+I.e. it grows <i>exponentially</i> in the number of parents. This is a
+serious problem in many settings. You can also not ask an expert
+to express all such CPDs. He will loose patient at some point.
+</p>
+
+<p>
+So the idea is to find a mechanism to express each and every
+\(P(X | PA_X)\) for each X and \(PA_X\) but without doing the
+exercise explicitly.
+</p>
+
+<p>
+I.e. you should find a <i>functional formula CPD = f(X, PA<sub>X</sub>)</i> such
+that you can leverage some structures represented by the
+functional formula and do not have to express all of the
+probabilities individually.
+</p>
+
+<p>
+You can then read in the book some forms of such deterministic
+CPDs. The general idea is quite simple. There might be
+deterministic structures that naturally arise due to the
+structure of the modeled phenomena.
+</p>
+
+<p>
+Moreover for deterministic networks you might have the notion of
+<code>context specific independence</code>. Here the idea is that given some
+particular configuration \(X \cup Y \cup Z\) you might have
+independence of X and Y given Z in this particular configuration.
+</p>
+</div>
+</li>
+
+
+<li><a id="orge475d80"></a>Context Specific CPDs for non-deterministic dependecies<br />
+<div class="outline-text-5" id="text-orge475d80">
+<p>
+Structure in CPDs might not just arise in the case of
+context-specific CPDs.
+</p>
+
+<p>
+The idea is that often there is some structure such that for
+certain realizations a RV X given some partial assignment to some
+subset of parents $ U &sub; PA<sub>X</sub>$ the probability is fully
+specified and does not depend on the remaining parents.
+</p>
+
+<p>
+Two ways to capture such structure is through Tree-CPDs and
+rule-based CPDs.
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="org676690e"></a>Tree-CPDs<br />
+<div class="outline-text-6" id="text-org676690e">
+<p>
+This is a very intuitive structure for every human. In fact
+trees are used continuously. There is a natural tendencies for
+such structures in engineering so nothing new. You saw them 100s
+time.
+</p>
+
+<p>
+However, what is interesting is the example. In fact it is easy
+to see that by leveraging the tree structure, i.e. the context
+specific structure and the resulting independencies you can
+highly reduce the total number of parameters.
+</p>
+
+<p>
+To understand that think of the following example:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-02-19_um_12.01.18.png" class="center">
+
+<p>
+It is immediate then to see that the above highly reduces the
+number of parameters.
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-02-19_um_12.03.41.png" class="center">
+
+
+<p>
+Notice that when we talk we say that the Tree-CPDs represent the
+network context specific information. This is immediate to see
+as you do not in fact consider the full structure of the network, but
+you already factor out some of the independencies.
+</p>
+
+<p>
+To see that consider, the following case where you would have
+two recommendation letters and are applying for a job. You have
+to choose among the two. Then you can represent the case in the
+following ways:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-02-20_um_19.08.25.png" class="center">
+
+<p>
+It is clear that on the left you work at the network structure
+not leveraging context specific information while on (b) you
+already start to pack that in.
+</p>
+</div>
+</li>
+
+<li><a id="org83877ec"></a>Rule-based<br />
+<div class="outline-text-6" id="text-org83877ec">
+<p>
+Another possibility to pack information of the network structure
+by leveraging context specific information is via <code>rule-CPDs</code>.
+</p>
+
+<p>
+They are defined in the following way:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-02-20_um_19.31.28.png" class="center">
+
+
+<img src="../../images/Bildschirmfoto_2021-02-20_um_19.50.22.png" class="center">
+
+<p>
+It follows immediately that it basically consists in sets joint
+co-occurrences of RV and assigns probabilities to such cases.
+</p>
+
+<p>
+With it you can then basically express all sorts of CPDs
+structures that are based on some partitioning.
+</p>
+
+<p>
+It is in fact immediate to see that tree-CPDs can be easily
+expressed via rule-based CPDs but the converse is not true.      
+</p>
+</div>
+</li>
+</ul>
+</li>
+
+<li><a id="org16b6db4"></a>Independence of Causal Influence<br />
+<div class="outline-text-5" id="text-org16b6db4">
+<p>
+Here the idea is the case where you have a set of variables X<sub>i</sub>
+influencing Y, such that X<sub>i</sub> can influence Y in an arbitrary
+way. I.e. you assume that X<sub>i</sub> can interact with each other in
+complex ways making the <b>effect of each combination unrelated to
+any other possible combination</b>.
+</p>
+
+<p>
+Two such models that fulfill such characteristics are
+</p>
+
+<ul class="org-ul">
+<li>the noisy-or model</li>
+
+<li>the generalized linear models.</li>
+</ul>
+</div>
+
+<ul class="org-ul">
+<li><a id="org25a876b"></a>Noisy Or Model<br />
+<div class="outline-text-6" id="text-org25a876b">
+<p>
+This is a very simple model. If an event occurs then you have no
+100% guarantee that the usual reaction will occur. That is there
+is some noise in the model and some side reaction might happen.
+</p>
+
+<p>
+Think for instance at working hard at work. Then with 90% you
+might have a successful project. However, due to some random
+factor, say sudden cut of budget or company restructuring, your
+project might fail. This is the <i>noisy part</i> and the noisy or
+model.
+</p>
+
+<p>
+This is the general setting. It is then possible to express such
+a noisy model through a graphical representation.
+</p>
+
+<p>
+Think of the following:
+</p>
+
+<img src="../../images/bayesNet2.png">
+
+<p>
+It follows then that W<sub>1</sub> expresses the probability of the noisy
+factor taking place - i.e. budget restriction. Such that
+&lambda;<sub>W</sub> = P(W<sub>1</sub> | W) = 0.9. Where W = work hard and W<sub>1</sub> = normal condition.
+Notice now, the case where independently on your hard work the
+team mate hard work also affects the result. Then you could be
+in a situation as the following
+</p>
+
+
+<div  style ="height: 40%; width: 50%; margin:0 auto;">
+   <img src="../../images/bayesNet3.png">
+</div>
+
+<p>
+Again also the TW hard work induces a probability of success of
+95%, i.e. &lambda;_<sub>TW</sub> = P(TW<sub>1</sub> | TW) = 95%, and there is a 5%
+prob of failure due to restructuring and budget cut.
+</p>
+
+<p>
+This is essentially the Noisy-or model. You have a deterministic
+or relation influencing the project success - i.e. either your
+work or your team members work. You have noise, i.e. despite the
+factors you might have project failures due to some
+unpredictable conditions - noise. Overall the probability of
+success is given by products of lambdas. I.e. if both team work
+and individual work multiply both lambdas. If just one, then
+take the respective lambda etc.
+</p>
+
+<p>
+More formally such model is defined as:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-02-21_um_09.48.03.png" class="center">
+
+<p>
+Notice that the <i>leak probability</i> was not discussed that
+far. It consists of the probability of project success even in
+the case that no hard work - for neither myself nor the team
+members was put in the project.
+</p>
+
+<p>
+<b>Note</b> that in such a models the parameters would be represented
+by the estimation of the <i>different lambdas</i>.
+</p>
+</div>
+</li>
+
+<li><a id="orgcd4837b"></a>Generalized Linear Models<br />
+<div class="outline-text-6" id="text-orgcd4837b">
+<p>
+These are networks where the interaction among the variables is
+represented by generalized linear models you saw a couple of
+times in your studies.
+</p>
+
+<p>
+Recall that in generalized linear models you would have a linear
+model
+</p>
+
+<p>
+\[ f(X_1, ..., X_p) = \sum_{i}^{p} w_i * X_i  \]
+</p>
+
+<p>
+That would represent the load that the parents sets on the
+system. Where the load of each individual variable might be
+higher or lower and is therefore weighted.
+</p>
+
+<p>
+Then basically you would transform such a load into a
+probability by applying a sensible transformation that could
+well reflect the system work. I.e. a very wide used example is
+the S-shaped structure that can be modeled via logit or probit
+models.
+</p>
+
+<p>
+You can also start to make inference on what happens
+if&#x2026; cases. For instance in the book it is discussed on how, in
+the case of a binary model, the log-odd probability changes
+w.r.t. a change in one of the independent binary RV. This gives
+you an idea of some possible structures and relations that could
+occur in such models so that if representative of some real
+world situation you can leverage on this.
+</p>
+
+<p>
+<b>Note</b> that here once the transformation is defined the only
+parameters left are the weights/loads entering the linear part
+of the model. You should therefore specify these under this
+setting.
+</p>
+</div>
+</li>
+</ul>
+</li>
+
+
+<li><a id="org75184e7"></a>Continuous Variables<br />
+<div class="outline-text-5" id="text-org75184e7">
+<p>
+These are not discussed here. Have to move on. The idea is always
+the same. You now have some continuous variables, say Y and
+X. You would then have for instance a relation governed by a
+normal distribution where \(Y \sim N( \beta * X, \sigma^2)\).
+</p>
+
+<p>
+That would actually be the case when
+</p>
+
+<p>
+\[ Y = \beta_0 + \sum_{i = 1}^{P} \beta_i X_i + \epsilon \]
+</p>
+
+<p>
+where &epsilon; is gaussian N(0, &sigma;<sup>2</sup>). So again the usual
+stuff.
+</p>
+</div>
+</li>
+
+<li><a id="org88d40cb"></a>Hybrid Models<br />
+<div class="outline-text-5" id="text-org88d40cb">
+<p>
+Here the basic idea is that you have a network where you have a
+mixture of continuous and discrete variables affecting other
+variables.
+</p>
+
+<p>
+Then one possibility to model such hybrid situation is the
+following
+</p>
+
+
+<img src="../../images/Bildschirmfoto_2021-02-21_um_10.34.49.png" class="center">
+
+<p>
+Notice that such CLG model induces a mixture on the continuous
+parents Y. Moreover it does not allow to have <i>discrete
+children</i>. Notice moreover that the number of parameters here is
+exponential in the number of discrete variables.
+</p>
+
+<p>
+Another possibility to model hybrid models is via threshold
+models, where you would easily go from continuous parents to
+discrete children.
+</p>
+
+<p>
+Notice that these are just very basic possibilities and the idea -
+both here and in the book I guess - is to start to make you reason
+about how to model such situations. The possibilities are however
+uncountable and therefore it is up to you then on a project to
+spend some time at the beginning to engineer the entire model and
+decide on the setting.
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org6fec02d" class="outline-3">
+<h3 id="org6fec02d">Inference</h3>
+<div class="outline-text-3" id="text-org6fec02d">
 <p>
 An important exercise for inference is to query
 distributions. I.e. as said the task is to compute the probability
