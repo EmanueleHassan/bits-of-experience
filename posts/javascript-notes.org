@@ -1,0 +1,594 @@
+#+BEGIN_COMMENT
+.. title: JavaScript Notes
+.. slug: javascript-notes
+.. date: 2021-02-23 09:05:54 UTC+01:00
+.. tags: 
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+The time has come. It is the moment to start learning javascript. This
+is a quite fundamental technology. No need to tell you why. Everyone
+knows it.
+
+For a project I might maybe use =Node.js=. We will decide next week
+but in the meanwhile I will take 1-2h now to explore javascript.
+
+Note that this notes, are mainly taken from Javascript the Definitive
+Guide - 7th edition.
+
+After all you know it. It was standard. The only particular thing
+is the asynchronous javascript. But after your course on distributed
+systems algo it should be no difficulty to make sense of all of this.
+
+This is a must know language as being it the programming language of
+the web and with the rise of =Node.js= that brought it also out of the
+web into the backend it is by now the most used programming language
+among Software Developers. 
+
+{{{TEASER_END}}}
+
+* Characteristics of Javascript
+:properties:
+:header-args:js: :session "*Javascript REPL*"
+:end:
+  
+
+  - Javascript variables are untyped.
+
+  - To be useful, every language must have a platform, or /standard
+    library/, for performing things like basic input and output. The
+    core JavaScript language defines a minimal API for working with
+    *numbers, text, arrays, sets, maps*, and so on, but *does not include
+    any input or output* functionality. Input and output (as well as
+    more sophisticated features, such as networking, storage, and
+    graphics) are the responsibility of the “host environment” within
+    which JavaScript is embedded. 
+
+  - The original host environment for JavaScript was a web
+
+  - Since 2010, another host environment has been available for
+    JavaScript code. Node gives JavaScript access to the entire
+    operating system, allowing JavaScript programs to read and write
+    files, send and receive data over the network, and make and serve
+    HTTP requests.
+
+* First Quick Intro and Javascript in Org Babel
+:properties:
+:header-args:sh: :session "*Javascript REPL*" :results output
+:header-args:js: :session "*Javascript REPL*" :results silent
+:end:
+
+  Ok so usually people save their code into a javascript file, say
+  =hello.js= and then would run it via shell as =node hello.js=.
+
+  You can work in org babel in the following way.
+
+  See for instance the following snippet that amounts to a print
+  statement in python. Notice that the code will display on the
+  REPL. So you have to work with this opened. Could not find a way to
+  this stage to have a nicely formatted result in org-babel, directly
+  in org mode.
+
+#+BEGIN_SRC js
+console.log ("Hello world");
+#+END_SRC
+
+
+Note that already with such bigger chuncks it becomes not quite
+readable in org chuncks. The results is not parsed correctly for some
+reason. Would be good to understand that.
+
+#+BEGIN_SRC js
+console.log ("hello world");
+x = 3;
+console.log (x)
+#+END_SRC
+
+
+#+BEGIN_SRC js 
+// Anything following double slashes is an English-language comment.
+// Read the comments carefully: they explain the JavaScript code.
+
+// A variable is a symbolic name for a value.
+// Variables are declared with the let keyword:
+let x;                     // Declare a variable named x.
+
+// Values can be assigned to variables with an = sign
+x = 0;                     // Now the variable x has the value 0
+x                          // => 0: A variable evaluates to its value.
+
+// JavaScript supports several types of values
+x = 1;                     // Numbers.
+x = 0.01;                  // Numbers can be integers or reals.
+x = "hello world";         // Strings of text in quotation marks.
+x = 'JavaScript';          // Single quote marks also delimit strings.
+x = true;                  // A Boolean value.
+x = false;                 // The other Boolean value.
+x = null;                  // Null is a special value that means "no value."
+x = undefined;             // Undefined is another special value like null.
+#+END_SRC
+
+** Object
+
+   This is javascript most important datatype. It corresponds to the
+   dictionary in python. It is a collection of name/value pairs, or a
+   string to value  map
+
+   #+BEGIN_SRC js :results silent
+let book = {               // Objects are enclosed in curly braces.
+    topic: "JavaScript",   // The property "topic" has value "JavaScript."
+    edition: 7             // The property "edition" has value 7
+};                         // The curly brace marks the end of the object.
+
+// Access the properties of an object with . or []:
+book.topic                 // => "JavaScript"
+book["edition"]            // => 7: another way to access property values.
+book.author = "Flanagan";  // Create new properties by assignment.
+book.contents = {};        // {} is an empty object with no properties.
+book.contents;             // retrieve empty object
+   #+END_SRC
+
+   Note the following property
+
+   #+BEGIN_SRC js 
+let o = {x: 1}, p = {x: 1};  // Two objects with the same properties
+o === p                      // => false: distinct objects are never equal
+let a = [], b = [];          // Two distinct, empty arrays
+a === b                      // => false: distinct arrays are never equal
+   #+END_SRC
+
+   Note however:
+
+   #+BEGIN_SRC js 
+let a = [];   // The variable a refers to an empty array.
+let b = a;    // Now b refers to the same array.
+b[0] = 1;     // Mutate the array referred to by variable b.
+a[0]          // => 1: the change is also visible through variable a.
+a === b       // => true: a and b refer to the same object, so they are equal.
+   #+END_SRC
+
+   
+** Arrays
+
+   Standard stuff. Same as python lists
+
+   #+BEGIN_SRC js 
+// JavaScript also supports arrays (numerically indexed lists) of values:
+let primes = [2, 3, 5, 7]; // An array of 4 values, delimited with [ and ].
+primes[0]                  // => 2: the first element (index 0) of the array.
+primes.length              // => 4: how many elements in the array.
+primes[primes.length-1]    // => 7: the last element of the array.
+primes[4] = 9;             // Add a new element by assignment.
+primes[4] = 11;            // Or alter an existing element by assignment.
+let empty = [];            // [] is an empty array with no elements.
+empty.length               // => 0
+   #+END_SRC
+
+   Notice that Arrays and objects can hold other arrays and objects:
+
+#+BEGIN_SRC js 
+let points = [             // An array with 2 elements.
+    {x: 0, y: 0},          // Each element is an object.
+    {x: 1, y: 1}
+];
+let data = {                 // An object with 2 properties
+    trial1: [[1,2], [3,4]],  // The value of each property is an array.
+    trial2: [[2,3], [4,5]]   // The elements of the arrays are arrays.
+};
+#+END_SRC   
+
+   So up to now very similar syntax to Python.
+
+   
+** Shorthand Arithmetics
+
+   #+BEGIN_SRC js 
+// JavaScript defines some shorthand arithmetic operators
+let count = 0;             // Define a variable
+count++;                   // Increment the variable. Weird for some
+			   // reason it returns the number before in
+			   // the REPL.
+count--;                   // Decrement the variable
+count += 2;                // Add 2: same as count = count + 2;
+count *= 3;                // Multiply by 3: same as count = count * 3;
+count                      // => 6: variable names are expressions, too.
+   #+END_SRC
+
+   
+** Equality and Logical Operators
+
+   Notice that in contrast to python here equality is expressed by
+   triple /===/.
+
+   #+BEGIN_SRC js 
+x = 2; let y = 3;          // These = signs are assignment, not equality tests
+x === y;                   // => false: equality ;; notice that does
+			   // not type conversion.
+   #+END_SRC
+
+   For the logical operators it hold
+
+   #+BEGIN_SRC js 
+// Logical operators combine or invert boolean values
+(x === 2) && (y === 3)     // => true: both comparisons are true. && is AND
+(x > 3) || (y < 3)         // => false: neither comparison is true. || is OR
+!(x === y)                 // => true: ! inverts a boolean value
+   #+END_SRC
+
+
+   Notice that in Javascript there is also the usual equality. This is
+   the /==/ operator.
+
+   The “strict equality operator,” /===/, does not consider its operands
+   to be equal if they are not of the same type, and this is almost
+   always the right operator to use when coding. But because
+   JavaScript is so flexible with type conversions, it also defines
+   the /==/ operator with a flexible definition of equality. All of the
+   following comparisons are true, for example:
+
+   #+BEGIN_SRC js 
+null == undefined // => true: These two values are treated as equal.
+"0" == 0          // => true: String converts to a number before comparing.
+0 == false        // => true: Boolean converts to number before comparing.
+"0" == false      // => true: Both operands convert to 0 before comparing!
+   #+END_SRC
+
+   In contrast to this you can work with explicit conversions directly
+
+   #+BEGIN_SRC js 
+Number("3")    // => 3
+String(false)  // => "false":  Or use false.toString()
+Boolean([])    // => true
+   #+END_SRC
+
+   Other more fancy conversion styles include
+
+   #+BEGIN_SRC js
+x = 3
+x + ""   // => String(x)
++x       // => Number(x); i.e. back to a numeric variable
+   #+END_SRC
+
+   
+** Functions Syntax
+
+   #+BEGIN_SRC js 
+let square = function(x) { // Functions are values and can be assigned to vars
+    return x * x;          // Compute the function's value
+};                         // Semicolon marks the end of the assignment.
+
+square(y)                  // => 9: invoke the function above
+   #+END_SRC
+
+   There is also a shorthand notation for defining functions. Think of
+   it as a lambda function in python.
+
+   #+BEGIN_SRC js 
+const square = x => x * x;  // The input x maps to the output x * x
+
+square(4)                   // => 16
+   #+END_SRC
+
+
+   
+** Methods
+
+   When functions are assigned to the properties of an object, we call
+   them "methods." Notice that in javascript it is not necessary to go
+   as far as OOP to specifiy methods. Note that this is quite a cool
+   feature of Javascript that is not shared with Python.
+
+   All JavaScript objects (including arrays) have methods:
+   
+   #+BEGIN_SRC js 
+let a = [];                // Create an empty array
+a.push(1,2,3);             // The push() method adds elements to an array
+a.reverse();               // Another method: reverse the order of elements
+   #+END_SRC
+
+   We can define our own methods, too.
+
+   The "this" keyword refers to the object on which the method is
+   defined: in this case, the points array from earlier. I.e. the
+   points object we previously defined.
+   
+#+BEGIN_SRC js 
+points.dist = function() { // Define a method to compute distance between points
+    let p1 = this[0];      // First element of array we're invoked on
+    let p2 = this[1];      // Second element of the "this" object
+    let a = p2.x-p1.x;     // Difference in x coordinates
+    let b = p2.y-p1.y;     // Difference in y coordinates
+    return Math.sqrt(a*a + // The Pythagorean theorem
+                     b*b); // Math.sqrt() computes the square root
+};
+points.dist()              // => Math.sqrt(2): distance between our 2 points
+#+END_SRC
+
+
+
+** Flow control in Javascript
+
+   Just notice the syntax
+
+   #+BEGIN_SRC js 
+function abs(x) {          // A function to compute the absolute value.
+    if (x >= 0) {          // The if statement...
+        return x;          // executes this code if the comparison is true.
+    }                      // This is the end of the if clause.
+    else {                 // The optional else clause executes its code if
+        return -x;         // the comparison is false.
+    }                      // Curly braces optional when 1 statement per clause.
+}                          // Note return statements nested inside if/else.
+abs(-10) === abs(10)       // => true
+
+function sum(array) {      // Compute the sum of the elements of an array
+    let sum = 0;           // Start with an initial sum of 0.
+    for(let x of array) {  // Loop over array, assigning each element to x. Same as =for i in array= in Python.
+        sum += x;          // Add the element value to the sum.
+    }                      // This is the end of the loop.
+    return sum;            // Return the sum.
+}
+sum(primes)                // => 28: sum of the first 5 primes 2+3+5+7+11
+
+function factorial(n) {    // A function to compute factorials
+    let product = 1;       // Start with a product of 1
+    while(n > 1) {         // Repeat statements in {} while expr in () is true
+        product *= n;      // Shortcut for product = product * n;
+        n--;               // Shortcut for n = n - 1
+    }                      // End of loop
+    return product;        // Return the product
+}
+factorial(4)               // => 24: 1*4*3*2
+
+function factorial2(n) {   // Another version using a different loop
+    let i, product = 1;    // Start with 1
+    for(i=2; i <= n; i++)  // Automatically increment i from 2 up to n
+        product *= i;      // Do this each time. {} not needed for 1-line loops
+    return product;        // Return the factorial
+}
+factorial2(5)              // => 120: 1*2*3*4*5
+   #+END_SRC
+
+** Quick Intro to OOP in JavaScript
+
+   #+BEGIN_SRC js 
+class Point {              // By convention, class names are capitalized.
+
+    // Notice the constructor below corresponds to the __init__ in python.
+    
+    constructor(x, y) {    // Constructor function to initialize new instances.
+        this.x = x;        // This keyword is the new object being initialized.
+        this.y = y;        // Store function arguments as object properties.
+    }                      // No return is necessary in constructor functions.
+
+    // Class Method 
+    distance() {           // Method to compute distance from origin to point.
+        return Math.sqrt(  // Return the square root of x² + y².
+            this.x * this.x +  // this refers to the Point object on which
+            this.y * this.y    // the distance method is invoked.
+        );
+    }
+}
+
+// Use the Point() constructor function with "new" to create Point objects
+let p = new Point(1, 1);   // The geometric point (1,1).
+
+// Now use a method of the Point object p
+p.distance()               // => Math.SQRT2
+   #+END_SRC
+
+   *Note:* Technically, it is only JavaScript objects that have
+   methods. But numbers, strings, boolean, and symbol values behave as
+   if they have methods. In JavaScript, null and undefined are the
+   only values that methods cannot be invoked on.
+
+   
+** Multiline Comments
+
+#+BEGIN_SRC js 
+/*
+ * This is a multi-line comment. The extra * characters at the start of
+ * each line are not a required part of the syntax; they just look cool!
+ */
+#+END_SRC   
+
+
+** Constants
+
+   #+BEGIN_SRC js 
+const xx = 3;
+
+xx = 4  // will throw an error. constants are ment to stay
+	// constant. Nice feature missing from python
+   #+END_SRC
+
+   
+** Strings
+
+   Note that strings are *immutable*. They are primitives
+
+   #+BEGIN_SRC js 
+   miele =  'miele'
+   miele                  // => miele
+
+   miele[0]               // => m
+
+   miele[0] = 'r'         // does not throw an error but does not
+			  // update because of immutabilitiy.
+
+   miele                  // => miele
+
+   // Nonetheless you can change the entire string
+
+   miele = "latte"
+
+   miele                 // => latte
+
+   // Another example
+   let s = "hello";
+   s.toUpperCase();   // Returns "HELLO", but doesn't alter s
+   s                  // => "hello": the original string has not changed
+
+   // so you can use the above and assign it to a new variable
+   let s1 = s.toUpperCase();
+   s1                 // => "HELLO"
+   #+END_SRC
+
+   Note the possible syntax
+
+   #+BEGIN_SRC js 
+   // A string representing 2 lines written on one line:
+   'two\nlines'
+
+   // A one-line string written on 3 lines:
+   "one\
+    long\
+    line"
+
+   // A two-line string written on two lines:
+   `the newline character at the end of this line
+   is included literally in this string`
+   #+END_SRC
+
+
+   On math operators in strings. Same as python.
+
+   #+BEGIN_SRC js 
+   let msg = "Hello, " + "world";   // Produces the string "Hello, world"
+
+   let name = 'Marco'
+
+   let greeting = "Welcome to my blog," + " " + name;
+   #+END_SRC
+
+   Standard string methods
+
+   #+BEGIN_SRC js 
+let s = "Hello, world"; // Start with some text.
+
+// Obtaining portions of a string
+s.substring(1,4)        // => "ell": the 2nd, 3rd, and 4th characters.
+s.slice(1,4)            // => "ell": same thing
+s.slice(-3)             // => "rld": last 3 characters
+s.split(", ")           // => ["Hello", "world"]: split at delimiter string
+
+// Searching a string
+s.indexOf("l")          // => 2: position of first letter l
+s.indexOf("l", 3)       // => 3: position of first "l" at or after 3
+s.indexOf("zz")         // => -1: s does not include the substring "zz"
+s.lastIndexOf("l")      // => 10: position of last letter l
+
+// Boolean searching functions in ES6 and later
+s.startsWith("Hell")    // => true: the string starts with these
+s.endsWith("!")         // => false: s does not end with that
+s.includes("or")        // => true: s includes substring "or"
+
+// Creating modified versions of a string
+s.replace("llo", "ya")  // => "Heya, world"
+s.toLowerCase()         // => "hello, world"
+s.toUpperCase()         // => "HELLO, WORLD"
+s.normalize()           // Unicode NFC normalization: ES6
+s.normalize("NFD")      // NFD normalization. Also "NFKC", "NFKD"
+
+// Inspecting individual (16-bit) characters of a string
+s.charAt(0)             // => "H": the first character
+s.charAt(s.length-1)    // => "d": the last character
+s.charCodeAt(0)         // => 72: 16-bit number at the specified position
+s.codePointAt(0)        // => 72: ES6, works for codepoints > 16 bits
+
+// String padding functions in ES2017
+"x".padStart(3)         // => "  x": add spaces on the left to a length of 3
+"x".padEnd(3)           // => "x  ": add spaces on the right to a length of 3
+"x".padStart(3, "*")    // => "**x": add stars on the left to a length of 3
+"x".padEnd(3, "-")      // => "x--": add dashes on the right to a length of 3
+
+// Space trimming functions. trim() is ES5; others ES2019
+" test ".trim()         // => "test": remove spaces at start and end
+" test ".trimStart()    // => "test ": remove spaces on left. Also trimLeft
+" test ".trimEnd()      // => " test": remove spaces at right. Also trimRight
+
+// Miscellaneous string methods
+s.concat("!")           // => "Hello, world!": just use + operator instead
+"<>".repeat(5)          // => "<><><><><>": concatenate n copies. ES6
+   #+END_SRC
+
+   F-strings equivalent
+
+   #+BEGIN_SRC js 
+ name = "Marco";
+
+ // Note the special ` marks. With normal " it will not work.
+ greeting = `Hello ${ name }.`;  // greeting == "Hello Bill."
+
+ // Everything between ${ and the matching } is interpreted as a JavaScript expression.
+   #+END_SRC
+   
+
+** Null and Undefined
+
+=null= is a language keyword that evaluates to a special value that is
+usually used to indicate the absence of a value. Using the typeof
+operator on null returns the string “object”, indicating that null can
+be thought of as a special object value that indicates “no object”. In
+practice, however, null is typically regarded as the sole member of
+its own type, and it can be used to indicate “no value” for numbers
+and strings as well as objects. Most programming languages have an
+equivalent to JavaScript’s null: you may be familiar with it as NULL,
+nil, or None.
+
+JavaScript also has a second value that indicates absence of
+value. The =undefined= value represents a deeper kind of absence. It is
+the value of variables that have not been initialized and the value
+you get when you query the value of an object property or array
+element that does not exist. If you apply the typeof operator to the
+undefined value, it returns “undefined”, indicating that this value is
+the sole member of a special type.
+
+** Infinity, NaN and other numerical values
+
+   #+BEGIN_SRC js 
+  Infinity
+
+
+  NaN
+
+  Infinity/Infinity // => NaN
+
+  -1/Infinity // => -0; i.e. negative 0. Funny notion. Like limit.
+
+   -0 === 0 // => true; they are equal
+
+
+   // The following Number properties are defined in ES6. Note, Number is built-in
+   Number.parseInt()       // Same as the global parseInt() function
+   Number.parseFloat()     // Same as the global parseFloat() function
+   Number.isNaN(x)         // Is x the NaN value?
+   Number.isFinite(x)      // Is x a number and finite?
+   Number.isInteger(x)     // Is x an integer?
+   Number.isSafeInteger(x) // Is x an integer -(2**53) < x < 2**53?
+   Number.MIN_SAFE_INTEGER // => -(2**53 - 1)
+   Number.MAX_SAFE_INTEGER // => 2**53 - 1
+   Number.EPSILON          // => 2**-52: smallest difference between numbers
+   #+END_SRC
+
+   
+   
+** Peculiarities of JavaScript
+
+   JavaScript differs from more static languages in that functions and
+   classes are not just part of the language syntax: they are
+   /themselves values that can be manipulated by JavaScript programs/.
+
+   Like any JavaScript value that is not a primitive value, functions
+   and classes are a *specialized kind of object*.
+
+   The JavaScript interpreter performs *automatic garbage collection*
+   for memory management. This means that a JavaScript programmer
+   generally does not need to worry about destruction or deallocation
+   of objects or other values.
+
+   

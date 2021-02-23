@@ -622,6 +622,67 @@ problem going quickly towards more complex situations.
     decide on the setting.
 
     
+*** On Conditional Bayesian Networks
+
+    Recall that no matter the CPD definition resulting from the
+    network structure before jumping straight into the modeling of the
+    CPDs for the entire network it might well make sense to consider
+    to reduce the problem.
+
+    In some case you might have a general problem that could be split
+    into submodules. Each submodules would then be generally defined -
+    say exhaustive - over the entire network if *conditioning* on some
+    elements =X= and upon some output =Y= it's entire dependency with
+    the network would be sufficiently specified. All of the other
+    elements of the sub-module would be *encapsulated* in between.
+
+    An example could be for instance the one of expressing the
+    failures for a PC.
+
+    Then you might well start with determining the CPDs for each
+    component given the parents over the entire network. On the other
+    hand you might consider to decompose the problem, leveraging
+    /conditional Bayesian Network/.
+
+
+    Consider for instance the /hard drive/. Although the hard drive
+    has a rich internal state, the only aspects of its state that
+    influence objects outside the hard drive are whether it is working
+    properly and whether it is full. The Temperature input of the hard
+    drive in a computer is outside the probabilistic model and will be
+    mapped to the Temperature parent of the Hard-Drive variable in the
+    computer model.
+
+    You might then use the following Conditional CPDs to express the
+    system:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-02-21_um_12.19.59.png" class="center">
+#+end_export
+
+    More formally than what previously described, albeit a bit clumsy
+    ad definition in my opinion:
+
+    
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-02-21_um_12.21.17.png" class="center">
+#+end_export
+
+
+*** TODO Template Based Representations
+
+    Skipped and not even read to this stage. Here also temporal dependent models.
+
+    
+*** TODO Gaussian Network Models
+
+    Skipped and not even read to this stage.
+    
+*** TODO Exponential Families
+
+    Skipped and not even read to this stage. I guess it is simply the
+    generalization of gaussian Network Models to the different
+    exponential family distributions.
 
                 
 ** Inference
@@ -686,5 +747,242 @@ problem going quickly towards more complex situations.
    $$ marginal MAP (Y | e) = \operatorname*{argmax}_Y  \sum_{Z}{P (Y,
    Z | e)} $$
 
-   
+*** TODO Exact Inference
+    
+*** TODO Inference as Optimization
+    
+*** TODO Particle Based Approximate Inference
 
+    These are essentially the methods you saw in stochastic simulation
+    course. 
+
+*** TODO Map Inference
+
+*** TODO Inference in Hybrid Models and Temporal Models
+
+
+** Learning
+
+   I will do now some brief notes on Learning. This will likely be the
+   matter of my Thesis.
+
+   It makes sense therefore to focus now on this, given the little
+   time I have now and as I have to push a bit in order to set things
+   correctly into the pipeline.
+
+   Recall that the idea of Learning, is to learn, either (i) the network
+   structure, or (ii) the parameters of the model or (iii) both, from
+   the data.
+
+   In some domains, the amount of knowledge required is just too large
+   or the expert’s time is too valuable to ask one to set up and
+   construct all of the network.  In others, there are simply no
+   experts who have sufficient understanding of the domain.  In many
+   domains, the properties of the distribution change from one
+   application site to another or over time, and we cannot expect an
+   expert to sit and redesign the network every few weeks.
+
+   For all of these reasons learning model parameters and structure
+   from the data is particularly important.
+
+   Formally, we have a distribution P^* that is induced by a network
+   M^* = (K^*, \theta^*). Given a dataset D = (d[1], ..., d[m]) of M
+   samples of P^*. Notice that such data samples are i.i.d. P^*
+   distributed. Then given a some model family $\tilde{M}$ that
+   defines a probability $P_{\tilde{M}}$ (or $\tilde{P}$ when
+   $\tilde{M}$ is clear). I.e. we may want to learn only model
+   parameters for a fixed structure, or some or all of the structure
+   of the model.
+
+*** Goals of Learning
+
+    Notice that we want to construct a $\tilde{M}$ that precisely
+    represents the distribution P^*.
+
+    Because of the limited amount of data and the fact that we might
+    possibly have to estimate a very high-dimensional distribution it
+    is clear that in practice we must select an $\tilde{M}$ that is
+    just a *best* approximation of M^*.
+
+    To define what a *best* approximation is, we have to specify the
+    goals of learning such that we can quantify how well a
+    distribution approximates.
+
+    
+**** On a Precise Density Estimation
+
+     It is clear that if the goal of setting up a bayesian network is
+     the one of performing /inference/, then you might want to
+     *estimate the density at best* such that your inference will be the
+     most precise as possible.
+
+     I.e. you try to construct a model $\tilde{M}$ such that
+     $\tilde{P}$ is "close" to the generating distribution P^*.
+
+     In order to measure how close the two densities lie to each other
+     you can use the /relative entropy distance/:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-02-22_um_12.01.01.png" class="center" style = "width: 30% !important;">
+#+end_export
+
+     Notice however that in the above you implicitly assume that P^*
+     is known. Obviously this is not the case in many practical cases
+     and it is in fact what we aim to achieve.
+
+     A solution for this is the following:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-02-22_um_12.21.43.png" class="center">
+#+end_export
+
+     Continuing the sentence in the above, the -H_p term is the
+     negative entropy above and the second is the /expected
+     log-likelihood/. It is immediate to see that the second term is
+     higher, the higher the probability that $\tilde{M}$ gives to
+     points sampled from the true distribution. Where as for the true
+     distribution we will use the *sampled distribution* as an
+     approximation.
+
+     As a consequence of that, it holds however that the
+     log-likelihood as a metric for comparing one learned model to
+     another, we cannot evaluate a particular $\tilde{M}$ in how close
+     it is to the unknown optimum.
+
+     Notice moreover that in our discussion we will be interested in
+     the /likelihood/ of the data given the model M $l(D : M)$. (nota
+     bene la notation).
+
+     Another option for comparing how well a model fits a distribution
+     is through the notion of /loss functions/ $l(\xi : M)$. This
+     measures the loss a model $M$ makes on a particular data sample,
+     i.e. on an instance \xi.
+
+     This can be expressed as follows:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-02-22_um_12.54.30.png" class="center">
+#+end_export
+
+     
+**** Specific Prediction Tasks
+     :LOGBOOK:
+     CLOCK: [2021-02-22 Mon 14:15]--[2021-02-22 Mon 14:40] =>  0:25
+     :END:
+
+     Notice that when assuming that you want to learn the model to
+     perform probabilistic inference, you implicitly state that your
+     aim is to make conclusions on the overall distribution /P^*/.
+
+     I.e. in such a case you are interested in evaluating the
+     probability of a full instance \xi, i.e. the probability of an
+     occurrence/sample over/of the entire network.
+
+     In contrast to this setting in many situations we might be
+     interested in answering a whole range of queries of the form
+     P(Y | X).
+
+     For instance in a classification task we might be interested in
+     selecting an Y given X. We can then work in such a case with a
+     MAP assignment to Y, i.e.
+
+     $$h_{\tilde{P}} = \operatorname*{argmax}_y \tilde{P} (y | x)$$
+
+     We might then act similarly for other cases.
+
+     We might even use classification errors such as the standard =0/1
+     loss=.
+
+     Another option is to focus on the general extent to which our
+     learned model is able to predict data generated from the
+     distribution.
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-02-22_um_14.20.47.png" class="center" style = "width: 30% !important;">
+#+end_export
+
+     Notice that it is immediate to see that if we /negate/ the above
+     we immediately obtain a loss function to compute an empirical
+     estimate by taking the average relative to a data set.
+
+**** Knowledge Discovery
+     :LOGBOOK:
+     CLOCK: [2021-02-22 Mon 14:45]--[2021-02-22 Mon 15:10] =>  0:25
+     :END:
+
+     This is another possible goal in comparison to probabilistic
+     inference. Here the idea is that you want to understand important
+     properties of the domain by observing P^*.
+
+     I.e. what are the direct and indirect dependencies, what
+     characterizes the nature of the dependencies and so forth.
+
+     Of course, simpler statistical methods can be used to explore
+     the data, for example, by highlighting the most significant
+     correlations between pairs of variables. However, a learned
+     network model can provide parameters that have direct causal
+     interpretation and can also reveal much finer structure, for
+     example, by distinguishing between direct and indirect
+     dependencies, both of which lead to correlations in the
+     resulting distribution.
+
+     Notice that such a task requires a very different approach in
+     comparison to the prediction task.
+
+     In this setting, we really do care about reconstructing the
+     *correct model* $M^*$. While before we could well have distorted
+     reconstructed model $\tilde{M}$ as long as we would induce a
+     *distribution* similar to the one induced by $M^*$.
+
+     So in this task we are not interested in some metric stating the
+     difference in the distributions defined by the models but rather
+     as a measure of success we should take directly something
+     representing the distance between $\tilde{M}$ and $M^*$.
+
+     This is however *not always achievable*. Even, with a large
+     amounts of data, the true model might not be
+     /identifiable/. Recall in fact that for instance the =network
+     structure= itself $K^*$, might not be well identifiable due to
+     the I-map discussion of the representation chapter. The best we
+     can achieve in this sense is to recover an I-equivalent
+     structure.
+
+     Such problems are exacerbated when data is limited. It might be
+     difficult to detect the correlation of two nodes that are in fact
+     related in the true model and distinguish it from some spurious
+     correlation in the data. Note that such a limit is less prominent
+     in a *density estimation task*. The reasoning is that as if the
+     correlation does not appear in the data than it is likely to be a
+     weak one.
+
+     The relatively high probability of making model identification
+     errors can be significant if the goal is to discover the correct
+     structure of the underlying distribution. So here it is important
+     to make some *confidence* statement about the inferred
+     relationship.
+
+     Thus, in a knowledge discovery application, it is far more
+     critical to assess the confidence in a prediction, taking into
+     account the extent to which it can be identified given the
+     available data and the number of hypotheses that would give rise
+     to similar observed behavior. On how to deal with it will be
+     analyzed in the next sections.
+     
+**** On Learning as an Optimization Task
+
+     Notice that in the above sections we defined some numerical
+     criterion to define the extent to which the distributions are
+     comparable to each other.
+
+     Given such numerical measures that we wish to mini- or maximize,
+     it follows immediately that learning can be generally seen as an
+     /optimization/ exercise.
+
+     We have in fact a /hypothesis space/, that is a set of candidate
+     models and an objective function that we aim to optimize. So the
+     learning task essentially amounts to find a high-scoring model
+     within our model class.
+
+                         
+
+     
