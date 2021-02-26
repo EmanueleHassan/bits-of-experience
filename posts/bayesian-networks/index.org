@@ -839,25 +839,29 @@ problem going quickly towards more complex situations.
      negative entropy above and the second is the /expected
      log-likelihood/. It is immediate to see that the second term is
      higher, the higher the probability that $\tilde{M}$ gives to
-     points sampled from the true distribution. Where as for the true
-     distribution we will use the *sampled distribution* as an
-     approximation.
+     points, sampled from the true distribution. 
 
      As a consequence of that, it holds however that the
      log-likelihood as a metric for comparing one learned model to
      another, we cannot evaluate a particular $\tilde{M}$ in how close
-     it is to the unknown optimum.
+     it is to the unknown optimum as we have lost in the above the
+     baseline $E_{P^{*}(\xi)}(log (P^{*}(\xi)) - i.e. the first term
+     that we ignore as not depending on $\tilde{P}$.
 
      Notice moreover that in our discussion we will be interested in
-     the /likelihood/ of the data given the model M $l(D : M)$. (nota
-     bene la notation).
+     the /likelihood/ of the data given the model M - i.e. on $l(D :
+     M)$. (recall this notation).
 
      Another option for comparing how well a model fits a distribution
-     is through the notion of /loss functions/ $l(\xi : M)$. This
+     is through the notion of /loss functions/ $loss(\xi : M)$. This
      measures the loss a model $M$ makes on a particular data sample,
      i.e. on an instance \xi.
 
-     This can be expressed as follows:
+     Assume that you take loss function is expressed as the /negative
+     log-likelihood/, i.e. $loss(\xi : M) = -
+     \sum^{M}_{m=1}log(P(\xi[m]) : M)$.
+
+     Then it holds for the /expected loss/:
 
 #+begin_export html
  <img src="../../images/Bildschirmfoto_2021-02-22_um_12.54.30.png" class="center">
@@ -982,6 +986,74 @@ problem going quickly towards more complex situations.
      learning task essentially amounts to find a high-scoring model
      within our model class.
 
-                         
+     In the next section we go a bit deeper and analyze the
+     ramifications of choosing one objective function over the other.
 
+     
+***** Empirical Risk and Overfitting
+
+      As said one of the objective functions we might have is the
+      expected loss.
+
+      I.e. we are interested in minimizing $E_{\xi \sim
+      P^*}[loss(\xi : M)]$.
+
+      Notice, that as mentioned before as we do not know the
+      distribution P^* we work with the empirical distribution
+      \^{P_D}, this is given for an event /A/ as follows:
+
+      $$\^{P_D}(A) =  \frac{1}{M} \sum_m 1_{\xi{m} \in A} $$
+
+      i.e. the empirical distribution is the count of instances that
+      are elements of the event /A/ over all of the instances sampled
+      M. It is therefore the usual frequency.
+
+      Notice that as the number of training samples grows the
+      empirical distribution approaches the true distribution. This
+      due to the LLN.
+
+      So as you have not have no knowledge about the true P^*, you use
+      \^{P_D} as your true distribution and compute the empirical loss
+      over it.
+
+      However, note that there are important limits in such
+      approach. The dimension of Bayesian Networks distribution
+      increases exponentially in the number of nodes - i.e. especially
+      when nodes have multiple parents.
+
+      Consider for instance the following:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-02-26_um_11.03.43.png" class="center">
+#+end_export
+
+      Moreover, recall when using the empirical distribution the usual
+      issue of overfitting. I.e. it might be easy to get very high
+      accuracy given a possibly large number of parameters. Notice
+      however that the empirical dist does not have to be 100%
+      representative for the true distribution as discussed above. So
+      recall that.
+
+
+      Recall the standard *bias-variance trade off* in this sense. We
+      are in the following /standard statistical dilemma/.
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-02-26_um_11.21.58.png" class="center">
+#+end_export
+
+      So generally we must take care *not to allow a too rich class of
+      possible models*.
+
+      
+
+
+
+
+      
+
+      
+
+      
+      
      
