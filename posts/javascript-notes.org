@@ -77,14 +77,9 @@ console.log ("Hello world");
 #+END_SRC
 
 
-Note that already with such bigger chuncks it becomes not quite
-readable in org chuncks. The results is not parsed correctly for some
-reason. Would be good to understand that.
-
 #+BEGIN_SRC js
 console.log ("hello world");
 x = 3;
-console.log (x)
 #+END_SRC
 
 
@@ -111,6 +106,8 @@ x = null;                  // Null is a special value that means "no value."
 x = undefined;             // Undefined is another special value like null.
 #+END_SRC
 
+* JavaScript Citizens
+
 ** Object
 
    This is javascript most important datatype. It corresponds to the
@@ -131,7 +128,7 @@ book.contents = {};        // {} is an empty object with no properties.
 book.contents;             // retrieve empty object
    #+END_SRC
 
-   Note the following property
+   Note the following property - two objects are *never equal*
 
    #+BEGIN_SRC js 
 let o = {x: 1}, p = {x: 1};  // Two objects with the same properties
@@ -198,10 +195,20 @@ count                      // => 6: variable names are expressions, too.
    #+END_SRC
 
    
+** Shorthand Declaration
+
+   #+BEGIN_SRC js 
+let [x,y] = [1,2];  // Same as let x=1, y=2
+[x,y] = [x+1,y+1];  // Same as x = x + 1, y = y + 1
+[x,y] = [y,x];      // Swap the value of the two variables
+[x,y]               // => [3,2]: the incremented and swapped values
+   #+END_SRC
+
+
 ** Equality and Logical Operators
 
-   Notice that in contrast to python here equality is expressed by
-   triple /===/.
+   Notice that in contrast to python here equality (strict equality
+   without conversion) is expressed by triple /===/.
 
    #+BEGIN_SRC js 
 x = 2; let y = 3;          // These = signs are assignment, not equality tests
@@ -236,6 +243,9 @@ null == undefined // => true: These two values are treated as equal.
 "0" == false      // => true: Both operands convert to 0 before comparing!
    #+END_SRC
 
+
+** Casting
+   
    In contrast to this you can work with explicit conversions directly
 
    #+BEGIN_SRC js 
@@ -308,7 +318,6 @@ points.dist()              // => Math.sqrt(2): distance between our 2 points
 #+END_SRC
 
 
-
 ** Flow control in Javascript
 
    Just notice the syntax
@@ -352,6 +361,98 @@ function factorial2(n) {   // Another version using a different loop
 factorial2(5)              // => 120: 1*2*3*4*5
    #+END_SRC
 
+*** On Using Const in Loops
+
+    This is handy and it is a further guarantee that you will not mess
+    up with the variable when looping.
+
+    It may seem surprising, but you can also use const to declare the
+    loop “variables” for for/in and for/of loops, as long as the body
+    of the loop does not reassign a new value. In this case, the const
+    declaration is just saying that the value is *constant for the
+    duration of one loop iteration*:
+
+    #+BEGIN_SRC js
+    // Example
+    for(const datum of data) console.log(datum);
+    for(const property in object) console.log(property);
+    #+END_SRC
+
+
+** Variables Scope    
+
+    The scope of a variable is the region of your program source code in
+    which it is defined. Variables and constants declared with let and
+    const are block scoped. This means that they are only defined within
+    the block of code in which the let or const statement
+    appears.
+
+    JavaScript class and function definitions are blocks, and so are the
+    bodies of if/else statements, while loops, for loops, and so on.
+
+    Roughly speaking, if a variable or constant is declared within a set
+    of curly braces, then those curly braces delimit the region of code in
+    which the variable or constant is defined.
+
+    When a declaration appears at the top level, outside of any code
+    blocks, we say it is a global variable or constant and has global
+    scope.
+
+    In =Node= and in client-side JavaScript modules (see Chapter
+    10), the scope of a global variable is the *file that it is defined
+    in*.
+
+    In traditional client-side JavaScript, however, the scope of a
+    global variable is the *HTML document* in which it is defined. That
+    is: if one <script> declares a global variable or constant, that
+    variable or constant is defined in all of the <script> elements in
+    that document (or at least all of the scripts that execute after
+    the let or const statement executes).
+
+*** Warning BAD PRACTICE
+
+    It is a syntax error to use the *same name* with more than one let
+    or const declaration *in the same scope*. It is legal (though a
+    practice best avoided) to declare a new variable with the same
+    name in a nested scope:
+
+    #+BEGIN_SRC js 
+const x = 1;        // Declare x as a global constant
+if (x === 1) {
+    let x = 2;      // Inside a block x can refer to a different value
+    console.log(x); // Prints 2
+}
+console.log(x);     // Prints 1: we're back in the global scope now
+let x = 3;          // ERROR! Syntax error trying to re-declare x
+    #+END_SRC
+   
+
+** Var vs Let - Warning quite Different
+
+    Variables declared with var *do not have block scope*. Instead, they
+    are scoped to the body of the containing function no matter how
+    deeply nested they are inside that function.
+
+    If you use var outside of a function body, it declares a global
+    variable. But global variables declared with var differ from
+    globals declared with let in an important way. Globals declared
+    with var are implemented as properties of the global object
+    (§3.7). The global object can be referenced as globalThis.
+
+    So if you write var x = 2; outside of a function, it is like you
+    wrote globalThis.x = 2;
+
+    Unlike variables declared with let, it is *legal to declare the
+    same variable multiple times with var*. I.e. =let= one time and
+    that was it.
+
+    One of the most unusual features of var declarations is known as
+    =hoisting=. When a variable is declared with var, the declaration is
+    /lifted up (or “hoisted”) to the top of the enclosing function/. The
+    initialization of the variable remains where you wrote it, but the
+    definition of the variable moves to the top of the function.
+
+    
 ** Quick Intro to OOP in JavaScript
 
    #+BEGIN_SRC js 
@@ -547,6 +648,7 @@ element that does not exist. If you apply the typeof operator to the
 undefined value, it returns “undefined”, indicating that this value is
 the sole member of a special type.
 
+
 ** Infinity, NaN and other numerical values
 
    #+BEGIN_SRC js 
@@ -575,6 +677,31 @@ the sole member of a special type.
    #+END_SRC
 
    
+
+** Regex
+
+   Notice the following interesting fact. When searching for Regex you
+   do not do it through a package. You do it by *declaring* a
+   variable with your regex expression. This will be interpreted as
+   some object. It is in fact a datatype known as RegExp and it has
+   several *methods* associated with it to deal with regexp stories.
+
+#+BEGIN_SRC js 
+let text = "testing: 1, 2, 3";   // Sample text
+
+// See below how you define your regexp variable
+let pattern = /\d+/g;            // Matches all instances of one or more digits
+
+// Some methods associated to the object.
+pattern.test(text)               // => true: a match exists
+
+// Some methods associated with the string object
+text.search(pattern)             // => 9: position of first match
+text.match(pattern)              // => ["1", "2", "3"]: array of all matches
+text.replace(pattern, "#")       // => "testing: #, #, #"
+text.split(/\D+/)                // => ["","1","2","3"]: split on nondigits
+#+END_SRC
+
    
 ** Peculiarities of JavaScript
 
