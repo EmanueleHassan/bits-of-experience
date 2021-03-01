@@ -908,6 +908,7 @@ problem going quickly towards more complex situations.
      we immediately obtain a loss function to compute an empirical
      estimate by taking the average relative to a data set.
 
+
 **** Knowledge Discovery
      :LOGBOOK:
      CLOCK: [2021-02-22 Mon 14:45]--[2021-02-22 Mon 15:10] =>  0:25
@@ -971,6 +972,7 @@ problem going quickly towards more complex situations.
      to similar observed behavior. On how to deal with it will be
      analyzed in the next sections.
      
+
 **** On Learning as an Optimization Task
 
      Notice that in the above sections we defined some numerical
@@ -1180,6 +1182,7 @@ problem going quickly towards more complex situations.
         outperform the generatively trained models for large data
         sets.
 
+
 **** On Learning Tasks - Flavors determining different class of tasks
 
      We will look here in greater detail to the different variants of
@@ -1205,13 +1208,157 @@ problem going quickly towards more complex situations.
 
 ***** On Model Constraints
 
+      A non-reducing analysis is impossible as there is theoretically
+      an unbounded set of options here.
+
+      The most common constraints on our model are $\tilde{M}$ are
+      the following:
+
+      - we are given a graph structure and we only have to learn some
+        of the parameters. Here we do not assume that the graph
+        structure corresponds to the correct one, i.e. to K^*.
+
+      - we do not know the structure and have to learn both parameters
+        and structure.
+
+      - we may not know the *set of variables* over which the
+        distribution P^* is defined. I.e. we might observe just a
+        /subset/ of these variables.
+
+      Notice that no matter the case the less prior knowledge we are
+      given, the /larger the hypothesis space/ and the more
+      possibilities we need to consider when choosing the model.
+
+      Recall that for larger models you face the statistical trade off
+      of /variance-bias/ discussed before.
+
+      Moreover, on top of that it is important to see that there is a
+      /computational trade-off/ as well: the richer the hypothesis
+      space, the more difficult the search to find a high-scoring
+      model.
+
 ***** On Data Observability
 
-      Notice that in the thesis you will move in this direction.
+      Notice that in the thesis you will move in this direction. Here
+      the case is whether we are always able to observe the
+      realization of a RV of the bayesian network or not.
+
+      I.e. there are essentially /two cases/:
+
+      1) complete data: in this case data are /fully observed/. I.e. for
+         each of our training instances d[m] is a full instantiation in
+         all of the variables spanning our bayesian network.
+
+      2) incomplete data: in this case data are /partially
+         observed/. In each training instance d[m], some variables are not
+         observed.
+
+      3) hidden variables: here the values of such variables is *never
+         observed* in any training instance d[m]. This can represent
+         both the case of some RV that is not modeled in the bayesian
+         network as we do not know of its existence, as well as the
+         case when we know of the existence of such RV but we never
+         have the chance to observe it.
+
+      Note that as we will see the usual technique to deal with
+      unobservable data is the one of /hypothesize possible values/
+      for these variables.
+
+      The greater the extent to which *data are missing*, the less we
+      are able to hypothesize reliably values for the missing entries.
+
+      Note, moreover, that modeling hidden variables is important for
+      knowledge discovery. These are important to understand and
+      properly map the relation among variables. Think for instance in
+      a medical application, you want to make sure that you ascribe
+      the correct relation among two RV.
+
+      Note, furthermore, that modeling hidden variables might highly
+      reduce the complexity of the model. It is in fact possible to
+      leverage conditional independencies given hidden variables. To
+      make that visual consider the following:
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-01_um_11.05.36.png" class="center">
+#+end_export
+
+***** Taxonomy of Learning task
+
+      Depending on the dimension of the axis described above - i.e. on
+      the specifics of the learning task we might end up in different
+      situations.
+
+      I.e.
+
+      - in the case of parameter learning *with known structure*, the
+        problem is of the class of *numerical optimization*.
+
+      - in the case of bayesian learning with *fixed structure and
+        with complete data*, the parameter learning is easily solved
+        and it is sometimes even possible to find closed form
+        solutions. I.e. no need to go in the numerical optimization
+        dimension. Even when this is not the case the optimization
+        problem is convex and can be solved easily by iterated
+        numerical optimization algorithms. Note, however that such
+        algorithm often requires /inference over the entire network/.
+
+      - in the case the *structure is not given*, the problem
+        incorporates an additional level of complexity. The hypothesis
+        space contains an enormous - generally super-exponentially
+        large - set of possible structures. here the problem of
+        *structure selection* is generally also formulated as an
+        optimization problem. I.e. we have different structures and we
+        assign a score to them w.r.t. how well they manage to map the
+        information of interest. We aim then to find the network whose
+        score is the highest and this is essentially the /optimization
+        task/. Note that the /score/ assigned to each network can be
+        computed in /closed form/.
+
+      - in the case of *incomplete data* the problem is nasty. Here
+        multiple hypotheses regarding the values of unobserved
+        variables give rise to a *combinatorial range of different
+        alternative models*. This induce a non-convex, *multimodal
+        optimization problem*. In order to solve this it is common
+        practice to use the EM-algorithm. This suffers from the fact
+        that requires usually *multiple calls to inference as a
+        subroutine* making the process expensive for large
+        networks. Note, that if the *structure on the top of it is not
+        known*, it is even harder to come to a solution since we need
+        to *combine a discrete search over the network structure with a
+        non-convex optimization problem over the parameter space*.
+
+
+      Given this general outline it is now possible to go in the
+      different outlined cases in turn and see how to deal with them.
+
+*** Parameter Estimation
+
+    So we start here with the first learning case. I.e. we start with
+    parameter learning in the case of *known network structure* and
+    *fully observed instances* $D = {\xi[1], ..., \xi[m]}$.
+
+    Note, that this is also the building block for both structure
+    learning as well as learning from incomplete data.
+
+    There are in general two approaches to dealing with such parameter
+    estimation tasks:
+
+    1) Maximum Likelihood Estimation
+
+    2) Bayesian Appraoch
+
+    We will explore the two next
+
+
+    
+**** Maximum Likelihood - Parameter Estimation
+
+     6;3; 7; 9; 12; 17; 19
+     
+**** Bayesian - Parameter Estimation
+
+    
       
 
-      
-
-      
 
      
