@@ -1070,11 +1070,148 @@ problem going quickly towards more complex situations.
       (ii) on the other hand, we use an optimization objective
       function that /leads us away from overfitting/.
 
+      
+***** Validation (Interesting formalization of PAC bounds)
+
       You can then test how well you achieved your results using
       cross-validation and holdout standard techniques.
 
+      Notice that another interesting technique to determine how well
+      the learned model is performing is to compute *PAC bounds*. This
+      is something I did not encounter in my memory under this name in
+      my Stat courses.
+
+      Recall that we cannot guarantee with certainty the quality of
+      the learned model. Recall that the data set D is sampled
+      stochastically from P^*. There is always chance that we would
+      have "bad luck" and sample a very unrepresentative data set so
+      that our empirical distribution will be very off. So with *PAC
+      bounds* that is probably approximately correct bounds, we want
+      to compute the probability of such very bad outcome and make
+      sure it is small enough.
+
+      I am pretty sure that this is what we did in the class of
+      distribution system without stating this explicitly under this
+      name. There we also saw computed the probability of very bad
+      outcomes when implementing shared coin algorithms.
+
+      So formally our goal is to prove that our learning procedure is
+      probably approximately correct, that is for *most training sets
+      D* the learning procedure will return a model whose error is
+      low.
+
+      I.e. assume the /relative entropy/ as the loss function. Let
+      P^{*}_{M} be the distribution over the data sets D of size M
+      sampled IID from P^{*}. Now assume that a /given learning
+      procedure L/ returns a model M_{L(D)}. We search for *PAC bounds*
+      a results of the forms:
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-02-26_um_16.18.45.png" class="center">
+#+end_export
+
+      The number of samples M required to achieve such a bound is then
+      called the *sample complexity*.
+
+      *Note* - Important when computing PAC bounds is the following,
+      and that has well to be kept in mind:
+
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-02-26_um_16.21.47.png" class="center">
+#+end_export
+
+
+***** Discriminative vs Generative Training
+
+      This goes back to the previous analysis. We discussed how we
+      might well be interested in a precise density estimation of the
+      *entire distribution* P^*. However, we might also be interested
+      in some more *specific prediction task*.
+
+      Depending on it we have the different notion of discriminative
+      vs generative training. Consider in fact the case where we
+      want the model to perform well on a particular task, such as
+      predicting $X$ from $Y$.
+
+      Then, on the one hand, when we want to estimate the /entire
+      distribution/ we want a /training regime/ that would aim to get
+      the model $\tilde{M}$ close to the overall joint distribution
+      P^{*}(X, Y). This type of training is termed *generative
+      training*. This because we use use the trained model to
+      /generate/ all of the variables.
+
+      Alternatively we can train the model /discriminatively/. Our
+      goal then is to get $\tilde{P}(Y|X)$ to be close to
+      $P^{*}(Y|X)$.
+
+      Note that a model that is trained generatively can still be
+      used for the specific prediction tasks. However, the converse
+      does not hold true.
+
+      Note, that on top of it discriminative training is less
+      appealing in Bayesian Networks as most of the computational
+      properties that facilitate Bayesian network learning do not
+      carry through to discriminative training. For this reason this
+      form of training is usually *performed in the context of
+      undirected models*.
+
+      Notice finally that there is a series of trade-off to consider
+      when deciding among /discriminative/ and /generative/ models.
+
+      - Generally, generative models have /higher bias/. Make more
+        assumptions about the form of the distribution. They encode
+        independence assumptions about the feature variables X. In
+        contrast discriminative models just make independence
+        assumptions on Y and about their dependence with X.
+
+	Notice that this additional bias may not have to be strictly
+        bad. It might help for standard bias-variance trade
+        off. I.e. it might help to regularize and constrain the
+        learned model. On the other hand you might get hurt due to
+        the additional constraint you would set estimating the entire
+        model when your interest is on some conditional setting.
+
+	Note, moreover, that as the amount of data grows the bias
+        effect would dominate as the variance would decrease.
+
+        Therefore as discriminative tend to be less affected by
+        incorrect model assumptions and because they will often
+        outperform the generatively trained models for large data
+        sets.
+
+**** On Learning Tasks - Flavors determining different class of tasks
+
+     We will look here in greater detail to the different variants of
+     the learning tasks.
+
+     The input of the learning procedure is the following:
+
+     - Some prior knowledge or constraints about $\tilde{M}$
+
+     - A set D of data instances {d[1], ..., d[M]}. Note again that as
+       used throughout these notes a data instance is a data sample
+       over the entire network.
+
+     The output is then the model $\tilde{M}$, that might include
+     structure, parameters or both.
+
+     There are many variants of this fairly abstract learning
+     problem. These depends on:
+
+     - the extent of the constraints hat we are given about $\tilde{M}$
+
+     - the extent to which the data are fully observed
+
+***** On Model Constraints
+
+***** On Data Observability
+
+      Notice that in the thesis you will move in this direction.
       
 
+      
 
+      
 
      
