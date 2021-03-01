@@ -34,7 +34,6 @@ Models - Principles and Techniques/ ([[https://www.amazon.de/Probabilistic-Graph
 
 {{{TEASER_END}}}
 
-
 * Bayesian Networks
   :LOGBOOK:
   CLOCK: [2021-02-15 Mon 14:27]--[2021-02-15 Mon 14:52] =>  0:25
@@ -479,7 +478,7 @@ problem going quickly towards more complex situations.
    [[file:~/Desktop/Blog/images/bayesNet2.png]]
 
 #+begin_export html
- <img src="../../images/bayesNet2.png"  style = "width: 40% !important;">
+ <img src="../../images/bayesNet2.png"  style = "width: 30% !important;">
 #+end_export
 
       It follows then that W_1 expresses the probability of the noisy
@@ -983,7 +982,7 @@ problem going quickly towards more complex situations.
      it follows immediately that learning can be generally seen as an
      /optimization/ exercise.
 
-     We have in fact a /hypothesis space/, that is a set of candidate
+     We have in fact a /hypotheses space/, that is a set of candidate
      models and an objective function that we aim to optimize. So the
      learning task essentially amounts to find a high-scoring model
      within our model class.
@@ -1226,14 +1225,14 @@ problem going quickly towards more complex situations.
         /subset/ of these variables.
 
       Notice that no matter the case the less prior knowledge we are
-      given, the /larger the hypothesis space/ and the more
+      given, the /larger the hypotheses space/ and the more
       possibilities we need to consider when choosing the model.
 
       Recall that for larger models you face the statistical trade off
       of /variance-bias/ discussed before.
 
       Moreover, on top of that it is important to see that there is a
-      /computational trade-off/ as well: the richer the hypothesis
+      /computational trade-off/ as well: the richer the hypotheses
       space, the more difficult the search to find a high-scoring
       model.
 
@@ -1303,7 +1302,7 @@ problem going quickly towards more complex situations.
         algorithm often requires /inference over the entire network/.
 
       - in the case the *structure is not given*, the problem
-        incorporates an additional level of complexity. The hypothesis
+        incorporates an additional level of complexity. The hypotheses
         space contains an enormous - generally super-exponentially
         large - set of possible structures. here the problem of
         *structure selection* is generally also formulated as an
@@ -1347,14 +1346,146 @@ problem going quickly towards more complex situations.
 
     2) Bayesian Appraoch
 
-    We will explore the two next
-
-
+    We will explore the two next the two cases. We will start easy,
+    that is with the case of a bayes network with a single
+    variable. We will then expand and discuss about the generalization
+    of the theory to arbitrary network structures. We will work with
+    parameter estimation in the context of structured CPDs.
     
 **** Maximum Likelihood - Parameter Estimation
 
-     
-     
+     So consider for the simple network with one random variable
+     consider the case of throwing a thumbtack - see below.
+
+     This can either fall head or tail.
+
+     The goal is to predict the probability through which the object
+     falls heads \theta or tails (1 - \theta). So in general it is to
+     estimate the probability of \theta.
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-01_um_16.18.52.png" class="center">
+#+end_export
+
+     As you know then the MLE consists on taking the parameter for
+     which the likelihood is maximized. Consider for instance M = 100,
+     and head = 0.3, then it is straightforward to set \theta = 0.3
+     and that is in fact the MLE. You can then calculate the
+     confidence interval via standard asymptotic theory. See the
+     section on asymptotic theory of your fundamentals of mathematics
+     statistics if interested. Or your notes on econometrics II.
+
+     To formalize the above straightforward. Consider a set of tosses
+     x[1], ..., x[M] that are IID. Each of these tosses is H (heads),
+     T (tails) with prob. \theta, (1 - \theta) respectively.
+
+     We define the /hypotheses space/ \Theta - i.e. the set of
+     parameterization we are considering - and an /objective function/
+     that tells us how good different hypotheses are relative to the
+     data D.
+
+     In MLE we then take as the objective function the likelihood of
+     the observations given the parameterization.
+
+     It follows immediately that given the independence property of
+     the realizations such objective function, i.e. the /likelihood/
+     is given by the following:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-01_um_16.41.02.png" class="center">
+#+end_export
+
+     So that basically that is very standard intro statistical
+     material.
+
+     Let's leave this 101 example and let's start to consider MLE and
+     set it into the bayes networks frame.
+
+***** MLE in Bayesian Networks
+
+      Consider the case of a set $\mathscr{X}$ of random variables, with an
+      unknown distribution $P^{*}(X)$. We know the sample space,
+      i.e. the random variables and their domain.
+
+      We denote the /training set/  of samples as $D$ and assume that
+      it consists of $M$ instances (i.e. recall 1 instance = 1 sample
+      over the entire network; i.e. 1 realization for the entire
+      network) of $\mathscr{X}$, that is \xi[1], ..., \xi[M].
+
+      Next we assume a /parametric model/ which is defined by a
+      function $P (\xi : \theta)$, i.e. read by a probability function
+      of an instance realization /given/ a set of parameters \theta.
+
+      We require than that for each choice of \theta:
+
+      $$ \sum_{\xi} P(\xi : \theta)  = 1 $$
+
+      The parameter space \Theta excludes parameterizations that /do
+      not satisfy/ the above.
+
+      Then depending on your modeling of the space of your X you might
+      come up with different parametric models and possible
+      \Theta. Again up to know nothing new. These are well known
+      things to you.
+
+      Note now that since in MLE we maximize the /objective
+      function/ we ideally want it to be continuous - and possibly
+      smooth - over \theta.
+
+      To ensure these properties, most of the theory usually require
+      the likelihood function to be continuous and differentiable in
+      \theta.
+
+      Recall, that given the definitions of above the likelihood
+      function is defined as:
+
+
+      $$ L(\theta : D) = \prod_m P(\xi[m] : \theta)  $$
+
+
+      Such that the MLE is defined as:
+
+      $$ L(\hat{\theta} : D) = \operatorname*{max}_{\theta \in \Theta}
+      L(\theta : D) $$
+
+      Given the proper definition for the problem, the question that
+      remains open is simply on how to specify the above properties in
+      the case of Bayesian Networks.
+
+      In order to give the idea we will consider the most easy
+      possible network. We consider the case of the set $\mathscr{X}$
+      of variables containing two random variables $X$ and $Y$.
+
+      Among the variables there is the following network structure:
+
+   #+begin_src plantuml :file ~/Desktop/Blog/images/bayesNet4.png :exports none
+   @startuml
+   circle X
+   circle Y
+
+   X -right-> Y
+   @enduml
+   #+end_src
+
+   #+RESULTS:
+   [[file:~/Desktop/Blog/images/bayesNet4.png]]
+
+#+begin_export html
+ <img src="../../images/bayesNet4.png"  style = "width: 30% !important;">
+#+end_export
+      
+       So recall that essentially our problem amounts in finding the
+       formula for the /objective function/, i.e. the /likelihood
+       function/ in our network and to maximize it.
+
+       Note, that in the case of bayesian networks, our network is
+       parameterized by a vector containing all of the probabilities
+       in the different CPDs. So in our case \theta is a vector
+       containing such probabilities.
+
+       
+
+      
 **** Bayesian - Parameter Estimation
 
     
