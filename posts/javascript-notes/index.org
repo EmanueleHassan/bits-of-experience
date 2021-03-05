@@ -55,6 +55,7 @@ among Software Developers.
     files, send and receive data over the network, and make and serve
     HTTP requests.
 
+
 * First Quick Intro and Javascript in Org Babel
 :properties:
 :header-args:sh: :session "*Javascript REPL*" :results output
@@ -106,10 +107,16 @@ x = null;                  // Null is a special value that means "no value."
 x = undefined;             // Undefined is another special value like null.
 #+END_SRC
 
+
 * JavaScript Citizens
+:properties:
+:header-args:sh: :session "*Javascript REPL*" :results output
+:header-args:js: :session "*Javascript REPL*" :results silent
+:end:
+
 
 ** Object
-
+   
    This is javascript most important datatype. It corresponds to the
    dictionary in python. It is a collection of name/value pairs, or a
    string to value  map
@@ -147,7 +154,52 @@ a[0]          // => 1: the change is also visible through variable a.
 a === b       // => true: a and b refer to the same object, so they are equal.
    #+END_SRC
 
-   
+   Note that the =new= operator initializes a new object. The =new=
+   keyword must be followed by a class/function invocation. Such a
+   function is called a /constructor/.
+
+   #+BEGIN_SRC js 
+// Example
+let o = new Object();  // Create an empty object: same as {}.
+let a = new Array();   // Create an empty array: same as [].
+   #+END_SRC
+
+*** Object Inheritance
+
+    This is again the very principle of object oriented programming
+
+    #+BEGIN_SRC js 
+// Example
+
+let o = {};               // o inherits object methods from Object.prototype - base class
+o.x = 1;                  // and it now has an own property x.
+let p = Object.create(o); // p inherits properties from o and Object.prototype
+p.y = 2;                  // and has an own property y.
+let q = Object.create(p); // q inherits properties from p, o, and...
+q.z = 3;                  // ...Object.prototype and has an own property z.
+let f = q.toString();     // toString is inherited from Object.prototype
+q.x + q.y                 // => 3; x and y are inherited from o and p
+    #+END_SRC
+
+
+*** Extending Objects
+
+    One intuitive way
+
+
+    #+BEGIN_SRC js 
+let target = {x: 1}, source = {y: 2, z: 3};
+for(let key of Object.keys(source)) {
+    target[key] = source[key];
+}
+target  // => {x: 1, y: 2, z: 3}
+    #+END_SRC
+
+
+    The JavaScript way; the methods =assign= and =extend=. It is
+    impressive to see every time how much python and JavaScript are
+    related.
+
 ** Arrays
 
    Standard stuff. Same as python lists
@@ -180,6 +232,212 @@ let data = {                 // An object with 2 properties
    So up to now very similar syntax to Python.
 
    
+*** Spreader Operator
+
+    The spread operator =...=, to include the elements of one array
+    within an array literal. I.e. it spreads the argument into your
+    array. See for instance the following:
+
+
+    #+BEGIN_SRC js 
+a = [1, 2, 3];
+b = [0, ...a, 4];  // b == [0, 1, 2, 3, 4]
+
+// vs
+
+b = [0, a, 4] // // b == [0, [1, 2, 3], 4]
+    #+END_SRC
+
+    Notice that the operator can also be used to quickly create a copy
+    of an object
+
+    #+BEGIN_SRC js 
+let original = [1,2,3];
+let copy = [...original];
+copy[0] = 0;  // Modifying the copy does not change the original
+original[0]   // => 1
+    #+END_SRC
+
+    Note moreover that the spread operator does not just work with
+    arrays but rather with any iterable object. To understand this
+    consider
+
+    #+BEGIN_SRC js 
+let digits = [..."0123456789ABCDEF"];
+digits // => ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"]
+    #+END_SRC
+
+    
+*** Array Extension
+
+    This corresponds to the =[].extend()= method in Python.
+
+    In JavaScript it is the =[].push()= method.
+
+    #+BEGIN_SRC js 
+a = []
+a.push("a", "b", "c") // without assignment; returns 3
+a // notice that it was updated. Returns [ 'a', 'b', 'c' ]
+    #+END_SRC
+
+    For deleting simply use the =delete= command
+
+    #+BEGIN_SRC js 
+delete a[0]
+
+a // => [ <1 empty item>, 'b', 'c' ]; length still 3.
+    #+END_SRC
+
+*** forEach
+
+    It is the lambda functions and the =apply= logic in Python/R.
+
+    I.e. it is an array method that offers a functional approach to
+    array iteration.
+
+    #+BEGIN_SRC js 
+// Example
+let letters = [..."Hello world"];  // An array of letters
+
+let uppercase = "";
+letters.forEach(letter => {  // Note arrow function syntax here,
+			     // i.e. input letter maps to ... Note
+			     // that the input is given by the forEach
+			     // method
+    uppercase += letter.toUpperCase();
+});
+uppercase  // => "HELLO WORLD"
+
+// Example 2
+
+let data = [1,2,3,4,5], sum = 0;
+// Compute the sum of the elements of the array
+data.forEach(value => { sum += value; });          // sum == 15
+    #+END_SRC
+
+*** Map
+
+    That is the same as the map method in python. It passes each
+    element of the array on which it is invoked to the function you
+    specify.
+
+    #+BEGIN_SRC js 
+// Example
+a = [1, 2, 3];
+a.map(x => x*x)   // => [1, 4, 9]: the function takes input x and returns x*x
+
+
+// so that is ultimately similar in funcition to the forEach method
+// see for instance
+bx = []; a.forEach(x => {bx.push(x*x)})
+
+bx // => [1, 4, 9]
+    #+END_SRC
+
+*** Filter
+
+    Filter is also very intuitive and similar to the one you use in
+    python
+
+    #+BEGIN_SRC js 
+let a = [5, 4, 3, 2, 1];
+// note that you pass a function that should return either true or false, so a boolean
+a.filter(x => x < 3)         // => [2, 1]; values less than 3
+
+// note that here the i is the index.
+a.filter((x,i) => i%2 === 0) // => [5, 3, 1]; every other value
+
+// in order to see this check the following
+bx = []; a.map((x,i) => bx.push(i))
+bx // => [ 0, 1, 2, 3, 4 ]
+    #+END_SRC
+
+
+    To skip missing values in a sparse array you can also use the
+    =filter= command, filtering out all of the empty entries
+
+#+BEGIN_SRC js 
+let sparse = [1,,,,4]
+
+bx = sparse.filter(() => true)
+
+bx // => [1, 4]
+#+END_SRC
+    
+*** Find & Findindex
+
+    The find() and findIndex() methods are like filter() in that they
+    iterate through your array looking for elements for which your
+    predicate function returns a truthy value. Unlike filter(),
+    however, these two methods *stop iterating the first time the
+    predicate finds an element*.
+
+    #+BEGIN_SRC js 
+let a = [1,2,3,4,5];
+a.findIndex(x => x === 3)  // => 2; the value 3 appears at index 2
+a.findIndex(x => x < 0)    // => -1; no negative numbers in the array
+a.find(x => x % 5 === 0)   // => 5: this is a multiple of 5
+a.find(x => x % 7 === 0)   // => undefined: no multiples of 7 in the array
+    #+END_SRC
+
+    
+*** Every and Some
+
+    The =every()= and =some()= methods are array predicates: they
+    apply a predicate function you specify to the elements of the
+    array, then return true or false.
+
+    =every()= returns true if the condition holds for all of the
+    values.
+
+    =some()= returns true if just for at least 1 value the condition
+    holds true.
+
+    #+BEGIN_SRC js 
+// every
+let a = [1,2,3,4,5];
+a.every(x => x < 10)      // => true: all values are < 10.
+a.every(x => x % 2 === 0) // => false: not all values are even.
+
+// some
+let a = [1,2,3,4,5];
+a.some(x => x%2===0)  // => true; a has some even numbers.
+a.some(isNaN)         // => false; a has no non-numbers.
+    #+END_SRC
+
+
+*** Reduce
+
+    Here again is the same as in python and together with map you are
+    back to your favourite Map-Reduce framework.
+
+    #+BEGIN_SRC js 
+let a = [1,2,3,4,5];
+a.reduce((x,y) => x+y, 0)          // => 15; the sum of the values
+a.reduce((x,y) => x*y, 1)          // => 120; the product of the values
+a.reduce((x,y) => (x > y) ? x : y) // => 5; the largest of the values
+
+// recall thatt the paradigm is to combine two sequentially.
+
+// note the syntax! the 0 and 1 after the comma above are the
+// initializers values. The first argument is the accumulated result
+// of the reduction so far.  On the first call to the function, this
+// first argument is the initial value you passed as the second
+// argument to reduce(). On subsequent calls, it is the value returned
+// by the previous invocation of the function.
+
+// Note that in the third example above there is no intializer.  When
+// you invoke reduce() like this with no initial value, it uses the
+// first element of the array as the initial value.
+    #+END_SRC
+
+    
+    
+
+    
+
+    
+    
 ** Shorthand Arithmetics
 
    #+BEGIN_SRC js 
@@ -378,6 +636,116 @@ factorial2(5)              // => 120: 1*2*3*4*5
     for(const property in object) console.log(property);
     #+END_SRC
 
+*** For/in loops
+
+A for/in loop looks a lot like a for/of loop, with the of keyword
+changed to in. While a for/of loop requires an iterable object after
+the of, a for/in loop works with any object after the in.
+
+    #+BEGIN_SRC js 
+let o = { x: 1, y: 2, z: 3 };
+
+for(let element in o) { // Throws TypeError because o is not iterable
+    console.log(element); 
+} // =>  : x : y : z
+    #+END_SRC
+
+*** Jumps
+
+    Notice that you can *name* statements in Javascript. That is
+    quite a cool and particular characteristic.
+
+    You can then use the classical =continue=, =break= statements
+    etc.
+
+    Think for instance to the following example
+
+#+BEGIN_SRC js 
+mainloop: while(token !== null) {
+    // Code omitted...
+    continue mainloop;  // Jump to the next iteration of the named loop
+    // More code omitted...
+}
+#+END_SRC
+
+    You need the labeled form of the jump statement when you want to
+    break out of a statement that is not the nearest enclosing loop.
+
+
+** Conditional Property Access
+
+    Note that *ES2020* (check well and be sure you have it) adds two
+    new kinds of property access expressions:
+
+    #+BEGIN_SRC js 
+    expression?.identifier
+
+     // and
+
+     expression?.[expression]
+    #+END_SRC
+    
+    In JavaScript, the values null and undefined are the only two values
+    that do not have properties. In a regular property access expression
+    using . or [], you get a TypeError if the expression on the left
+    evaluates to null or undefined. You can use =?.= and =?.[]= syntax to
+    guard against errors of this type.
+
+    #+BEGIN_SRC js
+// example
+let a = { b: null };
+a.b?.c.d   // => undefined
+    #+END_SRC
+
+    #+RESULTS:
+    : undefined
+
+    Note that this might be handy for having shortcut notation when
+    using *optional functions*. Think for instance to the following
+    situation:
+
+#+BEGIN_SRC js 
+function square(x, log) { // The second argument is an optional function
+    if (log) {            // If the optional function is passed
+        log(x);           // Invoke it
+    }
+    return x * x;         // Return the square of the argument
+}
+
+// skip the invocation next
+function square(x, log) { // The second argument is an optional function
+    log?.(x);             // Call the function if there is one
+    return x * x;         // Return the square of the argument
+}
+#+END_SRC
+
+     I.e. the above is handy if you want to use conditional variables
+     representing functions.
+
+     Note, however, that ?.() only checks whether the lefthand side is
+     null or undefined. It *does not verify that the value is actually
+     a function*. So the square() function in this example would still
+     throw an exception if you passed two numbers to it, for example.
+
+     Note moreover that the conditional invocation is
+     short-circuiting, that is:
+
+     #+BEGIN_SRC js 
+let f = null, x = 0;
+try {
+    f(x++); // Throws TypeError because f is null
+} catch(e) {
+    x       // => 1: x gets incremented before the exception is thrown
+}
+f?.(x++)    // => undefined: f is null, but no exception thrown
+x           // => 1: increment is skipped because of short-circuiting
+     #+END_SRC
+
+     #+RESULTS:
+
+     Conditional invocation expressions with ?.() *work just as well
+     for methods as they do for functions*.
+     
 
 ** Variables Scope    
 
@@ -452,7 +820,78 @@ let x = 3;          // ERROR! Syntax error trying to re-declare x
     initialization of the variable remains where you wrote it, but the
     definition of the variable moves to the top of the function.
 
+
     
+** The /in/ operator
+
+   Understand the following concepts
+
+   #+BEGIN_SRC js 
+let point = {x: 1, y: 1};  // Define an object
+"x" in point               // => true: object has property named "x"
+"z" in point               // => false: object has no "z" property.
+"toString" in point        // => true: object inherits toString method
+
+let data = [7,8,9];        // An array with elements (indices) 0, 1, and 2
+"0" in data                // => true: array has an element "0"
+1 in data                  // => true: numbers are converted to strings
+3 in data                  // => false: no element 3
+   #+END_SRC
+
+
+** Instanceof
+
+   The instanceof operator expects a left-side operand that is an
+   *object* and a right-side operand that identifies a *class* of
+   objects.
+
+   Some examples in this sense are:
+
+   #+BEGIN_SRC js 
+let d = new Date();  // Create a new object with the Date() constructor
+d instanceof Date    // => true: d was created with Date()
+d instanceof Object  // => true: all objects are instances of Object
+d instanceof Number  // => false: d is not a Number object
+let a = [1, 2, 3];   // Create an array with array literal syntax
+a instanceof Array   // => true: a is an array
+a instanceof Object  // => true: all arrays are objects
+a instanceof RegExp  // => false: arrays are not regular expressions
+   #+END_SRC
+
+
+** Logical OR
+
+   Note the following usage of the OR operator =||=. Note that this is
+   quite funny. You can avoid with it lengthy conditional statements.
+
+   Should try to check also in Python how it looks with it.
+
+   #+BEGIN_SRC js 
+// If maxWidth is truthy, use that. Otherwise, look for a value in
+// the preferences object. If that is not truthy, use a hardcoded constant.
+let max = maxWidth || preferences.maxWidth || 500;
+   #+END_SRC
+
+   
+** The /eval/ command
+
+   Note, this is another funny one. It says that it is common to many
+   interpreted languages. You should check if this is the case in
+   python as it might be handy as you might have the argument coming
+   as a string in a loop that you can pass to a function in such a way
+   using and =f-string=.
+
+   #+BEGIN_SRC js 
+// example 1
+x = 4;
+eval("x"); // => 4
+
+// example 2
+function f(x){return x * 2};
+eval("f(4)"); // => 8
+   #+END_SRC
+
+   
 ** Quick Intro to OOP in JavaScript
 
    #+BEGIN_SRC js 
@@ -480,6 +919,8 @@ let p = new Point(1, 1);   // The geometric point (1,1).
 // Now use a method of the Point object p
 p.distance()               // => Math.SQRT2
    #+END_SRC
+
+   #+RESULTS:
 
    *Note:* Technically, it is only JavaScript objects that have
    methods. But numbers, strings, boolean, and symbol values behave as
@@ -702,7 +1143,71 @@ text.replace(pattern, "#")       // => "testing: #, #, #"
 text.split(/\D+/)                // => ["","1","2","3"]: split on nondigits
 #+END_SRC
 
+
+** Throwing Errors
+
+   Similar to python you throw exceptions and specify errors using the
+   =throw command=.
+
+#+BEGIN_SRC js 
+throw expression;
+#+END_SRC
    
+   Note that theoretically expression, may evaluate to any
+   expression. I.e. you might throw a number that represents an error
+   code or a string that contains a human-readable error message. 
+
+   That being said, the =Error class= and its subclasses are used when
+   the JavaScript interpreter itself throws an error, and you can use
+   them as well. This is what usually makes the most sense.
+
+   A concrete example is the following
+
+#+BEGIN_SRC js 
+function factorial(x) {
+    // If the input argument is invalid, throw an exception!
+    if (x < 0) throw new Error("x must not be negative");
+    // Otherwise, compute a value and return normally
+    let f;
+    for(f = 1; x > 1; f *= x, x--) /* empty */ ;
+    return f;
+}
+factorial(4)   // => 24
+#+END_SRC
+
+   When an exception is thrown, the JavaScript interpreter immediately
+   stops normal program execution and jumps to the nearest exception
+   handler. Exception handlers are written using the catch clause of
+   the *try/catch/finally* statement. These operates in the same way
+   as Python.
+
+   
+** with Statements
+
+   The =with= statement runs a block of code as if the properties of a
+   specified object were variables in scope for that code
+
+   Example if you need to write expressions like this a number of
+   times, you can use the with statement to treat the properties of
+   the form object like variables:
+
+#+BEGIN_SRC js 
+let f = document.forms[0];
+f.name.value = "";
+f.address.value = "";
+f.email.value = "";
+
+// vs.
+
+with(document.forms[0]) {
+    // Access form elements directly here. For example:
+    name.value = "";
+    address.value = "";
+    email.value = "";
+}
+#+END_SRC
+
+
 ** Peculiarities of JavaScript
 
    JavaScript differs from more static languages in that functions and
@@ -718,3 +1223,9 @@ text.split(/\D+/)                // => ["","1","2","3"]: split on nondigits
    of objects or other values.
 
    
+
+
+
+
+
+
