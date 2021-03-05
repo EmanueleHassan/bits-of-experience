@@ -30,7 +30,10 @@ Here are some Notes about the topic of my Master Thesis - Bayesian
 Networks.
 
 Note that most of these Notes are based on /Probabilistic Graphical
-Models - Principles and Techniques/ ([[https://www.amazon.de/Probabilistic-Graphical-Models-Principles-Computation/dp/0262013193][Koller and Friedman]]).
+Models - Principles and Techniques/ ([[https://www.amazon.de/Probabilistic-Graphical-Models-Principles-Computation/dp/0262013193][Koller and Friedman]]). The book is
+outstanding and would recommend it. Note that here all of the pictures
+you have inside stem from this book. Read them as a word by word
+quotation. 
 
 {{{TEASER_END}}}
 
@@ -1330,6 +1333,7 @@ problem going quickly towards more complex situations.
       Given this general outline it is now possible to go in the
       different outlined cases in turn and see how to deal with them.
 
+
 *** Parameter Estimation
 
     So we start here with the first learning case. I.e. we start with
@@ -1450,7 +1454,7 @@ problem going quickly towards more complex situations.
 
       Given the proper definition for the problem, the question that
       remains open is simply on how to specify the above properties in
-      the case of Bayesian Networks.
+      the case of *Bayesian Networks*.
 
       In order to give the idea we will consider the most easy
       possible network. We consider the case of the set $\mathscr{X}$
@@ -1483,13 +1487,415 @@ problem going quickly towards more complex situations.
        in the different CPDs. So in our case \theta is a vector
        containing such probabilities.
 
-       
+       In the above toy example with $X, Y$ being a binary RVs, the
+       parameterization would consist of:
 
-      
+       - \theta_{x^1} , \theta_{x^0} that specify the two
+         probabilities of X
+
+       - the conditional probabilities of the RV $Y$,
+         i.e. \theta_{y^{1} | x^{1}}, \theta_{y^{0} | x^{1}},
+         \theta_{y^{1} | x^{0}}, \theta_{y^{0} | x^{0}}
+
+       Note that in the following we us \theta_{Y | x^{1}} to refer to
+       the set {\theta_{y^{1} | x^{1}}, \theta_{y^{0} | x^{1}}} and
+       \theta_{Y | x^{0}} to refer to the set {\theta_{y^{1} | x^{0}},
+       \theta_{y^{0} | x^{0}}}. The union of these sets represents
+       then \theta_{Y | X}.
+
+       Given this and the conditional joint probability factorization
+       it follows that it is possible to write the probability in the
+       following form:
+
+       
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_10.26.08.png" class="center">
+#+end_export
+
+       *Important* is then to see that the likelihood decomposes into
+       /two separate terms/. Each of this terms is a *local likelihood
+       function* that measures how will it predicts given the
+       parents.
+
+       Given this, we can quickly argue for the first very important
+       property of the MLE in Bayesian Networks, i.e. the
+       *decomposability property* of the likelihood function.
+
+       In order to see this consider the above local likelihoods. It
+       is then immediate to understand that each of the local
+       likelihood terms just depends on the local parameters for that
+       CPD entry. That is, for the P(x[m] : \theta) entries the
+       parameter of interest is \theta_X and for the P(y[m] | x[m] :
+       \theta) entries the parameter of interest are \theta_{Y | X}.
+
+       Given this realization it follows that 
+
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_10.46.20.png" class="center">
+#+end_export
+
+       Note now the following notation that will be used throughout
+       the book. Given the above the question is on how it is possible
+       to express
+
+       $$ \prod_{m : x[m] = x^0} P(y[m] | x[m] : \theta_{Y | x^0} ) $$
+
+       The idea is then to count both the occasions where x[m] = 0 and
+       y[m] = 1; and represent such number by M[x^0, y^1]. As well to
+       count the occasions where x[m] = 0 and y[m] = 0 and represent
+       such number as M[x^0, y^0].
+
+       It follows then immediately that the above reduces to:
+
+       $$ \prod_{m : x[m] = x^0} P(y[m] | x[m] : \theta_{Y | x^0} ) =
+       \theta_{y^1 | x^0}^{M[x^0, y^1]} * \theta_{y^0 | x^0}^{M[x^0,
+       y^0]}$$
+
+       It is then immediate to see that the above takes the form of a
+       multinomial likelihood function and we know that for it the
+       maximizing parameter solution takes the form of:
+
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_11.08.11.png" class="center">
+#+end_export
+
+       Note now that despite the fact that the above was a very toy
+       model, such *decomposability* property holds in general for
+       Bayesian Networks such that it is easy to work with the above.
+
+       I.e. in general the following holds:
+
+       Take a network structure $\mathscr{G}$ with parameter \theta.
+
+       Take on top of it a dataset $\mathscr{D}$ consisting of sample
+       instances $\xi[1], ..., \xi[M]$.
+
+       Given that, we can work again as in the above case, that is
+       first decompose the likelihood of an instance leveraging the
+       conditional factorization of the joint likelihood of the
+       instance.
+
+       Then, in a second step, exchange the order of multiplication,
+       such that you have the product of *local likelihoods*
+
+       
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_11.24.04.png" class="center">
+#+end_export
+
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_11.24.20.png" class="center">
+#+end_export
+
+
+       *Important* is therefore to understand that the likelihood
+       decomposes as a product of *independent* terms, one for each
+       CPD in the network. This is an important property called
+       *global decomposition* property.
+
+       Note moreover, that if the \theta_{X_i | Pa_{X_i}} are *disjoint*
+       then the parameter vector maximizing the global likelihood can
+       be easily computed:
+
+       
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_11.31.45.png" class="center">
+#+end_export
+
+       You can then read an example in the book for the case of table
+       CPD if you are interested. Note that the above holds in general
+       for multiple CPD specifications.
+       
+***** On Non-parameteric Models
+
+       Note finally that although the chapter in the book deals with
+       parametric CPDs; in their multinomial form - as above - and as
+       linear Gaussians, a growing interest in the use of
+       *nonparameteric* Bayesian estimation methods arose.
+
+       Here, the (conditional) distribution is not defined to be in
+       some particular parametric class with a fixed number of
+       parameters, but rather the complexity of the representation is
+       allowed to grow as we get more data instances.
+
+       Note that in the case of discrete variables, any CPD can be
+       described as a table - maybe a very large one as discussed in
+       the representation section. In this sense, there is less need
+       for a non-parametric representation. In contrast in the
+       continuous case there is not a general "universal" parametric
+       distribution that is able to cover all of the possible
+       continuous distributions.
+
+       In this sense, instead of representing some continuous
+       distribution with a parameteric distribution, that might fit
+       well it might be sensible to use a non-parameteric
+       approach. If interested check in the book for more.
+
+
 **** Bayesian - Parameter Estimation
 
-    
-      
+     Note that here, we will start again with a 101 bayesian example.
+     I.e. we will look again at the Thumbtack example. We will then
+     generalize on that and look at the general case for bayesian
+     parameter estimation.
 
+     Recall that in Bayesian Stat you encode the prior knowledge about
+     \theta with a probability distribution. This distribution represents
+     how likely we are a priori to believe the different choices of
+     parameters.
+
+     Once we quantify our knowledge (or lack thereof) about possible
+     values of \theta, we can create a *joint distribution* over the
+     parameter \theta and the data cases that we are about to observe X[1],
+     . . . , X[M]. This joint distribution captures our assumptions
+     about the experiment.
+
+     Let's go back to the thumbtack. Say that \theta is the
+     probability of head. Recall that previously we assumed that
+     tosses are independent of each other. Note, however, that this
+     assumption was made when \theta was fixed. If we do not know
+     \theta, then the tosses are not marginally independent: Each toss
+     tells us something about the parameter \theta, and thereby about
+     the probability of the next toss.
+
+     Note however that given \theta, we cannot learn about the outcome
+     of one toss from observing the results of others. So we say that
+     the tosses are /conditionally independent/ given \theta.
 
      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_13.06.13.png" class="center">
+#+end_export
+
+     Given this specification, our joint distribution is specified up
+     to P(\theta). This is the /prior/ distribution we assign to the
+     RV \theta.
+
+     Given all of the above it follows that we have the following
+     /network structure and joint probability factorization/:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_13.09.34.png" class="center">
+#+end_export
+
+     In practice we can then apply the Bayes Formula to get to the
+     posterior distribution of our parameter of interest given some
+     sample x[1], ..., x[M].
+
+     This is then the major difference with MLE. We use the posterior
+     /distribution/ to compute the parameterization for our network
+     instead of selecting a single value for the parameter \theta.
+
+     In order to see this, consider the case where you want to
+     estimate the probability of the next coin x[M+1] being head. Then
+     you can *integrate* over the entire distribution of \theta instead
+     of relying on a single value.
+
+     The idea is that $ P(a | b) = \int P(a, c |b) dc = \int P(a |
+     c,b) * P(c | b) dc$ 
+
+     I.e. you can compute it by:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_15.02.02.png" class="center">
+#+end_export
+
+     Note that the last equality above uses the fact that for the
+     network described conditioning on \theta we cover the information
+     deriving from x[1], ..., x[M].
+
+     Going back to the thumbtack example this translates into the
+     following:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_15.10.51.png" class="center">
+#+end_export
+
+     Note then that it follows a section in the book where you make
+     the same exercise for different priors. In particular with a Beta
+     distribution.
+
+     I skip it here as you had extensive training in bayesian in your
+     master and you should be able to replicate that without big
+     issues.
+
+     Note, moreover that there is some heuristic reasoning on how you
+     should choose the hyperparameters for your beta. Go read if
+     interested.
+
+     We turn now to a generalization of the above for bayesian
+     networks leaving the 101 example. 
+     
+***** General Case and a Sufficient Statistics Example
+
+      Assume a general learning problem with training set
+      $\mathscr{D}$, that contains iid M samples of a set tof random
+      variable $\mathscr{X}$ from an unknown distribution /P^*(X)/.
+
+      Also assume a parametric model $P(\xi | \theta)$, where the
+      parameter belong to the space \Theta.
+
+      Recall that MLE search the point estimate $\hat{theta}$ in
+      \Theta maximizing the likelihood of the data. Recall that in
+      contrast in bayesian we include our prior belief in the model
+      treating the parameter itself as a RV.
+
+      We therefore do not simply have a likelihood of observing some
+      data given a fixed parameterization but we rather have a joint
+      probability of observing some data and parameterization.
+
+      So here the joint probability specifying the model is given by
+      $P(D, \theta) = P(D | \theta) * P(\theta)$.
+
+      Given this we can compute the marginal likelihood of the data -
+      i.e. integrating the parameter out - as
+
+      $$ P(D) = \int_{\Theta} P(D | \theta) P(\theta) d\theta $$.
+
+      So far therefore nothing new in comparison to the 101 case. Just
+      written under more general form.
+
+      We turn next to a particularly useful parameterization for the
+      bayesian network. I.e. we will show that when working under
+      particular prior settings we might end up with sufficient
+      statistics for which it is possible to *compactly represent
+      posterior distribution*.[fn:1] This will ultimately lead to the
+      prediction task of P(x[M+1] | D) which is especially easy to
+      compute.
+
+      In order to see this consider the following learning problem -
+      i.e. the one of /uncertainty about the parameters of a
+      multinomial distribution/. The parameter space \Theta is the one
+      of all nonnegative vectors \theta = (\theta_1, ..., \theta_K)
+      such that $\sum_k \theta_k = 1$.
+      
+      The likelihood in this model has the form
+
+      $$ L(\theta : D) = \prod_k \theta_k^{M[k]}  $$
+
+      One conjugate prior to such multinomial likelihood is the
+      /Dirichlet/ distribution.
+
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_16.47.14.png" class="center">
+#+end_export
+
+      Given such model specification it follows now the following.
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_16.54.47.png" class="center">
+#+end_export
+
+      This prediction is similar to prediction with the MLE
+      parameters. The only difference is that we added the
+      hyperparameters to our counts when making the prediction. For
+      this reason the Dirichlet hyperparameters are often called
+      /pseudo-counts/. We can think of these as the number of times we
+      have seen the different outcomes in our prior experience before
+      conducting our current experiment.
+
+      Note moreover the following interesting interpretation for
+      model:
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_17.07.11.png" class="center">
+#+end_export
+
+      Note; you should read the /mean prediction/ above, simply as:
+      $\frac{\alpha_k}{\alpha} $.
+
+      Note moreover that the prediction in the above case is therefore
+      nothing more than a weighted average (convex combination) of the
+      prior mean and the MLE estimate.
+
+      The combination weights are determined by the relative magnitude
+      of \alpha — the confidence of the prior (or total weight of the
+      pseudo-counts) — and M — the number of observed samples. Note
+      finally that there is convergence to MLE when the sample size M
+      grows to infinity.
+
+***** Bayesian Parameter Estimation in Bayesian Networks
+
+      Note one final time that in the case of bayesian parameter
+      estimation we must specify a join distribution the data
+      instances and the unknown parameters.
+
+      Again as in the case of MLE we will start from a very basic
+      trivial network and we will generalize then to a global
+      Decomposition.
+
+      *The simple Case*
+
+      
+      Again, we consider the case of the set $\mathscr{X}$ of
+      variables containing two random variables $X$ and $Y$.
+
+      Among the variables there is the following network structure:
+
+      #+begin_export html
+<img src="../../images/bayesNet4.png"  style = "width: 30% !important;">
+      #+end_export
+
+      We have training observations X[m] and Y[m] for m = 1, ...,
+      M. In addition we have unknown parameter vectors \theta_X and
+      \theta_{Y|X}.
+
+      Note that the meta-network might be represented as follows:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_17.28.09.png" class="center">
+#+end_export
+
+      Note that, as in our simple thumbtack example, the instances are
+      independent given the unknown parameters.  examination of active
+      trails shows that X[m] and Y [m] are d-separated from X[m'] and
+      Y[m'] once we observe the parameter variables.
+
+      Moreover, we assume that that the individual parameters *are a
+      priori independent*. We believe that knowing the value of one
+      parameter tells us nothing about another one.
+
+      Formally:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_17.39.17.png" class="center">
+#+end_export
+
+      Thus, although we use the global parameter independence in much
+      of our discussion, it is not always appropriate.
+
+      Once you accept global parameter independence an important
+      property emerges:
+
+      *Important - Important - Important:*
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-05_um_17.48.55.png" class="center">
+#+end_export
+
+      So this has important ramifications as it means that given the
+      data $\mathscr{D}$ we can determine the posterior over \theta_X
+      independently of the posterior over \theta_{Y|X}. I.e. you can
+      solve each problem separately and then combine the
+      results.[fn:2] Finally, in the case of bayesian parameter
+      estimation another important property arise. It tells us that
+      the posterior can be represented in a compact factorized form.
+
+      
+      
+      
+* Footnotes
+
+[fn:2]Note this again similarly to the MLE case. 
+
+[fn:1]Note that With this you would then have in these notes both a
+      way to write down the likelihood in compact form via sufficient
+      statistics in the case of multinomial parameterization arising
+      from the MLE. As well as a way to write in compact form the
+      posterior distribution in the case of working with bayesian
+      parameter learning. Note that both assume you are ready to
+      accept the described prior/parameter space settings.
