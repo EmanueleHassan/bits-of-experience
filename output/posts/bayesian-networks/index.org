@@ -2822,10 +2822,243 @@ problem going quickly towards more complex situations.
 
       /Example:/
 
+      Consider the following simple meta-network for the example:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_09.43.51.png" class="center" style = "width: 40% !important;">
+#+end_export
+
+      As we discussed previously in the case the likelihood in the
+      case of fully observable data for the MLE for the global shared
+      parameters would look as:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_09.47.23.png" class="center" style = "width: 40% !important;">
+#+end_export
+
+      It is therefore clear that in the case of complete data we can
+      easily compute the MLE parameters.
+
+      Consider now the case of missing data. For instance $o = [a^1,
+      ?, ?, d^0]$.
+
+      Then there are four combinations for the realization of the
+      missing variables.
+
+      The idea is that given an initial parameterization you can
+      compute the probability of each of this possible realization
+      using inference.[fn:3] 
+
+      What you can then actually do is to treat each of the possible
+      combination as an actual observation, i.e. an instantiation and
+      weight each of this according to the probability with which it
+      occurs. You would then have a new /weighted/ complete dataset on
+      which you can do standard MLE estimation as discussed above.
+
+      In general the following holds - where instead of sufficient
+      statistics we would in fact work with *expected sufficient
+      statistics*:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_10.13.31.png" class="center">
+#+end_export
+
+      You can then see in the example that when you compute your MLE
+      estimates according to the formula above they are quite
+      different from the initial parameters. So you took the uphill
+      movement discussed, with an =expectation step= the one where you
+      weight each possible occurrence - and a =maximization step=,
+      where you compute the new parameters. Both are written in one
+      shot in the above.
+
+      This intuition seems nice. However, it may require an
+      unreasonable amount of computation. To compute the expected
+      sufficient statistics, we must sum over all the completed data
+      cases. The number of these completed data cases is much larger
+      than the original data set. For each o[m], the number of
+      completions is exponential in the number of missing values.
+
+      Fortunately, it turns out that there is a better approach to
+      computing the expected sufficient statistic than simply summing
+      over all possible completions.
+
+      To understand this consider the following expected sufficient
+      statistics:
       
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_10.49.13.png" class="center">
+#+end_export
+
+      Therefore it is clear from the above that the new formula is
+      identical, except that we have substituted the indicator
+      variable with a probability that is somewhere between 0 and 1.
+
+      If in a certain data case we get to observe C, the indicator
+      variable and the probability are the same. Thus, we can view the
+      expected sufficient statistics as filling in soft estimates for
+      hard data when the hard data are not available.
+
+      So notice that you use a sort of posterior probability in the
+      inference step when computing expected sufficient statistics.
+
+      So in general for the case of =Table CPDs= you can work as
+      follows:
+
+      - choose an initial parameterization \theta^0, then execute the
+        following phases for t = 0, 1, ...:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_11.07.13.png" class="center">
+#+end_export
+     
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_11.07.37.png" class="center">
+#+end_export
+
+      Note that the maximization step is straightforward given the
+      expected sufficient statistics.
+
+      The question is rather on how to compute the conditional
+      probabilities necessary for computing the expectation term.  For
+      this you must resort to one inference technique over the network
+      ${\mathscr{G}, \theta^t}$ such as the /clique tree/ or /cluster
+      graph/ algorithm. These are not described in these notes. You
+      can read about them in the book. Important however is to
+      understand that the properties of such algorithms allows us to
+      *do all of the required inference for each data case using one
+      run of message-passing calibration*.
+
+      Note that the discussion of above does not just hold for the
+      case of table-CPDs but it can rather be quickly generalized to
+      arbitrary cases, where you have a sufficient statistics that
+      characterizes your probability function. Think for instance to
+      the case of an exponential family PDF, then it holds:
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_11.38.44.png" class="center">
+#+end_export
+
+      So it is now clear the algorithmic scope of the
+      EM-algorithm. The question is on why the convergence property
+      applies. We saw in the video above a very rough
+      motivation. I.e. it is possible to interpret it as an iterative
+      way of finding the necessary condition for an optimum - i.e. the
+      fact that the derivative is 0.
+
+***** Mathematics of EM
+
+      We will now proceed and do a more robust analysis of that to
+      understand the mathematical motivation of the algorithm.
+
+      The basic idea is the following: at each iteration can be viewed
+      as maximizing an /auxiliary function/, rather than the actual
+      likelihood function. The crucial part of the analysis is to show
+      how the auxiliary function relates to the likelihood function we
+      are trying to maximize.
+
+      As we will show, the relation is such that we can show that the
+      parameters that maximize the auxiliary function in an iteration
+      also have /better likelihood/ than the parameters with which we
+      started the iteration.
+
+      It holds therefore:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_12.31.20.png" class="center" style = "width: 30% !important;">
+#+end_export
+
+      To understand why this holds and the fact with the /auxiliary
+      variable/ consider the following - i.e. start with the following
+      setting:
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_16.08.27.png" class="center">
+#+end_export
+
+      Note that in the case of fully observed data, the *score*
+      expressing how well a set of parameters is, was the
+      log-likelihood. In the case of partially observed data we work
+      with the /expected log-likelihood/ as mentioned above, i.e. as
+      discussed the *score* would be given by:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_16.12.30.png" class="center" style = "width: 30% !important;">
+#+end_export
+
+      From this it follows immediately inserting the log-likelihood
+      for the case of table CPDs that was shown before and using the
+      linearity of the expectation that:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_16.20.56.png" class="center">
+#+end_export
+
+      This expression has precisely the same form as the
+      log-likelihood function in the complete data case, but using the
+      expected counts rather than the exact full-data counts. The
+      implication is that instead of summing over all possible
+      completions of the data, we can evaluate the expected
+      log-likelihood based on the expected counts.
+
+      The crucial point here is that the log-likelihood function of
+      complete data is *linear in the counts*. This allows us to use
+      linearity of expectations to write the expected likelihood as a
+      function of the expected counts.
+
+      An analogous result arise in the case of exponential
+      family. There it is also possible to arrive to a log-likelihood
+      function that is linear in the sufficient statistics.
+
+      The idea is now that the two steps are:
+
+      - you compute the expected sufficient statistics under the =Q=
+        measure.
+
+      - then maximizing the expected likelihood is the same task as
+        the maximization in the case of /complete data/. the only
+        difference lies in the fact that you work with the expected
+        number counts instead of the actual number of counts.
+
+      You see therefore the classical two steps of the EM algorithm.
+
+      Recall now that in the above the expected sufficient statistics
+      is computed as:
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_16.46.21.png" class="center" style = "width: 30% !important;">
+#+end_export
+
+      And that $Q(\mathscr{H})$ is the distribution:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_16.49.16.png" class="center">
+#+end_export
+
+      Note that each iteration uses a different $\mathscr{Q}$
+      distribution, i.e. a *different parameterization*, and thus we
+      cannot relate the optimization taken in one iteration to the
+      ones made in the subsequent one.
+
+      However, note that the choice of $\mathscr{Q}(\mathscr{H}) =
+      (\mathscr{H} | \mathscr{D}, \theta^t)$ allows us to prove that
+      at each EM iteration we improve the likelihood.
+
+      In order to understand this we create the new /auxiliary
+      function/ discussed above. We will let such function be
+      dependent both on \theta and on \mathscr{Q} at each step.
+
+      Good check the book. Did some thing with energy functional and
+      entropy function. Pretty much straightforward
+      decomposition. Nothing wild but you have to go back to chapter
+      11 to understand it completely and make notes on it.
+
+            
       
             
-* footnotes
+* Footnotes
+
+[fn:3] See the textbook for the exact computation of this. It is
+quite straightforward - just an application of the bayes formula.
 
 [fn:2]Note this again similarly to the MLE case. 
 
