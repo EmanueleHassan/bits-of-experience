@@ -431,13 +431,38 @@ a.reduce((x,y) => (x > y) ? x : y) // => 5; the largest of the values
 // first element of the array as the initial value.
     #+END_SRC
 
-    
-    
+*** Flat
+
+    In ES2019, the =flat()= method creates and returns a new array that
+    contains the same elements as the array it is called on, except
+    that any elements that are themselves arrays are “flattened” into
+    the returned array. For example:
+
+    #+BEGIN_SRC js 
+[1, [2, 3]].flat()    // => [1, 2, 3]
+[1, [2, [3]]].flat()  // => [1, 2, [3]]
+
+// and note moreover
+
+let a = [1, [2, [3, [4]]]];
+a.flat(1)   // => [1, 2, [3, [4]]]
+a.flat(2)   // => [1, 2, 3, [4]]
+a.flat(3)   // => [1, 2, 3, 4]
+a.flat(4)   // => [1, 2, 3, 4]
+    #+END_SRC
 
     
+*** Flatmap
 
-    
-    
+    Just works like the =flat()= function combining with a =map()=
+    part.
+
+    #+BEGIN_SRC js 
+let phrases = ["hello world", "the definitive guide"];
+let words = phrases.flatMap(phrase => phrase.split(" "));
+words // => ["hello", "world", "the", "definitive", "guide"];
+    #+END_SRC
+        
 ** Shorthand Arithmetics
 
    #+BEGIN_SRC js 
@@ -1223,6 +1248,63 @@ with(document.forms[0]) {
    of objects or other values.
 
    
+
+
+
+
+
+
+
+
+* Asynchronous Javascript
+:properties:
+:header-args:sh: :session "*Javascript REPL*" :results output
+:header-args:js: :session "*Javascript REPL*" :results silent
+:end:
+
+
+This is in fact the most interesting property of JavaScript. Here is
+where it takes a clear edge over python for the backend development. 
+
+I.e. the asynchronous execution allows you a degree of flexibility
+that is not possible in other languages. 
+
+To understand asynchronous JavaScript understand the following
+video. This makes the point ultra-well. It is a bit focused on the
+browser side of JavaScript but it makes the point.
+
+ #+begin_export html
+<style>
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+<div class="container"> 
+  <iframe class="responsive-iframe" src="https://www.youtube.com/embed/8aGhZQkoFbQ" frameborder="0" allowfullscreen;> </iframe>
+</div>
+ #+end_export
 
 
 
