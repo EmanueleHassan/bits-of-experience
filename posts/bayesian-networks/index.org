@@ -772,7 +772,118 @@ problem going quickly towards more complex situations.
    $$ marginal MAP (Y | e) = \operatorname*{argmax}_Y  \sum_{Z}{P (Y,
    Z | e)} $$
 
+   The issue when doing inference and performing the MAP and marginal
+   MAP exercises as mentioned above is that the exercise complexity
+   increases in an exponential way in the number of parents.
+
+   We will show now that there are ways to deal with it. I.e. we will
+   show that there are cases where you can reduce the problem by
+   *factorizing terms out*. On the other hand we will show that
+   sometimes it makes sense to circumventing the hardness of exact
+   inference compromising, to some extent, on the accuracies of our
+   answers. This will be addressed through *approximate inference
+   analysis*.
+
+
 *** TODO Exact Inference
+
+    Note the difficulty of doing exact inference without reducing the
+    problem.
+
+    Check at the following network:
+
+   #+begin_src plantuml :file ~/Desktop/Blog/images/bayesNet6.png :exports none
+   @startuml
+   circle A
+   circle B
+   circle C
+   circle D
+
+   A -right-> B
+   B -right-> C
+   C -right-> D
+   @enduml
+   #+end_src
+
+   #+RESULTS:
+   [[file:~/Desktop/Blog/images/bayesNet6.png]]
+
+#+begin_export html
+ <img src="../../images/bayesNet6.png"  style = "width: 40% !important;">
+#+end_export
+
+     Then it is immediate to see why the problem increases in an
+     exponential way:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-15_um_12.34.21.png" class="center">
+#+end_export
+
+      It is then immediate to see how such an approach explodes in
+      longer chains. Consider the general problem.
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-15_um_12.38.58.png" class="center">
+#+end_export
+
+      Note that in contrast to this if you do not leverage the
+      conditional probabilistic structure you would have to generate
+      $k^n$ probabilities for the different events $x_1, . . . , x_n$.
+
+      Finally note that using /dynamic programming/ we can make the
+      above exercise for expressing the joint distribution via
+      conditional distributions smart. In the sense that we do not
+      compute:
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-15_um_12.56.48.png" class="center">
+#+end_export
+
+      as such. We rather leverage the structure to reduce the number
+      of computations in the following way:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-15_um_12.57.35.png" class="center">
+#+end_export
+
+
+
+
+*** TODO Approximate Inference
+
+    To analyze the approximate inference task formally, we must first
+    define a metric for evaluating the quality of our approximation.
+
+    There are essentially /two perspectives/:
+
+    - The first perspective goes as follows. In /conditional
+      probability queries/ the problem is to compute the probability
+      $P(Y | e)$, i.e. for some query variable $Y$ and evidence $e$.
+
+      Hence you are essentially computing a probability function
+      $P(Y | e)$, such that as metric for evaluating the approximation
+      you would ultimately choose probability distance metrics - such
+      as entropy measures.
+
+    - The other perspective consists in analyzing the problem with
+      different eyes.
+
+      Consider a /specific/ query: $P(Y = y| E = e)$ such that we are
+      interested in the specific assignment $y$.
+
+      The approximate answer to this query is a number \rho, whose
+      accuracy we wish to evaluate relative to the correct
+      probability.
+
+      In this sense it makes sense to check the relative error as it
+      takes into account that an event might have a large or low
+      probability such that the error is taken wrt to this baseline:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-15_um_12.06.45.png" class="center">
+#+end_export
+
+    
     
 *** TODO Inference as Optimization
     
@@ -2818,10 +2929,532 @@ problem going quickly towards more complex situations.
       fixed point of the likelihood function, which is essentially
       always a *local* maximum.
 
+      Concretely in one example the above would look as follows.
+
+      /Example:/
+
+      Consider the following simple meta-network for the example:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_09.43.51.png" class="center" style = "width: 40% !important;">
+#+end_export
+
+      As we discussed previously in the case the likelihood in the
+      case of fully observable data for the MLE for the global shared
+      parameters would look as:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_09.47.23.png" class="center" style = "width: 40% !important;">
+#+end_export
+
+      It is therefore clear that in the case of complete data we can
+      easily compute the MLE parameters.
+
+      Consider now the case of missing data. For instance $o = [a^1,
+      ?, ?, d^0]$.
+
+      Then there are four combinations for the realization of the
+      missing variables.
+
+      The idea is that given an initial parameterization you can
+      compute the probability of each of this possible realization
+      using inference.[fn:3] 
+
+      What you can then actually do is to treat each of the possible
+      combination as an actual observation, i.e. an instantiation and
+      weight each of this according to the probability with which it
+      occurs. You would then have a new /weighted/ complete dataset on
+      which you can do standard MLE estimation as discussed above.
+
+      In general the following holds - where instead of sufficient
+      statistics we would in fact work with *expected sufficient
+      statistics*:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_10.13.31.png" class="center">
+#+end_export
+
+      You can then see in the example that when you compute your MLE
+      estimates according to the formula above they are quite
+      different from the initial parameters. So you took the uphill
+      movement discussed, with an =expectation step= the one where you
+      weight each possible occurrence - and a =maximization step=,
+      where you compute the new parameters. Both are written in one
+      shot in the above.
+
+      This intuition seems nice. However, it may require an
+      unreasonable amount of computation. To compute the expected
+      sufficient statistics, we must sum over all the completed data
+      cases. The number of these completed data cases is much larger
+      than the original data set. For each o[m], the number of
+      completions is exponential in the number of missing values.
+
+      Fortunately, it turns out that there is a better approach to
+      computing the expected sufficient statistic than simply summing
+      over all possible completions.
+
+      To understand this consider the following expected sufficient
+      statistics:
+
+#+Name: expected_suff_stat      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_10.49.13.png" class="center">
+#+end_export
+
+      Therefore it is clear from the above that the new formula is
+      identical, except that we have substituted the indicator
+      variable with a probability that is somewhere between 0 and 1.
+
+      If in a certain data case we get to observe C, the indicator
+      variable and the probability are the same. Thus, we can view the
+      expected sufficient statistics as filling in soft estimates for
+      hard data when the hard data are not available.
+
+      So notice that you use a sort of posterior probability in the
+      inference step when computing expected sufficient statistics.
+
+      So in general for the case of =Table CPDs= you can work as
+      follows:
+
+      - choose an initial parameterization \theta^0, then execute the
+        following phases for t = 0, 1, ...:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_11.07.13.png" class="center">
+#+end_export
+     
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_11.07.37.png" class="center">
+#+end_export
+
+      Note that the maximization step is straightforward given the
+      expected sufficient statistics.
+
+      The question is rather on how to compute the conditional
+      probabilities necessary for computing the expectation term.  For
+      this you must resort to one inference technique over the network
+      ${\mathscr{G}, \theta^t}$ such as the /clique tree/ or /cluster
+      graph/ algorithm. These are not described in these notes. You
+      can read about them in the book. Important however is to
+      understand that the properties of such algorithms allows us to
+      *do all of the required inference for each data case using one
+      run of message-passing calibration*.
+
+      Note that the discussion of above does not just hold for the
+      case of table-CPDs but it can rather be quickly generalized to
+      arbitrary cases, where you have a sufficient statistics that
+      characterizes your probability function. Think for instance to
+      the case of an exponential family PDF, then it holds:
       
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_11.38.44.png" class="center">
+#+end_export
+
+      So it is now clear the algorithmic scope of the
+      EM-algorithm. The question is on why the convergence property
+      applies. We saw in the video above a very rough
+      motivation. I.e. it is possible to interpret it as an iterative
+      way of finding the necessary condition for an optimum - i.e. the
+      fact that the derivative is 0.
+
+***** Mathematics of EM
+
+      We will now proceed and do a more robust analysis of that to
+      understand the mathematical motivation of the algorithm.
+
+      The basic idea is the following: at each iteration can be viewed
+      as maximizing an /auxiliary function/, rather than the actual
+      likelihood function. The crucial part of the analysis is to show
+      how the auxiliary function relates to the likelihood function we
+      are trying to maximize.
+
+      As we will show, the relation is such that we can show that the
+      parameters that maximize the auxiliary function in an iteration
+      also have /better likelihood/ than the parameters with which we
+      started the iteration.
+
+      It holds therefore:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_12.31.20.png" class="center" style = "width: 30% !important;">
+#+end_export
+
+      To understand why this holds and the fact with the /auxiliary
+      variable/ consider the following - i.e. start with the following
+      setting:
       
-            
-* footnotes
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_16.08.27.png" class="center">
+#+end_export
+
+      Note that in the case of fully observed data, the *score*
+      expressing how well a set of parameters is, was the
+      log-likelihood. In the case of partially observed data we work
+      with the /expected log-likelihood/ as mentioned above, i.e. as
+      discussed the *score* would be given by:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_16.12.30.png" class="center">
+#+end_export
+
+      From this it follows immediately inserting the log-likelihood
+      for the case of table CPDs that was shown before and using the
+      linearity of the expectation that:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_16.20.56.png" class="center">
+#+end_export
+
+      This expression has precisely the same form as the
+      log-likelihood function in the complete data case, but using the
+      expected counts rather than the exact full-data counts. The
+      implication is that instead of summing over all possible
+      completions of the data, we can evaluate the expected
+      log-likelihood based on the expected counts.
+
+      The crucial point here is that the log-likelihood function of
+      complete data is *linear in the counts*. This allows us to use
+      linearity of expectations to write the expected likelihood as a
+      function of the expected counts.
+
+      An analogous result arise in the case of exponential
+      family. There it is also possible to arrive to a log-likelihood
+      function that is linear in the sufficient statistics.
+
+      The idea is now that the two steps are:
+
+      - you compute the expected sufficient statistics under the =Q=
+        measure.
+
+      - then maximizing the expected likelihood is the same task as
+        the maximization in the case of /complete data/. the only
+        difference lies in the fact that you work with the expected
+        number counts instead of the actual number of counts.
+
+      You see therefore the classical two steps of the EM algorithm.
+
+      Recall now that in the above the expected sufficient statistics
+      is computed as:
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_16.46.21.png" class="center" style = "width: 60% !important;">
+#+end_export
+
+      And that $Q(\mathscr{H})$ is the distribution:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-12_um_16.49.16.png" class="center">
+#+end_export
+
+      Note that each iteration uses a different $\mathscr{Q}$
+      distribution, i.e. a *different parameterization*, and thus we
+      cannot relate the optimization taken in one iteration to the
+      ones made in the subsequent one.
+
+      However, note that the choice of $\mathscr{Q}(\mathscr{H}) =
+      P(\mathscr{H} | \mathscr{D}, \theta^t)$ allows us to prove that
+      at each EM iteration we improve the likelihood.
+
+      In order to understand this we create the new /auxiliary
+      function/ discussed above. We will let such function be
+      dependent both on \theta and on $\mathscr{Q}$ at each step and we
+      will optimize this.
+
+      In order to understand the /auxiliary function/ and its relation
+      to the log-likelihood, start by considering the *energy
+      functional* expressing the total energy in the system. This can
+      be expressed as follows:
+
+
+      $$ F[P, Q] = E_Q [log(\tilde{P})] + H_Q(\mathscr{X}) $$
+
+      where, $P = \frac{\tilde{P}}{Z}$ such that $\tilde{P}$ is the
+      unnormalized state probability and $H_Q$ is the negative
+      entropy of the observed particles.
+
+      It is then immediate to see that given such energy functional
+      function you can re-express the logarithm of the normalizing
+      constant Z as follows:
+
+      $$ log(Z) = F[P, Q] + D(Q || P) $$
+
+      where $D(Q || P)$ is the relative entropy or the KL-divergence
+      criteria.
+
+      To see this is immediate as:
+
+      $$ F[P, Q] + D(Q || P) = E_Q [log(\tilde{P})] +
+      H_Q(\mathscr{X}) + E_Q [log(Q(\mathscr{X}))] -
+      E_Q[log(P(\mathscr{X}))]$$
+
+      The result follows by inserting $P = \frac{\tilde{P}}{Z}$ and
+      noting that the negative entropy term cancels in the above.
+
+      Inserting now our probability measures for the $P =
+      \frac{\tilde{P}}{Z}$ expression, and noting the consequences of
+      this we can come to important appreciations that will lead us to
+      understand the key results of this section, i.e. the /relation
+      between the auxiliary function and the log-likelihood/:
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-13_um_10.23.37.png" class="center">
+#+end_export
+
+      Note that the above is central piece of information.
+
+      From the last corollary, i.e. the last two equalities we can
+      derive important understandings.
+
+      /Key Insights from the second equality:/
+
+      I.e. by the fact that both the entropy H_Q is non-negative (log
+      of 0-1) as well as the relative entropy is non-negative by the
+      same argument (ratio of two positive numbers) we know that the
+      *log-likelihood is a lower bound on the expected log-likelihood
+      relative to Q for any choice of Q*.
+
+      Moreover note the important fact that selecting $Q(\mathscr{H})
+      = P(\mathscr{H} | \mathscr{D}, \theta)$ the relative entropy
+      term in the second equality becomes 0. Then you are just left
+      with the entropy term that in such case is the overall measure
+      on the difference between the expected log-likelihood and the
+      real log-likelihood.
+
+      /Key Insights from the first equality:/
+
+      Here it is possible to see that the energy functional is a lower
+      bound for the log-likelihood. This for the same argument for the
+      relative entropy as above.
+
+      Moreover note, that when choosing - as in our case - $Q(\mathscr{H})
+      = P(\mathscr{H} | \mathscr{D}, \theta)$ then the *energy
+      functional and the log-likelihood are equal*. This practically
+      means that when optimizing the energy functional you are
+      maximizing the log-likelihood as well.
+
+      The question is then on how to optimize the energy functional.
+
+      We will next see that with the EM algorithm you are actually
+      optimizing the energy functional. We will see next the way
+      through which such an optimization is performed.
+
+      We will in fact show that the EM algorithm optimizes the energy
+      functional F through a /coordinate ascent/ optimization (same as
+      Gibbs sampling - optimize the function in one axis at the
+      time). We start with some choice θ of parameters. We then search
+      for Q that maximizes $F[\theta, Q]$ while keeping \theta
+      fixed. Next, we fix Q and search for parameters that maximize
+      $F[\theta, Q]$. We continue in this manner until convergence.
+
+      In order to do that consider the following:
+
+      *Step 1 - Optimization of Q:*
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-13_um_12.02.34.png" class="center">
+#+end_export
+
+      Note that the mentioned corollary above is the one at the end of
+      the previous pic. The intuition is the one expressed in the
+      reasonings above for the first equation. You have in general a
+      lower bound on F given by log-likelihood. If you now choose the
+      distribution Q in the way described above you know that you have
+      reached the lower bound and that such lower bound is
+      tight. I.e. it is straightforward to see that your are at the
+      maximum for a *given \theta*.
+
+      Note that when computing $P(\mathscr{H} | \mathscr{D},
+      \theta^t)$ by which you are going to weight your observations
+      you are in your E-step, i.e. in your expectation step. Such that
+      it is possible to conclude by saying that :
+
+      #+begin_quote
+      we can view the E-step as implicitly optimizing Q by using
+      $P(\mathscr{H} | \mathscr{D}, \theta^t)$ in computing the
+      expected sufficient statistics.
+      #+end_quote
+
+      *Step 2 - Optimization of \theta:*
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-13_um_12.12.08.png" class="center">
+#+end_export
+
+      I.e. this second step is exactly the maximization step of the EM
+      algorithm.
+
+      *So it is generally clear that the EM steps corresponds to two
+      coordinate ascent optimization procedures.*
+
+      And generally
+
+      #+begin_quote
+      We conclude that EM performs a variant of hill climbing, in the
+      sense that it improves the log-likelihood at each
+      step. Moreover, the M-step can be understood as maximizing a
+      lower-bound on the improvement in the likelihood. Thus, in a
+      sense we can view the algorithm as searching for the largest
+      possible improvement, when using the expected log-likelihood as
+      a proxy for the actual log-likelihood.
+      #+end_quote
+
+      *Beautiful! You now have an understanding of why the EM algo
+      works!*
+
+      
+***** Hard-assignment EM
+
+      The hard-assignment EM, also iterates over two steps: one in
+      which it completes the data given the current parameters
+      \theta^t , and the other in which it uses the completion to
+      estimate new parameters \theta^t+1.
+
+      However, rather than using a soft completion of the data, as in
+      standard EM, it selects for each data instance o[m] the *single
+      assignment* h[m] that maximizes $P(h | o[m], \theta^t)$.
+
+      Although hard-assignment EM is similar in outline to EM, there
+      are important differences. In fact, hard-assignment EM can be
+      described as optimizing a different objective function, one that
+      involves /both/ the learned parameters /and the learned assignment/
+      to the hidden variables.
+
+      You can refer to the book for more. However, note the following
+      important property, for instance in the case of using EM
+      algorithm for performing bayesian clustering:
+
+      #+begin_quote
+      Although hard-assignment EM is similar in outline to EM, there
+      are important differences. In fact, hard-assignment EM can be
+      described as optimizing a different objective function, one that
+      involves both the learned parameters and the learned assignment
+      to the hidden variables.
+      #+end_quote
+
+**** Uncertain Evidence
+
+     This is the topic of the thesis. Essentially the idea is that now
+     you are not dealing with the case of totally unobserved or
+     missing data. You rather have an uncertain evidence. This means
+     an evidence that comes with a probability assigned to it.
+
+     The algorithm is quite intuitive and we will deal with it in this
+     section. It is a natural extension of the material covered that
+     far.
+
+     The idea is the one of using [Pearl 1998][fn:4] to extend the
+     bayesian network with new nodes with CPDs representing the
+     likelihood evidence gained from uncertain data.
+
+     I.e. this is best explained on an example - consider the ASIA
+     network as in the paper of reference.
+     
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-14_um_09.39.27.png" class="center">
+#+end_export
+
+     Then consider that you have doctor handwritings stating whether a
+     person had =Dyspoea= or not. Such writings are analyzed via NLP
+     such that whether a patient had Dyspoea or not is just associated
+     with a *likelihood*. This is in fact the case of /uncertainty/
+     evidence we are interested in. I.e. you do not have a missing
+     observation but also do not know its value precisely.
+
+     The idea is then that you can convert such structure into a new
+     Bayesian Network where you either *observe* or have *missing*
+     evidence. However, you do not have uncertain evidence. In such a
+     way you can then effectively treat the network in the usual way
+     as it would ultimately fall in the classical structure.
+
+     In order to reach such a structure what you do as in Pearl 1998
+     is to extend the network by adding a node
+     =Variable_Observed=. You would then assign to this variable the
+     realization =True= i.e. observed, and that would kick in with the
+     given likelihood given the parent (i.e. kick in with the
+     likelihood arising from the NLP model). This is quite
+     straightforward to understand and you can quickly understand then
+     that like this the situation is well mapped.
+
+     To make this 100% clear for when you are coming back in a couple
+     of time. Consider the ASIA network above. Consider you have NLP
+     that reads the doctor handwritings for the =Dyspoea= case. With
+     0.7% the NLP returns =Dyspoea = True= when Dyspoea occurs.
+
+     Then you can you construct your network as follows.
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-14_um_10.18.40.png" class="center">
+#+end_export
+
+     With this modification you can therefore treat any uncertain
+     evidence and convert it to standard Bayesian Networks with just
+     observed or missing evidence.
+
+     We will now show that it is possible to apply the EM algorithm to
+     such augmented network.
+
+     Consider the EM algorithm in the case of a Bayesian Network
+     without uncertain evidence. Then the situation would look as
+     follows:
+     
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-14_um_10.33.42.png" class="center">
+#+end_export
+
+     So you see that it basically consists in the expectation step
+     where you compute the expected sufficient statistics as
+     previously described in the [[expected_suff_stat][expected_suff_stat]] image above. And
+     the maximization step where you essentially take the MLE for your
+     distribution. So basically nothing new compared to what was
+     discussed above. We simply put this in an algorithm frame.
+
+     For the case of *uncertain evidence* this looks very similar, you
+     just have to augment the algorithm with a step where you would
+     actually extend and reframe the Bayesian Network to account for
+     uncertain evidence as previously done.
+
+     In algorithmic terms we would do the following:
+     
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-14_um_10.57.39.png" class="center">
+#+end_export
+
+     So basically it is 1:1 the same after augmenting the
+     network. Note that there is some notation inconsistency in the
+     algorithm above. Some M[.] should be $\overline{M[.]}$. Discuss
+     with it with Radu.
+
+     The only thing that is left over is to show that the properties
+     of the EM algorithm are not altered by the Network expansion,
+     i.e. we have to guarantee the same properties for the EM such
+     that such coordinate ascent argumentation holds and we will
+     /converge to a global maximum/.
+
+     This is possible to see by noting that again you can easily show
+     that the *log-likelihood* is *linear in the sufficient
+     statistics*. Given this condition as discussed it is then
+     possible to insert the expected sufficient statistics over the
+     measure $\mathscr{Q}(\mathscr{H}) = P(\mathscr{H} | \mathscr{D},
+     \theta^t)$ and we will have all of the desired properties.
+
+     For the MLE you would then insert the MLE solution for the
+     parameters. This amounts in the case of *table CPD* to:
+     
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-14_um_12.42.15.png" class="center" style = "width: 30% !important;">
+#+end_export
+
+     
+     
+     
+* Footnotes
+
+[fn:4] Pearl, J. 1988. Probabilistic Reasoning in Intelligent Systems:
+Networks of Plausible Inference. San Francisco, CA, USA: Morgan
+Kaufmann Publishers Inc. ISBN 1558604790.
+
+[fn:3] See the textbook for the exact computation of this. It is
+quite straightforward - just an application of the bayes formula.
 
 [fn:2]Note this again similarly to the MLE case. 
 
