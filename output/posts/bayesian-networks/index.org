@@ -784,6 +784,10 @@ problem going quickly towards more complex situations.
    answers. This will be addressed through *approximate inference
    analysis*.
 
+   Finally note that no matter whether you are using exact or
+   approximate methods both were shown to be *NP-hard
+   problems*. Despite of this in practice approximate methods seems to
+   work fine.
 
 *** TODO Exact Inference
 
@@ -846,10 +850,167 @@ problem going quickly towards more complex situations.
  <img src="../../images/Bildschirmfoto_2021-03-15_um_12.57.35.png" class="center">
 #+end_export
 
+      So essentially the above is an exercise of factorizing the joint
+      distribution and *marginalizing out variables from a
+      distribution*.
 
+      This factor marginalization exercise and will be used throughout
+      the book so that I define here:
 
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-15_um_15.37.58.png" class="center">
+#+end_export
+
+      Where a factor is defined as follows:
+      
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-15_um_16.00.32.png" class="center">
+#+end_export
+
+      Moreover, note that for factors both the commutative as well as
+      the associative rules apply.
+
+      This means:
+
+      $$ \sum_X (\phi_1 * \phi_2) = \phi_1 * \sum_X \phi_2 $$
+
+      It is now immediate given the discussion above that it is
+      possible to rewrite the joint distribution in factor notation:
+
+      $$ P(A, B, C, D) = P(A) P(B|A) * P(C|B) * P(D|C) $$
+
+      such that it becomes:
+
+      $$ P(A, B, C, D) = \phi_A * \phi_B * \phi_C * \phi_D $$
+      
+      and due to the properties of the factors:
+
+      $$ P(D) = \sum_C \sum_B \sum_A (\phi_A * \phi_B * \phi_C *
+      \phi_D) $$
+
+      $$ P(D) = \sum_C \sum_B * \phi_C * \phi_D (\sum_A \phi_A *
+      \phi_B) $$
+
+      $$ P(D) = \sum_C  * \phi_D * \sum_B( \phi_C (\sum_A \phi_A *
+      \phi_B)) $$
+
+      where the different transformations are justified by the limited
+      scope of the CPD factors; for example, the second equality is
+      justified by the fact that the scope of \phi_C and \phi_D does not
+      contain A.
+
+      *Important - Important - Important:*
+
+      #+begin_quote
+      In general, any marginal probability computation involves taking
+      the product of all the CPDs, and doing a summation on all the
+      variables except the query variables. We can do these steps in
+      any order we want, as long as we only do a summation on a
+      variable X after multiplying in all of the factors that involve
+      X.
+      #+end_quote
+
+      In mathematical terms you can express this condition as follows:
+
+      $$ \sum_Z \prod_{\phi \in \Phi} $$
+
+      We call this the *sum-product* for inference. And by now it
+      should be clear to you that the advantage is the fact that due
+      to the conditional structure and the fact that not every node
+      depends on all of the other nodes - i.e. the fact that the scope
+      of the factors is limited - you can “push in” some of the
+      summations, performing them over the product of only a subset of
+      variable factors. This reduces the complexity.
+
+      So when doing exact inference you can essentially work by
+      keeping *sum-product variable elimination* keeping the
+      complexity low. The basic idea in the algorithm is that we /sum
+      out variables one at a time/. When we sum out any variable, we
+      /multiply all the factors that mention that variable/, generating
+      a product factor.
+
+      Now that the algorithm should be clear you can formulate and
+      express it in its more general way:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-15_um_17.03.45.png" class="center">
+#+end_export
+
+      So now you have a way to compute the marginal distribution for a
+      Bayesian Network. The question is on how to leverage such work
+      in order to make a query of the form: $P (Y| e) $. 
+
+      In order to answer such a challenge you can use the following reasoning.
+
+      First note the Gibbs Distribution being defined as follows:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-15_um_20.05.38.png" class="center">
+#+end_export
+
+      I.e. in this setting you can express the Gibbs distribution as
+      the product of factors normalized by the /partition function/.
+
+      Moreover, given this definition it is possible to see that a
+      Bayesian network conditioned on evidence E = e also induces a
+      Gibbs distribution: the one defined by the original factors
+      reduced to the context E = e.
+
+      Or in mathematical terms:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-15_um_20.14.05.png" class="center">
+#+end_export
+
+      Where the proof follows immediately from the definitions.
+
+      Based on this it follows immediately that we can perform
+      immediately the *same sum-product variable elimination*
+      algorithm to the task of computing P(Y , e).
+
+      I.e. we would apply the sum-product variable elimination to all
+      of the variables in the network excluding the query variables
+      and the /evidence variables/. What you would obtain then is an
+      unnormalized distribution \phi^{*}(Y). You would then normalize
+      this in a last step by multiplying with the inverse of the
+      partition function, which is obtained simply by marginalizing
+      all of the evidence terms $E = e$ from the obtained \phi^{*}(Y).
+
+      You can then summarize all of the above in the following
+      algorithm.
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-03-15_um_20.24.39.png" class="center">
+#+end_export
+
+      It should be straightforward to understand now that such a
+      sum-product variable elimination algorithm is computationally
+      much more efficient then a full enumeration of the joint as done
+      in the introduction of this section. If you want to go into the
+      asymptotics and analyze the time performance of such an
+      algorithm check 9.4 of the book. There is an entire sub-chapter
+      dedicated to it. This is not too much of interest to me to this
+      stage so that I will skip it now.
+
+      
+*** TODO Clique Tree - Exact Inference
+
+    This is a second technique to do exact inference. I skipped it
+    here as if it will not pop up continuously in my research it is
+    fine. It is not the core for my research and I want to go to the
+    approximate inference task of the next section.
 
 *** TODO Approximate Inference
+
+    The idea is that despite the techniques mentioned before, i.e. the
+    *sum-product variable elimination* and the *clique-tree* the
+    complexity of such algorithm might still be too large for big
+    networks.
+
+    In such cases it might make sense to abandon the idea of making
+    an exact inference and to trade-off exact results against
+    computational complexity. This is the interest of this section on
+    approximate inference. 
 
     To analyze the approximate inference task formally, we must first
     define a metric for evaluating the quality of our approximation.
@@ -883,10 +1044,47 @@ problem going quickly towards more complex situations.
  <img src="../../images/Bildschirmfoto_2021-03-15_um_12.06.45.png" class="center">
 #+end_export
 
+    So given such definitions it is clear that the goal of approximate
+    inference is to fulfill a good approximation in the sense of the
+    measures above and at the same time to reduce complexity at most.
+
+    In this sense the general approach is the following:
+
+    #+begin_quote
+   The methods considered consists in defining a target class Q of
+   “easy” (i.e. easy to query) distributions Q and then search for an
+   instance within that class that is the “best” approximation to
+   P_{\Phi}. Queries can then be answered using inference on Q rather
+   than on P_{\Phi}.
+    #+end_quote
+
+    So what is important to understand at this point is that you move
+    from an unconstrained optimization problem to a *constrained
+    optimization problem*. One way you know well to deal with such
+    optimization problem is the one of the Lagrange method. However,
+    in the following we will use a different approach leveraging a set
+    of fixed point equations derived from the /constrained energy
+    optimization/, and we will work through such structure in order to
+    find a solution.
+
+    There are essentially three major ways of performing such an
+    approximate inference task:
+
+    - simplify the inference task by using an /approximate energy
+      functional/.
+      In this category falls the famous *loopy belief propagation*
+      method. 
+
+    - simplify the inference task by using an /use message passing
+      algorithm maximizing the exact energy functional but with relaxed consistency on the representation of Q/.
+      This is called the *expectation propagation* method.
+
+    - simplify the inference task by using /the exact energy functional, but they restrict attention to a class $\mathscr{Q}$ consisting of distributions
+      Q that have a particular simple factorization/. This is falls
+      into the category of /mean field/ 
     
-    
+
 *** TODO Inference as Optimization
-    
 *** TODO Particle Based Approximate Inference
 
     These are essentially the methods you saw in stochastic simulation
@@ -3420,9 +3618,7 @@ problem going quickly towards more complex situations.
 #+end_export
 
      So basically it is 1:1 the same after augmenting the
-     network. Note that there is some notation inconsistency in the
-     algorithm above. Some M[.] should be $\overline{M[.]}$. Discuss
-     with it with Radu.
+     network. 
 
      The only thing that is left over is to show that the properties
      of the EM algorithm are not altered by the Network expansion,

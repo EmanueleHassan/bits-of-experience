@@ -1,0 +1,690 @@
+<p>
+So new project new life. The one before did not take off due to
+bureaucratic issues - a pity.
+</p>
+
+<p>
+Good is that on the new one I will work with Graph Databases. I love
+graph structures and I deeply believe in them so I am very happy to
+start this project.
+</p>
+
+<p>
+This posts summarizes my learning encounters when working with graph
+databases and sets some mental structure for working with them.
+</p>
+
+<p>
+The notes are based on <a href="https://neo4j.com/books/neo4j-in-action-book/">Neo4j in action</a>.
+</p>
+
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org62a8365" class="outline-2">
+<h2 id="org62a8365">On the benefit of Graph Structure</h2>
+<div class="outline-text-2" id="text-org62a8365">
+<p>
+This section makes clear why for some structures it makes sense to
+use graph databases instead of going with relational databases.
+</p>
+
+<p>
+Consider for instance a friendship database. This has the following
+shape:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-18_um_10.17.51.png" class="center">
+
+<p>
+As you can see above in the <code>T_USER</code> table you assign a primary key
+to each person. Then on the <code>T_USER_FRIEND</code> table you have a primary
+key <code>id</code> representing the friendship relation id and a friendship
+relation represented by two foreign keys referencing the <code>T_USER</code>
+primary key.
+</p>
+
+<p>
+It follows immediately that if you want to get the number of friends
+of a single person this can be easily done by:
+</p>
+
+<div class="highlight"><pre><span></span>  <span class="k">select</span> <span class="k">count</span><span class="p">(</span><span class="k">distinct</span> <span class="n">uf</span><span class="p">.</span><span class="o">*</span><span class="p">)</span> <span class="k">from</span> <span class="n">t_user_friend</span> <span class="n">uf</span> <span class="k">where</span> <span class="n">uf</span><span class="p">.</span><span class="n">user_1</span> <span class="o">=</span> <span class="o">?</span>
+</pre></div>
+
+<p>
+What about finding the number of friends of a all of my friends?
+</p>
+
+<p>
+Then you would need to do a join operation in a relational database
+</p>
+
+<div class="highlight"><pre><span></span>  <span class="k">select</span> <span class="k">count</span><span class="p">(</span><span class="k">distinct</span> <span class="n">uf2</span><span class="p">.</span><span class="o">*</span><span class="p">)</span> <span class="k">from</span> <span class="n">t_user_friend</span> <span class="n">uf1</span>
+    <span class="k">inner</span> <span class="k">join</span> <span class="n">t_user_friend</span> <span class="n">uf2</span> <span class="k">on</span> <span class="n">uf1</span><span class="p">.</span><span class="n">user_1</span> <span class="o">=</span> <span class="n">uf2</span><span class="p">.</span><span class="n">user_2</span>
+    <span class="k">where</span> <span class="n">uf1</span><span class="p">.</span><span class="n">user_1</span> <span class="o">=</span> <span class="o">?</span>
+</pre></div>
+
+<p>
+I.e. you would first select all of my friends friends by doing the
+join operation. And then simply count the number of distinct
+entries.
+</p>
+
+<p>
+You understand now that if you want to find the friends of the
+friends of my friends you would do 3 join operations etc.
+</p>
+
+<p>
+Note that, although you’re only interested in friends of friends of
+a single user, you have to perform a <b>join of all data</b> in the
+t<sub>user</sub><sub>friend</sub> table, and then discard all rows that you’re not
+interested in.
+</p>
+
+<p>
+It is obvious that as each join computes a cartesian product down
+the hood such operations become quickly extremely computational
+intense. Even with smaller databases the size of the joins increase
+exponentially in the depth of the friendships relations.
+</p>
+
+<p>
+It is so straightforward to see that in such cases relational
+databases are not the best way of representing the data for making
+such queries.
+</p>
+
+<p>
+Graph databases were developed to deal exactly with such type of
+queries and data models. Here the idea is to use graph theory to
+answer such queries in a more efficient way using the concept of
+<i>traversal</i>, i.e. by <i>visiting nodes in the graph by moving between
+nodes connected with relationships</i>.
+</p>
+
+<p>
+The key concept of traversals is that they’re <b>localized—querying</b>
+the data using a traversal only takes into account the data that’s
+required, without needing to perform expensive grouping operations
+on the entire data set, like you do with join operations on
+relational data.
+</p>
+
+<p>
+Note moreover that as long as you perform queries that leverage some
+graph distance concept - such as the friends of friends - the
+performance of queries is optimized and scale well with the size of
+the database. I.e. while making a query at depth 5 (i.e. friends of
+friends of friends etc.) on a table with million entries will
+quickly break down your hardware resources - due to the <b>global
+structure of the query</b> - a graph database will continue to perform
+the local operations from the node of interest visiting by
+traversal. I.e. it will continue to do <b>local-queries</b> that will not
+be much affected of the overall size of the database and can
+therefore quickly scale.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orge18eb29" class="outline-2">
+<h2 id="orge18eb29">Label-property based vs. RDF graphs</h2>
+<div class="outline-text-2" id="text-orge18eb29">
+<p>
+These are very different and this should be your first call when
+working with graph databases.
+</p>
+
+<p>
+Essentially if you primarily need to walk, query and analyse paths
+through your graph, then Labelled-Property graphs are probably the
+way to go. If you are more interested in the nature of the
+relationships between things, and creating rich semantic
+representations of things, then RDF graphs hit the spot. (<a href="https://datalanguage.com/blog/graphql-and-graph-databases">source</a>)
+</p>
+
+<p>
+This should give you some more intuition into the topic
+</p>
+
+<div class="container"> 
+  <iframe class="responsive-iframe" src="https://www.youtube.com/embed/t1Mn178sEYg" frameborder="0" allowfullscreen;> </iframe>
+</div>
+
+<p>
+So go over it at some point and understand the difference in depth
+and do some longer post. <a href="https://neo4j.com/blog/rdf-triple-store-vs-labeled-property-graph-difference/">This</a> is a good reference in this sense.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge2d87ec" class="outline-2">
+<h2 id="orge2d87ec">Data Modeling in Neo4j</h2>
+<div class="outline-text-2" id="text-orge2d87ec">
+<p>
+Interestingly Neo4j is <i>schemaless</i>, so unlike classical databases
+you do not have to specify the schema and relationships before
+starting to write the data into it.
+</p>
+
+<p>
+This means that the data model for a Neo4j database is <i>implicit</i> in
+the data it contains, <i>rather than explicitly</i> defined as part of the
+database itself. In this sense the data model is a <b>description</b> of
+the data it contains rather than being a <b>prescription</b> of what it
+should contain. So that we can say overall that the data model is
+<b>descriptive</b>.
+</p>
+
+<p>
+In this sense the query language works in <i>pattern defined way</i>
+instead of a rigid relation based way as the one you are used to
+work in RDMS. The Neo4j query language, <b>Cypher</b>, works by <i>matching
+patterns</i> in the data, so one way to see your data model is as an
+inventory of basic patterns.
+</p>
+
+<p>
+In this sense, to structure your queries in a meaningful way what
+you usually do is to draw diagrams for portion of the
+graph. Understand the common patterns and reason about meaningful
+queries to do according to that.
+</p>
+
+<p>
+Note that in Neo4j the first class citizens as in any graph are
+nodes and edges. However, despite of this, not everything must be
+modeled as a node or an edge. <b>Nodes and Edges</b> can have
+<b>properties</b>. These are attributes of the node that can be accessed
+with the standard <code>node.property</code> syntax. Properties are saved as
+<code>key-value</code> pairs.  
+</p>
+</div>
+
+<div id="outline-container-org8fd5935" class="outline-3">
+<h3 id="org8fd5935">Domain Modeling</h3>
+<div class="outline-text-3" id="text-org8fd5935">
+<p>
+This has important consequences for the domain modeling - consider
+the following example:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-17_um_16.39.08.png" class="center">
+
+<p>
+Then you should be careful when checking if the above is the most
+meaningful model. It might well be that some of these nodes might be
+well be modeled as properties. Hence in general when you have
+<code>has_property</code> relations consider well if what you need is indeed a
+node or whether you can model via properties.
+</p>
+
+<p>
+In fact unless, for some reason, you wanted to link users together
+based on their favorite colors, there’s probably no need for
+<i>FavoriteColor</i> to be modeled as a node; it could be an property on
+the <i>User</i> node.
+</p>
+
+<p>
+Hence leveraging the property function you would come up with
+something as that in the end:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-17_um_16.44.12.png" class="center" style = "width: 30% !important;">
+
+<p>
+Now suppose you want to distinguish between a user’s current and
+previous addresses. One way to do this would be to attach an
+<code>is_current</code> flag to the address node as an property. But if two
+users had lived at the same address, and one was the current and the
+other a previous occupant, then whatever value this flag had would
+be false for one of them. Being a user’s current address is <b>not a
+property of the address itself, or of the user</b>, but of the
+<b>relationship</b> between them—a relationship that may change over time,
+as users move from one address to another.
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-17_um_16.47.46.png" class="center">
+
+<p>
+Note now that a further way to refine the above is to set the
+<code>is_current</code> tag as a <b>property</b> of the relation itself.
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-17_um_16.53.14.png" class="center">
+
+<p>
+So in general when modeling with graph databases you should make
+yourself clear what you want to model as <b>entities</b> (which will be
+nodes), what you want to model as <b>relations</b> (which will be edges)
+and finally the properties that the above should have.
+</p>
+
+<p>
+An important thing to consider when making such choice is as well
+to consider the speed at which you can <b>traverse</b> the graph. It is
+clear that depending on how you model the entities you will have a
+better or worse performance.
+</p>
+
+<p>
+For instance you should not create new nodes/entities which main
+purpose is to store <i>additional</i> properties for some entity. To do
+that a new possibility is incorporated into the <code>Neo4j</code> API as of
+version 2.0, i.e. the possibility of assigning <b>labels</b> to
+nodes. Think of labels as <i>collection IDs</i> through which as
+mentioned you can assign nodes to given <b>collections</b>. Note that
+single nodes might be assigned to multiple IDs.
+</p>
+
+<p>
+Note then that on the one hand by using <b>labels</b> properly you can
+reduce the overall number of nodes so that you have a more compact
+graph that is easier to traverse.
+</p>
+
+<p>
+On the top of it, you can as well build queries based on the
+labels. Like this your query in itself does not have to deal with
+missing data as you can base based on the labels just the nodes
+that have the additional properties you are interested in.
+</p>
+
+<p>
+Note that matching a label at query time is done in the following
+way <code>(u:User)</code>. Here you are actually selecting all of the nodes
+with the <code>label: User</code>.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org965fae3" class="outline-2">
+<h2 id="org965fae3">Neo4j in Production</h2>
+<div class="outline-text-2" id="text-org965fae3">
+<p>
+As the project is starting pretty quickly I will explore the depths
+of the query syntax and traversals later. I will now go straight to
+this chapter as pretty soon in the project together with the data
+model we will have to make this call.
+</p>
+
+<p>
+There are essentially two ways to deploy Neo4j, one is <code>embedded</code> mode the other
+being <code>server</code> mode. We will see how this decision will influence
+how you will work with it.
+</p>
+</div>
+
+
+<div id="outline-container-org8ad30cf" class="outline-3">
+<h3 id="org8ad30cf">Embedded vs. Server Mode</h3>
+<div class="outline-text-3" id="text-org8ad30cf">
+<p>
+At the beginning Neo4j was Java centered. Within the <code>embedded
+   mode</code> setup, your Java application and new shiny Neo4j database
+were happily <i>bundled together</i> as a single deployable entity, and
+together they went forth to conquer the brave new world of
+interesting graph-based problems.
+</p>
+
+<p>
+Neo4j, although written in Java, is inherently just a JVM-based
+product. This means that, theoretically, any JVM-based language
+(provided the appropriate libraries or bindings can be found or
+written) can also make use of the Neo4j database. Thus, Neo4j’s
+reach naturally began to extend to other JVM-based languages.
+</p>
+
+<p>
+But it was the need to operate in more network-friendly
+architectures and to support other non-JVM clients that were the
+primary drivers behind the introduction of the <code>server mode</code>.
+</p>
+
+<p>
+<b>With <code>server mode</code>, the Neo4j database runs in its own process, with
+clients talking to it via its dedicated HTTP-based REST API.</b> So if
+you want to go Pythonic go with server mode.
+</p>
+
+<p>
+Such that in general the ecosystem of <code>Neo4j</code> would look as
+follows:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-18_um_11.38.14.png" class="center">
+
+<p>
+Note that as usual, with the inherent network latency introduced in
+the server mode, performance is naturally not going to be as good
+as accessing the database using native code directly. To add more
+flexibility to the server offering, server plugins and unmanaged
+extensions. At the moment I do not think that performance is key
+plus to get up and running with Java is not a question to this
+stage and will skip it for now and stay in my Pythonic world.       
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1d58cfa" class="outline-3">
+<h3 id="org1d58cfa">Server Mode</h3>
+<div class="outline-text-3" id="text-org1d58cfa">
+<p>
+Unlike embedded mode, running Neo4j in server mode involves having
+all the classes and logic to access and process interactions with
+the Neo4j database contained within its own dedicated process,
+<i>completely separate from any clients wishing to use it</i>.
+</p>
+
+<p>
+In order to interact with the server process there is a well-defined, yet extensible,
+HTTP-based REST API.
+</p>
+
+<p>
+The general structure of running Neo4j in server mode is the
+following:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-18_um_15.38.56.png" class="center">
+
+<p>
+Given the basic structure now the standard question of <code>REST</code>
+vs. <code>graphQL</code> vs. other architectures come up.
+</p>
+
+<p>
+Let me briefly make the excursus on this to this stage.
+</p>
+</div>
+
+<div id="outline-container-orge3746fa" class="outline-4">
+<h4 id="orge3746fa">GRAPHQL vs REST</h4>
+<div class="outline-text-4" id="text-orge3746fa">
+<p>
+GraphQL has nothing to do with graph databases. It is much more a
+new kind of API originally developed by Facebook that is rapidly
+expanding.
+</p>
+
+<p>
+In simple terms:
+</p>
+
+<blockquote>
+<p>
+GraphQL is a REST API alternative with a structured query language
+combined with a runtime for query processing and serving data to
+GraphQL clients (and it is almost always implemented with JSON in
+mind).
+</p>
+
+<p>
+GraphQL isn't tied to any specific database or storage engine and is
+instead backed by your existing code and data.
+</p>
+</blockquote>
+
+<p>
+While RESTful API have in fact many benefits, such as the caching
+structures, the general architecture etc. they have a drawback
+that has led to the development and a general interest on
+GraphQL. The major drawback being the fact that sometimes RESTful
+API are too rigid. I.e. this is their power but also their
+drawback.
+</p>
+
+<p>
+Sometimes maybe you are not interested in the entire information
+you would obtain from the API. Sometimes to get your information
+of need you have to do very complex and chatty API call.  Think of
+an API where we first have to GET <i>user first and then fetch each
+friend individually via GET /user</i>:id/friend/:id endpoint, this
+can result in N+1 queries and is a will known performance issue in
+API and database queries. This was in fact the behavior you
+observed on your last project API.
+</p>
+
+
+<p>
+In other words, RESTful API calls are chained on the client before
+the final representation can be formed for display. GraphQL can
+reduce this by enabling the server to aggregate the data for the
+client in a single query. In fact, GraphQL comes handy as it
+creates an API that allows for arbitrary requests that are
+complaint with the GraphQL runtime and protocol.
+</p>
+
+<p>
+This has pro and cons as especially in the case of open API great
+care have to be taken to ensure GraphQL queries don’t result in
+expensive join queries that can bring down server performance or
+even DDoS the server.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org7528ff8" class="outline-4">
+<h4 id="org7528ff8">Back to Server Neo4j</h4>
+<div class="outline-text-4" id="text-org7528ff8">
+<p>
+So back to the Neo4j server. Given that you are interested in
+navigating your graph database it might make little sense to use a
+RESTful approach as for instance to navigate such graph you would
+have to make multiple iterative calls. Think for instance about
+this first call:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-18_um_16.21.38.png" class="center">
+
+<p>
+You can then start from there and navigate your database.
+</p>
+
+<p>
+However, this is very much impractical.
+</p>
+
+<p>
+In this sense I read online that it is common practice for some
+use cases to leverage GraphQL in such cases. This is in fact a
+good example of a possible use case for such technology. In fact
+there are built-in GraphQL implementations in Neo4j. On the other
+hand I also read online that some complain about it saying that if
+you stop by leveraging the GraphQL queries then you probably did
+not need a graph database in the first place and a document store
+might have been enough. Whatever it is. I guess both have their
+point and you will not get completely the point of the discussion
+until you make yourself your hands dirty.
+</p>
+
+<p>
+In any case what is good in Neo4j is that luckily they have
+implemented a REST API where you can leverage the Cypher query
+language such that you can leverage the standard traversal
+properties and get to your data of interest quickly without having
+to do all of that manual work iterating over different APIs calls
+repeatedly.
+</p>
+
+<p>
+In fact using the Cypher API, you would make <code>POST</code> of the
+following form:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-18_um_16.41.56.png" class="center">
+</div>
+</div>
+
+<div id="outline-container-orgc39e0a3" class="outline-4">
+<h4 id="orgc39e0a3">On Remote Client Libraries</h4>
+<div class="outline-text-4" id="text-orgc39e0a3">
+<p>
+Although it is possible for you to directly talk with the 
+RESTful Server directly and get your information via raw API as
+done above many suggest to use client libraries to talk with
+Neo4j. There again much of the complexity of the raw API is
+abstracted away such that you can easily communicate in an
+intuitive way.
+</p>
+
+<p>
+What usually happens is that a runtime is added between your
+client and the server. In the runtime running on a standard
+framework the complexity is masked and you would use the new
+library functions and go through it in the following way:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-18_um_16.47.40.png" class="center">
+
+<p>
+This seems to me quite an overhead also because you would then
+have to make sure that everything scales well. So try to
+understand better the implications of taking such an approach
+should this project become very large at some point.
+</p>
+
+<p>
+You can find a list of different runtime specific drivers
+(i.e. read more as remote REST wrappers) <a href="https://neo4j.com/developer/language-guides/">here</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge627ece" class="outline-4">
+<h4 id="orge627ece">On server Plug-ins</h4>
+<div class="outline-text-4" id="text-orge627ece">
+<p>
+This is a nice feature of the Server Mode. The idea is that as
+mentioned sometimes you might get back too much information via
+API calls. Instead of processing the response on the client when
+you get it, what you can do is to write <code>server Plug-ins</code>.
+</p>
+
+<p>
+<code>Server plug-ins</code> provide a mechanism for offloading some of the
+processing-intensive logic to the server rather than having to
+perform it all on the client, with multiple requests having to
+flow backward and forward to accomplish the same thing. Server
+plugins are sometimes compared to stored procedures in the
+relational database world.
+</p>
+
+<p>
+Server plugins have specifically been designed to extend the
+existing REST API options returned for a node, relationship, or
+the global graph database. Recall that when you make a request for
+the detail of a particular node, you get a lot of options back,
+including an <b>extensions key</b>. This will specify the server 
+extensions specified for your server.
+</p>
+
+<pre class="example" id="org9e4aa54">
+{ ...
+  "extensions" : { . . .},
+  "property" : "http://localhost:7474/db/data/node/0/properties/{key}",
+  "self" : "http://localhost:7474/db/data/node/0",
+  "data" : { "name" : "Adam"  }
+  ... }
+</pre>
+
+<p>
+To write a <code>server plug-in</code> you can extend a <code>ServerPlugin</code> class
+that should be contained in your driver.  You should then be sure
+that the name of your class extending and inheriting from
+<code>ServerPlugin</code> is contained in
+<code>org.neo4j.server.plugins.ServerPlugin</code>.
+</p>
+
+<p>
+If that is the case you should then see it in the extensions in
+the <code>json</code> received from the REST endpoint. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org41cdad2" class="outline-4">
+<h4 id="org41cdad2">Unmanaged Extensions</h4>
+<div class="outline-text-4" id="text-org41cdad2">
+<p>
+If you require complete control over your server-side code, then
+unmanaged extensions may be what you’re looking for. Unlike
+<code>server plugins</code>, which merely allow you to <i>augment the existing
+REST API</i> at specific points, <code>unmanaged extensions</code> essentially
+allow you to <i>define your own domain-specific REST API</i>.
+</p>
+
+<p>
+This means that instead of dealing with general nodes and
+relationships, you can now with a specific set of nodes - say
+Users and Movies. This was not an option for <code>server
+    Plugins</code>. There you could just specify a plugin at a node level
+that would be available across all nodes.
+</p>
+
+<p>
+Broadly speaking, you define a class, which, through a set of
+annotations, binds the class to a particular URL pattern and mount
+point within the Neo4j server. When this mount point is invoked,
+control is transferred to this class, which can have full access
+to the Neo4j graph database, allowing the class to perform
+whatever actions or functionality is required, returning the data
+in whatever format is desired.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+<div id="outline-container-org7ab9498" class="outline-2">
+<h2 id="org7ab9498"><span class="todo TODO">TODO</span> trello</h2>
+</div>
