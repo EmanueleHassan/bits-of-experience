@@ -2,7 +2,7 @@
 .. title: Kubernetes
 .. slug: Kubernetes
 .. date: 2019-09-06 18:21:43 UTC+02:00
-.. tags: IT Architecture
+.. tags: IT Architecture, Container Management
 .. category: 
 .. link: 
 .. description: 
@@ -293,6 +293,30 @@ You can inspect such by running
 #+BEGIN_SRC 
 $ kubectl logs
 #+END_SRC
+
+** Contexts
+
+   As mentioned above context specify with which cluster and on which
+   namespace you will work.
+
+   I worked with multiple clusters throughout my experience. At some
+   point I needed to make order. I had too many clusters and contexts
+   I did not use anymore in my =config= file governing the kubectl
+   specifications.
+
+   In order to unset clusters and contexts use the following
+
+   #+BEGIN_SRC sh
+   ## to view the contexts
+   kubectl config get-contexts
+
+   ## to view the clusters 
+   kubectl config get-contexts
+
+   ## to remove contexts and clusters
+   kubectl config unset contexts.<name>
+   kubectl config unset clusters.<name>
+   #+END_SRC
 
 ** Direct operating within a /Pod/
 
@@ -893,7 +917,6 @@ docker build -t us.icr.io/$MY_NAMESPACE/hello-world:3 . && docker push us.icr.io
 
 You would get the configmap text when accessing your application
 running on the cluster.
-
 
 ** Literature
 

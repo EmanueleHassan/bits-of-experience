@@ -29,6 +29,7 @@ It is essentially the tool set that lets you manage containers.
 Enterprise">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2019-09-06T18:21:43+02:00">
+<meta property="article:tag" content="Container Management">
 <meta property="article:tag" content="IT Architecture">
 </head>
 <body>
@@ -67,7 +68,8 @@ Enterprise">
 <h3 class="metadata-title">
 <i class="fa fa-tags"></i> Tags:</h3>
         <ul itemprop="keywords" class="tags-ul">
-<li><a class="tag p-category" href="../../categories/it-architecture/" rel="tag">IT Architecture</a></li>
+<li><a class="tag p-category" href="../../categories/container-management/" rel="tag">Container Management</a></li>
+            <li><a class="tag p-category" href="../../categories/it-architecture/" rel="tag">IT Architecture</a></li>
         </ul>
 </div>
 
@@ -105,13 +107,13 @@ While the virtual machine controlling other VMs is called master VM,
 the other are not called <i>workers</i> but rather <i>nodes</i>.
 </p>
 
-<div id="outline-container-org08d6cab" class="outline-2">
-<h2 id="org08d6cab">Theoretical Framework</h2>
-<div class="outline-text-2" id="text-org08d6cab">
+<div id="outline-container-org0106755" class="outline-2">
+<h2 id="org0106755">Theoretical Framework</h2>
+<div class="outline-text-2" id="text-org0106755">
 </div>
-<div id="outline-container-orgf7b373f" class="outline-3">
-<h3 id="orgf7b373f">Architecture</h3>
-<div class="outline-text-3" id="text-orgf7b373f">
+<div id="outline-container-org00046bf" class="outline-3">
+<h3 id="org00046bf">Architecture</h3>
+<div class="outline-text-3" id="text-org00046bf">
 <p>
 The kubernetes architecture is rather simple. It consists of three major components:
 </p>
@@ -170,9 +172,9 @@ looking at the following three videos
 </div>
 
 
-<div id="outline-container-org1bc02c9" class="outline-3">
-<h3 id="org1bc02c9">Master</h3>
-<div class="outline-text-3" id="text-org1bc02c9">
+<div id="outline-container-orga32758e" class="outline-3">
+<h3 id="orga32758e">Master</h3>
+<div class="outline-text-3" id="text-orga32758e">
 <p>
 Masters are responsible for an entire cluster, they are the one that
 makes the decision on which node to schedule an application.
@@ -209,9 +211,9 @@ available things is.</li>
 </div>
 
 
-<div id="outline-container-orge76ed8f" class="outline-4">
-<h4 id="orge76ed8f">Operation</h4>
-<div class="outline-text-4" id="text-orge76ed8f">
+<div id="outline-container-org1f7cf89" class="outline-4">
+<h4 id="org1f7cf89">Operation</h4>
+<div class="outline-text-4" id="text-org1f7cf89">
 <p>
 The question that arise now is how do we specify the Master the tasks to be scheduled?
 </p>
@@ -227,9 +229,9 @@ will make sure the state is guaranteed.
 
 
 
-<div id="outline-container-orgd3e0e9f" class="outline-3">
-<h3 id="orgd3e0e9f">Helm</h3>
-<div class="outline-text-3" id="text-orgd3e0e9f">
+<div id="outline-container-org2bb6954" class="outline-3">
+<h3 id="org2bb6954">Helm</h3>
+<div class="outline-text-3" id="text-org2bb6954">
 <p>
 Helm, the Kubernetes native package management system, is used for
 application management inside an IBM Cloud Private cluster. The Helm
@@ -243,9 +245,9 @@ their cluster.
 
 
 
-<div id="outline-container-org6463a59" class="outline-3">
-<h3 id="org6463a59">Image Registry</h3>
-<div class="outline-text-3" id="text-org6463a59">
+<div id="outline-container-org5ca1718" class="outline-3">
+<h3 id="org5ca1718">Image Registry</h3>
+<div class="outline-text-3" id="text-org5ca1718">
 <p>
 Here is where you save your images. Registries can be either public
 or private. Once you push an image to a registry is can then be
@@ -270,10 +272,10 @@ registry, for instance <code>docker.io</code>.
 </div>
 
 
-<div id="outline-container-org4b86273" class="outline-2">
-<h2 id="org4b86273">Commands</h2>
-<div class="outline-text-2" id="text-org4b86273">
-<pre class="example">
+<div id="outline-container-org453da1d" class="outline-2">
+<h2 id="org453da1d">Commands</h2>
+<div class="outline-text-2" id="text-org453da1d">
+<pre class="example" id="orgb913f6a">
 ## to view the cluster info
 $ kubectl cluster-info  
 
@@ -307,7 +309,7 @@ providing a name for the deployment and pulling the docker image of
 interest you want to run on top of it.
 </p>
 
-<pre class="example">
+<pre class="example" id="orgac96848">
 $ kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1
 </pre>
 
@@ -315,7 +317,7 @@ $ kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/ku
 You can then double check the successful creating of the deployment by running:
 </p>
 
-<pre class="example">
+<pre class="example" id="org1553e1d">
 $ kubectl get deployments
 </pre>
 
@@ -444,10 +446,42 @@ You can inspect such by running
 </pre></div>
 </div>
 
-<div id="outline-container-org7c70ab3" class="outline-3">
-<h3 id="org7c70ab3">Direct operating within a <i>Pod</i>
+<div id="outline-container-org0da1776" class="outline-3">
+<h3 id="org0da1776">Contexts</h3>
+<div class="outline-text-3" id="text-org0da1776">
+<p>
+As mentioned above context specify with which cluster and on which
+namespace you will work.
+</p>
+
+<p>
+I worked with multiple clusters throughout my experience. At some
+point I needed to make order. I had too many clusters and contexts
+I did not use anymore in my <code>config</code> file governing the kubectl
+specifications.
+</p>
+
+<p>
+In order to unset clusters and contexts use the following
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1">## to view the contexts</span>
+   kubectl config get-contexts
+
+   <span class="c1">## to view the clusters </span>
+   kubectl config get-contexts
+
+   <span class="c1">## to remove contexts and clusters</span>
+   kubectl config <span class="nb">unset</span> contexts.&lt;name&gt;
+   kubectl config <span class="nb">unset</span> clusters.&lt;name&gt;
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org22e53ea" class="outline-3">
+<h3 id="org22e53ea">Direct operating within a <i>Pod</i>
 </h3>
-<div class="outline-text-3" id="text-org7c70ab3">
+<div class="outline-text-3" id="text-org22e53ea">
 <p>
 Notice that as a Pod is used as a running isolated environment within
 a node it is possible to directly operate on it.
@@ -476,9 +510,9 @@ Pod as a parameter. Let’s list the environment variables
 </div>
 </div>
 
-<div id="outline-container-org08054ac" class="outline-3">
-<h3 id="org08054ac">On Pod Lifecycle</h3>
-<div class="outline-text-3" id="text-org08054ac">
+<div id="outline-container-org731dfc0" class="outline-3">
+<h3 id="org731dfc0">On Pod Lifecycle</h3>
+<div class="outline-text-3" id="text-org731dfc0">
 <p>
 Up to know we have addressed the issues of accessing Pod locally from
 the kubernetes CLI.
@@ -674,9 +708,9 @@ name and the selected port deployment.
 </div>
 </div>
 
-<div id="outline-container-org88932e7" class="outline-3">
-<h3 id="org88932e7">App scaling</h3>
-<div class="outline-text-3" id="text-org88932e7">
+<div id="outline-container-orgd356a43" class="outline-3">
+<h3 id="orgd356a43">App scaling</h3>
+<div class="outline-text-3" id="text-orgd356a43">
 <p>
 In the previous modules we created a Deployment, and then exposed it
 publicly via a Service. The Deployment created only one Pod for
@@ -728,9 +762,9 @@ services/&lt;service name&gt;</code> command.
 </div>
 </div>
 
-<div id="outline-container-org505f918" class="outline-3">
-<h3 id="org505f918">New releases</h3>
-<div class="outline-text-3" id="text-org505f918">
+<div id="outline-container-org8f64f4b" class="outline-3">
+<h3 id="org8f64f4b">New releases</h3>
+<div class="outline-text-3" id="text-org8f64f4b">
 <p>
 Users expect applications to be available all the time and developers
 are expected to deploy new versions of them several times a day. In
@@ -757,9 +791,9 @@ to the users of the application.
 </div>
 </div>
 
-<div id="outline-container-org5809100" class="outline-3">
-<h3 id="org5809100">Cluster Exposure to Public Internet</h3>
-<div class="outline-text-3" id="text-org5809100">
+<div id="outline-container-orgf6cb395" class="outline-3">
+<h3 id="orgf6cb395">Cluster Exposure to Public Internet</h3>
+<div class="outline-text-3" id="text-orgf6cb395">
 <p>
 Since there are three replicas of this application deployed in the
 cluster, Kubernetes will load balance requests across these three
@@ -810,7 +844,7 @@ entitled NODE):
 Here is some sample output.
 </p>
 
-<pre class="example">
+<pre class="example" id="org76601b3">
 NAME                          READY   STATUS    RESTARTS   AGE   IP               NODE            NOMINATED NODE   READINESS GATES
 hello-world-dd6b5d745-f9xjk   1/1     Running   0          7m    172.30.104.185   10.114.85.153   &lt;none&gt;           &lt;none&gt;
 hello-world-dd6b5d745-m89fc   1/1     Running   0          7m    172.30.165.182   10.114.85.151   &lt;none&gt;           &lt;none&gt;
@@ -839,7 +873,7 @@ To get the port number, run the following command and note the port:
 Here is some sample output. In this sample, the port number we need is 31758.
 </p>
 
-<pre class="example">
+<pre class="example" id="org8421285">
 NAME          TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
 hello-world   NodePort   172.21.121.84   &lt;none&gt;        8080:31758/TCP   58s
 </pre>
@@ -867,7 +901,7 @@ Notice that this output includes the Pod name. Run the command ten
 times and note the <b>different Pod names</b> in each line of output.  
 </p>
 
-<div class="highlight"><pre><span></span><span class="k">for</span> i in <span class="sb">`</span>seq <span class="m">10</span><span class="sb">`</span><span class="p">;</span> <span class="k">do</span> curl <span class="nv">$NODE_IP</span>:<span class="nv">$NODE_PORT</span><span class="p">;</span> <span class="k">done</span>
+<div class="highlight"><pre><span></span><span class="k">for</span> i <span class="k">in</span> <span class="sb">`</span>seq <span class="m">10</span><span class="sb">`</span><span class="p">;</span> <span class="k">do</span> curl <span class="nv">$NODE_IP</span>:<span class="nv">$NODE_PORT</span><span class="p">;</span> <span class="k">done</span>
 </pre></div>
 
 <p>
@@ -879,13 +913,13 @@ different instance of our application.
 </div>
 </div>
 
-<div id="outline-container-org1c7e9be" class="outline-3">
-<h3 id="org1c7e9be">App Scaling, new releases, cluster configuration - Implementation</h3>
-<div class="outline-text-3" id="text-org1c7e9be">
+<div id="outline-container-org0150396" class="outline-3">
+<h3 id="org0150396">App Scaling, new releases, cluster configuration - Implementation</h3>
+<div class="outline-text-3" id="text-org0150396">
 </div>
-<div id="outline-container-orgf511d2a" class="outline-4">
-<h4 id="orgf511d2a">Replicasets</h4>
-<div class="outline-text-4" id="text-orgf511d2a">
+<div id="outline-container-orge3688e9" class="outline-4">
+<h4 id="orge3688e9">Replicasets</h4>
+<div class="outline-text-4" id="text-orge3688e9">
 <p>
 It manages your pods ensuring the right number of pods are always up
 and running. This can mean adding or deleting pods as
@@ -954,9 +988,9 @@ an imperative way running
 </div>
 </div>
 
-<div id="outline-container-orgfe69ae9" class="outline-4">
-<h4 id="orgfe69ae9">Autoscaling</h4>
-<div class="outline-text-4" id="text-orgfe69ae9">
+<div id="outline-container-org603f411" class="outline-4">
+<h4 id="org603f411">Autoscaling</h4>
+<div class="outline-text-4" id="text-org603f411">
 <p>
 Horizontal Pod Autoscaler, or HPA, enables the application to increase
 the number of pods based on traffic.
@@ -1047,9 +1081,9 @@ spec:
 
 
 
-<div id="outline-container-org2106d65" class="outline-4">
-<h4 id="org2106d65">Rolling Updates</h4>
-<div class="outline-text-4" id="text-org2106d65">
+<div id="outline-container-org76df51a" class="outline-4">
+<h4 id="org76df51a">Rolling Updates</h4>
+<div class="outline-text-4" id="text-org76df51a">
 <p>
 Rolling updates provide a way to roll out app changes in an automated
 and controlled fashion throughout your pods.  Rolling updates work
@@ -1096,9 +1130,9 @@ spec:
 </div>
 
 
-<div id="outline-container-org3a0fb6f" class="outline-4">
-<h4 id="org3a0fb6f">Config Maps and Secrets</h4>
-<div class="outline-text-4" id="text-org3a0fb6f">
+<div id="outline-container-orgf950002" class="outline-4">
+<h4 id="orgf950002">Config Maps and Secrets</h4>
+<div class="outline-text-4" id="text-orgf950002">
 <p>
 As software developers, we know it’s a good practice not to hard-code
 configuration variables in code.
@@ -1214,10 +1248,9 @@ running on the cluster.
 </div>
 </div>
 
-
-<div id="outline-container-org84cfda7" class="outline-3">
-<h3 id="org84cfda7">Literature</h3>
-<div class="outline-text-3" id="text-org84cfda7">
+<div id="outline-container-orgacd5a80" class="outline-3">
+<h3 id="orgacd5a80">Literature</h3>
+<div class="outline-text-3" id="text-orgacd5a80">
 <p>
 IBM - Journey to Cloud Series.
 </p>
