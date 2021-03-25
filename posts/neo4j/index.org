@@ -277,6 +277,7 @@ select count(distinct uf2.*) from t_user_friend uf1
    way ~(u:User)~. Here you are actually selecting all of the nodes
    with the =label: User=.
 
+
 * Neo4j in Production
 
   As the project is starting pretty quickly I will explore the depths
@@ -529,7 +530,6 @@ instead backed by your existing code and data.
     
 
 
-
     
 * Neo4j for Ontologies
 
@@ -579,6 +579,154 @@ instead backed by your existing code and data.
 
   Ok lucky me - there seem to be an ontology available for the use
   case. So it is always worthy to check at the material around.
-    
 
+
+  
+* Experiment with Neo4j on Local Machine
+
+  Install it with brew
+
+  #+BEGIN_SRC sh
+  brew install neo4j
+  #+END_SRC
+
+  Then you can start the server with
+
+  #+begin_src sh
+  neo4j start
+  #+end_src
+
+  And stop it with
+
+  #+BEGIN_SRC sh
+  neo4j stop
+  #+END_SRC
+
+  Interestingly at the beginning you will be asked for a login. The
+  default user and password are =neo4j=. After that you can set a new
+  password.
+
+  
+* Neo4j Bloom
+
+  I think we should use this for visualization. It has all the
+  features we need. It is good for the 3 months PoC and we would not
+  waste too much time for getting up and running with everything.
+
+  The issue is that I am noting now that is not
+  open-sourced. I.e. there are licensing costs. So it's probably out.
+
+  
+* Alternative to Bloom
+
+  I will work with open source tools instead of Bloom due to the
+  license issues.
+
+  An IBM group did some project with it and connected the Discovery
+  services with Neo4j. They implemented a microservices structure with
+  a Flask backend that is orchestrating the entire thing.
+
+  The solution with Discovery is ingenious. A bit an overkill in my
+  opinion and I doubt it will run smoothly without a lot of fine
+  tuning. For the PoC I will just borrow from that code to connect to
+  Neo4j and use an Angular app for the visualization.
+
+
+* Neo4j Install on Kuberenetes
+
+  So for the project we will work with a kubernetes cluster. So the
+  next steps will be to install the Neo4j Community Edition on our
+  cluster.
+
+  While it is out of the box and straightforward to install Neo4j
+  Enterprise Edition on it the community edition process seems to be
+  more convoluted.
+
+  Let's try to see by trial and error how long it will take to me.
+
+  I also question if it makes sense to work with a helm chart
+  directly as I will not be able to scale in either case with the
+  community edition and you will generally probably not be able to use
+  the benefit of kubernetes. Anyways let's leave the point open and
+  let's try to install it. If it is quick it's fine. Then you are
+  already on the platform so that post-PoC you will be able to
+  quickly expand. Moreover like this you will be able to expand and
+  refresh your skills on k8s. 
+
+  So apparently it is possible to use the enterprise edition neo4j
+  helm chart and change some parameters. Check [[https://community.neo4j.com/t/neo4j-community-edition-on-kubernetes/4955/4][this link]] in this
+  sense.
+
+  Note that the above is fine in the general sense i.e. some of these
+  parameters I guess still hold and probably you can change the
+  structure and achieve the same as mentioned there. The helm chart
+  mentioned there is outdated in any case.
+
+  The new chart is [[https://github.com/neo4j-contrib/neo4j-helm/][this]].
+
+  So try to install it:
+
+  #+BEGIN_SRC sh
+   helm install neo-helm https://github.com/neo4j-contrib/neo4j-helm/releases/download/4.2.2-1/neo4j-4.2.2-1.tgz --set core.standalone=true --set acceptLicenseAgreement=yes --set neo4jPassword="MYPASSWORD" --namespace usz-sarcoma
+  #+END_SRC
+
+  Good, now you have =services= and =persitant volume= associated with
+  it. Note that I installed the core.standalone mode where
+  Replicasets are ignored and it acts as the community
+  edition. I.e. it does not scale etc. Try to understand if with this
+  you are fine or not.
+
+  Ok so after installation I can see the various services running
+
+  #+BEGIN_SRC sh :results raw
+  kubectl get services --namespace usz-sarcoma
+  #+END_SRC
+
+  #+RESULTS:
+  NAME                         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                               AGE
+  discovery-neo-helm-neo4j-0   ClusterIP   None         <none>        5000/TCP,6000/TCP,7000/TCP,3637/TCP   3h40m
+  discovery-neo-helm-neo4j-1   ClusterIP   None         <none>        5000/TCP,6000/TCP,7000/TCP,3637/TCP   3h40m
+  discovery-neo-helm-neo4j-2   ClusterIP   None         <none>        5000/TCP,6000/TCP,7000/TCP,3637/TCP   3h40m
+  discovery-neo-helm-neo4j-3   ClusterIP   None         <none>        5000/TCP,6000/TCP,7000/TCP,3637/TCP   3h40m
+  discovery-neo-helm-neo4j-4   ClusterIP   None         <none>        5000/TCP,6000/TCP,7000/TCP,3637/TCP   3h40m
+  discovery-neo-helm-neo4j-5   ClusterIP   None         <none>        5000/TCP,6000/TCP,7000/TCP,3637/TCP   3h40m
+  neo-helm-neo4j               ClusterIP   None         <none>        7474/TCP,7687/TCP,7473/TCP,6362/TCP   3h40m
+
+  And you will have your persitant storage associated with the service
+  as well
+
+  #+BEGIN_SRC sh :results raw
+  kubectl get pvc
+  #+END_SRC
+
+  #+RESULTS:
+  NAME                            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      AGE
+  datadir-neo-helm-neo4j-core-0   Bound    pvc-88a62e20-4905-4d51-bda4-f5b4e126e84a   20Gi       RWO            ibmc-block-gold   3h41m
+
+  Good. Now you can also see your running pod that is running the
+  services
+
+  #+BEGIN_SRC sh :results raw
+  kubectl get pods
+  #+END_SRC
+
+  #+RESULTS:
+  NAME                    READY   STATUS    RESTARTS   AGE
+  neo-helm-neo4j-core-0   1/1     Running   0          3h42m
+
+  Well done. You must now expose the services to the outside world. I
+  will start easily by testing it locally doing a port forward.
+
+  #+BEGIN_SRC sh :results raw
+  kctl port-forward neo-helm-neo4j-core-0 7474:7474 7687:7687 7473:7473 --namespace usz-sarcoma
+  #+END_SRC
+
+  Good. You can now access the neo4j webapp at =localhost:7474= and
+  access the database from there via =localhost:7687=.
+
+  You can start playing with it. Understand the visualization and the
+  application schema through which you will communicate with the
+  database. Then come back to expose the service to the outside world.
+
+  
   
