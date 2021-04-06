@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1616835106.19446
+_modified_time = 1617691977.422611
 _enable_loop = True
 _template_filename = '/Users/marcohassan/Desktop/python_venv/nikola/lib/python3.9/site-packages/nikola/data/themes/base/templates/listing.tmpl'
 _template_uri = 'listing.tmpl'
@@ -30,12 +30,12 @@ def render_body(context,**pageargs):
     __M_caller = context.caller_stack._push_frame()
     try:
         __M_locals = __M_dict_builtin(pageargs=pageargs)
-        crumbs = context.get('crumbs', UNDEFINED)
-        messages = context.get('messages', UNDEFINED)
-        ui = _mako_get_namespace(context, 'ui')
         source_link = context.get('source_link', UNDEFINED)
-        code = context.get('code', UNDEFINED)
+        crumbs = context.get('crumbs', UNDEFINED)
+        ui = _mako_get_namespace(context, 'ui')
         files = context.get('files', UNDEFINED)
+        code = context.get('code', UNDEFINED)
+        messages = context.get('messages', UNDEFINED)
         title = context.get('title', UNDEFINED)
         folders = context.get('folders', UNDEFINED)
         def content():
@@ -56,12 +56,12 @@ def render_body(context,**pageargs):
 def render_content(context,**pageargs):
     __M_caller = context.caller_stack._push_frame()
     try:
-        crumbs = context.get('crumbs', UNDEFINED)
-        messages = context.get('messages', UNDEFINED)
-        ui = _mako_get_namespace(context, 'ui')
         source_link = context.get('source_link', UNDEFINED)
-        code = context.get('code', UNDEFINED)
+        crumbs = context.get('crumbs', UNDEFINED)
+        ui = _mako_get_namespace(context, 'ui')
         files = context.get('files', UNDEFINED)
+        code = context.get('code', UNDEFINED)
+        messages = context.get('messages', UNDEFINED)
         title = context.get('title', UNDEFINED)
         folders = context.get('folders', UNDEFINED)
         def content():

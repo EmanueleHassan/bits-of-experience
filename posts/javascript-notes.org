@@ -15,7 +15,7 @@ is a quite fundamental technology. No need to tell you why. Everyone
 knows it.
 
 For a project I might use =Node.js=. We will decide next week
-but in the meanwhile I will take 1-2h now to explore javascript.
+but in the meanwhile I will take 1-2h now to explore javascript. 
 
 Note that these notes, are mainly taken from Javascript the Definitive
 Guide - 7th edition.
@@ -27,7 +27,16 @@ systems algo it should be no difficulty to make sense of all of this.
 This is a must know language as being it the programming language of
 the web and with the rise of =Node.js= that brought it also out of the
 web into the backend it is by now the most used programming language
-among Software Developers. 
+among Software Developers.
+
+Update end of March - this project did not take of due to bureaucratic
+issues. Good is that for the next project I have the decision on the
+entire architecture and it turns out that I will also have to deal a
+bit with the front-end. So it was indeed a good idea to learn
+Javascript. Talked with a colleague that introduced my to Angular
+architecture. I mean I will never learn it at a level to write code in
+it as front-end is not my bread but at least I will be able to
+navigate and read the code and get an idea of how the front-end operates.
 
 {{{TEASER_END}}}
 
@@ -1273,7 +1282,12 @@ To understand asynchronous JavaScript understand the following
 video. This makes the point ultra-well. It is a bit focused on the
 browser side of JavaScript but it makes the point.
 
- #+begin_export html
+I have to still write down promises, subscribe etc... syntax. This is
+however syntax. I will keep it to the moment where I will start
+working in javascript projects. To this stage just watch the video and
+understand the logic. Pretty clear the idea.
+
+ #+Begin_export html
 <style>
 .container {
   position: relative;
@@ -1307,7 +1321,64 @@ browser side of JavaScript but it makes the point.
  #+end_export
 
 
+* Angular
 
+   Here some notes on Angular. I did not read any book or worked in a
+   structured way. It is more jump into the project and make your way
+   through. 
+  
+   So don't take at golden what is written here. You can probably find
+   much better notes and explanations. 
 
+   Basically the structure of Angular consists of the following,
+   where components and services are the building blocks:
 
+   - you call components in html pages and call the functions of the
+     components from there. components also define html tags that
+     perform given functionalities.
 
+   - in the =<name>.components.ts= you write in typescript the
+     functions of interest and eventually load and call services
+     functions. you import the services at the beginning of your
+     component files as you would import python modules. html tags for
+     the component exists then generally via the
+     =<app-component_name>=.
+
+   - services implement functions that can be called from components
+     but are unrelated from html and get not embedded in there.
+
+   - an =app.component= part, which consists of:
+
+     + =app.component.html= this is the root governing html calls all
+       of the routes to the other components via <router-outlet> 
+
+     + =app.component.ts= this just refers to the component html and
+       css as it is a component itself. 
+
+     + =app-routing.module.ts= specifies all of the routes to the
+       other compoents and the website *routes* associated with it.
+
+     + Example of component syntax in the =app.component.ts= file
+       where you actually specify the component
+
+       #+begin_src js
+     @Component({
+		 selector: 'app-chat',
+		 templateUrl: './chat.component.html',
+		 styleUrls: ['./chat.component.css']
+	       })
+       #+end_src
+
+       Moreover you have some modules built-in angular. for instance
+       you work with ngOnInit() which is similar to the =__init__=
+       module in python that immediately runs when importing a
+       module. I.e. this makes specific API calls, loads variables
+       etc. when the component is first called.
+
+     + =app.module.ts= here you import all of the modules you will use
+       throughout your implementations. there are also maps to the
+       components you specify yourself. such maps and "syslinks" are
+       created automatically when creating a component via =ng
+       generate compoent= use such command therefore. 
+
+   - um ein neues component zu machen: ~ng generate component~

@@ -2,7 +2,7 @@
 .. title: Neo4j
 .. slug: neo4j
 .. date: 2021-03-17 15:27:09 UTC+01:00
-.. tags: 
+.. tags: Data
 .. category: 
 .. link: 
 .. description: 
@@ -166,7 +166,9 @@ select count(distinct uf2.*) from t_user_friend uf1
 
   So go over it at some point and understand the difference in depth
   and do some longer post. [[https://neo4j.com/blog/rdf-triple-store-vs-labeled-property-graph-difference/][This]] is a good reference in this sense.
-    
+
+  Also [[https://medium.com/@atakanguney94/a-comparison-of-label-property-graph-and-the-rdf-cd94d2943d53#:~:text=There%20are%20certain%20advantages%20of,may%20simplify%20the%20modeling%20process.][this post]] gives a quick dirty intro.
+
 * Data Modeling in Neo4j
 
   Interestingly Neo4j is /schemaless/, so unlike classical databases
@@ -574,7 +576,7 @@ instead backed by your existing code and data.
   themselves without creating a separate ontology on top of it?
 
   These are all questions you should address with the domain experts
-  of your problem. Consider such things in the introductory talk for
+  of your problem.  Consider such things in the introductory talk for
   the project.
 
   Ok lucky me - there seem to be an ontology available for the use
@@ -605,6 +607,21 @@ instead backed by your existing code and data.
   Interestingly at the beginning you will be asked for a login. The
   default user and password are =neo4j=. After that you can set a new
   password.
+
+  
+* Experiment with Neo4j Desktop
+
+  This has all of the licensed tools built in and it is quick and easy
+  to get up and running with it. For instance also the implementation
+  of managed extensions is straightforward.
+
+  I will experiment a bit here for now. That makes it easier.
+
+  The installation via brew on MACOSX is also straightforward:
+
+  #+BEGIN_SRC sh
+  brew install --cask neo4j
+  #+END_SRC
 
   
 * Neo4j Bloom
@@ -729,4 +746,79 @@ instead backed by your existing code and data.
   database. Then come back to expose the service to the outside world.
 
   
+  
+* Cypher Language
+
+  I like to work in a clean way. So the first thing I will do is
+  create my specific database.
+
+  #+begin_example
+  $ create database <dbName>
+  #+end_example
+
+  Next you will fill it up with food... 
+  
+* NeoSemantics
+
+  This is the way you would deal with RDF schema and there are scripts
+  that parse such into neo4j syntax as import and exports.
+
+  There are also scripts that deal with ontologies imports. Have to
+  test these out.
+
+  In order to have such toolkit you need to install the extension to
+  your neo4j database.
+
+  I will try to do this next in my database running in the oc cluster.
+
+  First of all ssh into your cluster such that you can have a bash
+  session over there.
+
+  #+BEGIN_SRC sh
+  $ kubectl exec -ti $POD_NAME bash
+  #+END_SRC
+
+
+  Then change your directory to the =$NEO4J_HOME= directory.
+
+  #+BEGIN_SRC sh
+  cd $NEO4J_HOME
+  #+END_SRC
+
+  You can then go to the =plugin= repo in there
+  
+  #+BEGIN_SRC sh
+  cd plugins
+  #+END_SRC
+
+  Then you can get the release you want from [[https://github.com/neo4j-labs/neosemantics/releases][here]] and copy the link of
+  the jar file of interest.
+
+  #+BEGIN_SRC sh
+  # in my case
+  $ wget https://github.com/neo4j-labs/neosemantics/releases/download/4.2.0.0/neosemantics-4.2.0.0.jar
+  #+END_SRC
+
+  Then I made the following change:
+
+  #+BEGIN_SRC sh
+  $ echo "dbms.unmanaged_extension_classes=n10s.endpoint=/rdf" >> <NEO_HOME>/conf/neo4j.conf
+  #+END_SRC
+
+  Then you should restart the server. I think this is where it is not
+  working correctly. Cause when I did ~$NEO4J_HOME/bin/neo4j restart~
+  it said that there was no instance of neo4j running. 
+
+  Then it started one. But then I could not find a working mounted
+  extension as when calling the endpoint I got a 404 error
+
+  #+BEGIN_SRC sh
+  :GET http://localhost:7474/rdf/ping
+  #+END_SRC
+
+  this from the web-browser with port forward. That is weird. Even if
+  it is pod as long as you do not kill and restart that pod it should
+  work as a normal neo4j instance. So theoretically the above should
+  have worked.
+
   
