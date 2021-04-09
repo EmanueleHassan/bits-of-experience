@@ -756,7 +756,21 @@ instead backed by your existing code and data.
   $ create database <dbName>
   #+end_example
 
-  Next you will fill it up with food... 
+  Next you will fill it up with food...
+
+** On directional Nodes
+  
+   Neo4j’s graphs are directed, which means that each relationship must
+   have well-defined start and end nodes. Bidirectional relationships
+   in Neo4j can be modeled with two separate relationships, one in each
+   direction.
+
+   Note that even in the case of a directed relationship you might be
+   able to infer relationships at query time in any of the two
+   directions. I.e. you can go against the current so to say and infer
+   relationship against current as well.
+
+           
   
 * NeoSemantics
 
@@ -766,59 +780,235 @@ instead backed by your existing code and data.
   There are also scripts that deal with ontologies imports. Have to
   test these out.
 
-  In order to have such toolkit you need to install the extension to
-  your neo4j database.
-
-  I will try to do this next in my database running in the oc cluster.
-
-  First of all ssh into your cluster such that you can have a bash
-  session over there.
-
-  #+BEGIN_SRC sh
-  $ kubectl exec -ti $POD_NAME bash
-  #+END_SRC
-
-
-  Then change your directory to the =$NEO4J_HOME= directory.
-
-  #+BEGIN_SRC sh
-  cd $NEO4J_HOME
-  #+END_SRC
-
-  You can then go to the =plugin= repo in there
   
-  #+BEGIN_SRC sh
+** Install
+
+   In order to have such toolkit you need to install the extension to
+   your neo4j database.
+
+   I will try to do this next in my database running in the oc cluster.
+
+   First of all ssh into your cluster such that you can have a bash
+   session over there.
+
+   #+BEGIN_SRC sh
+  $ kubectl exec -ti $POD_NAME bash
+   #+END_SRC
+
+
+   Then change your directory to the =$NEO4J_HOME= directory.
+
+   #+BEGIN_SRC sh
+  cd $NEO4J_HOME
+   #+END_SRC
+
+   You can then go to the =plugin= repo in there
+  
+   #+BEGIN_SRC sh
   cd plugins
-  #+END_SRC
+   #+END_SRC
 
-  Then you can get the release you want from [[https://github.com/neo4j-labs/neosemantics/releases][here]] and copy the link of
-  the jar file of interest.
+   Then you can get the release you want from [[https://github.com/neo4j-labs/neosemantics/releases][here]] and copy the link of
+   the jar file of interest.
 
-  #+BEGIN_SRC sh
+   #+BEGIN_SRC sh
   # in my case
   $ wget https://github.com/neo4j-labs/neosemantics/releases/download/4.2.0.0/neosemantics-4.2.0.0.jar
-  #+END_SRC
+   #+END_SRC
 
-  Then I made the following change:
+   Then I made the following change:
 
-  #+BEGIN_SRC sh
+   #+BEGIN_SRC sh
   $ echo "dbms.unmanaged_extension_classes=n10s.endpoint=/rdf" >> <NEO_HOME>/conf/neo4j.conf
-  #+END_SRC
+   #+END_SRC
 
-  Then you should restart the server. I think this is where it is not
-  working correctly. Cause when I did ~$NEO4J_HOME/bin/neo4j restart~
-  it said that there was no instance of neo4j running. 
+   Then you should restart the server. I think this is where it is not
+   working correctly. Cause when I did ~$NEO4J_HOME/bin/neo4j restart~
+   it said that there was no instance of neo4j running. 
 
-  Then it started one. But then I could not find a working mounted
-  extension as when calling the endpoint I got a 404 error
+   Then it started one. But then I could not find a working mounted
+   extension as when calling the endpoint I got a 404 error
 
-  #+BEGIN_SRC sh
+   #+BEGIN_SRC sh
   :GET http://localhost:7474/rdf/ping
-  #+END_SRC
+   #+END_SRC
 
-  this from the web-browser with port forward. That is weird. Even if
-  it is pod as long as you do not kill and restart that pod it should
-  work as a normal neo4j instance. So theoretically the above should
-  have worked.
+   this from the web-browser with port forward. That is weird. Even if
+   it is pod as long as you do not kill and restart that pod it should
+   work as a normal neo4j instance. So theoretically the above should
+   have worked.
+  
+   I will now work with the Desktop version as time is limited. I will
+   then figure out what is not working in the above. And possibly use a
+   docker image.
+
+    
+** Semantics
+
+   Basically you have options to specify how URI objects are
+   translated into your label-property graph.
+
+   There are default settings on how you treat general structures; you
+   can check at them by calling ~n10s.graphconfig.init()~.
+
+   After an initial Graph Config has been created and before the data
+   is imported, the method ~n10s.graphconfig.set~ will let you update
+   individual configuration items. Here’s an example:
+
+   #+BEGIN_SRC js 
+   call n10s.graphconfig.init();
+
+   call n10s.graphconfig.set( { keepLangTag: true, handleRDFTypes: "LABELS_AND_NODES" });
+   #+END_SRC
+
+   Once you specify this general configuration option you can start
+   importing your RDF data. This can be done via the
+   ~n10s.rdf.import.fetch~ function. From there you can specify a
+   =URL= or a local resource to import.
+
+   For instance, consider the following turtle file.
+
+   #+begin_src js
+   @prefix neo4voc: <http://neo4j.org/vocab/sw#> .
+   @prefix neo4ind: <http://neo4j.org/ind#> .
+
+   neo4ind:nsmntx3502 neo4voc:name "NSMNTX" ;
+	    a neo4voc:Neo4jPlugin ;
+	    neo4voc:version "3.5.0.2" ;
+	    neo4voc:releaseDate "03-06-2019" ;
+	    neo4voc:runsOn neo4ind:neo4j355 .
+
+   neo4ind:apoc3502 neo4voc:name "APOC" ;
+	    a neo4voc:Neo4jPlugin ;
+	    neo4voc:version "3.5.0.4" ;
+	    neo4voc:releaseDate "05-31-2019" ;
+	    neo4voc:runsOn neo4ind:neo4j355 .
+
+   neo4ind:graphql3502 neo4voc:name "Neo4j-GraphQL" ;
+	    a neo4voc:Neo4jPlugin ;
+	    neo4voc:version "3.5.0.3" ;
+	    neo4voc:releaseDate "05-05-2019" ;
+	    neo4voc:runsOn neo4ind:neo4j355 .
+
+   neo4ind:neo4j355 neo4voc:name "neo4j" ;
+	    a neo4voc:GraphPlatform , neo4voc:AwesomePlatform ;
+	    neo4voc:version "3.5.5" .
+   #+end_src
+
+   You can then import such a turtle file with the following command -
+   note that the resource above is saved at this URL below.
+
+   #+BEGIN_SRC js 
+   CALL n10s.rdf.import.fetch("https://github.com/neo4j-labs/neosemantics/raw/3.5/docs/rdf/nsmntx.ttl","Turtle");
+   #+END_SRC
+
+   ok - so pretty straightforward. after calling such function you
+   will find the converted RDF in your neo4j database.
+
+   There are a few conversion default you need to understand. Consider
+   the RDF above. This is converted along the following lines. 
+   
+   #+begin_export html
+    <img src="../../images/Bildschirmfoto_2021-04-06_um_10.16.27.png" class="center">
+   #+end_export
+
+   What you can see from the above - and your take away should be the
+   following:
+
+   - =dataType= properties, i.e. relating individuals to literal data
+     (strings, numbers, datetime etc.), in your RDF have been
+     converted into node properties
+     
+   - =object properties=, i.e. relate individuals to other
+     individuals, are now relationships connecting nodes.
+
+   - Every node represents a resource and has a property with its
+     =URI=.
+
+   - =rdf:type= statements are transformed into node
+     labels. I.e. recall that you can think of labels as classID
+     through which you can filter and sort out your data at query
+     time.
+
+   - The URIs identifying the elments in the RDF data (resources,
+     properties, etc) have their *namespace part shortened* to make
+     them more human readable and easier to query with Cypher. See for
+     instance above how =http://neo4j.org/vocab/sw#name= turns into
+     =ns0__name=. Prefixes for custom namespaces are assigned
+     dynamically in sequence (=ns0=, =ns1=, etc) as they appear in the
+     imported RDF. There are also options that you can specify in your
+     general configuration to specify how you should deal with such
+     prefixes. Check more [[https://neo4j.com/docs/labs/nsmntx/current/import/][this]] if interested.
+
+   That is pretty much it. If you want to explore this further, check
+   [[https://jbarrasa.com/2016/06/07/importing-rdf-data-into-neo4j/][here]].
+
+   
+** Filtering triples
+
+   This section outlines the possibility to *exclude certain triples*
+   when importing RDFs.
+
+   This can be done in a straightforward way using the
+   =predicateExclusionList= where you provide a list of URIs of the
+   predicates you want excluded.
+
+   #+begin_src js
+   CALL n10s.rdf.import.fetch("https://github.com/neo4j-labs/neosemantics/raw/3.5/docs/rdf/nsmntx.ttl", "Turtle", {
+     predicateExclusionList : [ "http://neo4j.org/vocab/sw#version", "http://neo4j.org/vocab/sw#releaseDate" ]
+   });
+   #+end_src
+
+** Handling multi valued properties      
+
+   Consider the following RDF. 
+   
+#+BEGIN_SRC js 
+<neo4j://individual/JB> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://neo4j.org/voc#Person> .
+<neo4j://individual/JB> <http://neo4j.org/voc#name> "J. Barrasa" .
+<neo4j://individual/JB> <http://neo4j.org/voc#altName> "JB" .
+<neo4j://individual/JB> <http://neo4j.org/voc#altName> "Jesús" .
+<neo4j://individual/JB> <http://neo4j.org/voc#altName> "Dr J" .
+#+END_SRC
+   
+   In an RDF graph you would have multiple triples for handling the
+   above.
+
+   Label-property graph overwrite the above as they allow a single
+   =dataType= property entry per field. So it will just keep the last
+   read of the above.
+
+   If you want to keep all of the entries you have to modify the
+   default configuration settings. 
+
+#+BEGIN_SRC js 
+CALL n10s.graphconfig.set({ handleMultival: 'ARRAY' });
+#+END_SRC
+
+   
+** Handling Custom Data Types
+
+   This is not so well supported into Neo4j. You can read more [[https://neo4j.com/docs/labs/nsmntx/current/import/][here]] in
+   section 4.7. Check there if interested.
+
+** Change rdf:type from label to Nodes
+
+   This is important as you might link them to ontologies
+
+   #+begin_quote
+   The rdf:type statements in RDF (triples) are transformed into
+   labels by default when we import them into Neo4j. While this is a
+   reasonable approach it may not be your preferred option, especially
+   if you want to load an ontology too and link it to your instance
+   data. In that case you’ll probably want to represent the types as
+   nodes and have 'the magic' of uris have them linked.
+   #+end_quote
+
+   Check at the example in there with an ontology import. Very easy
+   and neat to do.
 
   
+
+
+
+   
