@@ -624,6 +624,7 @@ instead backed by your existing code and data.
   #+END_SRC
 
   
+
 * Neo4j Bloom
 
   I think we should use this for visualization. It has all the
@@ -747,6 +748,7 @@ instead backed by your existing code and data.
 
   
   
+
 * Cypher Language
 
   I like to work in a clean way. So the first thing I will do is
@@ -770,8 +772,57 @@ instead backed by your existing code and data.
    directions. I.e. you can go against the current so to say and infer
    relationship against current as well.
 
-           
+
+** Cypher Syntax
+
+   There are 4 most important components in cypher.
+
+   1. *Start* - this is used for finding the starting node in the
+      graph.
+
+   2. *Match* - this is used for matching patterns, allowing you to
+      locate the subgraphs of interesting data.
+
+   3. *Where* - this is the standard filtering clause.
+
+   4. *Return* — this returns the results you’re interested in.
+
+*** Big AND clause
+
+    Have to write here that comma, separated Cypher statements result
+    in a big =AND= query.
+
+*** Updating Graph via Cypher
+
+    
   
+* Python Driver
+
+  This is mostly straightforward. There is an important difference
+  between =transactions= and =session= that you should get.
+
+  Check at it here as the answer of a stack overflow post:
+
+  #+begin_quote
+Session.run() will actually create a transaction, execute the
+statement, and commit the transaction. Transaction.run() will leave
+the transaction open until you commit it, but the statement will still
+be sent and interpreted and executed, and results will be
+returned. However, any changes won't actually be persisted into the
+datastore, and won't be visible to queries outside of the
+transaction. You have to mark the transaction as successful and commit
+it or it will be rolled back.
+
+You should try not to use transactions; open transactions prevent
+changes to indexes and constraints and increase memory usage. The only
+reason to use transactions is for the rollback potential; if you want
+to see what the results of the query are, and maybe undo it depending
+on those results, then use a transaction. Otherwise use a session.
+  #+end_quote  
+
+  
+
+
 * NeoSemantics
 
   This is the way you would deal with RDF schema and there are scripts
