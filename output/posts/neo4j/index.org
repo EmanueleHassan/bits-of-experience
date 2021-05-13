@@ -20,7 +20,7 @@ start this project.
 This posts summarizes my learning encounters when working with graph
 databases and sets some mental structure for working with them.
 
-The notes are based on [[https://neo4j.com/books/neo4j-in-action-book/][Neo4j in action]].
+The notes are based on [[https://neo4j.com/books/neo4j-in-action-book/][Neo4j in action]] and the [[https://neo4j.com/docs/cypher-manual/current/clauses/match/][Official Documentation]].
 
 #+begin_export html
 <style>
@@ -777,8 +777,7 @@ instead backed by your existing code and data.
 
    There are 4 most important components in cypher.
 
-   1. *Start* - this is used for finding the starting node in the
-      graph.
+   1. *Create* - this is used for creating nodes and relations.
 
    2. *Match* - this is used for matching patterns, allowing you to
       locate the subgraphs of interesting data.
@@ -787,15 +786,236 @@ instead backed by your existing code and data.
 
    4. *Return* — this returns the results you’re interested in.
 
-*** Big AND clause
+*** On the Big AND clause
 
-    Have to write here that comma, separated Cypher statements result
-    in a big =AND= query.
+    Before going into the syntax of cypher it is important to
+    understand that when you do specify more than 1 argument you are
+    in fact using an =AND= clause.
+
+    That means that if you, for instance, use two =MATCH= clause next
+    to each other you will ultimately use both of the filters so that
+    you ultimately can interpret that syntax as a big =AND=
+    statement.
+
+*** Creation of Nodes and Relations
+
+**** Create Node with properties.
+
+     #+begin_example
+    """
+    CREATE (p1:Person{name: "YourSecretPerson"})
+    """
+     #+end_example
+
+**** Create Nodes and add Relation - 1 Shot
+
+
+     #+begin_example
+    """
+    CREATE (p1:Person{person: $person1}) 
+    CREATE (p2:Person{person: $person2}) 
+    CREATE (p1)-[r:IS_FRIEND_OF]-> (p2) 
+    """
+     #+end_example
+    
+**** Create Relation from Existing Nodes
+
+     Clear to see from the below, you match the two nodes that you are
+     interested in first and then add the relationship there.
+
+     #+begin_example
+    """
+    MATCH
+    (a:Person),
+    (b:Person)
+    WHERE a.person = $person1 AND b.person = $person2
+    CREATE (a)-[r:IS_FRIEND_OF]->(b)
+    """
+     #+end_example
+
+**** Set Properties to Relation
+
+     This works again the same way. With that =json-sh= syntax there.
+
+     Using the example above it is clear that it becomes:
+
+     #+begin_example
+    """
+    CREATE (p1:Person{person: $person1}) 
+    CREATE (p2:Person{person: $person2}) 
+    CREATE (p1)-[r:IS_FRIEND_OF {name: a.name + '<->' + b.name}]-> (p2) 
+    """
+     #+end_example
+
+**** Important on Pattern Creation
+
+     Note that in the above you do not have to create everything
+     yourself.
+
+     I.e. if you specify a pattern and some of the pieces of it are
+     missing from your network, these are automatically created.
+
+     #+begin_example
+    """
+    MATCH (a:Person)
+    WHERE a.person = 'Marco'
+    CREATE p = (Person {person:'Roberto'})-[:IS_FRIEND_OF]->(a)<-[:IS_FRIEND_OF]-(PERSON {person: 'Bagutti'})
+    """
+     #+end_example
+
+     Interesting. For some reason if you do not set a tag to the Person
+     =nodes= above, the database does not recognize these properly and
+     does not set the attribute of them in the correct way.
+
+     Ok, so the explanation of the above comes directly in the next
+     section. The idea is simply that you have plain =nodes= and
+     =relations= if you do not specify any =TAGS= for them.
+
+     These are two different exercises. with the =:mytag= part you
+     specify labels to the nodes, relations so that you can then
+     filter based on them at query time. This was briefly touched
+     upon above in the introduction.
+     
+**** How to work directly with Json
+
+     That is mostly it. You can then check at the following [[https://neo4j.com/docs/cypher-manual/current/clauses/create/][link]], the
+     option to automatically create nodes out of =json= files. This
+     might be useful then when you set up everything properly to talk
+     with the front-end.  
+
+*** Extracting Relevant Information
+
+**** Get all of the nodes and the entire graph
+
+     By just specifying a pattern with a single node and no labels,
+     all nodes in the graph will be returned.
+
+     #+begin_example
+     """
+     MATCH (n)
+     RETURN n
+     """
+     #+end_example
+
+     Note that your statements cannot just end with a =MATCH=
+     clause. The =MATCH= part is how you get the information, then you
+     have to process and do something with that information.
+
+
+**** Get Nodes by ID
+
+     This is especially handy. Every time you create a node - a node
+     id is automatically created and associated with it.
+
+     #+begin_example
+     """
+     MATCH (n)
+     WHERE id(n) = 0
+     RETURN n
+     """
+     #+end_example
+
+     You can then sort based on the index.
+
+     With this you can easily see that you can get all of the
+     relations for a given ID.
+
+     You can also filter based on multiple IDs at once. See for
+     instance the following:
+
+     #+begin_example
+     """
+     MATCH (n)
+     WHERE id(n) in [1,2,3]
+     RETURN n
+     """
+     #+end_example
+     
+**** Getting all Nodes Matching a Pattern
+
+     This is important - recall the importance of specifying =labels=
+     mentioned above.
+
+     It is of paramount importance to have such labels in your
+     graph. This will allow you to make sense of the entire structure
+     of your network as well to filter out just =nodes=, =relations=
+     belonging to a specific label category.
+
+     For instance to get all of the names of the people in your
+     network you can use the following
+
+     #+begin_example
+     """
+     MATCH (p:Person)
+     RETURN p.name
+     """
+     #+end_example
+
+
+**** Directed vs Undirected queries
+
+     Nothing special here. Just notice that you have to make the
+     distinction about how you the relation goes.
+
+     If you do not care the side of the connection just use the =--=
+     syntax.
+
+     For instance the following works
+
+     #+begin_example
+     """
+     MATCH (director {name: 'Oliver Stone'})--(movie)
+     RETURN movie.title
+     """
+     #+end_example
+
+     =--= means related to, without regard to type or direction of the
+     relationship.
+
+     If you want to specify the relation direction you can use an
+     ASCII style arrow.
+
+     Always test in your Neo4j local console this will allow you to
+     make sense of all of that before going into production.
+
+     Good so that is pretty much very straightforward syntax.
+     
+**** Others
+
+     Ok this gave you a basis now. All of the rest I will keep as a
+     =stack-overflow= job. With that you should be good to go to make
+     sense of the logic for the coming weeks.
+
+     One example could be for instance queries on multiple labels via
+     an or syntax ~(node1)-[:label1|label2]-(node2)~.
+
+     Moreover other options consists in:
+
+     - specify maximum number of hops distance in the graph  (can be
+       used in conjunction to the multiple labels case above)
+
+     - can use properties filter for relationship queries matches
+
+     - finding shortest path; there is a command exactly for doing
+       that
+
+     - Optional matches - If a relationship is optional, use the
+       ~OPTIONAL MATCH~ clause. This is similar to how a SQL outer join
+       works. If the relationship is there, it is returned. If it’s
+       not, =null= is returned in its place.
+
+     - ~WITH~; with this you can organize the output and decide on
+       it.
+
+     - ~FOREACH~, apply any of the ~SET~, ~REMOVE~, ~CREATE~, ~MERGE~,
+       ~DELETE~ operations. you apply it to a set of matched results.
+
+
+     Generally look check at the [[https://neo4j.com/docs/cypher-manual/current/clauses/merge/][official documentation]] when you need
+     to make sense and build up your queries.
 
 *** Updating Graph via Cypher
 
-    
-  
 * Python Driver
 
   This is mostly straightforward. There is an important difference
