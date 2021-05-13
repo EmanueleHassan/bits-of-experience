@@ -3643,6 +3643,237 @@ problem going quickly towards more complex situations.
      
      
      
+
+** MLE for Exponential Family as M-Projection
+
+   Note that in the book of Koller the notation is different and I
+   like it less. It is for the discrete case and not for the
+   continuous.
+
+   Have to double check at the notation in there, but that is
+   essentially a 1:1 with your notes of mathematical statistics.
+
+   Note that there is the important property of non-redundancy of the
+   parametric exponential family. This goes hand in hand with the
+   invertibility of the function $t(\theta)$. This is in your math
+   statistics notes the $c(\theta)$.
+   
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-07_um_14.02.20.png" class="center">
+#+end_export
+
+   Exponential Family in canonical form is termed in /natural form/ in
+   the book.
+
+   This gives moreover rise to the idea of /natural parameter
+   space/. This and the correspondingly defined /linear exponential
+   family/ are defined as follows:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-07_um_14.27.09.png" class="center">
+#+end_export
+
+   Note, that sometimes the exponential family distribution cannot be
+   written in the linear form. In such cases additional machinery is
+   required, and we leave this case as untreated.
+
+   Note that due to the mathematical form of the exponential such that
+   when multiplying two exponent you add the terms in a single
+   exponent the multiplication of multiple exponential family CPDs
+   give rise to an exponential family distribution.
+
+   This in more rigorous words and notation:
+   
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-07_um_14.58.36.png" class="center">
+#+end_export
+
+   Then you just have to be careful when chaining such results in such
+   a way. Note that if you do not chain normalized CPDs (with the
+   partition function Z(\theta) [in mathstat notes d (\theta)]), then
+   you have to find a partition function to normalize the unnormalized
+   CPD multiplication. Otherwise work with locally normalized CPDs.
+
+   As it is not possible to find a global partition function in a
+   general form that normalizes under all of the realizations, it is
+   suggested that you work by locally normalizing distribution
+   functions.
+   
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-07_um_15.30.00.png" class="center">
+#+end_export
+
+   This is the usual $-d(\theta)$ in your mathstat notes. So again
+   nothing new under the sun.
+
+   Note however that albeit the simple strategy above defines an
+   exponential family distribution for the overall network, this does
+   not have to be in general a linear exponential distribution. So
+   watch out in generally for that and double check you case and make
+   explicit the case you are treating.
+
+   Note that once you have a properly defined exponential family
+   distribution you can calculate its in entropy in a very neat and
+   quick way, as follows:
+
+   - First, recall the formula for the entropy function:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-07_um_15.59.23.png" class="center" style = "width: 30% !important;">
+#+end_export
+
+  Then given this definition it follows immediately that:
+   
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-07_um_16.03.20.png" class="center">
+#+end_export
+
+   Note that the above defines entropy for the general distribution
+   over the entire network. This requires the partition function over
+   the entire network and as we mentioned before this might not be
+   easy to compute.
+
+   In this sense, as before it makes sense to compute the entropy via
+   the local CPD entropies. This can also easily done in Bayesian
+   Networks as the following holds:
+   
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-07_um_16.32.24.png" class="center">
+#+end_export
+
+   So the entropy of the network decomposes as the sum of conditional
+   entropies.
+
+   Note however that you cannot do the entropies calculation locally,
+   as there information *about the entire network is encoded*.
+
+   This can be seen from the following image. You need inference over
+   the network to get the probability of the realization of the
+   parents values. For this you have to make your calculations over
+   the entire network.
+   
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-07_um_16.38.43.png" class="center">
+#+end_export
+
+   /Relative Entropy:/
+
+   It follows now that for an arbitrary distribution $Q$ and an
+   exponential distribution P, that
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-07_um_17.23.32.png" class="center" style = "width: 60% !important;">
+#+end_export
+
+   To see this think of the prove of proposition 16.1 above.
+
+   It follows immediately by combining the above results that:
+   
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-08_um_09.55.26.png" class="center">
+#+end_export
+
+   Given all of that reasoning and machinery, we turn to the topic of
+   distribution projections.
+
+*** Distribution Projections
+
+    Recall that the relative entropy is a measure for the distance
+    among two distributions.
+
+    We can therefore use this measure as a tool for finding the
+    distribution, within a given exponential family, that is closest
+    to a given distribution. This will be our /projection/ task.
+
+    This leads us to the following /definitions/.
+    
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-08_um_10.03.35.png" class="center">
+#+end_export
+
+    Note the difference between the =M= and =I= projection.
+
+    The =M= projection is defined as:
+
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-08_um_10.28.29.png" class="center">
+#+end_export
+
+    Such that you can see that the only term depending on the
+    distribution of interest =Q= is the second one.
+
+    Such that, given the properties of the natural logarithm function,
+    we see that here we aim to have high density Q, so that =-ln(Q)=,
+    is as small as possible - close to 0 - in regions with high
+    probability P. And at the same time we have to watch out not to
+    give low probability $Q(X)$, in regions with non-negligible
+    probability P, as there you potentially add up infinity.
+
+    Note that the situation for =I-projections= are different:
+    
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-08_um_10.33.15.png" class="center">
+#+end_export
+
+    Overall, you will have the following pattern: The *M-projection*
+    attempts to give all assignments reasonably high probability,
+    whereas the *I-projection* attempts to focus on high-probability
+    assignments in P while maintaining a reasonable entropy.
+
+    Note that for the projections above some general characteristics
+    hold. This is important for characterizing your data:
+    
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-09_um_08.46.48.png" class="center">
+#+end_export
+
+    This basically says that in order to find the M-projection to an
+    exponential family distribution, you can work directly with the
+    sufficient statistics, and more specifically with the /expected
+    sufficient statistics/.
+
+    Given this the problem of finding the M-projection is just as
+    difficult as the *exact inference problem* and the computation of
+    the expected sufficient statistics which you would have to invert
+    then.
+
+    That in a bit of text.
+    
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-09_um_08.54.44.png" class="center">
+#+end_export
+
+    By comparing the expected sufficient statistics of $P$ to these of
+    distributions in $Q$, we can find the M-projection.
+
+    Then the schema is to find the $ess(\theta)$ map and the
+    corresponding $E_{Q_{\theta}}[\tau(X)]$. Then check whether
+    $E_{P}[\tau(X)]$ is an image of the map above. You would then
+    invert the map to find the parameters of interest.
+
+    
+*** MLE as M-projection
+
+    Given the discussion above, it is interesting to note that you can
+    interpret the MLE as an M-projection, and find the MLE
+    parameterization by doing an M-projection exercise and inverting
+    the expected sufficient statistics as discussed above.
+
+    In order to see that the MLE is nothing else than a special case
+    of an M-projection look at the following:
+    
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-05-09_um_09.48.13.png" class="center">
+#+end_export
+
+    It follows immediately that if $\hat{P}_{D}$ is parameterized
+    according to an exponential family, and if the mapping of ess from
+    parameters to sufficient statistics is invertible, we can simply
+    take the sufficient statistic vector from $\hat{P}_{D}$, and
+    invert this mapping to produce the MLE.
+
+    
+      
 * Footnotes
 
 [fn:4] Pearl, J. 1988. Probabilistic Reasoning in Intelligent Systems:
