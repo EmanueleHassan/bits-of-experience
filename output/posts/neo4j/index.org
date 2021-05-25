@@ -883,6 +883,7 @@ instead backed by your existing code and data.
      might be useful then when you set up everything properly to talk
      with the front-end.  
 
+
 *** Extracting Relevant Information
 
 **** Get all of the nodes and the entire graph
@@ -899,8 +900,7 @@ instead backed by your existing code and data.
 
      Note that your statements cannot just end with a =MATCH=
      clause. The =MATCH= part is how you get the information, then you
-     have to process and do something with that information.
-
+     have to process and do something with that information.     
 
 **** Get Nodes by ID
 
@@ -1014,7 +1014,10 @@ instead backed by your existing code and data.
      Generally look check at the [[https://neo4j.com/docs/cypher-manual/current/clauses/merge/][official documentation]] when you need
      to make sense and build up your queries.
 
+
 *** Updating Graph via Cypher
+
+
 
 * Python Driver
 
@@ -1040,9 +1043,56 @@ to see what the results of the query are, and maybe undo it depending
 on those results, then use a transaction. Otherwise use a session.
   #+end_quote  
 
+  *Important* to understand for the python driver is that when you
+  return nodes these are of a particular class =neo4j.graph.Node=.
+
+  You can then check here such a data type and how you work with it
+  https://neo4j.com/docs/api/python-driver/current/api.html#graph-data-types
+
+  The basic functioning I saw in some apps built with the driver is to
+  use a serializer function.
+
+  This could for instance look as follows:
+
+#+begin_src python
+def serialize_node(node):
+    return {
+        'title': node['title'],
+        'layer': node['layer'],
+        'message': node['message'],
+        'selected': node['selected'],
+    }
+#+end_src
+
+  You can then pass this function on a =neo4j.graph.Node= and save
+  them in a json affine way.
+
+  From there it will be usual work.
+
+  Finally, notice that to get the id, this from =__init__= in the
+  python class so that you will work with it by calling it via
+  =node.id=.
+
+  Notice that if you return entire =paths= you will need a different
+  processing.
+
+  #+begin_src python
+def update_and_withdraw(tx, json):
+    """update the selected status of a node
+    """
+    result = tx.run("""
+                    MATCH (n)
+                    WHERE id(n) = $ID
+                    SET n.selected = $selected
+                    RETURN (n) -[:triggers]-> () as data
+                    """, ID = json['id'], selected = json['selected']) 
+                    # ID, selected
+    values = []
+    for record in result:
+        values.extend([k[2] for k in record.data()['data']]) ## so notice that the index here is of the triples that come back. 
+  #+end_src
+
   
-
-
 * NeoSemantics
 
   This is the way you would deal with RDF schema and there are scripts
