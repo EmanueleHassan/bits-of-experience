@@ -1,217 +1,76 @@
-<br>
-<br>
-
-
 <p>
-This post contains the basic logic of Helm and should act as a
-repository listing the most important ways to work with Helm.
+This are some notes on Helm.
 </p>
 
-<br>
+<p>
+Recently I have downloaded a chart. I will have to change the
+configurations of this.
+</p>
+
+<p>
+I will have to configure static IP for the internal application
+running in kubernetes such that my service will be externally
+accessible. 
+</p>
+
+<p>
+Here some notes based on that and some commands.
+</p>
+
+<p>
+I will expand on this in the future depending how much I will have to
+work with it.
+</p>
 
 <!-- TEASER_END -->
 
-<div id="outline-container-orgb5fff9d" class="outline-2">
-<h2 id="orgb5fff9d">Helm - Why?</h2>
-<div class="outline-text-2" id="text-orgb5fff9d">
+<div id="outline-container-org5e27a4e" class="outline-2">
+<h2 id="org5e27a4e">Helm Important Commands</h2>
+<div class="outline-text-2" id="text-org5e27a4e">
 <p>
-Using virtualization capabilities ensures scaling, yes. Just keep in
-mind that an AMI, ARM (or a Docker container for that matter) you use
-to launch the app will be dependent on the Virtual Machine it is
-stored on and will be able to scale only the way the virtual machines
-are scaled — by adding more resources to the pool.
+First of all it makes sense to look at the deployed chart.
 </p>
 
 <p>
-With Helm, we have quite another picture. The application can be
-composed of clearly defined microservices and we can scale only the
-ones we need to scale, adding more Kubernetes nodes and pods to the
-cluster. Instead of working with a holistic image and growing all the
-resources, you operate a set of images and scale them independently.
+You can get all of the info regarding your deployed chart via
 </p>
 
-<p>
-The problems begin when you want to launch a new instance of an
-application that runs, let’s say, 50 microservices. Starting and
-combining them all will be a laborious and error-prone task. However,
-with Helm, all you need to know is the name of the charts for the
-images responsible. Launching a new instance is the question of
-executing the corresponding Helm chart.
-</p>
-
-<p>
-Of course, the DevOps team can do the same using standard kubectl
-commands, yet working with Helm provides the ability to quickly
-define, cleanly manage and easily deploy the applications.
-</p>
-
-
-<br>
-</div>
-</div>
-
-<div id="outline-container-org1d01fac" class="outline-2">
-<h2 id="org1d01fac">Helm</h2>
-<div class="outline-text-2" id="text-org1d01fac">
-<p>
-General <a href="https://helm.sh/docs/intro/quickstart/">Helm Guide</a> with all of the necessary commands.
-</p>
-</div>
-
-
-<div id="outline-container-org149b265" class="outline-4">
-<h4 id="org149b265">Add a Charts Repository to your Helm Client</h4>
-<div class="outline-text-4" id="text-org149b265">
-<p>
-Add IBM-Kubernetes charts to your local helm 
-</p>
-
-<div class="highlight"><pre><span></span>    helm repo add iks-charts https://icr.io/helm/iks-charts
-</pre></div>
-
-
-<p>
-Other useful charts are the stable released charts. There you can
-find images for major databases, SDKs etc.
-</p>
-
-<div class="highlight"><pre><span></span>    helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+<div class="highlight"><pre><span></span>  helm get all &lt;chart-name&gt;
 </pre></div>
 
 <p>
-You can moreover add the incubator charts for your local client
+There the output might be especially long.
 </p>
 
-<div class="highlight"><pre><span></span>    helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
+<p>
+In this sense you can also restrict the view to the manifest, say
+with
+</p>
+
+<div class="highlight"><pre><span></span>  helm get manifest &lt;chart-name&gt;
 </pre></div>
 
 <p>
-Remind that there is an intrinsic difference between <i>stable</i> and <i>incubator</i> charts.
+That will likely also be long. This depending on the complexity of
+the chart.
 </p>
 
 <p>
-Stable Charts meet the criteria in the <a href="https://github.com/helm/charts/blob/master/CONTRIBUTING.md#technical-requirements">technical requirements</a>, which
-are a set of strict quality restrictions the Charts should comply with.
+Notice
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf5c1c66" class="outline-2">
+<h2 id="orgf5c1c66">Helm history and relases</h2>
+<div class="outline-text-2" id="text-orgf5c1c66">
+<p>
+A good idea to start with helm is to read this <a href="http://technosophos.com/2017/03/23/how-helm-uses-configmaps-to-store-data.html">entry</a>.
 </p>
 
 <p>
-Incubator Charts are those that do not meet these criteria. Having the
-incubator folder allows charts to be shared and improved on until they
-are ready to be moved into the stable folder. There are not simply
-incubator and stable charts. Also iks-charts that are IBM specific for
-instance.
+There it is still based on tiller and v2 but it should give you a
+basic idea.
 </p>
-</div>
-</div>
-
-<div id="outline-container-org70b6c67" class="outline-4">
-<h4 id="org70b6c67">Install a Chart</h4>
-<div class="outline-text-4" id="text-org70b6c67">
-<div class="highlight"><pre><span></span> <span class="c1">## helm install &lt;yourchart&gt;</span>
- helm install iks-charts/ibmcloud-data-shield
-</pre></div>
-</div>
-</div>
-
-<div id="outline-container-org331e412" class="outline-4">
-<h4 id="org331e412">Installing a Chart in Debug Mode might help</h4>
-<div class="outline-text-4" id="text-org331e412">
-<div class="highlight"><pre><span></span> helm install &lt;yourchart&gt; --dry-run --debug
-</pre></div>
-
-<p>
-This will print to stdout all the rendered templates in the chart (and won't install the chart)
-</p>
-</div>
-</div>
-
-<div id="outline-container-orgee6e38b" class="outline-4">
-<h4 id="orgee6e38b">Altering some specific entries in the .yaml configuration of the chart</h4>
-<div class="outline-text-4" id="text-orgee6e38b">
-<p>
-This can be achieved through the <code>--set</code> flag.
-</p>
-
-<p>
-For instance by running
-</p>
-
-<div class="highlight"><pre><span></span>    helm install iks-charts/ibmcloud-data-shield
-     --set global.OpenShiftEnabled<span class="o">=</span><span class="nb">true</span>
-</pre></div>
-
-<p>
-you specify that you want to run the chart on an Openshfit cluster.
-</p>
-</div>
-</div>
-
-<div id="outline-container-orgd14751e" class="outline-4">
-<h4 id="orgd14751e">Don't forget to Update</h4>
-<div class="outline-text-4" id="text-orgd14751e">
-<div class="highlight"><pre><span></span>    helm repo update
-</pre></div>
-</div>
-</div>
-
-<div id="outline-container-orge1d26c3" class="outline-4">
-<h4 id="orge1d26c3">View Running Charts</h4>
-<div class="outline-text-4" id="text-orge1d26c3">
-<p>
-View installed charts on Helm
-</p>
-
-<div class="highlight"><pre><span></span>  helm ls
-</pre></div>
-</div>
-</div>
-
-<div id="outline-container-org90d2ae2" class="outline-4">
-<h4 id="org90d2ae2">Information and Yaml for different Chart Repositories</h4>
-<div class="outline-text-4" id="text-org90d2ae2">
-<p>
-The information is saved in the following folder on the local machine with your kubectl client.
-</p>
-
-<div class="highlight"><pre><span></span> ls /Users/marcohassan/Library/Caches/helm/repository/
-</pre></div>
-
-<p>
-There you see moreover the installed charts.
-</p>
-</div>
-</div>
-
-<div id="outline-container-org9bad0d0" class="outline-4">
-<h4 id="org9bad0d0">Info on Deployed Charts</h4>
-<div class="outline-text-4" id="text-org9bad0d0">
-<div class="highlight"><pre><span></span>  helm status my-cert-manager
-</pre></div>
-</div>
-</div>
-
-<div id="outline-container-org317d517" class="outline-4">
-<h4 id="org317d517">Delete a Chart</h4>
-<div class="outline-text-4" id="text-org317d517">
-<p>
-To delete one helm chart you can use the following command
-</p>
-
-<div class="highlight"><pre><span></span>  helm delete my-wordpress
-</pre></div>
-
-<p>
-This will clean all the pods associated with a given release.
-</p>
-</div>
-</div>
-
-<div id="outline-container-org3dd200a" class="outline-4">
-<h4 id="org3dd200a">Change Namespace</h4>
-<div class="outline-text-4" id="text-org3dd200a">
-<p>
-Look at this <a href="https://itnext.io/drastically-improve-your-kubernetes-deployments-with-helm-5323e7f11ef8">medium article</a> for a basic discussion on basic helm commands.
-</p>
-</div>
 </div>
 </div>
