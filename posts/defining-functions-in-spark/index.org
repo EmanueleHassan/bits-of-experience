@@ -1,0 +1,153 @@
+#+BEGIN_COMMENT
+.. title: Defining Functions in Spark
+.. slug: defining-functions-in-spark
+.. date: 2021-06-03 14:34:46 UTC+02:00
+.. tags: Spark
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+.. status: private
+#+END_COMMENT
+
+
+Ok. So it might be that for the next project I will work one more time
+with Spark.
+
+This time in production and it is quite a heavy project that should
+last for quite some time.
+
+All depends how I well I will perform tomorrow at the interview. So
+now I am taking some more time to go over the material.
+
+One especially interesting feature that I already used before; but
+unfortunately I did not make notes for, is the possibility of
+specifying particular functions via the PySpark raw API and make them
+available throughout your spark session when working via data-frames -
+be it via SparkSQL or via pandas.
+
+Note that this notes are based on [[https://jaceklaskowski.gitbooks.io/mastering-spark-sql/content/spark-sql-udfs.html][this source]]. Looks like a very
+exhaustive source. So check at it again should this project really
+start. There you might make sense of all of that. 
+
+{{{TEASER_END}}}
+
+** User Defined Functions
+
+   So the usual way to work to specify the functions you would need to
+   work with is via *user-defined-functions*.
+
+   This is a very neat feature when working with Spark as it will
+   allow you to define functions you can then apply to data-frames.
+
+   So if you are working with data in tabular format it might well
+   makes sense to work in such a way leveraging such customizable
+   functions.
+
+   The idea of udf when working with Python is now the following:
+
+   #+begin_quote
+   User-Defined Functions (aka UDF) is a feature of Spark SQL to
+   define new Column-based functions that extend the vocabulary of
+   Spark SQL’s DSL for transforming Datasets.
+   
+   Historically, user-defined functions operate one-row-at-a-time, and thus
+   suffer from high serialization and invocation overhead. As a
+   result, many data pipelines define UDFs in Java and Scala and then
+   invoke them from Python.
+
+   Now, with the rise of [[https://arrow.apache.org/][Apache Arrow]], it is now possible to define
+   low-overhead, high-performant user-defined functions directly in
+   Python.
+   #+end_quote
+
+   Specifically so far it was just possible in python to use the
+   SparkSQL user-defined functions and perform row by row operations.
+
+   You can think for instance at the following:
+
+   #+begin_src python
+from pyspark.sql.functions import udf
+
+# Use udf to define a row-at-a-time udf
+@udf('double')
+# Input/output are both a single double value
+def plus_one(v):
+      return v * v
+
+df.withColumn('v2', plus_one(df.v))
+
+## Other possible way
+
+def squared(s):
+  return s * s
+
+spark.udf.register("squaredWithPython", squared)
+   #+end_src
+
+   Vis à vis the following new vectorized udf or stated differently
+   pandas-udf:
+   
+   #+begin_src python
+import pandas as pd
+
+from pyspark.sql.functions import col, pandas_udf
+from pyspark.sql.types import LongType
+
+# Declare the function and create the UDF
+def multiply_func(a, b):
+    return a * b
+
+multiply = pandas_udf(multiply_func, returnType=LongType())
+
+# The function for a pandas_udf should be able to execute with local Pandas data
+x = pd.Series([1, 2, 3])
+print(multiply_func(x, x))
+# 0    1
+# 1    4
+# 2    9
+# dtype: int64
+
+# Create a Spark DataFrame, 'spark' is an existing SparkSession
+df = spark.createDataFrame(pd.DataFrame(x, columns=["x"]))
+
+# Execute function as a Spark vectorized UDF
+df.select(multiply(col("x"), col("x"))).show()
+# +-------------------+
+# |multiply_func(x, x)|
+# +-------------------+
+# |                  1|
+# |                  4|
+# |                  9|
+# +-------------------+
+   #+end_src
+
+** Note and understand the difference between vectorized udf and toPandas
+
+   Note that the two are quite different.
+
+   Although it might come naturally to work with pandas and so you
+   might be tempted to call the convert =toPandas ()= function and
+   work with Pandas methods etc. this is not recommended as the entire
+   benefit of working with distributed data would be gone.
+
+   In this sense, when calling the spark method what you would
+   actually do is to 
+
+   
+
+   
+
+   
+   spark first class citizens to pandas 
+
+   
+
+
+   
+
+   
+   
+   
+
+
