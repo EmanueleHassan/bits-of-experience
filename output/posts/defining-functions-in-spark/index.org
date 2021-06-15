@@ -7,18 +7,8 @@
 .. link: 
 .. description: 
 .. type: text
-.. status: private
+.. status: published
 #+END_COMMENT
-
-
-Ok. So it might be that for the next project I will work one more time
-with Spark.
-
-This time in production and it is quite a heavy project that should
-last for quite some time.
-
-All depends how I well I will perform tomorrow at the interview. So
-now I am taking some more time to go over the material.
 
 One especially interesting feature that I already used before; but
 unfortunately I did not make notes for, is the possibility of
@@ -33,6 +23,10 @@ start. There you might make sense of all of that.
 {{{TEASER_END}}}
 
 ** User Defined Functions
+:PROPERTIES:
+:header-args:ein-python: :session http://127.0.0.1:8888/Spark.ipynb
+:header-args:sh: :session baubab
+:END:
 
    So the usual way to work to specify the functions you would need to
    work with is via *user-defined-functions*.
@@ -67,22 +61,43 @@ start. There you might make sense of all of that.
    You can think for instance at the following:
 
    #+begin_src python
+##############
+## Syntax 1 ##
+##############
+
 from pyspark.sql.functions import udf
 
 # Use udf to define a row-at-a-time udf
 @udf('double')
 # Input/output are both a single double value
-def plus_one(v):
+def squared(v):
       return v * v
 
-df.withColumn('v2', plus_one(df.v))
+# work with it either leveraging dataframes methods or sql
 
-## Other possible way
+df.withColumn('v2', plus_one(df.v)) # note that df is a spark data frame
+
+# or call via sql  - should be a separate chuck with the magic %sql call
+%sql 
+select v2, squaredWithPython(v2) as id_squared from df
+
+##############
+## Syntax 2 ##
+##############
 
 def squared(s):
   return s * s
 
 spark.udf.register("squaredWithPython", squared)
+
+# assume a test spark dataframe
+
+# call it via sql - should be a separate chuck with the magic %sql call
+%sql
+select id, squaredWithPython(id) as id_squared from test
+
+# or call it via dataframes methods 
+test.withColumn('id', squaredWithPython(test.id))
    #+end_src
 
    Vis à vis the following new vectorized udf or stated differently
@@ -100,13 +115,17 @@ def multiply_func(a, b):
 
 multiply = pandas_udf(multiply_func, returnType=LongType())
 
-# The function for a pandas_udf should be able to execute with local Pandas data
+### Applied to Pandas data objectes ###
+
+## The function for a pandas_udf should be able to execute with local Pandas data
 x = pd.Series([1, 2, 3])
 print(multiply_func(x, x))
 # 0    1
 # 1    4
 # 2    9
 # dtype: int64
+
+### Applied Spark Data Frames  ###
 
 # Create a Spark DataFrame, 'spark' is an existing SparkSession
 df = spark.createDataFrame(pd.DataFrame(x, columns=["x"]))
@@ -122,6 +141,10 @@ df.select(multiply(col("x"), col("x"))).show()
 # +-------------------+
    #+end_src
 
+   Then you can do numerical tests yourself and see that the
+   vectorized operations rather than the row by row operations has a
+   computational edge. 
+
 ** Note and understand the difference between vectorized udf and toPandas
 
    Note that the two are quite different.
@@ -131,23 +154,25 @@ df.select(multiply(col("x"), col("x"))).show()
    work with Pandas methods etc. this is not recommended as the entire
    benefit of working with distributed data would be gone.
 
-   In this sense, when calling the spark method what you would
-   actually do is to 
+   In this sense, when calling the spark method of udf what you would
+   actually do is specifying working a function and work on vectorized
+   columns stores leveraging data structures that resolves such
+   operations in a computationally intense and fast way.
 
    
+** Very Important Note
 
-   
+   Notice that despite the fact that /Apache Arrow/ and the vectorized
+   pandas operations are able to bring quite some computational edge
+   over the standard available udf functions that were so far
+   available it is still recommended to work with SQL when working
+   with dataframes.
 
-   
-   spark first class citizens to pandas 
-
-   
-
-
-   
-
-   
-   
-   
+   In this sense, you should not fall in the temptation of writing to
+   many udf functions yourself even if you like to work in a pythonic
+   way, as project Tungsten and the Catalyst optimizer leveraging the
+   decades of research on relational structures and SQL will still be
+   there so that you should go with it and be thoughtful in the extent
+   you should apply such weapon. 
 
 
