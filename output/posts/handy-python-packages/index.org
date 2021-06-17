@@ -505,8 +505,6 @@ print (ll); print (la)
    from dotenv import load_dotenv  
    #+end_src
 
-
-
 ** Function Wraps
 
    This is a nice tool. You can wrap and augment functions with
@@ -522,6 +520,21 @@ print (ll); print (la)
    #+begin_src python
 from functools import wraps
    #+end_src
-
-
    
+** Abort error messages on Flask
+
+   This comes handy when you specify an endpoint and you receive bad
+   requests etc.
+
+   #+begin_src python
+    def get(self):
+
+        try:
+            content = request.get_json()
+            content['uuid']
+
+        except:
+            abort(400, "bad request; you must pass a json with the UUID of the patient")
+   #+end_src
+
+
