@@ -32,9 +32,9 @@ next. It will make you to make sense of everything.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-orge40546e" class="outline-2">
-<h2 id="orge40546e">Types of Website rendering Architectures</h2>
-<div class="outline-text-2" id="text-orge40546e">
+<div id="outline-container-orgd1c924a" class="outline-2">
+<h2 id="orgd1c924a">Types of Website rendering Architectures</h2>
+<div class="outline-text-2" id="text-orgd1c924a">
 <p>
 So you can read the basic idea in the link above. This is a well
 written post.
@@ -150,19 +150,22 @@ Note one controversial point I found when doing such notes: you need
 a server when running <code>Angular</code>? Why is this the case? Should not
 everything run in the browser engine? Yes and No; but badaboom; you
 made the right sense of it; it is not strictly necessary to have a
-<code>ng serve</code> although this is often the way you work with. I.e. you
-need for sure a server to fetch the angular files and bring them
-into the browser. This also in local development mode as browser are
-for security reasons not given access to your file system. However
-the very same flask backend server from which you are serving /
-exposing your models could well be that server.
+javascript based server although this is often the way you work
+with. I.e. you need for sure a server to fetch the angular files and
+bring them into the browser. This also in local development mode as
+browser are for security reasons not given access to your file
+system. There you would actually use <code>ng serve</code>. However the very
+same flask backend server from which you are serving / exposing your
+models could well be that server. In this sense check at the route
+that is mapping all of the paths to the <code>index.html</code>, the single
+html from which you manage it all in your angular framework.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgd335443" class="outline-2">
-<h2 id="orgd335443">Flask Authentification</h2>
-<div class="outline-text-2" id="text-orgd335443">
+<div id="outline-container-org5bf8185" class="outline-2">
+<h2 id="org5bf8185">Flask Authentification</h2>
+<div class="outline-text-2" id="text-org5bf8185">
 <p>
 Once you understand the different types of architectures it is clear
 that when securing an application served via flask it is necessary to
@@ -176,7 +179,17 @@ RESTful services with the <code>authHTTP</code> module. You just secure the
 endpoints for accessing the data and returning them to the
 front-end which will then integrate them in the front-end. This is
 how you are working on your project. Notice that here you would
-actually need to authentificate for each request.
+actually need to authentificate for each request. You can find a
+trivial basic example <a href="https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask">here</a>. You can then expand on this according
+to the need.
+</p>
+
+<p>
+A better way to deal with the RESTful authentification would be to
+use the token-based authentification as discussed in <a href="https://realpython.com/token-based-authentication-with-flask/#refactoring">here</a>. You
+would have to read a bit more into it if you decided to go down
+that road as it is not straightforward at the moment why you would
+use a db for that etc. 
 </p>
 
 <p>
@@ -186,6 +199,16 @@ to have to keep state for the client? Then use <code>flask_login</code>. You
 can implement the login with or without a <code>front-end page</code> for
 it. You can find a basic template for doing that with front-end
 <a href="https://github.com/MarcoHassan/flask_login">here</a>. Use it in your future projects.
+</p>
+
+<p>
+Note that it also possible to use the flask<sub>login</sub> module and deal
+with multiple clients and access your RESTful points with a single
+access. In order to do that, you can also keep a session argument
+where you keep track of all of the active users that might access
+resources. However, this is not recommended as this goes <b>against
+the concept of stateless REST</b> Api and it is not recommended. For
+quick and dirty PoC situations you might well work in such a way.
 </p>
 </div>
 </div>

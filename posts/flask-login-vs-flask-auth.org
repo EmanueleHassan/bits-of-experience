@@ -122,12 +122,15 @@ next. It will make you to make sense of everything.
   a server when running =Angular=? Why is this the case? Should not
   everything run in the browser engine? Yes and No; but badaboom; you
   made the right sense of it; it is not strictly necessary to have a
-  =ng serve= although this is often the way you work with. I.e. you
-  need for sure a server to fetch the angular files and bring them
-  into the browser. This also in local development mode as browser are
-  for security reasons not given access to your file system. However
-  the very same flask backend server from which you are serving /
-  exposing your models could well be that server.
+  javascript based server although this is often the way you work
+  with. I.e. you need for sure a server to fetch the angular files and
+  bring them into the browser. This also in local development mode as
+  browser are for security reasons not given access to your file
+  system. There you would actually use =ng serve=. However the very
+  same flask backend server from which you are serving / exposing your
+  models could well be that server. In this sense check at the route
+  that is mapping all of the paths to the =index.html=, the single
+  html from which you manage it all in your angular framework.
     
 * Flask Authentification
 
@@ -141,7 +144,15 @@ next. It will make you to make sense of everything.
    endpoints for accessing the data and returning them to the
    front-end which will then integrate them in the front-end. This is
    how you are working on your project. Notice that here you would
-   actually need to authentificate for each request.
+   actually need to authentificate for each request. You can find a
+   trivial basic example [[https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask][here]]. You can then expand on this according
+   to the need.
+
+   A better way to deal with the RESTful authentification would be to
+   use the token-based authentification as discussed in [[https://realpython.com/token-based-authentication-with-flask/#refactoring][here]]. You
+   would have to read a bit more into it if you decided to go down
+   that road as it is not straightforward at the moment why you would
+   use a db for that etc. 
 
    Are you rendering web-sites from the backend? I.e. are you routing
    via the backend and making dynamic webpages out of it? Do you need
@@ -149,5 +160,13 @@ next. It will make you to make sense of everything.
    can implement the login with or without a =front-end page= for
    it. You can find a basic template for doing that with front-end
    [[https://github.com/MarcoHassan/flask_login][here]]. Use it in your future projects.
+
+   Note that it also possible to use the flask_login module and deal
+   with multiple clients and access your RESTful points with a single
+   access. In order to do that, you can also keep a session argument
+   where you keep track of all of the active users that might access
+   resources. However, this is not recommended as this goes *against
+   the concept of stateless REST* Api and it is not recommended. For
+   quick and dirty PoC situations you might well work in such a way.
    
 
