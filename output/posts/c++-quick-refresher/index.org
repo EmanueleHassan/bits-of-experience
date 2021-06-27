@@ -835,6 +835,32 @@ void PassCar::display( void) const{
 #+END_SRC
 
 
+
+*** Private, protected and public variables and methods
+
+    when you make this division you decide from where to expose the
+    data and methods associated to a method.
+
+    I.e. =public= it is accessible from everywhere. I.e. even when
+    running the code inside of the class code - i.e. in a method of
+    it - you might access the variable. 
+
+    I.e. =private= you might just access to the methods and variables
+    from the very same class they are declared in. I.e. through
+    methods specified in there etc.
+
+    I.e. =protected= you might just access to the methods and variables
+    from the very same class they are declared in as well as classes
+    derived from such class.
+
+    In this sense understand the strucutre of your c++ projects. You
+    specify the structure and variables in header files together with
+    the access properties. This will make it much easier for you to
+    get all of the structure in a quick way.
+
+    Based on that you would then expand and write the actual code
+    etc. 
+
 *** Name Lookup
 
     This are general questions you should know the answer for. Last
@@ -1043,7 +1069,6 @@ auto = *carPtr; // Error! Pointer to derived object; true. But of **Base** class
     There you have to make the casting explicitly. Check at it online
     in case of interest.
     
-** Finish the two tomorrow    
     
 *** Polymorphism
 
@@ -1103,6 +1128,77 @@ auto = *carPtr; // Error! Pointer to derived object; true. But of **Base** class
     opposite direction though - a base class method does not become
     virtual just because it is declared as virtual in a derived class.
 
+    However, note the following *important point*:
+
+    If you use a different signature or return type of a virtual base
+    class method to define a method in a derived class, this simply
+    creates a new method with the same name. The method will not
+    necessarily be virtual!
+
+    Note as well the following: If you use a base class pointer to
+    manage an object, the appropriate virtual methods of the derived
+    class are called. However, non-virtual methods will always execute
+    the base class version.
+
+    This goes together with the /static/ and /dynamic/ memory
+    allocation when calling virtual and non-virtual methods.
+
+    Note as well that if a virtual method is called via an /object’s
+    name/, the appropriate version of this method is also known at
+    time of compilation. So this is also a case of early binding. 
+
+    When a non-virtual method is called, the address of the function
+    is known at time of compilation. The address is inserted directly into
+    the machine code. This is also referred to as static or early
+    binding.
+
+    This in contrast to the case of making the call via pointers to
+    the base classes and the virtual method. Then /dynamic/ memory
+    allocation occurs. 
+
+    Note moreover that there quite some few low level stories that you
+    will have to well manage. i.e. if you have a pointer to the base
+    class, which you assign an object of a derived class, and then
+    subsequently delete such pointer, i.e.
+
+    #+BEGIN_SRC cpp 
+    Car *carPtr;
+    carPtr = new PassCar("500",false,21,"Geo");
+    . . .
+    delete carPtr;
+    #+END_SRC
+
+    then the destructor for the base class is called but not for the
+    derived class. As the PassCar destructor is not called, neither is
+    the destructor called for the data member passCarType, which is
+    additionally defined in the derived class. The data member
+    passCarType is a string, however, and occupies dynamically
+    allocated memory— this memory /will not be released/.
+
+    So be careful:
+
+    If multiple objects are created dynamically in the derived class,
+    a dangerous situation occurs. More and more unreferenced memory
+    blocks will clutter up the main memory without you being able to
+    reallocate them—this can seriously impact your program’s response
+    and even lead to external memory being swapped in.
+
+    The solution to this is to use *virtual destructors*. The idea
+    with such virtual destructors is that in such a way, just like any
+    /other virtual method/, the appropriate version of the destructor
+    /will be executed/.
+
+    Note the following important piece:
+
+    #+begin_quote
+    A class used as a base class for other classes should *always have
+    a virtual destructor* defined. Even if the base class does not need a
+    destructor itself, it should at least contain a dummy destructor, that
+    is, a destructor with an empty function body.
+    #+end_quote
+
+    
+    
 *** Data Abstraction
 
     Here the idea is to create a class describing the objects.
