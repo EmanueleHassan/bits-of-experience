@@ -161,10 +161,90 @@ at the top level and in calculator mode).
    currently working (i.e. relative to the package where your module
    resides).
 
+   Note that the directory from which relative paths are defined is
+   the one of your =script= file.
+
    Note that relative path just work across =packages=, i.e. you
    cannot reference a module that is not part of a package with
    relative paths.
+
+   Note that the directory where your script is running is the root
+   directory. I.e. everything is defined relative to that. Notice that
+   you cannot go higher in the tree in comparison to that directory.
+
+   Or at least you should use tricks then. A very good entry is under
+   [[https://stackoverflow.com/questions/16981921/relative-imports-in-python-3][this url]]. The one you up-voted.
+
+   And within it there is this trick of defining a function from which
+   you can change the root directory for relative paths so to say.
+
+   #+begin_src python
+if __name__ == "__main__" and __package__ is None:
+
+    """
+    basic test procedure for logger.py
+    """
+
+    import sys, importlib
+    from pathlib import Path
+
+    def import_parents(level=1):
+        global __package__
+        file = Path(__file__).resolve()
+        parent, top = file.parent, file.parents[level]
+
+        sys.path.append(str(top))
+        try:
+            sys.path.remove(str(parent))
+        except ValueError: # already removed
+            pass
+
+        __package__ = '.'.join(parent.parts[len(top.parts):])
+        importlib.import_module(__package__) # won't be needed after that
+
+    ## Relative to 2 directories higher
+    import_parents(level=2) # N = 2
+
+    ## do your code for running the file as script
+   #+end_src
+
+   That is quite useful, for instance when you want to test some of
+   your modules that require a different module in a different
+   package.
+
+   Note however that if you start to import modules in different
+   packages you will run into errors when working in such a way.
+
+   This because when you program all of your code you specify all of
+   the relative path in relation to the =src= directory - i.e. the
+   directory where your =__main__= script is.
+
+   You will hence get errors as, in the case above, the relative path
+   would be in relation to the module you are running your tests for.
+
    
+** Adding the root directory from which the imports are specified
+
+   So the one strategy you can use to circumvent this would be to set
+   the root where your normal =__main__.py= /script/ is. Then you do
+   not have to modify the relative path of all of your modules.
+
+   You can do that in the following way:
+
+   #+begin_src python
+if __name__ == "__main__" and __package__ is None:
+
+    """
+    basic test procedure for logger.py
+    """
+
+    ## add the path of the root directory so that you get relative
+    ## imports from there
+    import sys,os
+    sys.path.append(os.path.realpath('..'))
+
+    ## your module tests when running it as a script.
+   #+end_src
 
 ** On Naming Conventions According to PEP8
 
@@ -178,16 +258,11 @@ at the top level and in calculator mode).
    Some other practice; I do not think it is PEP but would have to
    double check it.
       
-   Note that some people like to call their =script=, i.e. the main
-   file they execute the __main__.py.
+   Note that some people like to call their /script/, i.e. the file
+   they execute the =__main__.py=.
 
    It is up to you if you want to follow that structure or not. You
    can make some research on the best practice in the following
    depending on the time.
 
    
-
-
-
-
-

@@ -993,13 +993,64 @@ problem going quickly towards more complex situations.
       stage so that I will skip it now.
 
       
-*** TODO Clique Tree - Exact Inference
+*** Clique Tree - Exact Inference
 
-    This is a second technique to do exact inference. I skipped it
-    here as if it will not pop up continuously in my research it is
-    fine. It is not the core for my research and I want to go to the
-    approximate inference task of the next section.
+    This is a second technique to do exact inference.
 
+    This is an important technique in the sense that it is the usually
+    chosen technique for dealing with inference in the EM algorithm.
+
+    Moreover multiple algorithms were proposed based on the technique
+    to deal with the case of mulitple /probabilistic evidence/.
+
+    The idea is essentially one-to-one the one of the sum-product
+    above.
+
+    It is just a different notation with a graphical structure
+    description and visualization of the above.
+
+    
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-07-10_um_16.21.55.png" class="center">
+#+end_export
+
+    
+#+begin_export html
+ <img src="../../images/Bildschirmfoto_2021-07-10_um_16.25.07.png" class="center">
+#+end_export
+
+
+    You see there that each time you cancel one variable out of a
+    factor, i.e. you marginalize it and then you pass the new factor
+    created out of this marginalization on to the next factor in
+    clique-tree. There you will mulitply the factor of the clique with
+    the received message and you iterate until the root node -
+    i.e. the containing the probability all of the variables of
+    interest.
+
+    Then to get the probability of a particular variable you sum all
+    of the variables out that are not interesting to you.
+
+    Note that the clique algorithm is efficient and important due to
+    computational reasons. We saw that given a root clique you can
+    then get the probability of each joint event of the variables of
+    the clique.
+
+    Consider now the task of computing the posterior distribution over
+    every random variable in the network. The most naive approach is
+    to do inference separately for each variable. Letting /c/ be the
+    cost of a single execution of clique tree inference, the total
+    cost of this algorithm is /nc/. An approach that is slightly less
+    naive is to run the algorithm once for every clique, making it the
+    root. The total cost of this variant is /Kc/, where /K/ is the
+    number of cliques. However, it turns out that we can do
+    substantially better than either of these approaches.
+
+    Then basically you can bring it down to two message passes - one
+    upstream and one downstream. Every clique will have all of the
+    messages and you can compute everywhere the probability with /2c/
+    costs. Check at the book if you want more detailed information.
+        
 *** TODO Approximate Inference
 
     The idea is that despite the techniques mentioned before, i.e. the
