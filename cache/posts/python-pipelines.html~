@@ -30,9 +30,9 @@ to combine the three together in easy to use Pipelines.
 <br>
 <br>
 
-<div id="outline-container-org0fa1f09" class="outline-2">
-<h2 id="org0fa1f09">The general Case</h2>
-<div class="outline-text-2" id="text-org0fa1f09">
+<div id="outline-container-org0596fa4" class="outline-2">
+<h2 id="org0596fa4">The general Case</h2>
+<div class="outline-text-2" id="text-org0596fa4">
 <p>
 In fact, all of the ML models in the sklearn and Spark-ML libraries -
 for instance RandomForest, SVM, LogisticRegression etc. - are built
@@ -65,9 +65,9 @@ with in production.
 </div>
 </div>
 
-<div id="outline-container-orgc4efe6e" class="outline-2">
-<h2 id="orgc4efe6e">An Example with Pipeline Understanding</h2>
-<div class="outline-text-2" id="text-orgc4efe6e">
+<div id="outline-container-orgc003d1b" class="outline-2">
+<h2 id="orgc003d1b">An Example with Pipeline Understanding</h2>
+<div class="outline-text-2" id="text-orgc003d1b">
 <p>
 A simple basic example that aims to provide your with the general
 workflow is the following:
@@ -225,9 +225,9 @@ your data and you compute the metrics on the original scaled data.
 </div>
 </div>
 
-<div id="outline-container-org2260fbb" class="outline-2">
-<h2 id="org2260fbb">Why you should always work through Pipelines</h2>
-<div class="outline-text-2" id="text-org2260fbb">
+<div id="outline-container-orgd5306c2" class="outline-2">
+<h2 id="orgd5306c2">Why you should always work through Pipelines</h2>
+<div class="outline-text-2" id="text-orgd5306c2">
 <p>
 It is recommended that you always work with pipelines for your
 workflow. 
@@ -251,6 +251,16 @@ In order to see that consider the following example:
 <span class="c1"># split in training and testing dataset - i.e. look at generalization</span>
 <span class="c1"># of your model out of sample</span>
 <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">## notice that the split was not stratified here. </span>
+
+<span class="c1"># This stratify parameter makes a split so that the proportion of</span>
+<span class="c1"># values in the sample produced will be the same as the proportion of</span>
+<span class="c1"># values provided to parameter stratify.</span>
+<span class="c1"># For example, if variable y is a binary categorical variable with</span>
+<span class="c1"># values 0 and 1 and there are 25% of zeros and 75% of ones,</span>
+<span class="c1"># stratify=y will make sure that your random split has 25% of 0&#39;s and</span>
+<span class="c1"># 75% of 1&#39;s.</span>
 
 <span class="c1"># create your pipeline that you can apply directly to your data. you</span>
 <span class="c1"># can then fit the pipeline and predict using it.</span>
@@ -313,9 +323,9 @@ In order to see that consider the following example:
 </div>
 </div>
 
-<div id="outline-container-orgb35792e" class="outline-2">
-<h2 id="orgb35792e">Differentiated Pipelines for different variables</h2>
-<div class="outline-text-2" id="text-orgb35792e">
+<div id="outline-container-orge034525" class="outline-2">
+<h2 id="orge034525">Differentiated Pipelines for different variables</h2>
+<div class="outline-text-2" id="text-orge034525">
 <p>
 The process previously described performs the same transformations to
 all of the variables passed to the pipeline. 
@@ -371,5 +381,49 @@ pipelines through the <code>ColumnTransformer</code> as shown in the below case
 
 <span class="n">preprocessor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 </pre></div>
+
+<p>
+Notice finally that you can combine Pipelines in new Pipelines. This
+is what happened under the hood in the <code>ColumnTransformer</code> above. To
+make it more explicit you might then create a final Pipeline for the
+above case implementing a ML implementation:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## Baseline</span>
+<span class="n">param_grid_svm</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;svm__C&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">10.0</span><span class="p">],</span>
+    <span class="s1">&#39;svm__gamma&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.1</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">best_params</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">pipe_svm</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">),</span>
+			   <span class="p">(</span><span class="s1">&#39;svm&#39;</span><span class="p">,</span><span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;rbf&#39;</span><span class="p">,</span>
+				      <span class="n">class_weight</span><span class="o">=</span><span class="s1">&#39;balanced&#39;</span><span class="p">))])</span>
+
+<span class="c1"># svc_fit = pipe_svm.fit(X_train, y_train)</span>
+
+<span class="c1"># y_pred = svc_fit.predict(X_test)</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">pipe_svm</span><span class="p">,</span>
+		    <span class="n">param_grid</span><span class="o">=</span><span class="n">param_grid_svm</span><span class="p">,</span>
+		    <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">best_params</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">best_params_</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Fitted Pipeline</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;--&gt;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pipe_svm</span><span class="o">.</span><span class="n">named_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="o">*</span><span class="mi">35</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;f1_score&quot;</span><span class="p">,</span><span class="nb">round</span><span class="p">(</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span><span class="n">average</span><span class="o">=</span><span class="s1">&#39;binary&#39;</span><span class="p">),</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+
+<pre class="example">
+Fitted Pipeline
+pre--&gt;svm
+===================================
+
+f1_score 0.634
+</pre>
 </div>
 </div>
