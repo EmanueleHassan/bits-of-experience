@@ -258,6 +258,7 @@ that has the .class extension.
     
 * Syntax
 
+
 ** if
 
    #+begin_src java 
@@ -1581,6 +1582,21 @@ class SubClass extends ParentClass
 *** @Inherited
 *** @Deprecated
 *** @SuppressWarnings
+*** @FunctionalInterface
+
+    If a method takes a functional interface as a paraameter, then we
+    can pass the following:
+
+    - An anonymous inner class, the old-fashioned way - meaning not
+      functional - (but why would we?)
+      
+    - A lambda expression, like the map() method
+
+    - A method or constructor reference
+
+**** TODO understand this better :noexport:
+
+    
 ** Abstract Classes
 
    *Important* Concrete methods are still /allowed in abstract classes/.
@@ -1700,6 +1716,7 @@ class AbstractAreas {
    Inside Area for Triangle.
    Area is 40.0
 
+
 ** Object Class
 
    There is one special class, Object, defined by Java. *All other
@@ -1709,6 +1726,7 @@ class AbstractAreas {
    that a *reference variable of type Object can refer to an object of
    any other class*. Also, since arrays are implemented as classes, a
    variable of type Object can also refer to any array.
+
 
 ** Interfaces
 
@@ -2075,12 +2093,192 @@ class IFExtend {
      
 
 
+
 ** On Functional Programming - Available since Java 8
 
    Sinced Java 8 there are some new possibilities of programming in a
    functional programming way.
 
+   Basically here is where your pythonic way of working comes into
+   play.
+
+   There you basically iterate across some iterable object with a new
+   kind of iterator and apply calssical =maps= and =reduce= functions
+   through the use of lambda functions as you already encountered them
+   in the past.
+
+   Note that programming in such a way will bring to you several
+   advantages:
+
+   - Nicely composed, not cluttered
+
+   - Free of low-level operations
+
+   - Easier to enhance or change the logic
+
+   - Iteration controlled by a library of methods
+
+   - Efficient; lazy evaluation of loops
+
+   - Easier to parallelize where desired
+
+   It is easy to see why that holds true by programming a bit with
+   them. It is also pretty quick then to understand the benefit of it.
+
+   I like this concept:
+
+   #+begin_quote
+Functional-style code has a *higher signal-to-noise ratio*; we write fewer lines
+of code, but each line or expression achieves more.
+   #+end_quote
+
+   Note as well the following fundamental reasonings:
+
+   #+begin_quote
+The functional version can easily be parallelized. If the computation
+was time consuming, we can easily run it concurrently for each element
+in the list. If we parallelized the imperative version, we’d have to
+worry about concurrent modification of the totalOfDiscountedPrices
+variable. In the functional version we gain access to the variable
+only after it’s fully baked, which removes the thread-safety concerns
+   #+end_quote
+
+   That is most likely the root from which the map-reduce and Hadoop
+   frameworks developed and how it is implemented in Java. Java-8 must
+   have been a huge revolution in this sense.
+
+   The functional style is not counter to object-oriented programming
+   (OOP). The real paradigm shift is from the imperative to the
+   declarative style of programming. With Java 8, we can now intermix
+   functional and OO styles of programming quite effectively. We can
+   continue to use the OOP style to model domain entities, their
+   states, and their relationships. In addition, we can model the
+   behavior or state transformations, business workflows, and data
+   processing as a series of functions to form a function composition.
+
+   So basically that is the ultimate way you program in Java and where
+   its benefit is unleashed. I must say that coming from the Python
+   world I still see it as inferior to Java for the data processing,
+   but with that it solves quite some fundamental constrains.
+   
+*** Syntax
+
+    The syntax is very close to the one you know yourself.
+
+    Consider the following    
     
+    #+begin_src java :results output raw 
+friends.forEach((final String name) -> System.out.println(name));
+    #+end_src 
+
+    The forEach() is a higher-order function that /accepts a lambda
+    expression/ or block of code to execute in the context of each
+    element in the list.
+
+    The variable =name= is bound to each element of the collection
+    during the call. So that is the =lambda x= of your python
+    code. There you specify what your lambda parameters are. Here you
+    specify them within the =()= before the arrow =->=. So that is
+    basically the syntax and you already know and love that way of
+    programming.
+
+    *Note*: the above is not the only way to implement lambda
+    functions in Java. It is nonetheless the most type safe ways of
+    doing it.
+
+    Other possible ways involve the following:
+
+    #+begin_src java :results output raw 
+friends.forEach((name) -> System.out.println(name));
+    #+end_src 
+
+    here you do not specify a type for the name. This is automatically
+    inferred by looking at the signature of the called method.
+
+    *Important Note:* We can also use type inference if a lambda
+    expression takes multiple parameters, but in that case we must
+    leave out the type information for all the parameters; we have to
+    *specify the type for none or for all of the parameters* in a lambda
+    expression.
+
+    The last way to specify the lambda function is the following:
+
+    #+begin_src java :results output raw 
+friends.forEach(name -> System.out.println(name));
+    #+end_src
+
+    Note that here you have no =()=. This is a corner case.
+
+    The Java compiler treats single-parameter lambda expressions as
+    special: we can leave off the parentheses around the parameter if
+    the parameter’s type is inferred. Note this cause some of your
+    colleagues are using this way of coding.
+
+    Keep unity in your code and forget about it. Always work with =()=
+    for consistency reasons. 
+    
+
+*** Nice benefit of working in a functional way
+
+    Note the following benefit of lambda expressions. You never
+    thought in these terms and it is clear that there are high
+    benefits in working in such a way.
+
+    Consider the following - old fashioned way of working with java
+    and code. 
+
+    #+begin_src java :results output raw 
+Transaction transaction = getFromTransactionFactory();
+
+//... operation to run within the transaction ...
+
+checkProgressAndCommitOrRollbackTransaction();
+UpdateAuditTrail();
+    #+end_src 
+
+    Then the issue is that multiple errors could occur in the
+    following part:
+
+    #+begin_src java :results output raw 
+//... operation to run within the transaction ...
+    #+end_src
+
+    such that you might not get to the roll-back code part.
+
+    This causes issues. A way to fix this is via the classical
+    =try-catch= methods.
+
+    Another way of doing this is via functional programming. Think of
+    the following:
+
+    #+begin_src java :results output raw 
+runWithinTransaction((Transaction transaction) -> {
+//... operation to run within the transaction ...
+})
+    #+end_src 
+
+    In such a way you encapsulate everything.
+
+    The policy to check the status and update the audit trails is
+    abstracted and encapsulated within the ~runWithinTransaction()~
+    method. To this method we send a piece of code that needs to run
+    in the context of a transaction. We no longer have to worry about
+    forgetting to perform the steps or about the exceptions being
+    handled well.
+    
+
+*** TODO continue to read. not bad to put a little bit more of structure in that important part of coding :noexport:
+
+    continue to read from: =A Little Sugar to Sweeten= on.
+       
+
+*** TODO :noexport:
+
+    Have as well still to understand what libraries are available for
+    data management in Java. Explore =poi=. Understand what other
+    libraries are available for managing data frames etc. 
+   
+
 ** enumerations
 
    Created using ~enum~.
@@ -2194,7 +2392,9 @@ class EnumDemo3 {
    Winesap costs 15 cents.
    Cortland costs 8 cents.
 
+
 ** TODO Autoboxing     
+
 
 ** Generics
 
@@ -2782,6 +2982,70 @@ class GenConsDemo {
     you have time.
      
 
+** Text Blocks Feature
+
+   This was your goto way to write longer query to be embedded in
+   application logic. It is just available for Java 15 onwards.
+
+   We are not there yet. Cannot use it in this sense.
+
+   I use the alternative way for writing multiline queries as this is
+   to my humble opinion the best way to have the overview of the
+   screen.
+
+   #+begin_src java :results output raw 
+   ""
+   + " my query " 
+   + " my query " 
+   + " my query "
+   +       
+   ""	
+   #+end_src 
+
+** Try with resource statements
+
+   This is implemented since Java 7. You can read the official
+   documentation in [[https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html][here]].
+
+   The idea is the following... check this function snippet
+
+   #+begin_src java :results output raw 
+try(BatchSQL myBatchQueryObject = new BatchSQL()){	
+   // my logic for my batchSQL job
+}
+#+end_src 
+
+   then the idea is to say try to perform the batch-query as specified
+   within parenthesis.
+
+   A =resource=, i.e. the thing you pass within =()= after the =try=
+   expression, is an object that *must be closed* after the program is
+   finished with it. The try-with-resources statement ensures that
+   each resource is closed at the end of the statement.
+
+   Note that form such a statement it does not seem that you implement
+   the closing clause automatically. You have to make sure that you
+   close the resource.
+
+   Mmm... this looks weird to me. Note the follwoing:
+
+   #+begin_quote
+Any object that implements java.lang.AutoCloseable, which includes all
+objects which implement java.io.Closeable, can be used as a resource.
+   #+end_quote
+
+   I saw that autocloseable thing into an =interface= at some point
+   when navigating our libraries. so I think that is the logic.
+
+   probably our batchSQL objects implement that interface and then you
+   are pretty much done. -> double checked. this is in fact the case
+   see that it in fact implements that interface.
+
+   I am pretty much sure that then such close statement is called if
+   the try-statement fails with that syntax. Double checked with
+   colleagues and yeah. That is how it works. 
+   
+   
 * Iterator Interface
 
   Check at that interface and its method cause all of the most
@@ -2897,7 +3161,6 @@ class CallByRef {
         
 
 * Packages
-   
 
 ** General definition
 
@@ -3102,6 +3365,101 @@ import pkg1[.pkg2].(classname|*);
    java package called /java.lang/. This is implicitly imported by
    the compiler for all programs.
     
+
+** On Strings Parsing
+
+   Have to structure the documentation more at some point and check at
+   which library implements everything and understand a bit its API.
+
+   In the meanwhile here some ways of working with it.
+
+   Basically you have ~String.format()~ way of working where you work
+   as in the f-strings you saw in multiple programming languages.
+
+   The idea is simply to pass some data types to the string. Moreover
+   it is interesting that you can impose some structure to the string
+   in such a way.
+
+   This is especially important cause in such a way you can perform
+   the necessary checks in your data pipelines.
+
+   Consider for instance the following 
+
+   #+begin_src java :results output raw 
+   String.format("|%020d|", 93); // prints: |00000000000000000093|
+   #+end_src 
+
+   in such a way you can pad with 0, the desired amount of times. This
+   will be useful for instance to keep the RUC number consistent.
+
+   
+** Logger Package
+
+   As you know, this is a quite fundamental component when writing
+   your apps.
+
+*** Logger Object Configuration
+
+    In order to create a Logger object zou can use the following:
+
+    #+begin_src java :results output raw 
+import java.util.logging.Logger;
+
+// assumes the current class is called MyLogger
+private final static Logger LOGGER = Logger.getLogger(<package>);
+    #+end_src 
+
+    What the above does is actually to implement a hierarchy of
+    loggers.
+
+    To understand what the above sentence means understand the
+    following:
+
+    If for instance you specify a logger for the =com.example=
+    package, that logger would be a child of the =com= Logger, which
+    is itself a child of the =String= Logger (default). 
+   
+*** Levels
+
+    The module works the same way your logger in python used to
+    work. This means that you have multiple levels of logging.
+
+    - SEVERE (highest)
+    - WARNING
+    - INFO
+    - CONFIG
+    - FINE
+    - FINER
+    - FINEST
+    - OFF (turns the logger off)
+    - ALL (log everything)
+
+    You can choose the level of your log in the following way:
+
+    #+begin_src java :results output raw
+// set logger at info level
+LOGGER.setLevel(Level.INFO);
+    #+end_src 
+
+    In the case above log levels =INFO= and above will be automatically
+    written to the console. This in a very similar way to the logger in
+    python you have used multiple times.
+
+    Note that through the =LogManager= it is possible to set the
+    logging levels for a set of packages at once. 
+  
+*** Formatter
+
+    Here again in a similar way than python you can specify the output
+    for the logger and how logged entry are returned / logged in the
+    console.
+
+    It is common practice to use the fully qualified name of each
+    class whose activity is being logged as a message category,
+    because this allows developers to fine-tune log settings for each
+    class.
+
+    Make sure this is the case in your team.
 
 * Frameworks
 
@@ -3519,7 +3877,6 @@ class EnumSet<E extends Enum<E>>
   <img src="../../images/Screenshot 2021-09-24 161528.png">
  #+end_export
 
-
 ** Maps Frameworks
 
    Note that these are the functions for performing the classical
@@ -3667,6 +4024,7 @@ interface Map.Entry<K,V>
    ordering of the elements of your objects implementing the
    =NavigableSet=/=NavigableMap= interfaces. 
 
+
 * On The RandomAcess Interface
 
   This is a quite fun interface. It is an *interface that implements
@@ -3685,11 +4043,6 @@ interface Map.Entry<K,V>
   So very interesting way of setting up your project. Keep that in
   mind when setting up your projects.
    
-
-* Note that since Java 8 they introduced functional programming
-
-  Read about it. 
-
 
 * On the main method
 
