@@ -1,0 +1,82 @@
+#+BEGIN_COMMENT
+.. title: Nikola Port to Windows
+.. slug: nikola port to windows
+.. date: 2021-10-07 15:06:55 UTC+02:00
+.. tags: 
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+
+Wow... everything is a fight on this new system.
+
+even with nikola there were some issues. first of all I was getting an
+execute-error concerining some zipped-function defined in the markdown
+file. the solution for it was to downgrade to a [[https://forum.drawbot.com/topic/247/markdown-syntax-for-formattedstring][previous version of
+markdown]]. Actually it turned out that was not that important in the
+first place as the very root cause was not cause by some missing/malfunctioning
+python packages but rather by the following.
+
+{{{TEASER_END}}}
+
+* Issue with .smth files
+
+The issue is created as you imported the nikola project that was built
+on unix OS. Now I did not go into the internal mechanism of Nikola in
+a deep way... Though, what I think is that you use a =sqllite= alike
+way to operate in an RDMS like way with files on your file system -
+i.e. you have an RDMS alike interface without the need to set up and
+use a proper database.
+
+Nonethess the way the files through which you manage such SQL
+compability are named (in terms of file extension) and the way they
+operate on different OS is different. Hence when you port your blog
+from one OS to the next you should pay attention to such detail.
+
+The solution is to generate a dummy blog with the command
+
+#+BEGIN_SRC sh
+nikola init --demo mysite
+#+END_SRC
+
+Then you will find the basic structure with the necessary DB-alike
+files.
+
+* How to deploy in my new workflow.
+
+  Not having a native bash language on my laptop I could not use the
+  bash scripts I wrote in order to automate the deployment of my
+  blog.
+
+  What I did in order to solve that is to write some lisp function in
+  order to trigger some =eshell= functions that operates in an bash
+  alike way.
+
+  The workflow is not that smooth that far but it should be fine.
+
+  Here the steps you need to perform for the deployment. Automate even
+  further when you have time.
+  
+** For local deployment
+
+   trigger the ~blog/move_blog_files()~ function you defined. this
+   will copy all of the static resources of your blog to
+   =blog/output/images=.
+
+   note that it is not important from where you trigger such function
+   in your file system as I specified the correct change of directory
+   in there.
+   
+** For github deployment
+
+   First deploy via =nikola github_deploy=. Then call the
+   ~blog/push_resources_to_blog()~ function to copy all of the static
+   files used by the blog into the deployed branch. 
+
+  
+
+
+
