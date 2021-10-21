@@ -137,6 +137,7 @@ Schildt)" publicly available on the world wide web at [[https://gfgc.kar.nic.in/
 
   ... many others I still have to insert. keep it as a todo.
   
+
 * History
 
   Java primary motivation was the need for a platform-independent
@@ -1389,7 +1390,6 @@ class RefDemo {
     Note that you *cannot access members* of the referenced object that
     are not implemented in the superclass though. 
      
-
 ** on the super keyword
 
    This is useful in the case you would not want to expose the entire
@@ -1618,28 +1618,34 @@ class Dispatch {
    [[*@FunctionalInterface][@FunctionalInterface]]
 
 
+
+   You have built-in Annotations that you can use out of the box.
+
+   On the top of it, you have user-defined Annotations that we will
+   explore next.
    
-*** @Override
+*** Built-in Annotations
+**** @Override
 
-    This is powerful notation construct. Note that it is not mandatory
-    to use for the correct syntax of the program. I noted though that
-    this is quite extensively used in our team.
+     This is powerful notation construct. Note that it is not mandatory
+     to use for the correct syntax of the program. I noted though that
+     this is quite extensively used in our team.
 
-    It is quite practical in fact. With it you specify that a method
-    will be overrriden next. This will be useful in two ways:
+     It is quite practical in fact. With it you specify that a method
+     will be overrriden next. This will be useful in two ways:
 
-    1. if you make a mistake when spelling out the name of the method
-       or you pass a wrong number of arguments such that you will
-       ultimately not override the method you will be thrown an error
-       at compile time. It is hence a *safety check*. You are telling
-       the compiler that the next method should be an overrriden method.
+     1. if you make a mistake when spelling out the name of the method
+	or you pass a wrong number of arguments such that you will
+	ultimately not override the method you will be thrown an error
+	at compile time. It is hence a *safety check*. You are telling
+	the compiler that the next method should be an overrriden method.
 
-    2. the second way it helps is by navigating the code. it is then
-       useful to see what went wrong.
+     2. the second way it helps is by navigating the code. it is then
+	useful to see what went wrong.
 
-    /Example/
+     /Example/
 
-    #+begin_src java :results output raw :classname SubClass
+     #+begin_src java :results output raw :classname SubClass
 class ParentClass
 {
 	public void displayMethod(String msg){
@@ -1657,36 +1663,137 @@ class SubClass extends ParentClass
 		obj.displayMethod("Hey!!");
 	}
 }
-    #+end_src 
+     #+end_src 
 
-    #+RESULTS:
-    Message is: Hey!!
+     #+RESULTS:
+     Message is: Hey!!
 
-*** @Retention
+**** @Deprecated
 
-*** @Documented
+     @Deprecated annoation marks that this method is deprecated so
+     *compiler prints warning*. It informs user that it may be removed in
+     the future versions. So, it is better not to use such methods.
 
-*** @Target
+**** @SuppressWarnings
 
-*** @Inherited
+     @SuppressWarnings annotation: is used to suppress warnings issued
+     by the compiler.
 
-*** @Deprecated
 
-*** @SuppressWarnings
+    
 
-*** @FunctionalInterface
 
-    If a method takes a functional interface as a paraameter, then we
-    can pass the following:
+*** User defined Annotations
 
-    - An anonymous inner class, the old-fashioned way - meaning not
-      functional - (but why would we?)
+    So first of all you have to understand how you define your
+    user-specific annotations.
+
+    
+**** Syntax
+
+     In order to define an interface you can use the following
+
+     #+begin_src java :results output raw 
+     @interface MyAnnotation{}  
+     #+end_src 
+
+     Note that such custom annotations can just be used under the
+     following settings:
+
+     - annotated method should not have any throws clauses
+     - method should return one of the following:
+       1. primitives
+       2. String
+       3. Class
+       4. enum
+       5. array
+     - method should not have any parameter
+
+     Note now the following general constructs:
+
+     - an annotation that has no method is called a =marker=.
+
+       for instance the following
+
+       #+begin_src java :results output raw 
+       @interface MyAnnotation{}  
+       #+end_src 
+
+       Note that the built-in annotations above are all markers.
+       
+     - =single-value= annotation
+
+       an annotation that /has one method/.
+
+       see for instance the following
+
+       #+begin_src java :results output raw 
+@interface MyAnnotation{  
+int value();  
+}  
+       #+end_src 
+
+       or the following
+
+       #+begin_src java :results output raw 
+@interface MyAnnotation{  
+int value() default 0;  
+}  
+       #+end_src 
+
+       You can then set the value for the single methods
+
+       #+begin_src java :results output raw 
+@MyAnnotation(value=10)  
+       #+end_src 
+       
+     - =multi-value= annotation
+
+       for instance the following
+
+       #+begin_src java :results output raw 
+@interface MyAnnotation{  
+int value1() default 1;  
+String value2() default "";  
+String value3() default "xyz";  
+}
+       #+end_src
+
+
+   *Recall:* albeit you have members within the annotation when an
+   annotation member is passed a value when instantiating it, only its
+   name is used.
+
+   For instance in the above, as was the case of single-value.
+
+   #+begin_src java :results output raw 
+@MyAnnotation{  
+value1 = 3;  
+value2 = "hello";  
+value3 = "world";  
+}
+   #+end_src 
+     
+**** @Retention
+
+     
+     
+**** @Documented
+**** @Target
+**** @Inherited
+**** @FunctionalInterface
+
+     If a method takes a functional interface as a parameter, then we
+     can pass the following:
+
+     - An anonymous inner class, the old-fashioned way - meaning not
+       functional - (but why would we?)
       
-    - A lambda expression, like the map() method
+     - A lambda expression, like the map() method
 
-    - A method or constructor reference
+     - A method or constructor reference
 
-**** TODO understand this better :noexport:
+***** TODO understand this better                                  :noexport:
 
     
 ** Abstract Classes
@@ -2501,6 +2608,7 @@ class EnumDemo3 {
 
 ** TODO Autoboxing     
 
+
 ** Generics
 
    Note that this is a very powerful element of the
@@ -3154,6 +3262,27 @@ objects which implement java.io.Closeable, can be used as a resource.
    the try-statement fails with that syntax. Double checked with
    colleagues and yeah. That is how it works. 
    
+
+** Java Beans
+
+   You will have to make proper notes about it at some later
+   point. You come across it multiple times in the Java world
+   paradigm.
+
+   A JavaBean is just a standard
+
+   All properties are private (use getters/setters) A public
+   no-argument constructor Implements Serializable.
+
+   That's it. It's just a convention. Lots of libraries depend on it
+   though.
+
+   The standard allows libraries to programmatically do things with
+   class instances you define in a predefined way. For example, if a
+   library wants to stream any object you pass into it, it knows it
+   can because your object is serializable (assuming the library
+   requires your objects be proper JavaBeans).
+   
    
 * Iterator Interface
 
@@ -3236,7 +3365,7 @@ class Test {
 }
 class CallByRef {
     public static void main(String args[]) {
-	Test ob = new Test(15, 20);
+Test ob = new Test(15, 20);
 	System.out.println("ob.a and ob.b before call: " +
 			   ob.a + " " + ob.b);
 	ob.meth(ob);
@@ -4087,7 +4216,6 @@ interface Map.Entry<K,V>
     given the new lanaguage paradigm shift.
 
     
-    
 ** Maps Frameworks - Classes
 
    This is the general interface
@@ -4143,11 +4271,13 @@ interface Map.Entry<K,V>
     =EnumMap= extends =AbstractMap= and implements Map. It is
     specifically for use with keys of an =enum= type.
 
+
 ** Comparators
 
    that is an important class that will allow you to specify the
    ordering of the elements of your objects implementing the
    =NavigableSet=/=NavigableMap= interfaces. 
+
 
 ** Streaming - check as well resource you have there on java 8     :noexport:
 
@@ -4236,10 +4366,14 @@ public int addNum(int numA, int numB) {
   [[https://www.tutorialspoint.com/java/java_documentation.htm][avaiable tags]] properly.
 
   *Note* that there is a function to run =JavaDoc= in Eclipse. You
-  should understand that at some point. 
+  should understand that at some point. You also have the option to
+  generate such =JavaDocs= from within your built-tool.
 
+  You can find an example of generated =JavaDocs= [[https://docs.gradle.org/current/javadoc/index.html][here]].
+  
 
 * Encapsulation
+
 
 *** Access Control
 
@@ -4266,6 +4400,7 @@ public int addNum(int numA, int numB) {
     when it is declared. Note that is good practice to write all such
     variables in =UPPERCASE=.
     
+
 *** Calling methods
     
 **** Static
@@ -4376,6 +4511,7 @@ About the situation:
   car.
     #+end_quote
       
+
 *** Final in class methods
 
     Though polymorphism is one of the most useful tool in OOP there
@@ -4398,6 +4534,7 @@ class B extends A {
 }
     #+end_src 
     
+
 *** Final Class
 
     The same holds for classes. You can specify that you cannot
@@ -4431,3 +4568,72 @@ class B extends A { // ERROR! Can't subclass A
 
 
 
+
+
+  
+* Java Application
+
+** On WAR
+  
+   A WAR (web application archive) file is used to bundle web
+   components, compiled classes, and other resource files like
+   deployment descriptors, HTML, JavaScript, and CSS files. Together
+   they form a web application. To run a Java web application, the WAR
+   file needs to be deployed to *the server environment*, a web
+   container.
+
+   The web-app server can be any of Tomcat or Jetty or a Java EE
+   server such as JBoss or Glassfish.
+
+   Note that in simple words you can say the following:
+
+   #+begin_quote
+   A war file is a special jar file that is used to package a web
+   application to make it easy to deploy it on an application
+   server. The content of the war file must follow a defined
+   structure.
+   #+end_quote
+
+   Recall the following strucutre. =.jar= is just part of the entire
+   system. Can be a package dependency, a bytecode app etc. =war= is
+   the entire bundle.
+   
+#+begin_export html
+ <img src="../../images/strucutre.png" class="center">
+#+end_export
+
+   
+   
+
+* On Model 2 Architecture, Servlets and JSP
+
+  So basically this is one of the standard architectures for Java to
+  communicate with clients and serve content from web-servers.
+  
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-21 110909.png" class="center">
+#+end_export
+
+  Basically this is one of the standards. You have your servlet that
+  handles the server side communication. It instantiate a Java Bean
+  that is responsible of fetching the information from the database.
+
+  Finally the information is rendered via JSP - which are a high-level
+  abstraction of Java servlets. They allow Java code and certain
+  predefined actions to be interleaved with static web markup content,
+  such as HTML. The resulting page is compiled and executed on the
+  server to deliver a document.
+
+  The architecture is a =model-view-controller= architecture. The
+  =view= is the JSP, the =controller= is the Servlet and the =model=
+  is given by JavaBeans.
+
+  This was never your bread and butter but this is what you were also
+  doing at the end in your Flask project. There you could as well
+  embedd dynamic information in your html pages. I never went into the
+  details of it as I was busy running the project. But that should
+  have been the JSP equivalent. 
+
+
+   
+   
