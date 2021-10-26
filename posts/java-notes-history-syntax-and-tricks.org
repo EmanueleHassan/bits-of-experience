@@ -1783,19 +1783,31 @@ value3 = "world";
 **** @Inherited
 **** @FunctionalInterface
 
-     If a method takes a functional interface as a parameter, then we
-     can pass the following:
+     You can use this annotation to specify that an interface fulfills
+     the properties of the functional interface. 
+     
+     Note that these are important, as these are the basical logical
+     construct for *functional programming in Java*.
+
+     Functional interfaces are now simply defined as any interface
+     with a sinlge abstract method.
+
+     Note that this is the basis of functional programming as the
+     implementation of the single abstract method is then the lambda
+     expression you can use in your lambda function.      
+
+     If a method takes a functional interface as a parameter - note
+     that this is the case of functional programming -, then we can
+     pass the following:
 
      - An anonymous inner class, the old-fashioned way - meaning not
-       functional - (but why would we?)
+       functional - (but why would we?). This is for instance the
+       example you have in these notes in the =forEach= loop. 
       
      - A lambda expression, like the map() method
 
      - A method or constructor reference
 
-***** TODO understand this better                                  :noexport:
-
-    
 ** Abstract Classes
 
    *Important* Concrete methods are still /allowed in abstract classes/.
@@ -2331,7 +2343,9 @@ class IFExtend {
 
    - Iteration controlled by a library of methods
 
-   - Efficient; lazy evaluation of loops
+   - Efficient; lazy evaluation of loops. I.e. it can decide to
+     perform them lazily, in any order, and exploit parallelism as it
+     sees fit.
 
    - Easier to parallelize where desired
 
@@ -2373,9 +2387,13 @@ only after it’s fully baked, which removes the thread-safety concerns
    its benefit is unleashed. I must say that coming from the Python
    world I still see it as inferior to Java for the data processing,
    but with that it solves quite some fundamental constrains.
+
+   *Important:* Now the above is all at the meta-level. In order to
+   properly understand the stuff you should understand the concept of
+   @functionalInterface. I have an entry in this post for that. You
+   can in general refer to [[https://www.baeldung.com/java-8-lambda-expressions-tips][this website]]. They host good content in
+   this sense.
    
-
-
 *** Syntax
 
     The syntax is very close to the one you know yourself.
@@ -2429,9 +2447,12 @@ friends.forEach(name -> System.out.println(name));
     the parameter’s type is inferred. Note this cause some of your
     colleagues are using this way of coding.
 
-    Keep unity in your code and forget about it. Always work with =()=
-    for consistency reasons. 
+    *Design choice:* Keep unity in your code and forget about it. Always work with =()=
+    for consistency reasons.
+
     
+    
+
 *** Nice benefit of working in a functional way
 
     Note the following benefit of lambda expressions. You never
@@ -2479,19 +2500,105 @@ runWithinTransaction((Transaction transaction) -> {
     in the context of a transaction. We no longer have to worry about
     forgetting to perform the steps or about the exceptions being
     handled well.
+
+
+*** On the forEach method
+
+    This was introduced in Java 8 and I think it is one interesting
+    big point for working with collections. Moreover, it makes the
+    point for functional programming without going in the arrow
+    notation above.
+
+    You can understand by looking at the following:
+
+    #+begin_src java :results output raw 
+void forEach(Consumer<? super T> action)
+    #+end_src 
+
+    so the syntax is the above, and as simply stated in Javadoc:
+    Performs the given action for each element of the Iterable until
+    all elements have been processed or the action throws an
+    exception.
+
+    So one example is the following, you have an *Iterable* object -
+    say a list of friends and you apply the action in the following
+    syntax.
+        
+    #+begin_src java :results output raw 
+friends.forEach(new Consumer<String>() {
+	public void accept(final String name) {
+	    System.out.println(name);
+	}
+    });
+    #+end_src 
+
+
+*** Stream
+
+    The method =stream()= is available on all collections in JDK 8 and
+    it wraps the collection into an instance of Stream.
+
+    A Stream is much like an iterator on a collection of objects and
+    provides some nice /fluent functions/. Using the methods of this
+    interface, we can compose a sequence of calls so that the code
+    reads and flows in the same way we’d state problems, making it
+    easier to read.
+
+    Among the classical fluent functions there are the classical /map/
+    and /reduce/ functions. In general it looks as if all of the
+    methods you were using in pyhtona in the lambda expression are the
+    same as the ones available here under this paradigm. So double
+    check and make sense of all of this.
+
+*** Method Reference
+
+    As mentioned in the notes regarding the @FunctionalInterface, what
+    is important for the functional paradigma is that a
+    @FunctionalInterface is implemented.
+
+    So in order to do that you can either use a =lambda= function
+    which obviously uses such interface, or you can as well pass a
+    /reference to a method where an implementation of a functional
+    interface/ is expected. Think for instance of
+    =String::toUpperCase=, such that the following two work in the
+    same way:
+
+    #+begin_src java :results output raw 
+// v1
+friends.stream()
+.map(name -> name.toUpperCase())
+.forEach(count -> System.out.print(count + " "));
+
+// v2
+friends.stream()
+.map(String::toUpperCase)
+.forEach(count -> System.out.print(count + " "));
+    #+end_src
+
+    Finally, note that method reference is possible, as the target
+    object and parameters are derived from the parameters passed to
+    the synthesized method. This makes the code with method references
+    much more concise than the code with lambda expressions.
     
-*** TODO continue to read. not bad to put a little bit more of structure in that important part of coding :noexport:
-
-    continue to read from: =A Little Sugar to Sweeten= on.
-
+    *Important:* So note that if lamdba functions simply pass the
+    parameters through to the method we can replace them always with
+    reference methods. If you do some transformation then of course
+    that is not possible/ you would have to create a new method for it
+    but then it is opinable if that makes sense - i.e. depends on the
+    amount of transformation involved.
+    
+    
 *** TODO data management libraries                                 :noexport:
 
     Have as well still to understand what libraries are available for
     data management in Java. Explore =poi=. Understand what other
     libraries are available for managing data frames etc.
-    
-   
 
+
+*** TODO understand better the functionalInterface
+
+    
+    
 ** enumerations
 
    Created using ~enum~.
@@ -3263,6 +3370,44 @@ objects which implement java.io.Closeable, can be used as a resource.
    colleagues and yeah. That is how it works. 
    
 
+** On Strings Parsing
+
+   Have to structure the documentation more at some point and check at
+   which library implements everything and understand a bit its API.
+
+   In the meanwhile here some ways of working with it.
+
+   Basically you have ~String.format()~ way of working where you work
+   as in the f-strings you saw in multiple programming languages.
+
+   The idea is simply to pass some data types to the string. Moreover
+   it is interesting that you can impose some structure to the string
+   in such a way.
+
+   This is especially important cause in such a way you can perform
+   the necessary checks in your data pipelines.
+
+   Consider for instance the following 
+
+   #+begin_src java :results output raw 
+   String.format("|%020d|", 93); // prints: |00000000000000000093|
+   #+end_src 
+
+   in such a way you can pad with 0, the desired amount of times. This
+   will be useful for instance to keep the RUC number consistent.
+
+   
+** F-strings similars
+
+   Check at the below. This was your standard pyhton way of using
+   parameterized strings. 
+
+   #+begin_src java :results output raw 
+System.out.println(String.format("Found %d names", startsWithN.size()));
+   #+end_src 
+   
+
+   
 ** Java Beans
 
    You will have to make proper notes about it at some later
@@ -3290,13 +3435,88 @@ objects which implement java.io.Closeable, can be used as a resource.
   important data structures in the Collection Framework implement
   such an interface and that is actually the interface that will
   allow you to quickly navigate throughout all of your important
-  datastructures and this in a much more convenient way than doing
+  data-structures and this in a much more convenient way than doing
   that through indexing operations.
 
   Note that the for-each loop is a valid subsititute to the iterator
   interface in the case you want to iterate in the existing order of
   the data structure. *Know the both of them well* in any case.
 
+  Recall that any data-structure of the Collections framework
+  implements the Iterators interface and provides an =iterator()=
+  method that returns an iterator at the start of the collection. That
+  means that you can use the following iterator methods to work with
+  it:
+  
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-25 101403.png" class="center">
+#+end_export
+
+  You can then see that you can cycle across classes of the Collection
+  framework by using such iterators. This in a very similar taste to
+  what you used to do when working in C++.
+
+  You can find basic examples next:
+
+  #+begin_src java :results output raw :classname IteratorDemo
+// Demonstrate iterators.
+import java.util.*;
+class IteratorDemo {
+    public static void main(String args[]) {
+	// Create an array list.
+	ArrayList<String> al = new ArrayList<String>();
+	// Add elements to the array list.
+	al.add("C");
+	al.add("A");
+	al.add("E");
+	al.add("B");
+	al.add("D");
+	al.add("F");
+
+	// Use iterator to display contents of al.
+	System.out.print("Original contents of al: ");
+	Iterator<String> itr = al.iterator();
+	while(itr.hasNext()) {
+	    String element = itr.next();
+	    System.out.print(element + " ");
+	}
+	System.out.println();
+
+	// Modify objects being iterated.
+	ListIterator<String> litr = al.listIterator();
+	while(litr.hasNext()) {
+	    String element = litr.next();
+	    litr.set(element + "+");
+	}
+	System.out.print("Modified contents of al: ");
+	itr = al.iterator();
+	while(itr.hasNext()) {
+	    String element = itr.next();
+	    System.out.print(element + " ");
+	}
+	System.out.println();
+	// Now, display the list backwards.
+	System.out.print("Modified list backwards: ");
+	while(litr.hasPrevious()) {
+	    String element = litr.previous();
+	    System.out.print(element + " ");
+	}
+	System.out.println();
+    }
+}
+  #+end_src 
+
+  #+RESULTS:
+  Original contents of al: C A E B D F 
+  Modified contents of al: C+ A+ E+ B+ D+ F+ 
+  Modified list backwards: F+ D+ B+ E+ A+ C+ 
+
+  Note that you have to instantiate an =iterator= object out of the
+  Collection class in order to call the iterator methods.
+
+  The for-each alternative is more your pythonic way of doing
+  things. Check at the functional methods to work as lambda
+  expressions were a great killer in Python in this sense. 
    
 * argument Passing
 
@@ -3604,33 +3824,6 @@ import pkg1[.pkg2].(classname|*);
    the compiler for all programs.
     
 
-** On Strings Parsing
-
-   Have to structure the documentation more at some point and check at
-   which library implements everything and understand a bit its API.
-
-   In the meanwhile here some ways of working with it.
-
-   Basically you have ~String.format()~ way of working where you work
-   as in the f-strings you saw in multiple programming languages.
-
-   The idea is simply to pass some data types to the string. Moreover
-   it is interesting that you can impose some structure to the string
-   in such a way.
-
-   This is especially important cause in such a way you can perform
-   the necessary checks in your data pipelines.
-
-   Consider for instance the following 
-
-   #+begin_src java :results output raw 
-   String.format("|%020d|", 93); // prints: |00000000000000000093|
-   #+end_src 
-
-   in such a way you can pad with 0, the desired amount of times. This
-   will be useful for instance to keep the RUC number consistent.
-
-   
 ** Logger Package
 
    As you know, this is a quite fundamental component when writing
@@ -3699,6 +3892,15 @@ LOGGER.setLevel(Level.INFO);
 
     Make sure this is the case in your team.
 
+
+** TODO Hiberante
+
+   Check at it. Everybody talks about it.
+   
+** TODO H2
+
+   Apparently a good module to talk with the SQL DB. 
+    
 
 * Frameworks
 
@@ -4116,6 +4318,44 @@ class EnumSet<E extends Enum<E>>
   <img src="../../images/Screenshot 2021-09-24 161528.png">
  #+end_export
 
+
+ 
+*** Collection Algorithms
+
+    Note that the Collection Framework has a set of algorithm that are
+    usable across the classes of the framework. You can have an
+    overview of such algorithms in the following table:
+
+    They are a tons of methods. The syntax is the one of the
+    Generics. So nothing special just a more solid type-safe
+    implementation of them. You can read more in detail into them in
+    the book if interested.
+
+    Keep the follwoing tables as a reference and come back here in case of you want to
+    do one search and withdrawal, ordering operation in order to see
+    how to do it at best:
+
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-25 105112.png" class="center">
+#+end_export
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-25 105126.png" class="center">
+#+end_export
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-25 105141.png" class="center">
+#+end_export
+
+ 
+
+    
+    
+    
+
+    
+ 
 ** Maps Frameworks
 
    Note that these are the functions for performing the classical
@@ -4129,154 +4369,159 @@ class EnumSet<E extends Enum<E>>
    unique.
 
    Note that maps are not collections such that you cannot apply
-   =iterators= or =for-each= loops to them. Note however that there
-   options to *collect the views* of maps that will result in
-   collection objects such that you can apply your usual workflow for
-   iterating and dealing with results.
+   =iterators= or =for-each= loops to them.
+
+   However, note that there options to *collect the views* of maps
+   that will result in collection objects such that you can apply your
+   usual workflow for iterating and dealing with results.
     
-** Maps Frameworks - Interfaces
+*** Maps Frameworks - Interfaces
 
-   Note that there exists the follwoing interfaces to Maps
+    Note that there exists the follwoing interfaces to Maps
 
-#+begin_export html
- <img src="../../images/Screenshot 2021-09-24 170632.png">
-#+end_export
+ #+begin_export html
+  <img src="../../images/Screenshot 2021-09-24 170632.png">
+ #+end_export
 
-   Let's discuss the following interfaces
+    Let's discuss the following interfaces
 
-*** Maps
+**** Maps
 
-    #+begin_src java :results output raw 
+     #+begin_src java :results output raw 
 interface Map<K,V>
-    #+end_src
+     #+end_src
 
-    this is the interface for the map data structure. The interface
-    implements the following:
+     this is the interface for the map data structure. The interface
+     implements the following:
 
-    it throws exceptions when an object is incompatible with the
-    elements in a map - i.e. for instance if the keys are not unique.
+     it throws exceptions when an object is incompatible with the
+     elements in a map - i.e. for instance if the keys are not unique.
 
-    The basic methods are the =get()= method, to get a value given a
-    key, and the =put ()= method, to add a key-value pair.
+     The basic methods are the =get()= method, to get a value given a
+     key, and the =put ()= method, to add a key-value pair.
 
-    To get the *Collection* view of a map you can leverage the
-    =entrySet()= method. It returns a set that contains the elements
-    inthe map. You can even get a set for the keys of the map via the
-    =keySet()= method.
+     To get the *Collection* view of a map you can leverage the
+     =entrySet()= method. It returns a set that contains the elements
+     inthe map. You can even get a set for the keys of the map via the
+     =keySet()= method.
 
-    You have on the top of it some more methods that you can check online.
+     You have on the top of it some more methods that you can check online.
 
-*** SortedMaps
+**** SortedMaps
     
-    #+begin_src java :results output raw 
+     #+begin_src java :results output raw 
 interface SortedMap<K,V>
-    #+end_src
+     #+end_src
 
-    This *extends* the Map interface.
+     This *extends* the Map interface.
 
-    Sorted maps allow very efficient manipulations of submaps (in
-    other words, subsets of a map). To obtain a submap, use headMap(
-    ), tailMap( ), or subMap( ). To get the first key in the set, call
-    firstKey( ). To get the last key, use lastKey( )
+     Sorted maps allow very efficient manipulations of submaps (in
+     other words, subsets of a map). To obtain a submap, use headMap(
+     ), tailMap( ), or subMap( ). To get the first key in the set, call
+     firstKey( ). To get the last key, use lastKey( )
    
-*** NaviagableMaps
+**** NaviagableMaps
  
-    #+begin_src java :results output raw 
+     #+begin_src java :results output raw 
 interface NavigableMap<K,V>
-    #+end_src
+     #+end_src
 
-    It extends SortedMap and declares the behavior of a map that
-    supports the retrieval of entries based on the closest match to a
-    given key or keys.
+     It extends SortedMap and declares the behavior of a map that
+     supports the retrieval of entries based on the closest match to a
+     given key or keys.
         
-*** Map.Entry
+**** Map.Entry
    
-    #+begin_src java :results output raw 
+     #+begin_src java :results output raw 
 interface Map.Entry<K,V>
-    #+end_src
+     #+end_src
 
-   The =Map.Entry= interface enables you to work with a map
-   entry. Recall that the =entrySet( )= method declared by the Map
-   interface returns a Set containing the map entries. Each of these
-   set elements is a Map.Entry object.
+    The =Map.Entry= interface enables you to work with a map
+    entry. Recall that the =entrySet( )= method declared by the Map
+    interface returns a Set containing the map entries. Each of these
+    set elements is a Map.Entry object.
 
-   You have then functions as =getKey=, =getValue= etc..
+    You have then functions as =getKey=, =getValue= etc..
 
-*** Unmodifiable Map
+**** Unmodifiable Map
 
-    Interesting is this concept and similar. You can read about it
-    [[https://www.geeksforgeeks.org/collections-unmodifiablemap-method-in-java-with-examples/][here]]. So nice feature of collection in java is that you can
-    specify such unmodifiable objects.
+     Interesting is this concept and similar. You can read about it
+     [[https://www.geeksforgeeks.org/collections-unmodifiablemap-method-in-java-with-examples/][here]]. So nice feature of collection in java is that you can
+     specify such unmodifiable objects.
 
-    Note that I had this question when reading about it. I.e. what is
-    added on the top of a declaration with final. The answer is always
-    the same and it is [[https://stackoverflow.com/questions/7996499/creating-hashtable-as-final-in-java][this one]]. I.e. you have to recall and make
-    explicit your understand of what is a final reference and an
-    obejct. You should start thinking in these terms when you program
-    given the new lanaguage paradigm shift.
+     Note that I had this question when reading about it: /what is
+     added on the top of a declaration with final/. The answer is
+     always the same and it is [[https://stackoverflow.com/questions/7996499/creating-hashtable-as-final-in-java][this one]]. I.e. you have to recall and
+     make explicit your understanding of what is a final reference and
+     an obejct. You should start thinking in these terms when you
+     program given the new lanaguage paradigm shift.
 
     
-** Maps Frameworks - Classes
+*** Maps Frameworks - Classes
 
-   This is the general interface
+    This is the general overview
 
-   #+begin_export html
-    <img src="../../images/Screenshot 2021-09-24 175633.png">
-   #+end_export
+    #+begin_export html
+     <img src="../../images/Screenshot 2021-09-24 175633.png">
+    #+end_export
 
-   Notice that =AbstractMap= is a superclass for all concrete map implementations.
+    Notice that =AbstractMap= is a superclass for all concrete map implementations.
 
-   =WeakHashMap= implements a map that uses “weak keys,” which allows an element in
-   a map to be /garbage-collected/ when its key is otherwise unused. This class is not discussed
-   further here.
+    =WeakHashMap= implements a map that uses “weak keys,” which allows an element in
+    a map to be /garbage-collected/ when its key is otherwise unused. This class is not discussed
+    further here.
    
-*** HashMap
+**** HashMap
 
-    Creates a hash-table to store the map. This is especially useful
-    for the computational benefit of using hash-maps.
+     Creates a hash-table to store the map. This is especially useful
+     for the computational benefit of using hash-maps.
 
-    Note that you can have a single key-value pair in your hash-table
-    as the Map data structure requires the keys to be unique.
+     Note that you can have a single key-value pair in your hash-table
+     as the Map data structure requires the keys to be unique.
 
-    So if you =put()= into the hash-map two times the same key the
-    second one will overwrite the entry of the first. 
+     So if you =put()= into the hash-map two times the same key the
+     second one will overwrite the entry of the first. 
 
-*** TreeMap
+**** TreeMap
 
-    Implements =AbstractMap= and implements the =NavigableMap=
-    interface.
+     Implements =AbstractMap= and implements the =NavigableMap=
+     interface.
 
-    Note once more that the TreeMap uses a tree data structure for
-    storing the Map. It therefore provides an efficient means of
-    storing key/value pairs in sorted order and allows rapid
-    retrieval.
+     Note once more that the TreeMap uses a tree data structure for
+     storing the Map. It therefore provides an efficient means of
+     storing key/value pairs in sorted order and allows rapid
+     retrieval.
 
-*** LinkedHashMap
+**** LinkedHashMap
 
-    =LinkedHashMap= extends =HashMap=. It maintains a /linked list/ of the
-    entries in the map, /in the order in which they were inserted/. This
-    allows insertion-order iteration over the map. That is, when
-    iterating through a collection-view of a LinkedHashMap, the
-    elements will be returned in the order in which they were
-    inserted.
+     =LinkedHashMap= extends =HashMap=. It maintains a /linked list/ of the
+     entries in the map, /in the order in which they were inserted/. This
+     allows insertion-order iteration over the map. That is, when
+     iterating through a collection-view of a LinkedHashMap, the
+     elements will be returned in the order in which they were
+     inserted.
 
-*** IdentityHashMap
+**** IdentityHashMap
 
-    IdentityHashMap extends AbstractMap and implements the Map
-    interface. It is similar to HashMap except that it uses *reference
-    equality* when comparing elements.
+     IdentityHashMap extends AbstractMap and implements the Map
+     interface. It is similar to HashMap except that it uses *reference
+     equality* when comparing elements.
 
-*** EnumMap
+**** EnumMap
 
-    =EnumMap= extends =AbstractMap= and implements Map. It is
-    specifically for use with keys of an =enum= type.
+     =EnumMap= extends =AbstractMap= and implements Map. It is
+     specifically for use with keys of an =enum= type.
+
 
 
 ** Comparators
 
    that is an important class that will allow you to specify the
    ordering of the elements of your objects implementing the
-   =NavigableSet=/=NavigableMap= interfaces. 
+   =NavigableSet=/=NavigableMap= interfaces.
+
+   You can define the comporator yourself. 
+
 
 
 ** Streaming - check as well resource you have there on java 8     :noexport:

@@ -722,17 +722,398 @@ $ gradle wrapper
    Finally, note that you can costumize the wrapper to download the
    zipped gradle files from a specific location.
 
-   
+** Testing
+
+   Recall the three types of tests:
+
+   - unit testing: with it you test the smallest components of your
+     code. Here you avoid testing the interaction with external
+     systems. (for example DB or file system). In order to not
+     interact with the other components you use =Mocks= and =Stub=.
+
+   - integration testing: make sure that the interaction across
+     components works as expected. For instance the interaction among
+     application and database. 
+
+   - functional testing: test end-to-end functionality of an
+     application including the interaction with all external systems
+     from a user's perspective.
+
+   Note that Gradle's Java plugin does all of the heavy lifiting for
+   you. It introduces a standard directory structure for testing your
+   code, moreover, it introduces test code compilation and execution
+   =into the build's lifecycle=.
+
+   Note that in gradle you have the following standard for structuring
+   your tests. You put them all in the =src/test/java=
+   repository. Moreover, you put the required files by the tests in
+   the =src/test/resources= repository.
+
+    After compiling test source code, the class files end up in the
+    output directory =build/classes/test=, nicely separated from the
+    compiled production class files.
+
+    Note that the results of running such tests are usually generated
+    in XML. This is less interesting to you as you will generally use
+    some tool to operate with them such that you will only marginally
+    deal with them.
+
+    Once again in order to set up your build-configuration in a proper
+    way, you have to understand the two groups available to you in the
+    java built-in:
+
+    - =testCompile=: here you specify libraries dependencies required
+      for test code compilation.
+
+    - =testRuntime=: here you specify dependencies needed for test
+      code execution. I.e. these are dependencies that are not needed
+      during the compilation phase of your tests, but are needed at
+      runtime during test execution.
+
+    Note the following schema. It is written in a difficult way in the
+    book. The secret souce is the following and something quite
+    intuititve. I.e. you might need some compile dependencies from
+    your production code as you are testing it. So that is it.
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-21 175028.png" class="center">
+#+end_export
+
+*** Automatic test detection
+
+    Note that gradle automatically detects the tests in your projects
+    that sit in =build/classes/test= through the following:
+      
+    - Any class or superclass that extends either
+      =junit.framework.TestCase= or =groovy.util.GroovyTestCase=.
+
+    - Any class or superclass that’s annotated with =@RunWith=.
+
+    - Any class or superclass that contains at least one method
+      annotated with =@Test=.
+
+    Given that you structured your repository in the proper way and
+    you wrote your tests in there you can run the following in order
+    to run your tests. 
+
+    #+begin_example
+gradle :repository:test
+    #+end_example
+
+    If you want more informative content don't forget the =-i= flag.
+
+    You are not an individual that cares a lot about the front-end
+    experience in your development. You would not work with Emacs
+    would that be the case.
+
+    In any case you will find an html report of your tests under
+    =build/reports/test= should you ever be interested in it.
+    The thing would then look as following:
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-22 093615.png" class="center">
+#+end_export
+
+*** Multiple Testing Frameworks
+
+    For bigger projects it is well possible to start having multiple
+    testing frameworks at work.
+
+    You can see the following example, that uses, junit, spock and
+    testNG for writing your tests.
+
+    You can introduce the additional requirement by following the
+    following naming convention  for test classes in your project:
+
+    #+begin_example
+- JUnit: All tests class names end with *Test.java.
+- TestNG: All test class names end with *NGTest.java.
+- Spock: All test class names end with *Spec.groovy.
+    #+end_example    
+
+    Both Junit and Spock tests are run out of the box in the default
+    =test= class. On the contrary you have to specify a task for
+    running =testNG= tests.
+
+    You can then achieve the testing using the three of them by using
+    the following gradle config
+
+    #+begin_example
+project(':repository') {
+
+ apply plugin: 'groovy'
+
+ repositories {
+  mavenCentral()
+ }
+
+ dependencies {
+  compile project(':model')
+  testCompile 'junit:junit:4.11'
+  testCompile 'org.testng:testng:6.8'
+  testCompile 'org.codehaus.groovy:groovy:2.0.6'
+  testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+ }
+
+ task testNG(type: Test) { 
+  useTestNG()
+ }
+
+ test.dependsOn testNG 
+}
+    #+end_example
+
+    I.e. the logic is simple. You make your test depending on the task
+    =testNG= that triggers the tests. Such that once the =test= task
+    runs it triggers the testNG as well as the Junit and Spock tests
+    as default.
+
+    Visually you would have the follwoing:
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-22 100802.png" class="center">
+#+end_export
+
+
+
+*** On running a subclass of tests
+
+    Note that when your projects grows larger you do not want to
+    execute then entire tests suites. You might want to run individual
+    tests or even just a couple of tests by pattern.
+
+    In order to run tests by pattern you can use the following:
+
+    #+begin_example
+$ gradle -Dtest.single=**/*Spec :repository:test
+    #+end_example
+
+    I.e. note the notation: =<taskName>.single =
+    <testNamePattern>=. Note that other options are as well
+    available. Check at the documentation for it, should you be
+    interested.
+
+    Note that for this reason you should structure your test naming
+    conventions in the proper way, meaning with the suffix
+    =IntegTest=.
+
+    You can then set up the testing of the different components  in
+    different tasks. See for instance the following:
+
+    #+begin_src
+project(':repository') {
+ repositories {
+    mavenCentral()
+ }
+
+ dependencies {
+    compile project(':model')
+    runtime 'com.h2database:h2:1.3.170' 
+    testCompile 'junit:junit:4.11'
+ }
+
+ test {
+    exclude '**/*IntegTest.class' 
+    reports.html.destination = file ("$reports.html.destination/unit") 
+    reports.junitXml.destination = file("$reports.junitXml.destination/unit") 
+ }
+
+ task integrationTest(type: Test) {
+    include '**/*IntegTest.class'
+
+ reports.html.destination = file("$reports.html.destination/integration") 
+ reports.junitXml.destination = file("$reports.junitXml.destination/integration") 
+ }
+
+ check.dependsOn integrationTest 
+}
+    #+end_src 
+
+    You see that in the last command you specify the integration tests
+    as dependency to check task.
+
+    --------
+
+    *More elegant solution to the above:* you see books are good but
+    sometimes to didactic. I wonder why they do not just skip some
+    stuff and go straight to the correct way of doing things.
+
+    The idea is that, although the above schema is functional it is
+    not the best thing in town. This due to the follwoing reason: you
+    have to instruct all of the devs in your team to use the same
+    naming convention, which is unconvenient.
+
+    A better approach is the one of creating a separate repository
+    where you can write your integration tests. Say for instance
+    =src/integTest/java=. You can then keep your unit tests in the
+    =src/test/java= directory and differentiate among the two in such
+    a way.
+
+    In order to do that you can use the following:
+
+    #+begin_src 
+sourceSets {
+ integrationTest {
+ java.srcDir file('src/integTest/java') 
+ resources.srcDir file('src/integTest/resources') 
+ compileClasspath = sourceSets.main.output + configurations.testRuntime 
+ runtimeClasspath = output + compileClasspath 
+ }
+}
+    #+end_src
+
+    Here, quote on quote on the book:
+
+    #+begin_quote
+you have to assign the compilation classpath, which consists of the
+production code classes and all dependencies assigned to the
+configuration testRuntime. You’ll also need to define the runtime
+classpath consisting of the compiled integration test classes directly
+accessible through the variable output and the compilation classpath.
+    #+end_quote
+
+    Note that after setting that source, your default deviates from
+    the gradle default. In this sense you need to configure your =Test=
+    to be able to read from the new repository.
+
+    You can do that in the following way:
+
+    #+begin_example
+task integrationTest(type: Test) {
+ testClassesDir = sourceSets.integrationTest.output.classesDir 
+ classpath = sourceSets.integrationTest.runtimeClasspath 
+}
+    #+end_example
+
+    You can then run everything with the
+
+    ~gradle :repository:build~
+
+    command.
+
+    Note that a similar approach holds for the /functional tests/.
+
+    Finally note that there are ways to start your dependencies with
+    gradle. I.e. for instance the databse for the integration server
+    and the web-app server for the functional tests. Check at it in
+    more depth in the book if interested.
+
+    For illustrative purposes:
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-22 140729.png" class="center">
+#+end_export
+
+    
+*** On remote debugging
+
+    *Important:* this is probably very important to you. As this is
+    the way emacs operates most of the time. I can well imagine that
+    lots of integration have been constructed on the top of it.
+
+     Being able to remotely debug your tests with an IDE is an
+     invaluable tool to have in your toolbox. Gradle provides a
+     convenient shortcut for enabling remote debugging:
+     =<taskName>.debug=, which means you can use it for other tasks as
+     well. Using this startup parameter will start a server socket on
+     port 5005 and block task execution until you actually connect to
+     it with your IDE.
+
+     I.e. you can for instance run
+
+     #+begin_example
+$ gradle -Dtest.debug :repository:test
+     #+end_example
+     
+
+*** Understanding the Test API representation
+
+    This is important. As in such a way you can leave the command line
+    and start working in a proper way via the API.
+
+    Note that you have tons of options to customize the way gradle
+    runs your tests. You can refer to the book for a genral
+    overiview. Otherwise just refer to the Javadocs of the project.
+
+    Note that sometimes you might want to write to standard output in
+    order to monitor your code. One of Gradle’s Test configuration
+    options is to flip a Boolean flag that prints /standard output and
+    error/ messages to the terminal.
+
+    You can specify it in the following way:
+
+    #+begin_example
+test {
+ testLogging {
+ showStandardStreams = true 
+ }
+}
+    #+end_example
+
+    You can as well to the terminal events triggers for tests such as
+    =started=, =passed=, =skipped=, =failed= etc..
+
+    You can as well fine tune the way you run your tests by specifying
+    some piece of code in gradle that has to be run:
+
+    - beforeSuite: before a test suite is executed
+
+    - afterSuite: after a test suite is executed
+
+    - beforeTest: before a test class is executed
+
+    - afterTest: after a test class is executed
+
+    You will then have the following schema:
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-22 113024.png" class="center">
+#+end_export
+
+    You can then check in the book for examples of gradle scripts that
+    use such hooks. For instance there is an example in groovy to
+    calculate the elapsed execution time for tests and send this
+    information as a notification to the desktop. Quite useless as
+    many of these features are implemented in your IDE but you get the
+    gist of the idea should you ever want to do something with it.
+    
+*** Parallel Execution
+
+    This is as well an extension to the gradle test API. I write the
+    notes for it in this separate section as it is one of particular
+    importance.
+
+    Basically the idea is that when your projects start to grow larger
+    it will take too much time for you to run all of the tests for
+    them.
+
+    The API provides a convenient way to execute your tests in
+    parallel. All you need to specify is the number of forked JVM
+    processes. In addition, you can set the number of maximum test
+    classes to execute per forked test process.
+
+    The syntax is quite simple and intuitive:
+
+    #+begin_example
+test {
+ forkEvery = 5 
+ maxParallelForks = Runtime.runtime.availableProcessors() / 2 
+}
+    #+end_example
+
+    You can immediately make sense of the above via the following
+    overview:
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-22 111939.png" class="center">
+#+end_export
+
+** Better understand your work environment gradle build
+
+   That will not be easy. It is a very long build config with multiple
+   files calling each other.
+
+   So not that trivial and it will take some time to tackle it
+   down. Good to have that understanding at some point.
 
    
-
-
-  
-  
-
-  
-
-
-
-
-
