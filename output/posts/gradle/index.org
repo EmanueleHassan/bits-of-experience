@@ -1,0 +1,1119 @@
+#+BEGIN_COMMENT
+.. title: Gradle
+.. slug: gradle
+.. date: 2021-10-20 09:18:25 UTC+02:00
+.. tags: java
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+#+end_export
+
+
+So in this post I will make some notes on Gradle.
+
+I could theoretically take it as a black box at work and do my work
+with the current configuration.
+
+I prefer to invest some time to understand how it works under the
+hood. This will allow me more flexibility in the future. Moreover, it
+will allow me to streamline my workflow in emacs once I have a more
+profund understanding of it.
+
+These notes are based on the book [[https://www.amazon.com/Gradle-Action-Benjamin-Muschko/dp/1617291307][gradle in action]]. Interesting is
+that this book works with Groovy, which is apparently a more flexible
+Java that introduce some of the concepts of dynamic programming
+languages. Look at the [[https://www.bbvaapimarket.com/en/api-world/why-groovy-gaining-popularity-among-java-developers/][following entry]] in this sense. I must say that
+I can well understand why Python is gaining so much traction over more
+heavy languages as Java. It is not simply a thing about the learning
+curve. I think that Java with its structured type-safe and OOP
+appraoch is more solid than Python for larger system. I see the point
+for using it at work. The only thing is that the developing experience
+is slower. As you have to compile the entire code before running it,
+you cannot develop on the fly and integrate the changes in the more
+structured project as you used to do in interpreted languages.
+
+Anyways, back to the book. Note that the book is very exhaustive.
+Through it you will manage to get a broad overview on the topic and
+you will even get to the point of continous integration and continouos
+deployment.
+
+{{{TEASER_END}}}
+
+* General Idea
+
+  So basically this is nothing else than a tool that is system and OS
+  independent to create builds of your projects.
+
+  Basically in Python and these ecosystems you came from, this was
+  already done out of the box, i.e. you were writing directly
+  everything (your source files - no bytecode) in the repositories of
+  your choice. Dependencies were already handled as on your systempath
+  you had the libraries downloaded thorugh the package manager in the
+  right repository. Period. Here the story is more annoying and this
+  is the reason why you use such build-tools. 
+
+  So a build tool entails the logic of reaching your desired workflow
+  via a set of well-defined tasks. Think for instance at such a basic
+  concept:
+  
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-20 101212.png" class="center">
+#+end_export
+
+  Straightforward. By /assemble a deliverable/ we mean an entity that
+  contains the class files. A deliverable could be a ZIP file, for
+  example, that can be distributed to a runtime environment.
+
+  Note that internally the build tool models such different
+  tasks via DAGs. Your old friends of Bayesian Networks and
+  Spark.
+
+  Note that such DAGs are important constructs. This because, if two
+  different tasks depend on the task “source code compilation,” you
+  only want to execute it once. Meaning that you must have a
+  corresponding DAG representation of it in order to work smoothly.
+
+  Note that different tasks in the process might use input and produce
+  output. So the typical workflow of a build would look schematically
+  as follows:
+  
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-20 102530.png" class="center">
+#+end_export
+
+  
+** Build File
+
+   So basically once you have in mind your desired build workflow, you
+   can specify it into a build-file. 
+
+   
+** Build Engine
+
+   The build-engine is the engine that takes the declarations of the
+   build-file and builds everything as specified in
+   there.
+
+   Note that the build-engine will need to process the relevant
+   dependencies for your project. I.e. it will have to resolve the
+   dependencies from multiple packages stored in =.jar= files, that
+   might be fetched over the internet or might reside on your local
+   file system. Recall that =.jar= files are ultimately (mainly) a
+   collection of compressed java Bytecode =.class= files.
+  
+   Graphically, at high level:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2021-10-20 105123.png" class="center">
+   #+end_export
+
+   Such a very general overview holds generally irrespective of the
+   build tool you are using.
+
+   Next we will explore some build-tools in more depth. 
+   
+* On Ant and Maven
+
+   So I keep it short here but you can find in the book in the
+   introductory chapter some quick introduction to Ant and Maven. It
+   is well written and in a few pages you will get the overview of
+   it. 
+
+   So I was wondering why in Java you always work with very long
+   chains of empty repositories. The answer lies in such build tools.
+
+   While the Ant built-tool provides you with the flexibility of your
+   choice when building your project, maven started to impose some
+   standards. I.e. if you structure your project in adherence with
+   these standards, your build-tool will know out of the box where to
+   find the relevant pieces of your projects.
+
+   So basically you can then have minimal configuration and
+   consistency across your enterprise on how such projects are
+   managed. Note that such standard is to have code in the
+   =src/main/java= repo.
+
+   Moreover maven started to introduce a default build lifecyle that
+   would consist of the follwoing:
+
+   - Compiling source code
+
+   - Running unit and integration tests
+
+   - Assembling the artifact (for example, a JAR file)
+
+   - Deploying the artifact to a local repository 
+
+   - Releasing the artifact to a remote repository
+
+   so the workflow is now given.
+
+   Now you can call in maven the execution of a given =phase=
+   (i.e. step in the build lifecycle above) and all of the previous
+   steps will be performed.
+
+   Now this - obviously biased - book suggests the following
+   key-element to choose gradle over the other mentioned built-tools:
+
+   #+begin_quote
+Either you choose full flexibility and extensibility but get weak
+project standardization, tons of boiler-plate code, and no support for
+dependency management by picking Ant; or you go with Maven, which
+offers a convention over configuration approach and a seamlessly
+integrated dependency manager, but an overly restrictive mindset and
+cumbersome plugin system.
+
+Wouldn’t it be great if a build tool could cover a middle ground? Here are some
+features that an evolved build tool should provide:
+
+- Expressive, declarative, and maintainable build language.
+
+- Standardized project layout and lifecycle, but full flexibility and
+  the option to fully configure the defaults.
+
+- Easy-to-use and flexible ways to implement custom logic.
+
+- Support for project structures that consist of more than one project
+  to build deliverable.
+
+- Support for dependency management.
+
+- Good integration and migration of existing build infrastructure,
+  including the ability to import existing Ant build scripts and tools
+  to translate existing Ant/ Maven logic into its own rule set.
+
+- Emphasis on scalable and high-performance builds. This will matter
+  if you have long-running builds (for example, two hours or longer),
+  which is the case for some big enterprise projects.
+   #+end_quote
+
+   I will see in time if I agree or not with the above.
+   
+* Gradle Syntax and Specifics
+
+
+  #+begin_quote
+  Following a build-by-convention approach, Gradle allows for
+  declaratively modeling your problem domain using a powerful and
+  expressive domain-specific language (DSL) implemented in Groovy
+  instead of XML.
+
+  Because *Gradle is a JVM native*, it allows you to write custom logic
+  in the language you’re most comfortable with, be it Java or Groovy.
+  #+end_quote
+
+  Note that Gradle DSL is mapped to instances via the Gradle API.
+
+  An example is the following:
+  
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-20 133902.png" class="center">
+#+end_export
+
+  You have to recall that via the API, wach element in a Gradle script
+  has a one-to-one representation with a Java class.
+
+  Note that the DSL is written in Groovy. Given that this is a flare
+  of Java, you can even extend the DSL language in plain Java.
+  
+** Gradle Conventions
+
+   Gradle’s conventions are similar to the ones provided by Maven, but
+   they don’t leave you feeling boxed in. Maven is very opinionated;
+   it proposes that a project only contains one Java source directory
+   and only produces one single JAR file. This is not necessarily
+   reality for many enterprise projects.
+
+   Gradle allows you to easily break out of the conventions. On the
+   opposite side of the spectrum, Ant never gave you a lot of guidance
+   on how to structure your build script, allowing for a maximum level
+   of flexibility. Gradle takes the middle ground by offering
+   conventions combined with the ability to easily change them.
+
+   Note the following visualization with the things the conventions
+   alter:
+   
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-20 135837.png" class="center">
+#+end_export
+
+   
+** On Scalable Builds - Incremental Builds
+
+   For some companies, a large project with hundreds of modules is
+   reality. Building and testing minor code changes can consume a lot
+   of time. You may know from personal experience that deleting old
+   classes and resources by running a cleanup task is a natural
+   reflex.
+
+   All too often, you get burned by your build tool not picking up the
+   changes and their dependencies. What you need is a tool that’s
+   smart enough to only rebuild the parts of your software that
+   actually changed. Gradle supports incremental builds by specifying
+   task inputs and outputs.
+
+   Already in my first month I could experience something that goes
+   into this direction. It is for sure a topic to consider on the long
+   term.
+
+** On Ant and Maven Integration
+
+   Note that Gradle fully supports Ant integration. For maven you
+   would still need to check in more detail as it is work in
+   progress.
+
+   You will probably not need it in the near future but keep it in
+   mind should it become necessary.
+   
+** Continouos Delivery.
+
+   Read the book that you recently downloaded.
+
+   In general you should have a pipeline comparable to the following:
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-20 155352.png" class="center">
+#+end_export
+
+   We are half way there in our team. Go back to it at some point when
+   you have time.
+   
+** Syntax
+
+   #+begin_src java :results output raw 
+// In the build.gradle file
+task helloWorld {
+    doLast {
+	println 'Hello world!'
+	    }
+}
+
+// Other short version to perform the same thing
+
+// task helloWorld << {
+//  println 'Hello world!'
+// }
+   #+end_src 
+
+   The above specify a task. The =doLast= it is the last action
+   executed by the task.
+
+   You can then run the task by running in your shell
+
+   #+BEGIN_SRC sh
+gradle –q helloWorld
+   #+END_SRC
+
+   A more involved example of gradle is the following
+
+   #+begin_src java :results output raw 
+task startSession << {
+ chant()
+}
+
+
+// See the integration with Ant you briefly
+// touched upon higher above.
+def chant() {
+ ant.echo(message: 'Repeat after me...') 
+}
+
+// major loop. groovy syntax. $it is replaced by the internals.
+3.times {
+ task "yayGradle$it" << { 
+ println 'Gradle rocks'
+ }
+}
+
+// dependsOn -> important component. makes sure you run startSession before yayGradle0
+yayGradle0.dependsOn startSession 
+yayGradle2.dependsOn yayGradle1, yayGradle0 
+task groupTherapy(dependsOn: yayGradle2) 
+   #+end_src 
+
+   Given the above it is straightforward to see that the following
+   holds, when running the =groupTherapy=.
+
+   #+begin_src sh
+$ gradle groupTherapy
+   #+end_src
+
+   #+begin_example
+:startSession
+[ant:echo] Repeat after me...
+:yayGradle0
+Gradle rocks
+:yayGradle1
+Gradle rocks
+:yayGradle2
+Gradle rocks
+:groupTherapy
+   #+end_example
+
+   You can as well specify the tasks that you want to run by running
+   the following:
+   
+   #+begin_src java :results output raw 
+$ gradle yayGradle0 groupTherapy
+   #+end_src 
+
+   Note that you can as well exclude a specific task from being run
+   through the =-x= flag.
+
+   #+begin_src java :results output raw 
+$ gradle groupTherapy -x yayGradle0
+   #+end_src 
+
+   #+begin_example
+:yayGradle1
+Gradle rocks
+:yayGradle2
+Gradle rocks
+:groupTherapy
+   #+end_example
+
+   Note that running tasks in such a way is not super informative. You
+   can include the following two more flags:
+
+   - =-i=: : In the default settings, a Gradle build doesn’t output a
+     lot of information. Use this option to get more informative
+     messages by changing Gradle’s logger to INFO log level. This is
+     helpful if you want to get more information on what’s happening
+     under the hood. 
+
+   - =-s=: If you run into errors in your build, you’ll want to know
+     where they stem from. The option –s prints out an abbreviated
+     stack trace if an exception is thrown. 
+   
+   
+** Tasks overview (list them)
+
+   Note that you have gradle integrated in your eclipse IDE.
+
+   I will explore how to run it from the command line such that I will
+   have the option to use my emacs-lsp integrated development
+   environment and run all of my build workflow from there by properly
+   triggering the relevant jobs.
+
+   #+BEGIN_SRC sh
+## checks at all of the tasks specified in the workflow
+gradle -q tasks
+   #+END_SRC
+
+   Your reply will be the following:
+
+   #+begin_example
+------------------------------------------------------------
+All tasks runnable from root project
+------------------------------------------------------------
+
+Build Setup tasks 
+-----------------
+setupBuild - Initializes a new Gradle build. [incubating]
+wrapper - Generates Gradle wrapper files. [incubating]
+
+Help tasks 
+----------
+dependencies - Displays the dependencies of root project 'grouptherapy'.
+dependencyInsight - Displays the insight into a specific dependency in root 
+➥ project 'grouptherapy'.
+help - Displays a help message
+projects - Displays the sub-projects of root project 'grouptherapy'.
+properties - Displays the properties of root project 'grouptherapy'.
+tasks - Displays the tasks runnable from root project 'grouptherapy' (some of
+➥ the displayed tasks may belong to subprojects).
+
+Other tasks 
+-----------
+groupTherapy 
+   #+end_example
+
+   Note that out of the box, each build script exposes the task group
+   Help tasks without any additional work from the developer.
+
+   If a task doesn’t belong to a task group, it’s displayed under
+   =Other tasks=. This is where you find the task =groupTherapy=. You
+   can as well order tasks to groups.
+
+   The same command with the =--all= tag will as well provide the
+   information of the dependency tasks and not simply on the last
+   one.
+
+   #+begin_src java :results output raw 
+ gradle -q tasks --all
+   #+end_src 
+        
+** Explore other available parameters
+
+   this can be done through the =-h= tag as always.
+
+
+** Java Project - The Java Plug-ins
+
+    A plugin extends your project by introducing domain-specific
+    conventions and tasks with sensible defaults. One of the plugins
+    that Gradle ships with is the Java plugin. The /Java plugin/ goes
+    far beyond the basic functionality of source code compilation and
+    packaging. It establishes a standard layout for your project and
+    makes sure that tasks are executed in the correct order so they
+    make sense in the context of a Java project.
+
+    In order to leverage such a plug-in and start to interact with
+    your java project you need to specify the plug-in in your
+    =build.gradle= file.
+
+    #+begin_example
+apply plugin: 'java'
+    #+end_example
+
+    Note that with such a plug-in the gradle build tool will expect
+    your source code to be in =src/main/java=. So this in a similar
+    way to the structure imposed by maven.
+
+    Note that such a plug-in will provide you with the =build= task.
+
+    Such a task will:
+
+    - compile your code
+
+    - run your tests
+
+    - assembles the =jar= file
+
+    you can see by running such a task. You will get the following flow:
+      
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-21 090747.png " class="center">
+#+end_export
+
+    *Important:* The =UP-TO-DATE= tag in above, means that Gradle’s
+    /incremental build support/ automatically identified that no work
+    needed to be done.
+
+    Note that unit-tests where skipped. This is because for the given
+    project example no unit tests was present in the default directory
+    =src/test/java= (default test directory of gradle - write your
+    unit tests there).
+
+    Note that after running the build command your application is
+    packaged in the =build= repository. This will look as follows:
+
+    #+begin_example
+.
+├── build
+│ ├── classes                      ## here you have your application bytecode that can be run on the JVM
+│ ├── dependency-cache
+│ ├── libs                         ## here you have your compressed jar files
+│ │ └── todo-app.jar 
+│ ├── reports
+│ │ └── tests
+│ ├── test-results
+│ └── tmp
+│    └── jar
+│        └── MANIFEST.MF           ## temporary manifest used in the jar file 
+└── build.gradle
+    #+end_example
+
+    Note that you can find a similar structure in the projects you are
+    working on. Not perfectly the same but almost so.
+
+    Now you can run your enty point java bytecode.
+
+    You can either run directly the app by specifying the path of your
+    main =.class= file or you can include the =Main-Class header to
+    JAR file’s manifest= and run directly the application by running
+    the =.jar= file.
+
+    An example of the way you can do it in =Gradle= is the following:
+
+    #+begin_src java :results output raw 
+version = 0.1 
+sourceCompatibility = 1.6 
+jar {
+ manifest { 
+ attributes 'Main-Class': 'com.manning.gia.todo.ToDoApp'   // specify main class in header
+ }
+}
+    #+end_src 
+
+    You can then run: ~java –jar build/libs/myapp-0.1.jar~
+
+    You can then read in the book how you can make similar
+    modifications in your project, i.e. where the source code is,
+    where the build goes etc. Google it in case of need.
+
+    
+*** Specify Source Repository from where you fetch your libraries
+
+    This you can do with the following entry in your =build.gradle= file.
+
+    #+begin_src java :results output raw 
+repositories {
+ mavenCentral() 
+}
+    #+end_src 
+
+    You can then specify the dependencies to specific libraries in
+    there in the following way:
+
+    #+begin_src java :results output raw 
+dependencies {
+ compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.1'
+}
+    #+end_src
+
+    *Important note:* you have to specify to which configuration group
+    your dependencies belong to. Note that one default group is the
+    =compile= group. This group consists of all of the dependencies
+    that are needed at compile time. 
+
+** War Plug-in
+
+   This is the plug-in for running your java web-applications.
+
+   I already mentioned that the War plugin extends the Java plugin. In
+   practice, this means that you don’t have to apply the Java plugin
+   anymore in your build script.
+
+   You can specify it like this:
+
+   #+begin_example
+   apply plugin: 'war'
+   #+end_example
+
+   So once you have it in your build config, gradle can package your
+   application as a war file that you can then run on your
+   web-application servers.
+
+   Note that by applying the plug-in you will have at your
+   availability new dependency configuration groups.
+
+   - =providedCompile=: here you specify the dependency you use for
+     the Servlet. It’s used for dependencies that are required for
+     compilation but *not used by the runtime*.
+
+     This means that packages specified in here will only be available
+     at compile time but will not be available at runtime. It
+     means, those JAR will not be included in archive.
+
+   - =runtime=: this is the tag to reach exactly the opposite logic of
+     the above. Runtime dependencies like the JSTL library aren’t
+     needed for the compilation process, but are needed at
+     runtime. They’ll become part of the WAR file.
+
+     When you run ~gradle build~ you will have a packaged =.war=
+     file. You can then run your webapplication with it.
+
+** Running in an Embedded web-container
+
+  So basically the book is written with the example of the =Jetty=
+  webserver. I can imagine that the same holds for similar concepts
+  for =tomcat=.
+
+  Basically the idea is that you apply the plug-in:
+
+  #+begin_src 
+apply plugin: 'jetty'
+  #+end_src
+
+  Then you can run the web-app server via:
+
+  #+begin_example
+gradle jettyRun
+  #+end_example
+
+   Internally, the Jetty plugin does know all of the relevant
+   dependencies and is able to find and execute the =war=. As the War
+   plugin exposes all this information, it can be accessed at runtime
+   by the Jetty plugin.
+
+   You can finally set some tasks and change the relevant deployment
+   statndards by specifying the following:
+   
+  #+begin_src java :results output raw 
+jettyRun { 
+ httpPort = 9090
+ contextPath = 'todo'
+}
+  #+end_src 
+
+   
+** Gradle Wrapper
+
+   This is useful as it guarantees that you run your gradle build with
+   the same version of the gradle software.
+
+   In such a way you will not suffer from issues arising due to
+   different software versions.
+
+   #+begin_src java :results output raw 
+task wrapper(type: Wrapper) {
+ gradleVersion = '1.7'
+}
+   #+end_src
+
+   Once you specified this task you can execute it
+
+   #+begin_example
+$ gradle wrapper
+:wrapper
+   #+end_example
+
+   You will then have the following generated files:
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-21 144131.png" class="center">
+#+end_export
+
+   You see that among the many files that you obtain by running such a
+   task you have the ~gradlew~ file.
+
+   You can then basically use that script in order to run the
+   build with the specified gradle version. 
+
+   You can visualize the build process as follows:
+   
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-21 144841.png" class="center">
+#+end_export
+
+   Finally, note that you can costumize the wrapper to download the
+   zipped gradle files from a specific location.
+
+** Testing
+
+   Recall the three types of tests:
+
+   - unit testing: with it you test the smallest components of your
+     code. Here you avoid testing the interaction with external
+     systems. (for example DB or file system). In order to not
+     interact with the other components you use =Mocks= and =Stub=.
+
+   - integration testing: make sure that the interaction across
+     components works as expected. For instance the interaction among
+     application and database. 
+
+   - functional testing: test end-to-end functionality of an
+     application including the interaction with all external systems
+     from a user's perspective.
+
+   Note that Gradle's Java plugin does all of the heavy lifiting for
+   you. It introduces a standard directory structure for testing your
+   code, moreover, it introduces test code compilation and execution
+   =into the build's lifecycle=.
+
+   Note that in gradle you have the following standard for structuring
+   your tests. You put them all in the =src/test/java=
+   repository. Moreover, you put the required files by the tests in
+   the =src/test/resources= repository.
+
+    After compiling test source code, the class files end up in the
+    output directory =build/classes/test=, nicely separated from the
+    compiled production class files.
+
+    Note that the results of running such tests are usually generated
+    in XML. This is less interesting to you as you will generally use
+    some tool to operate with them such that you will only marginally
+    deal with them.
+
+    Once again in order to set up your build-configuration in a proper
+    way, you have to understand the two groups available to you in the
+    java built-in:
+
+    - =testCompile=: here you specify libraries dependencies required
+      for test code compilation.
+
+    - =testRuntime=: here you specify dependencies needed for test
+      code execution. I.e. these are dependencies that are not needed
+      during the compilation phase of your tests, but are needed at
+      runtime during test execution.
+
+    Note the following schema. It is written in a difficult way in the
+    book. The secret souce is the following and something quite
+    intuititve. I.e. you might need some compile dependencies from
+    your production code as you are testing it. So that is it.
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-21 175028.png" class="center">
+#+end_export
+
+*** Automatic test detection
+
+    Note that gradle automatically detects the tests in your projects
+    that sit in =build/classes/test= through the following:
+      
+    - Any class or superclass that extends either
+      =junit.framework.TestCase= or =groovy.util.GroovyTestCase=.
+
+    - Any class or superclass that’s annotated with =@RunWith=.
+
+    - Any class or superclass that contains at least one method
+      annotated with =@Test=.
+
+    Given that you structured your repository in the proper way and
+    you wrote your tests in there you can run the following in order
+    to run your tests. 
+
+    #+begin_example
+gradle :repository:test
+    #+end_example
+
+    If you want more informative content don't forget the =-i= flag.
+
+    You are not an individual that cares a lot about the front-end
+    experience in your development. You would not work with Emacs
+    would that be the case.
+
+    In any case you will find an html report of your tests under
+    =build/reports/test= should you ever be interested in it.
+    The thing would then look as following:
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-22 093615.png" class="center">
+#+end_export
+
+*** Multiple Testing Frameworks
+
+    For bigger projects it is well possible to start having multiple
+    testing frameworks at work.
+
+    You can see the following example, that uses, junit, spock and
+    testNG for writing your tests.
+
+    You can introduce the additional requirement by following the
+    following naming convention  for test classes in your project:
+
+    #+begin_example
+- JUnit: All tests class names end with *Test.java.
+- TestNG: All test class names end with *NGTest.java.
+- Spock: All test class names end with *Spec.groovy.
+    #+end_example    
+
+    Both Junit and Spock tests are run out of the box in the default
+    =test= class. On the contrary you have to specify a task for
+    running =testNG= tests.
+
+    You can then achieve the testing using the three of them by using
+    the following gradle config
+
+    #+begin_example
+project(':repository') {
+
+ apply plugin: 'groovy'
+
+ repositories {
+  mavenCentral()
+ }
+
+ dependencies {
+  compile project(':model')
+  testCompile 'junit:junit:4.11'
+  testCompile 'org.testng:testng:6.8'
+  testCompile 'org.codehaus.groovy:groovy:2.0.6'
+  testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+ }
+
+ task testNG(type: Test) { 
+  useTestNG()
+ }
+
+ test.dependsOn testNG 
+}
+    #+end_example
+
+    I.e. the logic is simple. You make your test depending on the task
+    =testNG= that triggers the tests. Such that once the =test= task
+    runs it triggers the testNG as well as the Junit and Spock tests
+    as default.
+
+    Visually you would have the follwoing:
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-22 100802.png" class="center">
+#+end_export
+
+
+
+*** On running a subclass of tests
+
+    Note that when your projects grows larger you do not want to
+    execute then entire tests suites. You might want to run individual
+    tests or even just a couple of tests by pattern.
+
+    In order to run tests by pattern you can use the following:
+
+    #+begin_example
+$ gradle -Dtest.single=**/*Spec :repository:test
+    #+end_example
+
+    I.e. note the notation: =<taskName>.single =
+    <testNamePattern>=. Note that other options are as well
+    available. Check at the documentation for it, should you be
+    interested.
+
+    Note that for this reason you should structure your test naming
+    conventions in the proper way, meaning with the suffix
+    =IntegTest=.
+
+    You can then set up the testing of the different components  in
+    different tasks. See for instance the following:
+
+    #+begin_src
+project(':repository') {
+ repositories {
+    mavenCentral()
+ }
+
+ dependencies {
+    compile project(':model')
+    runtime 'com.h2database:h2:1.3.170' 
+    testCompile 'junit:junit:4.11'
+ }
+
+ test {
+    exclude '**/*IntegTest.class' 
+    reports.html.destination = file ("$reports.html.destination/unit") 
+    reports.junitXml.destination = file("$reports.junitXml.destination/unit") 
+ }
+
+ task integrationTest(type: Test) {
+    include '**/*IntegTest.class'
+
+ reports.html.destination = file("$reports.html.destination/integration") 
+ reports.junitXml.destination = file("$reports.junitXml.destination/integration") 
+ }
+
+ check.dependsOn integrationTest 
+}
+    #+end_src 
+
+    You see that in the last command you specify the integration tests
+    as dependency to check task.
+
+    --------
+
+    *More elegant solution to the above:* you see books are good but
+    sometimes to didactic. I wonder why they do not just skip some
+    stuff and go straight to the correct way of doing things.
+
+    The idea is that, although the above schema is functional it is
+    not the best thing in town. This due to the follwoing reason: you
+    have to instruct all of the devs in your team to use the same
+    naming convention, which is unconvenient.
+
+    A better approach is the one of creating a separate repository
+    where you can write your integration tests. Say for instance
+    =src/integTest/java=. You can then keep your unit tests in the
+    =src/test/java= directory and differentiate among the two in such
+    a way.
+
+    In order to do that you can use the following:
+
+    #+begin_src 
+sourceSets {
+ integrationTest {
+ java.srcDir file('src/integTest/java') 
+ resources.srcDir file('src/integTest/resources') 
+ compileClasspath = sourceSets.main.output + configurations.testRuntime 
+ runtimeClasspath = output + compileClasspath 
+ }
+}
+    #+end_src
+
+    Here, quote on quote on the book:
+
+    #+begin_quote
+you have to assign the compilation classpath, which consists of the
+production code classes and all dependencies assigned to the
+configuration testRuntime. You’ll also need to define the runtime
+classpath consisting of the compiled integration test classes directly
+accessible through the variable output and the compilation classpath.
+    #+end_quote
+
+    Note that after setting that source, your default deviates from
+    the gradle default. In this sense you need to configure your =Test=
+    to be able to read from the new repository.
+
+    You can do that in the following way:
+
+    #+begin_example
+task integrationTest(type: Test) {
+ testClassesDir = sourceSets.integrationTest.output.classesDir 
+ classpath = sourceSets.integrationTest.runtimeClasspath 
+}
+    #+end_example
+
+    You can then run everything with the
+
+    ~gradle :repository:build~
+
+    command.
+
+    Note that a similar approach holds for the /functional tests/.
+
+    Finally note that there are ways to start your dependencies with
+    gradle. I.e. for instance the databse for the integration server
+    and the web-app server for the functional tests. Check at it in
+    more depth in the book if interested.
+
+    For illustrative purposes:
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-22 140729.png" class="center">
+#+end_export
+
+    
+*** On remote debugging
+
+    *Important:* this is probably very important to you. As this is
+    the way emacs operates most of the time. I can well imagine that
+    lots of integration have been constructed on the top of it.
+
+     Being able to remotely debug your tests with an IDE is an
+     invaluable tool to have in your toolbox. Gradle provides a
+     convenient shortcut for enabling remote debugging:
+     =<taskName>.debug=, which means you can use it for other tasks as
+     well. Using this startup parameter will start a server socket on
+     port 5005 and block task execution until you actually connect to
+     it with your IDE.
+
+     I.e. you can for instance run
+
+     #+begin_example
+$ gradle -Dtest.debug :repository:test
+     #+end_example
+     
+
+*** Understanding the Test API representation
+
+    This is important. As in such a way you can leave the command line
+    and start working in a proper way via the API.
+
+    Note that you have tons of options to customize the way gradle
+    runs your tests. You can refer to the book for a genral
+    overiview. Otherwise just refer to the Javadocs of the project.
+
+    Note that sometimes you might want to write to standard output in
+    order to monitor your code. One of Gradle’s Test configuration
+    options is to flip a Boolean flag that prints /standard output and
+    error/ messages to the terminal.
+
+    You can specify it in the following way:
+
+    #+begin_example
+test {
+ testLogging {
+ showStandardStreams = true 
+ }
+}
+    #+end_example
+
+    You can as well to the terminal events triggers for tests such as
+    =started=, =passed=, =skipped=, =failed= etc..
+
+    You can as well fine tune the way you run your tests by specifying
+    some piece of code in gradle that has to be run:
+
+    - beforeSuite: before a test suite is executed
+
+    - afterSuite: after a test suite is executed
+
+    - beforeTest: before a test class is executed
+
+    - afterTest: after a test class is executed
+
+    You will then have the following schema:
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-22 113024.png" class="center">
+#+end_export
+
+    You can then check in the book for examples of gradle scripts that
+    use such hooks. For instance there is an example in groovy to
+    calculate the elapsed execution time for tests and send this
+    information as a notification to the desktop. Quite useless as
+    many of these features are implemented in your IDE but you get the
+    gist of the idea should you ever want to do something with it.
+    
+*** Parallel Execution
+
+    This is as well an extension to the gradle test API. I write the
+    notes for it in this separate section as it is one of particular
+    importance.
+
+    Basically the idea is that when your projects start to grow larger
+    it will take too much time for you to run all of the tests for
+    them.
+
+    The API provides a convenient way to execute your tests in
+    parallel. All you need to specify is the number of forked JVM
+    processes. In addition, you can set the number of maximum test
+    classes to execute per forked test process.
+
+    The syntax is quite simple and intuitive:
+
+    #+begin_example
+test {
+ forkEvery = 5 
+ maxParallelForks = Runtime.runtime.availableProcessors() / 2 
+}
+    #+end_example
+
+    You can immediately make sense of the above via the following
+    overview:
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-22 111939.png" class="center">
+#+end_export
+
+** Better understand your work environment gradle build
+
+   That will not be easy. It is a very long build config with multiple
+   files calling each other.
+
+   So not that trivial and it will take some time to tackle it
+   down. Good to have that understanding at some point.
+
+   
