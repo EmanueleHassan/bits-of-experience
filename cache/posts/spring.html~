@@ -1,0 +1,521 @@
+<p>
+So this is the next piece of the cake. As we transition to the cloud
+it makes sense to have the spring-framework in your skillset.
+</p>
+
+<p>
+The notes are based on Spring in Action - 5th edition.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org1b35758" class="outline-2">
+<h2 id="org1b35758">General Idea</h2>
+<div class="outline-text-2" id="text-org1b35758">
+<p>
+At its core, Spring offers a container, often referred to as the
+Spring application context, that creates and manages application
+components.
+</p>
+
+<p>
+These components, or beans, are wired together inside the Spring
+application context to make a complete application, much like
+bricks, mortar, timber, nails, plumbing, and wiring are bound
+together to make a house.
+</p>
+
+<p>
+The act of wiring beans together is based on a pattern known as
+<i>dependency injection</i> (DI).
+</p>
+
+<p>
+Rather than have components create and maintain the lifecycle of
+other beans that they depend on, a <i>dependency-injected
+application</i> relies on a <b>separate entity (the container)</b> to
+create and maintain all components and inject those into the beans
+that need them. This is done typically through constructor
+arguments or property accessor methods.
+</p>
+
+<p>
+On top of its core container, Spring and a full portfolio of
+related libraries offer a web framework, a variety of data
+persistence options, a security framework, integration with other
+systems, runtime monitoring, microservice support, a reactive
+programming model, and many other features necessary for modern
+application development.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgc30c890" class="outline-2">
+<h2 id="orgc30c890">Spring Project Structure</h2>
+<div class="outline-text-2" id="text-orgc30c890">
+<ul class="org-ul">
+<li><code>TacoCloudApplication.java</code> - This is the Spring Boot main class
+that bootstraps the project.</li>
+
+<li><code>application.properties</code> - here you can specify the configuration
+properties.</li>
+
+<li><code>static</code> - here you save your static files for your application.</li>
+
+<li><code>templates</code> - here you have template files that will be used to
+render content to the browser.</li>
+
+<li><code>TacoApplicationTests.java</code> - this is a simple test class that
+ensures that the Spring application context loads successfully.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgaa7299f" class="outline-2">
+<h2 id="orgaa7299f">Gradle Configuration</h2>
+<div class="outline-text-2" id="text-orgaa7299f">
+<p>
+Note that one of the most important thing that you have in your
+build configuration is that you deploy to a <code>jar</code> not into a <code>war</code>.
+</p>
+
+<p>
+Whereas WAR files are perfectly suitable for deploying to a
+traditional Java application server, they’re not a natural fit for
+most cloud platforms.
+</p>
+
+<p>
+Although some cloud platforms (such as Cloud Foundry) are capable of
+deploying and running WAR files, <b>all Java cloud platforms are
+capable of running an executable JAR file</b>. Therefore, the Spring
+Initializer defaults to JAR packaging unless you tell it to do
+otherwise.
+</p>
+
+<p>
+Basically you can then set up your project with the required
+dependecies. In order to do that, always work through
+<a href="https://start.spring.io/">https://start.spring.io/</a>.
+</p>
+
+<p>
+This is useful as through it you can get your skeleton for working
+with Spring and through it you can quickly jump-start into your
+projects.
+</p>
+
+<p>
+Note that through <i>transitive dependencies</i> you will manage to keep
+your build tools lean. This in the sense that by simply specifying
+the follwoing dependecies:
+</p>
+
+<ul class="org-ul">
+<li>spring-boot-starter-thymeleaf</li>
+
+<li>spring-boot-starter-web</li>
+</ul>
+
+<p>
+You get out of the box dependencies that makes the following
+available:
+</p>
+
+<ul class="org-ul">
+<li>Spring’s MVC framework</li>
+
+<li>Embedded Tomcat</li>
+
+<li>Thymeleaf and the Thymeleaf layout dialect</li>
+</ul>
+
+<p>
+Moreover, you get autoconfiguration libraries that automatically:
+</p>
+
+<ul class="org-ul">
+<li>Configure the beans in the Spring application context to enable Spring MVC</li>
+
+<li>Configure the embedded Tomcat server in the Spring application context</li>
+
+<li>Configure a Thymeleaf view resolver for rendering Spring MVC
+views with Thymeleaf templates.</li>
+</ul>
+
+
+<p>
+Note that Thymeleaf is a framework to handle the views. This is
+front-end stuff. You did some stuff in there in Python but it is not
+your bread and butter and neither your main interest. You are rather
+interested in the Spring MVC for writing your endpoints and do the
+back-end work.
+</p>
+
+<p>
+Note as well there is a devtools dependency:
+<code>spring-boot-starter-devtools</code>. This is handy when programming as
+through it you will be able to have quicker updates and
+deployments. It achieves similar results as running flask in
+debugging mode. But it adds much more to it. There is also this
+H2-console that you need to understand better at some later point.
+</p>
+
+<p>
+Anyways read more into such devtools when you start properly
+developing with it. For now focus on the general structure in these
+notes.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0422716" class="outline-2">
+<h2 id="org0422716">Running the Spring web-application</h2>
+<div class="outline-text-2" id="text-org0422716">
+</div>
+<div id="outline-container-org412b5c2" class="outline-3">
+<h3 id="org412b5c2">Run App</h3>
+<div class="outline-text-3" id="text-org412b5c2">
+<p>
+This is the equivalent to your <code>flask.run</code> command. 
+</p>
+
+'pygmentize' is not recognized as an internal or external command,
+operable program or batch file.
+
+<p>
+Through the Spring framework you know that this will be the entry
+point for your application and its <code>main</code>.
+</p>
+
+<p>
+You see that you call then the static <code>run</code> method. This does the
+actual bootstrapping of the application, creating the <b>application
+context</b> we mentioned before.
+</p>
+
+<p>
+Note that you pass to the <code>run</code> method:
+</p>
+
+<ul class="org-ul">
+<li>a <b>configuration class</b></li>
+
+<li>the <b>command-line arguments</b></li>
+</ul>
+
+<p>
+Note that in the example above the configuration class is the same
+as the <i>bootstrap class</i>. This does not have to be the case.
+</p>
+
+<p>
+We will see that in fact the larger the projects - the more you
+usually work with separate classes.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org41d31b0" class="outline-3">
+<h3 id="org41d31b0">MVC - through it you write your back-end endpoints</h3>
+<div class="outline-text-3" id="text-org41d31b0">
+<p>
+This is a web-framework.
+</p>
+
+<p>
+At the center of it there is the concept of <i>controller</i>.
+</p>
+
+<p>
+This is a class that handles requests and responds with
+information. I.e. it is the class through which you classically
+implement your endpoints.
+</p>
+
+<p>
+So in order to implement the most basic endpoint you can work as
+follows:
+</p>
+
+'pygmentize' is not recognized as an internal or external command,
+operable program or batch file.
+
+
+<p>
+Note that the <code>@Controller</code> annotation doesn't do much. It is there
+to identify the class as a component. This will be useful as you
+will do some component-scanning in your Spring-application context
+then.
+</p>
+
+<p>
+I.e. through the annotation Spring’s component scanning
+automatically discovers it and creates an instance of
+Home-Controller as a bean in the Spring application context.
+</p>
+
+<p>
+The <code>@GetMapping</code> is there to note that the endpoint will work with
+GET requests. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orga4458e4" class="outline-3">
+<h3 id="orga4458e4">Endpoints Testing</h3>
+<div class="outline-text-3" id="text-orga4458e4">
+<p>
+You can check in the book. This will be a quite big waste of time
+nonetheless.
+</p>
+
+<p>
+Start first by deciding on which tests suite you want to use. All
+of these books explain you the stuff pretending there would be just
+a single way of doing it.
+</p>
+
+<p>
+This is not the case. So get the general structure and idea. But do
+not spend too much time on it now on doing documentation. You might
+use then a complete different testing-suite.
+</p>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+<div id="outline-container-org95bea68" class="outline-2">
+<h2 id="org95bea68">Important Spring Dependencies</h2>
+<div class="outline-text-2" id="text-org95bea68">
+<p>
+Note that on that spring initialzer page you can see all of the
+dependencies nicely integrated with the spring framework.
+</p>
+
+<p>
+You can navigate it in detail in time.
+</p>
+
+<p>
+However, in general there are macroscopic classes, that you need to
+understand:
+</p>
+</div>
+
+<div id="outline-container-orgabf7986" class="outline-3">
+<h3 id="orgabf7986">Core Spring Framework</h3>
+<div class="outline-text-3" id="text-orgabf7986">
+<p>
+This is the fundation of everything in the spring universe.
+</p>
+
+<p>
+It provides the core container and dependencies injection
+framework.
+</p>
+
+<p>
+It also provides the following essential features:m
+</p>
+
+<ul class="org-ul">
+<li>Spring MVC</li>
+
+<li>Template based JDBC support</li>
+
+<li>Spring WebFlux (for <b>reactive</b> programming)</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgfddcbc8" class="outline-3">
+<h3 id="orgfddcbc8">Spring Boot</h3>
+<div class="outline-text-3" id="text-orgfddcbc8">
+<p>
+This is what makes autoconfiguration and starter-depencies
+possible.
+</p>
+
+<p>
+Note that the starter-dependencies are exactly the thing we
+mentioned. I.e. you specified these very general
+<code>spring-boot-starter-xxx</code> dependencies and through it you get a ton
+of others transitive dependencies and autoconfigurations of them.
+</p>
+
+<p>
+Note that Spring Boot also allows the following:
+</p>
+
+<ul class="org-ul">
+<li>The <b>Actuator</b> provides runtime insight into the inner workings of
+an application, including metrics, thread dump information,
+application health, and environment properties available to the
+application.</li>
+
+<li>Flexible specification of environment properties.</li>
+
+<li>Additional testing support on top of the testing assistance found
+in the core framework.</li>
+</ul>
+
+<p>
+Spring Boot offers an alternative programming model based on Groovy
+scripts that’s called the Spring Boot CLI (command-line
+interface). With the Spring Boot CLI, you can write entire
+applications as a collection of Groovy scripts and run them from
+the command line.
+</p>
+
+<p>
+Not interesting to me. It is another layer of config. It seems that
+this Groovy is quite some config language in the Java world as it
+is used for both specifying things in Gradle as well as here in
+Spring at macro-level.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org089807a" class="outline-3">
+<h3 id="org089807a">Spring Data</h3>
+<div class="outline-text-3" id="text-org089807a">
+<p>
+What’s more, Spring Data is capable of working with a <i>several
+different kinds of databases</i>, including relational (JPA), document
+(Mongo), graph (Neo4j), and others.
+</p>
+
+<p>
+So interesting altough as mentioned I do not like to work with such
+interfaces as then you stick too much into a single language.
+</p>
+
+<p>
+I prefer to work with the native declarative languages of each as
+these are quite stable and will provide the necessary portability
+across languages.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4f8826f" class="outline-3">
+<h3 id="org4f8826f">Spring Security</h3>
+<div class="outline-text-3" id="text-org4f8826f">
+<p>
+Through it you can manage a broad range of application security
+needs, including authentication, authorization, and API security.
+</p>
+
+<p>
+This is what you did in your last Flask project. So similar
+thing. Was never a fun of it. I hope I will not have to dig too
+much into it. However, with the Zero-trust Architecture paradigm I
+might have to do that at some point. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org18dd608" class="outline-3">
+<h3 id="org18dd608">Spring Integration and Spring Batch</h3>
+<div class="outline-text-3" id="text-org18dd608">
+<p>
+<b>Spring Integration</b>: addresses real-time integration where data is
+processed as it’s made available.
+</p>
+
+<p>
+<b>Spring Batch</b>: addresses batched integration where data is allowed
+to collect for a time until some trigger (perhaps a time trigger)
+signals that it’s time for the batch of data to be processed.
+</p>
+
+<p>
+So this will be important as with it you can push the boundaries
+of your market risk system and make a nice machine out of it. It
+will be very important in this sense to master functional
+programming and these frameworks in order to have a proper baby. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga4f9660" class="outline-3">
+<h3 id="orga4f9660">Spring Cloud</h3>
+<div class="outline-text-3" id="text-orga4f9660">
+<p>
+Microservices are a hot topic, addressing several practical
+development and runtime concerns. In doing so, however, they bring
+to fore their own challenges. Those challenges are met head-on by
+Spring Cloud, a collection of projects for developing cloud-native
+applications with Spring.
+</p>
+
+<p>
+So that is interesting and what Sergio was mentioning. I am
+interested in looking into it as many things were provided by
+external dashboards on the cloud from my experience at IBM.
+</p>
+
+<p>
+I am interested in this sense to understand how that is working
+and how exactly is it monitoring things given that the things work
+in different runtimes.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge86a123" class="outline-2">
+<h2 id="orge86a123">Web-applications with Spring</h2>
+<div class="outline-text-2" id="text-orge86a123">
+</div>
+<div id="outline-container-orge88f9ce" class="outline-3">
+<h3 id="orge88f9ce">Spring MVC</h3>
+<div class="outline-text-3" id="text-orge88f9ce">
+<p>
+With it you can both display information to the front-end in a
+dynamic way.
+</p>
+
+<p>
+Or, alternatively, it will be possible for you to develop REST
+endpoints with it.
+</p>
+
+<p>
+I will not make big notes of the first. It is not my bread and
+butter. Note that it is pretty much what you saw at the times of
+your IBM projects when you worked with flask.
+</p>
+
+<p>
+I.e. you serve the static content via MVC, and you have different
+<code>views</code>, through which it is possible to embedd the application
+logic into the front-end.
+</p>
+
+<p>
+The book worked with Thymeleaf as a view framework in order to
+embedd the application logic into the front-end. We work with
+Mustache. Though, you can imagine that the two are quite similar -
+and again, from what you can read this is exactly what you could
+see when working on your flask-login module. 
+</p>
+
+<p>
+Note that in general you always talk with the controller when
+instatiating the HTTP request. Then you perform your application
+logic and pass on the relevant info to the views. 
+</p>
+</div>
+</div>
+</div>
