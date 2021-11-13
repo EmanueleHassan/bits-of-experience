@@ -138,6 +138,12 @@ Schildt)" publicly available on the world wide web at [[https://gfgc.kar.nic.in/
   ... many others I still have to insert. keep it as a todo.
   
 
+
+* Reference
+
+  A nice website to navigate some Java is [[https://www.javabrahman.com/category/java-8/][this]]. 
+
+
 * History
 
   Java primary motivation was the need for a platform-independent
@@ -2394,6 +2400,60 @@ only after it’s fully baked, which removes the thread-safety concerns
    can in general refer to [[https://www.baeldung.com/java-8-lambda-expressions-tips][this website]]. They host good content in
    this sense.
    
+
+*** TODO in order to properly understand this functional way of working :noexport:
+    SCHEDULED: <2021-11-12 Fr. 15:00>
+
+    basically you have to understand the logic of functional
+    interfaces.
+
+    these you already encountered a couple of times in your notes.
+
+    still you have to improve your understanding of it. -> but
+    basically they are interfaces. have to find the methods they
+    implement.
+
+    they are moreover interfaces that just specify a single method.
+
+    I think it is important to understand the logic of these packages
+    and how you implement them. once you understand them you will also
+    be able to properly understand java and write clean code in it.
+
+    For instance note this *important split* across all of such major
+    Java packages. You always have interfaces that you use to code
+    with.
+
+    And then you apply the classical method which are largely shared
+    across the entire environment.
+
+    That is a nice and important feature and you should also develop
+    in such a way.
+
+    I mean you arrived to a point where you can easily understand the
+    following:
+    
+    https://www.baeldung.com/java-8-functional-interfaces
+
+    -> note the nice composability feature
+
+    
+    
+*** TODO have to draw lines among the different components         :noexport:
+
+    i.e. streams and functional interfaces through which you define
+    the functions to use on your streams. 
+    
+    
+*** TODO start by work through patterns                            :noexport:
+
+    i.e. for instance always decide to express the functional
+    interfaces you are working with.
+
+    it will help you quite much in keeping up and running the system
+    and split a little bit the logic across the different components
+    as mentioned in the previous point.  
+
+    
 *** Syntax
 
     The syntax is very close to the one you know yourself.
@@ -2449,8 +2509,6 @@ friends.forEach(name -> System.out.println(name));
 
     *Design choice:* Keep unity in your code and forget about it. Always work with =()=
     for consistency reasons.
-
-    
     
 
 *** Nice benefit of working in a functional way
@@ -2550,6 +2608,7 @@ friends.forEach(new Consumer<String>() {
     same as the ones available here under this paradigm. So double
     check and make sense of all of this.
 
+
 *** Method Reference
 
     As mentioned in the notes regarding the @FunctionalInterface, what
@@ -2580,14 +2639,147 @@ friends.stream()
     the synthesized method. This makes the code with method references
     much more concise than the code with lambda expressions.
     
-    *Important:* So note that if lamdba functions simply pass the
+    *Important:* So note that if lambda functions simply pass the
     parameters through to the method we can replace them always with
     reference methods. If you do some transformation then of course
     that is not possible/ you would have to create a new method for it
     but then it is opinable if that makes sense - i.e. depends on the
     amount of transformation involved.
     
+
+*** Behavior paramterization
+
+    This is a nice feature in Java. You can pass functions to the
+    lambda expressions in the following way:
+
+    #+begin_src java :results output raw :classname PassFunction :results drawer
+import java.util.List;
+import java.util.ArrayList;
+
+class PassFunction {
+    public static void main(String arg[]) {
+	List<Integer> myList = new ArrayList();
+
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+
+	myList.stream()
+	    .forEach(System.out::println);
+    }
+}		  
+    #+end_src 
+
+    #+RESULTS:
+
+    So you see you can pass your functions to the forEach.
+
+    You can even pass your self defined function as paramter
+
+#+begin_src java :results output raw :classname ParamBeh :results drawer
+import java.util.List;
+import java.util.ArrayList;
+
+class ParamBeh {
+
+    private static int sum = 0;
+
+    public static void main(String arg[]) {
+
+	List<Integer> myList = new ArrayList<>();
+
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+
+	myList.stream()
+	      .forEach(x -> {sum = mySum(x, sum);}); // note the nice forEach function.
+
+	System.out.println("final sum is: " + sum);
+    }
+
+    private static Integer mySum(Integer x, Integer sum){
+	sum += x;
+
+	return sum;
+
+
+    }    
+
+}		  
+#+end_src 
+
+#+RESULTS:
+:results:
+final sum is: 12
+:end:
+
+   You can then pass any function of choice as parameter to your
+   lambda functions.
+
+**** Behaviour Parameterization with Nested Functions
+
+     Note that since java 8 there is the =java.util.function=
+     package.
+
+     Note that in that package just *interfaces* are defined. This is
+     important. Such interfaces implements then the 
     
+     Through it, it is possible to write your lambda functions within
+     a method that you will then ultimately pass in the method.
+
+     So the question is then if to work in such a way or not and
+     rather work with separated methods implemented as above.
+
+     Note that when specifying such functions you should choose from
+     one of the interfaces under [[https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html][this url]].
+
+     #+begin_src java :results output raw :classname MyTest
+import java.util.List;
+import java.util.ArrayList;
+
+class MyTest {
+
+    private static int sum = 0;
+    
+    public static void main(String arg[]) {
+
+
+	List<Integer> myList = new ArrayList<>();
+
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+
+	java.util.function.Function<Integer,Integer> MySum = (i) -> {
+	    sum += i;
+	    return sum;
+	};
+
+	myList.stream()
+	      .forEach(x -> {sum = MySum.apply((Integer) x);}); // note the nice forEach function.
+
+	System.out.println("final sum is: " + sum);
+    }
+}
+     #+end_src 
+
+     #+RESULTS:
+     final sum is: 12
+
+
+     Note that you can refer to the list
+
+        
 *** TODO data management libraries                                 :noexport:
 
     Have as well still to understand what libraries are available for
@@ -2595,7 +2787,7 @@ friends.stream()
     libraries are available for managing data frames etc.
 
 
-*** TODO understand better the functionalInterface
+*** TODO understand better the functionalInterface                 :noexport:
 
     
     
@@ -3416,8 +3608,9 @@ System.out.println(String.format("Found %d names", startsWithN.size()));
 
    A JavaBean is just a standard
 
-   All properties are private (use getters/setters) A public
-   no-argument constructor Implements Serializable.
+   All properties are private (use getters/setters).
+
+   A public no-argument constructor Implements Serializable.
 
    That's it. It's just a convention. Lots of libraries depend on it
    though.
@@ -3518,6 +3711,7 @@ class IteratorDemo {
   things. Check at the functional methods to work as lambda
   expressions were a great killer in Python in this sense. 
    
+
 * argument Passing
 
   Note that this is as well similar as with C++. When you pass
@@ -3896,32 +4090,68 @@ LOGGER.setLevel(Level.INFO);
 ** TODO Hiberante
 
    Check at it. Everybody talks about it.
+
+   The idea is to stay in the OOP logic when working with data tables
+   etc.
+
+   I must say that it is very funny to work with Java as it is not
+   simply another programming language. It is so far apart from Python
+   in the frameworks and ideas that it is a complete revolution in
+   terms of mental process.
+
+
+** Project Lombok
+
+   You can read more about it [[https://www.baeldung.com/intro-to-project-lombok][here]].
+
+   It is basically a way to short-circuit all of the getters, setters
+   and equals stuff that you so often use in Java.
+
+   You can read about it online. Check how stable is the framework as
+   here you are dealing with code that has to survive over very long
+   periods of time.
+
+   I mean if it is stable it is quite handy as through it you will
+   manage Java-Beans quite easily and these will be very readable.
+
+   Nice as it also handles Logger and adds it to the class in case of
+   need.
+
+
+*** TODO do documentation on lombok                                :noexport:
+
+    So tlaked with Sergio. He confirmed me that the project is a thing
+    and well used in the Java world.
    
-** TODO H2
-
-   Apparently a good module to talk with the SQL DB. 
-    
-
+   
 * Frameworks
 
 ** Collection Frameworks
+
+   You can have the general overview of the collections framework
+   here.
+
+   This is fundamental as each time you will have to implement a thing
+   youself you will have to use one these native data structures.
+
+   So the following image is a good way to have the overview. 
+
    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-11-12 162739.png" class="center">
+#+end_export
 
-     note that some of the most important data structures that you will
-     use when coding are implemented in the ~java.util~ module.
 
-     I am pretty sure that this is not a library implemented by them. I
-     would have to understand where they did get this library from. It
-     is not included in the =gradle= set-up files. Maybe ask Sergio
-     tomorrow.
+   ------------------------
+   
+   Note that some of the most important data structures that you will
+   use when coding are implemented in the ~java.util~ module.
 
-     That is in fact correct. The java library is in fact similar to
-     the standard library implemented in C. Based on this you will have
-     a lot of the most basic functionality of the language that make
-     the operability of it possible.
+   Based on this you will have a lot of the most basic functionality
+   of the language that make the operability of it possible.
     
     
-     #+begin_src java :results output raw
+   #+begin_src java :results output raw
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -3930,45 +4160,45 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-     #+end_src
+   #+end_src
 
-     So you see that there are a lot of basic data structures.
+   So you see that there are a lot of basic data structures.
 
-     First understand that the =java.util= package implements many
-     different classes and interfaces of first-order importance.
+   First understand that the =java.util= package implements many
+   different classes and interfaces of first-order importance.
 
-     Among the others - the follwoing *classes* are implemented:
+   Among the others - the follwoing *classes* are implemented:
 
- #+begin_export html
-  <img src="../../images/Screenshot 2021-09-21 154011.png">
- #+end_export
+   #+begin_export html
+    <img src="../../images/Screenshot 2021-09-21 154011.png">
+   #+end_export
 
-     And the follwoing *interfaces* are implemented 
+   And the follwoing *interfaces* are implemented 
 
- #+begin_export html
-  <img src="../../images/Screenshot 2021-09-21 154313.png">
- #+end_export
+   #+begin_export html
+    <img src="../../images/Screenshot 2021-09-21 154313.png">
+   #+end_export
 
-      Note that we will describe next methods and interfaces from the
-      =java.util= being part of the *Collection Framework*.
+   Note that we will describe next methods and interfaces from the
+   =java.util= being part of the *Collection Framework*.
 
-      This is a collection of java *classes* and *interfaces* that has
-      been developed in an homogenous way in order to assure a basic
-      common operability of the classes and interfaces.
+   This is a collection of java *classes* and *interfaces* that has
+   been developed in an homogenous way in order to assure a basic
+   common operability of the classes and interfaces.
 
-      Note that there are some basic functionalities that such
-      collections must guarantee such that you can then generally extend
-      and build on the top of them. You can think of them as a set of
-      rules or as an software API defining how you interact with such
-      collection objects.
+   Note that there are some basic functionalities that such
+   collections must guarantee such that you can then generally extend
+   and build on the top of them. You can think of them as a set of
+   rules or as an software API defining how you interact with such
+   collection objects.
 
-      Note for instance that each collection object *implements* an
-      ~iterator interface~. Note therefore that you can always iterate
-      across the objects of such a collection.
+   Note for instance that each collection object *implements* an
+   ~iterator interface~. Note therefore that you can always iterate
+   across the objects of such a collection.
 
-      We will explore next the basic interfaces of the *collections
-      framework* on which the collections framework classes will build
-      upon for implementing the most important data structures. 
+   We will explore next the basic interfaces of the *collections
+   framework* on which the collections framework classes will build
+   upon for implementing the most important data structures. 
 
 
 *** Collections Frameworks - Interfaces
@@ -4314,12 +4544,22 @@ class EnumSet<E extends Enum<E>>
 
       You can use the following:
 
- #+begin_export html
-  <img src="../../images/Screenshot 2021-09-24 161528.png">
- #+end_export
+      #+begin_export html
+       <img src="../../images/Screenshot 2021-09-24 161528.png">
+      #+end_export
+
+      A classical pattern is to create enum object to reference
+      resources that might change at a later time point.
+
+      In this case when they change at a later time point you just
+      adjust them where they changed without having to change them
+      everywhere.
+
+      That should become an instinct when you program. Otherwise it
+      will be a painful refactoring exercise that is as well prone to
+      error.
 
 
- 
 *** Collection Algorithms
 
     Note that the Collection Framework has a set of algorithm that are
@@ -4346,16 +4586,9 @@ class EnumSet<E extends Enum<E>>
     
 #+begin_export html
  <img src="../../images/Screenshot 2021-10-25 105141.png" class="center">
-#+end_export
-
+#+end_export    
  
 
-    
-    
-    
-
-    
- 
 ** Maps Frameworks
 
    Note that these are the functions for performing the classical
@@ -4480,7 +4713,47 @@ interface Map.Entry<K,V>
      as the Map data structure requires the keys to be unique.
 
      So if you =put()= into the hash-map two times the same key the
-     second one will overwrite the entry of the first. 
+     second one will overwrite the entry of the first.
+
+     #+begin_src java :results output raw :classname MapsBasics
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;    
+
+class MapsBasics {
+    public static void main(String args[]) {
+        Map<String, List<Integer>> map = new HashMap<>();
+
+	List<Integer> myList = new ArrayList<>();
+
+	myList.add(1); // add the desired value
+	    
+	map.put("hello", myList);
+
+	if (map.containsKey("hello")) {
+		List<Integer> myTest = map.get("hello");
+
+		myTest.add(2);
+
+		map.put("hello", myTest);
+	}
+
+
+	List<Integer> myTest = map.get("hello");
+
+	myTest.stream().forEach(System.out::println);
+
+    }
+}
+     #+end_src 
+
+     #+RESULTS:
+     1
+     2
+
+    
+
 
 **** TreeMap
 
@@ -4616,6 +4889,304 @@ public int addNum(int numA, int numB) {
 
   You can find an example of generated =JavaDocs= [[https://docs.gradle.org/current/javadoc/index.html][here]].
   
+** Important parameters to properly write java-docs
+
+   So in order to start to properly document your code you have to
+   interiorize the following java-doc annotations.
+
+   Do it and all of your team-mates will be thankful to you in a
+   couple of years.
+
+   Before starting with all of the different tags, understand the
+   following basics distinction:
+
+   - if a tag is of the form =@tag=, then it is a /stand-alone/
+     tag. I.e. you must use it on a single line. I.e. the line must
+     start with the tag. 
+
+   - if a tag is of the form ={@tag}=, then it is a /in-line/
+     tag. This means you can embed it in your general comments.
+
+   --------
+
+   I continue here with a set of tags that you can and should use when
+   writing your documentation.
+
+
+   1. =@author=:
+
+      so this is of the follwoing form
+
+      ~@author description~
+
+      note that the description is usually your name. You have to add
+      a tag when generating docstrings if you want to have this
+      compoenent included.
+
+   2. =@param=:
+
+      documents a parameter type to the method.
+
+      ~@param parameter-name explanation~
+
+      Here, parameter-name specifies the name of a parameter. The
+      meaning of that parameter is described by explanation.
+
+      Note that you do not specify the type of parameter by default.
+
+   3. =@deprecated=:
+
+      Deprecated specifies that a class, interface, or a member is
+      deprecated.
+
+      You then usually include the =@see= or ={@link}= tags in order
+      to point to the alternatives.
+
+      ~@deprecated description~
+
+      note that this tag can be used in documentation for variables,
+      methods, classes, and interfaces.
+
+   4. =@exception=:
+
+      this tag describes an exception to a method.
+
+      It has the following syntax:
+
+      ~@exception exception-name explanation~
+
+      Here, the fully qualified name of the exception is specified by
+      =exception-name= say IOException etc., and explanation is a string
+      that describes how the exception can occur.
+
+      I like the standard of including then the error documentation as
+      a reference via =@see=.
+
+      For instance:
+
+      #+begin_src java :results output raw 
+ /**
+ ,* This method inputs a number from the user.
+ ,* @return The value input as a double.
+ ,* @exception IOException On input error.
+ ,* @see IOException
+ ,*/
+      #+end_src 
+
+   5. =@return=:
+
+      here you specify what the method returns.
+
+   6. =@see=:
+
+      this is an important one, as with this tag you can specify
+      references to other packages.
+
+      you can use it as follows:
+
+      ~@see anchor~
+
+      ~@see pkg.calss#member text~
+
+      so you see that in its second form it is the same as the
+      ={@link}= below. read that in order to understand it. Note that
+      you can also specify references to entire packages simply by
+      excluding the ~#member~ piece from the above.
+
+      In the first form you pass an URL.
+
+      Usually you use this in combination with ={@link}=. In this way
+      your doc-strings will be properly set up with the correct amount
+      of visibility, as your references will be saved in the /See
+      Also/ section.
+
+   7. =@serial=:
+
+      this is just there since *java 14*. you are using 11. so just
+      consider it if you are updating.
+      
+   8. =@serialData=:
+
+      A class that customizes the serialization format by implementing
+      ~writeObject( )~ or ~writeExternal( )~ should annotate those
+      methods with an @serialData tag explaining in detail the format
+      written.
+
+      ~@serialData description~
+
+      where in the description you document what is written for that
+      data etc. 
+      
+
+   9. =@serialField=:
+
+      should be there since java 11. I do not see it in my IDE as an
+      available tag. Intersting - undestand it at some point.
+
+      For a class that *implements Serializable*, the @serialField tag
+      provides comments for an ObjectStreamField component.
+
+      ~@serialField name type description~
+
+   10. =@since=:
+
+       this specifies that a class or member was introduced in a
+       specific release.
+
+       ~@since release~
+
+   11. =@throws=:
+
+       this has the same meaning as the ~@exception~ tag.
+
+   12. =@version=:
+
+       this is the usual way to write the version of it. 
+
+   13. ={@code}=
+
+       this allos you to embed a code snippet into a comment.
+
+       ~{@code code-snippet}~
+
+       
+   14. ={@value}=
+
+       It has two forms.
+
+       The first displays the value of the constant that it precedes,
+       which must be a /static/ field.
+
+       In this case the usage form is simple
+
+       ~{@value}~
+
+       have still to understand better how to use this. Would be
+       useful to get an example in this sense.
+
+   15. ={@docRoot}=
+
+       it specifies the root repository of the document. you will not
+       use it much.
+
+   16. ={@inheritDoc}=
+
+       so this is used when you inherit in order to inherit the
+       documentation of the inherited class/method as well.
+
+   17. ={@link}=
+
+       It provides an in-line link to additional information.
+
+       ~{@link pkg.class#member text}~
+
+       The =pkg.class#member= specifies the name of a class or method
+       to which a link is added, and =text= is the string that is
+       displayed.
+
+       Note that the above is not that well explained. In the sense
+       that you have to include =()= to the member as well write the
+       parameter types of it in order for it to work properly.
+
+       Understand it properly. Another time when including the
+       arguments it was not accepted. Do some trial and error. 
+
+   18. ={@linkplain}=
+
+       this is the same as the ={@link}= above. It just creates input
+       in a different format when creating the java-doc. Can try to
+       esperiment the difference among the two at some point.
+
+   19. ={@literal}=
+
+       this is another javadoc rendering thing. this is not that
+       important to me at this stage. check at it later in case of
+       interest. 
+
+
+** Working standards
+
+*** Top level info for class
+   
+    On the top of each main class of each document have an entry of the
+    following form
+
+    #+begin_src java 
+ /**
+ ,* General description of the source file.
+ ,* <p>
+ ,* (c) YYYY, Zurich Insurance Group
+ ,* @author MYNAME MYLASTNAME
+ ,* @version 1.2
+ ,*/
+    #+end_src
+
+    Note the =<p>= method through which you order your
+    documentation. I.e. you separate different paragraphs and make
+    everything more ordered.
+    
+*** Package Documentation
+
+    In general *always include a general documentation for each
+    pacakge*, documenting the sense and the meaning of it.
+
+    In Java in order to do that you have to create a
+    =package-info.java= file. This you have to position within a
+    package repository.
+
+    You then write the documentation for the pacakge in that file in
+    the following form:
+
+    #+begin_src java :results output raw 
+/**
+ * Provides the classes necessary to create an applet and the classes an applet uses 
+ * to communicate with its applet context. 
+ * <p>
+ * The applet framework involves two entities: 
+ * the applet and the applet context. An applet is an embeddable window (see the 
+ * {@link java.awt.Panel} class) with a few extra methods that the applet context 
+ * can use to initialize, start, and stop the applet.
+ *
+ * @since 1.0
+ * @see java.awt
+ */
+package java.lang.applet;
+    #+end_src 
+
+    I.e. you write your comment and finally you specify the package it
+    applies to.
+
+    
+*** General notation for methods
+
+    In order to consistently annotate your methods use the following
+    strucutre.
+
+    #+begin_src java :results output raw 
+/** One-liner description of the method as in PEP8
+,   <p>
+,   Longer serious documentation
+,   <p>
+,   TODO .... 
+,*/
+    #+end_src 
+
+
+* Code Standards
+
+  Even though there is not a very big rigor in here in the way you
+  structure your code I think it beneficial to have some.
+
+  In this sense I think that to comply with a standard or style guide
+  as it could be PEP8 for python is beneficial.
+
+  I did not find a good standard in this sense in Java yet. I have to
+  spend some time checking for it at some point.
+
+  To this stage I found this. Now as always I do not have the time to
+  go deep into [[https://www.oracle.com/java/technologies/javase/codeconventions-introduction.html][this topic]]. Did put it in your calendar though. Go back
+  to it at some point when you have time. 
+   
 
 * Encapsulation
 
@@ -4637,7 +5208,17 @@ public int addNum(int numA, int numB) {
       those members of the superclass that have been declared as
       private. *A class member that has been declared as private will
       remain private to its class.* *It is not accessible by any code
-      outside its class, including subclasses.*
+      outside its class, including subclasses.* This is where
+      protected differs. If a method is protected it can be visible to
+      subclasses of the class even if they are sitting in different
+      packages.
+
+      Moreover, it also differs in the nature of same-package
+      non-subclasses access. In order to see this check at [[*Package and Access Control of classes][Package and
+      Access Control of classes]]. 
+
+
+      
 
     On the top of it there is the =final= specification for
     *variables*. This means that the variable cannot be modified at
@@ -4808,14 +5389,8 @@ class B extends A { // ERROR! Can't subclass A
   defines those methods that the derived class must implement on its
   own. This allows the subclass the flexibility to define its own
   methods, yet still enforces a consistent interface.
-
-
-
-
-
-
-
   
+
 * Java Application
 
 ** On WAR
@@ -4849,36 +5424,104 @@ class B extends A { // ERROR! Can't subclass A
 
    
    
+   
+* On Java Persistence API - JPA
 
-* On Model 2 Architecture, Servlets and JSP
+  [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][Read this]]. The following notes are a simple copy and paste of that
+  article.
 
-  So basically this is one of the standard architectures for Java to
-  communicate with clients and serve content from web-servers.
+  ------------------
   
+** JPA in the historic context
+
+   The core question here is about /persistence/, which loosely means any
+   mechanism by which Java objects outlive the application process that
+   created them.
+
+   The JPA specification lets you define which objects should be
+   persisted, and how those objects should be persisted in your Java
+   applications.
+
+   So this is more a styling-guide at the macro-level. You have then
+   all of the different frameworks through which you can implement such
+   theoretical construct.
+
+   So Java Persistence API is highly related with ORM. As this is the
+   old-school way of programming and was the norm the two developed
+   hand in hand. Today with the advent of NoSQL you have Java
+   Persistence API being developed and formed for the NoSQL databases. 
+
+   ORM - object-relational mapping. So through ORM you are able to work
+   through objects and stay within the first-class citizens of Java and
+   still, at the same time, interact with the relational tables of your
+   application.
+
+   Hibernate is the default ORM used across the industries as you
+   quickly learned after 2 months of exposure to the Java world.
+
+** JPA in the application context
+
+   So this is how the JPA fits the application logic.
+   
 #+begin_export html
- <img src="../../images/Screenshot 2021-10-21 110909.png" class="center">
+ <img src="../../images/Screenshot 2021-11-02 134907.png" class="center">
 #+end_export
 
-  Basically this is one of the standards. You have your servlet that
-  handles the server side communication. It instantiate a Java Bean
-  that is responsible of fetching the information from the database.
+   You can then quickly imagine how the picture would change to the
+   NoSQL space. Nothing big would change. Just the connector, the
+   general theoretical API specifications to interact with NoSQL etc.
 
-  Finally the information is rendered via JSP - which are a high-level
-  abstraction of Java servlets. They allow Java code and certain
-  predefined actions to be interleaved with static web markup content,
-  such as HTML. The resulting page is compiled and executed on the
-  server to deliver a document.
-
-  The architecture is a =model-view-controller= architecture. The
-  =view= is the JSP, the =controller= is the Servlet and the =model=
-  is given by JavaBeans.
-
-  This was never your bread and butter but this is what you were also
-  doing at the end in your Flask project. There you could as well
-  embedd dynamic information in your html pages. I never went into the
-  details of it as I was busy running the project. But that should
-  have been the JSP equivalent. 
-
-
+   But in general the high-level structure will persist.
    
-   
+** On JPA Annotations
+
+   Note that here you specify as well all of the annotators to
+   properly interact with your relational model.
+
+   This is integral part of the JPA API. You can read more about it at
+   the same link in [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][here]].
+
+   Note that we do not work a lot through such JPA layer. We work
+   directly through SQL. I think this is not a bad idea as through it
+   you will be able to more quickly transition from one language to
+   the other in the future.
+
+   Moreover, I prefer SQL as being declarative it is much more
+   straightforward to understand what is needed.
+
+   So on this I prefer to keep one layer of abstraction and work in
+   the way the team is working. 
+  
+
+
+* On the DataFrame issue
+
+  Ok so this is a *huge huge* issue in Java.
+
+  It is quite a funny thing that nobody managed to solve the issue so
+  far.
+
+  I mean you can create your dataframe internal representation pretty
+  quickly as with the libraries you have in here.
+
+  Still there are too big hurdles cause even when you have these
+  internal representations you will miss basics functionalities such
+  as joins etc.
+
+  So what I understand it is the classical way of working in java is
+  the following:
+
+  - you work with your internal representation of the table. you write
+    it to a staging table in the db - plenty of libraries for doing
+    it - 
+
+    you use a stored procedure to do your sql business logic in there.
+
+    you get back your transformed table - plenty of libraries to do
+    that - you continue to operate in your business. 
+
+  so this is basically the logic of java but you see it is pretty
+  rough and not that nice. 
+
+
+
