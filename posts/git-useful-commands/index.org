@@ -1,0 +1,153 @@
+#+BEGIN_COMMENT
+.. title: Git Useful Commands
+.. slug: git-useful-commands
+.. date: 2019-08-29 16:40:59 UTC+02:00
+.. tags: git
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+So here are some notes about some useful commands in git.
+
+I might start to use it again from the command line as magit in my
+emacs is dead slow on Windows OS.
+
+I read online that there are some fundamental issues with it on
+Windows.
+
+This is not the only program where I am experiencing some performance
+hiccup on Windows systems.
+
+I will switch back to Mac soon as it seems that here in the company
+they started to offer the possibility to have one. Have to wait a
+couple of months for it still as I have to wait for the migration of
+the IT systems to the cloud to have proper access to everything
+without having to manually make new auth-modules. 
+
+{{{TEASER_END}}}
+
+* On the many files you touch that you do not want to touch
+
+  It is normal to make minor modifications to multiple files when you
+  edit the files of a larger project.
+
+  You enter here and there in a ton of files and especially if you use
+  emacs it is easy to add a space or a new line because of the many
+  shortcuts.
+
+  So basically what you do then is just to stage the files you
+  want. You then write your different commits for them.
+
+  You then push to the origin.
+
+  You then fetch from the origin and reset your local repo based on
+  it.
+
+  Like this you will have eliminated all of the minor modifications
+  that were unintendended and you keep your commits clean.
+
+  You can do that with the following command
+
+  #+begin_src sh
+git fetch  # will fetch the latest changes on the remote
+git reset --hard origin/master # will set your local branch to match the representation of the remote just pulled down.
+  #+end_src
+
+* On the right way to work and commit on git
+  
+  I also took the habit of making multiple commits per different logic
+  chuncks of the modifications or as well for individual files.
+
+  In such a way it is easier to keep track of your changes. You will
+  read the different logical portions of your code and it will be easy
+  for you to switch back to them.
+
+  This is ultimately the way of working and thinking in git. You
+  understand it by the default way git is implemented.
+
+  You see that then if you rebase you rebase to some particular very
+  well defined logical unit - and you keep your other future changes.
+
+  Check at the following entry from [[https://stackoverflow.com/questions/46275070/why-do-i-get-conflicts-when-i-do-git-revert][this post here]].
+  
+  -------------------
+
+  That's actually not what revert does. Revert doesn't "take you back
+  to" that commit and pretend that subsequent commits didn't
+  happen. It applies a logical negation of a single commit - and that
+  commit alone - leaving subsequent commits in place. 
+
+  Let's say you have some initial commit of some file - let's call it commit #1 for simplicity - and the file looks like this:
+
+  #+begin_example
+  One
+  Two
+  Three
+  Four
+  #+end_example
+
+  Now let's say you have a commit #2 that changes one line:
+
+  #+begin_example
+  One
+  2
+  Three
+  Four
+  #+end_example
+
+  And finally, commit #3 that changes a different line:
+
+  #+begin_example
+  One
+  2
+  Three
+  4
+  #+end_example
+
+  If you try to revert commit #2, it will undo only the line changed
+  in that commit, and leave the changes introduced in commit #3, so
+  the result will be: 
+
+  #+begin_example
+  One
+  Two
+  Three
+  4
+  #+end_example
+
+  Now, if there was a subsequent commit that had changed the same line
+  as the commit that you're trying to revert, then you'll have a
+  conflict. For example, let's say you have a commit #4 that also
+  changed the second line: 
+
+  #+begin_example
+  One
+  TWO
+  THREE
+  4
+  #+end_example
+
+  Now if your HEAD is commit #4 and you try to revert commit #2, you
+  will have a conflict. Revert expects to take second line back - to
+  undo the changes made in commit #2. So it expects the second line to
+  currently be 2, and it will then revert it to what it was in the
+  previous commit, setting it to Two.
+
+  However, that expectation was invalidated, since commit #4 had also
+  changed it. So you have a conflict.
+
+  If your goal isn't to revert at all, but to get back to commit #1
+  and ignore all the changes that have gone on since then, then you
+  want to reset instead of revert.
+
+  #+begin_example
+  git reset --hard 1 
+  #+end_example
+
+
+
+  
+  
