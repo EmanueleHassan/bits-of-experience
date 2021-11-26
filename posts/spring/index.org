@@ -577,22 +577,189 @@ alter table Taco_Order_Tacos
    some insert statements in a =data.sql= file also saved on the same
    repo.
 
+** Spring JPA
+
+   Ok - here there is a big discussion among the Java experts in my
+   team and other people coming from other programming languages.
+
+   I still have to understand it properly. Heavy Java users claim it
+   is the way to work with data in Java. It will allow the developer
+   to keep thinking and programming in terms of objects.
+
+   On the other hand it is true that if you work through such layer
+   you will create a strong dependency to Java. It will not be easy to
+   migrate to other modern data-driven languages that direct SQL.
+
+   Think for instance the SQL in the python environment where you can
+   apply it directly to pandas, apache-spark-sql etc.
+
+   I also have to understnad better the scope of Spring JPA - and the
+   extent to which it differs from Hibernate JPA. I think in fact that
+   Spring JPA leverages by default the Hibernate JPA but would have
+   eventually to check it up once and if you decided to go through
+   this JPA experience in the way you develop in Java. 
+   
    
 * Configuring Spring
 
-  So basically Spring it is nice cause you have all of your beans in
+  So basically Spring it is nice cause you have tons of beans in
   spring that will ultimately be injected in your context and you will
-  have a well rounded Java development environment 
+  have a well rounded Java development environment.
    
+  So this is basically the idea. You differentiate two components in
+  Java:
 
-   
+  - /Bean wiring/: through this component you can define the beans
+    that you will use in your spring application. I.e. the beans that
+    will be discoverable from the spring context. Moreover, through
+    /beans wiring/ you specify how the different beans will be
+    injected into each other. 
 
+  - /Property injection/: this sets the values on the different beans
+    in the Spring context of the application.
 
-   
-   
-   
+  We will see how to specify these two fundamental components through
+  Spring boot. You will then be able to create your modularized
+  application and work with it in a smooth and agile way.
   
 
+** How the spring framework works
 
+   In order to properly understand how to do /beans wiring/ and
+   /property injection/ you should first understand the following
+   general flow spring boot follows.
 
+   The following chart of the book gives a good overview:
 
+#+begin_export html
+ <img src="../../images/Screenshot 2021-11-14 182534.png" class="center">
+#+end_export
+
+   I.e. what you do is to instantiate the spring application by
+   setting all of the relevant parameters that will be used in order
+   to instantiate the relevant beans with the relevant configurations.
+
+   I.e. you specify the spring configuration you want by specifying
+   the relevant paramters through cmd line, yaml configuration files
+   etc.
+
+   Spring boot will then refer to the relevant configuration available
+   in the /spring environment/ to initiate the relevant beans and make
+   them accessible by the proper injection into the spring context.
+
+   So given the general picture above understand the following
+   components that are key to every proper Spring application and that
+   you should accordingly set.
+
+** Embedded Server
+
+   Here you can decide where your embedded server will communicate.
+
+   The default embedded server is Tomcat. You can change the option
+   and work with different servers.
+
+   #+begin_src yaml
+server:
+ port: 0
+   #+end_src
+
+   Note that port =0= is a sensible choice as you will be able in such
+   a way to do proper integration testing. You do not hard-wire a port
+   but each time a different port is selected.
+
+   You will therefore make sure that your tests do not simply pass
+   because a port was hard-wired.
+
+   Note that this is a good point but it can well be a moot
+   point. Everything ultimately depends on the infrastructure
+   initialization.
+
+   Here you can also specify all of the options for ssl, your
+   key-stores etc. I just note it here but again I do not think I will
+   never need that stuff as we are in the era of the cloud and I think
+   it is a sensible decision to leverage the abstraction layer in
+   there.
+   
+** Data
+
+   Here you can specify the driver and the location of the DB you will
+   interact with.
+
+   You have to understand how this overlaps with Gradle. There you
+   specify as well parts of this.
+
+   So double check how these two fits together. I am quite sure that
+   if you work with spring you do not specify the stuff in
+   gradle. I.e. you just specify the spring dependencies in gradle.
+
+   Then once this is specified it is all of a game within spring. This
+   is the big difference. While when programming without Spring you
+   have to pull the modules one-by-one into gradle and you compose
+   everything yourself.
+
+   Moreover as there is not a framework putting everything in an
+   opinionated context you have to do the manual config yourself.
+
+   I mean in the notes above I put a bit of notes that are nose-driven
+   so I am not sure everything is correct at 100% but more or less it
+   should be that.
+
+   You can then see in the book how to properly instantiate your db
+   with the different tables schema etc. I refer to the book in case
+   you want to go down that road. 
+   
+** Logging
+
+   This is nice, you can set there the standard output of your
+   logger.
+
+   Refer to the book. But basically there is an option to do that via
+   a xml file.
+
+   Moreover on the top of it once you defined the output of the logger
+   you can define all of the different levels that should be printed
+   by the logger.
+
+   You can that through the standards yaml configuration files.
+
+** Property injection via special property values
+
+   This is a nice way to make dynamic and intelligent properties
+   injection into your spring environment - and consequently beans -.
+
+   The standard format would be something like that:
+
+   #+begin_src  yaml
+greeting:
+ welcome: You are using ${spring.application.name}
+   #+end_src
+
+** Creating your own configuration properties
+
+   Configuration properties are nothing more than properties of beans
+   that have been designated to accept configurations from Spring’s
+   environment abstraction.
+
+   So the above configurations are easy to integrate.
+
+   This is the *important* section. We will see how the beans are
+   actually designed to consume the configuration in the spring
+   environment and how you can actually set up your configuration and
+   inject it into the beans.
+
+   In order to do that you have to understand a couple of flags as in
+   the usual case of spring - i.e. these are actually the first class
+   citizens of spring through which you can manage it all.
+
+   In this sense, one of the most important annotation is the
+   following:
+
+   - @ConfigurationProperties annotation. When placed on any Spring
+     bean, it specifies that the properties of that bean can be
+     injected from properties in the Spring environment.
+
+   It is then immediate to understand the logic. You can check at it
+   in the book and online but you get the essential idea of beans and
+   property injection and how that works.
+
+   

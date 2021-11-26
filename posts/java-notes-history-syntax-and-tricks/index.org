@@ -2391,15 +2391,10 @@ only after it’s fully baked, which removes the thread-safety concerns
 
    So basically that is the ultimate way you program in Java and where
    its benefit is unleashed. I must say that coming from the Python
-   world I still see it as inferior to Java for the data processing,
-   but with that it solves quite some fundamental constrains.
-
-   *Important:* Now the above is all at the meta-level. In order to
-   properly understand the stuff you should understand the concept of
-   @functionalInterface. I have an entry in this post for that. You
-   can in general refer to [[https://www.baeldung.com/java-8-lambda-expressions-tips][this website]]. They host good content in
-   this sense.
-   
+   world I still see it as inferior to Python for the data processing,
+   but with that it solves quite some fundamental constrains. This
+   especially due to the native concept of dataframes in
+   there. I.e. there is no modular abstraction of the concept. 
 
 *** TODO in order to properly understand this functional way of working :noexport:
     SCHEDULED: <2021-11-12 Fr. 15:00>
@@ -2436,13 +2431,26 @@ only after it’s fully baked, which removes the thread-safety concerns
 
     -> note the nice composability feature
 
+
+*** TODO write about functional interface
     
+   *Important:* Now the above is all at the meta-level. In order to
+   properly understand the stuff you should understand the concept of
+   @functionalInterface. I have an entry in this post for that. You
+   can in general refer to [[https://www.baeldung.com/java-8-lambda-expressions-tips][this website]]. They host good content in
+   this sense.
     
 *** TODO have to draw lines among the different components         :noexport:
 
     i.e. streams and functional interfaces through which you define
-    the functions to use on your streams. 
-    
+    the functions to use on your streams.
+
+    that is correct. note that the streams and the maps etc are the
+    general way you work with functional programming and lambda
+    functions.
+
+    this is however not the only one. i.e. these are the typical
+    consumer functions of the many =java.util.function= calls etc. 
     
 *** TODO start by work through patterns                            :noexport:
 
@@ -2590,6 +2598,14 @@ friends.forEach(new Consumer<String>() {
     });
     #+end_src 
 
+    Note: the code above is cluttered. Simplify it. No need to
+    explicitely write the consumer. This is part of the
+    =java.util.function=. You can pass directly a lambda
+    function. Then being Consumer a functionalInterface it will
+    automatically fit the lambda function as consumer.
+
+    Note just that being a consumer the lambda function does not have
+    to produce a result.
 
 *** Stream
 
@@ -2603,12 +2619,13 @@ friends.forEach(new Consumer<String>() {
     easier to read.
 
     Among the classical fluent functions there are the classical /map/
-    and /reduce/ functions. In general it looks as if all of the
-    methods you were using in pyhtona in the lambda expression are the
-    same as the ones available here under this paradigm. So double
-    check and make sense of all of this.
+    and /reduce/ functions.
 
-
+    In general it looks as if all of the methods you were using in
+    pyhtona in the lambda expression are the same as the ones
+    available here under this paradigm. So double check and make sense
+    of all of this.
+    
 *** Method Reference
 
     As mentioned in the notes regarding the @FunctionalInterface, what
@@ -2780,6 +2797,111 @@ class MyTest {
      Note that you can refer to the list
 
         
+
+*** Filter clause
+
+    #+begin_src java :results output raw :classname FilterFunction
+import java.util.List;
+import java.util.ArrayList;
+
+class FilterFunction {
+    public static void main(String arg[]) {
+	List<Integer> myList = new ArrayList();
+
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+
+	myList.stream()
+	    .filter(rs -> rs == 3) // so very simple bool condition
+	    .forEach(System.out::println);
+    }
+}		  
+
+    #+end_src 
+
+    #+RESULTS:
+    3
+    3
+
+    
+
+*** Nested lambda functions
+
+    This is a nice way of working that you will need to master at some
+    point.
+
+    Once you start to properly work via functional programming this
+    will come natural.
+
+    Here an example that iterates across all of the hashtables of the
+    hashtables and performs operations on them.
+
+    #+begin_src java :results output raw :classname NestedLambda :results drawer
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;    
+
+class NestedLambda {
+    public static void main(String args[]) {
+        Map<String, Map<String, Integer>> map = new HashMap<>();
+
+	Map<String, Integer> map2 = new HashMap<>();
+
+	Map<String, Integer> map3 = new HashMap<>();	
+
+	map2.put("a",1); // add the desired value
+	map2.put("b",2); // add the desired value
+	map2.put("c",3); // add the desired value
+	map2.put("d",4); // add the desired value
+
+
+	map3.put("e",5); // add the desired value
+	map3.put("f",6); // add the desired value
+	map3.put("g",7); // add the desired value
+	map3.put("h",8); // add the desired value	
+
+	map.put("hello", map2);
+	map.put("balloon", map3);
+
+ 	map.values().stream()
+	    .forEach(d -> d.entrySet().stream().forEach(m -> System.out.println(m.getValue())));
+
+	// note d is easily accessible in the second stream
+ 	map.values().stream()
+	    .forEach(d -> d.entrySet().stream().forEach(m -> d.put(m.getKey(), 0 )));	
+
+ 	map.values().stream()
+	    .forEach(d -> d.entrySet().stream().forEach(m -> System.out.println(m.getValue())));
+    }
+}
+    #+end_src 
+
+    #+RESULTS:
+    :results:
+    e
+    f
+    g
+    h
+    a
+    b
+    c
+    d
+    0
+    0
+    0
+    0
+    0
+    0
+    0
+    0
+    :end:
+
+    
 *** TODO data management libraries                                 :noexport:
 
     Have as well still to understand what libraries are available for
@@ -2876,7 +2998,14 @@ enum Apple {
 				// constants would then refer to such
 				// a constructor
 
-    int getPrice() { return price; }
+    int getPrice() { return price; } // so note how you can define
+				     // methods that you can use on
+				     // enum objects. In fact enum is
+				     // a special type of
+				     // class. I.e. also enum are
+				     // obejcts such that everything
+				     // falls back into the frist
+				     // class citizens of the app.
 }
 class EnumDemo3 {
     public static void main(String args[])
@@ -2907,6 +3036,13 @@ class EnumDemo3 {
 
 ** TODO Autoboxing     
 
+   Have to read it. It is important cause it happens multiple times
+   that you have Objects you work with that you need to compare with
+   primitives.
+
+   This essentially because most of the data-structures in Java cannot
+   store primitives but they rather have to work with the Objects
+   counterparties of them. 
 
 ** Generics
 
@@ -3599,7 +3735,6 @@ System.out.println(String.format("Found %d names", startsWithN.size()));
    #+end_src 
    
 
-   
 ** Java Beans
 
    You will have to make proper notes about it at some later
@@ -3811,6 +3946,7 @@ Test ob = new Test(15, 20);
   Note that when Garbage collection is performed depend on the
   different Java run-times etc.
         
+
 
 * Packages
 
@@ -4087,19 +4223,6 @@ LOGGER.setLevel(Level.INFO);
     Make sure this is the case in your team.
 
 
-** TODO Hiberante
-
-   Check at it. Everybody talks about it.
-
-   The idea is to stay in the OOP logic when working with data tables
-   etc.
-
-   I must say that it is very funny to work with Java as it is not
-   simply another programming language. It is so far apart from Python
-   in the frameworks and ideas that it is a complete revolution in
-   terms of mental process.
-
-
 ** Project Lombok
 
    You can read more about it [[https://www.baeldung.com/intro-to-project-lombok][here]].
@@ -4117,13 +4240,26 @@ LOGGER.setLevel(Level.INFO);
    Nice as it also handles Logger and adds it to the class in case of
    need.
 
-
 *** TODO do documentation on lombok                                :noexport:
 
     So tlaked with Sergio. He confirmed me that the project is a thing
     and well used in the Java world.
    
-   
+
+** TODO Hiberante
+
+   Check at it. Everybody talks about it.
+
+   The idea is to stay in the OOP logic when working with data tables
+   etc.
+
+   I must say that it is very funny to work with Java as it is not
+   simply another programming language. It is so far apart from Python
+   in the frameworks and ideas that it is a complete revolution in
+   terms of mental process.
+
+
+    
 * Frameworks
 
 ** Collection Frameworks
@@ -4715,7 +4851,7 @@ interface Map.Entry<K,V>
      So if you =put()= into the hash-map two times the same key the
      second one will overwrite the entry of the first.
 
-     #+begin_src java :results output raw :classname MapsBasics
+     #+begin_src java :results output raw :classname MapsBasics :results drawer
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -4749,11 +4885,80 @@ class MapsBasics {
      #+end_src 
 
      #+RESULTS:
+     :results:
+     1
+     2
+     :end:
      1
      2
 
-    
+     Understand how to get all of the values of a map.
 
+     Note the importance of functional programming and
+     streams. Without it, it would be extremely cumbersome to work
+     with such data structures.
+
+     In such a way you come closer to a python development speed, even
+     though after 3 months I am still rather biased towards that
+     language. 
+     
+     #+begin_src java :results output raw :classname MapsValues :results drawer
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;    
+
+class MapsValues {
+    public static void main(String args[]) {
+        Map<String, Integer> map = new HashMap<>();
+
+	map.put("a",1); // add the desired value
+	map.put("b",2); // add the desired value
+	map.put("c",3); // add the desired value
+	map.put("d",4); // add the desired value	
+
+
+	System.out.println("My set of keys");
+	map.entrySet().stream()
+	    .forEach(d -> System.out.println(d.getKey()));
+
+	System.out.println("My set of keys - Method 2");
+	map.keySet().stream()
+	    .forEach(System.out::println);
+
+	System.out.println("My set of values");
+	map.entrySet().stream()
+	    .forEach(d -> System.out.println(d.getValue()));
+
+	System.out.println("My set of values - Method 2");
+	map.values().stream().forEach(System.out::println);
+    }
+}
+     #+end_src 
+
+     #+RESULTS:
+     :results:
+     My set of keys
+     a
+     b
+     c
+     d
+     My set of keys - Method 2
+     a
+     b
+     c
+     d
+     My set of values
+     1
+     2
+     3
+     4
+     My set of values - Method 2
+     1
+     2
+     3
+     4
+     :end:
 
 **** TreeMap
 
@@ -4796,10 +5001,163 @@ class MapsBasics {
    You can define the comporator yourself. 
 
 
+** Java Threading                                                  :noexport:
+
+   This is important as it allows to work with multiple threads in
+   Java.
+
+   This notes are based on [[https://www.iitk.ac.in/esc101/05Aug/tutorial/essential/threads/index.html][this source]].
+
+   As a sequential flow of control, a thread must carve out some of
+   its own resources *within a running program*.
+
+   For example, a thread must have its own execution stack and program
+   counter. The code running within the thread works only within that
+   context. Some other texts use execution context as a synonym for
+   thread.
+   
+*** High level timer API - used threads in the background but shields a bit the user
+
+    This is nice as it allows to easily work with threads.
+
+    You can see for instance the following program:
+
+    #+begin_src java :results output raw :classname Reminder :results drawer
+import java.util.Timer;
+import java.util.TimerTask;
+
+/**
+ ,* Simple demo that uses java.util.Timer to schedule a task 
+ ,* to execute once 5 seconds have passed.
+ ,*/
+
+public class Reminder {
+    Timer timer;
+
+    public Reminder(int seconds) {
+        timer = new Timer();
+        timer.schedule(new RemindTask(), seconds*1000);
+	
+    }
+
+    class RemindTask extends TimerTask {
+        public void run() {
+            System.out.println("Time's up!");
+            timer.cancel(); //Terminate the timer thread
+        }
+    }
+
+    public static void main(String args[]) {
+        new Reminder(5);
+	System.out.println("Task scheduled.");	
+	int i = 0;
+	while(i < 5){
+	    System.out.println("hello world");
+	    i++;
+	}	
+        
+    }
+}
+    #+end_src 
+
+    #+RESULTS:
+    :results:
+    Task scheduled.
+    hello world
+    hello world
+    hello world
+    hello world
+    hello world
+    Time's up!
+    :end:
+
+    So you see that while the timer schedule thread sleeps in the
+    background and triggers the task just upon task completion the
+    main program thread goes on in performing its standard things.
+
+    So this is the same concept as the one of Javascript that you
+    looked up in the recent past. You can check at that video in your
+    Javascripts notes as it was explaining asynchronous programming in
+    a very neat way and the ultimate concept is the same here.
+
+        
+
+*** 
 
 ** Streaming - check as well resource you have there on java 8     :noexport:
 
+** Mustache                                                        :noexport:
 
+   Mustache is a web framework  that is *logicless*.
+
+   That is important. It means that there are no if-else statements
+   nor for loops.
+
+   Note that how the framework actually works is then in the following
+   way:
+
+   - you define a template with your ={{}}= - i.e. the mustaches
+     containing your variables that you will pass to the template
+     dynamically. 
+
+   - you compile the framework.
+
+   Note then the following schema for using the framework.
+
+   #+begin_src plantuml :file ../../images/mustache.png :exports none :results drawer
+@startuml
+(*) -right-> "Create template in the form <b>MYNAME.mustache</b>"
+
+ -right->"Create a <b>MYNAME</b> class where you save the parameters 
+     you pass to the template.
+
+     The fields must be equivalent to the ones in the mustaches."
+
+ -right-> "Compile the mustache template"
+
+ -down-> "Execute the compiled mustache template passing it 
+           the necessary object containing the parameterized fields.
+
+	   Flush the results to a stringwriter.   
+	  "
+
+  --> (*)
+@enduml
+#+end_src
+
+#+RESULTS:
+:results:
+[[file:../../images/mustache.png]]
+:end:
+
+
+#+begin_export html
+ <img src="../../images/mustache.png" class="center">
+#+end_export
+
+Note that this is just the basics but it is sufficient to get an
+idea for the moment.
+
+What you are missing then is the following:
+
+- passing a list of objects. then if setting properly tags you will
+  generate a template containing all of the entries for the objects in
+  the list.
+
+  I guess it is therefore the way to do dynamic allocation etc. 
+
+- tags that are triggered just when you pass an empty list, a
+  non-existing key of a map, a false or null.
+
+  i.e. you trigger this generally to display info for the case of
+  abnormal events.
+
+- tags processing lambda function. I.e you can for instance use a
+  =Function<Object, Object>= and the result from it will be passed to
+  to the appropriate tag.
+
+You can read more of the above cases [[https://www.baeldung.com/mustache][here]]. Let's leave it for now. 
+   
 * On The RandomAcess Interface
 
   This is a quite fun interface. It is an *interface that implements

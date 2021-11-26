@@ -154,6 +154,7 @@ deployment.
 
    Next we will explore some build-tools in more depth. 
    
+
 * On Ant and Maven
 
    So I keep it short here but you can find in the book in the
@@ -231,6 +232,7 @@ features that an evolved build tool should provide:
 
    I will see in time if I agree or not with the above.
    
+
 * Gradle Syntax and Specifics
 
 
@@ -258,6 +260,7 @@ features that an evolved build tool should provide:
   Note that the DSL is written in Groovy. Given that this is a flare
   of Java, you can even extend the DSL language in plain Java.
   
+
 ** Gradle Conventions
 
    Gradle’s conventions are similar to the ones provided by Maven, but
@@ -298,6 +301,7 @@ features that an evolved build tool should provide:
    into this direction. It is for sure a topic to consider on the long
    term.
 
+
 ** On Ant and Maven Integration
 
    Note that Gradle fully supports Ant integration. For maven you
@@ -307,6 +311,7 @@ features that an evolved build tool should provide:
    You will probably not need it in the near future but keep it in
    mind should it become necessary.
    
+
 ** Continouos Delivery.
 
    Read the book that you recently downloaded.
@@ -485,6 +490,7 @@ groupTherapy
  gradle -q tasks --all
    #+end_src 
         
+
 ** Explore other available parameters
 
    this can be done through the =-h= tag as always.
@@ -609,6 +615,7 @@ dependencies {
     =compile= group. This group consists of all of the dependencies
     that are needed at compile time. 
 
+
 ** War Plug-in
 
    This is the plug-in for running your java web-applications.
@@ -645,6 +652,7 @@ dependencies {
 
      When you run ~gradle build~ you will have a packaged =.war=
      file. You can then run your webapplication with it.
+
 
 ** Running in an Embedded web-container
 
@@ -722,6 +730,238 @@ $ gradle wrapper
    Finally, note that you can costumize the wrapper to download the
    zipped gradle files from a specific location.
 
+
+** Gradle Configurations
+
+   We already encountered configurations in the notes above.
+
+   We will deep dive into them now.
+
+   Recall that the idea of configurations is to provide logical groups
+   through which you can scope your dependencies.
+   
+
+*** On Configuration
+
+    Configuration are an important concept in Gradle. They allow to
+    group a set of dependencies. So this is basically the most
+    classical stuff in computer science. A logical group to manage
+    things. 
+
+    The API for managing dependencies is the following:
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2021-11-19 172144.png" class="center">
+    #+end_export
+
+    Java plugin already provides /six configurations out of the box/:
+
+    - compile
+    - runtime
+    - testCompile
+    - testRuntime
+    - archives
+    - default
+
+    So basically you already saw most of these configurations in the
+    previous notes.
+
+    You can define a new configuration as follows:
+
+    #+begin_example
+configurations {
+ cargo { 
+ description = 'Classpath for Cargo Ant tasks.' 
+ visible = false
+ }
+}
+    #+end_example
+
+    *Limiting the visibility of this configuration to this project* is a
+    conscious choice in preparation for a multiproject setup.
+
+    There is then a section in the book that specfies how you can get
+    all of the dependencies for a particular configuration. Package
+    them into a =.war= get a specific container - say Tomcat-7x - and
+    run the =.war= into it. 
+
+
+** Gradle Dependencies Management
+
+   Note that when you set up a Gradle project there are multiple types
+   of dependencies you might need to create.
+
+   You can visualize the different, together with their discussion in
+   the book in the following table:
+   
+#+begin_export html
+ <img src="../../images/Screenshot 2021-11-23 180112.png" class="center">
+#+end_export
+
+   Note that each of the dependency types above is declared through a
+   /method of the dependency handler/ within the project =dependencies=
+   configuration block.
+
+   Note that each Gradle project comes out of the box with an instance
+   of a dependency block.
+
+
+*** 1. External Module Dependency
+
+    We start next with external module dependency, this represent a
+    dependency to a library/module *outside of the project hierarchy*.
+
+    Libraries in Java get distributed in the form of a JAR file. The
+    JAR file specification doesn’t require you to indicate the version
+    of the library. However, it’s common practice to attach a version
+    number to the JAR filename to identify a specific release (for
+    example, /spring-web-3.1.3.RELEASE.jar/).
+
+    This is good practice as you can then refer to a specific release
+    and you do not change the underlying library until a new release
+    where everything was properly tested. It helps you to think into
+    waves in this sense and to keep structure and stability to your
+    system.
+
+    In Ivy and Maven, dependency configuration is expressed through
+    an XML descriptor file.
+
+    The configuration consists of two parts: the /dependency identifiers/
+    plus their respective versions, and the /location of the binary
+    repositories/ (for example HTTP address).
+
+    Libraries can /define transitive dependencies/ as part of their
+    metadata. The dependency manager is smart enough to analyze this
+    information and resolve those dependencies as part of the retrieval
+    process.
+
+    Basically the idea is then the classical one.. you point to your
+    local and remote repositories, containing the =.jar= files with the
+    binary of your libraries that you can ultimately use for your
+    deployment. 
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2021-11-19 164656.png" class="center">
+    #+end_export
+
+*** Dependency Attributes
+
+    As mentioned it is common practice to properly track and
+    parameterize a dependency. This will allow to work in an ordered
+    and properly way.
+
+    In fact, when a dependency manager looks for a dependency it
+    locates it through the combination of its attributes.
+
+    In our projects it is standard just to work with the minimum
+    attributes - i.e. the dependency name. From the discussion above
+    it is clear though that much better can be achieved. 
+
+    The possible dependencies attributes are the following:
+
+    1. /group/: this identifies an organization, company or project.
+
+    2. /name/: this is the artifact name that uniquely describes the
+       depndency. For instance for the hibernate framework it could be
+       the ~hibernate-core~.
+
+    3. /version/: this tags the version of the specific dependency you
+       rely on. you should work with these. like this you keep stable
+       versions as reference and this will not change sporadically as
+       it is the current set-up where you never know where you
+       actually stay with the software that is out there.
+
+    4. /classifier/: this is used to distinguish artifacts with the
+       same /group/, /version/, /name/ - say for instance say library
+       but different runtime environment. Note, that it is not a too
+       big thing in Java due to the JVM and its very underlying
+       conceptual idea.
+
+*** Dependency Notation
+
+    As already mentioned in the previous notes you can specify the
+    dependencies in the following way:
+
+    #+begin_example
+dependecies {
+   configurationName depdencyNotation1, depdencyNotation2, ...
+}
+    #+end_example
+
+
+    Note how you specify the name of the configuration you want to
+    *assign* the dependencies to.
+
+    The depedencyNotation is expressed as follows:
+
+    #+begin_example
+org.hibernate:hibernate-core:3.6.3-Final
+    #+end_example
+
+*** Repositories used
+
+    It’s not uncommon for enterprise software to rely on open source
+    libraries. Many of these projects publish their releases to a
+    centrally hosted repository. One of the most widely used
+    repositories is =Maven Central=.
+
+    If Maven Central is the only repository your build relies on,
+    you’ve automatically created a single point of failure for your
+    system.
+
+    It’s not uncommon for enterprise software to rely on open source
+    libraries. Many of these projects publish their releases to a
+    centrally hosted repository. One of the most widely used
+    repositories is Maven Central.
+
+    If Maven Central is the only repository your build relies on,
+    you’ve automatically created a single point of failure for your
+    system.
+
+    You can avoid this situation by configuring your build to use
+    your own custom in-house repository, which gives you full control over
+    server availability. If you’re eager to learn about it, feel free to
+    directly jump to chapter 14, which talks about how to set up and use
+    open source and commercial repository managers like Sonatype Nexus and
+    JFrog’s Artifactory.
+
+    I skip this now as it is not key to this stage, you can then see
+    at some later stage if this is needed for your workspace. Good to
+    know about such things in any case.
+
+*** On customization of the dependecy graph
+
+    This is included at some point in the project.
+
+    =Metadata= is used to declare transitive dependencies for a
+    library. A dependency manager analyzes this information, builds a
+    dependency graph from it, and resolves all nested dependencies for
+    you.
+
+    Unfortunately, neither the metadata nor the repository guarantees
+    that any of the artifacts declared in the metadata actually exist,
+    are defined correctly, or are even needed. You may encounter
+    problems like missing dependencies, especially on repositories
+    that don’t enforce any quality control, which is a *known issue on
+    Maven Central*: also good to know.
+
+    Gradle allows for excluding transitive dependencies on any level
+    of the dependency graph. Alternatively, you can omit the
+    provided metadata and instate your own transitive dependency
+    definition. This is most likely what Dave was talking about
+    today.
+
+
+
+    
+
+    
+
+        
+   
+
+
+   
 ** Testing
 
    Recall the three types of tests:
@@ -779,6 +1019,7 @@ $ gradle wrapper
  <img src="../../images/Screenshot 2021-10-21 175028.png" class="center">
 #+end_export
 
+
 *** Automatic test detection
 
     Note that gradle automatically detects the tests in your projects
@@ -813,6 +1054,7 @@ gradle :repository:test
 #+begin_export html
  <img src="../../images/Screenshot 2021-10-22 093615.png" class="center">
 #+end_export
+
 
 *** Multiple Testing Frameworks
 
@@ -873,7 +1115,6 @@ project(':repository') {
 #+begin_export html
  <img src="../../images/Screenshot 2021-10-22 100802.png" class="center">
 #+end_export
-
 
 
 *** On running a subclass of tests
@@ -1077,6 +1318,7 @@ test {
     many of these features are implemented in your IDE but you get the
     gist of the idea should you ever want to do something with it.
     
+
 *** Parallel Execution
 
     This is as well an extension to the gradle test API. I write the
@@ -1108,12 +1350,50 @@ test {
  <img src="../../images/Screenshot 2021-10-22 111939.png" class="center">
 #+end_export
 
-** Better understand your work environment gradle build
 
-   That will not be easy. It is a very long build config with multiple
-   files calling each other.
 
-   So not that trivial and it will take some time to tackle it
-   down. Good to have that understanding at some point.
 
-   
+
+* Hands On
+
+  Ok so the above notes will help you to gain a high level overview of
+  gradle.
+
+  In this way you were able to understand at the high-level the
+  general structure and life-cycle of a Java project.
+
+  But as the germans always say: /übugng macht den Meister/.
+
+  So let's practice.
+
+  This is a good way to strat writing your Java projects and start to
+  gain your independence in that language.
+
+  Plus our testing and productive environment is too large to proper
+  understand the language. It is too complex to start it.
+
+  You have to gain the understanding of the Java environments bottom
+  up. You need a playground. There you can start to set up different
+  projects etc. 
+
+  In order to get my playground I installed gradle =7.1.1=, same
+  version we use for the productive env.
+
+  It is nice that in gradle you can set up a project with ~gradle
+  init~ command.
+
+  Then you can enter a few decisions and you will have your skeleton
+  for your project.
+
+  This is very similar to the way you set up spring projects with the
+  online spring initializer. So basically there is a tendency to work
+  in such a way in Java, and for freshies of the environment like me
+  it is ok - use it until you will be able to properly stand on your
+  feet.
+
+  So started a project. This is on your Desktop. Try to test the
+  Java-LSP on emacs seriously over there.
+
+  Start to write a parser application over there.
+
+    
