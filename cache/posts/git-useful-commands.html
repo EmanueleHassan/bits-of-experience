@@ -1,0 +1,193 @@
+<p>
+So here are some notes about some useful commands in git.
+</p>
+
+<p>
+I might start to use it again from the command line as magit in my
+emacs is dead slow on Windows OS.
+</p>
+
+<p>
+I read online that there are some fundamental issues with it on
+Windows.
+</p>
+
+<p>
+This is not the only program where I am experiencing some performance
+hiccup on Windows systems.
+</p>
+
+<p>
+I will switch back to Mac soon as it seems that here in the company
+they started to offer the possibility to have one. Have to wait a
+couple of months for it still as I have to wait for the migration of
+the IT systems to the cloud to have proper access to everything
+without having to manually make new auth-modules. 
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org4c4bda9" class="outline-2">
+<h2 id="org4c4bda9">On the many files you touch that you do not want to touch</h2>
+<div class="outline-text-2" id="text-org4c4bda9">
+<p>
+It is normal to make minor modifications to multiple files when you
+edit the files of a larger project.
+</p>
+
+<p>
+You enter here and there in a ton of files and especially if you use
+emacs it is easy to add a space or a new line because of the many
+shortcuts.
+</p>
+
+<p>
+So basically what you do then is just to stage the files you
+want. You then write your different commits for them.
+</p>
+
+<p>
+You then push to the origin.
+</p>
+
+<p>
+You then fetch from the origin and reset your local repo based on
+it.
+</p>
+
+<p>
+Like this you will have eliminated all of the minor modifications
+that were unintendended and you keep your commits clean.
+</p>
+
+<p>
+You can do that with the following command
+</p>
+
+<div class="highlight"><pre><span></span>  git fetch  <span class="c1"># will fetch the latest changes on the remote</span>
+  git reset --hard origin/master <span class="c1"># will set your local branch to match the representation of the remote just pulled down.</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgf485e7b" class="outline-2">
+<h2 id="orgf485e7b">On the right way to work and commit on git</h2>
+<div class="outline-text-2" id="text-orgf485e7b">
+<p>
+I also took the habit of making multiple commits per different logic
+chuncks of the modifications or as well for individual files.
+</p>
+
+<p>
+In such a way it is easier to keep track of your changes. You will
+read the different logical portions of your code and it will be easy
+for you to switch back to them.
+</p>
+
+<p>
+This is ultimately the way of working and thinking in git. You
+understand it by the default way git is implemented.
+</p>
+
+<p>
+You see that then if you rebase you rebase to some particular very
+well defined logical unit - and you keep your other future changes.
+</p>
+
+<p>
+Check at the following entry from <a href="https://stackoverflow.com/questions/46275070/why-do-i-get-conflicts-when-i-do-git-revert">this post here</a>.
+</p>
+
+<hr />
+
+<p>
+That's actually not what revert does. Revert doesn't "take you back
+to" that commit and pretend that subsequent commits didn't
+happen. It applies a logical negation of a single commit - and that
+commit alone - leaving subsequent commits in place. 
+</p>
+
+<p>
+Let's say you have some initial commit of some file - let's call it commit #1 for simplicity - and the file looks like this:
+</p>
+
+<pre class="example" id="orgc6a1797">
+One
+Two
+Three
+Four
+</pre>
+
+<p>
+Now let's say you have a commit #2 that changes one line:
+</p>
+
+<pre class="example" id="orgb10f912">
+One
+2
+Three
+Four
+</pre>
+
+<p>
+And finally, commit #3 that changes a different line:
+</p>
+
+<pre class="example" id="org5779316">
+One
+2
+Three
+4
+</pre>
+
+<p>
+If you try to revert commit #2, it will undo only the line changed
+in that commit, and leave the changes introduced in commit #3, so
+the result will be: 
+</p>
+
+<pre class="example" id="org36d0743">
+One
+Two
+Three
+4
+</pre>
+
+<p>
+Now, if there was a subsequent commit that had changed the same line
+as the commit that you're trying to revert, then you'll have a
+conflict. For example, let's say you have a commit #4 that also
+changed the second line: 
+</p>
+
+<pre class="example" id="org2d3915a">
+One
+TWO
+THREE
+4
+</pre>
+
+<p>
+Now if your HEAD is commit #4 and you try to revert commit #2, you
+will have a conflict. Revert expects to take second line back - to
+undo the changes made in commit #2. So it expects the second line to
+currently be 2, and it will then revert it to what it was in the
+previous commit, setting it to Two.
+</p>
+
+<p>
+However, that expectation was invalidated, since commit #4 had also
+changed it. So you have a conflict.
+</p>
+
+<p>
+If your goal isn't to revert at all, but to get back to commit #1
+and ignore all the changes that have gone on since then, then you
+want to reset instead of revert.
+</p>
+
+<pre class="example" id="org9138f87">
+git reset --hard 1 
+</pre>
+</div>
+</div>
