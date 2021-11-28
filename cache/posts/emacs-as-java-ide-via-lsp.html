@@ -1,0 +1,784 @@
+<p>
+So I will work quite a lot with Java in the next couple of years. So I
+have to properly set up a strong IDE and workflow for working in it.
+</p>
+
+<p>
+I know that the majority of the people do not think much of emacs in
+terms of IDE but since the language-server-protocol integrations I
+believe they can be as strong as more mainstream IDEs such as Visual
+Code out there. t.
+</p>
+
+<p>
+I even think that they can be better once you get into it
+enough. After a bit of research I am quite sure about the fact.
+</p>
+
+<p>
+In fact this was my experience with Python and now the step is simply
+to get ot that level of costumization with emacs. So here some notes
+on my way of making emacs a top environment for java and improve my
+productivity with it in the long-term.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org57fdaff" class="outline-2">
+<h2 id="org57fdaff">Resources</h2>
+<div class="outline-text-2" id="text-org57fdaff">
+<p>
+Look at the following <a href="https://code.visualstudio.com/blogs/2018/08/07/debug-adapter-protocol-website">blog entry</a> and <a href="https://microsoft.github.io/language-server-protocol/overviews/lsp/overview/">this entry</a>.
+</p>
+
+<p>
+There you will understand why emacs is nothing else than VS-code. So
+people that tell you that VS-code is a better IDE than emacs have
+obviously no idea how VS-code works in the background.
+</p>
+
+<p>
+Add to a perfect functioning IDE all of the major emacs mode that have
+little to no rival:
+</p>
+
+<ul class="org-ul">
+<li>org-mode</li>
+
+<li>magit</li>
+
+<li>projectile</li>
+
+<li>imenu</li>
+
+<li>hs-minor-mode</li>
+</ul>
+
+<p>
+etc. and you will soon get the reason why emacs is 10x better than any
+other workflow solution out there.
+</p>
+
+<p>
+Also note that you should not get confused. The underlying language
+servers that you install are running in localhost so that your code is
+never leaving your machine.
+</p>
+
+<p>
+You can in fact see in emacs the <code>pid</code> that they are running on as it
+is prompted in any source file where you are developing with the
+integration of the language server protocol.
+</p>
+
+<p>
+I tried then to find the process on my local laptop. On windows
+systems you can do that with the following command.
+</p>
+
+<div class="highlight"><pre><span></span>netstat -aon
+</pre></div>
+
+<p>
+Note that interestingly the process is listening on <code>0.0.0.0</code> for
+connections on <code>0.0.0.0</code> so actually anyone knowing the port and IP of
+my machine can connect to that language server. I was rather thinking
+more of a <code>127.0.0.1</code> solution as default to be honest.
+</p>
+
+<p>
+That said you can now explore the functionalities of the language
+server protocol and how the infor is displayed in the emacs UI.
+</p>
+
+<p>
+Check as well <a href="https://xpressrazor.wordpress.com/2020/11/04/java-programming-in-emacs/">this tutorial</a> that shows some basics functioning of
+java-lsp. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgb3375b7" class="outline-2">
+<h2 id="orgb3375b7">Find reference</h2>
+<div class="outline-text-2" id="text-orgb3375b7">
+<p>
+<code>lsp-find-references</code>:  For an object visualize where it is used in
+your project. I.e. it searches across all of your files in the
+project. You can then navigate across them in the usual way.
+</p>
+
+<p>
+Note that this si actually very similar to the ag-search you used to
+do through projectile. No big difference in this sense.
+</p>
+
+<p>
+you can either do it in this version or via
+<code>peek-reference</code>. understand which one of the both you like the
+most.
+</p>
+
+<p>
+note that you have understand the difference among reference and
+implementations when searching.
+</p>
+
+<p>
+you search for references for objects or variables.
+</p>
+
+<p>
+you search for implementations of classes and interfaces.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org51b5a0d" class="outline-2">
+<h2 id="org51b5a0d">peek references</h2>
+<div class="outline-text-2" id="text-org51b5a0d">
+<p>
+basically the same as finding by reference. it will display more
+information in the same buffer though.
+</p>
+
+<p>
+you will not just see the references such that you can hover there
+and jump to the statement but rather you will have two frames side
+by side where hovering over one statement it will already display
+the code for that piece of information.
+</p>
+
+<p>
+I might even like this better. it is not bad as you see on the code
+and then if you select it you actually jump to that piece of code as
+in the normal way. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org6cf0143" class="outline-2">
+<h2 id="org6cf0143">Refactor</h2>
+<div class="outline-text-2" id="text-org6cf0143">
+<p>
+when you call the rename option through the <code>lsp</code> server you should
+actually rename all of the variables across all of the source files
+in the project. this is actually not happening in my case so there
+must still be some minor error.
+</p>
+</div>
+
+<div id="outline-container-org9a98bad" class="outline-3">
+<h3 id="org9a98bad"><span class="todo TODO">TODO</span> check if it refactors across projects</h3>
+</div>
+</div>
+
+
+<div id="outline-container-org1ce0ec6" class="outline-2">
+<h2 id="org1ce0ec6">Flycheck</h2>
+<div class="outline-text-2" id="text-org1ce0ec6">
+<p>
+Activate it. Then with <code>lsp-ui-flycheck-list</code> you will get a list
+with all of the errors and inconsistencies you have in your source
+files.
+</p>
+
+<p>
+that is good.
+</p>
+
+<p>
+Have to compare as well to the <code>sonarqube</code> that Sergio mentioned.
+</p>
+
+<p>
+Note that there are issues with the last stable release of Melpa. It
+is still not working. This is emacs. Have to deal with the dirty
+world of software development. Check at <a href="https://github.com/flycheck/flycheck/issues/1754">this thread</a> and implement
+that dirty workaround as it is more than 1 year that they are
+promising a stable release but nothing is moving. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org65b7694" class="outline-2">
+<h2 id="org65b7694">lsp format buffer</h2>
+<div class="outline-text-2" id="text-org65b7694">
+<p>
+reformat the buffer based on what the language server thinks it
+makes sense.
+</p>
+
+<p>
+<code>lsp-format-buffer</code>.
+</p>
+
+<p>
+not that recommendned. use different packages that are tailored to
+the language for doing code-formatting.
+</p>
+
+<p>
+usually it works better. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org13edc1b" class="outline-2">
+<h2 id="org13edc1b">Projectile</h2>
+<div class="outline-text-2" id="text-org13edc1b">
+<p>
+this is strong as it gives you all of the options to navigate your
+project and code.
+</p>
+
+<p>
+i.e. jump to the test files etc.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org77f4d58" class="outline-2">
+<h2 id="org77f4d58">Debugging</h2>
+<div class="outline-text-2" id="text-org77f4d58">
+<p>
+have to properly set-up the dap debugger. it looks as broken right
+now.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org3980fb5" class="outline-2">
+<h2 id="org3980fb5">class hierarchy</h2>
+<div class="outline-text-2" id="text-org3980fb5">
+<p>
+you can visualize the class hierachy with <code>lsp-ui-imenu</code>
+</p>
+
+<p>
+this is essentially the same information as you can have with the
+<b>lsp-header-breadcrumb</b> below.
+</p>
+
+<p>
+so I would not recommend it too much.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org59e8c56" class="outline-2">
+<h2 id="org59e8c56">lsp-header-breadcrumb</h2>
+<div class="outline-text-2" id="text-org59e8c56">
+<p>
+search it. will show you on the top of your buffer the hierarchy for
+where you are at in your buffer.
+</p>
+
+<p>
+i.e. what file, in which class etc.
+</p>
+
+<p>
+this will adapt as you cycle through your code and it should help
+you a bit to keep the visibility over your entire code. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org8345b96" class="outline-2">
+<h2 id="org8345b96">Project Root</h2>
+<div class="outline-text-2" id="text-org8345b96">
+<p>
+That is important as from there the lsp starts and make all of the
+connections.
+</p>
+
+<p>
+This will allow you to jump to variables and declarations at a
+project wide level.
+</p>
+
+<p>
+I managed to adjust the project root by removing the existing
+project root that I firstly selected in just a subspace of the
+working directory where just an application among the many was
+defined. This was not good as that application was using some gneral
+classes that were designed to be used across all of the applications
+and were therefore on a different path of the hierarchy that was not
+available through my project root.
+</p>
+
+<p>
+In this sense I had to adapt my project root. This was done in the
+following way.
+</p>
+
+<p>
+First you have to see and understand the location of your
+configuration file of your lsp-sessions. For this you can call the
+variable <code>lsp-session-file</code> by calling <code>C-h v</code>.
+</p>
+
+<p>
+Once you find such a location you can delete that file, close your
+emacs, restart it, navigate a source file of your project.
+</p>
+
+<p>
+You will be asked then to select the project root for your
+lsp. There you should not select the proposed root that will be
+inferred from the application specific <code>git</code> and <code>gradle</code> files but
+you rather select the option to choose the root of the project
+interactively. Then you can navigate to the real root of the project
+that includes all of the submodules.
+</p>
+
+<p>
+In such a way you should have a lsp server that is able to properly
+infer all of your relations for your entire project and you can jump
+to <b>implementations</b> and <b>definitions</b> for all of your methods,
+classes and variables across your entire projects.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org737e53f" class="outline-2">
+<h2 id="org737e53f">On checking the hierarchy and dependencies</h2>
+<div class="outline-text-2" id="text-org737e53f">
+<p>
+For visualizing the dependencies and get a general overview of a
+package I like to use the <code>lsp-treemacs-java-deps-list</code> function.
+</p>
+
+<p>
+There you can quickly visualize the pacakges structures and
+visualize the classes available in a given file together with the
+methods of them.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgfe4ec3f" class="outline-2">
+<h2 id="orgfe4ec3f">treemacs</h2>
+<div class="outline-text-2" id="text-orgfe4ec3f">
+<p>
+Note that this is a different module but I also like this a lot and
+the integration with lsp mode.
+</p>
+
+<p>
+It is nice cause you can see the hierarchy of the files that you are
+calling and get a general overview of how your projects are
+structured.
+</p>
+
+<p>
+Moreover it is nice that treemacs will follow you when jumping from
+one file to the next. Especially in very large projects with tons of
+files and repositories it is convenient.
+</p>
+
+<p>
+In such a way you will be able to visualize the anchestors of your
+file and explore what sits around that source file in the
+hierarchy. That is pretty much informative already and will help you
+to quickly make sense of your code.
+</p>
+
+<p>
+Note that in a similar way to lsp there is quite annoying story with
+the set up. I.e. once you select a root/workspace every time you
+open treemacs you will be prompted to that workspace no matter where
+you are working on your file-system.
+</p>
+
+<p>
+There are ways to deal with it. You can check your documentation
+<a href="https://github.com/Alexander-Miller/treemacs">online</a>. You can basically call <code>treemacs-edit-workspaces</code> and edit
+there your workspaces.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org7de489d" class="outline-2">
+<h2 id="org7de489d">Troubleshooting</h2>
+<div class="outline-text-2" id="text-org7de489d">
+<p>
+Look at this <a href="https://emacs-lsp.github.io/lsp-mode/page/troubleshooting/">troubleshooting</a> url when you have issues and want to
+debug stuff.  
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org4ba3567" class="outline-2">
+<h2 id="org4ba3567">Building and Testing</h2>
+<div class="outline-text-2" id="text-org4ba3567">
+<p>
+Ok that is not properly lsp-related but let's put it in here. Maybe
+I will then write some separate notes on projectile later.
+</p>
+
+<p>
+You have your build and test configuration set-up by David.
+</p>
+
+<p>
+You have to understand where the commands for such builds and push
+are.
+</p>
+
+<p>
+Then you can run your projects from emacs with the <code>projectile
+  run-project</code> command.
+</p>
+
+<p>
+You can even run the unit-root tests for your project by running
+<code>projectile test-project</code>.
+</p>
+
+<p>
+Working as a charm now. Just have to configure it with <code>gradle</code> for
+your actual project but then you are good to go.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgc373435" class="outline-2">
+<h2 id="orgc373435">Debugging</h2>
+<div class="outline-text-2" id="text-orgc373435">
+<p>
+Basically Debugging is based once more on a protocol that
+communicates with a server. In order to understand this properly
+check at <a href="https://code.visualstudio.com/blogs/2018/08/07/debug-adapter-protocol-website">this url</a>.
+</p>
+
+<p>
+So basically once more you are working with the same debugging
+features as in VS-code.
+</p>
+
+<p>
+Note that you can specify different debugger types that you want to
+work with. This in a similar way as in Eclipse.
+</p>
+
+<p>
+For my projects I am working with a remote Java application. For
+debugging that application I am launching it listening at port 8000
+for debugging.
+</p>
+
+<p>
+You can then specify then a dap-debugger that will try to
+instantiate a connection at that port.
+</p>
+
+<p>
+You can do that for instance by specifying the following template.
+</p>
+
+<div class="highlight"><pre><span></span>  <span class="p">(</span><span class="n">dap</span><span class="o">-</span><span class="n">register</span><span class="o">-</span><span class="n">debug</span><span class="o">-</span><span class="n">template</span>
+   <span class="s">&quot;localhost:8000&quot;</span>
+   <span class="p">(</span><span class="n">list</span> <span class="p">:</span><span class="n">type</span> <span class="s">&quot;java&quot;</span>
+    <span class="p">:</span><span class="n">request</span> <span class="s">&quot;attach&quot;</span>
+    <span class="p">:</span><span class="n">hostName</span> <span class="s">&quot;localhost&quot;</span>
+    <span class="p">:</span><span class="n">port</span> <span class="mi">8000</span><span class="p">))</span>
+</pre></div>
+
+<p>
+You can then enter the debugging modus via <code>dap-debug</code> and the hydra
+pop-up will come out. That is particularly useful as it will lock
+some keys that will be useful for debugging. You can then hide it or
+open it via <code>M-&lt;f5&gt;</code>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org15c034a" class="outline-2">
+<h2 id="org15c034a">Auto-completion</h2>
+<div class="outline-text-2" id="text-org15c034a">
+<p>
+Note that auto-completion is also working now. I think that before
+something was broken at configuration level.
+</p>
+
+<p>
+This is my experience with lsp. There are a lot of things going on
+and sometimes things just break.
+</p>
+
+<p>
+It is sensible once in a while to restart everything by deleting the
+<code>workspace</code> and the <code>.lsp-session-v1</code> file once in a while.
+</p>
+
+<p>
+Note that there is still a lot of confusion around that topic in
+lsp for emacs and the way that things are done there at UI level. In
+order to understand this, check <a href="https://github.com/emacs-lsp/lsp-java/issues/201">this</a>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org99b693b" class="outline-2">
+<h2 id="org99b693b">Note that it will take me some time to completely migrate to Emacs for Java development</h2>
+<div class="outline-text-2" id="text-org99b693b">
+<p>
+This because emacs is not the most easy way you start from scratch
+in a new environment. Especially for larger projects like this.
+</p>
+
+<p>
+In order to switch I will have to properly understand how <code>gradle</code>
+works at some point.
+</p>
+
+<p>
+Moreover, I will have to understand all of the testing suites that
+interface with Java and how to properly do the debugging in emacs.
+</p>
+
+<p>
+From what I could see it is nonetheless theoretically possible to
+eventually reach a stage with a much stronger development setting in
+emacs in comparison to standard IDEs.
+</p>
+
+<p>
+In the meanwhile while this process is ongoing check at the
+following notes for using more classical IDEs.
+</p>
+</div>
+
+
+<div id="outline-container-org98bcea0" class="outline-3">
+<h3 id="org98bcea0">On branch</h3>
+<div class="outline-text-3" id="text-org98bcea0">
+<p>
+One thing that irritates me for instance in the Eclipse IDE is that
+it does not automatically switch branch for my projects when I
+change branch via my shell.
+</p>
+
+<p>
+In order to change branch you need to right-click on the project
+and referesh it. Then the change of branch will be performed. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge17a90d" class="outline-3">
+<h3 id="orge17a90d">Debugging</h3>
+<div class="outline-text-3" id="text-orge17a90d">
+<p>
+For eclipse you can read <a href="https://www.vogella.com/tutorials/EclipseDebugging/article.html">this</a> documentation.
+</p>
+
+<p>
+Note that you can see the debugging options for which the
+local-server is started in your <code>LOCAL-tomcat</code> command file. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org473721e" class="outline-3">
+<h3 id="org473721e">On problems of references in Eclipse</h3>
+<div class="outline-text-3" id="text-org473721e">
+<p>
+Eclipse does not manage to properly get all of the relations when
+you git pull from the shell.
+</p>
+
+<p>
+so be aware and on the lookout for that. in that case you <code>clean</code>
+all of the workspace and start over from scratch.
+</p>
+
+<p>
+In order to do that <code>Project</code> -&gt; <code>Clean</code>. Then you follow the
+instructions there and you can rebuild and it should work.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org46c4093" class="outline-3">
+<h3 id="org46c4093">Note that in eclipse you have a way to write TODOs and search them then.</h3>
+<div class="outline-text-3" id="text-org46c4093">
+<p>
+Looks like an interesting feature. Check at it later. 
+</p>
+
+<p>
+Note that in many of my tasks are noted by the follwoing tags
+</p>
+
+<pre class="example" id="org25761b9">
+//TODO auto-generated method stub
+</pre>
+
+
+<p>
+as in the following example.
+</p>
+
+
+<div class="highlight"><pre><span></span>   <span class="nd">@Override</span>
+   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">insert</span><span class="p">()</span> <span class="p">{</span>
+       <span class="c1">// TODO Auto-generated method stub</span>
+
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+Note that such strings are auto-generated by the Eclipse IDE. It is
+interesting the tag <code>TODO</code>. This is a keyword through which you can
+manage your todos. It is interesting especially if you will have
+some searching feature then to organize such todos. 
+</p>
+
+<p>
+The <code>stub</code> keyword means that the method is void and has no
+return. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org11eef44" class="outline-3">
+<h3 id="org11eef44">Autogenerated doc-comment schema</h3>
+<div class="outline-text-3" id="text-org11eef44">
+<p>
+This is useful as it will give you the skeleton of the doc-comment
+and will save you quite some time.
+</p>
+
+<p>
+You have to find a substitute in emacs once you will get back to
+it. And yes it is a matter of time. It might take longer than
+expected though.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgebafac9" class="outline-3">
+<h3 id="orgebafac9">Broken Eclipse - not understanding project correctly - restart</h3>
+<div class="outline-text-3" id="text-orgebafac9">
+<p>
+Especially now at the beginning, without having a proper
+understanding of the entire thing, I am messing things up a bit.
+</p>
+
+<p>
+It seems that I am particularly capable of breaking the loop eclipse
+&lt;-&gt; gradle etc. In such a way your IDE will not be able to properly
+read the stuff in the project. You will have lots of errors because
+of missing dependecies etc.
+</p>
+
+<p>
+Have to fix it at some point. In any case I still plan to eventually
+migrate on my emacs for the development experience. Then I will be
+properly free.
+</p>
+
+<p>
+In any case for fixing these issues use the following procedere. 
+</p>
+
+<p>
+Delete the following from each gradle project
+</p>
+
+<ul class="org-ul">
+<li><code>.gradle</code> &#x2013; build stuff for each library</li>
+<li><code>.settings</code> &#x2013; eclipse settings</li>
+<li><code>.classpath</code> &#x2013; classpath info</li>
+<li><code>.project</code> &#x2013; project info</li>
+</ul>
+
+<p>
+on the top of the workspace <code>.metadata</code> (here eclipse saves workspace
+config).
+</p>
+
+<p>
+then basically you can close and reopen eclipse. there you have to
+specify your java exec, recall you have all of that stuff in your
+JavaServer repository.
+</p>
+
+<p>
+Then change your gradle version to 7.1.1.
+</p>
+
+<p>
+Then basically you are good to go. You click on import -&gt; import
+existing gradle project -&gt; you click on the repos.
+</p>
+
+<p>
+You wait until the built is done. -&gt; you build and deploy.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org29f6c10" class="outline-2">
+<h2 id="org29f6c10">ISSUES</h2>
+<div class="outline-text-2" id="text-org29f6c10">
+</div>
+<div id="outline-container-org8f9d8d9" class="outline-3">
+<h3 id="org8f9d8d9"><span class="done DONE">DONE</span> Issue 1 - LSP; Server not connecting when switching files</h3>
+<div class="outline-text-3" id="text-org8f9d8d9">
+<p>
+i.e. if you reference from one file to the other it works but you
+cannot change to a file with other methods such as projectile.
+</p>
+
+<p>
+it will not integrate directly with the lsp server.
+</p>
+
+<p>
+this is an error and issue that you need to fix if you want to work
+with it in a solid way.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7da406f" class="outline-3">
+<h3 id="org7da406f">Note that you manage all of the existing lsp-sessions</h3>
+<div class="outline-text-3" id="text-org7da406f">
+<p>
+with the <code>workspace</code> keyword. check at the the functions involving
+it in there.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org60b2c26" class="outline-3">
+<h3 id="org60b2c26">Solution</h3>
+<div class="outline-text-3" id="text-org60b2c26">
+<p>
+At the time the workaround was removing the highlighting at global
+level for lsp. Now it is starting to improve as an IDE.
+</p>
+</div>
+</div>
+</div>
