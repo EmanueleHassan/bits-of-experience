@@ -638,6 +638,26 @@ expression1 ? expression2 : expression3
     Both expression2 and expression3 are required to return the same
     type, which can’t be void.
 
+** Optional
+
+   The Optional object, which is the state-appointed /null deodorizer/
+   in Java allows you to deal with the case when the result may be
+   absent.
+
+   So it should be the result type in that case.
+
+   It protects us from getting a NullPointerException by accident and
+   makes it quite explicit to the reader that “no result found” is a
+   possible outcome.
+
+   Given a result type beloning to such a class we can inquire if an
+   object is present by using the ~isPresent()~ method, and we can obtain
+   the current value using its ~get()~ method.
+
+   Alternatively, we could suggest a substitute value , using the
+   method ~orElse()~.
+
+      
 ** Switch
 
    Note that this is the usual stuff. On the top of it you have a
@@ -1808,11 +1828,12 @@ value3 = "world";
 
      - An anonymous inner class, the old-fashioned way - meaning not
        functional - (but why would we?). This is for instance the
-       example you have in these notes in the =forEach= loop. 
+       example you have in these document in the =forEach= loop. 
       
      - A lambda expression, like the map() method
 
      - A method or constructor reference
+
 
 ** Abstract Classes
 
@@ -2431,7 +2452,6 @@ only after it’s fully baked, which removes the thread-safety concerns
 
     -> note the nice composability feature
 
-
 *** TODO write about functional interface
     
    *Important:* Now the above is all at the meta-level. In order to
@@ -2450,7 +2470,8 @@ only after it’s fully baked, which removes the thread-safety concerns
     functions.
 
     this is however not the only one. i.e. these are the typical
-    consumer functions of the many =java.util.function= calls etc. 
+    consumer functions of the many =java.util.function= calls etc.
+    
     
 *** TODO start by work through patterns                            :noexport:
 
@@ -2461,6 +2482,17 @@ only after it’s fully baked, which removes the thread-safety concerns
     and split a little bit the logic across the different components
     as mentioned in the previous point.  
 
+
+*** TODO functional programming - fluent functions etc.
+    
+    Note as well that there are difference among the ~forEach~ and the
+    ~map~ and other /fluent functions/.
+
+    This is a non-trivial difference that you need to understand
+    better if you truly want to understand functional programming in a
+    serious way at some point.
+
+    You can start reading into it in [[https://stackoverflow.com/questions/28319064/java-8-best-way-to-transform-a-list-map-or-foreach][here]].
     
 *** Syntax
 
@@ -2518,6 +2550,169 @@ friends.forEach(name -> System.out.println(name));
     *Design choice:* Keep unity in your code and forget about it. Always work with =()=
     for consistency reasons.
     
+*** More on Design Choices
+
+    *Keep this section in your mind. It will be of paramount
+    importance in order to write clean code*.
+    
+    The idea is that you should follow the DRY principle. I.e. you
+    should not repeat your code whenever possible as otherwise the
+    dimension will explode and it will not be easy to treat and
+    refactor.
+
+    Example write the following lambda expression that you can pass to
+    your fluent functions.
+
+    In such a way you will never replicate that ~name ->
+    name.startsWith(letter);~ bit of code.
+
+    #+begin_src java :results output raw 
+public static Predicate<String> checkIfStartsWith(final String letter) {
+return name -> name.startsWith(letter);
+}
+    #+end_src 
+
+    Note that in the above you do return a *function* as an
+    expression.
+
+    Note the following:
+
+    #+begin_quote
+    From within a lambda expression we can only access local variables
+    that are final or effectively final in the enclosing scope.
+
+    A lambda expression may be invoked right away, or it may be
+    invoked lazily or from multiple threads.
+    To *avoid race conditions*, the local variables we access in the
+    enclosing scope are not allowed to change once initialized. Any
+    attempt to change them will result in a compilation error.
+    #+end_quote
+
+**** Don't use Consumer or Predicates - wrap things into Functions
+
+     Note that the one above is a *bad example and not the way to
+     write clean code*.
+
+     I.e. you do not want to clutter your memory with static objects
+     that you refer to throughout your code.
+
+     So what you do in order to write clean code is the following -
+     you wrap the above lambda expressions into lambda functions.
+
+     Check the difference
+
+     #+begin_src java :results output raw :classname CleanCodeFunctional
+import java.util.function.Predicate;
+import java.util.List;
+import java.util.Arrays;
+
+class CleanCodeFunctional {
+
+    public static Predicate<String> checkIfStartsWith(final String letter) {
+	return name -> name.startsWith(letter);
+    }
+
+    public static void main(String arg[]) {
+    
+	final List<String> friends =
+	    Arrays.asList("Brian", "Nate", "Neal", "Raju", "Sara", "Scott");
+	final List<String> editors =
+	    Arrays.asList("Brian", "Jackie", "John", "Mike");
+	final List<String> comrades =
+	    Arrays.asList("Kate", "Ken", "Nick", "Paula", "Zach");
+
+	final long countFriendsStartN =
+	    friends.stream()
+	    .filter(checkIfStartsWith("N")).count();
+
+	final long countFriendsStartB =
+	    friends.stream()
+	    .filter(checkIfStartsWith("B")).count();
+
+	System.out.println(String.format("Number starting with N: %d", countFriendsStartN));
+	System.out.println(String.format("Number starting with B: %d", countFriendsStartB));	
+    }
+}
+     #+end_src 
+
+     #+RESULTS:
+     Number starting with N: 2
+     Number starting with B: 1
+     Number starting with N: 2
+     Number starting with B: 1
+     Number starting with N: 2
+     Number starting with B: 1
+     Number starting with N: 2
+     Number starting with B: 1
+
+     Much better and cleaner code is to write the following - function
+     wrapper
+
+     #+begin_src java :results output raw 
+Function<String, Predicate<String>> StartsWithLetter  =
+
+    (String Letter) -> {
+
+    Predicate<String> checkIfStartsWith = (String name) -> {
+	return name -> name.startsWith(Letter);
+    }
+
+    return checkIfStartsWith
+    }
+     #+end_src 
+
+     This can even be written in a more compact way as follows
+
+     #+begin_src java :results output raw 
+Function<String, Predicate<String>> StartsWithLetter =
+    (String letter) -> (String name) -> name.startsWith(letter);
+     #+end_src 
+
+     Note that the above is quite compact notation but it works as the
+     compiler will do the necessary job for you in the background.
+
+     This ultimately means that you can write the following
+     
+     #+begin_src java :results output raw :classname CleanCodeFunctional2
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.List;
+import java.util.Arrays;
+
+class CleanCodeFunctional2 {
+
+    public static void main(String arg[]) {
+    
+	final List<String> friends =
+	    Arrays.asList("Brian", "Nate", "Neal", "Raju", "Sara", "Scott");
+	final List<String> editors =
+	    Arrays.asList("Brian", "Jackie", "John", "Mike");
+	final List<String> comrades =
+	    Arrays.asList("Kate", "Ken", "Nick", "Paula", "Zach");
+
+	final Function<String, Predicate<String>> checkIfStartsWith =
+	    (String letter) -> (String name) -> name.startsWith(letter);	
+
+	final long countFriendsStartN =
+	    friends.stream()
+	    .filter(checkIfStartsWith.apply("N")).count();
+
+	final long countFriendsStartB =
+	    friends.stream()
+	    .filter(checkIfStartsWith.apply("B")).count();
+
+	System.out.println(String.format("Number starting with N: %d", countFriendsStartN));
+	System.out.println(String.format("Number starting with B: %d", countFriendsStartB));	
+    }
+}
+
+     #+end_src 
+
+     #+RESULTS:
+     Number starting with N: 2
+     Number starting with B: 1
+
+     
 
 *** Nice benefit of working in a functional way
 
@@ -2598,14 +2793,20 @@ friends.forEach(new Consumer<String>() {
     });
     #+end_src 
 
-    Note: the code above is cluttered. Simplify it. No need to
-    explicitely write the consumer. This is part of the
-    =java.util.function=. You can pass directly a lambda
+    Note: the code above is cluttered. It was the old way of doing
+    things with the all-too-familiar *anonymous inner class syntax*.
+    I.e. the consumer understand that the inner class is the function
+    it has to perform.
+    
+    Simplify it. No need to explicitely write the consumer. This is
+    part of the =java.util.function=. You can pass directly a lambda
     function. Then being Consumer a functionalInterface it will
     automatically fit the lambda function as consumer.
 
     Note just that being a consumer the lambda function does not have
     to produce a result.
+
+
 
 *** Stream
 
@@ -2626,6 +2827,11 @@ friends.forEach(new Consumer<String>() {
     available here under this paradigm. So double check and make sense
     of all of this.
     
+**** findfirst
+
+     Then the ~findFirst()~ method of the Stream class helped pick the
+     first value from that collection.
+
 *** Method Reference
 
     As mentioned in the notes regarding the @FunctionalInterface, what
@@ -2635,9 +2841,11 @@ friends.forEach(new Consumer<String>() {
     So in order to do that you can either use a =lambda= function
     which obviously uses such interface, or you can as well pass a
     /reference to a method where an implementation of a functional
-    interface/ is expected. Think for instance of
-    =String::toUpperCase=, such that the following two work in the
-    same way:
+    interface/ is expected.
+
+    Think for instance of =String::toUpperCase=, there a consumer
+    method is implicitely implemented, such that the following two
+    work in the same way:
 
     #+begin_src java :results output raw 
 // v1
@@ -2662,12 +2870,13 @@ friends.stream()
     that is not possible/ you would have to create a new method for it
     but then it is opinable if that makes sense - i.e. depends on the
     amount of transformation involved.
-    
 
-*** Behavior paramterization
+    This is a nice feature in Java.
 
-    This is a nice feature in Java. You can pass functions to the
-    lambda expressions in the following way:
+    You can find two others examples below.
+
+    You can pass functions to the lambda expressions in the following
+    way:
 
     #+begin_src java :results output raw :classname PassFunction :results drawer
 import java.util.List;
@@ -2795,8 +3004,7 @@ class MyTest {
 
 
      Note that you can refer to the list
-
-        
+     
 
 *** Filter clause
 
@@ -2827,6 +3035,22 @@ class FilterFunction {
     3
     3
 
+
+*** IfPresent and ifPresentOrElse
+
+    The two are interesting methods to deal in a fucntional way with
+    =Optional= objects. See your notes above.
+
+    #+begin_src java :results output raw 
+opt.ifPresentOrElse(
+   value -> System.out.println("Found: " + value),
+   () -> System.out.println("Not found")
+);
+    #+end_src 
+
+*** TODO Collect                                                   :noexport:
+
+    
     
 
 *** Nested lambda functions
@@ -2901,18 +3125,125 @@ class NestedLambda {
     0
     :end:
 
+
+*** Callback Interface - Fusion with Functional Interface
+
+**** Idea of coupling a callback Interface with Functional Programming
+
+     #+begin_src java :results output raw :classname MyTestFunctional
+class MyTestFunctional {
+
+    // public interface
+    @FunctionalInterface
+    public static interface ICallback {
+	public void hello();
+
+	default public void world(){
+	    System.out.println("hello world");
+	};
+
+    };
+
+    private static void myGenericMethod(ICallback callback, Integer i){
+	//consider checking if runnable != null to avoid NPE
+
+	if (i % 2 == 0) 
+	    callback.hello();
+	else
+	    callback.world();
+	
+    }      
     
-*** TODO data management libraries                                 :noexport:
+    public static void main(String arg[]) {
 
-    Have as well still to understand what libraries are available for
-    data management in Java. Explore =poi=. Understand what other
-    libraries are available for managing data frames etc.
+	Integer i = 0;
 
+	while (i < 5){
+	    
+	    myGenericMethod(() -> {
+		    //do something fancy
+		    System.out.println("baubab"); // implements the functional interface
+		}, i);
 
-*** TODO understand better the functionalInterface                 :noexport:
+	    i++;
+	} 
+    }
+}
 
+     #+end_src 
+
+     #+RESULTS:
+     baubab
+     hello world
+     baubab
+     hello world
+     baubab
+
+     Note now that if you are to add a third method in the callback
+     above it would not be a functional interface anymore, and you
+     could not apply the lambda function logic as here.
+
+**** Test 2 - Note the parameter passing syntax. Were tricked by it once
+
+     #+begin_src java :results results raw  :classname MySumTest
+class MySumTest {
+
+    // public interface
+    @FunctionalInterface
+    public static interface ICallback {
+	public void sum(Integer i);
+
+	default public void world(){
+	    System.out.println("hello world");
+	};
+
+    };
+
+    private static void myGenericMethod(ICallback callback, Integer i, Integer y){
+
+	//consider checking if runnable != null to avoid NPE
+	if (y % 2 == 0){
+	    callback.sum(i);
+	}
+	else{
+	    callback.world();
+		}
+    }      
     
-    
+    public static void main(String arg[]) {
+
+	Integer i = 0;
+
+	while (i < 5) {
+	    myGenericMethod((x) -> {
+		    System.out.println(x * x); // implements the functional interface
+		}, 2, i);
+
+	    i++;
+	    
+	}
+    }
+}
+
+     #+end_src 
+
+     #+RESULTS:
+     4
+     hello world
+     4
+     hello world
+     4
+
+     So you understand now how to couple them with arguments.
+
+     You pass to your functionalInterface a lambda function. Then you pass
+     the other parameters in the standard way.
+
+     So note that the above myGenericMethod is nothing else than a
+     normal fucntion. It has nothing to do with a stream etc. You just
+     pass to the callback interface a lambda funciton.
+
+
 ** enumerations
 
    Created using ~enum~.
@@ -3034,7 +3365,8 @@ class EnumDemo3 {
    Cortland costs 8 cents.
 
 
-** TODO Autoboxing     
+   
+** TODO Autoboxing                                                 :noexport:
 
    Have to read it. It is important cause it happens multiple times
    that you have Objects you work with that you need to compare with
@@ -3043,6 +3375,7 @@ class EnumDemo3 {
    This essentially because most of the data-structures in Java cannot
    store primitives but they rather have to work with the Objects
    counterparties of them. 
+
 
 ** Generics
 
@@ -4142,7 +4475,6 @@ import pkg1[.pkg2].(classname|*);
 
    You can then refer to the specfic class simply by name after you
    imported it correctly.
-
     
 ** Standard Classes
 
@@ -4167,7 +4499,7 @@ import pkg1[.pkg2].(classname|*);
 import java.util.logging.Logger;
 
 // assumes the current class is called MyLogger
-private final static Logger LOGGER = Logger.getLogger(<package>);
+private final static Logger LOGGER = Logger.getLogger(<ClassName>.class.getname());
     #+end_src 
 
     What the above does is actually to implement a hierarchy of
@@ -5546,6 +5878,20 @@ package java.lang.applet;
   to it at some point when you have time. 
    
 
+* Polymorphism
+
+  Overridden methods are another way that Java implements the “one
+  interface, multiple methods” aspect of polymorphism.
+
+  Part of the key to successfully applying polymorphism is understanding
+  that the superclasses and subclasses form a hierarchy which moves from
+  lesser to greater specialization.  Used correctly, the superclass
+  provides all elements that a subclass can use directly. It also
+  defines those methods that the derived class must implement on its
+  own. This allows the subclass the flexibility to define its own
+  methods, yet still enforces a consistent interface.
+  
+
 * Encapsulation
 
 
@@ -5735,20 +6081,6 @@ class B extends A { // ERROR! Can't subclass A
     #+end_src 
     
 
-* Polymorphism
-
-  Overridden methods are another way that Java implements the “one
-  interface, multiple methods” aspect of polymorphism.
-
-  Part of the key to successfully applying polymorphism is understanding
-  that the superclasses and subclasses form a hierarchy which moves from
-  lesser to greater specialization.  Used correctly, the superclass
-  provides all elements that a subclass can use directly. It also
-  defines those methods that the derived class must implement on its
-  own. This allows the subclass the flexibility to define its own
-  methods, yet still enforces a consistent interface.
-  
-
 * Java Application
 
 ** On WAR
@@ -5776,12 +6108,17 @@ class B extends A { // ERROR! Can't subclass A
    system. Can be a package dependency, a bytecode app etc. =war= is
    the entire bundle.
    
-#+begin_export html
- <img src="../../images/strucutre.png" class="center">
-#+end_export
+   #+begin_export html
+    <img src="../../images/strucutre.png" class="center">
+   #+end_export
 
-   
-   
+   So your app is deployed as =.war= and underneath you might refer to
+   =.jar= that package your libraries.
+
+   It is important always to understand where your packaged libraries
+   are stored on your file system. In such a way it will be possible
+   for you to understnad the dependency structure and see if your
+   build and deployment well functioned.
    
 * On Java Persistence API - JPA
 
@@ -5881,5 +6218,9 @@ class B extends A { // ERROR! Can't subclass A
   so this is basically the logic of java but you see it is pretty
   rough and not that nice. 
 
+** TODO data management libraries                                  :noexport:
 
+   Have as well still to understand what libraries are available for
+   data management in Java. Explore =poi=. Understand what other
+   libraries are available for managing data frames etc.
 
