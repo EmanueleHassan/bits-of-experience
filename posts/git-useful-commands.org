@@ -56,6 +56,7 @@ git fetch  # will fetch the latest changes on the remote
 git reset --hard origin/master # will set your local branch to match the representation of the remote just pulled down.
   #+end_src
 
+
 * On the right way to work and commit on git
   
   I also took the habit of making multiple commits per different logic
@@ -148,6 +149,45 @@ git reset --hard origin/master # will set your local branch to match the represe
   #+end_example
 
 
+* On staging and committing different parts of different files separately
 
-  
-  
+  This is an important concept that relates to the way git commits
+  work as seen before.
+
+  So far I was rather clumsy in my commits... meaning that I was
+  either committing entire file edits or nothing. This was fine as
+  pure software development was not my primary task.
+
+  Things are slowly changing such that it is important to adjust to
+  the new conditions.
+
+  Now, when working on projects and edits that last for multiple days
+  you might have to add piece of code to try things out that is not
+  really beneficial for the ultimate solution. The question is
+  then... can you commit that part of the code separately. In such a
+  way it will be possible to split the commits and potentially revert
+  to edits previously made without having to unwind all of the trial
+  and error crap that you used in the code.
+
+  In git you can do that as follows:
+
+  #+begin_src sh
+  git add --patch
+  #+end_src
+
+  Then git will start asking you interactively if you want to stage
+  different edits within a file or not.
+
+  This is not the most user friendly way to do that. Check out [[https://filip-prochazka.com/blog/git-commit-only-parts-of-a-file][this
+  url]] in this sense.
+
+  Note that the point made in the comment is correct. Once you are set
+  up with your CI pipeline things will not look that linear. But leave
+  that reasoning and solution finding for a later timepoint.
+
+  Note finally that magit - your emacs - tool is best suited for
+  performing this task. You never noticed / never thought about
+  it. But there basically the file is already split in the different
+  hunks of edits. You can then stage the different as usual by going
+  to the relevant hunk and pressing =s=, from there on is your very
+  classical workflow so nothing new under the sun. 

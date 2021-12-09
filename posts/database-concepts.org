@@ -459,7 +459,6 @@ VALUES (value1, value2, value3, ...);
    So generally you can always use =[]=. There seems not be
    consistency in the team. Both ways are used.
 
-
 ** WITH
 
    Syntax
@@ -495,5 +494,81 @@ SELECT ...
    #+end_src 
 
    
+** Alter Statement
+
+   In such a way it is possible to add, delete or modify columns in an
+   existing table.
+
+   #+begin_src sql
+ALTER TABLE table_name
+ADD column_name datatype;
+   #+end_src
 
    
+** Create
+
+   Here the syntax
+
+   #+begin_src sql
+    CREATE TABLE Mytable.MyName (
+        columnName varchar(128),
+        columnName2 varchar(256),
+        columnName3 float
+    );
+   #+end_src
+   
+** Some lower level stuff
+
+   It will be important at some point to check what is going on with
+   your database and what you are performing in there at a particular
+   moment.
+
+   Got this query somewhere.... not working cause I have no permission
+   at the moment. Go back to it at some point.
+
+   #+begin_src sql
+SELECT des.session_id ,
+des.status ,
+OBJECT_NAME(dest.objectid, der.database_id) AS OBJECT_NAME ,
+SUBSTRING(dest.text, der.statement_start_offset / 2,
+( CASE WHEN der.statement_end_offset = -1
+THEN DATALENGTH(dest.text)
+ELSE der.statement_end_offset
+END - der.statement_start_offset ) / 2)
+AS [executing statement] ,
+des.login_name ,
+des.[HOST_NAME] ,
+der.blocking_session_id ,
+DB_NAME(der.database_id) AS database_name ,
+der.command ,
+des.cpu_time ,
+des.reads ,
+des.writes ,
+dec.last_write ,
+des.[program_name] ,
+der.wait_type ,
+der.wait_time ,
+der.last_wait_type ,
+der.wait_resource ,
+CASE des.transaction_isolation_level
+WHEN 0 THEN 'Unspecified'
+WHEN 1 THEN 'ReadUncommitted'
+WHEN 2 THEN 'ReadCommitted'
+WHEN 3 THEN 'Repeatable'
+WHEN 4 THEN 'Serializable'
+WHEN 5 THEN 'Snapshot'
+END AS transaction_isolation_level ,
+
+
+
+deqp.query_plan
+FROM sys.dm_exec_sessions des
+LEFT JOIN sys.dm_exec_requests der
+ON des.session_id = der.session_id
+LEFT JOIN sys.dm_exec_connections dec
+ON des.session_id = dec.session_id
+CROSS APPLY sys.dm_exec_sql_text(der.sql_handle) dest
+CROSS APPLY sys.dm_exec_query_plan(der.plan_handle) deqp
+where des.session_id <> @@spid
+   #+end_src
+
