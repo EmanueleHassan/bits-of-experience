@@ -1,0 +1,110 @@
+<p>
+So here are some notes on concepts you have to use when working in a
+proper OOP way.
+</p>
+
+<p>
+Once upon a time, I had written some notes about major OOP
+concepts. Unfortunately it got lost. Learn your lesson from it as this
+is a real pity.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org58993cb" class="outline-2">
+<h2 id="org58993cb">Callback Methods</h2>
+<div class="outline-text-2" id="text-org58993cb">
+<p>
+So the basic idea is to create an interface with the methods that
+the callback will leverage.
+</p>
+
+<p>
+Then basically depedning on the object that will implement that
+intereface you will fallback to different implementations of it.
+</p>
+
+<p>
+Check as well at this event. <a href="https://www.tutorialspoint.com/Callback-using-Interfaces-in-Java">Equally good - if not better</a>. 
+</p>
+
+<p>
+Say for instance the following
+</p>
+
+<div class="highlight"><pre><span></span>  <span class="c1">// Java program to demonstrate callback mechanism</span>
+  <span class="c1">// using interface is Java</span>
+
+  <span class="c1">// Create interface</span>
+  <span class="kn">import</span> <span class="nn">java.util.Scanner</span><span class="p">;</span>
+  <span class="kd">interface</span> <span class="nc">STax</span> <span class="p">{</span>
+      <span class="kt">double</span> <span class="nf">stateTax</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Implementation class of Punjab state tax</span>
+  <span class="kd">class</span> <span class="nc">Punjab</span> <span class="kd">implements</span> <span class="n">STax</span> <span class="p">{</span>
+      <span class="kd">public</span> <span class="kt">double</span> <span class="nf">stateTax</span><span class="p">()</span>
+      <span class="p">{</span>
+	  <span class="k">return</span> <span class="mf">3000.0</span><span class="p">;</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Implementation class of Himachal Pardesh state tax</span>
+  <span class="kd">class</span> <span class="nc">HP</span> <span class="kd">implements</span> <span class="n">STax</span> <span class="p">{</span>
+      <span class="kd">public</span> <span class="kt">double</span> <span class="nf">stateTax</span><span class="p">()</span>
+      <span class="p">{</span>
+	  <span class="k">return</span> <span class="mf">1000.0</span><span class="p">;</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="kd">class</span> <span class="nc">TAX</span> <span class="p">{</span>
+      <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span>
+	  <span class="kd">throws</span> <span class="n">ClassNotFoundException</span><span class="p">,</span> <span class="n">IllegalAccessException</span><span class="p">,</span> <span class="n">InstantiationException</span>
+      <span class="p">{</span>
+	  <span class="n">Scanner</span> <span class="n">sc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Scanner</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">in</span><span class="p">);</span>
+	  <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Enter the state name&quot;</span><span class="p">);</span>
+	  <span class="n">String</span> <span class="n">state</span> <span class="o">=</span> <span class="n">sc</span><span class="p">.</span><span class="na">next</span><span class="p">();</span> <span class="c1">// name of the state</span>
+
+	  <span class="c1">// The state name is then stored in an object c</span>
+	  <span class="n">Class</span> <span class="n">c</span> <span class="o">=</span> <span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+
+	  <span class="c1">// Create the new object of the class whose name is in  c</span>
+	  <span class="c1">// Stax interface reference is now referencing that new object</span>
+	  <span class="n">STax</span> <span class="n">ref</span> <span class="o">=</span> <span class="p">(</span><span class="n">STax</span><span class="p">)</span><span class="n">c</span><span class="p">.</span><span class="na">newInstance</span><span class="p">();</span>
+
+	  <span class="cm">/*Call the method to calculate total tax</span>
+<span class="cm">	    and pass interface reference - this is callback .</span>
+<span class="cm">	    Here, ref may refer to stateTax() of Punjab or HP classes</span>
+<span class="cm">	    depending on the class for which the object is created</span>
+<span class="cm">	    in the previous step</span>
+<span class="cm">	  */</span>
+
+	  <span class="n">calculateTax</span><span class="p">(</span><span class="n">ref</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="kd">static</span> <span class="kt">void</span> <span class="nf">calculateTax</span><span class="p">(</span><span class="n">STax</span> <span class="n">t</span><span class="p">)</span>
+      <span class="p">{</span>
+	  <span class="c1">// calculate central tax</span>
+	  <span class="kt">double</span> <span class="n">ct</span> <span class="o">=</span> <span class="mf">2000.0</span><span class="p">;</span>
+
+	  <span class="c1">// calculate state tax</span>
+	  <span class="kt">double</span> <span class="n">st</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="na">stateTax</span><span class="p">();</span>
+	  <span class="kt">double</span> <span class="n">totaltax</span> <span class="o">=</span> <span class="n">st</span> <span class="o">+</span> <span class="n">ct</span><span class="p">;</span>
+
+	  <span class="c1">// display total tax</span>
+	  <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Total tax =&quot;</span> <span class="o">+</span> <span class="n">totaltax</span><span class="p">);</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+
+<p>
+Note that in your code - for instance in the case of the zipParser
+you use this concept coupled with the one of functional
+programming.
+</p>
+
+<p>
+I.e. your callback interface is implemented directly via functional
+programming and it is never explicitely written anywehere.
+</p>
+</div>
+</div>

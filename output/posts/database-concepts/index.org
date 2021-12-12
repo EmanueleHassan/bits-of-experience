@@ -1,0 +1,584 @@
+  #+BEGIN_COMMENT
+.. title: Database Concepts
+.. slug: database-concepts
+.. date: 2021-09-18 17:11:47 UTC+01:00
+.. tags: Data
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+#+end_export
+
+So in my new job role there is gonna be quite some SQL so here some
+notes on some important DB concepts.
+
+Time to refresh, since in the last of couple of years your focus was
+not on pure SQL.
+
+So for that - what could be better than listening to the [[https://www.youtube.com/c/GhislainFournysLectures/playlists][good old
+Ghislain]]?
+
+I guess that with a couple of recordings you should have a new correct
+mental framework in order to fill up your gaps and that will you put
+very high to speed on relational part of the things.. This guy works
+at a high level but he does it in a good way that I always enjoyed.
+
+{{{TEASER_END}}}
+
+* Datbase Partitioning
+
+  This sections notes are based on: [[https://www.digitalocean.com/community/tutorials/understanding-database-sharding][this]].
+
+  In the vertical partition you split by column. In horizontal you
+  have different tables with the same schema saved over different
+  instances. So your database is in fact distributed.
+
+#+begin_export html
+ <img src="../../images/db_partitioning.png" class="center">
+#+end_export
+
+** Database Sharding
+
+   Basically as mentioned this is /horizontal partitioning/.
+
+   Database shards exemplify a shared-nothing architecture. This means
+   that the shards are autonomous; they don’t share any of the same data
+   or computing resources.
+
+   Oftentimes, sharding is implemented at the *application level*,
+   meaning that the application includes code that defines which shard
+   to transmit reads and writes to. However, some database management
+   systems have sharding capabilities built in, allowing you to
+   /implement sharding directly at the database level/.
+
+   Note the following *reasons for sharding*:
+
+   First and foremost you scale out with it. This is essentially the
+   idea of the Big Data frameworks that you saw in your multiple
+   classes at University time. 
+
+   #+begin_quote
+Another reason why some might choose a sharded database architecture
+is to *speed up query response times*. When you submit a query on a
+database that hasn’t been sharded, it may have to search every row in
+the table you’re querying before it can find the result set you’re
+looking for. For an application with a large, monolithic database,
+queries can become prohibitively slow. By sharding one table into
+multiple, though, queries have to go over fewer rows and their result
+sets are returned much more quickly.
+   #+end_quote
+
+   As a final reason the article mentions this one:
+
+   #+begin_quote
+Sharding can also help to make an application more reliable by
+mitigating the impact of outages. If your application or website
+relies on an unsharded database, an outage has the potential to make
+the entire application unavailable. With a sharded database, though,
+an outage is likely to affect only a single shard. Even though this
+might make some parts of the application or website unavailable to
+some users, the overall impact would still be less than if the entire
+database crashed.
+   #+end_quote
+
+   I mean to be honest I think there are more elegant solutions for
+   the above. It is a bit a forced point but I list it nonetheless in
+   here.
+
+   Note that there are as well quite some concepts as mentioned on the
+   referred source above that speaks counter the sharding idea.
+
+   Then for instance one classical sharding possibility is the
+   following:
+   
+#+begin_export html
+ <img src="../../images/db_key_sharding.png" class="center">
+#+end_export
+
+   Note that the above is just one possibility among the many sharding
+   possibilities.
+   
+
+* Linked Servers
+
+  These enable you to implement distributed databases that can fetch
+  and update data in other databases.
+
+  They are for instance a good solution in the scenarios where you
+  need to implement database sharding without need to create a custom
+  application code or directly load from remote data sources.
+
+  So basically with them you can do the following:
+
+  - The ability to access data from outside of SQL Server
+
+  - The ability to issue distributed queries, updates, commands, and
+    transactions on heterogeneous data sources across the enterprise.
+
+    Think for instance again to the case of sharding. 
+
+  Note that the reason why we use this solution as a team is different
+  but this is another discussion I will not dig too much into.
+
+  Basically the way you implment this architecture is then the
+  following:
+
+  
+#+begin_export html
+ <img src="../../images/linked_server.png" class="center">
+#+end_export
+  
+
+* Data Dictionary
+
+  A data dictionary, or metadata repository, as defined in the IBM
+  Dictionary of Computing, is a "centralized repository of information
+  about data such as meaning, relationships to other data, origin,
+  usage, and format".
+
+  The term can have one of several closely related meanings pertaining
+  to databases and database management systems (DBMS):
+
+  - A document describing a database or collection of databases
+
+  - An integral component of a DBMS that is required to determine its
+    structure
+
+  - A piece of middleware that extends or supplants the native data
+    dictionary of a DBMS. This is the one I am reffering to in my notes.
+
+
+* Table Views
+
+  This is a powerful concepts.
+
+  The wikipedia definition for it is sufficient to get a basic
+  understanding of what /views/ are:
+
+  #+begin_quote
+  A view is the result set of a stored query on the data, which the
+  database users can query just as they would in a persistent database
+  collection object.
+
+  This pre-established query command is kept in the database
+  dictionary.
+
+  Unlike ordinary base tables in a relational database, a view does
+  not form part of the physical schema: as a result set, *it is a
+  virtual table computed or collated dynamically* *from data in the
+  database when access to that view is requested*. Changes applied to
+  the data in a relevant underlying table are reflected in the data
+  shown in subsequent invocations of the view
+  #+end_quote
+
+  Views are helpful in the follwoing cases:
+
+  - can represent a subset of data. can be used for access
+    permissions. You expose a /view/ to some user without exposing the
+    entire database. 
+
+  - views can *join* and simplify *multiple tables* into a single
+    virtual table. (note that though the performance will likely still
+    suffer from the burden of computing the joins each time one of the
+    underlying queries changes)
+
+  - you can hide some complexity using views such that is useful for
+    some other person of your team to work with.
+
+  - views just take very little space to store. the DB just contains
+    the definiton of a view and not a copy of all the data that it
+    presents.
+
+  *Note* that in a similar way to the programming concepts you can
+  *nest* views such that you can /a view/ aggregating the information
+  from multiple views.
+
+
+  *Note a table is a set:* A view is a relational table, and the
+  relational model defines a table as a set of rows. Since sets are
+  not ordered — by definition — neither are the rows of a
+  view. Therefore, an ~ORDER BY~ clause in the view definition is
+  meaningless.
+
+
+* Stored Procedures  
+
+  So that is probably the big discussion in my larger team.
+
+  The question is if to keep the business logic into the application
+  code or into sql-queries.
+
+  I always embedded my business logic at the application layer
+  performing the necessary data withdrawl and transformation steps at
+  the application layer.
+
+  There is the tendency in my team to use a different approach and to
+  /store the business logic into stored procedures/. I am too fresh
+  into the entire systems of my team to take an informed about the
+  topic.
+
+  So develop on this and explore the topic further until you can take
+  an informed position about the topic.
+
+  Starting with the basic 15 min. research the following picture
+  emerge.
+
+  Stored procedures are essentially SQL statements that are saved in
+  the database /data dictionary/. You can pass parameters to your
+  stored procedures. Such parameters will be passed by the client
+  triggering a stored procedure. It is therefore possible to expose
+  some business logic in a flexible way through them. 
+
+  *Note* that they do not have to return a table (set of rows) or a
+  value as in the case of functions and there is in this sense a
+  difference between the two. You can for instance perform CRUD
+  operations via stored procedures.
+
+  Now the arguments that I am reading around in favour of stored
+  procedures are the following:
+  
+  1. It can be *easily modified*: We can easily modify the code inside
+     the stored procedure without the need to restart or deploying the
+     application. For example, if the SQL queries are written in the
+     application and if we need to change the logic, we must change
+     the code in the application and re-deploy it.
+
+     That is true for compiled languages and not for scripting
+     languages. There there is no big difference as I usually develop
+     keeping a runtime open where I do my on the fly development
+     running the application logic of interest.
+
+     Moreover, this sounds like a little benefit to justify the usage
+     of such stored procedures. 
+
+  2. *Reduceded Network Traffic*: A major advantage of stored
+     procedures is that they can run directly within the database
+     engine. They are in fact *stored on the DB* and from there the
+     database engine executes them.
+
+     In a production system, this typically means that the procedures
+     run entirely on a specialized database server, which has /direct
+     access to the data being accessed/. You just ship your parameters
+     and that is it. The benefit here is that network communication costs can be
+     avoided completely. *This becomes more important for complex
+     series of SQL statements*.
+
+     As if you have to traffic all of the SQL results back and
+     forth, make transformations and then run other queries based on
+     that you see that you quickly get a huge amount of traffic and
+     everything becomes messy.
+
+     /My Comment:/ I do see the argument. I am not sure that it is
+     really the definitive solution. As you are running SQL statements
+     theoretically you can ship the very same SQL statement via the
+     application and you can do that in 1 shot so if you structure
+     things properly you should be able to keep your network bandwidth
+     safe. 
+
+  3. *Centralized business logic*: this point follows directly from
+     the above. To see this consider the follwoing wording above:
+
+     /They are in fact *stored on the DB* and from there the database
+     engine executes them./
+
+     So this means that you have no chance of having a curropted
+     client-program logic that was not properly managed across your
+     software development teams. There is a single source of truth for
+     the business logic and that reside at the database location.
+
+     /My comment:/ The strongest argument for me. Probably the one and
+     only that makes really sense and the ultimate reason for stored
+     procedures.
+
+     /Note:/ I even read the following as advantage.
+
+     #+begin_quote
+     The database system can ensure data integrity and consistency
+     with the help of stored procedures.
+     #+end_quote
+
+     /My comment:/ I think that is very important. Would need some more detailed
+     explaination of how that would be exactly implemented to make
+     sense of it in a real way.
+
+  4. *Delegating access-rights*: In many systems, stored procedures can
+     be granted access rights to the database that users who execute
+     those procedures do not directly have.
+
+  5. *Performance:* Because stored procedure statements are stored
+     directly in the database, they may remove all or part of the
+     compiling overhead that is typically needed in situations where
+     software applications send inline (dynamic) SQL queries to a
+     database. (However, most database systems implement statement
+     caches and other methods to avoid repetitively compiling dynamic
+     SQL statements.) Also, while they avoid some pre-compiled SQL,
+     statements add to the complexity of creating an optimal execution
+     plan because not all arguments of the SQL statement are supplied
+     at compile time. Depending on the specific database
+     implementation and configuration, *mixed performance results will
+     be seen from stored procedures versus generic queries* or user
+     defined functions.
+
+  Note that there are important *disadvantages* as well.
+
+  1. Stored procedure languages are often vendor-specific. Changing
+     database vendors usually requires rewriting existing stored
+     procedures.
+
+     /My comment:/ interesting that they decided to go so heavily on
+     them. I think that the lock-up must not be extreme otherwise I
+     would not imagine them to rely so much on them.
+
+  2. Changes to stored procedures are harder to keep track of within a
+     version control system than other code.
+
+     /My comment:/ This is in fact what the team is complaining
+     about. There is a single individual that has a good overview of
+     them and all of the others are masked and if they want to dig
+     into it is annoying to start reading huge SQL statements that can
+     be hardly broken apart in which there are parameters embedded.
+
+  Note that it must be a thing in the DB world the one of working with
+  DBs.
+
+  I also heard talking about it in databricks sessions about a company
+  working with them before switching to databricks.
+
+
+* On the key refresher
+
+  Recall the basics of relational databses. Nothing new but alternate
+  keys. Did not recall that definition.
+
+** Primary Key
+  
+   The *primary* key is the one that specifies the columns that make a
+   row entry of the table uniquely identifiable.
+
+
+** Foreign Key
+   
+   A *foreign key* is a column (or combination of columns) in a table
+   whose values /must match values of a column in some other
+   table/. FOREIGN KEY constraints /enforce referential integrity/, which
+   essentially says that if column value A refers to column value B,
+   then column value B must exist.
+
+   So say that you have a link between =table1.column_a= and
+   =table2.column_b=. Then if =table1.column_a= is a foreign key to
+   =table2.column_b=, you can just insert =table1.column_a= if an
+   existing entry to =table2.column_b= /already exists/.
+
+   In this sense you have this referential integrity and the name
+   /foreign key/ makes sense. It is a key to some foreign value such
+   that you can just have an entry for it if the value that is
+   referenced is existing.
+
+   You can then see that you can implement some relational logic with
+   the help of foreign keys. Note that /foreign keys/ /can/ but do not
+   have to match existing /primary keys/.
+
+   
+** Alternate Key / Secondary Keys
+
+   In order to understand alternate key, first define what the
+   *candidate key* is.
+
+   *candidate key* = a set of attributes (columns) that fullfills all
+   of the criteria to be a primary key.
+
+   An alternate key, or secondary key is the key that has not been
+   selected to be the primary key, but are candidate keys.
+
+   So basically with them you can as well identify unique entries in
+   the table.
+   
+
+* Some SQL Notes
+
+  This is fairly standard material. I just was not a too heavy user of
+  SQL recently, which I have to become again.
+
+** Insert Syntax
+  
+   Recall inserting syntax
+
+   #+begin_src sql :results output raw 
+INSERT INTO table_name (column1, column2, column3, ...)
+VALUES (value1, value2, value3, ...);
+   #+end_src 
+
+
+** COALESCE()
+
+   COALESCE() function returns the first non-null value in a list.
+
+   #+begin_src sql
+   SELECT COALESCE(NULL, 1, 2, 'W3Schools.com'); -- returns 1
+   #+end_
+
+
+** On Column notation
+
+   I basically had the same question as [[https://stackoverflow.com/questions/52898/what-is-the-use-of-the-square-brackets-in-sql-statements][this guy]].
+
+   So generally you can always use =[]=. There seems not be
+   consistency in the team. Both ways are used.
+
+** WITH
+
+   Syntax
+
+   #+begin_src sql
+WITH query_name1 AS (
+     SELECT ...
+     )
+
+SELECT ...
+   #+end_src
+
+   So the idea is that you create a query and give it a desired name.
+
+   You then use the result of such query for running a second query.
+
+   In such a way you avoid to perform the nasty nested loops.
+
+
+   Note that a single with clause can introduce multiple query names
+   by separating them with a comma
+
+   #+begin_src sql
+WITH query_name1 AS (
+     SELECT ...
+     )
+   , query_name2 AS (
+     SELECT ...
+       FROM query_name1
+        ...
+     )
+SELECT ...
+   #+end_src 
+
+   
+** Alter Statement
+
+   In such a way it is possible to add, delete or modify columns in an
+   existing table.
+
+   #+begin_src sql
+ALTER TABLE table_name
+ADD column_name datatype;
+   #+end_src
+
+   
+** Create
+
+   Here the syntax
+
+   #+begin_src sql
+    CREATE TABLE Mytable.MyName (
+        columnName varchar(128),
+        columnName2 varchar(256),
+        columnName3 float
+    );
+   #+end_src
+   
+** Some lower level stuff
+
+   It will be important at some point to check what is going on with
+   your database and what you are performing in there at a particular
+   moment.
+
+   Got this query somewhere.... not working cause I have no permission
+   at the moment. Go back to it at some point.
+
+   #+begin_src sql
+SELECT des.session_id ,
+des.status ,
+OBJECT_NAME(dest.objectid, der.database_id) AS OBJECT_NAME ,
+SUBSTRING(dest.text, der.statement_start_offset / 2,
+( CASE WHEN der.statement_end_offset = -1
+THEN DATALENGTH(dest.text)
+ELSE der.statement_end_offset
+END - der.statement_start_offset ) / 2)
+AS [executing statement] ,
+des.login_name ,
+des.[HOST_NAME] ,
+der.blocking_session_id ,
+DB_NAME(der.database_id) AS database_name ,
+der.command ,
+des.cpu_time ,
+des.reads ,
+des.writes ,
+dec.last_write ,
+des.[program_name] ,
+der.wait_type ,
+der.wait_time ,
+der.last_wait_type ,
+der.wait_resource ,
+CASE des.transaction_isolation_level
+WHEN 0 THEN 'Unspecified'
+WHEN 1 THEN 'ReadUncommitted'
+WHEN 2 THEN 'ReadCommitted'
+WHEN 3 THEN 'Repeatable'
+WHEN 4 THEN 'Serializable'
+WHEN 5 THEN 'Snapshot'
+END AS transaction_isolation_level ,
+
+
+
+deqp.query_plan
+FROM sys.dm_exec_sessions des
+LEFT JOIN sys.dm_exec_requests der
+ON des.session_id = der.session_id
+LEFT JOIN sys.dm_exec_connections dec
+ON des.session_id = dec.session_id
+CROSS APPLY sys.dm_exec_sql_text(der.sql_handle) dest
+CROSS APPLY sys.dm_exec_query_plan(der.plan_handle) deqp
+where des.session_id <> @@spid
+   #+end_src
+
+
+  
+  
