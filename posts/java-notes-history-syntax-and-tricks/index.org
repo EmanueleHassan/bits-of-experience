@@ -73,6 +73,7 @@ Schildt)" publicly available on the world wide web at [[https://gfgc.kar.nic.in/
 
 {{{TEASER_END}}}
 
+
 * Reference
 
   A nice website to navigate some Java is [[https://www.javabrahman.com/category/java-8/][this]]. 
@@ -262,7 +263,9 @@ that has the .class extension.
    It is then straightforward that due to this structure you should
    *always name your source code file after your class*.
 
-    
+
+
+
 * Syntax
 
 ** if
@@ -408,6 +411,40 @@ b = (byte)(b * 2);
    #+begin_src java 
     month_days[1] = 28;
    #+end_src
+
+   #+BEGIN_SRC java :results output drawer :classname myArrayTest
+class myArrayTest {
+    public static void main(String args[]) {
+	int oneD[]= new int[5];
+	int i, k = 0;
+
+	// populate the multi-array
+	for(i=0; i<5; i++){
+	    oneD[i] = k;
+	    k++;
+
+	    System.out.print(oneD [i] + " ");
+	}
+	System.out.println();
+
+	int[] subset = java.util.Arrays.copyOfRange(oneD, 0, 1);
+
+
+	for(i=0; i<1; i++){	
+	    // print the multi-array	
+	    System.out.print(subset [i] + " ");
+	}
+	System.out.println();
+    }
+}
+
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   0 1 2 3 4 
+   0 
+   :end:
 
 ** Multidimensional Array
 
@@ -572,6 +609,28 @@ expression1 ? expression2 : expression3
     Both expression2 and expression3 are required to return the same
     type, which can’t be void.
 
+    #+BEGIN_SRC java :results output drawer :classname question
+class question {
+    public static void main(String args[]) {
+
+	int h = 4;
+
+	int x = 3;
+
+	x = h <= 4 ? 2 : 3;  // ok so note that you must
+			     // return. cannot define it after
+			     // question mark.
+
+	System.out.println(x);
+    }
+}
+    #+END_SRC
+
+    #+RESULTS:
+    :results:
+    2
+    :end:
+
 ** Optional
 
    The Optional object, which is the state-appointed /null deodorizer/
@@ -591,7 +650,6 @@ expression1 ? expression2 : expression3
    Alternatively, we could suggest a substitute value , using the
    method ~orElse()~.
 
-      
 ** Switch
 
    Note that this is the usual stuff. On the top of it you have a
@@ -630,6 +688,77 @@ class SampleSwitch {
    i is greater than 3.
    i is greater than 3.
 
+   Note that if your case does not hit any of the existing ones it
+   redirects to default.
+
+   #+begin_src java  :classname SampleSwitch :results output drawer
+// A simple example of the switch.
+class SampleSwitch {
+    public static void main(String args[]) {
+	for(int i=0; i<6; i++)
+	    switch(i) {
+	    case 0:
+		System.out.println("i is zero.");
+		break;
+	    case 2:
+		System.out.println("i is two.");
+		break;
+	    case 3:
+		System.out.println("i is three.");
+ 		break;
+	    default: // see default. no matching condition redirects here.
+		System.out.println("i is greater than 3.");
+	    }
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   :results:
+   i is zero.
+   i is greater than 3.
+   i is two.
+   i is three.
+   i is greater than 3.
+   i is greater than 3.
+   :end:
+
+   Note that if you insert an empty case that is hit, it redirects to
+   the code of the next case statement
+
+   #+begin_src java  :classname SampleSwitchWithEmptyCase :results output drawer
+// A simple example of the switch.
+class SampleSwitchWithEmptyCase {
+    public static void main(String args[]) {
+	for(int i=0; i<6; i++)
+	    switch(i) {
+	    case 0:
+		System.out.println("i is zero.");
+		break;
+	    case 1:
+	    case 2:
+		System.out.println("i is two.");
+		break;
+	    case 3:
+		System.out.println("i is three.");
+ 		break;
+	    default: // see default. no matching condition redirects here.
+		System.out.println("i is greater than 3.");
+	    }
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   :results:
+   i is zero.
+   i is two.
+   i is two.
+   i is three.
+   i is greater than 3.
+   i is greater than 3.
+   :end:
+   
 ** Do-while
 
    This is a feature of many other languages I have never used that
@@ -684,6 +813,40 @@ class Comma {
    b = 4
    a = 2
    b = 3
+
+*** Naming for loops
+
+    This is a nice feature. I am using it for testing an application.
+
+    I do not want to waste time and want my program to be minimal, in
+    the sense it should run quickly as I am not sure what is going on
+    in the background and I fear that simply stopping it alltogether
+    might not be the ideal solution.
+
+    So in case you have nested loops, switch statements etc, the first
+    break will just break from the direct parent but not from the
+    overall loop. In this sense if you name the overall loop you can
+    then quickly escape it.
+
+    Example from stackoverflow
+
+    #+BEGIN_SRC java :results output drawer :classname 
+myLoop: while(sc.hasNextInt()){
+    typing = sc.nextInt();
+    switch(typing){
+        case 0:
+          break myLoop; 
+        case 1:
+          System.out.println("You choosed 1");
+          break;
+        case 2:
+          System.out.println("You choosed 2");
+          break;
+        default:
+          System.out.println("No such choice");
+    }
+}
+    #+END_SRC
 
 ** For-each type
     
@@ -1577,8 +1740,6 @@ class Dispatch {
    [[*@SuppressWarnings][@SuppressWarnings]]
    [[*@FunctionalInterface][@FunctionalInterface]]
 
-
-
    You have built-in Annotations that you can use out of the box.
 
    On the top of it, you have user-defined Annotations that we will
@@ -1767,7 +1928,6 @@ value3 = "world";
      - A lambda expression, like the map() method
 
      - A method or constructor reference
-
 
 ** Abstract Classes
 
@@ -2406,7 +2566,6 @@ only after it’s fully baked, which removes the thread-safety concerns
     this is however not the only one. i.e. these are the typical
     consumer functions of the many =java.util.function= calls etc.
     
-    
 *** TODO start by work through patterns                            :noexport:
 
     i.e. for instance always decide to express the functional
@@ -2415,7 +2574,6 @@ only after it’s fully baked, which removes the thread-safety concerns
     it will help you quite much in keeping up and running the system
     and split a little bit the logic across the different components
     as mentioned in the previous point.  
-
 
 *** TODO functional programming - fluent functions etc.
     
@@ -2428,6 +2586,9 @@ only after it’s fully baked, which removes the thread-safety concerns
 
     You can start reading into it in [[https://stackoverflow.com/questions/28319064/java-8-best-way-to-transform-a-list-map-or-foreach][here]].
     
+
+
+
 *** Syntax
 
     The syntax is very close to the one you know yourself.
@@ -2478,11 +2639,66 @@ friends.forEach(name -> System.out.println(name));
 
     The Java compiler treats single-parameter lambda expressions as
     special: we can leave off the parentheses around the parameter if
-    the parameter’s type is inferred. Note this cause some of your
-    colleagues are using this way of coding.
+    the parameter’s type is inferred. Keep this in mind, cause some of
+    your colleagues are using this way of coding.
 
-    *Design choice:* Keep unity in your code and forget about it. Always work with =()=
-    for consistency reasons.
+    *Design choice:* Keep unity in your code and forget about
+    it. Always work with =()=e for consistency reasons.
+
+    Note as well the following point in the syntax and the way you
+    work with functional programming - i.e. you have to respect the
+    logic of the methods. Depeding whether they are static or not you
+    pass the lambda argument in different positions. If it is static
+    within the class you give it as argument. Otherwise if it is an
+    instance method you call the method from it.
+
+    Check at the following simple example with =String= in order to
+    properly understand this.
+
+    #+BEGIN_SRC java :results output drawer :classname StaticVsInstance_Method
+import java.util.List;
+import java.util.ArrayList;
+
+class StaticVsInstance_Method {
+    
+    public static void main (String args[]){
+
+	List<String> myList = new ArrayList();
+
+	myList.add("romeo");
+	myList.add("gatto colosseo");	
+
+	// so note fairly standard the point. respect the logical
+	// construct of the language
+	myList.stream()
+	      .forEach(x -> System.out.println(x.substring(2)));
+
+	myList.stream()
+	      .forEach(x -> System.out.println(String.format("Hello %s", x)));
+
+    }
+
+}
+    #+END_SRC
+
+    #+RESULTS:
+    :results:
+    meo
+    tto colosseo
+    Hello romeo
+    Hello gatto colosseo
+    :end:
+    
+
+*** Important Note on Syntax and Conceptual Understanding
+
+    Note that this is a very standard way of working in the Java
+    Language. Even if you are not used to think in these terms, you
+    better fix it in your DNA.
+
+    This is in fact one of the [[https://www.geeksforgeeks.org/method-within-method-in-java/][three ways]] of specifying a nested
+    method within another one.  
+    
     
 *** More on Design Choices
 
@@ -2646,7 +2862,21 @@ class CleanCodeFunctional2 {
      Number starting with N: 2
      Number starting with B: 1
 
-     
+**** Important thing to consider - you use a method that has a throws an exception of some kind
+
+     Then your method has to deal with that exception.
+
+     The question is then how you can do that, i.e. your lambda
+     function has to deal with that.
+
+     The solution is one of the following: check [[https://stackoverflow.com/questions/18198176/java-8-lambda-function-that-throws-exception][this url]].
+
+     I like the wrapper solution. This might not be easy to follow for
+     future colleagues that do not know your code. Especially if the
+     wrapper is hidden somewhere.
+
+     So keep for the moment as design choice: try-catch sandwich
+     around the piece that you have to deal with.
 
 *** Nice benefit of working in a functional way
 
@@ -2765,6 +2995,7 @@ friends.forEach(new Consumer<String>() {
 
      Then the ~findFirst()~ method of the Stream class helped pick the
      first value from that collection.
+
 
 *** Method Reference
 
@@ -2982,10 +3213,11 @@ opt.ifPresentOrElse(
 );
     #+end_src 
 
-*** TODO Collect                                                   :noexport:
+
 
     
-    
+*** TODO Collect                                                   :noexport:    
+
 
 *** Nested lambda functions
 
@@ -3297,7 +3529,99 @@ class EnumDemo3 {
    RedDel costs 12 cents.
    Winesap costs 15 cents.
    Cortland costs 8 cents.
+   
+*** Check if one variable in enum
 
+    There are apparently libraries to do that: check online.
+
+    Another way to do that natively yourself is using the ~values~
+    method of your enumerator.
+
+#+BEGIN_SRC java :results output drawer :classname EnumDemo4
+// Use an enum constructor, instance variable, and method.
+enum Apple {
+    Jonathan(10), GoldenDel(9), RedDel(12), Winesap(15), Cortland(8);
+
+    private int price; // price of each apple
+
+    // Constructor
+    Apple(int p) { price = p; } // so note that here you are
+				// specifying the form of the
+				// constructor of apple. the above
+				// constants would then refer to such
+				// a constructor
+
+    int getPrice() { return price; } // so note how you can define
+				     // methods that you can use on
+				     // enum objects. In fact enum is
+				     // a special type of
+				     // class. I.e. also enum are
+				     // obejcts such that everything
+				     // falls back into the frist
+				     // class citizens of the app.
+}
+class EnumDemo4 {
+
+
+    @FunctionalInterface
+    interface myInterface {
+	boolean run(String Name);
+    }
+    
+    public static void main(String args[])
+    {
+	Apple ap;
+
+	myInterface r = (String Name) -> {
+	    for (Apple a : Apple.values()) {
+		if (a.name().equals(Name)) {
+		    return true;
+		}
+	    }
+	    return false;
+	};
+
+	if (r.run("Jonathan")){
+	    // Display price of Winesap.
+	    System.out.println("Winesap costs " +
+			       Apple.Winesap.getPrice() +
+			       " cents.\n");
+	    // Display all apples and prices.
+	    System.out.println("All apple prices:");
+	    for(Apple a : Apple.values())
+		System.out.println(a + " costs " + a.getPrice() +
+				   " cents.");
+	}
+	else if(r.run("Alberto")) {
+
+	    System.out.println("Note this is not printed");
+	    
+	    // Display price of Winesap.
+	    System.out.println("Winesap costs " +
+			       Apple.Winesap.getPrice() +
+			       " cents.\n");
+	    // Display all apples and prices.
+	    System.out.println("All apple prices:");
+	    for(Apple a : Apple.values())
+		System.out.println(a + " costs " + a.getPrice() +
+				   " cents.");	    
+	}
+    }
+}
+
+#+END_SRC   
+
+#+RESULTS:
+:results:
+Winesap costs 15 cents.
+
+All apple prices:
+Jonathan costs 10 cents.
+GoldenDel costs 9 cents.
+RedDel costs 12 cents.
+Winesap costs 15 cents.
+Cortland costs 8 cents.
+:end:
 
    
 ** TODO Autoboxing                                                 :noexport:
@@ -3942,29 +4266,15 @@ try(BatchSQL myBatchQueryObject = new BatchSQL()){
    finished with it. The try-with-resources statement ensures that
    each resource is closed at the end of the statement.
 
-   Note that form such a statement it does not seem that you implement
-   the closing clause automatically. You have to make sure that you
-   close the resource.
-
-   Mmm... this looks weird to me. Note the follwoing:
-
    #+begin_quote
-Any object that implements java.lang.AutoCloseable, which includes all
-objects which implement java.io.Closeable, can be used as a resource.
+It can take any object that implements java.lang.AutoCloseable, which includes all
+objects which implement java.io.Closeable.
    #+end_quote
 
-   I saw that autocloseable thing into an =interface= at some point
-   when navigating our libraries. so I think that is the logic.
-
-   probably our batchSQL objects implement that interface and then you
-   are pretty much done. -> double checked. this is in fact the case
-   see that it in fact implements that interface.
-
-   I am pretty much sure that then such close statement is called if
-   the try-statement fails with that syntax. Double checked with
-   colleagues and yeah. That is how it works. 
+   This because if that interface is implemented you know that there
+   is a ~close~ method implemented for it. This will be triggered by
+   this try-with-resource statements.
    
-
 ** On Strings Parsing
 
    Have to structure the documentation more at some point and check at
@@ -4023,7 +4333,11 @@ System.out.println(String.format("Found %d names", startsWithN.size()));
    can because your object is serializable (assuming the library
    requires your objects be proper JavaBeans).
    
+
+
    
+
+
 * Iterator Interface
 
   Check at that interface and its method cause all of the most
@@ -4411,121 +4725,6 @@ import pkg1[.pkg2].(classname|*);
    You can then refer to the specfic class simply by name after you
    imported it correctly.
     
-** Standard Classes
-
-   All of the standard Java classes are stored in a package called
-   *java*.
-
-   The basic language functions are stored in a package inside of the
-   java package called /java.lang/. This is implicitly imported by
-   the compiler for all programs.
-    
-
-** Logger Package
-
-   As you know, this is a quite fundamental component when writing
-   your apps.
-
-*** Logger Object Configuration
-
-    In order to create a Logger object zou can use the following:
-
-    #+begin_src java :results output raw 
-import java.util.logging.Logger;
-
-// assumes the current class is called MyLogger
-private final static Logger LOGGER = Logger.getLogger(<ClassName>.class.getname());
-    #+end_src 
-
-    What the above does is actually to implement a hierarchy of
-    loggers.
-
-    To understand what the above sentence means understand the
-    following:
-
-    If for instance you specify a logger for the =com.example=
-    package, that logger would be a child of the =com= Logger, which
-    is itself a child of the =String= Logger (default). 
-   
-*** Levels
-
-    The module works the same way your logger in python used to
-    work. This means that you have multiple levels of logging.
-
-    - SEVERE (highest)
-    - WARNING
-    - INFO
-    - CONFIG
-    - FINE
-    - FINER
-    - FINEST
-    - OFF (turns the logger off)
-    - ALL (log everything)
-
-    You can choose the level of your log in the following way:
-
-    #+begin_src java :results output raw
-// set logger at info level
-LOGGER.setLevel(Level.INFO);
-    #+end_src 
-
-    In the case above log levels =INFO= and above will be automatically
-    written to the console. This in a very similar way to the logger in
-    python you have used multiple times.
-
-    Note that through the =LogManager= it is possible to set the
-    logging levels for a set of packages at once. 
-  
-*** Formatter
-
-    Here again in a similar way than python you can specify the output
-    for the logger and how logged entry are returned / logged in the
-    console.
-
-    It is common practice to use the fully qualified name of each
-    class whose activity is being logged as a message category,
-    because this allows developers to fine-tune log settings for each
-    class.
-
-    Make sure this is the case in your team.
-
-
-** Project Lombok
-
-   You can read more about it [[https://www.baeldung.com/intro-to-project-lombok][here]].
-
-   It is basically a way to short-circuit all of the getters, setters
-   and equals stuff that you so often use in Java.
-
-   You can read about it online. Check how stable is the framework as
-   here you are dealing with code that has to survive over very long
-   periods of time.
-
-   I mean if it is stable it is quite handy as through it you will
-   manage Java-Beans quite easily and these will be very readable.
-
-   Nice as it also handles Logger and adds it to the class in case of
-   need.
-
-*** TODO do documentation on lombok                                :noexport:
-
-    So tlaked with Sergio. He confirmed me that the project is a thing
-    and well used in the Java world.
-   
-
-** TODO Hiberante
-
-   Check at it. Everybody talks about it.
-
-   The idea is to stay in the OOP logic when working with data tables
-   etc.
-
-   I must say that it is very funny to work with Java as it is not
-   simply another programming language. It is so far apart from Python
-   in the frameworks and ideas that it is a complete revolution in
-   terms of mental process.
-
-
     
 * Frameworks
 
@@ -5267,7 +5466,7 @@ class MapsValues {
 
    You can define the comporator yourself. 
 
-
+   
 ** Java Threading                                                  :noexport:
 
    This is important as it allows to work with multiple threads in
@@ -5351,7 +5550,9 @@ public class Reminder {
 
 *** 
 
+
 ** Streaming - check as well resource you have there on java 8     :noexport:
+
 
 ** Mustache                                                        :noexport:
 
@@ -5426,6 +5627,341 @@ What you are missing then is the following:
 You can read more of the above cases [[https://www.baeldung.com/mustache][here]]. Let's leave it for now. 
    
 
+* Important Libraries
+
+** Standard Classes
+
+   All of the standard Java classes are stored in a package called
+   *java*.
+
+   The basic language functions are stored in a package inside of the
+   java package called /java.lang/. This is implicitly imported by
+   the compiler for all programs.
+   
+** TODO Strings and working with them                              :noexport:
+
+   check for instance the =StringBuilder= method.
+   
+** Logger Package
+
+   As you know, this is a quite fundamental component when writing
+   your apps.
+
+*** Logger Object Configuration
+
+    In order to create a Logger object zou can use the following:
+
+    #+begin_src java :results output raw 
+import java.util.logging.Logger;
+
+// assumes the current class is called MyLogger
+private final static Logger LOGGER = Logger.getLogger(<ClassName>.class.getname());
+    #+end_src 
+
+    What the above does is actually to implement a hierarchy of
+    loggers.
+
+    To understand what the above sentence means understand the
+    following:
+
+    If for instance you specify a logger for the =com.example=
+    package, that logger would be a child of the =com= Logger, which
+    is itself a child of the =String= Logger (default). 
+   
+*** Levels
+
+    The module works the same way your logger in python used to
+    work. This means that you have multiple levels of logging.
+
+    - SEVERE (highest)
+    - WARNING
+    - INFO
+    - CONFIG
+    - FINE
+    - FINER
+    - FINEST
+    - OFF (turns the logger off)
+    - ALL (log everything)
+
+    You can choose the level of your log in the following way:
+
+    #+begin_src java :results output raw
+// set logger at info level
+LOGGER.setLevel(Level.INFO);
+    #+end_src 
+
+    In the case above log levels =INFO= and above will be automatically
+    written to the console. This in a very similar way to the logger in
+    python you have used multiple times.
+
+    Note that through the =LogManager= it is possible to set the
+    logging levels for a set of packages at once. 
+  
+*** Formatter
+
+    Here again in a similar way than python you can specify the output
+    for the logger and how logged entry are returned / logged in the
+    console.
+
+    It is common practice to use the fully qualified name of each
+    class whose activity is being logged as a message category,
+    because this allows developers to fine-tune log settings for each
+    class.
+
+    Make sure this is the case in your team.
+
+
+** Project Lombok
+
+   You can read more about it [[https://www.baeldung.com/intro-to-project-lombok][here]].
+
+   It is basically a way to short-circuit all of the getters, setters
+   and equals stuff that you so often use in Java.
+
+   You can read about it online. Check how stable is the framework as
+   here you are dealing with code that has to survive over very long
+   periods of time.
+
+   I mean if it is stable it is quite handy as through it you will
+   manage Java-Beans quite easily and these will be very readable.
+
+   Nice as it also handles Logger and adds it to the class in case of
+   need.
+
+*** TODO do documentation on lombok                                :noexport:   
+
+** JDBC
+
+*** What is it?
+
+    From [[https://www.baeldung.com/java-jdbc][here]]:
+
+    #+begin_quote
+A JDBC driver is a JDBC API implementation used for connecting to a
+particular type of database. There are several types of JDBC drivers:
+
+- Type 1 – contains a mapping to another data access API; an example
+  of this is the JDBC-ODBC driver
+
+- Type 2 – is an implementation that uses client-side libraries of the
+  target database; also called a native-API driver
+
+- Type 3 – uses middleware to convert JDBC calls into
+  database-specific calls; also known as a network protocol driver 
+
+- Type 4 – connect directly to a database by converting JDBC calls
+  into database-specific calls; known as database protocol drivers or
+  thin drivers,
+
+The most commonly used type is *type 4*, as it has the advantage of
+being platform-independent. Connecting directly to a database server
+provides better performance compared to other types. The downside of
+this type of driver is that it's database-specific – given each
+database has its own specific protocol.
+    #+end_quote
+
+    What this basically means is that if you use type 4, you will have
+    to download the specific database protocol driver, for instance
+    you can download via gradle or maven your specific artifact say
+    for instance the =mysql-connector-java= connector.
+
+    So now when working with JDBC you should make the following
+    important distinctions...  you have various way to interact with
+    the database. These are fundamentally different among each other.
+
+    So it is important not to get confused and understand the merits
+    of each and when to use one vis-a-vis another one.
+
+    There are basically three objects ~Statement~,
+    ~PreparedStatement~, ~CallableStatement~.
+
+    We will check at the difference among the three next. What you
+    basically have to remember that all of the three are called by a
+    ~SqlConnection.Connection~ object.
+
+*** Statement
+
+    Note that the ~Connection~, ~Statement~ and ~ResultSet~ all block
+    resources. You should free up such resources when you are over
+    with your processing.
+
+    This is why you should always work with [[*Try with resource statements][Try with resource statements]]
+    condtions. 
+
+    #+BEGIN_SRC java :results output drawer :classname
+    // basic example of working with it. 
+    try (Statement stmt = con.createStatement()) {
+      ResultSet rs = stmt.executeQuery(query);
+      while (rs.next()) {
+        String coffeeName = rs.getString("COF_NAME");
+        int supplierID = rs.getInt("SUP_ID");
+        float price = rs.getFloat("PRICE");
+        int sales = rs.getInt("SALES");
+        int total = rs.getInt("TOTAL");
+        System.out.println(coffeeName + ", " + supplierID + ", " + price +
+                           ", " + sales + ", " + total);
+      }
+    } catch (SQLException e) {
+      JDBCTutorialUtilities.printSQLException(e);
+    }
+    #+END_SRC
+
+    Note that it is not possible to insert any parameters in simple
+    statements. So use them for static queries in this sense.
+
+    Finally note that there are the following three methods options to
+    execute statements:
+
+    #+begin_quote
+- execute: Returns true if the first object that the query returns is
+  a ResultSet object.
+
+  Use this method if the query could return one or more ResultSet
+  objects. Retrieve the ResultSet objects returned from the query by
+  repeatedly calling Statement.getResultSet.
+
+- executeQuery: Returns one ResultSet object.
+
+- executeUpdate: *Returns an integer* representing the number of rows
+  affected by the SQL statement. Use this method if you are using
+  INSERT, DELETE, or UPDATE SQL statements.
+    #+end_quote
+
+    So note that the above is not the best design to my
+    mind. *Different return types*. Don't get tricked and refer to the
+    documentation - especially at the beginning while your mind is
+    still not set-up.
+
+    Note that ~stmt.getUpdateCount()~ method returns the number of
+    rows affected.
+
+    If the *result is 0* then either no rows were affected, or it was a
+    database structure update command.
+
+    If the *value is -1*, then the command was a SELECT query; we can then
+    obtain the result using stmt.getResultSet().
+   
+*** PreparedStatement
+
+    This basically shares all of the functionalities with the
+    Statement above. I.e. similar methods, application etc.
+
+    What is different?
+
+    PreparedStatement objects contain precompiled SQL sequences. They
+    can have one or more parameters denoted by a question mark.
+
+    #+BEGIN_SRC java :results output drawer :classname 
+@Override
+public void testPreparedStatement() throws SQLException {
+
+    insert = <MYCOOLPREPAREDSTATEMENT>;
+			  
+    /* Prepared Statement
+
+       Note that this is very similar to executing directly against a
+       connection. So have to dig a little bit at lower level in order
+       to properly understand where the difference truly lies.
+
+    ,*/
+    insert.setInt(1, asof().asofVersionID);
+    insert.setString(2, "hello2");
+    insert.setString(3, "hello3");
+    insert.setDouble(4, 3.0); 
+
+    /*
+      note that you use this executeUpdate() method in the case of
+      updates and inserts.  In contrast you use the plain execute()
+      method when you get a resultset from which you extract the results
+      then.
+
+      Note as well the nice property that the executeUpdate()
+      method returns an integer with the amount of rows affected by the
+      query.
+
+      Finally note from your experience that once you set your
+      parameters for the thing of choice you are good to go.
+      You do not have to add all of the parameters after each execution.
+      YOu just have to change the ones you want to change. 
+
+    ,*/
+    
+    int row = insert.executeUpdate(); 
+    
+    System.out.println("HEREE: " + row);
+			
+};
+	
+    #+END_SRC
+
+*** CallableStatement
+
+    This is used for *stored procedures*.
+
+    You can create such a statement as follows:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+String preparedSql = "{call insertEmployee(?,?,?,?)}";
+try (CallableStatement cstmt = con.prepareCall(preparedSql)) {
+    cstmt.setString(2, "ana");
+    cstmt.setString(3, "tester");
+    cstmt.setDouble(4, 2000);
+
+    cstmt.registerOutParameter(1, Types.INTEGER);
+
+    cstmt.execute();               // executes the statement
+    int new_id = cstmt.getInt(1);  // get the results of the preparedStatement
+                                   // there are equally other getX() methods
+}
+    #+END_SRC
+
+    Note the classical [[*Try with resource statements][Try with resource statements]] structure.
+
+    The above uses a preparedstatement of the form:
+
+    #+begin_src sql
+delimiter //
+CREATE PROCEDURE insertEmployee(OUT emp_id int, 
+  IN emp_name varchar(30), IN position varchar(30), IN salary double) 
+BEGIN
+INSERT INTO employees(name, position,salary) VALUES (emp_name,position,salary);
+SET emp_id = LAST_INSERT_ID();
+END //
+delimiter ;
+    #+end_src
+
+*** TODO [#A] On batchadd - How that works
+    
+*** TODO write about the logic of committing the results and executing them :noexport:
+   
+** TODO Hiberante
+
+   Check at it. Everybody talks about it.
+
+   The idea is to stay in the OOP logic when working with data tables
+   etc.
+
+   I must say that it is very funny to work with Java as it is not
+   simply another programming language. It is so far apart from Python
+   in the frameworks and ideas that it is a complete revolution in
+   terms of mental process.
+
+
+
+  
+** TODO check at guava
+
+   [[https://github.com/google/guava][url]]
+
+   It seems to be a thing in the Java world.
+
+   Already encountered it a couple of times.
+
+   Check at it in a more thorough way when you have time. 
+      
+   
+
+
 * On The RandomAcess Interface
 
   This is a quite fun interface. It is an *interface that implements
@@ -5453,7 +5989,7 @@ You can read more of the above cases [[https://www.baeldung.com/mustache][here]]
   Note that the =main ()= method is always static. This is necessary
   since =main( )= is called by the Java Virtual Machine before any
   objects are made.
-    
+
 
 * Doc Comments and JavaDocs
 
@@ -5857,9 +6393,6 @@ package java.lang.applet;
       non-subclasses access. In order to see this check at [[*Package and Access Control of classes][Package and
       Access Control of classes]]. 
 
-
-      
-
     On the top of it there is the =final= specification for
     *variables*. This means that the variable cannot be modified at
     later stages. Note that you have to specify a variable as *final*
@@ -6126,6 +6659,68 @@ class B extends A { // ERROR! Can't subclass A
   
 
 
+* Snippets
+  
+** Time a Method Execution
+
+   Use this basic one now. Then start to use more advanced stuff.
+
+   Think for instance to the guava library. There you have useful
+   utilities in this sense. 
+
+   #+BEGIN_SRC java :results output drawer :classname TimeMe
+// import java.util.concurrent.TimeUnit;
+
+import java.lang.Math;
+// import java.lang.Math.pow;
+
+class TimeMe {
+
+    static void wait(int ms)
+    {
+	try
+	    {
+		Thread.sleep(ms);
+	    }
+	catch(InterruptedException ex)
+	    {
+		Thread.currentThread().interrupt();
+	    }
+    }
+    
+    static void meth() {
+	System.out.println("hello");
+	wait(1000); // in milliseconds
+	System.out.println("world");
+    }
+
+    public static void main(String args[]) {
+	double startTime = System.nanoTime();
+	meth();
+	double endTime = System.nanoTime();
+
+	double duration = (endTime - startTime) / Math.pow(10, 9);
+
+	System.out.println(duration);
+    }
+}
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   hello
+   world
+   1.0027841
+   :end:
+
+   Start to make serious research on how to do the profiling in java
+   in this sense. Like this you will seriously start to track the
+   performance of your programs.
+
+
+* TODO Profiling
+   
+
 * On the DataFrame issue
 
   Ok so this is a *huge huge* issue in Java.
@@ -6161,3 +6756,5 @@ class B extends A { // ERROR! Can't subclass A
    data management in Java. Explore =poi=. Understand what other
    libraries are available for managing data frames etc.
 
+
+   
