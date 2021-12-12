@@ -264,7 +264,8 @@ that has the .class extension.
    *always name your source code file after your class*.
 
 
-    
+
+
 * Syntax
 
 ** if
@@ -410,6 +411,40 @@ b = (byte)(b * 2);
    #+begin_src java 
     month_days[1] = 28;
    #+end_src
+
+   #+BEGIN_SRC java :results output drawer :classname myArrayTest
+class myArrayTest {
+    public static void main(String args[]) {
+	int oneD[]= new int[5];
+	int i, k = 0;
+
+	// populate the multi-array
+	for(i=0; i<5; i++){
+	    oneD[i] = k;
+	    k++;
+
+	    System.out.print(oneD [i] + " ");
+	}
+	System.out.println();
+
+	int[] subset = java.util.Arrays.copyOfRange(oneD, 0, 1);
+
+
+	for(i=0; i<1; i++){	
+	    // print the multi-array	
+	    System.out.print(subset [i] + " ");
+	}
+	System.out.println();
+    }
+}
+
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   0 1 2 3 4 
+   0 
+   :end:
 
 ** Multidimensional Array
 
@@ -812,7 +847,6 @@ myLoop: while(sc.hasNextInt()){
     }
 }
     #+END_SRC
-
 
 ** For-each type
     
@@ -1479,7 +1513,6 @@ class RefDemo {
     Note that you *cannot access members* of the referenced object that
     are not implemented in the superclass though. 
      
-
 ** on the super keyword
 
    This is useful in the case you would not want to expose the entire
@@ -1895,7 +1928,6 @@ value3 = "world";
      - A lambda expression, like the map() method
 
      - A method or constructor reference
-
 
 ** Abstract Classes
 
@@ -3500,7 +3532,7 @@ class EnumDemo3 {
    
 *** Check if one variable in enum
 
-    There are apparently libraries to do that: check [[EnumUtils.isValidEnum(MyEnum.class, myValue)][at this]].
+    There are apparently libraries to do that: check online.
 
     Another way to do that natively yourself is using the ~values~
     method of your enumerator.
@@ -4234,29 +4266,15 @@ try(BatchSQL myBatchQueryObject = new BatchSQL()){
    finished with it. The try-with-resources statement ensures that
    each resource is closed at the end of the statement.
 
-   Note that form such a statement it does not seem that you implement
-   the closing clause automatically. You have to make sure that you
-   close the resource.
-
-   Mmm... this looks weird to me. Note the follwoing:
-
    #+begin_quote
-Any object that implements java.lang.AutoCloseable, which includes all
-objects which implement java.io.Closeable, can be used as a resource.
+It can take any object that implements java.lang.AutoCloseable, which includes all
+objects which implement java.io.Closeable.
    #+end_quote
 
-   I saw that autocloseable thing into an =interface= at some point
-   when navigating our libraries. so I think that is the logic.
-
-   probably our batchSQL objects implement that interface and then you
-   are pretty much done. -> double checked. this is in fact the case
-   see that it in fact implements that interface.
-
-   I am pretty much sure that then such close statement is called if
-   the try-statement fails with that syntax. Double checked with
-   colleagues and yeah. That is how it works. 
+   This because if that interface is implemented you know that there
+   is a ~close~ method implemented for it. This will be triggered by
+   this try-with-resource statements.
    
-
 ** On Strings Parsing
 
    Have to structure the documentation more at some point and check at
@@ -4318,7 +4336,8 @@ System.out.println(String.format("Found %d names", startsWithN.size()));
 
 
    
-   
+
+
 * Iterator Interface
 
   Check at that interface and its method cause all of the most
@@ -5531,7 +5550,9 @@ public class Reminder {
 
 *** 
 
+
 ** Streaming - check as well resource you have there on java 8     :noexport:
+
 
 ** Mustache                                                        :noexport:
 
@@ -5711,9 +5732,130 @@ LOGGER.setLevel(Level.INFO);
 
 ** JDBC
 
-   #+BEGIN_SRC java :results output drawer :classname 
+*** What is it?
+
+    From [[https://www.baeldung.com/java-jdbc][here]]:
+
+    #+begin_quote
+A JDBC driver is a JDBC API implementation used for connecting to a
+particular type of database. There are several types of JDBC drivers:
+
+- Type 1 – contains a mapping to another data access API; an example
+  of this is the JDBC-ODBC driver
+
+- Type 2 – is an implementation that uses client-side libraries of the
+  target database; also called a native-API driver
+
+- Type 3 – uses middleware to convert JDBC calls into
+  database-specific calls; also known as a network protocol driver 
+
+- Type 4 – connect directly to a database by converting JDBC calls
+  into database-specific calls; known as database protocol drivers or
+  thin drivers,
+
+The most commonly used type is *type 4*, as it has the advantage of
+being platform-independent. Connecting directly to a database server
+provides better performance compared to other types. The downside of
+this type of driver is that it's database-specific – given each
+database has its own specific protocol.
+    #+end_quote
+
+    What this basically means is that if you use type 4, you will have
+    to download the specific database protocol driver, for instance
+    you can download via gradle or maven your specific artifact say
+    for instance the =mysql-connector-java= connector.
+
+    So now when working with JDBC you should make the following
+    important distinctions...  you have various way to interact with
+    the database. These are fundamentally different among each other.
+
+    So it is important not to get confused and understand the merits
+    of each and when to use one vis-a-vis another one.
+
+    There are basically three objects ~Statement~,
+    ~PreparedStatement~, ~CallableStatement~.
+
+    We will check at the difference among the three next. What you
+    basically have to remember that all of the three are called by a
+    ~SqlConnection.Connection~ object.
+
+*** Statement
+
+    Note that the ~Connection~, ~Statement~ and ~ResultSet~ all block
+    resources. You should free up such resources when you are over
+    with your processing.
+
+    This is why you should always work with [[*Try with resource statements][Try with resource statements]]
+    condtions. 
+
+    #+BEGIN_SRC java :results output drawer :classname
+    // basic example of working with it. 
+    try (Statement stmt = con.createStatement()) {
+      ResultSet rs = stmt.executeQuery(query);
+      while (rs.next()) {
+        String coffeeName = rs.getString("COF_NAME");
+        int supplierID = rs.getInt("SUP_ID");
+        float price = rs.getFloat("PRICE");
+        int sales = rs.getInt("SALES");
+        int total = rs.getInt("TOTAL");
+        System.out.println(coffeeName + ", " + supplierID + ", " + price +
+                           ", " + sales + ", " + total);
+      }
+    } catch (SQLException e) {
+      JDBCTutorialUtilities.printSQLException(e);
+    }
+    #+END_SRC
+
+    Note that it is not possible to insert any parameters in simple
+    statements. So use them for static queries in this sense.
+
+    Finally note that there are the following three methods options to
+    execute statements:
+
+    #+begin_quote
+- execute: Returns true if the first object that the query returns is
+  a ResultSet object.
+
+  Use this method if the query could return one or more ResultSet
+  objects. Retrieve the ResultSet objects returned from the query by
+  repeatedly calling Statement.getResultSet.
+
+- executeQuery: Returns one ResultSet object.
+
+- executeUpdate: *Returns an integer* representing the number of rows
+  affected by the SQL statement. Use this method if you are using
+  INSERT, DELETE, or UPDATE SQL statements.
+    #+end_quote
+
+    So note that the above is not the best design to my
+    mind. *Different return types*. Don't get tricked and refer to the
+    documentation - especially at the beginning while your mind is
+    still not set-up.
+
+    Note that ~stmt.getUpdateCount()~ method returns the number of
+    rows affected.
+
+    If the *result is 0* then either no rows were affected, or it was a
+    database structure update command.
+
+    If the *value is -1*, then the command was a SELECT query; we can then
+    obtain the result using stmt.getResultSet().
+   
+*** PreparedStatement
+
+    This basically shares all of the functionalities with the
+    Statement above. I.e. similar methods, application etc.
+
+    What is different?
+
+    PreparedStatement objects contain precompiled SQL sequences. They
+    can have one or more parameters denoted by a question mark.
+
+    #+BEGIN_SRC java :results output drawer :classname 
 @Override
 public void testPreparedStatement() throws SQLException {
+
+    insert = <MYCOOLPREPAREDSTATEMENT>;
 			  
     /* Prepared Statement
 
@@ -5737,6 +5879,11 @@ public void testPreparedStatement() throws SQLException {
       method returns an integer with the amount of rows affected by the
       query.
 
+      Finally note from your experience that once you set your
+      parameters for the thing of choice you are good to go.
+      You do not have to add all of the parameters after each execution.
+      YOu just have to change the ones you want to change. 
+
     ,*/
     
     int row = insert.executeUpdate(); 
@@ -5744,31 +5891,49 @@ public void testPreparedStatement() throws SQLException {
     System.out.println("HEREE: " + row);
 			
 };
-		
-// 
-@Override
-public void test() throws SQLException {
-    // Single connection insert
-    
-    final String MYTEST = "" + "insert into result.Factor_Loading" +
-	"(as_of_version, securities, credit_factor, coefficient)" + "values" +
-	"(?, ?, ?, ?)" + "";
-      
-    connInsert.execute(MYTEST, asof().asofVersionID, "hello", "hello", 3.0);
-    connInsert.commit();
-			 
-}   
+	
+    #+END_SRC
 
-   #+END_SRC
+*** CallableStatement
 
+    This is used for *stored procedures*.
 
-*** TODO understand why prepared statment vs. connection.execute
+    You can create such a statement as follows:
 
+    #+BEGIN_SRC java :results output drawer :classname 
+String preparedSql = "{call insertEmployee(?,?,?,?)}";
+try (CallableStatement cstmt = con.prepareCall(preparedSql)) {
+    cstmt.setString(2, "ana");
+    cstmt.setString(3, "tester");
+    cstmt.setDouble(4, 2000);
+
+    cstmt.registerOutParameter(1, Types.INTEGER);
+
+    cstmt.execute();               // executes the statement
+    int new_id = cstmt.getInt(1);  // get the results of the preparedStatement
+                                   // there are equally other getX() methods
+}
+    #+END_SRC
+
+    Note the classical [[*Try with resource statements][Try with resource statements]] structure.
+
+    The above uses a preparedstatement of the form:
+
+    #+begin_src sql
+delimiter //
+CREATE PROCEDURE insertEmployee(OUT emp_id int, 
+  IN emp_name varchar(30), IN position varchar(30), IN salary double) 
+BEGIN
+INSERT INTO employees(name, position,salary) VALUES (emp_name,position,salary);
+SET emp_id = LAST_INSERT_ID();
+END //
+delimiter ;
+    #+end_src
+
+*** TODO [#A] On batchadd - How that works
     
 *** TODO write about the logic of committing the results and executing them :noexport:
    
-*** TODO make notes about general logic of JDBC                    :noexport:
-    
 ** TODO Hiberante
 
    Check at it. Everybody talks about it.
@@ -5784,6 +5949,18 @@ public void test() throws SQLException {
 
 
   
+** TODO check at guava
+
+   [[https://github.com/google/guava][url]]
+
+   It seems to be a thing in the Java world.
+
+   Already encountered it a couple of times.
+
+   Check at it in a more thorough way when you have time. 
+      
+   
+
 
 * On The RandomAcess Interface
 
@@ -5812,7 +5989,7 @@ public void test() throws SQLException {
   Note that the =main ()= method is always static. This is necessary
   since =main( )= is called by the Java Virtual Machine before any
   objects are made.
-    
+
 
 * Doc Comments and JavaDocs
 
@@ -6482,6 +6659,68 @@ class B extends A { // ERROR! Can't subclass A
   
 
 
+* Snippets
+  
+** Time a Method Execution
+
+   Use this basic one now. Then start to use more advanced stuff.
+
+   Think for instance to the guava library. There you have useful
+   utilities in this sense. 
+
+   #+BEGIN_SRC java :results output drawer :classname TimeMe
+// import java.util.concurrent.TimeUnit;
+
+import java.lang.Math;
+// import java.lang.Math.pow;
+
+class TimeMe {
+
+    static void wait(int ms)
+    {
+	try
+	    {
+		Thread.sleep(ms);
+	    }
+	catch(InterruptedException ex)
+	    {
+		Thread.currentThread().interrupt();
+	    }
+    }
+    
+    static void meth() {
+	System.out.println("hello");
+	wait(1000); // in milliseconds
+	System.out.println("world");
+    }
+
+    public static void main(String args[]) {
+	double startTime = System.nanoTime();
+	meth();
+	double endTime = System.nanoTime();
+
+	double duration = (endTime - startTime) / Math.pow(10, 9);
+
+	System.out.println(duration);
+    }
+}
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   hello
+   world
+   1.0027841
+   :end:
+
+   Start to make serious research on how to do the profiling in java
+   in this sense. Like this you will seriously start to track the
+   performance of your programs.
+
+
+* TODO Profiling
+   
+
 * On the DataFrame issue
 
   Ok so this is a *huge huge* issue in Java.
@@ -6518,3 +6757,4 @@ class B extends A { // ERROR! Can't subclass A
    libraries are available for managing data frames etc.
 
 
+   
