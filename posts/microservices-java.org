@@ -1,0 +1,263 @@
+#+BEGIN_COMMENT
+.. title: Microservices & Java
+.. slug: microservices-java
+.. date: 2021-12-20 20:09:40 UTC+01:00
+.. tags: java, software-engineering, kubernetes, quarkus
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+
+Notes based on [[https://developers.redhat.com/media-download-confirmation?tcDownloadFileName=Kubernetes-native-microservices-ebook-v3.pdf&tcRedirect=5000&tcSrcLink=https%3A%2F%2Fdevelopers.redhat.com%2Fcontent-gateway%2Fdevelopers%2FKubernetes-native-microservices-ebook-v3.pdf&p=Media%3A+Kubernetes+Native+Microservices+Ebook&pv=v3&tcDownloadURL=https%3A%2F%2Faccess.cdn.redhat.com%2Fdevelopers%2FKubernetes-native-microservices-ebook-v3.pdf%3F_auth_%3D1639834492_4a7529fa776a83612c3fae41e4b878b8][kubernetes native development with quarkus and
+microprofile]]. This is one of the books available on the red-hat
+developer website. From my personal experience these are good and
+red-hat is in fact a strong company - great products are coming out of
+it and they seem to deliver quality products throughout time.
+
+They know that space and it is a very interesting to my mind so I am
+taking a bit to make some notes and organize thoughts around it. 
+
+{{{TEASER_END}}}
+
+* Definition
+
+  #+begin_quote
+a microservice consists of a single deployment executing within a
+single process, isolated from other deployments and processes, that
+supports the fulfillment of a specific piece of business
+functionality.
+  #+end_quote
+
+  First, a microservice implements a specific piece of business
+  functionality. This is known as a a bounded context , which is a
+  logical separation of multiple business problem domains within an
+  enterprise. By /logically breaking down a business domain into
+  multiple bounded contexts/, each bounded context /more accurately
+  represents its specific view/ of the business domain and becomes
+  easier to model.
+
+  Multiple bounded contexts within in a single monolith can result in
+  "spaghetti code" as a result of /unnecessary inter-dependencies and
+  unplanned intermixing of contexts/. In a microservices architecture,
+  each of these capabilities is modeled individually as a bounded
+  context and implemented as a microservice that addresses each
+  specific bounded context.
+
+  Note that the industry believes now in the following concept /a
+  single application/ for microservices.
+
+  This began nearly a decade ago by deploying a single microservice
+  per application server, and shortly thereafter evolved into
+  specialized microservice runtimes like Dropwizard, /Spring Boot/,
+  and more recently /Quarkus/ to improve the developer and
+  administrator experience.
+
+* Learn in fast iterative steps
+
+  When it’s the first time a team is developing microservice
+  architectures, it’s even more critical to not create a *big picture*
+  up front.
+
+  Taking the time to create that big picture without previous
+  experience of microservices architecture design will expend time
+  when it’s likely the final architecture will actually be very
+  different.
+
+  During the process of gaining experience with microservices, the
+  architecture will shift over time towards a more appropriate
+  one.[fn:1]
+
+  
+* On the transition period that is occuring
+
+  Java EE has been the standard-bearer for enterprise Java
+  specifications for roughly 20 years.
+
+  However, Java EE has been traditionally focused on 3-tier monolithic
+  architecture with a steady, measured evolution and a strong focus on
+  backward compatibility. Java EE stopped evolving between 2014 and
+  2017 just as the industry began to heavily adopt microservices
+
+  During that pause, the Java EE community *began to experiment and
+  deliver early microservices APIs*. There was an increasing risk of
+  API fragmentation across Java runtimes that had been known for
+  application portability.
+  
+* Microprofile
+
+  MicroProfile extends that foundation through the creation and
+  evolution of Java API specifications for well-understood
+  microservices patterns and cloud-related standards.
+
+  Today, twelve sepcificications have been developed by the
+  MicroProfile community:
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-12-21 142211.png" class="center">
+#+end_export
+
+  So note for instance the open API specification. This is must be
+  similar to the RESTful swagger package you used to work with in
+  python. With it will be possible for you to easily specify the API
+  and document your RESTful endpoints. Note that you actually have
+  packages as that one [[https://swagger.io/tools/open-source/open-source-integrations/][for java as well]].
+
+  Back to Microprofile, the idea is essentially this, create a narrow
+  set of Java APIs for working in a more agile, microservices way.
+
+  As per Dec 2016 it was incorporated into the Eclipse Foundation.
+  This practically means that now the project is under the mantra:
+  open source, vendor neutrality, and community engagement and
+  collaboration.
+
+  On the top of it the Microprofile Working Group charter extends
+  those with additional standards. Pretty general and non-interesting
+  stuff but for this:
+
+  - *no backward compatibility guarantee* I mean: awkshj?!?!?!?!??
+
+  That is interesting and if you will ever work with it you will have
+  well to bear it in mind. They justify it as follows:
+
+  #+begin_quote
+MicroProfile considers itself an agile project and is willing to
+break backward compatibility. This willingness results from a
+rapid-moving specification project, and any breaking changes are well
+thought out with strong justification and as narrow a scope as
+possible.
+  #+end_quote
+
+  bah... not too convincing... will cause troubles..
+  
+* Quarkus
+
+  This is a Java microservices runtime.
+
+  Note that although you might think that there is no need for a new
+  microservice runtime, consider the following:
+
+  Another pain point is that /developer productivity/ often suffers with
+  Java microservice runtimes.  Every time a developer makes a change
+  they have to save the file, /rebuild/ the application, /restart/ the
+  application, and /refresh/ the browser. This can take 10s of seconds,
+  significantly impacting the productivity of a developer.
+
+  Developers and DevOps teams began to feel the pain of developing and
+  deploying Java microservices, and have been increasingly considering
+  alternatives like Node.js and Golang due to their reduced RAM
+  requirements and fast startup time. These alternatives can also
+  achieve a 5x to 10x deployment density on the same hardware,
+  significantly reducing cost.
+
+  So you understand that for these reasons it is convenient to have a
+  very well functioning microservices runtime.
+
+  Note as well that there is an interesting point for the case of
+  *dynamic language runtimes* - a thing that Quarkus is working in order
+  to deliver. I come from dynamic language runtimes languages and I
+  must say this is in fact a feature I like that allowed me to develop
+  at twice the speed and introducing less bugs as I had the
+  opportunity to double check on the fly and make some tests about the
+  current status of the application instead of having to compile,
+  start the application and enter in debug modus. 
+
+  Developers are rightfully enamored with the productivity of dynamic
+  language runtimes like Node.js, and Quarkus is driving to deliver
+  that experience even though Java is a "static" (pre-compiled)
+  language
+
+  Note now the functioning with Quarkus:
+
+  #+begin_quote
+The top developer joy feature is live coding, where code changes are
+detected, recompiled, and reloaded without having to restart the
+JVM. Live coding is enabled when Quarkus is started in developer mode
+using mvn quarkus:dev. Specifically, Quarkus checks for code changes
+when it receives external events like HTTP requests or Kafka
+messages. The developer simply makes code changes, saves the file, and
+refreshes the browser for near-instant updates. Live coding even works
+with pom.xml changes. The Quarkus maven plugin will detect pom.xml
+changes and restart the JVM. It is not uncommon for Quarkus developers
+to start Quarkus in developer mode, and then minimize the terminal
+window, never having to restart the JVM during a coding session.
+  #+end_quote
+
+  That is neat and not just an ancillary benefit.
+
+  Check at the following statistics:
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-12-21 164848" class="center">
+#+end_export
+
+* On Working in tandem Quarkus + MicroProfile
+
+  Basically if you want to go down the microservices road in a serious
+  way you will have to start to think in these terms:
+
+  - Quarkus as first class citizen for microservices running on
+    Kubernetes
+
+  - MicroProfile - use this specifications to facilitate microservices
+    development.
+
+  So you understand that ideally you would use the two in tandem.
+
+  Now on the concrete side of the coin, you know that to have a proper
+  kubernetes development experience in your team is almost
+  impossible. It is too small and to this stage I do not really see it
+  as a viable road. I will reconsider later in time when I will see
+  how much the reality barrier will drag me down and how much it is
+  really possible to develop in the given time with the given
+  resources.
+
+  So maybe start to dig a little bit more down the road of
+  MicroProfile at first and leave Quarkus then for a later moment when
+  you will have the first things more under control.
+
+  I am especially interested to understand how the MicroProfile component
+  interfaces with the Spring framework. As far as I understood this is
+  the go-to framework in the industry to develop microservices in
+  Java. However, this changes a bit the perspectives.
+  
+#+begin_export html
+ <img src="../../images/Screenshot 2021-12-21 164848.png" class="center">
+#+end_export
+
+  
+* TODO I think there is still a bit of confusion in these dimensions - clear that out
+
+
+** Spring Boot vs. Quarkus
+   
+  - spring boot vs. quarkus - so here the difference quarkus is the
+    kubernetes native way. Spring boot is the java - native way of
+    doing stuff....
+
+    continue to read in order to draw this clear line
+
+** Tomcat
+
+   As ngnix was still underlying the entire concept of docker. So will
+   tomcat, Jboss or whatever still underpin the concept here. 
+
+** Docker and JVM   
+
+  - interesting is as well the fact that there is no need for docker
+    in the Java world. This due to the JVM. That was the big
+    revolution wihtin the Java world that made Java - Java. Check at
+    [[https://stackoverflow.com/questions/34603805/is-it-necessary-to-use-docker-in-java][this]] and continue the book. As you are actually reading about
+    microservices with kubernetes and the question is then how to put
+    the JVM into Kubernetes. I thought it was orchestrating docker
+    containers. Probably it can even orchestrate Java web-containers.
+
+    
+   
+* Footnotes
+
+[fn:1] I guess this will always change no matter if it is the first
+time you do a long transition from a monolith to microservices or
+not. 

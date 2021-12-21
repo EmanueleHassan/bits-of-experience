@@ -466,6 +466,7 @@ VALUES (value1, value2, value3, ...);
    So generally you can always use =[]=. There seems not be
    consistency in the team. Both ways are used.
 
+
 ** WITH
 
    Syntax
@@ -500,7 +501,7 @@ WITH query_name1 AS (
 SELECT ...
    #+end_src 
 
-   
+
 ** Alter Statement
 
    In such a way it is possible to add, delete or modify columns in an
@@ -524,7 +525,8 @@ ADD column_name datatype;
     );
    #+end_src
    
-** Some lower level stuff
+
+** Some lower level stuff - check at what is running in the DB
 
    It will be important at some point to check what is going on with
    your database and what you are performing in there at a particular
@@ -566,8 +568,6 @@ WHEN 4 THEN 'Serializable'
 WHEN 5 THEN 'Snapshot'
 END AS transaction_isolation_level ,
 
-
-
 deqp.query_plan
 FROM sys.dm_exec_sessions des
 LEFT JOIN sys.dm_exec_requests der
@@ -578,7 +578,26 @@ CROSS APPLY sys.dm_exec_sql_text(der.sql_handle) dest
 CROSS APPLY sys.dm_exec_query_plan(der.plan_handle) deqp
 where des.session_id <> @@spid
    #+end_src
+   
+** To see key relations for a column/table
 
+   #+BEGIN_SRC sql
+SELECT
+    TABLE_NAME,
+    COLUMN_NAME,
+    CONSTRAINT_NAME
+FROM
+    INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE
+    TABLE_NAME = 'result'
+    COLUMN_NAME = 'extract'
+   #+END_SRC
+
+  Then you will have a table with all of the relations for that given
+  table/column.
+
+  You can then check at all of the tables/columns affected by a given
+  key constraint.
 
   
-  
+   

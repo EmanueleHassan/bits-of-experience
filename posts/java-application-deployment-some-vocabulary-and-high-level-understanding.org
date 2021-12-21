@@ -1,0 +1,131 @@
+#+BEGIN_COMMENT
+.. title: Java Application Deployment - Some Vocabulary and high Level Understanding
+.. slug: java-application-deployment-some-vocabulary-and-high-level-understanding
+.. date: 2021-12-20 20:25:11 UTC+01:00
+.. tags: java 
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+Through this post you will gain a bit of vocabulary in the Java
+world.
+
+This in the sense that you will understand better the deployment of
+application. Server side operations etc. for the Java world. 
+
+{{{TEASER_END}}}
+
+* Java Application
+
+  This section answers the question: how are the bytecode, the relevant
+  static front-end files etc. bundled?
+
+** On WAR
+  
+   A WAR (web application archive) file is used to bundle web
+   components, compiled classes, and other resource files like
+   deployment descriptors, HTML, JavaScript, and CSS files. Together
+   they form a web application.
+
+   To run a Java web application, the WAR file needs to be deployed to
+   *the server environment*, a web container.
+
+   The web-app server can be any of Tomcat or Jetty or a Java EE
+   server such as JBoss or Glassfish.
+
+   Note that in simple words you can say the following:
+
+   #+begin_quote
+   A war file is a special jar file that is used to package a web
+   application to make it easy to deploy it on an application
+   server. The content of the war file must follow a defined
+   structure.
+   #+end_quote
+
+   Recall the following strucutre. =.jar= is just part of the entire
+   system. Can be a package dependency, a bytecode app etc. =war= is
+   the entire bundle.
+   
+   #+begin_export html
+    <img src="../../images/strucutre.png" class="center">
+   #+end_export
+
+   So your app is deployed as =.war= and underneath you might refer to
+   =.jar= that package your libraries.
+
+   It is important always to understand where your packaged libraries
+   are stored on your file system. In such a way it will be possible
+   for you to understnad the dependency structure and see if your
+   build and deployment well functioned.
+
+   In this sense refer to your notes about gradle, as like this is
+   possible to start to connect the dots. 
+
+** Jakarta Servlet
+
+   A java servlet simply stores a class in Jakarta EE that is conform
+   to the specifications of the servlet API. This is simply a standard
+   for responding to requests.
+
+   That is basically it. Nothing fancy.
+
+   Thus, a software developer may use a servlet to add dynamic content
+   to a web server using the Java platform. The generated content is
+   commonly HTML, but may be other data such as XML and more commonly,
+   JSON. Servlets can maintain state in session variables across many
+   server transactions by using HTTP cookies, or URL mapping. (wiki)
+
+   So again it is a very standard thing. Nothing new under the
+   sun. Don't just be scared of the names.
+
+   The only thing is that is the general concept. And that general
+   concept must be embedded into the entire ecosystem with the
+   different web-containers etc.
+
+   Interesting would then be to understand how frameworks fit in this
+   picture. Do they implement the Servlet /under the hood/?
+
+   Note as well that now the historic Servlet API has been replaced by
+   two different technologies - I guess two different set of specific
+   API albeit wiki does not specify - :
+
+   - Jakarta RESTful Web Services (JAX-RS 2.0) useful for AJAX, JSON
+     and REST services
+
+   - Jakarta XML Web Services (JAX-WS) useful for SOAP Web Services
+      
+** On web-container and Java
+
+   A web-container - also called web-servlet - is the component of a
+   web-server that interacts with Jakarta Servlets. (wiki)
+
+   It is essentially the *component (!)* of a *web server* that interacts with
+   the servlets. The web container is responsible for managing the
+   lifecycle of servlets, mapping a URL to a particular servlet and
+   ensuring that the URL requester has the correct access rights.
+
+   Now again nothing new under the sun, Tomcat is the cousin of wsgi
+   or something very close to it. The idea of it in the python world
+   was discussed [[https://marcohassan.github.io/bits-of-experience/posts/wsgi-apache-and-nginx/][here]]. You can read about the top 5 open source
+   web-servers [[https://marcohassan.github.io/bits-of-experience/posts/wsgi-apache-and-nginx/][here]].
+
+   So do not be confused, it is the servlet component, not the whole
+   webserver in itself. I have to well understand in this sense if it
+   is still used in combination with a more robust server such apache
+   or ngnix or what. 
+   
+   In any case the post above mentions that you can use the coyote
+   extension for Tomcat and serve the role of a web-server, i.e. you
+   would have Tomcat not simply handling *Java applications* but as
+   well serve static content etc..
+
+   In any case you got the basic idea. With the servlet bit you
+   execute the server side java classes answering the requests
+   according to the well defined API. Note as well that this goes hand
+   in hand in the java world with the JSP Pages, which is basically
+   the MVC framework etc. and the way you create dynamic content.
+
+   
