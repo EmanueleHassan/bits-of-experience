@@ -4338,96 +4338,15 @@ System.out.println(String.format("Found %d names", startsWithN.size()));
    
 
 
-* Iterator Interface
+** Intersting point - no parameter initialization
 
-  Check at that interface and its method cause all of the most
-  important data structures in the Collection Framework implement
-  such an interface and that is actually the interface that will
-  allow you to quickly navigate throughout all of your important
-  data-structures and this in a much more convenient way than doing
-  that through indexing operations.
+   Check at [[https://stackoverflow.com/questions/997482/does-java-support-default-parameter-values][this article]].
 
-  Note that the for-each loop is a valid subsititute to the iterator
-  interface in the case you want to iterate in the existing order of
-  the data structure. *Know the both of them well* in any case.
+   Also interesting in there the thing about builder pattern.
 
-  Recall that any data-structure of the Collections framework
-  implements the Iterators interface and provides an =iterator()=
-  method that returns an iterator at the start of the collection. That
-  means that you can use the following iterator methods to work with
-  it:
-  
-#+begin_export html
- <img src="../../images/Screenshot 2021-10-25 101403.png" class="center">
-#+end_export
-
-  You can then see that you can cycle across classes of the Collection
-  framework by using such iterators. This in a very similar taste to
-  what you used to do when working in C++.
-
-  You can find basic examples next:
-
-  #+begin_src java :results output raw :classname IteratorDemo
-// Demonstrate iterators.
-import java.util.*;
-class IteratorDemo {
-    public static void main(String args[]) {
-	// Create an array list.
-	ArrayList<String> al = new ArrayList<String>();
-	// Add elements to the array list.
-	al.add("C");
-	al.add("A");
-	al.add("E");
-	al.add("B");
-	al.add("D");
-	al.add("F");
-
-	// Use iterator to display contents of al.
-	System.out.print("Original contents of al: ");
-	Iterator<String> itr = al.iterator();
-	while(itr.hasNext()) {
-	    String element = itr.next();
-	    System.out.print(element + " ");
-	}
-	System.out.println();
-
-	// Modify objects being iterated.
-	ListIterator<String> litr = al.listIterator();
-	while(litr.hasNext()) {
-	    String element = litr.next();
-	    litr.set(element + "+");
-	}
-	System.out.print("Modified contents of al: ");
-	itr = al.iterator();
-	while(itr.hasNext()) {
-	    String element = itr.next();
-	    System.out.print(element + " ");
-	}
-	System.out.println();
-	// Now, display the list backwards.
-	System.out.print("Modified list backwards: ");
-	while(litr.hasPrevious()) {
-	    String element = litr.previous();
-	    System.out.print(element + " ");
-	}
-	System.out.println();
-    }
-}
-  #+end_src 
-
-  #+RESULTS:
-  Original contents of al: C A E B D F 
-  Modified contents of al: C+ A+ E+ B+ D+ F+ 
-  Modified list backwards: F+ D+ B+ E+ A+ C+ 
-
-  Note that you have to instantiate an =iterator= object out of the
-  Collection class in order to call the iterator methods.
-
-  The for-each alternative is more your pythonic way of doing
-  things. Check at the functional methods to work as lambda
-  expressions were a great killer in Python in this sense. 
-   
-
+   there is a long post with all of the options where builder patterns
+   are outlined. Nothing too fancy. Try to keep it in the back of your
+   mind but do not know if you will really use it.
   
 * argument Passing
 
@@ -4726,7 +4645,154 @@ import pkg1[.pkg2].(classname|*);
    imported it correctly.
     
     
-* Frameworks
+* Frameworks 
+  
+** Iterator Interface
+
+   THis is a very important one that you should understand. As you
+   well know much of the logic of programming is built on the top of
+   the concept of object iteration.
+
+   So what you will often do in Java is work with objects beloning to
+   some class of maps or collections. There you will store the data,
+   and you will use iterators for performing transformations and
+   applying in there your business logic.
+
+   Given that the iterator interface defines what you can do and how
+   the iterating procedure works and is in fact the basis for the
+   iterator implementation of the Collections you should well
+   understand it. 
+
+   Check at that interface and its method cause all of the most
+   important data structures in the Collection Framework implement
+   such an interface and that is actually the interface that will
+   allow you to quickly navigate throughout all of your important
+   data-structures and this in a much more convenient way than doing
+   that through indexing operations.
+
+   Note that the for-each loop is a valid subsititute to the iterator
+   interface in the case you want to iterate in the existing order of
+   the data structure. *Know the both of them well* in any case.
+
+   Recall that any data-structure of the Collections framework
+   implements the Iterators interface and provides an =iterator()=
+   method that returns an iterator at the start of the collection. That
+   means that you can use the following iterator methods to work with
+   it:
+  
+ #+begin_export html
+  <img src="../../images/Screenshot 2021-10-25 101403.png" class="center">
+ #+end_export
+
+   You can then see that you can cycle across classes of the Collection
+   framework by using such iterators. This in a very similar taste to
+   what you used to do when working in C++.
+
+   You can find basic examples next:
+
+   #+begin_src java :results output raw :classname IteratorDemo
+// Demonstrate iterators.
+import java.util.*;
+class IteratorDemo {
+    public static void main(String args[]) {
+	// Create an array list.
+	ArrayList<String> al = new ArrayList<String>();
+	// Add elements to the array list.
+	al.add("C");
+	al.add("A");
+	al.add("E");
+	al.add("B");
+	al.add("D");
+	al.add("F");
+
+	// Use iterator to display contents of al.
+	System.out.print("Original contents of al: ");
+	Iterator<String> itr = al.iterator();
+	while(itr.hasNext()) {
+	    String element = itr.next();
+	    System.out.print(element + " ");
+	}
+	System.out.println();
+
+	// Modify objects being iterated.
+	ListIterator<String> litr = al.listIterator();
+	while(litr.hasNext()) {
+	    String element = litr.next();
+	    litr.set(element + "+");
+	}
+	System.out.print("Modified contents of al: ");
+	itr = al.iterator();
+	while(itr.hasNext()) {
+	    String element = itr.next();
+	    System.out.print(element + " ");
+	}
+	System.out.println();
+	// Now, display the list backwards.
+	System.out.print("Modified list backwards: ");
+	while(litr.hasPrevious()) {
+	    String element = litr.previous();
+	    System.out.print(element + " ");
+	}
+	System.out.println();
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   Original contents of al: C A E B D F 
+   Modified contents of al: C+ A+ E+ B+ D+ F+ 
+   Modified list backwards: F+ D+ B+ E+ A+ C+ 
+
+   Note that you have to instantiate an =iterator= object out of the
+   Collection class in order to call the iterator methods.
+
+   The for-each alternative is more your pythonic way of doing
+   things. Check at the functional methods to work as lambda
+   expressions were a great killer in Python in this sense. 
+   
+*** On a note of care when iterating.
+
+    Note that here sits a foundamental difference with other languages
+    you were used to work with.
+
+    In the sense that you can not iterate over an object that you are
+    modifying. This will cause a
+    =ConcurrentModificationException=. You can read more in [[https://www.baeldung.com/java-concurrentmodificationexception][here]].
+
+    This already happen to due to the my natural tendency to work in
+    such way in Python. 
+
+    So my strategy is then among the one in the post above the one of
+    creating interim helper objects. Probably not the best from the
+    performance perspective... but it is general and its ok. Plus Java
+    Garbage collection will take care of the rest.
+
+    Example:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+List<Data>  explodeMissingBl   = new LinkedList<>();
+
+this.table.data.stream()
+    .filter(d -> mySecretFilter(d))
+    .forEach(d -> mySecretMap(d)
+	     .stream().
+	     forEach(
+		     (m) ->  {
+			 // add the relevant business logic to the table db
+			 Data data = new Data();
+									 
+			 data.put(XXX); 
+			 data.put(XXX); 
+			 data.put(XXX); 
+									 
+			 explodeMissingBl.add( data );			// cannot add here directly to table, otherwise you will get that Exception	 
+		     }
+		     )
+	     );
+		 
+table.data.addAll(explodeMissingBl);	
+    #+END_SRC
+
 
 ** Collection Frameworks
 
@@ -5552,7 +5618,6 @@ public class Reminder {
 
 
 ** Streaming - check as well resource you have there on java 8     :noexport:
-
 
 ** Mustache                                                        :noexport:
 
@@ -6549,7 +6614,6 @@ class B extends A { // ERROR! Can't subclass A
 }
     #+end_src 
     
-
 
 * On Java Persistence API - JPA
 
