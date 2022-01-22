@@ -73,11 +73,9 @@ Schildt)" publicly available on the world wide web at [[https://gfgc.kar.nic.in/
 
 {{{TEASER_END}}}
 
-
 * Reference
 
   A nice website to navigate some Java is [[https://www.javabrahman.com/category/java-8/][this]]. 
-
 
 * History
 
@@ -3329,6 +3327,73 @@ objects which implement java.io.Closeable.
 
    in such a way you can pad with 0, the desired amount of times. This
    will be useful for instance to keep the RUC number consistent.
+
+** On regex
+
+   In order to check if a single regular expression matches you can
+   work directly with the convention
+
+   #+BEGIN_SRC java :results output drawer :classname 
+   "myString".matches(myCoolRegex)
+   #+END_SRC
+
+   In case you have multiple regex than the above will not be
+   sufficient. You have to start to work with the Pattern class.
+
+   Check at the methods on the official website. You can then either
+   get back the string that it matches as a string or a bool as in the
+   example below.
+
+   Then regex the same stuff as in all programming languages.
+
+   In order to check if a pattern matches some regular expressions you
+   can use the following:
+
+   #+BEGIN_SRC java :results output drawer :classname Regex
+import java.util.regex.Pattern;
+
+class Regex {
+    public static void main(String args[]) {
+
+	Pattern patternInclude = Pattern.compile("EM_(.*)|HELLO_(.*)");
+
+	System.out.println(patternInclude.matcher("HELLO_EM_CORP_DTS_AFRICA").matches());
+    }
+}
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   true
+   :end:
+
+   Use the [[https://regex101.com/r/pW6oL2/2][following website]] when you have to do your regex.
+
+   Note that to create complex hierarchical logics it is not
+   recommended to do it whole in a single regex. That becomes much
+   complex quickly and you risk making mistakes.
+
+   It is much better to embedd the hierarchical structure in the
+   application code
+
+   #+BEGIN_SRC java :results output drawer :classname 
+import java.util.regex.Pattern;
+
+class Regex {
+    public static void main(String args[]) {
+
+
+	// i.e. say you want to include all regex and then exclude for the matching... some that fullfill some criteria...
+	
+	Pattern patternInclude = Pattern.compile("EM_(.*)|HELLO_(.*)"); // include all that you have to include
+
+	PatternExclude = Pattern.compile("myPatternToExclude");         // exclude all that you have to exclude
+
+	// then apply the two pattern filters sequentially.
+    }
+}
+
+   #+END_SRC
    
 ** F-strings similars
 
@@ -3376,6 +3441,7 @@ System.out.println(String.format("Found %d names", startsWithN.size()));
    are outlined. Nothing too fancy. Try to keep it in the back of your
    mind but do not know if you will really use it.
   
+
 * argument Passing
 
   Note that this is as well similar as with C++. When you pass
