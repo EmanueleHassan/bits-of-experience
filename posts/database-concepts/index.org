@@ -598,46 +598,6 @@ WHERE
 
   You can then check at all of the tables/columns affected by a given
   key constraint.
+
+  
    
-** Some useful sql snippets
-
-   These will pose some very basic queries and concepts that you will
-   have to use continuously... I do not like to continuously do the
-   double of the effort.
-
-   So will store here the basic stuff and just perform a copy and
-   paste exercise when necessary.
-   
-*** Check that two tables are equal
-
-    Starting to get back the sql skills.
-
-    Check for instance at the following.
-
-    You can use the following as a snippet to check that two tables are
-    no different from each other. 
-
-    #+begin_src sql
-select mark.*  -- select the different one.
-                -- the general idea is the following:
-		--   1. get all of rows where you have a match for the specified columns (see join)		--   2. make a full outer join on the results of 1. and check which record are null
-                --      meaning there was not a match. 
-		
-from (select *
-      from B1_M21.mac.barra_factors
-      where version = 92)  as mark
-full outer join (
-    -- here you check that you have a match for the columns of interest
-    -- in the two tables marco and mark.
-    select *
-    from B1_M21.result.Factor_Loading 
-    where as_of_version = 11
-    )  on    m.barra_security   = a.security
-	     and   m.factor          = a.credit_factor
-	     and   m.value           = a.coefficient
-    where (mark.credit_factor is null
-           or marco.factor is null) -- note that not even this is perfect.
-                                    -- just checking if there was not a match on these.
-				    -- so would have to check also at the other ones..
-				    -- double check next time you will properly use it.
-    #+end_src
