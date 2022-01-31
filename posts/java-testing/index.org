@@ -157,26 +157,12 @@ dependencies {
     the other hand the possible assertions treated in the [[*AssertionTypes][next
     section]]. Also recall about [[*Assumptions][Assumptions]].
     
-**** @Test
 
-     Denotes that a method is a test method. 
-
-**** @ParameterizedTest
-
-     Denotes that a method is a parameterized test. Such methods are
-     inherited unless they are overridden.
- 
-**** @RepeatedTest
-
-     Denotes that a method is a test template for a repeated test. Such
-     methods are inherited unless they are overridden.
-     
 **** @TestFactory
 
      Denotes that a method is a test factory for dynamic tests. Such
      methods are inherited unless they are overridden. 
  
-
 **** @TestTemplate
 
      Denotes that a method is a template for test cases designed to be
@@ -184,22 +170,6 @@ dependencies {
      returned by the registered providers. Such methods are inherited
      unless they are overridden. 
  
-**** @TestClassOrder
-
-     Used to configure the test class execution order for @Nested test
-     classes in the annotated test class. Such annotations are inherited.
-
-**** @TestMethodOrder
-
-     Used to configure the test method execution order for the annotated
-     test class; similar to JUnit 4’s @FixMethodOrder. Such annotations are
-     inherited. 
- 
-
-**** @Disabled
-
-     Used to disable a test class or test method; analogous to JUnit 4’s
-     @Ignore. Such annotations are not inherited. 
 
 **** @Timeout
 
@@ -224,14 +194,484 @@ dependencies {
      org.junit.jupiter.api.io package. 
         
 
+**** Testing Annotations
 
+     These annotations are basically used for testing itself.
 
+     They specify how methods in test classes should be read and
+     processed.
 
+***** @Test
+
+      Denotes that a method is a test method.
+
+      That is the most trivial one. 
+
+***** @RepeatedTest
+
+      JUnit Jupiter provides the ability to repeat a test a specified
+      number of times by annotating a method with @RepeatedTest and
+      specifying the total number of repetitions desired. Each
+      invocation of a repeated test behaves like the execution of a
+      regular @Test method with full support for the same lifecycle
+      callbacks and extensions.
+
+      See you demo test. Then when you run the test you will basically
+      see the repetitions nested in the method of interest.
+
+      Use the following example as per the offficial docu to style
+      your tests:
+
+      #+BEGIN_SRC java :results output drawer :classname 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.logging.Logger;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
+import org.junit.jupiter.api.TestInfo;
+
+class RepeatedTestsDemo {
+
+    private Logger logger = // ...
+
+	@BeforeEach
+	void beforeEach(TestInfo testInfo, RepetitionInfo repetitionInfo) {
+        int currentRepetition = repetitionInfo.getCurrentRepetition();
+        int totalRepetitions = repetitionInfo.getTotalRepetitions();
+        String methodName = testInfo.getTestMethod().get().getName();
+        logger.info(String.format("About to execute repetition %d of %d for %s", //
+				  currentRepetition, totalRepetitions, methodName));
+    }
+
+	@RepeatedTest(10)
+	void repeatedTest() {
+	    // ...
+	}
+
+    @RepeatedTest(5)
+    void repeatedTestWithRepetitionInfo(RepetitionInfo repetitionInfo) {
+        assertEquals(5, repetitionInfo.getTotalRepetitions());
+    }
+
+    @RepeatedTest(value = 1, name = "{displayName} {currentRepetition}/{totalRepetitions}")
+    @DisplayName("Repeat!")
+    void customDisplayName(TestInfo testInfo) {
+        assertEquals("Repeat! 1/1", testInfo.getDisplayName());
+    }
+
+    @RepeatedTest(value = 1, name = RepeatedTest.LONG_DISPLAY_NAME)
+    @DisplayName("Details...")
+    void customDisplayNameWithLongPattern(TestInfo testInfo) {
+        assertEquals("Details... :: repetition 1 of 1", testInfo.getDisplayName());
+    }
+
+    @RepeatedTest(value = 5, name = "Wiederholung {currentRepetition} von {totalRepetitions}")
+    void repeatedTestInGerman() {
+        // ...
+    }
+
+}
+      #+END_SRC
+
+      :results:
+      INFO: About to execute repetition 1 of 10 for repeatedTest
+      INFO: About to execute repetition 2 of 10 for repeatedTest
+      INFO: About to execute repetition 3 of 10 for repeatedTest
+      INFO: About to execute repetition 4 of 10 for repeatedTest
+      INFO: About to execute repetition 5 of 10 for repeatedTest
+      INFO: About to execute repetition 6 of 10 for repeatedTest
+      INFO: About to execute repetition 7 of 10 for repeatedTest
+      INFO: About to execute repetition 8 of 10 for repeatedTest
+      INFO: About to execute repetition 9 of 10 for repeatedTest
+      INFO: About to execute repetition 10 of 10 for repeatedTest
+      INFO: About to execute repetition 1 of 5 for repeatedTestWithRepetitionInfo
+      INFO: About to execute repetition 2 of 5 for repeatedTestWithRepetitionInfo
+      INFO: About to execute repetition 3 of 5 for repeatedTestWithRepetitionInfo
+      INFO: About to execute repetition 4 of 5 for repeatedTestWithRepetitionInfo
+      INFO: About to execute repetition 5 of 5 for repeatedTestWithRepetitionInfo
+      INFO: About to execute repetition 1 of 1 for customDisplayName
+      INFO: About to execute repetition 1 of 1 for customDisplayNameWithLongPattern
+      INFO: About to execute repetition 1 of 5 for repeatedTestInGerman
+      INFO: About to execute repetition 2 of 5 for repeatedTestInGerman
+      INFO: About to execute repetition 3 of 5 for repeatedTestInGerman
+      INFO: About to execute repetition 4 of 5 for repeatedTestInGerman
+      INFO: About to execute repetition 5 of 5 for repeatedTestInGerman
+      import static org.junit.jupiter.api.Assertions.assertEquals;
+      :end:
+
+      Nice, you can then add this to your logs and inspect them
+      etc. Have still to decide on the workflow for such tests but that
+      is a good option.
+      
+      Such methods *are inherited* unless they are overridden.
+      
+***** @ParameterizedTest
+
+      Understand the following naming conventition that will be used
+      in this section
+
+      - =factory method=: a non-private, static method declared in the
+      target type that accepts a single String argument and returns an
+      instance of the target type. The name of the method can be
+      arbitrary and need not follow any particular convention. 
+
+      - =factory constructor=: a non-private constructor in the target
+      type that accepts a single String argument. Note that the target
+      type must be declared as either a top-level class or as a static
+      nested class.
+
+      These can then be used for parameterizing your test cases.
+      
+****** Most basic example
+
+       It is possible for the tests to run with different parameters
+       with the use of this tag.
+
+       See for instace the following
+
+       #+BEGIN_SRC java :results output drawer :classname 
+@ParameterizedTest
+@ValueSource(strings = { "hello", "world", "I love J.N." }) // source for the parameters
+void words(String candidate) {
+    Assertions.assertTrue(candidate.equals("hello"));
+}      
+       #+END_SRC
+      :results:
+ words(String) ✔
+ ├─ [1] candidate=hello ✔
+ ├─ [2] candidate=world X
+ └─ [3] candidate=I love J.N. X
+      :end:
       
 
+      Such methods are inherited unless they are overridden.
 
-
+****** On Methods implementing Autocloseable
      
+       Recall the following point. Might be useful at some point in
+       the future.
+       
+       #+BEGIN_SRC java :results output drawer :classname 
+       Arguments that implement java.lang.AutoCloseable (or
+       java.io.Closeable which extends java.lang.AutoCloseable) will
+       be automatically closed after @AfterEach methods and
+       AfterEachCallback extensions have been called for the current
+       parameterized test invocation.  
+
+       To prevent this from happening, set the autoCloseArguments
+       attribute in @ParameterizedTest to false. Specifically, if an
+       argument that implements AutoCloseable is reused for multiple
+       invocations of the same parameterized test method, you must
+       annotate the method with @ParameterizedTest(autoCloseArguments
+       = false) to ensure that the argument is not closed between
+       invocations. 
+       #+END_SRC                
+
+****** On the possible sources for parameterized methods 
+
+       Recall that there are various sources for parametrized methods that
+       you can use when working with these.
+
+       Essentially you can work with the follwoing:
+
+       - =@ValueSource=
+
+	 this is basically the one in the example above. It is the
+         trivial and most basic one. You pass primitives to it. 
+
+       - Null and Empty Sources
+
+	 So essentially these are tags to pass /empty and null values/
+         as paramters. Play around with them in the next step.
+
+	 =@NullSource=: provides a single null argument to the
+         annotated method.
+
+	 =@EmptySource=: provides a single empty argument to the
+         annotated =@ParameterizedTest= method for parameters of the
+         following types: java.lang.String, java.util.List,
+         java.util.Set, java.util.Map, primitive arrays (e.g., int[],
+         char[][], etc.), object arrays (e.g.,String[], Integer[][],
+         etc.).
+	 
+       - =@EnumSource=
+
+	 With this you can use Enum constants.
+
+	 #+BEGIN_SRC java :results output drawer :classname 
+@ParameterizedTest
+@EnumSource(names = { "DAYS", "HOURS" }) // names of the constant you will pass. 
+void testWithEnumSourceInclude(ChronoUnit unit) { // ChronoUnit is the enum you will use
+    assertTrue(EnumSet.of(ChronoUnit.DAYS, ChronoUnit.HOURS).contains(unit));
+}
+	 #+END_SRC
+
+	 You can even use exclude logic or regex
+
+	 #+BEGIN_SRC java :results output drawer :classname 
+@ParameterizedTest
+@EnumSource(mode = EXCLUDE, names = { "ERAS", "FOREVER" })
+void testWithEnumSourceExclude(ChronoUnit unit) {
+    assertFalse(EnumSet.of(ChronoUnit.ERAS, ChronoUnit.FOREVER).contains(unit));
+}
+@ParameterizedTest
+@EnumSource(mode = MATCH_ALL, names = "^.*DAYS$")
+void testWithEnumSourceRegex(ChronoUnit unit) {
+    assertTrue(unit.name().endsWith("DAYS"));
+}
+	 #+END_SRC
+	 
+       - =@MethodSource=
+
+	 @MethodSource allows you to refer to one or more /factory
+         methods/ of the test class or external classes.
+
+	 These will supply the input of interest.
+
+	 Each *factory method* must generate a stream of arguments, and
+         each set of arguments within the stream will be provided as
+         the physical arguments for individual invocations of the
+         annotated @ParameterizedTest method.
+
+	 #+BEGIN_SRC java :results output drawer :classname 
+
+// Single Parameter Example //
+@ParameterizedTest
+@MethodSource("stringProvider")
+void testWithExplicitLocalMethodSource(String argument) {
+    assertNotNull(argument);
+}
+
+static Stream<String> stringProvider() {
+    return Stream.of("apple", "banana");
+}
+
+// Multiple Paramter Parameter Example //
+@ParameterizedTest
+@MethodSource("stringIntAndListProvider")
+void testWithMultiArgMethodSource(String str, int num, List<String> list) {
+    assertEquals(5, str.length());
+    assertTrue(num >=1 && num <=2);
+    assertEquals(2, list.size());
+}
+
+static Stream<Arguments> stringIntAndListProvider() {
+    return Stream.of(
+        arguments("apple", 1, Arrays.asList("a", "b")), // note how you have to return an argument object
+        arguments("lemon", 2, Arrays.asList("x", "y"))
+    );
+}
+	 #+END_SRC	 	 
+
+	 recall that Argument Inteface. It is something specific in
+         Junit. See [[https://junit.org/junit5/docs/5.0.0/api/org/junit/jupiter/params/provider/Arguments.html][official docu]]. In any case just take it as given
+         and understand it in the way as used above.
+
+	 Note that you can as well work by calling a factory reference.
+
+	 #+BEGIN_SRC java :results output drawer :classname 
+package example;
+
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+class ExternalMethodSourceDemo {
+
+    @ParameterizedTest
+    @MethodSource("example.StringsProviders#tinyStrings")
+    void testWithExternalMethodSource(String tinyString) {
+        // test with tiny string
+    }
+}
+
+class StringsProviders {
+
+    static Stream<String> tinyStrings() {
+        return Stream.of(".", "oo", "OOO");
+    }
+}
+	 #+END_SRC
+
+       - =@CsvSource=:
+
+	 /@CsvSource/ allows you to express argument lists as
+         comma-separated values.
+
+	 So basically you pass your csv as comma separated values
+         there.
+
+	 This might be good for writing tests checking and your
+         implemented parsers.
+
+	 Example
+
+	 #+BEGIN_SRC java :results output drawer :classname 
+@ParameterizedTest
+@CsvSource({
+    "apple,         1",
+    "banana,        2",
+    "'lemon, lime', 0xF1", // note single quote ' for quote character.
+    "strawberry,    700_000"
+})
+void testWithCsvSource(String fruit, int rank) {
+    assertNotNull(fruit);
+    assertNotEquals(0, rank);
+}
+	 #+END_SRC
+
+	 An empty, quoted value ('') results in an empty String unless
+         the emptyValue attribute is set; whereas, an entirely empty
+         value is interpreted as a null reference.
+
+	 Note as well the following parameters that you can set
+
+	 #+BEGIN_SRC java :results output drawer :classname 
+@ParameterizedTest
+@CsvSource(delimiter = '|', quoteCharacter = '"', textBlock = """
+    #-----------------------------
+    #    FRUIT     |     RANK
+    #-----------------------------
+         apple     |      1
+    #-----------------------------
+         banana    |      2
+    #-----------------------------
+      "lemon lime" |     0xF1
+    #-----------------------------
+       strawberry  |    700_000
+    #-----------------------------
+    """)
+void testWithCsvSource(String fruit, int rank) {
+    // ...
+}
+	 #+END_SRC
+
+	 - =@CsvFileSource=
+
+	   This lets you use CSV files from the classpath or the local
+           file system.
+
+	   That is very good to know. Like this you can perform all of
+           the necessary tests for your different parsers and you can
+           see immediately if you did break anything before building
+           or even deploying into UAT etc.
+
+	   Check the following examples
+
+	   #+BEGIN_SRC java :results output drawer :classname 
+@ParameterizedTest
+@CsvFileSource(files = "src/test/resources/two-column.csv", numLinesToSkip = 1)
+void testWithCsvFileSourceFromFile(String country, int reference) {
+    assertNotNull(country);
+    assertNotEquals(0, reference);
+}
+
+@ParameterizedTest(name = "[{index}] {arguments}")
+@CsvFileSource(resources = "/two-column.csv", useHeadersInDisplayName = true)
+void testWithCsvFileSourceAndHeaders(String country, int reference) {
+    assertNotNull(country);
+    assertNotEquals(0, reference);
+}
+	   #+END_SRC
+
+	 - =@ArgumentsSource=
+
+	   Not really understanding the point of this to this stage	   
+
+	   #+BEGIN_SRC java :results output drawer :classname 
+@ParameterizedTest
+@ArgumentsSource(MyArgumentsProvider.class)
+void testWithArgumentsSource(String argument) {
+    assertNotNull(argument);
+}
+public class MyArgumentsProvider implements ArgumentsProvider {
+
+    @Override
+    public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+        return Stream.of("apple", "banana").map(Arguments::of);
+    }
+}
+
+	   #+END_SRC
+
+
+****** On implicit argument passsing
+
+       Note the following example. There are a couple of defaults. 
+
+       I.e. for instance the below uses the concept of /factory
+       method/ and /factory classes/ mentioned before.
+
+       So you can see for instance that in the below there is a
+       /factory method/ fromTitle. Note that it is =static= and
+       non-private. 
+
+       Note now the following *fallback* mechanism:
+
+       #+begin_quote
+       See blow you have a string parameter that you pass with
+       ValueSource.
+
+       Then the idea is:
+
+       for automatic conversion from a String to a given target type
+       if the target type declares /exactly one/ suitable factory method
+       or a factory constructor as defined below - see that it has the
+       String argument and there is a match in this sense -. 
+       #+end_quote
+
+       #+BEGIN_SRC java :results output drawer :classname
+@ParameterizedTest
+@ValueSource(strings = "42 Cats")
+void testWithImplicitFallbackArgumentConversion(Book book) {
+    assertEquals("42 Cats", book.getTitle());
+}
+public class Book {
+
+    private final String title;
+
+    private Book(String title) {
+        this.title = title;
+    }
+
+    public static Book fromTitle(String title) {
+        return new Book(title);
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+} 
+       #+END_SRC
+       
+****** TODO double check when you have time - could not understand when reading
+
+       Note that there is quite a few things that you will need to
+       make sense of when you have time.
+
+       In the notes they talk about =@TestImplementation= etc. also in
+       the context of Parameterized tests.
+
+       Moreover, they talk about the ordering of the parameters and
+       of some =@AggregateWith= annotator. Double check the entire
+       thing when you have time.
+
+****** TODO understand better this and Mockito
+
+       - difference with Mockito... might seem trivial to the user
+         that has a strong clue about it. I do not have one so we will
+         see. How do you supply things there that are not working
+         here? 
+
+	 what is missing etc.?
+
+****** TODO better understand the @ArgumentsSource method
+
+
 **** Tagging
 
 ***** @Tag
@@ -358,7 +798,11 @@ class DisplayNameGeneratorDemo {
       @Nested test class unless the "per-class" test instance lifecycle is
       used. Such annotations are not inherited.
 
+
 **** LifeCycle Annotations
+
+     
+               
 
 ***** Tests Lifecycle
 
@@ -422,9 +866,6 @@ class StandardTests {
 }
       #+END_SRC
      
-
-
-     
 ***** @BeforeEach
 
       Denotes that the annotated method should be executed before each
@@ -455,8 +896,6 @@ class StandardTests {
       inherited (unless they are hidden or overridden) and must be static
       (unless the "per-class" test instance lifecycle is used). 
 
-
-
 ***** @Disabled
 
       Simple tag to disable a particular test.
@@ -471,7 +910,8 @@ class StandardTests {
       disable. You can check at it online on the official
       documentation. There you have the correct reference.                  
 
-***** @TestInstance
+
+***** TODO @TestInstance
 
       Used to configure the test instance lifecycle for the annotated test
       class. Such annotations are inherited.
@@ -481,14 +921,26 @@ class StandardTests {
       thing.
 
       Study it later at a later time-point.
+
+***** TODO @TestMethodOrder
+
+      Used as well to
+
+      Used to configure the test method execution order for the annotated
+      test class; similar to JUnit 4’s @FixMethodOrder. Such annotations are
+      inherited. 
+ 
+      
        
+***** TODO @TestClassOrder
+
+      Used to configure the test class execution order for @Nested test
+      classes in the annotated test class. Such annotations are inherited.
+
 
 **** TODO check how to combine the annoations above into meta-annotations
 
      see chapter 2.1 in this sense. 
-     
-     
-
 
 *** AssertionTypes
 
@@ -671,7 +1123,7 @@ class AssertionsDemo {
     It is essentially and if condition that has to hold in order to
     run the test.
 
-    Then see the following two options
+    Then see the following two options (=assumeTrue= and =assumeThat=)
 
     #+BEGIN_SRC java :results output drawer :classname 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -688,7 +1140,13 @@ class AssumptionsDemo {
 
     @Test
     void testOnlyOnCiServer() {
-        assumeTrue("CI".equals(System.getenv("ENV")));
+        assumeTrue("CI".equals(System.getenv("ENV"))); // note that it
+						       // is a boolean
+						       // condition. It
+						       // is not a
+						       // function of
+						       // multiple
+						       // parameters.
         // remainder of test
     }
 
