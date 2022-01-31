@@ -2,7 +2,7 @@
 .. title: Object Oriented Programming - Some Notes
 .. slug: object-oriented-programming-some-notes
 .. date: 2021-11-17 16:37:49 UTC+01:00
-.. tags: 
+.. tags: oop
 .. category: 
 .. link: 
 .. description: 
@@ -16,6 +16,15 @@ proper OOP way.
 Once upon a time, I had written some notes about major OOP
 concepts. Unfortunately it got lost. Learn your lesson from it as this
 is a real pity.
+
+In any case start anew here. Basically this should cover a little bit
+of Software Design best practices. Add some notes for instance through
+the following sources
+
+- [[https://refactoring.guru/design-patterns/factory-method][design-patterns and refactoring]] - online source
+
+- [[http://www.javier8a.com/itc/bd1/articulo.pdf][desing patterns]] - apparently /THE BOOK/ in order to write proper
+  software .
 
 {{{TEASER_END}}}
 
@@ -103,10 +112,76 @@ class TAX {
   I.e. your callback interface is implemented directly via functional
   programming and it is never explicitely written anywehere.
 
+* Factory Methods
+
+  Basically this is the one I was already noting when making some
+  notes generally about Java.
+
+  This is very core in order to write a bit of solid code. You have to
+  understand and interiorize it.
+
+  Basically the idea is the following:
+
+  - Define an interface for creating an object, but let subclasses
+    decide which class to instantiate. Factory Method lets a class
+    defer instantiation to subclasses. 
+
+  - So that is basically a /virtual/ constructor.
 
 
+  So the idea is essentailly the following:
   
+  #+begin_export html
+   <img src="../../images/Screenshot 2022-01-28 122956.png" class="center">
+  #+end_export
 
+  This was essentially the note that you made when writing your notes
+  about java.
+
+  See now how everything fits in this factory methods picture and good
+  to have it here in order to have a minimum order and reference it in
+  a faster way.
+
+  You see see in this sense how you start to extract important info
+  from that file and refactor them.
+
+*** On reference variables using interafaces             :reference_variable:
+
+    This is convenient. Recall that it was possible to define
+    reference variables as superclasses and to reference then objects
+    of subclasses. It was then possible to call the different abstract
+    methods of the superclass that would then trigger the right call
+    to the actual implementation of it in the subclass.
+
+    In a similar way it is possible to create reference variables as
+    interfaces and point then to the different objects of classes
+    implementing such interface.
+
+    *Any instance of any class that implements the declared interface
+    can be referred to by such a variable*.
+
+    The exact way the interface is implemented depends then on the
+    type of object that the reference interface variable points
+    at. This in a very similar way to what was already explained for
+    the case of superclass reference variable.
+
+    *Note:* interestingly when you implement a reference variable of
+    type interface and then refer to an object of some class referring
+    to that interface you can access all of the methods specified by
+    the interface via the reference variable but *you cannot access
+    any other members defined in the class* implementing the
+    interface.
+    
+    The method to be executed is looked up dynamically at run time,
+    allowing classes to be created later than the code which calls
+    methods on them.
+
+    #+begin_quote
+CAUTION Because dynamic lookup of a method at run time incurs a
+significant overhead when compared with the normal method invocation
+in Java, you should be careful not to use interfaces casually in
+performance-critical code.
+  
 
 * Polymorphism
 
