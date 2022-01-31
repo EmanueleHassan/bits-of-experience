@@ -1,0 +1,303 @@
+#+BEGIN_COMMENT
+.. title: RDF Graphs - SPARQL - Turtle
+.. slug: rdf-graphs-sparql-turtle
+.. date: 2021-03-31 16:52:34 UTC+02:00
+.. tags: Data
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+.. status: 
+#+END_COMMENT
+
+Ok, it turns out I will have also quickly to dig into RDFs its syntax
+and concepts.
+
+To be honest after I digged deeper into label-property graphs I do not
+really see the point of using RDFs graphs and query such graphs via
+SPARQL. I did not even start seriously with it and I already have
+headache because of the complexity involved. In every little thing in
+CS there are layers and layers of complexity and at least 10 ways to
+do one thing. That does not help. w3c or whatever should improve on
+this, cause it is not fun like this. 
+
+In any case, after this quick rant, the point of learning this is that
+RDF is useful in itself cause on top of allowing the construction of
+RDF graphs and the query via SPARQL it is a w3c standard to store
+triples in itself.
+
+Standardizations are always good, and this is why such data syntax is
+very much used across the world for a smooth data transfer. I.e. even
+if you do not like the graph storage and query of such RDF data, it is
+useful itself cause its large community endowment.
+
+This is why for the solution we will leverage existing RDF ontologies
+as well as create our own data store following RDF standards and a
+particular RDF ontology format used in Switzerland.
+
+At the lower data layer we will therefore work with these. The app
+logic, store and retrieve will likely not be through RDFs graphs and SPARQL.
+
+{{{TEASER_END}}}
+
+* RDF Syntax 
+
+  Ok, recall your big-data classes. Always split the *logical* layer
+  from the physical layer.
+
+  At the logical level RDF are simple triples
+
+  #+begin_example
+  subject -> predicate -> object
+  #+end_example
+
+  That is all. You specify entries with the logical model above and
+  grow your relations in such a way.
+
+  Now the ways such triples are, or can be, implemented are multiple.
+
+  Some leverage =xml= standards - which is in fact the official one-,
+  some other the =json= format etc.
+
+  One particularly important and used syntax for storing RDFs triples
+  is =turtle= which we will explore next. It removes a bit of
+  complexity of =RDF/XML= and you can quickly keep on going with it
+  then. This is especially important in this project where there is a
+  lot to do in little time.
+  
+** Turtle
+
+   Note this borrows from [[https://ai.ia.agh.edu.pl/_media/pl:dydaktyka:semweb:quick-tutorial-rdf-turtle.pdf][here]]. For a more thorough introduction check [[https://link.springer.com/content/pdf/10.1007%2F978-3-540-33994-6_4.pdf][here]].
+
+   There are essentially two datatypes in RDF:
+
+   - =URIs= reference some conceptual entity. They are usually written
+     as follows: <http://people.csail.mit.edu/eob#ted>. Note this are
+     not www exposed URI. It is much more that they borrowed from that
+     same concepts.  Note also that the =<>= are unrelated from xml
+     syntax. You do not need closing =/=. i.e. =</>=
+
+   - =Literals= these are literals datatypes: int, strings etc. These
+     are generally enclosed in quotes =""=
+
+     In order to specify the type of your literals you can use the
+     following syntax.
+
+     =“123″^^xsd:integer=
+     =“Ted”^^xsd:string=
+
+
+   Given this basic logic you can the triples syntax would then be as
+   follows:
+
+   #+begin_quote
+1. A subject, which must be a URI (called a Resource in this sense)
+2. A property, which must be a URI (called a Property in this sense)
+3. An object, which can be either a URI (called a Resource in this sense) or a literal
+   #+end_quote
+
+   So for instance two triples might be:
+
+   #+begin_quote
+<http://example.org/ted> <http://example.org/name> “Ted”
+<http://example.org/ted> <http://example.org/knows> <http://example.org/Tim>
+   #+end_quote
+
+   So basically that is already most of the game. At least in this
+   ultra short tutorial I found.
+
+   What follows are techniques that will render your day by day
+   operations easier.
+   
+*** Namespaces
+
+    You can then leverage =namespaces= for not having to go through the
+    entire URI each time.
+
+    See for instance the following example:
+
+    #+begin_quote
+ @prefix haystack: <http://haystack.csail.mit.edu/>
+    #+end_quote
+
+    Such that you  can then write
+
+    #+begin_quote
+ haystack:ted
+    #+end_quote
+
+    Instead of
+
+    #+begin_quote
+ <http://haystack.csail.mit.edu/ted>
+    #+end_quote
+   
+    You can also specify a *default namespace*. This can be done in the
+    following way:
+
+    #+begin_quote
+ @base <http://db.csail.mit.edu/6.830/project#>
+    #+end_quote
+   
+    After your base prefix is specified you can write such expressions
+
+    #+begin_quote
+    :name
+    #+end_quote   
+
+    This will be evaluated as:
+
+    #+begin_quote
+    <http://db.csail.mit.edu/6.830/project#name>
+    #+end_quote
+
+*** on Typed Resources
+
+    In order to specify that a resource is of a particular type you
+    can use the =rdf:type= notation.
+
+    So for instance you can think of the following:
+
+    #+begin_quote
+    haystack:ted rdf:type someprefix:student
+    #+end_quote
+
+    where you would specify that ted is a student - or specifically
+    that ted is an instance of class =someprefix:student=, where the
+    "class" student is defined as the set of all instances belonging
+    to it.
+
+    There is a shortcut in Turtle for that and this is the predicate
+    =a=. So the below evaluates exactly as the above 
+
+    #+begin_quote
+    haystack:ted a someprefix:student
+    #+end_quote
+
+    Note that as being a class defined as a standard =URI= it is impossible
+    based on the =URI= itself to understand if it represents a single
+    object or a class. I.e. without domain knowledge of your data if
+    you just see =someprefix:student= you might not know if it
+    represents a class or a single individual. You have to dig deeper
+    in the entirety of your stored data for that and have to search
+    for =rdf:type= or =a= relations for that. 
+
+    You can then think and with a bit of intuition understand that in
+    a similar way it is possible to define metaclasses through such
+    syntax and this would be the milestone for creating your
+    ontologies. Check at the more thorough resource in the intro if
+    you want to go deeper.
+    
+*** Statement
+
+    Note that for each =subject= you can create a statement relating
+    to it - i.e. where the same URI is always your subject.
+
+    Statement boundaries are defined with a =.=.    
+
+    To make this clear think of the following:
+
+    #+begin_quote
+    <http://example.org/ted> <http://example.org/name> “Ted” .
+    #+end_quote
+
+    So note that this is a triple in the simple form.
+
+    You can however leverage the following syntax to express more
+    complex triples at once.
+
+    #+begin_quote
+## example triples in row
+<subject> <predicate> <object1> .
+<subject> <predicate> <object2> .
+
+
+## shortcut syntax for same predicate
+<subject> <predicate> <object1> , <object2> .
+
+## shortcut syntax for different predicates
+<subject> <predicateA> <object1> ;
+          <predicateB> <object2> .
+
+## combining the two above
+<subject> <predicateA> <object1a> ,
+                       <object2a> ; 
+          <predicateB> <object1b> ,
+                       <object2b> .
+    #+end_quote
+
+    So that generally you can have such structures:
+
+    #+begin_quote
+## Example 1
+
+@base <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rel: <http://www.perceive.net/schemas/relationship/> .
+
+<#green-goblin>
+    rel:enemyOf <#spiderman> ;
+    a foaf:Person ;    # in the context of the Marvel universe
+    foaf:name "Green Goblin" .
+
+<#spiderman>
+    rel:enemyOf <#green-goblin> ;
+    a foaf:Person ;
+    foaf:name "Spiderman", "Человек-паук"@ru .
+
+
+## Example 2
+haystack:ted a someprefix:student ;
+             person:firstName "Ted"^^xsd:string ;
+             person:lastName "Benson"^^xsd:string ;
+             person:knows haystack:mihir .
+    #+end_quote
+
+*** Blank Nodes
+
+    Blank nodes are evil. At least when recording data; they’re a
+    great shortcut when writing a query. They allow you to specify
+    generic relations without specifying an exact subject/object target.
+
+    If you must use them, they are connoted with square brackets =[]=.
+    
+    To understand them better check at the following two examples:
+
+    #+begin_quote
+    ## Example 1 - Use as subject
+
+    # => There exists a student with first name “Ted”
+
+    [] a someprefix:student ;
+       person:firstName "Ted"^^xsd:string .
+    #+end_quote
+
+    #+begin_quote
+    ## Example 2 - Use as object
+
+    # => haystack:ted knows haystack:adam and some student with first name “Mihir”
+
+    haystack:ted a someprefix:student ;
+		 person:knows [
+				a someprefix:student ;
+				person:firstName "Mihir"^^xsd:string .
+			      ] ;
+		 person:knows haystack:adam .
+
+    ## Note the statement "." in the [] above		 
+    #+end_quote
+
+*** Comments
+
+    Comments may be given after a =#= that is not part of another
+    lexical token and continue to the end of the line.
+
+** SPARQL
+
+   Left over for the next application. Do not have time now and will
+   likely not use it at this round. However this is the traditional
+   way to query RDFs graphs specified by RDFs entries. You use the
+   same syntax of turtle. You once started playing with it with
+   Wikipedia ontology.
