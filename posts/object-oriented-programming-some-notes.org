@@ -7,7 +7,7 @@
 .. link: 
 .. description: 
 .. type: text
-.. status: private
+.. status: 
 #+END_COMMENT
 
 So here are some notes on concepts you have to use when working in a
@@ -183,6 +183,93 @@ in Java, you should be careful not to use interfaces casually in
 performance-critical code.
   
 
+* Anonymous Inner Classes
+
+  This is something quite interesting.
+
+  Anonymous classes are /inner classes with no name/.
+
+  Since they have no name, we can't use them in order to create
+  instances of anonymous classes.
+
+  As a result, we have to *declare and instantiate anonymous classes in
+  a single expression at the point of use*. -> so essentially this is
+  ultimately the idea.
+
+  The way you declare this anonymous inner class with no name is the
+  following:
+
+  #+begin_quote
+new ParentClass (...) {}
+
+where:
+
+- ParentClass the class you want to create the inner class in
+
+- (...) here you have to pass the constructor arguments. Note that
+  this is /necessary/ as you are creating a new object out of the
+  box. 
+
+- {} here you have the methods your anonymous class should implement
+  #+end_quote
+
+  Example
+
+  #+BEGIN_SRC java :results output drawer :classname
+// Anonymous class - no name.
+// It basically is an inner class of the parentclass: Book
+myNewObject = new Book("Design Patterns") // constructors arguments of parent class
+{
+    @Override
+    public String description() {   // inner class with this method
+        return "Famous GoF book.";
+    }
+}
+  #+END_SRC
+
+  Note that this is essentially it. The question is then why it is an
+  /inner/ class? Not that clear to me at this stage. I think that the
+  naming is a bit confusing.
+
+  Check at the following minor test that I did. You can in fact as
+  well access the methods of the parent class. So it looks to me
+  simply as an extended class object. So don't know keep it as an open
+  question and do not spend too much time on it now... too many things
+  to learn. 
+
+  #+BEGIN_SRC java :results output drawer :classname TestAnnonymousInner
+class Person{
+    void eat(){};
+
+    void helloWorld (){
+	System.out.println ("hello world");
+    };
+}
+
+class TestAnnonymousInner{
+    public static void main(String args[]){
+	Person p=new Person(){
+
+		@Override
+		void eat(){System.out.println("nice fruits");}
+	    };
+
+	p.eat();
+	p.helloWorld ();
+    }
+}
+  #+END_SRC
+
+  #+RESULTS:
+  :results:
+  nice fruits
+  hello world
+  :end:
+
+  *Finally note*: that it is very common as well to use the /abstract
+  inner class/ patterns as well for interfaces. You can use this as
+  well there.
+
 * Polymorphism
 
   Overridden methods are another way that Java implements the “one
@@ -196,3 +283,5 @@ performance-critical code.
   own. This allows the subclass the flexibility to define its own
   methods, yet still enforces a consistent interface.
 
+
+  
