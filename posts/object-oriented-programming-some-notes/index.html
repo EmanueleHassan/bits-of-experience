@@ -12,6 +12,8 @@
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
 <link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/object-oriented-programming-some-notes/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../java-application-deployment-some-vocabulary-and-high-level-understanding/" title="Java Application Deployment - Some Vocabulary and high Level Understanding" type="text/html">
+<link rel="next" href="../on-a-brownfield-play/" title="On a Brownfield Play" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="Object Oriented Programming - Some Notes">
 <meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/object-oriented-programming-some-notes/">
@@ -87,15 +89,15 @@ the following sources
 
 <ul class="org-ul">
 <li>
-<a href="https://refactoring.guru/design-patterns/factory-method">design-patterns and refactoring</a> - online source</li>
+<a href="https://refactoring.guru/design-patterns">design-patterns and refactoring</a> - online source.</li>
 
 <li>
 <a href="http://www.javier8a.com/itc/bd1/articulo.pdf">desing patterns</a> - apparently <i>THE BOOK</i> in order to write proper
 software .</li>
 </ul>
-<!-- TEASER_END --><div id="outline-container-orgf566935" class="outline-2">
-<h2 id="orgf566935">Callback Methods</h2>
-<div class="outline-text-2" id="text-orgf566935">
+<!-- TEASER_END --><div id="outline-container-org2eab48c" class="outline-2">
+<h2 id="org2eab48c">Callback Methods</h2>
+<div class="outline-text-2" id="text-org2eab48c">
 <p>
 So the basic idea is to create an interface with the methods that
 the callback will leverage.
@@ -191,9 +193,9 @@ programming and it is never explicitely written anywehere.
 </div>
 </div>
 
-<div id="outline-container-org33b2eb4" class="outline-2">
-<h2 id="org33b2eb4">Factory Methods</h2>
-<div class="outline-text-2" id="text-org33b2eb4">
+<div id="outline-container-orga6d276d" class="outline-2">
+<h2 id="orga6d276d">Factory Methods</h2>
+<div class="outline-text-2" id="text-orga6d276d">
 <p>
 Basically this is the one I was already noting when making some
 notes generally about Java.
@@ -236,10 +238,10 @@ from that file and refactor them.
 </p>
 </div>
 
-<div id="outline-container-org91f9197" class="outline-4">
-<h4 id="org91f9197">On reference variables using interafaces   <span class="tag"><span class="reference_variable">reference_variable</span></span>
+<div id="outline-container-orgba1f331" class="outline-4">
+<h4 id="orgba1f331">On reference variables using interafaces   <span class="tag"><span class="reference_variable">reference_variable</span></span>
 </h4>
-<div class="outline-text-4" id="text-org91f9197">
+<div class="outline-text-4" id="text-orgba1f331">
 <p>
 This is convenient. Recall that it was possible to define
 reference variables as superclasses and to reference then objects
@@ -293,9 +295,115 @@ performance-critical code.
 </div>
 
 
-<div id="outline-container-orgb0c307f" class="outline-2">
-<h2 id="orgb0c307f">Polymorphism</h2>
-<div class="outline-text-2" id="text-orgb0c307f">
+<div id="outline-container-orgb736439" class="outline-2">
+<h2 id="orgb736439">Anonymous Inner Classes</h2>
+<div class="outline-text-2" id="text-orgb736439">
+<p>
+This is something quite interesting.
+</p>
+
+<p>
+Anonymous classes are <i>inner classes with no name</i>.
+</p>
+
+<p>
+Since they have no name, we can't use them in order to create
+instances of anonymous classes.
+</p>
+
+<p>
+As a result, we have to <b>declare and instantiate anonymous classes in
+a single expression at the point of use</b>. -&gt; so essentially this is
+ultimately the idea.
+</p>
+
+<p>
+The way you declare this anonymous inner class with no name is the
+following:
+</p>
+
+<blockquote>
+<p>
+new ParentClass (…) {}
+</p>
+
+<p>
+where:
+</p>
+
+<ul class="org-ul">
+<li>ParentClass the class you want to create the inner class in</li>
+
+<li>(…) here you have to pass the constructor arguments. Note that
+this is <i>necessary</i> as you are creating a new object out of the
+box.</li>
+
+<li>{} here you have the methods your anonymous class should implement</li>
+</ul>
+</blockquote>
+
+<p>
+Example
+</p>
+
+<div class="highlight"><pre><span></span>  <span class="c1">// Anonymous class - no name.</span>
+  <span class="c1">// It basically is an inner class of the parentclass: Book</span>
+  <span class="n">myNewObject</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Book</span><span class="p">(</span><span class="s">"Design Patterns"</span><span class="p">)</span> <span class="c1">// constructors arguments of parent class</span>
+  <span class="p">{</span>
+      <span class="nd">@Override</span>
+      <span class="kd">public</span> <span class="n">String</span> <span class="nf">description</span><span class="p">()</span> <span class="p">{</span>   <span class="c1">// inner class with this method</span>
+	  <span class="k">return</span> <span class="s">"Famous GoF book."</span><span class="p">;</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+
+<p>
+Note that this is essentially it. The question is then why it is an
+<i>inner</i> class? Not that clear to me at this stage. I think that the
+naming is a bit confusing.
+</p>
+
+<p>
+Check at the following minor test that I did. You can in fact as
+well access the methods of the parent class. So it looks to me
+simply as an extended class object. So don't know keep it as an open
+question and do not spend too much time on it now… too many things
+to learn. 
+</p>
+
+<div class="highlight"><pre><span></span>  <span class="kd">class</span> <span class="nc">Person</span><span class="p">{</span>
+      <span class="kt">void</span> <span class="nf">eat</span><span class="p">(){};</span>
+
+      <span class="kt">void</span> <span class="nf">helloWorld</span> <span class="p">(){</span>
+	  <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span> <span class="p">(</span><span class="s">"hello world"</span><span class="p">);</span>
+      <span class="p">};</span>
+  <span class="p">}</span>
+
+  <span class="kd">class</span> <span class="nc">TestAnnonymousInner</span><span class="p">{</span>
+      <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[]</span><span class="p">){</span>
+	  <span class="n">Person</span> <span class="n">p</span><span class="o">=</span><span class="k">new</span> <span class="n">Person</span><span class="p">(){</span>
+
+		  <span class="nd">@Override</span>
+		  <span class="kt">void</span> <span class="nf">eat</span><span class="p">(){</span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"nice fruits"</span><span class="p">);}</span>
+	      <span class="p">};</span>
+
+	  <span class="n">p</span><span class="p">.</span><span class="na">eat</span><span class="p">();</span>
+	  <span class="n">p</span><span class="p">.</span><span class="na">helloWorld</span> <span class="p">();</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+
+<p>
+<b>Finally note</b>: that it is very common as well to use the <i>abstract
+inner class</i> patterns as well for interfaces. You can use this as
+well there.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgaf7bfad" class="outline-2">
+<h2 id="orgaf7bfad">Polymorphism</h2>
+<div class="outline-text-2" id="text-orgaf7bfad">
 <p>
 Overridden methods are another way that Java implements the “one
 interface, multiple methods” aspect of polymorphism.
@@ -313,7 +421,14 @@ methods, yet still enforces a consistent interface.
 </div>
 </div>
     </div>
-    <aside class="postpromonav"><nav></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../java-application-deployment-some-vocabulary-and-high-level-understanding/" rel="prev" title="Java Application Deployment - Some Vocabulary and high Level Understanding">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../on-a-brownfield-play/" rel="next" title="On a Brownfield Play">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
         </footer>
 </div>

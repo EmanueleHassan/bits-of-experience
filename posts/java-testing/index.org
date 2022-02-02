@@ -48,7 +48,48 @@ further integration with tools as [[https://en.wikipedia.org/wiki/SonarQube][son
   maybe go into the other in time.   
   
 * Unit Testing
-   
+
+  - [[*JUnit][JUnit]]
+  
+    - [[*Set Up][Set Up]]
+
+    - [[*Actually Testing][Actually Testing]]
+
+    - [[*Test Classes And Method][Test Classes And Method]]
+
+    - [[*JUnit Jupiter][JUnit Jupiter]]:
+
+      - [[*@ExtendWith][@ExtendWith]]
+
+      - [[*@RegisterExtension][@RegisterExtension]]
+
+      - [[*@TempDir][@TempDir]]
+
+      - [[*Testing Annotations][Testing Annotations]]
+
+      - [[*Tagging][Tagging]]
+
+      - [[*Naming and UI Style Annotations][Naming and UI Style Annotations]]
+
+      - [[*LifeCycle Annotations][LifeCycle Annotations]]
+
+      - [[*Templates - @TestTemplate][Templates - @TestTemplate]]
+
+      - [[*Dynamic Testing][Dynamic Testing]]
+
+      - [[*URI][URI]]
+
+      - [[*Timeouts][Timeouts]]
+
+      - [[*check how to combine the annoations above into meta-annotations][check how to combine the annoations above into meta-annotations]]
+
+
+    - [[*AssertionTypes][AssertionTypes]]
+
+    - [[*Assumptions][Assumptions]]
+
+** JUnit
+  
 *** Set Up
 
     So essentially I will use the JUnit package for running unit
@@ -91,7 +132,6 @@ dependencies {
     You are done then, bu as soon as you will manage to fix your issues with
     emacs start to migrate as that is a much more powerful tool.
 
-
 *** Actually Testing
 
     This is then straightforward. You can read and refer a bit to the
@@ -123,7 +163,6 @@ dependencies {
     the Eclipse IDE... there everything is more less embedded. Move
     then to Emacs with time.
 
-
 *** Test Classes And Method
     
     What are the first-class citizens. 
@@ -148,35 +187,40 @@ dependencies {
     The only *exception* are =@TestFactory= methods where you are
     required to return a value.
 
-
 *** JUnit Jupiter
 
+    - [[*@ExtendWith][@ExtendWith]]
+
+    - [[*@RegisterExtension][@RegisterExtension]]
+
+    - [[*@TempDir][@TempDir]]
+
+    - [[*Testing Annotations][Testing Annotations]]
+
+    - [[*Tagging][Tagging]]
+
+    - [[*Naming and UI Style Annotations][Naming and UI Style Annotations]]
+
+    - [[*LifeCycle Annotations][LifeCycle Annotations]]
+
+    - [[*Templates - @TestTemplate][Templates - @TestTemplate]]
+
+    - [[*Dynamic Testing][Dynamic Testing]]
+
+    - [[*URI][URI]]
+
+    - [[*Timeouts][Timeouts]]
+
+    - [[*check how to combine the annoations above into meta-annotations][check how to combine the annoations above into meta-annotations]]
+
+    
     Basically in order to understand well how to write tests in Java
     understand on the one hand the following annotators through which
     it is possible to specify the general logic of your tests and on
     the other hand the possible assertions treated in the [[*AssertionTypes][next
     section]]. Also recall about [[*Assumptions][Assumptions]].
+
     
-
-**** @TestFactory
-
-     Denotes that a method is a test factory for dynamic tests. Such
-     methods are inherited unless they are overridden. 
- 
-**** @TestTemplate
-
-     Denotes that a method is a template for test cases designed to be
-     invoked multiple times depending on the number of invocation contexts
-     returned by the registered providers. Such methods are inherited
-     unless they are overridden. 
- 
-
-**** @Timeout
-
-     Used to fail a test, test factory, test template, or lifecycle method
-     if its execution exceeds a given duration. Such annotations are
-     inherited. 
-
 **** @ExtendWith
 
      Used to register extensions declaratively. Such annotations are
@@ -345,7 +389,6 @@ void words(String candidate) {
  ├─ [2] candidate=world X
  └─ [3] candidate=I love J.N. X
       :end:
-      
 
       Such methods are inherited unless they are overridden.
 
@@ -647,7 +690,35 @@ public class Book {
     }
 } 
        #+END_SRC
+
+****** On Explicit Argument Passing
+
+       Note that the above can as well be stated in a more torough and
+       complete way as follows:
        
+       #+BEGIN_SRC java :results output drawer :classname 
+@ParameterizedTest
+@EnumSource(ChronoUnit.class)
+void testWithExplicitArgumentConversion(
+        @ConvertWith(ToStringArgumentConverter.class) String argument) {
+
+    assertNotNull(ChronoUnit.valueOf(argument));
+}
+public class ToStringArgumentConverter extends SimpleArgumentConverter {
+
+    @Override
+    protected Object convert(Object source, Class<?> targetType) {
+        assertEquals(String.class, targetType, "Can only convert to String");
+        if (source instanceof Enum<?>) {
+            return ((Enum<?>) source).name();
+        }
+        return String.valueOf(source);
+    }
+}
+       #+END_SRC
+
+              
+      
 ****** TODO double check when you have time - could not understand when reading
 
        Note that there is quite a few things that you will need to
@@ -683,7 +754,6 @@ public class Book {
       Such annotations are inherited at the class level but not at the
       method level. 
 
-     
 **** Naming and UI Style Annotations
 
      This are used for setting the naming of your test methods.
@@ -798,11 +868,7 @@ class DisplayNameGeneratorDemo {
       @Nested test class unless the "per-class" test instance lifecycle is
       used. Such annotations are not inherited.
 
-
 **** LifeCycle Annotations
-
-     
-               
 
 ***** Tests Lifecycle
 
@@ -931,16 +997,518 @@ class StandardTests {
       inherited. 
  
       
-       
 ***** TODO @TestClassOrder
 
       Used to configure the test class execution order for @Nested test
       classes in the annotated test class. Such annotations are inherited.
 
+**** Templates - @TestTemplate
 
+     It is essentially possible as well to write template tests. 
+
+     These will not be run in the normal way but will rather be
+     invoked by =TestTemplateInvocationContextProvider= extension.
+
+     So have to understand that better.
+
+     Note in any case that:
+
+     #+begin_quote
+     Each invocation of a test template method behaves like the
+     execution of a regular @Test method with full support for the
+     same lifecycle callbacks and extensions. 
+     #+end_quote
+
+***** TODO understand TestTemplateInvocationContextProvider better
+
+      check [[https://junit.org/junit5/docs/current/user-guide/#extensions-test-templates][this]] in this sense.
+
+ 
+**** Dynamic Testing
+
+     See the following to understand these:
+
+     #+begin_quote
+     =@Test=: These test cases are static in the sense that they are
+     /fully specified at compile time/, and their behavior cannot be
+     changed by anything happening at runtime. 
+     Assumptions provide a basic form of dynamic behavior but are
+     intentionally rather *limited in their expressiveness*. 
+     #+end_quote
+
+     In order to enrich the testing environment you have now the
+     introction of =dynamic test= in Junit.
+
+     These is a kind of test that is generated *at runtime* by a factory
+     method that is annotated with [[*@TestFactory][@TestFactory]].
+
+     
+***** @TestFactory
+
+      Denotes that a *method is a test factory* for dynamic tests. 
+
+      So essentially the idea is similar to the one of TestTemplates
+      in the sense that methods annotated as such are not standard
+      test case. 
+
+      #+begin_quote
+      @TestFactory method is not itself a test case but rather a
+      factory for test cases. 
+      #+end_quote
+
+      Technically speaking, a =@TestFactory= method must return a
+      single DynamicNode or a Stream, Collection, Iterable, Iterator,
+      or array of DynamicNode instances.
+
+      Note that =DynamicContainer= and =DynamicTest= are subclasses of
+      =DynamicNode=. 
+
+      Understand now the two:
+
+      - =DynamicContainer= instances are composed of a display name and
+        a list of dynamic child nodes, enabling the creation of
+        arbitrarily nested hierarchies of dynamic nodes. 
+
+      - =DynamicTest= instances will be executed lazily, enabling
+        dynamic and even non-deterministic generation of test cases. 
+
+      Note as well the following: 
+
+      Any Stream returned by a @TestFactory /will be properly closed/
+      by calling ~stream.close()~, making it safe to use a resource
+      such as Files.lines().
+
+      *Important* is as well to understand the following:
+
+      #+begin_quote
+      A DynamicTest is a test case generated at runtime. It is
+      composed of a display name and an Executable. *Executable* is a
+      =@FunctionalInterface= which means that the implementations of
+      dynamic tests can be provided as *lambda expressions* or *method
+      references*. 
+      #+end_quote
+
+      So that is it. See the examples in the next section. You see in
+      fact that you specify lambda functions in order to interact with
+      that functional interface.
+      
+      One last *very important remark*:
+
+      #+begin_quote
+!!!
+The execution lifecycle of a dynamic test is quite different than it
+is for a standard @Test case. Specifically, there are /no lifecycle
+callbacks/ for individual dynamic tests. This means that @BeforeEach
+and @AfterEach methods and their corresponding extension callbacks are
+executed for the @TestFactory method but not for each dynamic test.  
+!!!
+      #+end_quote
+
+      Finally, note that such methods are inherited unless they are
+      overridden. 
+
+***** Examples
+
+      Try to go with the following:
+
+       #+BEGIN_SRC java :results output drawer :classname 
+import static example.util.StringUtils.isPalindrome;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+import static org.junit.jupiter.api.Named.named;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Function;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import example.util.Calculator;
+
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Named;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.function.ThrowingConsumer;
+
+class DynamicTestsDemo {
+
+    private final Calculator calculator = new Calculator();
+
+    // This will result in a JUnitException!
+    // if you check at the error - is says that @TestFactory must return a single 
+    // one of 
+    @TestFactory
+    List<String> dynamicTestsWithInvalidReturnType() {
+        return Arrays.asList("Hello"); 
+    }
+
+    // So se how it reference a dynamicTest. So that is fine. 
+    // note the return type. Collection here.
+    // note that there is nothing dynamic in here. it is just to illustrate how it works with
+    // the return types. 
+    // Note that usually the dynamic compoenent would come from performing the test in a dynamic
+    // way by dynamically testing the values within the collection.
+    @TestFactory
+    Collection<DynamicTest> dynamicTestsFromCollection() {
+        return Arrays.asList(
+            dynamicTest("1st dynamic test", () -> assertTrue(isPalindrome("madam"))),
+            dynamicTest("2nd dynamic test", () -> assertEquals(4, calculator.multiply(2, 2)))
+        );
+    }
+
+    // Note the return type in here: Iterable. 
+    // So you see that if you return an Object such an array that is both a Collection and
+    // an Iterable you are free to specify the two return types.
+    @TestFactory
+    Iterable<DynamicTest> dynamicTestsFromIterable() {
+        return Arrays.asList(
+            dynamicTest("3rd dynamic test", () -> assertTrue(isPalindrome("madam"))),
+            dynamicTest("4th dynamic test", () -> assertEquals(4, calculator.multiply(2, 2)))
+        );
+    }
+
+    // Again nothing fancy - just here for completeness in order to see possible reutrn types
+    // An Iterable is a simple representation of a series of elements that can be iterated over. 
+    // It does not have any iteration state such as a "current element". Instead, 
+    // it has one method that produces an Iterator.
+
+    // An Iterator is the object with iteration state. 
+    // It lets you check if it has more elements using hasNext() 
+    // and move to the next element (if any) using next(). 
+    @TestFactory
+    Iterator<DynamicTest> dynamicTestsFromIterator() {
+        return Arrays.asList(
+            dynamicTest("5th dynamic test", () -> assertTrue(isPalindrome("madam"))),
+            dynamicTest("6th dynamic test", () -> assertEquals(4, calculator.multiply(2, 2)))
+        ).iterator();
+    }
+
+    
+    @TestFactory
+    DynamicTest[] dynamicTestsFromArray() {
+        return new DynamicTest[] {
+            dynamicTest("7th dynamic test", () -> assertTrue(isPalindrome("madam"))),
+            dynamicTest("8th dynamic test", () -> assertEquals(4, calculator.multiply(2, 2)))
+        };
+    }
+
+    // Here you actually see the dynamic component of the tests. 
+    // Note not everything is fixed at compile time. 
+    // At runtime actually the tests execute by passing the stream.
+    // A stream is also returned.
+    @TestFactory
+    Stream<DynamicTest> dynamicTestsFromStream() {
+        return Stream.of("racecar", "radar", "mom", "dad")
+            .map(text -> dynamicTest(text, () -> assertTrue(isPalindrome(text))));
+    }
+
+    // See the following example of dynamic behaviour with a collection result.
+    // so you see that the returning method is the key.
+    // usually you do not work with such conversion. Not good practice. 
+    // The practice is to have the return type as the object type you pass to be dynamically tested.   
+    @TestFactory
+    Collection<DynamicTest> dynamicTestsFromStreamtoCollection() {
+        return Stream.of("racecar", "radar", "mom", "dad")
+            .map(text -> dynamicTest(text, () -> assertTrue(text.equals("hello"))))
+            .collect(Collectors.toList());
+    }
+
+
+    @TestFactory
+    Stream<DynamicTest> dynamicTestsFromIntStream() {
+        // Generates tests for the first 10 even integers.
+        return IntStream.iterate(0, n -> n + 2).limit(10)
+            .mapToObj(n -> dynamicTest("test" + n, () -> assertTrue(n % 2 == 0)));
+    }
+
+    @TestFactory
+    Stream<DynamicTest> generateRandomNumberOfTestsFromIterator() {
+
+        // Generates random positive integers between 0 and 100 until
+        // a number evenly divisible by 7 is encountered.
+        Iterator<Integer> inputGenerator = new Iterator<Integer>() {
+
+            Random random = new Random();
+            int current;
+
+            @Override
+            public boolean hasNext() {
+                current = random.nextInt(100);
+                return current % 7 != 0;
+            }
+
+            @Override
+            public Integer next() {
+                return current;
+            }
+        };
+
+        // Generates display names like: input:5, input:37, input:85, etc.
+        Function<Integer, String> displayNameGenerator = (input) -> "input:" + input;
+
+        // Executes tests based on the current input value.
+        ThrowingConsumer<Integer> testExecutor = (input) -> assertTrue(input % 7 != 0);
+
+        // Returns a stream of dynamic tests.
+        return DynamicTest.stream(inputGenerator, displayNameGenerator, testExecutor);
+    }
+
+
+    /** Lovely to see such stream of tests. Very nice way to program in a way 
+     *  where it is easy to keep the overview. Nice.
+     */
+    @TestFactory
+    Stream<DynamicTest> dynamicTestsFromStreamFactoryMethod() {
+        // Stream of palindromes to check
+        Stream<String> inputStream = Stream.of("racecar", "radar", "mom", "dad");
+
+        // Generates display names like: racecar is a palindrome
+        Function<String, String> displayNameGenerator = text -> text + " is a palindrome";
+
+        // Executes tests based on the current input value.
+        ThrowingConsumer<String> testExecutor = text -> assertTrue(isPalindrome(text));
+
+        // Returns a stream of dynamic tests.
+        return DynamicTest.stream(inputStream, displayNameGenerator, testExecutor);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> dynamicTestsFromStreamFactoryMethodWithNames() {
+        // Stream of palindromes to check
+        Stream<Named<String>> inputStream = Stream.of(
+                named("racecar is a palindrome", "racecar"),
+                named("radar is also a palindrome", "radar"),
+                named("mom also seems to be a palindrome", "mom"),
+                named("dad is yet another palindrome", "dad")
+            );
+
+        // Returns a stream of dynamic tests.
+        return DynamicTest.stream(inputStream,
+            text -> assertTrue(isPalindrome(text)));
+    }
+
+
+    /** See Dynamic containers here. 
+    *   This is nice. Basically each time you nest a container is one level
+    *   lower in the call hieararchy. 
+    *   The first string argument is the title of the particular hierarchical name 
+    *   of the test. 
+    */
+    @TestFactory
+    Stream<DynamicNode> dynamicTestsWithContainers() {
+        return Stream.of("A", "B", "C")
+            .map(input -> dynamicContainer("Container " + input, Stream.of(
+                dynamicTest("not null", () -> assertNotNull(input)),
+                dynamicContainer("properties", Stream.of(
+                    dynamicTest("length > 0", () -> assertTrue(input.length() > 0)),
+                    dynamicTest("not empty", () -> assertFalse(input.isEmpty()))
+                ))
+            )));
+    }
+
+    @TestFactory
+    DynamicNode dynamicNodeSingleTest() {
+        return dynamicTest("'pop' is a palindrome", () -> assertTrue(isPalindrome("pop")));
+    }
+
+    @TestFactory
+    DynamicNode dynamicNodeSingleContainer() {
+        return dynamicContainer("palindromes",
+            Stream.of("racecar", "radar", "mom", "dad")
+                .map(text -> dynamicTest(text, () -> assertTrue(isPalindrome(text)))
+        ));
+    }
+
+}
+       #+END_SRC
+
+       Example of dynamic Node in a picture. Run it on my Eclipse
+       together a couple of others tests in order to understand the
+       entire thingy.
+       
+#+begin_export html
+ <img src="../../images/Screenshot 2022-01-31 140121.png" class="center">
+#+end_export
+
+**** URI
+
+     Note that this might particularly be interesting for working with
+     dynamic Tests or Test-templates.
+
+     The idea is that you can reference then particular tests that you
+     want to use through URI.
+
+     The idea is essentially the following:
+
+     The JUnit Platform provides TestSource, a representation of the
+     source of a test or container used to navigate to its location by
+     IDEs and build tools. 
+
+     The TestSource for a dynamic test or dynamic container can be
+     constructed from a java.net.URI which can be supplied via the
+     DynamicTest.dynamicTest(String, URI, Executable) or
+     DynamicContainer.dynamicContainer(String, URI, Stream) factory method,
+     respectively. The URI will be converted to one of the following
+     TestSource implementations.
+     
+**** Timeouts
+
+***** @Timeout
+
+      Used to fail a test, test factory, test template, or lifecycle method
+      if its execution exceeds a given duration. 
+
+      Note that you have as well the assertion timeout option - see
+      the section [[*AssertionTypes][AssertionTypes]].
+
+      So that will be as well a design choice to understand which one
+      of the two you should use.
+
+      Check at the following quote:
+
+      #+begin_quote
+Contrary to the assertTimeoutPreemptively() assertion, the execution
+of the annotated method proceeds in the main thread of the test. If
+the timeout is exceeded, the main thread is interrupted from another
+thread. This is done to ensure interoperability with frameworks such
+as Spring that make use of mechanisms that are sensitive to the
+currently running thread — for example, ThreadLocal transaction
+management. - Double check this.
+      #+end_quote
+
+      So I guess that there would be a slight difference in the
+      logic. 
+
+      An example is the following:
+
+#+BEGIN_SRC java :results output drawer :classname 
+class TimeoutDemo {
+
+    @BeforeEach
+    @Timeout(5)
+    void setUp() {
+        // fails if execution time exceeds 5 seconds
+    }
+
+    @Test
+    @Timeout(value = 100, unit = TimeUnit.MILLISECONDS)
+    void failsIfExecutionTimeExceeds100Milliseconds() {
+        // fails if execution time exceeds 100 milliseconds
+    }
+
+}
+#+END_SRC
+
+      Such annotations are inherited.
+
+***** TODO understand better the difference with Assertion Kind of errors. 
+     
 **** TODO check how to combine the annoations above into meta-annotations
 
      see chapter 2.1 in this sense. 
+
+     have as well to understand the benefit of properly combining
+     annotations. 
+
+     
+**** Parallel Execution
+
+     This might be useful in order to keep a fast and nimble execution
+     of your tests.
+
+     Understand the following:
+
+     #+begin_quote
+By *default*, JUnit Jupiter tests are *run sequentially* in a single
+thread. 
+
+Running tests in parallel — for example, to speed up execution — is
+available as an opt-in feature since version 5.3. To enable parallel
+execution, set the junit.jupiter.execution.parallel.enabled
+configuration parameter to true — for example, in
+=junit-platform.properties=.
+
+
+This property is /only the first step/ required to execute tests in
+parallel. If enabled, test classes and methods will /still be executed
+sequentially by default/. Whether or not a node in the test tree is
+executed concurrently is controlled by its execution mode. The
+following two modes are available:
+
+
+- SAME_THREAD: execution in the same thread as the parent.
+
+- CONCURRENT: Execute concurrently unless a resource lock forces
+  execution in the same thread. 
+     #+end_quote
+
+     Note now that with the understanding above you have essentially
+     two options in order to implment the parallel execution strategy.
+
+     + Method 1 - set it at global level:
+
+       #+BEGIN_SRC java :results output drawer :classname 
+junit.jupiter.execution.parallel.enabled = true
+junit.jupiter.execution.parallel.mode.default = concurrent
+       #+END_SRC
+
+       Note here that: most of your test classes can be *run in
+       parallel* without any synchronization but you have some test
+       classes that need to run in isolation, you can mark the latter
+       with the @Isolated annotation. 
+
+     + Method 2 - set it for sepcific tests:
+
+       You can use the =@Execution= annotation to change the execution
+       mode for the annotated element and its subelements (if any)
+       which allows you to activate parallel execution for individual
+       test classes, one by one.  
+
+       Example: set - ~@Execution(CONCURRENT)~
+
+     + Method 3 - parallel classes but methods sequentially
+
+       There is also the option to run the tests of methods in the same
+       class on a specific thread, while tests across classes are
+       executed on separate threads. You can achieve that through the
+       following function:
+
+       #+BEGIN_SRC java :results output drawer :classname 
+junit.jupiter.execution.parallel.enabled = true
+junit.jupiter.execution.parallel.mode.default = same_thread
+junit.jupiter.execution.parallel.mode.classes.default = concurrent
+       #+END_SRC
+
+     + Method 4 - Classes sequentially while methods within in
+       parallel
+
+       So essentially the exact opposite of above.
+
+       #+BEGIN_SRC java :results output drawer :classname 
+junit.jupiter.execution.parallel.enabled = true
+junit.jupiter.execution.parallel.mode.default = concurrent
+junit.jupiter.execution.parallel.mode.classes.default = same_thread
+       #+END_SRC
+
+***** Recall that it is as well possible to set ResourceLocks
+
+      These will be especially important in order to avoid race
+      conditions. 
+
+      When access to shared resources is declared using the
+      @ResourceLock annotation, the JUnit Jupiter engine uses this
+      information to ensure that no conflicting tests are run in
+      parallel. 
+
 
 *** AssertionTypes
 
@@ -1108,7 +1676,6 @@ class AssertionsDemo {
 
 }
     #+END_SRC
-    
 
 *** Assumptions
 
@@ -1172,9 +1739,362 @@ class AssumptionsDemo {
     }
 
 }
+    #+END_SRC        
+
+** The bigger picture in unit-testing
+
+   Ok so basically the part above deals on how to write the unit-tests
+   themselves. 
+
+   That is the easy bit. You have now your basic logic in order to
+   write your testing suits. 
+
+   The issue is that sometimes you have one of the following
+   circumstances:
+
+   - the object supplies /non-deterministic results/ (e.g. the current
+     time or the current temperature); 
+
+   - it has states that are difficult to create or reproduce (e.g. a
+     network error); 
+
+   - it is slow (e.g. a complete database, which would have to be
+     initialized before the test); 
+
+   - it does not yet exist or may change behavior;
+
+   - it would have to include information and methods exclusively for
+     testing purposes (and not for its actual task). 
+
+   Then you understand that it is not that trivial to /test a bit of
+   code/. What you are interesting into is testing the application
+   logic of your code. Does it fulfill the goal? 
+
+   Though, what you will ultimately have is in most of the cases above
+   a *dependency* that makes testing the application bit
+   difficult/annoying. In this case the idea is to rely on mock
+   objects and other practices addressed in this section that will
+   make it possible for you to properly isolate the logic of your code
+   and test this in a shielded environment.
+
+   So the concept that you have to dominate are now the following:
+
+   - =Stub= : an implementation that returns a hard-coded value for
+     purposes of testing is known as a stub. 
+
+   - =Mocks=: A mock is a test construct that provides emulated
+     behavior and also does the job of *verifying whether or not it
+     received all the parameters expected*.
+
+   - =Fakes=:
+   
+** Stub 
+
+   So basic example of a stub is the following as from the book
+   /Pragmatic Unit Testing/.
+
+   Say you have an http response that you will need to use in a bit of
+   your code. Then you can do the following:
+
+   #+BEGIN_SRC java :results output drawer :classname 
+// See the following object creation
+Http http = new Http() {
+	@Override
+	public String get(String url) throws IOException {
+	    return "{\"address\":{"
+		+ "\"house_number\":\"324\","
+		+ "\"road\":\"North Tejon Street\","
+		// ...
+		}};
+   #+END_SRC
+
+   Then you can use that stub by invoking the object from the
+   anonymous inner class:
+
+   #+BEGIN_SRC java :results output drawer :classname 
+public Address retrieve(double latitude, double longitude)
+throws IOException, ParseException {
+String parms = String.format("lat=%.6flon=%.6f", latitude, longitude);
+ String response = http.get(
+ "http://open.mapquestapi.com/nominatim/v1/reverse?format=json&"
+ + parms); // here you have your stub
+JSONObject obj = (JSONObject)new JSONParser().parse(response);
+// ...
+}
+   #+END_SRC
+
+   You can then continue with your test in the most classical way. 
+
+   I.e. with the two above methods you would have something as
+   follows:
+
+   #+BEGIN_SRC java :results output drawer :classname 
+import java.io.*;
+import org.json.simple.parser.*;
+import org.junit.*;
+import util.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+public class AddressRetrieverTest {
+    @Test
+    public void answersAppropriateAddressForValidCoordinates()
+	throws IOException, ParseException {
+	Http http = (String url) ->
+	    "{\"address\":{"
+	    + "\"house_number\":\"324\","
+	    + "\"road\":\"North Tejon Street\","
+	    + "\"city\":\"Colorado Springs\","
+	    + "\"state\":\"Colorado\","
+	    + "\"postcode\":\"80903\","
+	    + "\"country_code\":\"us\"}"
+	    + "}";
+	AddressRetriever retriever = new AddressRetriever(http);
+	Address address = retriever.retrieve(38.0,-104.0);
+	assertThat(address.houseNumber, equalTo("324"));
+	assertThat(address.road, equalTo("North Tejon Street"));
+	assertThat(address.city, equalTo("Colorado Springs"));
+	assertThat(address.state, equalTo("Colorado"));
+	assertThat(address.zip, equalTo("80903"));
+    }
+}
+   #+END_SRC
+
+   so you see that you pass the =http= dependency to the
+   =AddressRetriever= where your stub will be declared.
+   
+   So note now that it is up to you to specify how you pass that exact
+   dependency. You can use as well spring and the way you pass
+   dependencies over there.             
+
+*** Side note - why is this a stub?
+
+    This because you use the object from the anonymous class above in
+    order to get your hard-coded string.   I.e. you are actually
+    calling the ~get~ method.
+
+** Mocks - Mockito
+
+   Basically the fundamental idea of the framework is the one of
+   giving the possibility to =mock= the /dependencies/.
+
+   A mock object is a dummy implementation for an interface or a
+   class. It allows to /define the output of certain method calls/. They
+   typically record the interaction with the system and tests can
+   validate that. 
+
+   So basically that is the idea. You have a dependency and use
+   Mockito to feed the dependency record/object.
+
+   This is in fact interesting and important. You can create
+   *mock-objects* that you will use in your tests. So understand that
+   this is not simply for feeding values or calling a single
+   method. It is creating an /entire mock-object/.
+
+*** What is a mock object
+
+    In object-oriented programming, mock objects are /simulated
+    objects/ that mimic the behavior of real objects in controlled
+    ways, most often as part of a software testing initiative. A
+    programmer typically creates a mock object to test the behavior of
+    some other object, in much the same way that a car designer uses a
+    crash test dummy to simulate the dynamic behavior of a human in
+    vehicle impacts. The technique is also applicable in generic
+    programming.
+
+
+*** Creating a mock() object and verifying the parameters received
+    
+    In order to create a mock object you can do the following - as in
+    the example:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+import static org.mockito.Mockito.*;
+
+public class AddressRetrieverTest {
+    @Test
+    public void answersAppropriateAddressForValidCoordinates()
+	throws IOException, ParseException {
+	Http http = mock(Http.class);
+	when(http.get(contains("lat=38.000000&lon=-104.000000"))).thenReturn(
+									     "{\"address\":{"
+									     + "\"house_number\":\"324\","
+									     // ...
+									     + "}");
+	AddressRetriever retriever = new AddressRetriever(http);
+	Address address = retriever.retrieve(38.0,-104.0); // parameters
+							   // you pass
+							   // you are
+							   // testing.
+	assertThat(address.houseNumber, equalTo("324"));
+	// ...
+    }
+
     #+END_SRC
 
-        
+    Then understand the following:
+
+    - first you understand the mock-object from the Http.class.
+
+    - then you verify the parameters: ~when(contains...)~
+
+    - finally you return the stub values.
+
+    Note now that the =http.get= method does not has the argument
+    above. Where do you pass this exactly? Have to double check. Not
+    that trivial. It means that the call of the get method providing
+    the argument to it is done somewhere else.
+
+    When a call to the http method =get()= is made with a parameter
+    containing the string "lat=38.000000&lon=- 104.000000", then
+    return the hardcoded JSON string. 
+
+*** Dependency Injection Tool
+
+    Passing a mock to a target class using a constructor is one
+    technique. It requires a change to the interface and exposes a
+    *private detail* to another class in the production code. Not a
+    great deal, but you can do better by using a /dependency injection
+    (DI)/ tool.
+
+    However, not that Mockito has its own dependency injection tool:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+public class AddressRetrieverTest {
+    @Mock private Http http;  // here you specify the mock object to
+			      // be synthetized.
+    @InjectMocks private AddressRetriever retriever;  // dependency
+						      // injection. I.e. you
+						      // tell that
+						      // your mock
+						      // should be
+						      // injected in
+						      // here.
+    @Before
+    public void createRetriever() {
+	retriever = new AddressRetriever();
+	MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void answersAppropriateAddressForValidCoordinates()
+	throws IOException, ParseException {
+	when(http.get(contains("lat=38.000000&lon=-104.000000")))
+	    .thenReturn("{\"address\":{"
+			+ "\"house_number\":\"324\","
+			// ...
+			)
+    }
+}
+    #+END_SRC
     
-** TODO Mockito
+    Understand now the following:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+    @Before
+    public void createRetriever() {
+	retriever = new AddressRetriever();
+	MockitoAnnotations.initMocks(this);
+    }
+    #+END_SRC
+
+    So basically you first instantiate a retriever object.
+
+    Then you call MockitoAnnotations.initMocks(this). The =this=
+    argument refers to the test class itself. Mockito retrieves any
+    @Mock-annotated fields on the test class and synthesizes a mock
+    instance for each.  It then retrieves any @InjectMocks-annotated
+    fields and injects mock objects into them. 
+
+    This is how things work and how dependency are injected through
+    annotators. 
+
+    *Finally note:* the =when= method is not strictly restricted to
+    fix-values. You can as well pass methods to it. See for instance
+    the following way of getting a value value out of a list.
+
+    #+BEGIN_SRC java :results output drawer :classname 
+when(mockList.get(anyInt())).thenReturn("hello");
+    #+END_SRC
+
+*** @Spy
+
+    Spies are known as /partially mock objects/. 
+
+    It means spy creates a partial object or a half dummy of the real
+    object by stubbing or spying the real ones. 
+
+    In spying, the *real object remains unchanged*, and we just spy some
+    specific methods of it. In other words, we take the existing
+    (real) object and replace or spy only some of its methods. 
+
+    What this practically means is the following:
+
+#+BEGIN_SRC java :results output drawer :classname 
+// Mock 
+@Test
+public void whenCreateMock_thenCreated() {
+    List mockedList = Mockito.mock(ArrayList.class);
+
+    mockedList.add("one");
+    Mockito.verify(mockedList).add("one");
+
+    assertEquals(0, mockedList.size()); // will be TRUE. adding an
+					// element into the mocked
+					// list doesn't actually add
+					// anything, it just calls the
+					// method with no other
+					// side-effects.
+}
+
+// Spy
+public void whenCreateMock_thenCreated() {
+    List spyList = Mockito.spy(ArrayList.class);
+
+    spyList.add("one");
+    Mockito.verify(spyList).add("one");
+
+    assertEquals(0, spyList.size());  // will be FALSE. The spy it
+				      // will actually call the real
+				      // implementation of the add
+				      // method and add the element to
+				      // the underlying list.
+}
+
+#+END_SRC
+
+    When using spy objects, the default behavior of the methods (when
+    not stubbed) is the real method behavior. 
+
+    See the following way to use spies:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+@Spy
+List<String> spyList = new ArrayList<String>(); // Spy
+
+@Test
+public void whenUsingTheSpyAnnotation_thenObjectIsSpied() {
+    spyList.add("one");
+    spyList.add("two");
+
+    Mockito.verify(spyList).add("one");
+    Mockito.verify(spyList).add("two");
+
+    assertEquals(2, spyList.size());
+
+
+    Mockito.doReturn(100).when(spyList).size(); // stubbed value.
+    assertEquals(100, spyList.size());
+}
+    #+END_SRC
+    
+*** TODO @Capture
+    
+   
+*** Resources used for the tutorial
+
+    - [[https://www.journaldev.com/21816/mockito-tutorial][Resource 1]]
+
+    - [[https://pragprog.com/titles/utj2/pragmatic-unit-testing-in-java-8-with-junit/][Resource 2]]
+
+
 

@@ -456,7 +456,7 @@ class CleanCodeFunctional2 {
      Number starting with N: 2
      Number starting with B: 1
 
-**** Important thing to consider - you use a method that has a throws an exception of some kind
+**** Important thing to consider - you use a method that throws an exception of some kind
 
      Then your method has to deal with that exception.
 
@@ -472,7 +472,38 @@ class CleanCodeFunctional2 {
      So keep for the moment as design choice: try-catch sandwich
      around the piece that you have to deal with.
 
+**** On Combining functional interafces
+
+
+    Note the following - try to keep code clean by writing lambda
+    functions and passing them as arguments.
+
+    See how clean the entire code then looks. I.e. do not clutter you
+    stream/ methods.
+
+    See the following example:
+    
+    #+BEGIN_SRC java :results output drawer :classname
+/** Lovely to see such stream of tests. Very nice way to program in a way 
+ ,*  where it is easy to keep the overview. Nice.
+ ,*/
+@TestFactory
+Stream<DynamicTest> dynamicTestsFromStreamFactoryMethod() {
+    // Stream of palindromes to check
+    Stream<String> inputStream = Stream.of("racecar", "radar", "mom", "dad");
+
+    // Generates display names like: racecar is a palindrome
+    Function<String, String> displayNameGenerator = text -> text + " is a palindrome";
+
+    // Executes tests based on the current input value.
+    ThrowingConsumer<String> testExecutor = text -> assertTrue(isPalindrome(text));
+
+    // Returns a stream of dynamic tests.
+    return DynamicTest.stream(inputStream, displayNameGenerator, testExecutor);
+}
+    #+END_SRC     
      
+
 *** On functional Interfaces
 
     You can use the annotation =@FunctionalInterface= to specify that
@@ -549,7 +580,7 @@ runWithinTransaction((Transaction transaction) -> {
     forgetting to perform the steps or about the exceptions being
     handled well.
 
-
+    
 *** On the forEach method
 
     This was introduced in Java 8 and I think it is one interesting
