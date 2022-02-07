@@ -18,6 +18,19 @@ The notes are based on Spring in Action - 5th edition.
 
 {{{TEASER_END}}}
 
+* Index
+  
+- [[*General Idea][General Idea]]
+- [[*Spring Project Structure][Spring Project Structure]]
+- [[*Gradle Configuration][Gradle Configuration]]
+- [[*Running the Spring web-application][Running the Spring web-application]]
+- [[*Important Spring Modules][Important Spring Modules]]
+- [[*Web-applications with Spring][Web-applications with Spring]]
+- [[*Spring Data][Spring Data]]
+- [[*Securing Spring][Securing Spring]]
+- [[*Configuring Spring][Configuring Spring]]
+
+
 * General Idea
 
    At its core, Spring offers a container, often referred to as the
@@ -71,6 +84,7 @@ The notes are based on Spring in Action - 5th edition.
 
   - =TacoApplicationTests.java= - this is a simple test class that
     ensures that the Spring application context loads successfully. 
+
 
 * Gradle Configuration
 
@@ -139,8 +153,10 @@ The notes are based on Spring in Action - 5th edition.
   developing with it. For now focus on the general structure in these
   notes.
   
+
 * Running the Spring web-application
   
+
 ** Run App
 
    This is the equivalent to your =flask.run= command. 
@@ -154,7 +170,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication 
 public class TacoCloudApplication {
  public static void main(String[] args) {
- SpringApplication.run(TacoCloudApplication.class, args); 
+ SpringApplication.run(TacoCloudApplication.class, args);  // here you
+							   // run the
+							   // application. similar
+							   // to flask
+							   // run.
  }
 }
    #+end_src 
@@ -220,7 +240,6 @@ public class HomeController {
    The =@GetMapping= is there to note that the endpoint will work with
    GET requests. 
 
-   
 ** Endpoints Testing
 
    You can check in the book. This will be a quite big waste of time
@@ -234,6 +253,7 @@ public class HomeController {
    not spend too much time on it now on doing documentation. You might
    use then a complete different testing-suite.
   
+
 * Important Spring Modules
 
   Note that on that spring initialzer page you can see all of the
@@ -345,6 +365,7 @@ public class HomeController {
     and how exactly is it monitoring things given that the things work
     in different runtimes.
    
+
 * Web-applications with Spring
 
 ** Spring MVC
@@ -606,8 +627,11 @@ alter table Taco_Order_Tacos
   You might need it for your next assignment.
 
   Keep it in the back of your mind and skip it for the moment and go
-  back to it when the project will require it. 
+  back to it when the project will require it.
+
+  So basically it is all about the key generation and exchange. 
    
+
 * Configuring Spring
 
   So basically Spring it is nice cause you have tons of beans in
@@ -666,6 +690,8 @@ alter table Taco_Order_Tacos
    The default embedded server is Tomcat. You can change the option
    and work with different servers.
 
+   In order to do so set the following in the the =src/main/resources/application.yml=
+
    #+begin_src yaml
 server:
  port: 0
@@ -687,6 +713,10 @@ server:
    never need that stuff as we are in the era of the cloud and I think
    it is a sensible decision to leverage the abstraction layer in
    there.
+
+   Note taht this is likely the way I will choose. Write tha
+   =application.yml= with all of the desired properties you would like
+   to set. 
    
 ** Data
 
@@ -742,6 +772,17 @@ greeting:
  welcome: You are using ${spring.application.name}
    #+end_src
 
+   i.e. you map =greeting.welcome= to "You are using
+   ${spring.application.name}", where =${spring.application.name}=
+   maps to the =spring.application.name= of the yaml.
+
+   I think that essentially and ultimately it is simple yaml syntax.
+
+   What is important to get is how this properties are injected into
+   spring. This is a different story.
+
+   This is what is actully handeled in the next section.   
+
 ** Creating your own configuration properties
 
    Configuration properties are nothing more than properties of beans
@@ -770,5 +811,106 @@ greeting:
    in the book and online but you get the essential idea of beans and
    property injection and how that works.
 
+   So basically the idea is the following - take the example of
+   setting the page-size in the front-end displaying a given number of
+   taco orders - this is the example of the book of reference.
+
+   #+BEGIN_SRC java :results output drawer :classname 
+@Controller // recall controller is the way you denote the class
+	    // answers requests etc.
+@RequestMapping("/orders")
+@SessionAttributes("order")
+@ConfigurationProperties(prefix="taco.orders") // here you set your
+					       // configuration
+					       // property. Like this
+					       // it will be possible
+					       // to set the
+					       // properties in this
+					       // class with the
+					       // prefix mentioned
+					       // there.
+public class OrderController {
+
+    private int pageSize = 20; // note that then you can set the
+			       // default variables encapsulated in
+			       // the objects of the class.
+
+    public void setPageSize(int pageSize) {  // note the setter here.
+	this.pageSize = pageSize;
+    }
+
+    ...
+	@GetMapping
+	public String ordersForUser(
+				    @AuthenticationPrincipal User user, Model model) {
+	Pageable pageable = PageRequest.of(0, pageSize);
+	model.addAttribute("orders",
+			   orderRepo.findByUserOrderByPlacedAtDesc(user, pageable));
+	return "orderList";
+    }
+
+}
+   #+END_SRC
+
+   In such a way you can then set the properties in your application
+   =yaml= - for instance the default page size in your controller:
+
+   #+begin_src yaml
+taco:
+ orders:
+ pageSize: 10
+   #+end_src
+
+   Spring framework will then take care of property injection as
+   described.
+
+*** Note that usually you set configproperties to *component classes*
+
+    So basically recall that component is a first class citizen in the
+    Spring framework and these can then be picked up by the Spring
+    context and injected into other classes.
+
+    
    
-** TODO continue from configuring with profiles. 
+   
+* Application Restart
+
+  Have to integrate at some point the =Spring DevTools=.
+
+  With them as part of your project, you will be able to make changes
+  to Java code and properties files in the project and see those
+  changes applied after a brief moment.
+
+  Note that the quintessential idea of setting up this application
+  restart is the following:
+
+  #+begin_quote
+ More precisely, when DevTools is in play, the application is loaded
+ into two separate class loaders in the Java virtual machine
+ (JVM).
+
+ One class loader is loaded with your Java code, property files, and
+ pretty much anything that’s in the src/main/ path of the
+ project. These are items that are likely to change frequently. The
+ other class loader is loaded with dependency libraries, which aren’t
+ likely to change as often.  When a change is detected, DevTools
+ reloads only the class loader containing your project code and
+ restarts the Spring application context, but leaves the other class
+ loader and the JVM intact. Although subtle, this strategy affords a
+ small reduction in the time it takes to start the application.
+
+  The downside of this strategy is that changes to dependencies won’t
+  be available in automatic restarts. That’s because the class loader
+  containing dependency libraries isn’t automatically reloaded. This
+  means that any time you add, change, or remove a dependency in your
+  build specification, you’ll need to do a *hard restart* of the
+  application for those changes to take effect.
+  #+end_quote
+
+* Deploying with Spring Boot
+
+  In order to deploy with Spring Boot you can use the shell command
+
+  #+begin_src 
+  ./gradlew.bat bootRun
+  #+end_src

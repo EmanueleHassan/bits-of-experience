@@ -10,6 +10,46 @@
 
 #+END_COMMENT
 
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+#+end_export
+
 So I will work quite a lot with Java in the next couple of years. So I
 have to properly set up a strong IDE and workflow for working in it.
 
@@ -28,6 +68,28 @@ productivity with it in the long-term.
 
 {{{TEASER_END}}}
 
+* Index
+
+- [[*Resources][Resources]]
+- [[*Find reference][Find reference]]
+- [[*peek references][peek references]]
+- [[*Refactor][Refactor]]
+- [[*Flycheck][Flycheck]]
+- [[*lsp format buffer][lsp format buffer]]
+- [[*Projectile][Projectile]]
+- [[*class hierarchy][class hierarchy]]
+- [[*lsp-header-breadcrumb][lsp-header-breadcrumb]]
+- [[*Project Root][Project Root]]
+- [[*On checking the hierarchy and dependencies][On checking the hierarchy and dependencies]]
+- [[*treemacs][treemacs]]
+- [[*Troubleshooting][Troubleshooting]]
+- [[*Building and Testing][Building and Testing]]
+- [[*Debugging][Debugging]]
+- [[*Auto-completion][Auto-completion]]
+- [[*Lsp java deps list][Lsp java deps list]]
+- [[*Organize Imports][Organize Imports]]  
+- [[*Note that it will take me some time to completely migrate to Emacs for Java development][Note that it will take me some time to completely migrate to Emacs for Java development]]
+- [[*ISSUES][ISSUES]]
 
 * Resources
 
@@ -147,20 +209,30 @@ java-lsp.
    This is a nice way to set a default. You can in fact add a
    parameter and specify over there the default such that eclipse will
    actually change all of the existing methods by adding the parameter
-   of choice with the *default* value of choice.  
-
-** TODO check if it refactors across projects
+   of choice with the *default* value of choice.
 
 
 * Flycheck
 
-  Activate it. Then with =lsp-ui-flycheck-list= you will get a list
-  with all of the errors and inconsistencies you have in your source
-  files.
+  De-Activate it.
 
-  that is good.
 
-  Have to compare as well to the =sonarqube= that Sergio mentioned.
+  Then with =lsp-ui-flycheck-list= you will get a list with all of the
+  errors and inconsistencies you have in your source files.
+
+  that is good and it corresponds to your eclipse way of seeing your
+  errors etc.
+
+  Note that there you see as well the todos as in eclipse so there is
+  a 1:1 in this sense.
+
+  See for instance the following on the 101 spring application I am
+  working on:
+
+#+begin_export html
+ <img src="../../images/Screenshot 2022-02-03 164053.png" class="center">
+#+end_export
+  
 
   Note that there are issues with the last stable release of Melpa. It
   is still not working. This is emacs. Have to deal with the dirty
@@ -176,11 +248,11 @@ java-lsp.
 
   =lsp-format-buffer=.
 
-  not that recommendned. use different packages that are tailored to
+  not that recommended. use different packages that are tailored to
   the language for doing code-formatting.
 
   usually it works better. 
-  
+
 
 * Projectile
 
@@ -188,12 +260,6 @@ java-lsp.
   project and code.
 
   i.e. jump to the test files etc.
-
-
-* Debugging
-
-  have to properly set-up the dap debugger. it looks as broken right
-  now.
 
 
 * class hierarchy
@@ -204,7 +270,7 @@ java-lsp.
   *lsp-header-breadcrumb* below.
 
   so I would not recommend it too much.
-  
+
 
 * lsp-header-breadcrumb
 
@@ -215,7 +281,7 @@ java-lsp.
 
   this will adapt as you cycle through your code and it should help
   you a bit to keep the visibility over your entire code. 
-  
+
 
 * Project Root
 
@@ -372,6 +438,24 @@ java-lsp.
   order to understand this, check [[https://github.com/emacs-lsp/lsp-java/issues/201][this]].
 
 
+* Lsp java deps list
+
+  In such a way it is possible to quickly navigate all of the
+  necessary dependencies for your projects in your workspace.
+
+  It opens kind of a treemacs thing where you would set the stuff.
+
+* Organize Imports
+
+  Use this. I.e. type =C-c l a-a= and organize imports.
+
+  It will clear all of the imports you do not have to use.
+
+  It will as well import all of the stuff you are using in the file.
+
+  So neat. You see that each day you are closing to working better
+  with it. 
+    
 * Note that it will take me some time to completely migrate to Emacs for Java development
 
   This because emacs is not the most easy way you start from scratch
@@ -518,8 +602,6 @@ public void insert() {
    Then basically your marks in eclipse complain about it tells you
    that you have errors in your html etc.
 
-   
-
 ** On the Eclipse Debugger
 
    Have to find the option to go back in time - i.e. of steps.
@@ -567,7 +649,6 @@ there are a few Eclipse-based tools that could be used to "go back" in
    taskkill /F /IM java.exe
    #+end_quote
 
-   
 
 * ISSUES
 
@@ -582,23 +663,49 @@ there are a few Eclipse-based tools that could be used to "go back" in
    this is an error and issue that you need to fix if you want to work
    with it in a solid way.
 
-** Note that you manage all of the existing lsp-sessions
+   - all solved. this is simply a matter of setting your lsp-session
+     correctly. 
 
-   with the =workspace= keyword. check at the the functions involving
-   it in there.
+*** Note that you manage all of the existing lsp-sessions
+
+    with the =workspace= keyword. check at the the functions involving
+    it in there.
    
-** Solution
+*** Solution
 
-   At the time the workaround was removing the highlighting at global
-   level for lsp. Now it is starting to improve as an IDE.
+    At the time the workaround was removing the highlighting at global
+    level for lsp. Now it is starting to improve as an IDE.
 
+
+** On Multi-project builds
+
+   See your note in your emacs configuration:
+
+   ------------------------
    
+   Check at the [[https://issueexplorer.com/issue/emacs-lsp/lsp-java/320][following url]] to understand the issue.
 
+   #+BEGIN_SRC emacs-lisp
+(advice-add 'lsp :before (lambda (&rest _args) (eval '(setf (lsp-session-server-id->folders (lsp-session)) (ht)))))
+   #+END_SRC
 
-  
-    
+   #+RESULTS:
 
+   It is working now. Check also at the [[https://github.com/emacs-lsp/lsp-mode/discussions/3095][following discussion]] to
+   understand more.
 
+   Just the single project that you open is shown there in the erros
+   sections now in the =lsp-ui-flycheck-list=. If you add a second one
+   this is also added to the list in the sense that is managed by the
+   same server connection. The only issue is that if you close the
+   file it stays in the server connection. This is not ideal and would
+   have to sort it somehow. 
 
+   But basically now you have all of the features you desired. Just
+   have to check the last thing with the debugger but basically you
+   are there. 
+
+   You can now start to run your smaller projects in emacs and start
+   to get up and running with it. 
 
 
