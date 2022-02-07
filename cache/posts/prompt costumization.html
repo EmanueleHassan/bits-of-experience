@@ -1,0 +1,95 @@
+<div class="HTML" id="org57c3835">
+<p>
+&lt;br&gt;
+&lt;br&gt;
+</p>
+
+</div>
+
+<p>
+This month I started to work for the first time with a Mac OS. 
+</p>
+
+<p>
+As this recently became my primar working OS I immediately started by
+downloading <i>emacs</i> and customize the editor in order to optimize my
+workflow.
+</p>
+
+<p>
+Annoyingly after pinning the Emacs executable to the Mac Dock and
+launching Emacs from there I got troubles with the <code>$PATH</code>.
+</p>
+
+<p>
+Emacs launched in such a way will not inherit the <code>$PATH</code> specified
+within the <code>~/.bash_profile</code> file nor will the <code>M-x shell</code> command of
+emacs display a nice prompt.
+</p>
+
+<p>
+This article goes over my fix and the way I customized my set up to
+get a nice informative prompt in the terminal.
+</p>
+
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org6655842" class="outline-2">
+<h2 id="org6655842">The Issue</h2>
+<div class="outline-text-2" id="text-org6655842">
+<p>
+The issue turn out to be rather trivial. Launching Emacs executable
+directly and not from the terminal will imply that Emacs will not have
+the Terminal.app as a super process at any level so that Emacs cannot
+inherit anything form the shell in Terminal.
+</p>
+
+<p>
+This will mean that you have to make the environment the same by sourcing the same files.
+</p>
+
+<p>
+In this sense I decided to create a single <code>.bashrc</code> file where to
+configure my entire terminal options and to refer to this set-up in my
+<code>.bash_profile</code> file through the following command.
+</p>
+
+<pre class="example" id="orgd97af98">
+if [ -f ~/.bashrc ]; then . ~/.bashrc; fi 
+</pre>
+
+<p>
+Once this is set up you can finally modify your set up so that <code>M-x
+shell</code> as well as your standard terminal prompt will display the information you like.
+</p>
+
+<p>
+In my specific case, I decided to go for
+</p>
+
+<pre class="example" id="orgb90aeae">
+export PS1="(\d) \u@\w[\j]\$"
+</pre>
+
+<p>
+This will allow me to read the current data at first (as I am
+especially bad at them this is a nice reminder for myself).  On top of
+that I will have an overview on the user, the working directory as
+well as the processes managed by the shell. Especially the last
+information is necessary for me as when running processes in the
+background I can easily forget about them. Finally I add the
+additional information on whether I am leveraging the root user or
+not.
+</p>
+
+<p>
+If you are interested on what it is possible to dynamically display in
+the prompt follow <a href="https://www.cyberciti.biz/tips/howto-linux-unix-bash-shell-setup-prompt.html">this nice article</a>.
+</p>
+
+<p>
+If you are interested in coloring your prompt check at <a href="https://www.ostechnix.com/hide-modify-usernamelocalhost-part-terminal/">this other</a>.
+</p>
+</div>
+</div>
