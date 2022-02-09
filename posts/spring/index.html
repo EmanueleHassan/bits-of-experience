@@ -12,8 +12,8 @@
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
 <link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/spring/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
-<link rel="prev" href="../on-enterprise-applications-architecture/" title="On Enterprise Applications Architecture" type="text/html">
-<link rel="next" href="../on-classical-architectures/" title="On Classical Architectures" type="text/html">
+<link rel="prev" href="../java-testing/" title="Java Testing" type="text/html">
+<link rel="next" href="../switching-language/" title="On some side note about working with Emacs and understanding a different language" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="Spring">
 <meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/spring/">
@@ -26,11 +26,9 @@ The notes are based on Spring in Action - 5th edition.
 
 
 
-
-
-Genera">
+I must s">
 <meta property="og:type" content="article">
-<meta property="article:published_time" content="2021-11-01T16:46:56+01:00">
+<meta property="article:published_time" content="2022-02-02T16:46:56+01:00">
 <meta property="article:tag" content="java">
 </head>
 <body>
@@ -55,7 +53,7 @@ Genera">
 <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Spring</a></h1>
 
         <div class="metadata">
-            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2021-11-01T16:46:56+01:00" itemprop="datePublished" title="2021-11-01 16:46">2021-11-01 16:46</time></a></p>
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2022-02-02T16:46:56+01:00" itemprop="datePublished" title="2022-02-02 16:46">2022-02-02 16:46</time></a></p>
             <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
                     Marco Hassan
             </span></p>
@@ -84,11 +82,74 @@ it makes sense to have the spring-framework in your skillset.
 The notes are based on Spring in Action - 5th edition.
 </p>
 
+<p>
+I must say that is not too far from the way I used to develop in
+Python. Of course you have some Java-based falvour here and
+there. Sometimes with pros sometimes with cons. There are things were
+I still believe that Python is clearly superior. So ultimately my goal
+is to go in a direction of microservices with reactive architectures
+mixing the best of breed.
+</p>
+
+<p>
+Anyways here and there I skipped some sections. Will go back to them
+later when the work will require it.
+</p>
+
+<p>
+Note that as per my usual way of working I read, make notes, such that
+when I work many things should be already familiar and you should have
+a high-level understanding of an application written through such
+framework.
+</p>
+
+<p>
+Then of course experience is the one where you fix/crystallize all of
+these concepts. That comes with time nothing to add.
+</p>
+
+<p>
+Creative will then make you deviate from the general structure you
+learned.
+</p>
+
+<p>
+You just have to be careful to document everything then as it should
+always be possible for an external to join and take over your work.
+</p>
+
+<p>
+This is the bit I learned from my current recent experience.
+</p>
+
+
+
 <!-- TEASER_END -->
 
-<div id="outline-container-org1f9c424" class="outline-2">
-<h2 id="org1f9c424">General Idea</h2>
-<div class="outline-text-2" id="text-org1f9c424">
+<div id="outline-container-org8494d4b" class="outline-2">
+<h2 id="org8494d4b">Index</h2>
+<div class="outline-text-2" id="text-org8494d4b">
+<ul class="org-ul">
+<li><a href="#org64a156a">General Idea</a></li>
+<li><a href="#orgceb83b8">Spring Project Structure</a></li>
+<li><a href="#orgcc45a32">Gradle Configuration</a></li>
+<li><a href="#orgd2ece91">Running the Spring web-application</a></li>
+<li><a href="#orgbc9c795">Important Spring Modules</a></li>
+<li><a href="#org19b14a3">Configuring Spring</a></li>
+<li><a href="#org56f4698">Web-applications with Spring</a></li>
+<li><a href="#orgd95da26">Spring Data</a></li>
+<li><a href="#org2eeaa93">Spring Integration</a></li>
+<li><a href="#orgf9a7e1e">Securing Spring</a></li>
+<li><a href="#orga820df5">Application Restart</a></li>
+<li><a href="#orga90d1f9">Deploying with Spring Boot</a></li>
+<li><a href="#org663d696">Generating a Docker Image out of your Spring Application</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org64a156a" class="outline-2">
+<h2 id="org64a156a">General Idea</h2>
+<div class="outline-text-2" id="text-org64a156a">
 <p>
 At its core, Spring offers a container, often referred to as the
 Spring application context, that creates and manages application
@@ -128,9 +189,9 @@ application development.
 </div>
 
 
-<div id="outline-container-orgb078611" class="outline-2">
-<h2 id="orgb078611">Spring Project Structure</h2>
-<div class="outline-text-2" id="text-orgb078611">
+<div id="outline-container-orgceb83b8" class="outline-2">
+<h2 id="orgceb83b8">Spring Project Structure</h2>
+<div class="outline-text-2" id="text-orgceb83b8">
 <ul class="org-ul">
 <li>
 <code>TacoCloudApplication.java</code> - This is the Spring Boot main class
@@ -154,9 +215,10 @@ ensures that the Spring application context loads successfully.</li>
 </div>
 </div>
 
-<div id="outline-container-org6a4ecca" class="outline-2">
-<h2 id="org6a4ecca">Gradle Configuration</h2>
-<div class="outline-text-2" id="text-org6a4ecca">
+
+<div id="outline-container-orgcc45a32" class="outline-2">
+<h2 id="orgcc45a32">Gradle Configuration</h2>
+<div class="outline-text-2" id="text-orgcc45a32">
 <p>
 Note that one of the most important thing that you have in your
 build configuration is that you deploy to a <code>jar</code> not into a <code>war</code>.
@@ -248,13 +310,24 @@ notes.
 </div>
 </div>
 
-<div id="outline-container-org7a74a20" class="outline-2">
-<h2 id="org7a74a20">Running the Spring web-application</h2>
-<div class="outline-text-2" id="text-org7a74a20">
+
+<div id="outline-container-orgd2ece91" class="outline-2">
+<h2 id="orgd2ece91">Running the Spring web-application</h2>
+<div class="outline-text-2" id="text-orgd2ece91">
+<p>
+This is a 101 example. Do not waste too much time if you do not get
+these notes.
+</p>
+
+<p>
+Keep reading. But yeah take the idea if you want to start a 101
+spring app.
+</p>
 </div>
-<div id="outline-container-orgf335599" class="outline-3">
-<h3 id="orgf335599">Run App</h3>
-<div class="outline-text-3" id="text-orgf335599">
+
+<div id="outline-container-org5c67002" class="outline-3">
+<h3 id="org5c67002">Run App</h3>
+<div class="outline-text-3" id="text-org5c67002">
 <p>
 This is the equivalent to your <code>flask.run</code> command. 
 </p>
@@ -267,7 +340,11 @@ This is the equivalent to your <code>flask.run</code> command.
    <span class="nd">@SpringBootApplication</span> 
    <span class="kd">public</span> <span class="kd">class</span> <span class="nc">TacoCloudApplication</span> <span class="p">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">SpringApplication</span><span class="p">.</span><span class="na">run</span><span class="p">(</span><span class="n">TacoCloudApplication</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">args</span><span class="p">);</span> 
+    <span class="n">SpringApplication</span><span class="p">.</span><span class="na">run</span><span class="p">(</span><span class="n">TacoCloudApplication</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">args</span><span class="p">);</span>  <span class="c1">// here you</span>
+							      <span class="c1">// run the</span>
+							      <span class="c1">// application. similar</span>
+							      <span class="c1">// to flask</span>
+							      <span class="c1">// run.</span>
     <span class="p">}</span>
    <span class="p">}</span>
 </pre></div>
@@ -306,11 +383,11 @@ usually work with separate classes.
 </div>
 </div>
 
-<div id="outline-container-org9f47e77" class="outline-3">
-<h3 id="org9f47e77">MVC - through it you write your back-end endpoints</h3>
-<div class="outline-text-3" id="text-org9f47e77">
+<div id="outline-container-orgec397cc" class="outline-3">
+<h3 id="orgec397cc">MVC - through it you write your back-end endpoints</h3>
+<div class="outline-text-3" id="text-orgec397cc">
 <p>
-This is a web-framework.
+This is a web-framework. Again check the more detail section <a href="#org56f4698">Web-applications with Spring</a>.
 </p>
 
 <p>
@@ -364,10 +441,9 @@ GET requests.
 </div>
 </div>
 
-
-<div id="outline-container-org76f4f05" class="outline-3">
-<h3 id="org76f4f05">Endpoints Testing</h3>
-<div class="outline-text-3" id="text-org76f4f05">
+<div id="outline-container-org764f330" class="outline-3">
+<h3 id="org764f330">Endpoints Testing</h3>
+<div class="outline-text-3" id="text-org764f330">
 <p>
 You can check in the book. This will be a quite big waste of time
 nonetheless.
@@ -388,9 +464,10 @@ use then a complete different testing-suite.
 </div>
 </div>
 
-<div id="outline-container-orgb2c13a5" class="outline-2">
-<h2 id="orgb2c13a5">Important Spring Modules</h2>
-<div class="outline-text-2" id="text-orgb2c13a5">
+
+<div id="outline-container-orgbc9c795" class="outline-2">
+<h2 id="orgbc9c795">Important Spring Modules</h2>
+<div class="outline-text-2" id="text-orgbc9c795">
 <p>
 Note that on that spring initialzer page you can see all of the
 dependencies nicely integrated with the spring framework.
@@ -406,9 +483,9 @@ understand:
 </p>
 </div>
 
-<div id="outline-container-org22f28f5" class="outline-3">
-<h3 id="org22f28f5">Core Spring Framework</h3>
-<div class="outline-text-3" id="text-org22f28f5">
+<div id="outline-container-org6975042" class="outline-3">
+<h3 id="org6975042">Core Spring Framework</h3>
+<div class="outline-text-3" id="text-org6975042">
 <p>
 This is the fundation of everything in the spring universe.
 </p>
@@ -432,9 +509,9 @@ It also provides the following essential features:m
 </div>
 </div>
 
-<div id="outline-container-org630a8f1" class="outline-3">
-<h3 id="org630a8f1">Spring Boot</h3>
-<div class="outline-text-3" id="text-org630a8f1">
+<div id="outline-container-org22e579a" class="outline-3">
+<h3 id="org22e579a">Spring Boot</h3>
+<div class="outline-text-3" id="text-org22e579a">
 <p>
 This is what makes autoconfiguration and starter-depencies
 possible.
@@ -479,9 +556,9 @@ Spring at macro-level.
 </div>
 </div>
 
-<div id="outline-container-org1465028" class="outline-3">
-<h3 id="org1465028">Spring Data</h3>
-<div class="outline-text-3" id="text-org1465028">
+<div id="outline-container-orgd95da26" class="outline-3">
+<h3 id="orgd95da26">Spring Data</h3>
+<div class="outline-text-3" id="text-orgd95da26">
 <p>
 What’s more, Spring Data is capable of working with a <i>several
 different kinds of databases</i>, including relational (JPA), document
@@ -501,9 +578,9 @@ across languages.
 </div>
 </div>
 
-<div id="outline-container-org6950e6a" class="outline-3">
-<h3 id="org6950e6a">Spring Security</h3>
-<div class="outline-text-3" id="text-org6950e6a">
+<div id="outline-container-org48c89cf" class="outline-3">
+<h3 id="org48c89cf">Spring Security</h3>
+<div class="outline-text-3" id="text-org48c89cf">
 <p>
 Through it you can manage a broad range of application security
 needs, including authentication, authorization, and API security.
@@ -518,9 +595,9 @@ might have to do that at some point.
 </div>
 </div>
 
-<div id="outline-container-org64a4a68" class="outline-3">
-<h3 id="org64a4a68">Spring Integration and Spring Batch</h3>
-<div class="outline-text-3" id="text-org64a4a68">
+<div id="outline-container-org6ae1f6b" class="outline-3">
+<h3 id="org6ae1f6b">Spring Integration and Spring Batch</h3>
+<div class="outline-text-3" id="text-org6ae1f6b">
 <p>
 <b>Spring Integration</b>: addresses real-time integration where data is
 processed as it’s made available.
@@ -541,9 +618,9 @@ programming and these frameworks in order to have a proper baby.
 </div>
 </div>
 
-<div id="outline-container-org8c2c4e4" class="outline-3">
-<h3 id="org8c2c4e4">Spring Cloud</h3>
-<div class="outline-text-3" id="text-org8c2c4e4">
+<div id="outline-container-org2c99cb6" class="outline-3">
+<h3 id="org2c99cb6">Spring Cloud</h3>
+<div class="outline-text-3" id="text-org2c99cb6">
 <p>
 Microservices are a hot topic, addressing several practical
 development and runtime concerns. In doing so, however, they bring
@@ -567,13 +644,634 @@ in different runtimes.
 </div>
 </div>
 
-<div id="outline-container-orgc74909b" class="outline-2">
-<h2 id="orgc74909b">Web-applications with Spring</h2>
-<div class="outline-text-2" id="text-orgc74909b">
+
+<div id="outline-container-org19b14a3" class="outline-2">
+<h2 id="org19b14a3">Configuring Spring</h2>
+<div class="outline-text-2" id="text-org19b14a3">
+<p>
+So basically Spring it is nice cause you have tons of beans in
+spring that will ultimately be injected in your context and you will
+have a well rounded Java development environment.
+</p>
+
+<p>
+So this is basically the idea. You differentiate two components in
+Java:
+</p>
+
+<ul class="org-ul">
+<li>
+<i>Bean wiring</i>: through this component you can define the beans
+that you will use in your spring application. I.e. the beans that
+will be discoverable from the spring context. Moreover, through
+<i>beans wiring</i> you specify how the different beans will be
+injected into each other.</li>
+
+<li>
+<i>Property injection</i>: this sets the values on the different beans
+in the Spring context of the application.</li>
+</ul>
+<p>
+We will see how to specify these two fundamental components through
+Spring boot. You will then be able to create your modularized
+application and work with it in a smooth and agile way.
+</p>
 </div>
-<div id="outline-container-org7019160" class="outline-3">
-<h3 id="org7019160">Spring MVC</h3>
-<div class="outline-text-3" id="text-org7019160">
+
+
+<div id="outline-container-org2fca088" class="outline-3">
+<h3 id="org2fca088">How the spring framework works</h3>
+<div class="outline-text-3" id="text-org2fca088">
+<p>
+In order to properly understand how to do <i>beans wiring</i> and
+<i>property injection</i> you should first understand the following
+general flow spring boot follows.
+</p>
+
+<p>
+The following chart of the book gives a good overview:
+</p>
+
+<img src="../../images/Screenshot%202021-11-14%20182534.png" class="center"><p>
+I.e. what you do is to instantiate the spring application by
+setting all of the relevant parameters that will be used in order
+to instantiate the relevant beans with the relevant configurations.
+</p>
+
+<p>
+I.e. you specify the spring configuration you want by specifying
+the relevant paramters through cmd line, yaml configuration files
+etc.
+</p>
+
+<p>
+Spring boot will then refer to the relevant configuration available
+in the <i>spring environment</i> to initiate the relevant beans and make
+them accessible by the proper injection into the spring context.
+</p>
+
+<p>
+So given the general picture above understand the following
+components that are key to every proper Spring application and that
+you should accordingly set.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8f24cce" class="outline-3">
+<h3 id="org8f24cce">Embedded Server</h3>
+<div class="outline-text-3" id="text-org8f24cce">
+<p>
+Here you can decide where your embedded server will communicate.
+</p>
+
+<p>
+The default embedded server is Tomcat. You can change the option
+and work with different servers.
+</p>
+
+<p>
+In order to do so set the following in the the <code>src/main/resources/application.yml</code>
+</p>
+
+<div class="highlight"><pre><span></span>   server:
+    port: 0
+</pre></div>
+
+<p>
+Note that port <code>0</code> is a sensible choice as you will be able in such
+a way to do proper integration testing. You do not hard-wire a port
+but each time a different port is selected.
+</p>
+
+<p>
+You will therefore make sure that your tests do not simply pass
+because a port was hard-wired.
+</p>
+
+<p>
+Note that this is a good point but it can well be a moot
+point. Everything ultimately depends on the infrastructure
+initialization.
+</p>
+
+<p>
+Here you can also specify all of the options for ssl, your
+key-stores etc. I just note it here but again I do not think I will
+never need that stuff as we are in the era of the cloud and I think
+it is a sensible decision to leverage the abstraction layer in
+there.
+</p>
+
+<p>
+Note taht this is likely the way I will choose. Write tha
+<code>application.yml</code> with all of the desired properties you would like
+to set. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb5d8cef" class="outline-3">
+<h3 id="orgb5d8cef">Data</h3>
+<div class="outline-text-3" id="text-orgb5d8cef">
+<p>
+Here you can specify the driver and the location of the DB you will
+interact with.
+</p>
+
+<p>
+You have to understand how this overlaps with Gradle. There you
+specify as well parts of this.
+</p>
+
+<p>
+So double check how these two fits together. I am quite sure that
+if you work with spring you do not specify the stuff in
+gradle. I.e. you just specify the spring dependencies in gradle.
+</p>
+
+<p>
+Then once this is specified it is all of a game within spring. This
+is the big difference. While when programming without Spring you
+have to pull the modules one-by-one into gradle and you compose
+everything yourself.
+</p>
+
+<p>
+Moreover as there is not a framework putting everything in an
+opinionated context you have to do the manual config yourself.
+</p>
+
+<p>
+I mean in the notes above I put a bit of notes that are nose-driven
+so I am not sure everything is correct at 100% but more or less it
+should be that.
+</p>
+
+<p>
+You can then see in the book how to properly instantiate your db
+with the different tables schema etc. I refer to the book in case
+you want to go down that road. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0ef3a92" class="outline-3">
+<h3 id="org0ef3a92">Logging</h3>
+<div class="outline-text-3" id="text-org0ef3a92">
+<p>
+This is nice, you can set there the standard output of your
+logger.
+</p>
+
+<p>
+Refer to the book. But basically there is an option to do that via
+a xml file.
+</p>
+
+<p>
+Moreover on the top of it once you defined the output of the logger
+you can define all of the different levels that should be printed
+by the logger.
+</p>
+
+<p>
+You can that through the standards yaml configuration files.
+</p>
+
+<p>
+So basically double check the book to see the way to configure your
+logging across your applications. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2fba438" class="outline-3">
+<h3 id="org2fba438">Property injection via special property values</h3>
+<div class="outline-text-3" id="text-org2fba438">
+<p>
+This is a nice way to make dynamic and intelligent properties
+injection into your spring environment - and consequently beans -.
+</p>
+
+<p>
+The standard format would be something like that:
+</p>
+
+<div class="highlight"><pre><span></span>   greeting:
+    welcome: You are using ${spring.application.name}
+</pre></div>
+
+<p>
+i.e. you map <code>greeting.welcome</code> to "You are using
+\({spring.application.name}", where =\){spring.application.name}=
+maps to the <code>spring.application.name</code> of the yaml.
+</p>
+
+<p>
+I think that essentially and ultimately it is simple yaml syntax.
+</p>
+
+<p>
+What is important to get is how this properties are injected into
+spring. This is a different story.
+</p>
+
+<p>
+This is what is actully handeled in the next section.   
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9c84ca4" class="outline-3">
+<h3 id="org9c84ca4">Creating your own configuration properties</h3>
+<div class="outline-text-3" id="text-org9c84ca4">
+<p>
+Configuration properties are nothing more than properties of beans
+that have been designated to accept configurations from Spring’s
+environment abstraction.
+</p>
+
+<p>
+So the above configurations are easy to integrate.
+</p>
+
+<p>
+This is the <b>important</b> section. We will see how the beans are
+actually designed to consume the configuration in the spring
+environment and how you can actually set up your configuration and
+inject it into the beans.
+</p>
+
+<p>
+In order to do that you have to understand a couple of flags as in
+the usual case of spring - i.e. these are actually the first class
+citizens of spring through which you can manage it all.
+</p>
+
+<p>
+In this sense, one of the most important annotation is the
+following:
+</p>
+
+<ul class="org-ul">
+<li>@ConfigurationProperties annotation. When placed on any Spring
+bean, it specifies that the properties of that bean can be
+injected from properties in the Spring environment.</li>
+</ul>
+<p>
+It is then immediate to understand the logic. You can check at it
+in the book and online but you get the essential idea of beans and
+property injection and how that works.
+</p>
+
+<p>
+So basically the idea is the following - take the example of
+setting the page-size in the front-end displaying a given number of
+taco orders - this is the example of the book of reference.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nd">@Controller</span> <span class="c1">// recall controller is the way you denote the class</span>
+	       <span class="c1">// answers requests etc.</span>
+   <span class="nd">@RequestMapping</span><span class="p">(</span><span class="s">"/orders"</span><span class="p">)</span>
+   <span class="nd">@SessionAttributes</span><span class="p">(</span><span class="s">"order"</span><span class="p">)</span>
+   <span class="nd">@ConfigurationProperties</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">"taco.orders"</span><span class="p">)</span> <span class="c1">// here you set your</span>
+						  <span class="c1">// configuration</span>
+						  <span class="c1">// property. Like this</span>
+						  <span class="c1">// it will be possible</span>
+						  <span class="c1">// to set the</span>
+						  <span class="c1">// properties in this</span>
+						  <span class="c1">// class with the</span>
+						  <span class="c1">// prefix mentioned</span>
+						  <span class="c1">// there.</span>
+   <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderController</span> <span class="p">{</span>
+
+       <span class="kd">private</span> <span class="kt">int</span> <span class="n">pageSize</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span> <span class="c1">// note that then you can set the</span>
+				  <span class="c1">// default variables encapsulated in</span>
+				  <span class="c1">// the objects of the class.</span>
+
+       <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPageSize</span><span class="p">(</span><span class="kt">int</span> <span class="n">pageSize</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// note the setter here.</span>
+	   <span class="k">this</span><span class="p">.</span><span class="na">pageSize</span> <span class="o">=</span> <span class="n">pageSize</span><span class="p">;</span>
+       <span class="p">}</span>
+
+       <span class="p">...</span>
+	   <span class="nd">@GetMapping</span>
+	   <span class="kd">public</span> <span class="n">String</span> <span class="nf">ordersForUser</span><span class="p">(</span>
+				       <span class="nd">@AuthenticationPrincipal</span> <span class="n">User</span> <span class="n">user</span><span class="p">,</span> <span class="n">Model</span> <span class="n">model</span><span class="p">)</span> <span class="p">{</span>
+	   <span class="n">Pageable</span> <span class="n">pageable</span> <span class="o">=</span> <span class="n">PageRequest</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pageSize</span><span class="p">);</span>
+	   <span class="n">model</span><span class="p">.</span><span class="na">addAttribute</span><span class="p">(</span><span class="s">"orders"</span><span class="p">,</span>
+			      <span class="n">orderRepo</span><span class="p">.</span><span class="na">findByUserOrderByPlacedAtDesc</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">pageable</span><span class="p">));</span>
+	   <span class="k">return</span> <span class="s">"orderList"</span><span class="p">;</span>
+       <span class="p">}</span>
+
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+In such a way you can then set the properties in your application
+<code>yaml</code> - for instance the default page size in your controller:
+</p>
+
+<div class="highlight"><pre><span></span>   taco:
+    orders:
+    pageSize: 10
+</pre></div>
+
+<p>
+Spring framework will then take care of property injection as
+described.
+</p>
+</div>
+
+<div id="outline-container-orgd0cfc26" class="outline-4">
+<h4 id="orgd0cfc26">
+<b>Important Design Point</b> - Note that usually you set configproperties to <b>component classes</b>
+</h4>
+<div class="outline-text-4" id="text-orgd0cfc26">
+<p>
+So basically recall that component is a first class citizen in the
+Spring framework and these can then be picked up by the Spring
+context and injected into other classes.
+</p>
+
+<p>
+So basically what you do in Spring is creating a couple of these
+<i>components</i> that will be holding some given properties that you
+can instantiate via your defined <code>@ConfigurationProperties</code>.
+</p>
+
+<p>
+You can then inject these components across the application into
+the different controllers etc.
+</p>
+
+<p>
+This will keep your application modular and will make it possible
+for you to have a solid design. You also understand that when
+refactoring you just change values at one spot and everything will
+adjust as it will be referencing that given component through
+property injection.
+</p>
+
+<p>
+I.e. the example above
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kn">package</span> <span class="nn">tacos.web</span><span class="p">;</span>
+
+    <span class="kn">import</span> <span class="nn">org.springframework.boot.context.properties.</span>
+	<span class="n">ConfigurationProperties</span><span class="p">;</span>
+    <span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="p">;</span>
+    <span class="kn">import</span> <span class="nn">lombok.Data</span><span class="p">;</span>
+
+    <span class="nd">@Component</span>
+    <span class="nd">@ConfigurationProperties</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">"taco.orders"</span><span class="p">)</span>
+    <span class="nd">@Data</span> <span class="c1">// lombok will implement getters and setters.</span>
+    <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderProps</span> <span class="p">{</span>
+	<span class="kd">private</span> <span class="kt">int</span> <span class="n">pageSize</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+    <span class="p">}</span>
+</pre></div>
+
+<p>
+Then you would inject that component in the controller - see the
+difference with the above - more ordered OrderController, more
+modular, reusable Component -.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="nd">@Controller</span>
+    <span class="nd">@RequestMapping</span><span class="p">(</span><span class="s">"/orders"</span><span class="p">)</span>
+    <span class="nd">@SessionAttributes</span><span class="p">(</span><span class="s">"order"</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderController</span> <span class="p">{</span>
+
+	<span class="kd">private</span> <span class="n">OrderRepository</span> <span class="n">orderRepo</span><span class="p">;</span>
+	<span class="kd">private</span> <span class="n">OrderProps</span> <span class="n">props</span><span class="p">;</span>              <span class="c1">// you will inject the component here.</span>
+
+	<span class="kd">public</span> <span class="nf">OrderController</span><span class="p">(</span><span class="n">OrderRepository</span> <span class="n">orderRepo</span><span class="p">,</span>
+			       <span class="n">OrderProps</span> <span class="n">props</span><span class="p">)</span> <span class="p">{</span>
+	    <span class="k">this</span><span class="p">.</span><span class="na">orderRepo</span> <span class="o">=</span> <span class="n">orderRepo</span><span class="p">;</span>
+	    <span class="k">this</span><span class="p">.</span><span class="na">props</span> <span class="o">=</span> <span class="n">props</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="p">...</span>
+
+	    <span class="nd">@GetMapping</span>
+	    <span class="kd">public</span> <span class="n">String</span> <span class="nf">ordersForUser</span><span class="p">(</span>
+					<span class="nd">@AuthenticationPrincipal</span> <span class="n">User</span> <span class="n">user</span><span class="p">,</span> <span class="n">Model</span> <span class="n">model</span><span class="p">)</span> <span class="p">{</span>
+	    <span class="n">Pageable</span> <span class="n">pageable</span> <span class="o">=</span> <span class="n">PageRequest</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">props</span><span class="p">.</span><span class="na">getPageSize</span><span class="p">());</span>
+	    <span class="n">model</span><span class="p">.</span><span class="na">addAttribute</span><span class="p">(</span><span class="s">"orders"</span><span class="p">,</span>
+			       <span class="n">orderRepo</span><span class="p">.</span><span class="na">findByUserOrderByPlacedAtDesc</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">pageable</span><span class="p">));</span>
+	    <span class="k">return</span> <span class="s">"orderList"</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="p">...</span>
+
+    <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org90be569" class="outline-3">
+<h3 id="org90be569">Excurs - Validation</h3>
+<div class="outline-text-3" id="text-org90be569">
+<p>
+Note that it makes sense to use <code>javax.validation.*</code> in combination
+with your spring application properties.
+</p>
+
+<p>
+With it you can double check some variables etc.
+</p>
+
+<p>
+This might be especially useful to apply to your <code>Components</code>. Then
+the idea is that you write your componnents, you instantiate them
+through config properties, you validate such config properties and
+you inject them in your application.
+</p>
+
+<p>
+A 101 example of validation is the following:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">package</span> <span class="nn">tacos.web</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">javax.validation.constraints.Max</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">javax.validation.constraints.Min</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.boot.context.properties.</span>
+       <span class="n">ConfigurationProperties</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.validation.annotation.Validated</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">lombok.Data</span><span class="p">;</span>
+   <span class="nd">@Component</span>
+   <span class="nd">@ConfigurationProperties</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">"taco.orders"</span><span class="p">)</span>
+   <span class="nd">@Data</span>
+   <span class="nd">@Validated</span>
+   <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderProps</span> <span class="p">{</span>
+       <span class="nd">@Min</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">"must be between 5 and 25"</span><span class="p">)</span>
+       <span class="nd">@Max</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">"must be between 5 and 25"</span><span class="p">)</span>
+       <span class="kd">private</span> <span class="kt">int</span> <span class="n">pageSize</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+   <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgabdbb00" class="outline-3">
+<h3 id="orgabdbb00">Profiles</h3>
+<div class="outline-text-3" id="text-orgabdbb00">
+<p>
+This is an important concept when configuring your spring
+application.
+</p>
+
+<p>
+Profiles allow you to create <b>conditional configuration</b>
+properties.
+</p>
+
+<p>
+I.e. framed as per the book:
+</p>
+
+<blockquote>
+<p>
+Profiles are a type of <i>conditional configuration</i> where different
+beans, configuration classes, and configuration properties are applied
+or ignored <i>based on what profiles are active</i> at runtime.
+</p>
+</blockquote>
+
+<p>
+So how do you use such conditional properties? The idea is to
+create multiple <code>yaml</code> files where you will store different bits of
+information.
+</p>
+
+<p>
+The name of the file <b>should follow this convention</b>:
+<code>application-{profile name}.yml</code> <b>or</b> <code>application-{profile
+   name}.properties</code>.
+</p>
+
+<p>
+The idea is then the following. You can activate profiles as
+described in <a href="#orga80fba0">Activating Profiles</a>.
+</p>
+
+<p>
+Note that this is your choice of design. Note that there are as
+well other ways to configure profiles - i.e. you set everything in
+your <code>application.yml</code> file with the following syntax:
+</p>
+
+<div class="highlight"><pre><span></span>   logging:
+     level:
+       tacos: DEBUG
+
+   # note tree lines to separate profiles. all below belongs to the
+   # prod profile.
+   ---  
+
+   # specify name of the profile
+   spring:
+     profiles: prod  
+
+     datasource:
+       url: jdbc:mysql://localhost/tacocloud
+       username: tacouser
+       password: tacopassword
+       logging:
+
+     level:
+       tacos: WARN
+</pre></div>
+
+
+<p>
+The basic idea is the following - the first section is the default
+section. The properties of the second section are just active when
+the profile is active.
+</p>
+</div>
+
+<div id="outline-container-orga80fba0" class="outline-4">
+<h4 id="orga80fba0">Activating Profiles</h4>
+<div class="outline-text-4" id="text-orga80fba0">
+<p>
+Now you understand how to set the properties for different
+profiles. The question is then how you active the different
+profiles.
+</p>
+
+<p>
+This is again done by configuring the <code>spring.profiles.active</code>
+property with the desired profiles to be activated when launching
+the applicaiton.
+</p>
+
+<p>
+As always you can set the property in the <code>application.yml</code> or by
+passing it via command line:
+</p>
+
+<div class="highlight"><pre><span></span>    export SPRING_PROFILES_ACTIVE=prod
+</pre></div>
+
+<p>
+Or the second option:
+</p>
+
+<div class="highlight"><pre><span></span>    spring:
+     profiles:
+       active:
+       - prod
+</pre></div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgad66d18" class="outline-3">
+<h3 id="orgad66d18">Profile-dependent Beans</h3>
+<div class="outline-text-3" id="text-orgad66d18">
+<p>
+Note now that it is as well possible to create beans that will just
+be active depending on the profile.
+</p>
+
+<p>
+You can well understand the usage of them.
+</p>
+
+<p>
+There are simple annotations for it.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nd">@Bean</span>
+   <span class="nd">@Profile</span><span class="p">({</span><span class="s">"dev"</span><span class="p">,</span> <span class="s">"qa"</span><span class="p">})</span> <span class="c1">// note that also the following works @Profile("dev") and @Profile("!dev")</span>
+   <span class="kd">public</span> <span class="n">CommandLineRunner</span> <span class="nf">dataLoader</span><span class="p">(</span><span class="n">IngredientRepository</span> <span class="n">repo</span><span class="p">,</span>
+				       <span class="n">UserRepository</span> <span class="n">userRepo</span><span class="p">,</span> <span class="n">PasswordEncoder</span> <span class="n">encoder</span><span class="p">)</span> <span class="p">{</span>
+       <span class="p">...</span>
+	   <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org56f4698" class="outline-2">
+<h2 id="org56f4698">Web-applications with Spring</h2>
+<div class="outline-text-2" id="text-org56f4698">
+<p>
+You can even read more into the detail about working with Spring at
+the following source <a href="https://docs.spring.io/spring-restdocs/docs/current/reference/html5/">here.</a>
+</p>
+</div>
+
+<div id="outline-container-org782259e" class="outline-3">
+<h3 id="org782259e">Spring MVC</h3>
+<div class="outline-text-3" id="text-org782259e">
 <p>
 With it you can both display information to the front-end in a
 dynamic way.
@@ -609,14 +1307,455 @@ Note that in general you always talk with the controller when
 instatiating the HTTP request. Then you perform your application
 logic and pass on the relevant info to the views.
 </p>
+
+<p>
+Note that you set up all of this <code>MVC</code> architecture and framework
+through <code>@Controller</code>. This will handle requests and will trigger
+and respond with views etc. In any case it is the <i>controller</i>
+piece of the <code>MVC</code> architecture you can read about <a href="https://marcohassan.github.io/bits-of-experience/posts/on-classical-architectures/">classical
+architectures</a>.
+</p>
+</div>
+
+
+<div id="outline-container-orga743dfb" class="outline-4">
+<h4 id="orga743dfb">
+<span class="todo TODO">TODO</span> check at the book for the CORS option</h4>
+<div class="outline-text-4" id="text-orga743dfb">
+<p>
+you did encounter it at some point in your architecture
+preparation course.
+</p>
+
+<p>
+have to double check there the idea behind this etc.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb3135d4" class="outline-3">
+<h3 id="orgb3135d4">On important Annotations</h3>
+<div class="outline-text-3" id="text-orgb3135d4">
+<p>
+So understand the following annotations in order to properly set up
+your application:
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+<code>@RestController</code>:
+</p>
+
+<p>
+Note that this is an annotation like @Controller and @Service
+that marks a class for discovery by component scanning.
+</p>
+
+<p>
+However, note the following <b>important difference</b> to the
+general <code>@Controller</code> which might return <i>a view</i> :
+</p>
+
+<blockquote>
+<p>
+In the <code>@RestController</code> all handler methods in the controller should
+have their return value written directly to the body of the response,
+rather than being carried in the model to a view for rendering. 
+</p>
+</blockquote>
+
+<p>
+Alternatively, you could have annotated DesignTacoController with
+@Controller, just like with any Spring MVC controller. But then
+you’d need to also annotate all of the handler methods with
+@ResponseBody to achieve the same result. So basic point: <i>see
+how IT architecture is modular</i>. You can compose it yourself or
+use abstraction. For me the choice is no matter of big questions.
+</p>
+
+<p>
+So the difference is that one specific controller for <code>REST</code>
+endpoints. Use that.
+</p>
+</li>
+
+<li>
+<p>
+<code>@RequestMapping</code>
+</p>
+
+<p>
+Use it as follows:
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="nd">@RestController</span>
+     <span class="nd">@RequestMapping</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s">"/design"</span><span class="p">,</span> 
+      <span class="n">produces</span><span class="o">=</span><span class="s">"application/json"</span><span class="p">)</span> <span class="c1">// multiple formats are also possible: produces={"application/json", "text/xml"})</span>
+      <span class="kd">public</span> <span class="n">myClassHandlingEndpoints</span> <span class="p">{</span>
+	 <span class="p">...</span>
+	 <span class="p">}</span>
+</pre></div>
+
+<p>
+Then basically in this way you are saying that all of the
+handlers in the class will handle requests to endpoints with
+basis <code>/design</code>.
+</p>
+
+<p>
+Moreover you say that you will return <code>json</code> as it is often the
+norm.
+</p>
+</li>
+
+<li>
+<p>
+<code>@GetMapping</code>
+</p>
+
+<p>
+Note that this is the way you handle get requests in your
+<code>@RestController</code>.
+</p>
+
+<p>
+Note that the path you specify in such annotations augments the
+one from the base-mapping in the class-level <code>@RequestMapping</code>.
+</p>
+
+<p>
+Note that we make an example with a <i>placeholer</i>:
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="nd">@GetMapping</span><span class="p">(</span><span class="s">"/{id}"</span><span class="p">)</span>
+     <span class="kd">public</span> <span class="n">Taco</span> <span class="nf">tacoById</span><span class="p">(</span><span class="nd">@PathVariable</span><span class="p">(</span><span class="s">"id"</span><span class="p">)</span> <span class="n">Long</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// see pathvariable here. this is the value in the request.</span>
+	 <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Taco</span><span class="o">&gt;</span> <span class="n">optTaco</span> <span class="o">=</span> <span class="n">tacoRepo</span><span class="p">.</span><span class="na">findById</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+	 <span class="k">if</span> <span class="p">(</span><span class="n">optTaco</span><span class="p">.</span><span class="na">isPresent</span><span class="p">())</span> <span class="p">{</span>
+	     <span class="k">return</span> <span class="n">optTaco</span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
+	 <span class="p">}</span>
+	 <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+     <span class="p">}</span>
+</pre></div>
+</li>
+
+<li>
+<p>
+<code>@RequestStatus</code>
+</p>
+
+<p>
+That is nice cause with that tag you can specify what the
+endpoint will utlimately hand back as HTTP anser.
+</p>
+
+<p>
+Check online at all of the options you have in this sense.
+</p>
+</li>
+
+<li>
+<p>
+<code>@RequestBody</code>
+</p>
+
+<p>
+This is important when handling post requests.
+</p>
+
+<p>
+Simply put, the <code>@RequestBody</code> annotation maps the HttpRequest
+body to a transfer or domain object, enabling automatic
+<i>deserialization</i> of the inbound HttpRequest body onto a <i>Java
+object</i>. Spring automatically deserializes the JSON into a Java
+type, assuming an appropriate one is specified.
+</p>
+
+<p>
+See <a href="https://www.baeldung.com/spring-request-response-body">this</a> for more. So you see this is how you handle json
+requests in a straightforward way without having to do all of
+that big conversion in the way we are doing.
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org72ff24d" class="outline-3">
+<h3 id="org72ff24d">HETOAS</h3>
+<div class="outline-text-3" id="text-org72ff24d">
+<p>
+Note that if you want you can work with <i>Hypermedia as the Engine
+of Application State</i> as a standard for setting up your REST
+endpoints.
+</p>
+
+<p>
+You can read the idea <a href="https://en.wikipedia.org/wiki/HATEOAS">here</a>.
+</p>
+
+<p>
+I think the idea is nice. The idea is that you can give back some
+endpoints in your responses such that you can then programatically
+trigger some endpoints in a programmatic way without hard-coding
+them.
+</p>
+
+<p>
+The entire application is then more bounded to the code itself and
+less on hard-coded strings.
+</p>
+
+<p>
+Read again in the book if you want to go in that direction.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgaef865f" class="outline-3">
+<h3 id="orgaef865f">Spring Data REST</h3>
+<div class="outline-text-3" id="text-orgaef865f">
+<p>
+Basically here the concept is the following.
+</p>
+
+<p>
+If you include the <code>spring-boot-starter-data-rest</code> dependency in
+your configuration and you work with Spring Data, then Spring will
+create out of the box endpoints for your Spring Data JPA
+repositories and will even expose endpoints following <code>HETOAS</code>
+convention as mentioned above.
+</p>
+
+<p>
+So note how you should work with JPA if you want to work with
+Spring Data REST.
+</p>
+
+<p>
+Otherwise if you want to work with pure SQL you will have to
+manually set up the endpoints yourself as discussed in the previous
+sections.
+</p>
+
+<p>
+So this is a design choice you will have to face soonish. The point
+remains open to this stage.
+</p>
+
+<p>
+I think the question is if you want to stay generally in the same
+environment or not.
+</p>
+</div>
+
+<div id="outline-container-org6288060" class="outline-4">
+<h4 id="org6288060">Important Note</h4>
+<div class="outline-text-4" id="text-org6288060">
+<p>
+If you will ever decide to go down that road read chapter <i>6.3.1 -
+Adjusting resource paths and relation names</i> in the book.
+</p>
+
+<p>
+There is some tricky nounces with the endpoints that you will have
+to keep in mind and remember.    
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1df7b7f" class="outline-3">
+<h3 id="org1df7b7f">Consuming REST services</h3>
+<div class="outline-text-3" id="text-org1df7b7f">
+<p>
+There are essentially three ways of consuming a REST interface:
+</p>
+
+<ul class="org-ul">
+<li>
+<code>RestTemplate</code>: this is a synchronous REST client provided by the
+Spring Framework.</li>
+
+<li>
+<code>Traverson</code>: a hyperlink-aware synchronous REST client provided
+by Spring HATEOAS. See more on hyperlink <a href="#org72ff24d">here</a>.</li>
+
+<li>
+<code>WebClient</code>: a <b>reactive</b> asynchronous REST client.</li>
+</ul>
+</div>
+
+<div id="outline-container-orged13a84" class="outline-4">
+<h4 id="orged13a84">RestTemplate</h4>
+<div class="outline-text-4" id="text-orged13a84">
+<p>
+basically RestTemplate provides 41 methods for interacting with
+REST resources.
+</p>
+
+<p>
+You can then surf around in the internet in order to see the
+different methods.
+</p>
+
+<p>
+What you should take away is the following basic structure:
+</p>
+
+<ul class="org-ul">
+<li>instantiate the RestTemplate</li>
+</ul>
+<p>
+You can do that either by instantiating an instance for it as
+usual or by creating a <code>Bean</code> and injecting it around the
+application.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">RestTemplate</span> <span class="n">rest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RestTemplate</span><span class="p">();</span> 
+
+    <span class="c1">// vs.</span>
+
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="n">RestTemplate</span> <span class="nf">restTemplate</span><span class="p">()</span> <span class="p">{</span>
+     <span class="k">return</span> <span class="k">new</span> <span class="n">RestTemplate</span><span class="p">();</span>
+    <span class="p">}</span>
+</pre></div>
+
+<p>
+undestand this difference as it is core to the Spring-native way
+of working.
+</p>
+
+<p>
+Then that is basically it. You have then your methods you work
+with:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1">// just one short example, then the basic structure is equal</span>
+    <span class="kd">public</span> <span class="n">Ingredient</span> <span class="nf">getIngredientById</span><span class="p">(</span><span class="n">String</span> <span class="n">ingredientId</span><span class="p">)</span> <span class="p">{</span>
+     <span class="k">return</span> <span class="n">rest</span><span class="p">.</span><span class="na">getForObject</span><span class="p">(</span><span class="s">"http://localhost:8080/ingredients/{id}"</span><span class="p">,</span> <span class="c1">// endpoint to be consumed</span>
+     <span class="n">Ingredient</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">ingredientId</span><span class="p">);</span>  <span class="c1">// second argument object you want</span>
+				       <span class="c1">// to get. Will deserialize the</span>
+				       <span class="c1">// json object into such Object.</span>
+				       <span class="c1">// third argument -&gt; paramter for the url.</span>
+
+    <span class="p">}</span>
+</pre></div>
+
+<p>
+Note that this is a bit the idea. There are better methods then.
+In this way it will be possible to work in a more structured
+way. Check at the method involving maps in this sense.
+</p>
+
+<p>
+The basic idea stays. You can consume your endpoints in such way,
+passing parameters and deserializing the response to Java native
+Objects.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9450e9f" class="outline-4">
+<h4 id="org9450e9f">Traverson</h4>
+<div class="outline-text-4" id="text-org9450e9f">
+<p>
+Basically this is similar to the simple RestTemplate and it is the
+way to cconsume hypermedia APIs.
+</p>
+
+<p>
+I leave this section for now as I am still not sure I will work
+with HATEOAS.
+</p>
+
+<p>
+Recall in any case that once you have hypermedia APIs you consume
+API by traversing multiple API based on the response.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8ce1fc3" class="outline-3">
+<h3 id="org8ce1fc3">
+<span class="todo TODO">TODO</span> read about the asynchronous messaging and working with queues</h3>
+<div class="outline-text-3" id="text-org8ce1fc3">
+<p>
+I skipped this chapter for now. I am aware it will come again as
+this is the way to write proper software nowadays.
+</p>
+
+<p>
+I push it back to the stage where I will start writing some
+software involving it. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgabc521d" class="outline-3">
+<h3 id="orgabc521d">Document Spring APIs via OpenApi standards</h3>
+<div class="outline-text-3" id="text-orgabc521d">
+<p>
+This is essentially what you were doing in your last projects at
+IBM.
+</p>
+
+<p>
+Check at this <a href="https://www.baeldung.com/spring-rest-openapi-documentation">website</a>. This is what you will start to do here as
+well.
+</p>
+
+<p>
+See then the subchapter 9. in order to see how that is done.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nd">@Operation</span><span class="p">(</span><span class="n">summary</span> <span class="o">=</span> <span class="s">"Get a book by its id"</span><span class="p">)</span>
+   <span class="nd">@ApiResponses</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="p">{</span> 
+     <span class="nd">@ApiResponse</span><span class="p">(</span><span class="n">responseCode</span> <span class="o">=</span> <span class="s">"200"</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"Found the book"</span><span class="p">,</span> 
+       <span class="n">content</span> <span class="o">=</span> <span class="p">{</span> <span class="nd">@Content</span><span class="p">(</span><span class="n">mediaType</span> <span class="o">=</span> <span class="s">"application/json"</span><span class="p">,</span> 
+	 <span class="n">schema</span> <span class="o">=</span> <span class="nd">@Schema</span><span class="p">(</span><span class="n">implementation</span> <span class="o">=</span> <span class="n">Book</span><span class="p">.</span><span class="na">class</span><span class="p">))</span> <span class="p">}),</span>
+     <span class="nd">@ApiResponse</span><span class="p">(</span><span class="n">responseCode</span> <span class="o">=</span> <span class="s">"400"</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"Invalid id supplied"</span><span class="p">,</span> 
+       <span class="n">content</span> <span class="o">=</span> <span class="nd">@Content</span><span class="p">),</span> 
+     <span class="nd">@ApiResponse</span><span class="p">(</span><span class="n">responseCode</span> <span class="o">=</span> <span class="s">"404"</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"Book not found"</span><span class="p">,</span> 
+       <span class="n">content</span> <span class="o">=</span> <span class="nd">@Content</span><span class="p">)</span> <span class="p">})</span>
+   <span class="nd">@GetMapping</span><span class="p">(</span><span class="s">"/{id}"</span><span class="p">)</span>
+   <span class="kd">public</span> <span class="n">Book</span> <span class="nf">findById</span><span class="p">(</span><span class="nd">@Parameter</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s">"id of book to be searched"</span><span class="p">)</span> 
+     <span class="nd">@PathVariable</span> <span class="kt">long</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span>
+       <span class="k">return</span> <span class="n">repository</span><span class="p">.</span><span class="na">findById</span><span class="p">(</span><span class="n">id</span><span class="p">).</span><span class="na">orElseThrow</span><span class="p">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">BookNotFoundException</span><span class="p">());</span>
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+i.e. this is how you annotate the different things in your API.
+</p>
+
+<p>
+You can then properly expose them.
+</p>
+
+<p>
+Note that I am having some minor troubles to set it up properly.
+In order to do that, check at the following: <a href="https://blog.mestwin.net/openapi-3-documentation-for-your-spring-rest-api-with-springdoc-openapi/">link</a>.
+</p>
+
+<p>
+Ok - so the normal way where everything is integrated
+out-of-the-box should be done via the following plugin: <a href="https://github.com/springdoc/springdoc-openapi-gradle-plugin">here</a>. Note
+that apparently this is not on MavenCentral and you would have to
+install it manually. Follow the instructions on Github for it. 
+</p>
 </div>
 </div>
 </div>
 
 
-<div id="outline-container-org1e560ca" class="outline-2">
-<h2 id="org1e560ca">Spring Data</h2>
-<div class="outline-text-2" id="text-org1e560ca">
+<div id="outline-container-orgdd73668" class="outline-2">
+<h2 id="orgdd73668">Spring Data</h2>
+<div class="outline-text-2" id="text-orgdd73668">
 <p>
 So we will treat here how to interact with JDBC and JPA in Spring.
 </p>
@@ -647,9 +1786,9 @@ application in a unified way: <a href="https://github.com/habuma/spring-in-actio
 </p>
 </div>
 
-<div id="outline-container-org959a4d4" class="outline-3">
-<h3 id="org959a4d4">Spring JDBC</h3>
-<div class="outline-text-3" id="text-org959a4d4">
+<div id="outline-container-org0b2d721" class="outline-3">
+<h3 id="org0b2d721">Spring JDBC</h3>
+<div class="outline-text-3" id="text-org0b2d721">
 <p>
 Spring JDBC support is rooted in the JdbcTemplate class.
 </p>
@@ -672,9 +1811,9 @@ I like this code as it is more lean than without the templates.
 </div>
 </div>
 
-<div id="outline-container-org3083341" class="outline-3">
-<h3 id="org3083341">Reading from RDMS</h3>
-<div class="outline-text-3" id="text-org3083341">
+<div id="outline-container-org137d49d" class="outline-3">
+<h3 id="org137d49d">Reading from RDMS</h3>
+<div class="outline-text-3" id="text-org137d49d">
 <p>
 You would do that in the follwoing way leveraging on the JDBC templates
 </p>
@@ -735,9 +1874,9 @@ as it just clutters the code.
 </div>
 </div>
 
-<div id="outline-container-orgde848eb" class="outline-3">
-<h3 id="orgde848eb">Writing to RDMS</h3>
-<div class="outline-text-3" id="text-orgde848eb">
+<div id="outline-container-org1fec077" class="outline-3">
+<h3 id="org1fec077">Writing to RDMS</h3>
+<div class="outline-text-3" id="text-org1fec077">
 <p>
 To write into the RDMS using JDBC template you can use the
 <code>update</code> method.
@@ -775,9 +1914,9 @@ with it. So wait for it and tackle this down at a later point.
 </div>
 </div>
 
-<div id="outline-container-org60616e9" class="outline-3">
-<h3 id="org60616e9">Creating and Populating your Tables</h3>
-<div class="outline-text-3" id="text-org60616e9">
+<div id="outline-container-orgdbb8b72" class="outline-3">
+<h3 id="orgdbb8b72">Creating and Populating your Tables</h3>
+<div class="outline-text-3" id="text-orgdbb8b72">
 <p>
 You can define the db schema in Java in the following way:
 </p>
@@ -880,9 +2019,9 @@ repo.
 </div>
 </div>
 
-<div id="outline-container-org90b9a79" class="outline-3">
-<h3 id="org90b9a79">Spring JPA</h3>
-<div class="outline-text-3" id="text-org90b9a79">
+<div id="outline-container-orgbc28820" class="outline-3">
+<h3 id="orgbc28820">Spring JPA</h3>
+<div class="outline-text-3" id="text-orgbc28820">
 <p>
 Ok - here there is a big discussion among the Java experts in my
 team and other people coming from other programming languages.
@@ -910,17 +2049,312 @@ I also have to understnad better the scope of Spring JPA - and the
 extent to which it differs from Hibernate JPA. I think in fact that
 Spring JPA leverages by default the Hibernate JPA but would have
 eventually to check it up once and if you decided to go through
-this JPA experience in the way you develop in Java. 
+this JPA experience in the way you develop in Java.
 </p>
 </div>
 </div>
 </div>
 
 
+<div id="outline-container-org2eeaa93" class="outline-2">
+<h2 id="org2eeaa93">Spring Integration</h2>
+<div class="outline-text-2" id="text-org2eeaa93">
+<p>
+That is also a nice feature.
+</p>
 
-<div id="outline-container-orgd1fb095" class="outline-2">
-<h2 id="orgd1fb095">Securing Spring</h2>
-<div class="outline-text-2" id="text-orgd1fb095">
+<p>
+See the book:
+</p>
+
+<blockquote>
+<p>
+Sring Integration is a ready-to-use implementation of many of the
+integration patterns that are catalogued in Enterprise Integration
+Patterns by Gregor Hohpe and Bobby Woolf (Addison-Wesley, 2003).
+</p>
+
+<p>
+Each pattern is implemented as a component through which messages
+ferry data in a pipeline, you can assemble these components into a
+pipeline through which data flows. 
+</p>
+</blockquote>
+
+<p>
+This is something that you want to explore. It basically is an
+entire suit that will allow you to easily interface with external
+systems.
+</p>
+</div>
+
+<div id="outline-container-orgadd8040" class="outline-3">
+<h3 id="orgadd8040">FileSystem Integration</h3>
+<div class="outline-text-3" id="text-orgadd8040">
+<p>
+The file endpoint module offers the ability to ingest files from
+the filesystem into an integration flow and/or to write data from a
+flow to the filesystem.
+</p>
+
+<p>
+This is important and you can start to see how you can work with
+it. Think for instance to your feed application. This is what you
+will need. 
+</p>
+
+<p>
+Check for instance the following example
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">import</span> <span class="nn">org.springframework.integration.annotation.MessagingGateway</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.integration.file.FileHeaders</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.messaging.handler.annotation.Header</span><span class="p">;</span>
+
+   <span class="nd">@MessagingGateway</span><span class="p">(</span><span class="n">defaultRequestChannel</span><span class="o">=</span><span class="s">"textInChannel"</span><span class="p">)</span>  <span class="c1">// open text channel.</span>
+   <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">FileWriterGateway</span> <span class="p">{</span>
+       <span class="kt">void</span> <span class="nf">writeToFile</span><span class="p">(</span>
+			<span class="nd">@Header</span><span class="p">(</span><span class="n">FileHeaders</span><span class="p">.</span><span class="na">FILENAME</span><span class="p">)</span> <span class="n">String</span> <span class="n">filename</span><span class="p">,</span> <span class="c1">// here</span>
+								       <span class="c1">// you</span>
+								       <span class="c1">// pass</span>
+								       <span class="c1">// the</span>
+								       <span class="c1">// filename</span>
+								       <span class="c1">// you</span>
+								       <span class="c1">// want</span>
+								       <span class="c1">// to</span>
+								       <span class="c1">// write</span>
+								       <span class="c1">// to.</span>
+			<span class="n">String</span> <span class="n">data</span><span class="p">);</span> <span class="c1">// here is the stuff you write to the file.</span>
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+So you understand that this is much easier in comparison to
+starting open Inputstreams and parse line by line.
+</p>
+
+<p>
+Understand now the following:
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+<code>@MessagingGateway</code>:
+</p>
+
+<p>
+This annotation tells Spring Integration to generate an
+<b>implementation of this interface</b> at runtime.  The others part
+of the code will use then this interface when they need to write
+a file.
+</p>
+
+<p>
+Note now that any call to the implementation of the
+MessagingGateway, will be sent to the given message channel. In
+this case, you state that any messages that result from a call to
+writeToFile() should be sent to the channel whose name is
+textInChannel.
+</p>
+
+<p>
+So you understand a bit at high level how the Spring Integration
+framework works.
+</p>
+</li>
+</ul>
+<p>
+Note then that you can start to define how the write should be
+performed thorugh different configuration options - say:
+</p>
+
+<ol class="org-ol">
+<li>XML configuration</li>
+<li>Java configuration</li>
+<li>Java configuration with a DSL</li>
+</ol>
+<p>
+If you work with XML one of the typical examples could be the
+following:
+</p>
+
+<div class="highlight"><pre><span></span>   &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+   &lt;beans xmlns="http://www.springframework.org/schema/beans"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xmlns:int="http://www.springframework.org/schema/integration"
+	  xmlns:int-file="http://www.springframework.org/schema/integration/file"
+	  xsi:schemaLocation="http://www.springframework.org/schema/beans
+			      http://www.springframework.org/schema/beans/spring-beans.xsd
+			      http://www.springframework.org/schema/integration
+			      http://www.springframework.org/schema/integration/spring-integration.xsd
+			      http://www.springframework.org/schema/integration/file
+			      http://www.springframework.org/schema/integration/file/springintegration-file.xsd"&gt;
+     &lt;int:channel id="textInChannel" /&gt; 
+     &lt;int:transformer id="upperCase"
+		      input-channel="textInChannel"
+		      output-channel="fileWriterChannel"
+		      expression="payload.toUpperCase()" /&gt; &lt;!-- interesting - it seems that you can enter java here. --&gt;
+     &lt;int:channel id="fileWriterChannel" /&gt; 
+     &lt;int-file:outbound-channel-adapter id="writer"
+					channel="fileWriterChannel"
+					directory="/tmp/sia5/files"
+					mode="APPEND"
+					append-new-line="true" /&gt;    &lt;!-- see here you append and not do it. --&gt;
+   &lt;/beans&gt;
+</pre></div>
+
+<p>
+You can then continue reading in the book for the other two
+configuration possibilities.
+</p>
+</div>
+
+<div id="outline-container-orgd29bdae" class="outline-4">
+<h4 id="orgd29bdae">Integration Components</h4>
+<div class="outline-text-4" id="text-orgd29bdae">
+<p>
+Now note that in a similar way as you have created your file
+system integration and write into there, you can create similar
+integration patterns around your application.
+</p>
+
+<p>
+So that is basically it. Understand now that you have the
+following lego components through which you can set up your
+integration patterns. 
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+Channels:
+</p>
+
+<p>
+pass messages from one element to the other. See for instance
+the example above.
+</p>
+</li>
+
+<li>
+<p>
+Filters:
+</p>
+
+<p>
+contionally allow messages to pass through
+</p>
+</li>
+
+<li>
+<p>
+Transformers:
+</p>
+
+<p>
+change message values. See this is what you have used above in
+the xml config file to make everything uppercase.      
+</p>
+</li>
+
+<li>
+<p>
+Routers:
+</p>
+
+<p>
+direct messages to one of several channels.
+</p>
+</li>
+
+<li>
+<p>
+Splitters:
+</p>
+
+<p>
+Split incoming messages into two or more messages, each sent to
+<b>different channels</b>.
+</p>
+</li>
+
+<li>
+<p>
+Aggregators:
+</p>
+
+<p>
+The opposite of splitters, <b>combining multiple messages</b> coming in
+from separate channels into a single message. 
+</p>
+</li>
+
+<li>
+<p>
+Service Activators:
+</p>
+
+<p>
+Hand a message off to some Java method for processing, and then
+publish the return value on an output channel.
+</p>
+
+<p>
+<i>nice</i>.
+</p>
+</li>
+
+<li>
+<p>
+Channel Adapters:
+</p>
+
+<p>
+Connect a channel to some external system or transport. Can
+either accept input or write to the external system.
+</p>
+</li>
+
+<li>
+<p>
+Gateways:
+</p>
+
+<p>
+pass data to an integration flow via an interface.
+</p>
+</li>
+</ul>
+<p>
+Note that to properly manage Spring integration is a job on its
+own. Like all of the major components you came across that far.
+</p>
+
+<p>
+Leave it on hold for now but note that you have multiple channels,
+like:
+</p>
+
+<ul class="org-ul">
+<li><code>pubSubscribe</code></li>
+
+<li><code>queues</code></li>
+
+<li>etc.</li>
+</ul>
+<p>
+Just understand how you inject the stuff in your application here
+and there.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf9a7e1e" class="outline-2">
+<h2 id="orgf9a7e1e">Securing Spring</h2>
+<div class="outline-text-2" id="text-orgf9a7e1e">
 <p>
 There is even all of the layer about securing the spring application
 such that it properly communicate by encrypting data in transfer.
@@ -932,272 +2366,112 @@ You might need it for your next assignment.
 
 <p>
 Keep it in the back of your mind and skip it for the moment and go
-back to it when the project will require it. 
+back to it when the project will require it.
+</p>
+
+<p>
+So basically it is all about the key generation and exchange. 
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgcac04fa" class="outline-2">
-<h2 id="orgcac04fa">Configuring Spring</h2>
-<div class="outline-text-2" id="text-orgcac04fa">
+
+<div id="outline-container-orga820df5" class="outline-2">
+<h2 id="orga820df5">Application Restart</h2>
+<div class="outline-text-2" id="text-orga820df5">
 <p>
-So basically Spring it is nice cause you have tons of beans in
-spring that will ultimately be injected in your context and you will
-have a well rounded Java development environment.
-</p>
-
-<p>
-So this is basically the idea. You differentiate two components in
-Java:
-</p>
-
-<ul class="org-ul">
-<li>
-<i>Bean wiring</i>: through this component you can define the beans
-that you will use in your spring application. I.e. the beans that
-will be discoverable from the spring context. Moreover, through
-<i>beans wiring</i> you specify how the different beans will be
-injected into each other.</li>
-
-<li>
-<i>Property injection</i>: this sets the values on the different beans
-in the Spring context of the application.</li>
-</ul>
-<p>
-We will see how to specify these two fundamental components through
-Spring boot. You will then be able to create your modularized
-application and work with it in a smooth and agile way.
-</p>
-</div>
-
-
-<div id="outline-container-org7e57fbf" class="outline-3">
-<h3 id="org7e57fbf">How the spring framework works</h3>
-<div class="outline-text-3" id="text-org7e57fbf">
-<p>
-In order to properly understand how to do <i>beans wiring</i> and
-<i>property injection</i> you should first understand the following
-general flow spring boot follows.
+Have to integrate at some point the <code>Spring DevTools</code>.
 </p>
 
 <p>
-The following chart of the book gives a good overview:
-</p>
-
-<img src="../../images/Screenshot%202021-11-14%20182534.png" class="center"><p>
-I.e. what you do is to instantiate the spring application by
-setting all of the relevant parameters that will be used in order
-to instantiate the relevant beans with the relevant configurations.
+With them as part of your project, you will be able to make changes
+to Java code and properties files in the project and see those
+changes applied after a brief moment.
 </p>
 
 <p>
-I.e. you specify the spring configuration you want by specifying
-the relevant paramters through cmd line, yaml configuration files
-etc.
+Note that the quintessential idea of setting up this application
+restart is the following:
+</p>
+
+<blockquote>
+<p>
+More precisely, when DevTools is in play, the application is loaded
+into two separate class loaders in the Java virtual machine
+(JVM).
 </p>
 
 <p>
-Spring boot will then refer to the relevant configuration available
-in the <i>spring environment</i> to initiate the relevant beans and make
-them accessible by the proper injection into the spring context.
+One class loader is loaded with your Java code, property files, and
+pretty much anything that’s in the src/main/ path of the
+project. These are items that are likely to change frequently. The
+other class loader is loaded with dependency libraries, which aren’t
+likely to change as often.  When a change is detected, DevTools
+reloads only the class loader containing your project code and
+restarts the Spring application context, but leaves the other class
+loader and the JVM intact. Although subtle, this strategy affords a
+small reduction in the time it takes to start the application.
 </p>
 
 <p>
-So given the general picture above understand the following
-components that are key to every proper Spring application and that
-you should accordingly set.
+The downside of this strategy is that changes to dependencies won’t
+be available in automatic restarts. That’s because the class loader
+containing dependency libraries isn’t automatically reloaded. This
+means that any time you add, change, or remove a dependency in your
+build specification, you’ll need to do a <b>hard restart</b> of the
+application for those changes to take effect.
 </p>
+</blockquote>
 </div>
 </div>
 
-<div id="outline-container-org9bd4b21" class="outline-3">
-<h3 id="org9bd4b21">Embedded Server</h3>
-<div class="outline-text-3" id="text-org9bd4b21">
+
+<div id="outline-container-orga90d1f9" class="outline-2">
+<h2 id="orga90d1f9">Deploying with Spring Boot</h2>
+<div class="outline-text-2" id="text-orga90d1f9">
 <p>
-Here you can decide where your embedded server will communicate.
+In order to deploy with Spring Boot you can use the shell command
 </p>
 
-<p>
-The default embedded server is Tomcat. You can change the option
-and work with different servers.
-</p>
-
-<div class="highlight"><pre><span></span>   server:
-    port: 0
-</pre></div>
-
-<p>
-Note that port <code>0</code> is a sensible choice as you will be able in such
-a way to do proper integration testing. You do not hard-wire a port
-but each time a different port is selected.
-</p>
-
-<p>
-You will therefore make sure that your tests do not simply pass
-because a port was hard-wired.
-</p>
-
-<p>
-Note that this is a good point but it can well be a moot
-point. Everything ultimately depends on the infrastructure
-initialization.
-</p>
-
-<p>
-Here you can also specify all of the options for ssl, your
-key-stores etc. I just note it here but again I do not think I will
-never need that stuff as we are in the era of the cloud and I think
-it is a sensible decision to leverage the abstraction layer in
-there.
-</p>
-</div>
-</div>
-
-<div id="outline-container-org3221f95" class="outline-3">
-<h3 id="org3221f95">Data</h3>
-<div class="outline-text-3" id="text-org3221f95">
-<p>
-Here you can specify the driver and the location of the DB you will
-interact with.
-</p>
-
-<p>
-You have to understand how this overlaps with Gradle. There you
-specify as well parts of this.
-</p>
-
-<p>
-So double check how these two fits together. I am quite sure that
-if you work with spring you do not specify the stuff in
-gradle. I.e. you just specify the spring dependencies in gradle.
-</p>
-
-<p>
-Then once this is specified it is all of a game within spring. This
-is the big difference. While when programming without Spring you
-have to pull the modules one-by-one into gradle and you compose
-everything yourself.
-</p>
-
-<p>
-Moreover as there is not a framework putting everything in an
-opinionated context you have to do the manual config yourself.
-</p>
-
-<p>
-I mean in the notes above I put a bit of notes that are nose-driven
-so I am not sure everything is correct at 100% but more or less it
-should be that.
-</p>
-
-<p>
-You can then see in the book how to properly instantiate your db
-with the different tables schema etc. I refer to the book in case
-you want to go down that road. 
-</p>
-</div>
-</div>
-
-<div id="outline-container-org39aa902" class="outline-3">
-<h3 id="org39aa902">Logging</h3>
-<div class="outline-text-3" id="text-org39aa902">
-<p>
-This is nice, you can set there the standard output of your
-logger.
-</p>
-
-<p>
-Refer to the book. But basically there is an option to do that via
-a xml file.
-</p>
-
-<p>
-Moreover on the top of it once you defined the output of the logger
-you can define all of the different levels that should be printed
-by the logger.
-</p>
-
-<p>
-You can that through the standards yaml configuration files.
-</p>
-</div>
-</div>
-
-<div id="outline-container-orgf14935d" class="outline-3">
-<h3 id="orgf14935d">Property injection via special property values</h3>
-<div class="outline-text-3" id="text-orgf14935d">
-<p>
-This is a nice way to make dynamic and intelligent properties
-injection into your spring environment - and consequently beans -.
-</p>
-
-<p>
-The standard format would be something like that:
-</p>
-
-<div class="highlight"><pre><span></span>   greeting:
-    welcome: You are using ${spring.application.name}
+<div class="highlight"><pre><span></span>  ./gradlew.bat bootRun
 </pre></div>
 </div>
 </div>
 
-<div id="outline-container-org918d718" class="outline-3">
-<h3 id="org918d718">Creating your own configuration properties</h3>
-<div class="outline-text-3" id="text-org918d718">
+
+<div id="outline-container-org663d696" class="outline-2">
+<h2 id="org663d696">Generating a Docker Image out of your Spring Application</h2>
+<div class="outline-text-2" id="text-org663d696">
 <p>
-Configuration properties are nothing more than properties of beans
-that have been designated to accept configurations from Spring’s
-environment abstraction.
+Note that this will be important and the way to go on the long run.
 </p>
 
 <p>
-So the above configurations are easy to integrate.
+Interesting to see that spring is all integrated in the new
+IT-ecosystem.
 </p>
 
 <p>
-This is the <b>important</b> section. We will see how the beans are
-actually designed to consume the configuration in the spring
-environment and how you can actually set up your configuration and
-inject it into the beans.
+In this sense it is possible to generate out of the box the
+necessary Docker image that you want to use.
 </p>
 
 <p>
-In order to do that you have to understand a couple of flags as in
-the usual case of spring - i.e. these are actually the first class
-citizens of spring through which you can manage it all.
+You can build a container image (if you have a docker daemon) using
+the Spring Boot build plugin:
 </p>
 
-<p>
-In this sense, one of the most important annotation is the
-following:
-</p>
-
-<ul class="org-ul">
-<li>@ConfigurationProperties annotation. When placed on any Spring
-bean, it specifies that the properties of that bean can be
-injected from properties in the Spring environment.</li>
-</ul>
-<p>
-It is then immediate to understand the logic. You can check at it
-in the book and online but you get the essential idea of beans and
-property injection and how that works.
-</p>
-</div>
-</div>
-
-
-<div id="outline-container-org6fc4f4e" class="outline-3">
-<h3 id="org6fc4f4e">
-<span class="todo TODO">TODO</span> continue from configuring with profiles.</h3>
+<div class="highlight"><pre><span></span>  ./gradlew.bat spring-boot:build-image
+</pre></div>
 </div>
 </div>
     </div>
     <aside class="postpromonav"><nav><ul class="pager hidden-print">
 <li class="previous">
-                <a href="../on-enterprise-applications-architecture/" rel="prev" title="On Enterprise Applications Architecture">Previous post</a>
+                <a href="../java-testing/" rel="prev" title="Java Testing">Previous post</a>
             </li>
             <li class="next">
-                <a href="../on-classical-architectures/" rel="next" title="On Classical Architectures">Next post</a>
+                <a href="../switching-language/" rel="next" title="On some side note about working with Emacs and understanding a different language">Next post</a>
             </li>
         </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             

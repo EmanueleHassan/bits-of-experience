@@ -30,6 +30,9 @@ with it. I am ready to get up and running with it and start to write
 well-covered software. In a further step you can then imagine some
 further integration with tools as [[https://en.wikipedia.org/wiki/SonarQube][sonarqube]] etc.
 
+Cool. Starting to test seriously. Like this we can soon set up serious
+devOps pipelines.
+
 {{{TEASER_END}}}
 
 * Testing 
@@ -47,49 +50,108 @@ further integration with tools as [[https://en.wikipedia.org/wiki/SonarQube][son
   I will start by writing unit tests for my application. I will then
   maybe go into the other in time.   
   
+
 * Unit Testing
-
-  - [[*JUnit][JUnit]]
   
-    - [[*Set Up][Set Up]]
+** Index for the page
 
-    - [[*Actually Testing][Actually Testing]]
+   - [[*JUnit][JUnit]]
+  
+     - [[*Set Up][Set Up]]
 
-    - [[*Test Classes And Method][Test Classes And Method]]
+     - [[*Actually Testing][Actually Testing]]
 
-    - [[*JUnit Jupiter][JUnit Jupiter]]:
+     - [[*Test Classes And Method][Test Classes And Method]]
 
-      - [[*@ExtendWith][@ExtendWith]]
+     - [[*JUnit Jupiter][JUnit Jupiter]]:
 
-      - [[*@RegisterExtension][@RegisterExtension]]
+       - [[*@ExtendWith][@ExtendWith]]
 
-      - [[*@TempDir][@TempDir]]
+       - [[*@RegisterExtension][@RegisterExtension]]
 
-      - [[*Testing Annotations][Testing Annotations]]
+       - [[*@TempDir][@TempDir]]
 
-      - [[*Tagging][Tagging]]
+       - [[*Testing Annotations][Testing Annotations]]
 
-      - [[*Naming and UI Style Annotations][Naming and UI Style Annotations]]
+       - [[*Tagging][Tagging]]
 
-      - [[*LifeCycle Annotations][LifeCycle Annotations]]
+       - [[*Naming and UI Style Annotations][Naming and UI Style Annotations]]
 
-      - [[*Templates - @TestTemplate][Templates - @TestTemplate]]
+       - [[*LifeCycle Annotations][LifeCycle Annotations]]
 
-      - [[*Dynamic Testing][Dynamic Testing]]
+       - [[*Templates - @TestTemplate][Templates - @TestTemplate]]
 
-      - [[*URI][URI]]
+       - [[*Dynamic Testing][Dynamic Testing]]
 
-      - [[*Timeouts][Timeouts]]
+       - [[*URI][URI]]
 
-      - [[*check how to combine the annoations above into meta-annotations][check how to combine the annoations above into meta-annotations]]
+       - [[*Timeouts][Timeouts]]
+
+       - [[*check how to combine the annoations above into meta-annotations][check how to combine the annoations above into meta-annotations]]
 
 
-    - [[*AssertionTypes][AssertionTypes]]
+     - [[*AssertionTypes][AssertionTypes]]
 
-    - [[*Assumptions][Assumptions]]
+     - [[*Assumptions][Assumptions]]
+
+  - [[*The bigger picture in unit-testing][The bigger picture in unit-testing]]
+   
+  - [[*Stub][Stub]]
+   
+  - [[*Mocks - Mockito][Mocks - Mockito]]
+
+     - [[*What is a mock object][What is a mock object]]
+     - [[*Creating a mock() object and verifying the parameters received][Creating a mock() object and verifying the parameters received]]
+     - [[*Dependency Injection Tool][Dependency Injection Tool]]
+     - [[*@Spy][@Spy]]
+     - [[*@Capture][@Capture]]
+     - [[*Resources used for the tutorial][Resources used for the tutorial]]       
+
 
 ** JUnit
+   
+*** Index
+   
+    - [[*JUnit][JUnit]]
   
+      - [[*Set Up][Set Up]]
+
+      - [[*Actually Testing][Actually Testing]]
+
+      - [[*Test Classes And Method][Test Classes And Method]]
+
+      - [[*JUnit Jupiter][JUnit Jupiter]]:
+
+	- [[*@ExtendWith][@ExtendWith]]
+
+	- [[*@RegisterExtension][@RegisterExtension]]
+
+	- [[*@TempDir][@TempDir]]
+
+	- [[*Testing Annotations][Testing Annotations]]
+
+	- [[*Tagging][Tagging]]
+
+	- [[*Naming and UI Style Annotations][Naming and UI Style Annotations]]
+
+	- [[*LifeCycle Annotations][LifeCycle Annotations]]
+
+	- [[*Templates - @TestTemplate][Templates - @TestTemplate]]
+
+	- [[*Dynamic Testing][Dynamic Testing]]
+
+	- [[*URI][URI]]
+
+	- [[*Timeouts][Timeouts]]
+
+	- [[*check how to combine the annoations above into meta-annotations][check how to combine the annoations above into meta-annotations]]
+
+
+      - [[*AssertionTypes][AssertionTypes]]
+
+      - [[*Assumptions][Assumptions]]
+	- [[*The bigger picture in unit-testing][The bigger picture in unit-testing]]
+	 
 *** Set Up
 
     So essentially I will use the JUnit package for running unit
@@ -197,15 +259,39 @@ dependencies {
 
     - [[*Testing Annotations][Testing Annotations]]
 
+      - [[*@RepeatedTest][@RepeatedTest]]
+      - [[*@RepeatedTest][@RepeatedTest]]
+      - [[*@ParameterizedTest][@ParameterizedTest]]
+
+
     - [[*Tagging][Tagging]]
 
     - [[*Naming and UI Style Annotations][Naming and UI Style Annotations]]
 
+      - [[*@DisplayName][@DisplayName]]
+      - [[*@DisplayNameGeneration][@DisplayNameGeneration]]
+      - [[*@IndicativeSentencesGeneration][@IndicativeSentencesGeneration]]
+      - [[*@Nested][@Nested]]      
+
     - [[*LifeCycle Annotations][LifeCycle Annotations]]
+
+      - [[*Tests Lifecycle][Tests Lifecycle]]
+      - [[*@BeforeEach][@BeforeEach]]
+      - [[*@AfterEach][@AfterEach]]
+      - [[*@BeforeAll][@BeforeAll]]
+      - [[*@AfterAll][@AfterAll]]
+      - [[*@Disabled][@Disabled]]
+      - [[*@TestInstance][@TestInstance]]
+      - [[*@TestMethodOrder][@TestMethodOrder]]
+      - [[*@TestClassOrder][@TestClassOrder]]
 
     - [[*Templates - @TestTemplate][Templates - @TestTemplate]]
 
     - [[*Dynamic Testing][Dynamic Testing]]
+
+      - [[*@TestFactory][@TestFactory]]
+      - [[*Examples][Examples]]
+
 
     - [[*URI][URI]]
 
@@ -220,7 +306,8 @@ dependencies {
     the other hand the possible assertions treated in the [[*AssertionTypes][next
     section]]. Also recall about [[*Assumptions][Assumptions]].
 
-    
+    - [[*LifeCycle Annotations][LifeCycle Annotations]]
+
 **** @ExtendWith
 
      Used to register extensions declaratively. Such annotations are
@@ -244,6 +331,13 @@ dependencies {
 
      They specify how methods in test classes should be read and
      processed.
+
+     
+***** Index
+      
+      - [[*@RepeatedTest][@RepeatedTest]]
+      - [[*@RepeatedTest][@RepeatedTest]]
+      - [[*@ParameterizedTest][@ParameterizedTest]]
 
 ***** @Test
 
@@ -754,6 +848,7 @@ public class ToStringArgumentConverter extends SimpleArgumentConverter {
       Such annotations are inherited at the class level but not at the
       method level. 
 
+
 **** Naming and UI Style Annotations
 
      This are used for setting the naming of your test methods.
@@ -829,6 +924,14 @@ class DisplayNameGeneratorDemo {
 
      So based on the above you can easily infer the following rules.
 
+***** Index
+
+     - [[*@DisplayName][@DisplayName]]
+     - [[*@DisplayNameGeneration][@DisplayNameGeneration]]
+     - [[*@IndicativeSentencesGeneration][@IndicativeSentencesGeneration]]
+     - [[*@Nested][@Nested]]
+
+
 ***** @DisplayName
 
       Declares a custom display name for the test class or test method. Such
@@ -868,7 +971,20 @@ class DisplayNameGeneratorDemo {
       @Nested test class unless the "per-class" test instance lifecycle is
       used. Such annotations are not inherited.
 
+
 **** LifeCycle Annotations
+
+***** Index
+
+      - [[*Tests Lifecycle][Tests Lifecycle]]
+      - [[*@BeforeEach][@BeforeEach]]
+      - [[*@AfterEach][@AfterEach]]
+      - [[*@BeforeAll][@BeforeAll]]
+      - [[*@AfterAll][@AfterAll]]
+      - [[*@Disabled][@Disabled]]
+      - [[*@TestInstance][@TestInstance]]
+      - [[*@TestMethodOrder][@TestMethodOrder]]
+      - [[*@TestClassOrder][@TestClassOrder]]
 
 ***** Tests Lifecycle
 
@@ -1002,6 +1118,7 @@ class StandardTests {
       Used to configure the test class execution order for @Nested test
       classes in the annotated test class. Such annotations are inherited.
 
+
 **** Templates - @TestTemplate
 
      It is essentially possible as well to write template tests. 
@@ -1042,7 +1159,11 @@ class StandardTests {
      These is a kind of test that is generated *at runtime* by a factory
      method that is annotated with [[*@TestFactory][@TestFactory]].
 
-     
+***** Index
+
+      - [[*@TestFactory][@TestFactory]]
+      - [[*Examples][Examples]]
+
 ***** @TestFactory
 
       Denotes that a *method is a test factory* for dynamic tests. 
@@ -1360,6 +1481,7 @@ class DynamicTestsDemo {
      respectively. The URI will be converted to one of the following
      TestSource implementations.
      
+
 **** Timeouts
 
 ***** @Timeout
@@ -1412,6 +1534,7 @@ class TimeoutDemo {
 
 ***** TODO understand better the difference with Assertion Kind of errors. 
      
+
 **** TODO check how to combine the annoations above into meta-annotations
 
      see chapter 2.1 in this sense. 
@@ -1508,7 +1631,6 @@ junit.jupiter.execution.parallel.mode.classes.default = same_thread
       @ResourceLock annotation, the JUnit Jupiter engine uses this
       information to ensure that no conflicting tests are run in
       parallel. 
-
 
 *** AssertionTypes
 
@@ -1741,6 +1863,7 @@ class AssumptionsDemo {
 }
     #+END_SRC        
 
+
 ** The bigger picture in unit-testing
 
    Ok so basically the part above deals on how to write the unit-tests
@@ -1872,6 +1995,7 @@ public class AddressRetrieverTest {
     order to get your hard-coded string.   I.e. you are actually
     calling the ~get~ method.
 
+
 ** Mocks - Mockito
 
    Basically the fundamental idea of the framework is the one of
@@ -1890,6 +2014,15 @@ public class AddressRetrieverTest {
    this is not simply for feeding values or calling a single
    method. It is creating an /entire mock-object/.
 
+*** Index
+
+    - [[*What is a mock object][What is a mock object]]
+    - [[*Creating a mock() object and verifying the parameters received][Creating a mock() object and verifying the parameters received]]
+    - [[*Dependency Injection Tool][Dependency Injection Tool]]
+    - [[*@Spy][@Spy]]
+    - [[*@Capture][@Capture]]
+    - [[*Resources used for the tutorial][Resources used for the tutorial]]
+
 *** What is a mock object
 
     In object-oriented programming, mock objects are /simulated
@@ -1900,7 +2033,6 @@ public class AddressRetrieverTest {
     crash test dummy to simulate the dynamic behavior of a human in
     vehicle impacts. The technique is also applicable in generic
     programming.
-
 
 *** Creating a mock() object and verifying the parameters received
     
@@ -2098,3 +2230,59 @@ public void whenUsingTheSpyAnnotation_thenObjectIsSpied() {
 
 
 
+
+
+** Testing in Spring Boot
+
+   Especially important is to understand the testing compoenent of MVC
+   as I plan to use this a lot. 
+
+   There basically you have a couple of spring specific tags that you
+   use to properly tag and create your test. 
+
+   See the following 101 example from spring in action.
+
+
+   #+BEGIN_SRC java :results output drawer :classname 
+package tacos;
+import static org.hamcrest.Matchers.containsString;
+import static 
+    org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static 
+    org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static 
+    org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static 
+    org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+
+@RunWith(SpringRunner.class)
+@WebMvcTest(HomeController.class)  // this is necessary to make the
+				   // HomeController seeable.
+
+public class HomeControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;       // this is the Mock object through
+				   // which you will perform the calls
+				   // to your endpoints and test them.
+
+    @Test 
+    public void testHomePage() throws Exception {    // this is the
+						     // test through
+						     // the mock
+						     // object.
+	mockMvc.perform(get("/")) 
+	    .andExpect(status().isOk()) 
+	    .andExpect(view().name("home")) 
+	    .andExpect(content().string(containsString("Welcome to...")));
+    }
+}
+   #+END_SRC
+
+So this is how you can test the actual business logic of your end-points.

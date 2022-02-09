@@ -13,6 +13,7 @@
 <link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/java-testing/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
 <link rel="prev" href="../front-end-stories/" title="Front-End Stories" type="text/html">
+<link rel="next" href="../spring/" title="Spring" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="Java Testing">
 <meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/java-testing/">
@@ -99,11 +100,16 @@ well-covered software. In a further step you can then imagine some
 further integration with tools as <a href="https://en.wikipedia.org/wiki/SonarQube">sonarqube</a> etc.
 </p>
 
+<p>
+Cool. Starting to test seriously. Like this we can soon set up serious
+devOps pipelines.
+</p>
+
 <!-- TEASER_END -->
 
-<div id="outline-container-org3fb7dac" class="outline-2">
-<h2 id="org3fb7dac">Testing</h2>
-<div class="outline-text-2" id="text-org3fb7dac">
+<div id="outline-container-orged57efb" class="outline-2">
+<h2 id="orged57efb">Testing</h2>
+<div class="outline-text-2" id="text-orged57efb">
 <p>
 So basically I am starting to dig in the testing bit.
 </p>
@@ -126,66 +132,150 @@ maybe go into the other in time.
 </div>
 </div>
 
-<div id="outline-container-orgf810754" class="outline-2">
-<h2 id="orgf810754">Unit Testing</h2>
-<div class="outline-text-2" id="text-orgf810754">
+
+<div id="outline-container-org61efafc" class="outline-2">
+<h2 id="org61efafc">Unit Testing</h2>
+<div class="outline-text-2" id="text-org61efafc">
+</div>
+<div id="outline-container-org17d581a" class="outline-3">
+<h3 id="org17d581a">Index for the page</h3>
+<div class="outline-text-3" id="text-org17d581a">
 <ul class="org-ul">
 <li>
-<a href="#org4ccdf61">JUnit</a>
+<a href="#orgd788660">JUnit</a>
 
 <ul class="org-ul">
-<li><a href="#orga75e3d1">Set Up</a></li>
+<li><a href="#orgb4a104f">Set Up</a></li>
 
-<li><a href="#orgf74faa8">Actually Testing</a></li>
+<li><a href="#orga8d1518">Actually Testing</a></li>
 
-<li><a href="#org08d8b96">Test Classes And Method</a></li>
+<li><a href="#org3ba63c7">Test Classes And Method</a></li>
 
 <li>
-<a href="#orgcd2750a">JUnit Jupiter</a>:
+<a href="#orge1f5677">JUnit Jupiter</a>:
 
 <ul class="org-ul">
-<li><a href="#org30aa2b9">@ExtendWith</a></li>
+<li><a href="#orgffef068">@ExtendWith</a></li>
 
-<li><a href="#orgf5b0736">@RegisterExtension</a></li>
+<li><a href="#orgbd67a57">@RegisterExtension</a></li>
 
-<li><a href="#org7c108c7">@TempDir</a></li>
+<li><a href="#org1bcf191">@TempDir</a></li>
 
-<li><a href="#org7c0160b">Testing Annotations</a></li>
+<li><a href="#orga4e4f68">Testing Annotations</a></li>
 
-<li><a href="#orgd74d0fb">Tagging</a></li>
+<li><a href="#org90256e7">Tagging</a></li>
 
-<li><a href="#org0e88ed6">Naming and UI Style Annotations</a></li>
+<li><a href="#org8404a26">Naming and UI Style Annotations</a></li>
 
-<li><a href="#org1244293">LifeCycle Annotations</a></li>
+<li><a href="#org6d83157">LifeCycle Annotations</a></li>
 
-<li><a href="#org2eeb845">Templates - @TestTemplate</a></li>
+<li><a href="#org4b54f30">Templates - @TestTemplate</a></li>
 
-<li><a href="#org443270f">Dynamic Testing</a></li>
+<li><a href="#org45a8931">Dynamic Testing</a></li>
 
-<li><a href="#orgf71d526">URI</a></li>
+<li><a href="#org5879f19">URI</a></li>
 
-<li><a href="#orgc48b88c">Timeouts</a></li>
+<li><a href="#org6c095ad">Timeouts</a></li>
 
-<li><a href="#org029ef16">check how to combine the annoations above into meta-annotations</a></li>
+<li><a href="#org4a688b4">check how to combine the annoations above into meta-annotations</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 <ul class="org-ul">
-<li><a href="#org3a5538e">AssertionTypes</a></li>
+<li><a href="#org37f37b1">AssertionTypes</a></li>
 
-<li><a href="#org04e8099">Assumptions</a></li>
+<li><a href="#org212538a">Assumptions</a></li>
+</ul>
+<ul class="org-ul">
+<li><a href="#org6e7b929">The bigger picture in unit-testing</a></li>
+
+<li><a href="#orgc1c44e7">Stub</a></li>
+
+<li>
+<a href="#orga335560">Mocks - Mockito</a>
+
+<ul class="org-ul">
+<li><a href="#org4cb5b5a">What is a mock object</a></li>
+<li><a href="#org0ca8077">Creating a mock() object and verifying the parameters received</a></li>
+<li><a href="#orgcdbc324">Dependency Injection Tool</a></li>
+<li><a href="#orgc0fdfb4">@Spy</a></li>
+<li><a href="#orgc55535b">@Capture</a></li>
+<li><a href="#orgc5e5e0f">Resources used for the tutorial</a></li>
+</ul>
+</li>
 </ul>
 </div>
-
-<div id="outline-container-org4ccdf61" class="outline-3">
-<h3 id="org4ccdf61">JUnit</h3>
-<div class="outline-text-3" id="text-org4ccdf61">
 </div>
-<div id="outline-container-orga75e3d1" class="outline-4">
-<h4 id="orga75e3d1">Set Up</h4>
-<div class="outline-text-4" id="text-orga75e3d1">
+
+
+<div id="outline-container-orgd788660" class="outline-3">
+<h3 id="orgd788660">JUnit</h3>
+<div class="outline-text-3" id="text-orgd788660">
+</div>
+<div id="outline-container-org490f716" class="outline-4">
+<h4 id="org490f716">Index</h4>
+<div class="outline-text-4" id="text-org490f716">
+<ul class="org-ul">
+<li>
+<a href="#orgd788660">JUnit</a>
+
+<ul class="org-ul">
+<li><a href="#orgb4a104f">Set Up</a></li>
+
+<li><a href="#orga8d1518">Actually Testing</a></li>
+
+<li><a href="#org3ba63c7">Test Classes And Method</a></li>
+
+<li>
+<a href="#orge1f5677">JUnit Jupiter</a>:
+
+<ul class="org-ul">
+<li><a href="#orgffef068">@ExtendWith</a></li>
+
+<li><a href="#orgbd67a57">@RegisterExtension</a></li>
+
+<li><a href="#org1bcf191">@TempDir</a></li>
+
+<li><a href="#orga4e4f68">Testing Annotations</a></li>
+
+<li><a href="#org90256e7">Tagging</a></li>
+
+<li><a href="#org8404a26">Naming and UI Style Annotations</a></li>
+
+<li><a href="#org6d83157">LifeCycle Annotations</a></li>
+
+<li><a href="#org4b54f30">Templates - @TestTemplate</a></li>
+
+<li><a href="#org45a8931">Dynamic Testing</a></li>
+
+<li><a href="#org5879f19">URI</a></li>
+
+<li><a href="#org6c095ad">Timeouts</a></li>
+
+<li><a href="#org4a688b4">check how to combine the annoations above into meta-annotations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="org-ul">
+<li><a href="#org37f37b1">AssertionTypes</a></li>
+
+<li>
+<a href="#org212538a">Assumptions</a>
+<ul class="org-ul">
+<li><a href="#org6e7b929">The bigger picture in unit-testing</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgb4a104f" class="outline-4">
+<h4 id="orgb4a104f">Set Up</h4>
+<div class="outline-text-4" id="text-orgb4a104f">
 <p>
 So essentially I will use the JUnit package for running unit
 tests.
@@ -243,9 +333,9 @@ emacs start to migrate as that is a much more powerful tool.
 </div>
 </div>
 
-<div id="outline-container-orgf74faa8" class="outline-4">
-<h4 id="orgf74faa8">Actually Testing</h4>
-<div class="outline-text-4" id="text-orgf74faa8">
+<div id="outline-container-orga8d1518" class="outline-4">
+<h4 id="orga8d1518">Actually Testing</h4>
+<div class="outline-text-4" id="text-orga8d1518">
 <p>
 This is then straightforward. You can read and refer a bit to the
 <a href="https://junit.org/junit5/docs/current/user-guide/">following documentation</a>.
@@ -291,9 +381,9 @@ then to Emacs with time.
 </div>
 </div>
 
-<div id="outline-container-org08d8b96" class="outline-4">
-<h4 id="org08d8b96">Test Classes And Method</h4>
-<div class="outline-text-4" id="text-org08d8b96">
+<div id="outline-container-org3ba63c7" class="outline-4">
+<h4 id="org3ba63c7">Test Classes And Method</h4>
+<div class="outline-text-4" id="text-org3ba63c7">
 <p>
 What are the first-class citizens. 
 </p>
@@ -331,47 +421,90 @@ required to return a value.
 </div>
 </div>
 
-<div id="outline-container-orgcd2750a" class="outline-4">
-<h4 id="orgcd2750a">JUnit Jupiter</h4>
-<div class="outline-text-4" id="text-orgcd2750a">
+<div id="outline-container-orge1f5677" class="outline-4">
+<h4 id="orge1f5677">JUnit Jupiter</h4>
+<div class="outline-text-4" id="text-orge1f5677">
 <ul class="org-ul">
-<li><a href="#org30aa2b9">@ExtendWith</a></li>
+<li><a href="#orgffef068">@ExtendWith</a></li>
 
-<li><a href="#orgf5b0736">@RegisterExtension</a></li>
+<li><a href="#orgbd67a57">@RegisterExtension</a></li>
 
-<li><a href="#org7c108c7">@TempDir</a></li>
+<li><a href="#org1bcf191">@TempDir</a></li>
 
-<li><a href="#org7c0160b">Testing Annotations</a></li>
+<li>
+<a href="#orga4e4f68">Testing Annotations</a>
 
-<li><a href="#orgd74d0fb">Tagging</a></li>
+<ul class="org-ul">
+<li><a href="#org63c0ca1">@RepeatedTest</a></li>
+<li><a href="#org63c0ca1">@RepeatedTest</a></li>
+<li><a href="#orga36ac1c">@ParameterizedTest</a></li>
+</ul>
+</li>
+</ul>
+<ul class="org-ul">
+<li><a href="#org90256e7">Tagging</a></li>
 
-<li><a href="#org0e88ed6">Naming and UI Style Annotations</a></li>
+<li>
+<a href="#org8404a26">Naming and UI Style Annotations</a>
 
-<li><a href="#org1244293">LifeCycle Annotations</a></li>
+<ul class="org-ul">
+<li><a href="#org70e43db">@DisplayName</a></li>
+<li><a href="#org7da1656">@DisplayNameGeneration</a></li>
+<li><a href="#org59c7403">@IndicativeSentencesGeneration</a></li>
+<li><a href="#org13c0d63">@Nested</a></li>
+</ul>
+</li>
 
-<li><a href="#org2eeb845">Templates - @TestTemplate</a></li>
+<li>
+<a href="#org6d83157">LifeCycle Annotations</a>
 
-<li><a href="#org443270f">Dynamic Testing</a></li>
+<ul class="org-ul">
+<li><a href="#orgf291834">Tests Lifecycle</a></li>
+<li><a href="#org9828973">@BeforeEach</a></li>
+<li><a href="#org3b38446">@AfterEach</a></li>
+<li><a href="#org4a54d38">@BeforeAll</a></li>
+<li><a href="#org57dfc15">@AfterAll</a></li>
+<li><a href="#org6149637">@Disabled</a></li>
+<li><a href="#org9357598">@TestInstance</a></li>
+<li><a href="#orga724277">@TestMethodOrder</a></li>
+<li><a href="#orgc2c29a0">@TestClassOrder</a></li>
+</ul>
+</li>
 
-<li><a href="#orgf71d526">URI</a></li>
+<li><a href="#org4b54f30">Templates - @TestTemplate</a></li>
 
-<li><a href="#orgc48b88c">Timeouts</a></li>
+<li>
+<a href="#org45a8931">Dynamic Testing</a>
 
-<li><a href="#org029ef16">check how to combine the annoations above into meta-annotations</a></li>
+<ul class="org-ul">
+<li><a href="#orgfd693c4">@TestFactory</a></li>
+<li><a href="#orgb36d6a4">Examples</a></li>
+</ul>
+</li>
+</ul>
+<ul class="org-ul">
+<li><a href="#org5879f19">URI</a></li>
+
+<li><a href="#org6c095ad">Timeouts</a></li>
+
+<li><a href="#org4a688b4">check how to combine the annoations above into meta-annotations</a></li>
 </ul>
 <p>
 Basically in order to understand well how to write tests in Java
 understand on the one hand the following annotators through which
 it is possible to specify the general logic of your tests and on
-the other hand the possible assertions treated in the <a href="#org3a5538e">next
-section</a>. Also recall about <a href="#org04e8099">Assumptions</a>.
+the other hand the possible assertions treated in the <a href="#org37f37b1">next
+section</a>. Also recall about <a href="#org212538a">Assumptions</a>.
 </p>
-</div>
 
+<ul class="org-ul">
+<li><a href="#org6d83157">LifeCycle Annotations</a></li>
+</ul>
+</div>
 
 <ul class="org-ul">
 <li>
-<a id="org30aa2b9"></a>@ExtendWith<br><div class="outline-text-5" id="text-org30aa2b9">
+<a id="orgffef068"></a>@ExtendWith<br><div class="outline-text-5" id="text-orgffef068">
 <p>
 Used to register extensions declaratively. Such annotations are
 inherited. 
@@ -380,7 +513,7 @@ inherited.
 </li>
 
 <li>
-<a id="orgf5b0736"></a>@RegisterExtension<br><div class="outline-text-5" id="text-orgf5b0736">
+<a id="orgbd67a57"></a>@RegisterExtension<br><div class="outline-text-5" id="text-orgbd67a57">
 <p>
 Used to register extensions programmatically via fields. Such fields
 are inherited unless they are shadowed. 
@@ -389,7 +522,7 @@ are inherited unless they are shadowed.
 </li>
 
 <li>
-<a id="org7c108c7"></a>@TempDir<br><div class="outline-text-5" id="text-org7c108c7">
+<a id="org1bcf191"></a>@TempDir<br><div class="outline-text-5" id="text-org1bcf191">
 <p>
 Used to supply a temporary directory via field injection or parameter
 injection in a lifecycle method or test method; located in the
@@ -400,7 +533,7 @@ org.junit.jupiter.api.io package.
 
 
 <li>
-<a id="org7c0160b"></a>Testing Annotations<br><div class="outline-text-5" id="text-org7c0160b">
+<a id="orga4e4f68"></a>Testing Annotations<br><div class="outline-text-5" id="text-orga4e4f68">
 <p>
 These annotations are basically used for testing itself.
 </p>
@@ -411,9 +544,20 @@ processed.
 </p>
 </div>
 
+
 <ul class="org-ul">
 <li>
-<a id="orgdc0a230"></a>@Test<br><div class="outline-text-6" id="text-orgdc0a230">
+<a id="orgc127e10"></a>Index<br><div class="outline-text-6" id="text-orgc127e10">
+<ul class="org-ul">
+<li><a href="#org63c0ca1">@RepeatedTest</a></li>
+<li><a href="#org63c0ca1">@RepeatedTest</a></li>
+<li><a href="#orga36ac1c">@ParameterizedTest</a></li>
+</ul>
+</div>
+</li>
+
+<li>
+<a id="orgbf03713"></a>@Test<br><div class="outline-text-6" id="text-orgbf03713">
 <p>
 Denotes that a method is a test method.
 </p>
@@ -425,7 +569,7 @@ That is the most trivial one.
 </li>
 
 <li>
-<a id="orgb476ea7"></a>@RepeatedTest<br><div class="outline-text-6" id="text-orgb476ea7">
+<a id="org63c0ca1"></a>@RepeatedTest<br><div class="outline-text-6" id="text-org63c0ca1">
 <p>
 JUnit Jupiter provides the ability to repeat a test a specified
 number of times by annotating a method with @RepeatedTest and
@@ -537,7 +681,7 @@ Such methods <b>are inherited</b> unless they are overridden.
 </li>
 
 <li>
-<a id="org1cda6c5"></a>@ParameterizedTest<br><div class="outline-text-6" id="text-org1cda6c5">
+<a id="orga36ac1c"></a>@ParameterizedTest<br><div class="outline-text-6" id="text-orga36ac1c">
 <p>
 Understand the following naming conventition that will be used
 in this section
@@ -570,7 +714,7 @@ These can then be used for parameterizing your test cases.
 
 <ul class="org-ul">
 <li>
-<a id="org2bbfc7f"></a>Most basic example<br><div class="outline-text-7" id="text-org2bbfc7f">
+<a id="orgc1ec279"></a>Most basic example<br><div class="outline-text-7" id="text-orgc1ec279">
 <p>
 It is possible for the tests to run with different parameters
 with the use of this tag.
@@ -600,7 +744,7 @@ Such methods are inherited unless they are overridden.
 </li>
 
 <li>
-<a id="orgd6facd8"></a>On Methods implementing Autocloseable<br><div class="outline-text-7" id="text-orgd6facd8">
+<a id="org17504f0"></a>On Methods implementing Autocloseable<br><div class="outline-text-7" id="text-org17504f0">
 <p>
 Recall the following point. Might be useful at some point in
 the future.
@@ -624,7 +768,7 @@ the future.
 </li>
 
 <li>
-<a id="org6326b18"></a>On the possible sources for parameterized methods<br><div class="outline-text-7" id="text-org6326b18">
+<a id="org1ae9892"></a>On the possible sources for parameterized methods<br><div class="outline-text-7" id="text-org1ae9892">
 <p>
 Recall that there are various sources for parametrized methods that
 you can use when working with these.
@@ -923,7 +1067,7 @@ Not really understanding the point of this to this stage
 
 
 <li>
-<a id="orgc22ca90"></a>On implicit argument passsing<br><div class="outline-text-7" id="text-orgc22ca90">
+<a id="org2dd6a3c"></a>On implicit argument passsing<br><div class="outline-text-7" id="text-org2dd6a3c">
 <p>
 Note the following example. There are a couple of defaults. 
 </p>
@@ -987,7 +1131,7 @@ String argument and there is a match in this sense -.
 </li>
 
 <li>
-<a id="orgfa553e8"></a>On Explicit Argument Passing<br><div class="outline-text-7" id="text-orgfa553e8">
+<a id="org3fca01f"></a>On Explicit Argument Passing<br><div class="outline-text-7" id="text-org3fca01f">
 <p>
 Note that the above can as well be stated in a more torough and
 complete way as follows:
@@ -1018,7 +1162,7 @@ complete way as follows:
 
 
 <li>
-<a id="orgff52c2f"></a><span class="todo TODO">TODO</span> double check when you have time - could not understand when reading<br><div class="outline-text-7" id="text-orgff52c2f">
+<a id="orgbba36e5"></a><span class="todo TODO">TODO</span> double check when you have time - could not understand when reading<br><div class="outline-text-7" id="text-orgbba36e5">
 <p>
 Note that there is quite a few things that you will need to
 make sense of when you have time.
@@ -1038,7 +1182,7 @@ thing when you have time.
 </li>
 
 <li>
-<a id="orga195c99"></a><span class="todo TODO">TODO</span> understand better this and Mockito<br><div class="outline-text-7" id="text-orga195c99">
+<a id="org24bbad3"></a><span class="todo TODO">TODO</span> understand better this and Mockito<br><div class="outline-text-7" id="text-org24bbad3">
 <ul class="org-ul">
 <li>
 <p>
@@ -1057,7 +1201,7 @@ what is missing etc.?
 </li>
 
 <li>
-<a id="orge267786"></a><span class="todo TODO">TODO</span> better understand the @ArgumentsSource method<br>
+<a id="orgd62241e"></a><span class="todo TODO">TODO</span> better understand the @ArgumentsSource method<br>
 </li>
 </ul>
 </li>
@@ -1066,9 +1210,9 @@ what is missing etc.?
 
 
 <li>
-<a id="orgd74d0fb"></a>Tagging<br><ul class="org-ul">
+<a id="org90256e7"></a>Tagging<br><ul class="org-ul">
 <li>
-<a id="orga894934"></a>@Tag<br><div class="outline-text-6" id="text-orga894934">
+<a id="org3b8d313"></a>@Tag<br><div class="outline-text-6" id="text-org3b8d313">
 <p>
 Test classes and methods can be tagged via the @Tag
 annotation. Those tags can later be used to filter test discovery
@@ -1084,8 +1228,9 @@ method level.
 </ul>
 </li>
 
+
 <li>
-<a id="org0e88ed6"></a>Naming and UI Style Annotations<br><div class="outline-text-5" id="text-org0e88ed6">
+<a id="org8404a26"></a>Naming and UI Style Annotations<br><div class="outline-text-5" id="text-org8404a26">
 <p>
 This are used for setting the naming of your test methods.
 </p>
@@ -1153,7 +1298,19 @@ So based on the above you can easily infer the following rules.
 
 <ul class="org-ul">
 <li>
-<a id="org4352391"></a>@DisplayName<br><div class="outline-text-6" id="text-org4352391">
+<a id="orgfcfb964"></a>Index<br><div class="outline-text-6" id="text-orgfcfb964">
+<ul class="org-ul">
+<li><a href="#org70e43db">@DisplayName</a></li>
+<li><a href="#org7da1656">@DisplayNameGeneration</a></li>
+<li><a href="#org59c7403">@IndicativeSentencesGeneration</a></li>
+<li><a href="#org13c0d63">@Nested</a></li>
+</ul>
+</div>
+</li>
+
+
+<li>
+<a id="org70e43db"></a>@DisplayName<br><div class="outline-text-6" id="text-org70e43db">
 <p>
 Declares a custom display name for the test class or test method. Such
 annotations are not inherited.
@@ -1174,7 +1331,7 @@ if it is zero() [OK]
 </li>
 
 <li>
-<a id="org6e05d2f"></a>@DisplayNameGeneration<br><div class="outline-text-6" id="text-org6e05d2f">
+<a id="org7da1656"></a>@DisplayNameGeneration<br><div class="outline-text-6" id="text-org7da1656">
 <p>
 Declares a custom display name generator for the test class. Such
 annotations are inherited.
@@ -1190,7 +1347,7 @@ the output in the example above.
 </li>
 
 <li>
-<a id="org1f8d05c"></a>@IndicativeSentencesGeneration<br><div class="outline-text-6" id="text-org1f8d05c">
+<a id="org59c7403"></a>@IndicativeSentencesGeneration<br><div class="outline-text-6" id="text-org59c7403">
 <p>
 Sets some standards for displaying the hierarchy. I think this
 is especially important / might be especially important.
@@ -1199,7 +1356,7 @@ is especially important / might be especially important.
 </li>
 
 <li>
-<a id="org52ca3b5"></a>@Nested<br><div class="outline-text-6" id="text-org52ca3b5">
+<a id="org13c0d63"></a>@Nested<br><div class="outline-text-6" id="text-org13c0d63">
 <p>
 This basically creates the hieararchical structure that you will
 ultimately see on your GUI. It will help to structure your tests
@@ -1217,10 +1374,27 @@ used. Such annotations are not inherited.
 </ul>
 </li>
 
+
 <li>
-<a id="org1244293"></a>LifeCycle Annotations<br><ul class="org-ul">
+<a id="org6d83157"></a>LifeCycle Annotations<br><ul class="org-ul">
 <li>
-<a id="org4e873ec"></a>Tests Lifecycle<br><div class="outline-text-6" id="text-org4e873ec">
+<a id="org7d1cd28"></a>Index<br><div class="outline-text-6" id="text-org7d1cd28">
+<ul class="org-ul">
+<li><a href="#orgf291834">Tests Lifecycle</a></li>
+<li><a href="#org9828973">@BeforeEach</a></li>
+<li><a href="#org3b38446">@AfterEach</a></li>
+<li><a href="#org4a54d38">@BeforeAll</a></li>
+<li><a href="#org57dfc15">@AfterAll</a></li>
+<li><a href="#org6149637">@Disabled</a></li>
+<li><a href="#org9357598">@TestInstance</a></li>
+<li><a href="#orga724277">@TestMethodOrder</a></li>
+<li><a href="#orgc2c29a0">@TestClassOrder</a></li>
+</ul>
+</div>
+</li>
+
+<li>
+<a id="orgf291834"></a>Tests Lifecycle<br><div class="outline-text-6" id="text-orgf291834">
 <p>
 In order to proper understand testing lifecycle you can check at
 the following 101 test-example.
@@ -1289,7 +1463,7 @@ Basic to understand then how that works. Trivial.
 </li>
 
 <li>
-<a id="org060d656"></a>@BeforeEach<br><div class="outline-text-6" id="text-org060d656">
+<a id="org9828973"></a>@BeforeEach<br><div class="outline-text-6" id="text-org9828973">
 <p>
 Denotes that the annotated method should be executed before each
 @Test, @RepeatedTest, @ParameterizedTest, or @TestFactory method in
@@ -1300,7 +1474,7 @@ inherited unless they are overridden.
 </li>
 
 <li>
-<a id="orgeea8782"></a>@AfterEach<br><div class="outline-text-6" id="text-orgeea8782">
+<a id="org3b38446"></a>@AfterEach<br><div class="outline-text-6" id="text-org3b38446">
 <p>
 Denotes that the annotated method should be executed after each @Test,
 @RepeatedTest, @ParameterizedTest, or @TestFactory method in the
@@ -1311,7 +1485,7 @@ inherited unless they are overridden.
 </li>
 
 <li>
-<a id="orgab6ef4b"></a>@BeforeAll<br><div class="outline-text-6" id="text-orgab6ef4b">
+<a id="org4a54d38"></a>@BeforeAll<br><div class="outline-text-6" id="text-org4a54d38">
 <p>
 Denotes that the annotated method should be executed before all @Test,
 @RepeatedTest, @ParameterizedTest, and @TestFactory methods in the
@@ -1323,7 +1497,7 @@ inherited (unless they are hidden or overridden) and must be static
 </li>
 
 <li>
-<a id="org51513fb"></a>@AfterAll<br><div class="outline-text-6" id="text-org51513fb">
+<a id="org57dfc15"></a>@AfterAll<br><div class="outline-text-6" id="text-org57dfc15">
 <p>
 Denotes that the annotated method should be executed after all @Test,
 @RepeatedTest, @ParameterizedTest, and @TestFactory methods in the
@@ -1335,7 +1509,7 @@ inherited (unless they are hidden or overridden) and must be static
 </li>
 
 <li>
-<a id="orgfeb6a12"></a>@Disabled<br><div class="outline-text-6" id="text-orgfeb6a12">
+<a id="org6149637"></a>@Disabled<br><div class="outline-text-6" id="text-org6149637">
 <p>
 Simple tag to disable a particular test.
 </p>
@@ -1357,7 +1531,7 @@ documentation. There you have the correct reference.
 
 
 <li>
-<a id="orga9678d3"></a><span class="todo TODO">TODO</span> @TestInstance<br><div class="outline-text-6" id="text-orga9678d3">
+<a id="org9357598"></a><span class="todo TODO">TODO</span> @TestInstance<br><div class="outline-text-6" id="text-org9357598">
 <p>
 Used to configure the test instance lifecycle for the annotated test
 class. Such annotations are inherited.
@@ -1376,7 +1550,7 @@ Study it later at a later time-point.
 </li>
 
 <li>
-<a id="org228f3c4"></a><span class="todo TODO">TODO</span> @TestMethodOrder<br><div class="outline-text-6" id="text-org228f3c4">
+<a id="orga724277"></a><span class="todo TODO">TODO</span> @TestMethodOrder<br><div class="outline-text-6" id="text-orga724277">
 <p>
 Used as well to
 </p>
@@ -1391,7 +1565,7 @@ inherited.
 
 
 <li>
-<a id="orgae9bf78"></a><span class="todo TODO">TODO</span> @TestClassOrder<br><div class="outline-text-6" id="text-orgae9bf78">
+<a id="orgc2c29a0"></a><span class="todo TODO">TODO</span> @TestClassOrder<br><div class="outline-text-6" id="text-orgc2c29a0">
 <p>
 Used to configure the test class execution order for @Nested test
 classes in the annotated test class. Such annotations are inherited.
@@ -1401,8 +1575,9 @@ classes in the annotated test class. Such annotations are inherited.
 </ul>
 </li>
 
+
 <li>
-<a id="org2eeb845"></a>Templates - @TestTemplate<br><div class="outline-text-5" id="text-org2eeb845">
+<a id="org4b54f30"></a>Templates - @TestTemplate<br><div class="outline-text-5" id="text-org4b54f30">
 <p>
 It is essentially possible as well to write template tests. 
 </p>
@@ -1431,7 +1606,7 @@ same lifecycle callbacks and extensions.
 
 <ul class="org-ul">
 <li>
-<a id="org8790269"></a><span class="todo TODO">TODO</span> understand TestTemplateInvocationContextProvider better<br><div class="outline-text-6" id="text-org8790269">
+<a id="org8d663bc"></a><span class="todo TODO">TODO</span> understand TestTemplateInvocationContextProvider better<br><div class="outline-text-6" id="text-org8d663bc">
 <p>
 check <a href="https://junit.org/junit5/docs/current/user-guide/#extensions-test-templates">this</a> in this sense.
 </p>
@@ -1442,7 +1617,7 @@ check <a href="https://junit.org/junit5/docs/current/user-guide/#extensions-test
 
 
 <li>
-<a id="org443270f"></a>Dynamic Testing<br><div class="outline-text-5" id="text-org443270f">
+<a id="org45a8931"></a>Dynamic Testing<br><div class="outline-text-5" id="text-org45a8931">
 <p>
 See the following to understand these:
 </p>
@@ -1464,14 +1639,22 @@ introction of <code>dynamic test</code> in Junit.
 
 <p>
 These is a kind of test that is generated <b>at runtime</b> by a factory
-method that is annotated with <a href="#org2ccee2e">@TestFactory</a>.
+method that is annotated with <a href="#orgfd693c4">@TestFactory</a>.
 </p>
 </div>
 
-
 <ul class="org-ul">
 <li>
-<a id="org2ccee2e"></a>@TestFactory<br><div class="outline-text-6" id="text-org2ccee2e">
+<a id="org1301fc9"></a>Index<br><div class="outline-text-6" id="text-org1301fc9">
+<ul class="org-ul">
+<li><a href="#orgfd693c4">@TestFactory</a></li>
+<li><a href="#orgb36d6a4">Examples</a></li>
+</ul>
+</div>
+</li>
+
+<li>
+<a id="orgfd693c4"></a>@TestFactory<br><div class="outline-text-6" id="text-orgfd693c4">
 <p>
 Denotes that a <b>method is a test factory</b> for dynamic tests. 
 </p>
@@ -1568,7 +1751,7 @@ overridden.
 </li>
 
 <li>
-<a id="org21969c5"></a>Examples<br><div class="outline-text-6" id="text-org21969c5">
+<a id="orgb36d6a4"></a>Examples<br><div class="outline-text-6" id="text-orgb36d6a4">
 <p>
 Try to go with the following:
 </p>
@@ -1805,7 +1988,7 @@ entire thingy.
 </li>
 
 <li>
-<a id="orgf71d526"></a>URI<br><div class="outline-text-5" id="text-orgf71d526">
+<a id="org5879f19"></a>URI<br><div class="outline-text-5" id="text-org5879f19">
 <p>
 Note that this might particularly be interesting for working with
 dynamic Tests or Test-templates.
@@ -1837,10 +2020,11 @@ TestSource implementations.
 </div>
 </li>
 
+
 <li>
-<a id="orgc48b88c"></a>Timeouts<br><ul class="org-ul">
+<a id="org6c095ad"></a>Timeouts<br><ul class="org-ul">
 <li>
-<a id="orgf0f669c"></a>@Timeout<br><div class="outline-text-6" id="text-orgf0f669c">
+<a id="orgc47a71c"></a>@Timeout<br><div class="outline-text-6" id="text-orgc47a71c">
 <p>
 Used to fail a test, test factory, test template, or lifecycle method
 if its execution exceeds a given duration. 
@@ -1848,7 +2032,7 @@ if its execution exceeds a given duration.
 
 <p>
 Note that you have as well the assertion timeout option - see
-the section <a href="#org3a5538e">AssertionTypes</a>.
+the section <a href="#org37f37b1">AssertionTypes</a>.
 </p>
 
 <p>
@@ -1905,13 +2089,14 @@ Such annotations are inherited.
 </li>
 
 <li>
-<a id="org3fa11bf"></a><span class="todo TODO">TODO</span> understand better the difference with Assertion Kind of errors.<br>
+<a id="orgba8f115"></a><span class="todo TODO">TODO</span> understand better the difference with Assertion Kind of errors.<br>
 </li>
 </ul>
 </li>
 
+
 <li>
-<a id="org029ef16"></a><span class="todo TODO">TODO</span> check how to combine the annoations above into meta-annotations<br><div class="outline-text-5" id="text-org029ef16">
+<a id="org4a688b4"></a><span class="todo TODO">TODO</span> check how to combine the annoations above into meta-annotations<br><div class="outline-text-5" id="text-org4a688b4">
 <p>
 see chapter 2.1 in this sense. 
 </p>
@@ -1925,7 +2110,7 @@ annotations.
 
 
 <li>
-<a id="org8efea06"></a>Parallel Execution<br><div class="outline-text-5" id="text-org8efea06">
+<a id="org0dba15b"></a>Parallel Execution<br><div class="outline-text-5" id="text-org0dba15b">
 <p>
 This might be useful in order to keep a fast and nimble execution
 of your tests.
@@ -2045,7 +2230,7 @@ So essentially the exact opposite of above.
 
 <ul class="org-ul">
 <li>
-<a id="org9e250d5"></a>Recall that it is as well possible to set ResourceLocks<br><div class="outline-text-6" id="text-org9e250d5">
+<a id="orgfa995cc"></a>Recall that it is as well possible to set ResourceLocks<br><div class="outline-text-6" id="text-orgfa995cc">
 <p>
 These will be especially important in order to avoid race
 conditions. 
@@ -2064,10 +2249,9 @@ parallel.
 </ul>
 </div>
 
-
-<div id="outline-container-org3a5538e" class="outline-4">
-<h4 id="org3a5538e">AssertionTypes</h4>
-<div class="outline-text-4" id="text-org3a5538e">
+<div id="outline-container-org37f37b1" class="outline-4">
+<h4 id="org37f37b1">AssertionTypes</h4>
+<div class="outline-text-4" id="text-org37f37b1">
 <p>
 Check in the following all of the different types of possible
 assertion methods - note again in junit package.
@@ -2244,9 +2428,9 @@ already picture beautiful use-cases for it. Very neat.
 </div>
 </div>
 
-<div id="outline-container-org04e8099" class="outline-4">
-<h4 id="org04e8099">Assumptions</h4>
-<div class="outline-text-4" id="text-org04e8099">
+<div id="outline-container-org212538a" class="outline-4">
+<h4 id="org212538a">Assumptions</h4>
+<div class="outline-text-4" id="text-org212538a">
 <p>
 Ok… that is as well something I never came across
 before. Interesting to know of its existence.
@@ -2319,9 +2503,10 @@ Then see the following two options (<code>assumeTrue</code> and <code>assumeThat
 </div>
 </div>
 
-<div id="outline-container-org586a7e0" class="outline-3">
-<h3 id="org586a7e0">The bigger picture in unit-testing</h3>
-<div class="outline-text-3" id="text-org586a7e0">
+
+<div id="outline-container-org6e7b929" class="outline-3">
+<h3 id="org6e7b929">The bigger picture in unit-testing</h3>
+<div class="outline-text-3" id="text-org6e7b929">
 <p>
 Ok so basically the part above deals on how to write the unit-tests
 themselves. 
@@ -2387,9 +2572,9 @@ received all the parameters expected</b>.</li>
 </div>
 </div>
 
-<div id="outline-container-orgc806f31" class="outline-3">
-<h3 id="orgc806f31">Stub</h3>
-<div class="outline-text-3" id="text-orgc806f31">
+<div id="outline-container-orgc1c44e7" class="outline-3">
+<h3 id="orgc1c44e7">Stub</h3>
+<div class="outline-text-3" id="text-orgc1c44e7">
 <p>
 So basic example of a stub is the following as from the book
 <i>Pragmatic Unit Testing</i>.
@@ -2478,9 +2663,9 @@ dependencies over there.
 </p>
 </div>
 
-<div id="outline-container-org312dd2e" class="outline-4">
-<h4 id="org312dd2e">Side note - why is this a stub?</h4>
-<div class="outline-text-4" id="text-org312dd2e">
+<div id="outline-container-org9993854" class="outline-4">
+<h4 id="org9993854">Side note - why is this a stub?</h4>
+<div class="outline-text-4" id="text-org9993854">
 <p>
 This because you use the object from the anonymous class above in
 order to get your hard-coded string.   I.e. you are actually
@@ -2490,9 +2675,10 @@ calling the <code>get</code> method.
 </div>
 </div>
 
-<div id="outline-container-org677565d" class="outline-3">
-<h3 id="org677565d">Mocks - Mockito</h3>
-<div class="outline-text-3" id="text-org677565d">
+
+<div id="outline-container-orga335560" class="outline-3">
+<h3 id="orga335560">Mocks - Mockito</h3>
+<div class="outline-text-3" id="text-orga335560">
 <p>
 Basically the fundamental idea of the framework is the one of
 giving the possibility to <code>mock</code> the <i>dependencies</i>.
@@ -2518,9 +2704,23 @@ method. It is creating an <i>entire mock-object</i>.
 </p>
 </div>
 
-<div id="outline-container-orgeb5814b" class="outline-4">
-<h4 id="orgeb5814b">What is a mock object</h4>
-<div class="outline-text-4" id="text-orgeb5814b">
+<div id="outline-container-orgfbcc874" class="outline-4">
+<h4 id="orgfbcc874">Index</h4>
+<div class="outline-text-4" id="text-orgfbcc874">
+<ul class="org-ul">
+<li><a href="#org4cb5b5a">What is a mock object</a></li>
+<li><a href="#org0ca8077">Creating a mock() object and verifying the parameters received</a></li>
+<li><a href="#orgcdbc324">Dependency Injection Tool</a></li>
+<li><a href="#orgc0fdfb4">@Spy</a></li>
+<li><a href="#orgc55535b">@Capture</a></li>
+<li><a href="#orgc5e5e0f">Resources used for the tutorial</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4cb5b5a" class="outline-4">
+<h4 id="org4cb5b5a">What is a mock object</h4>
+<div class="outline-text-4" id="text-org4cb5b5a">
 <p>
 In object-oriented programming, mock objects are <i>simulated
 objects</i> that mimic the behavior of real objects in controlled
@@ -2534,10 +2734,9 @@ programming.
 </div>
 </div>
 
-
-<div id="outline-container-org78b741d" class="outline-4">
-<h4 id="org78b741d">Creating a mock() object and verifying the parameters received</h4>
-<div class="outline-text-4" id="text-org78b741d">
+<div id="outline-container-org0ca8077" class="outline-4">
+<h4 id="org0ca8077">Creating a mock() object and verifying the parameters received</h4>
+<div class="outline-text-4" id="text-org0ca8077">
 <p>
 In order to create a mock object you can do the following - as in
 the example:
@@ -2592,9 +2791,9 @@ return the hardcoded JSON string.
 </div>
 </div>
 
-<div id="outline-container-org6a5dc4e" class="outline-4">
-<h4 id="org6a5dc4e">Dependency Injection Tool</h4>
-<div class="outline-text-4" id="text-org6a5dc4e">
+<div id="outline-container-orgcdbc324" class="outline-4">
+<h4 id="orgcdbc324">Dependency Injection Tool</h4>
+<div class="outline-text-4" id="text-orgcdbc324">
 <p>
 Passing a mock to a target class using a constructor is one
 technique. It requires a change to the interface and exposes a
@@ -2674,9 +2873,9 @@ the following way of getting a value value out of a list.
 </div>
 </div>
 
-<div id="outline-container-org9d03e44" class="outline-4">
-<h4 id="org9d03e44">@Spy</h4>
-<div class="outline-text-4" id="text-org9d03e44">
+<div id="outline-container-orgc0fdfb4" class="outline-4">
+<h4 id="orgc0fdfb4">@Spy</h4>
+<div class="outline-text-4" id="text-orgc0fdfb4">
 <p>
 Spies are known as <i>partially mock objects</i>. 
 </p>
@@ -2757,15 +2956,15 @@ See the following way to use spies:
 </div>
 </div>
 
-<div id="outline-container-org09dbfc0" class="outline-4">
-<h4 id="org09dbfc0">
+<div id="outline-container-orgc55535b" class="outline-4">
+<h4 id="orgc55535b">
 <span class="todo TODO">TODO</span> @Capture</h4>
 </div>
 
 
-<div id="outline-container-org33b3afa" class="outline-4">
-<h4 id="org33b3afa">Resources used for the tutorial</h4>
-<div class="outline-text-4" id="text-org33b3afa">
+<div id="outline-container-orgc5e5e0f" class="outline-4">
+<h4 id="orgc5e5e0f">Resources used for the tutorial</h4>
+<div class="outline-text-4" id="text-orgc5e5e0f">
 <ul class="org-ul">
 <li><a href="https://www.journaldev.com/21816/mockito-tutorial">Resource 1</a></li>
 
@@ -2774,11 +2973,83 @@ See the following way to use spies:
 </div>
 </div>
 </div>
+
+
+
+
+
+<div id="outline-container-org1da3904" class="outline-3">
+<h3 id="org1da3904">Testing in Spring Boot</h3>
+<div class="outline-text-3" id="text-org1da3904">
+<p>
+Especially important is to understand the testing compoenent of MVC
+as I plan to use this a lot. 
+</p>
+
+<p>
+There basically you have a couple of spring specific tags that you
+use to properly tag and create your test. 
+</p>
+
+<p>
+See the following 101 example from spring in action.
+</p>
+
+
+<div class="highlight"><pre><span></span>   <span class="kn">package</span> <span class="nn">tacos</span><span class="p">;</span>
+   <span class="kn">import static</span> <span class="nn">org.hamcrest.Matchers.containsString</span><span class="p">;</span>
+   <span class="kn">import static</span> 
+       <span class="nn">org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get</span><span class="p">;</span>
+   <span class="kn">import static</span> 
+       <span class="nn">org.springframework.test.web.servlet.result.MockMvcResultMatchers.content</span><span class="p">;</span>
+   <span class="kn">import static</span> 
+       <span class="nn">org.springframework.test.web.servlet.result.MockMvcResultMatchers.status</span><span class="p">;</span>
+   <span class="kn">import static</span> 
+       <span class="nn">org.springframework.test.web.servlet.result.MockMvcResultMatchers.view</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.junit.runner.RunWith</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.test.context.junit4.SpringRunner</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.test.web.servlet.MockMvc</span><span class="p">;</span>
+
+   <span class="nd">@RunWith</span><span class="p">(</span><span class="n">SpringRunner</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+   <span class="nd">@WebMvcTest</span><span class="p">(</span><span class="n">HomeController</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>  <span class="c1">// this is necessary to make the</span>
+				      <span class="c1">// HomeController seeable.</span>
+
+   <span class="kd">public</span> <span class="kd">class</span> <span class="nc">HomeControllerTest</span> <span class="p">{</span>
+
+       <span class="nd">@Autowired</span>
+       <span class="kd">private</span> <span class="n">MockMvc</span> <span class="n">mockMvc</span><span class="p">;</span>       <span class="c1">// this is the Mock object through</span>
+				      <span class="c1">// which you will perform the calls</span>
+				      <span class="c1">// to your endpoints and test them.</span>
+
+       <span class="nd">@Test</span> 
+       <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testHomePage</span><span class="p">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>    <span class="c1">// this is the</span>
+							<span class="c1">// test through</span>
+							<span class="c1">// the mock</span>
+							<span class="c1">// object.</span>
+	   <span class="n">mockMvc</span><span class="p">.</span><span class="na">perform</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="s">"/"</span><span class="p">))</span> 
+	       <span class="p">.</span><span class="na">andExpect</span><span class="p">(</span><span class="n">status</span><span class="p">().</span><span class="na">isOk</span><span class="p">())</span> 
+	       <span class="p">.</span><span class="na">andExpect</span><span class="p">(</span><span class="n">view</span><span class="p">().</span><span class="na">name</span><span class="p">(</span><span class="s">"home"</span><span class="p">))</span> 
+	       <span class="p">.</span><span class="na">andExpect</span><span class="p">(</span><span class="n">content</span><span class="p">().</span><span class="na">string</span><span class="p">(</span><span class="n">containsString</span><span class="p">(</span><span class="s">"Welcome to..."</span><span class="p">)));</span>
+       <span class="p">}</span>
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+So this is how you can test the actual business logic of your end-points.
+</p>
+</div>
+</div>
 </div>
     </div>
     <aside class="postpromonav"><nav><ul class="pager hidden-print">
 <li class="previous">
                 <a href="../front-end-stories/" rel="prev" title="Front-End Stories">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../spring/" rel="next" title="Spring">Next post</a>
             </li>
         </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
