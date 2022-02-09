@@ -1,0 +1,1384 @@
+#+BEGIN_COMMENT
+.. title: JavaScript Notes
+.. slug: javascript-notes
+.. date: 2021-02-23 09:05:54 UTC+01:00
+.. tags: 
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+The time has come. It is the moment to start learning javascript. This
+is a quite fundamental technology. No need to tell you why. Everyone
+knows it.
+
+For a project I might use =Node.js=. We will decide next week
+but in the meanwhile I will take 1-2h now to explore javascript. 
+
+Note that these notes, are mainly taken from Javascript the Definitive
+Guide - 7th edition.
+
+After all it is quite standard and easy. The only particular thing is
+the asynchronous javascript. But after your course on distributed
+systems algo it should be no difficulty to make sense of all of this.
+
+This is a must know language as being it the programming language of
+the web and with the rise of =Node.js= that brought it also out of the
+web into the backend it is by now the most used programming language
+among Software Developers.
+
+Update end of March - this project did not take of due to bureaucratic
+issues. Good is that for the next project I have the decision on the
+entire architecture and it turns out that I will also have to deal a
+bit with the front-end. So it was indeed a good idea to learn
+Javascript. Talked with a colleague that introduced my to Angular
+architecture. I mean I will never learn it at a level to write code in
+it as front-end is not my bread but at least I will be able to
+navigate and read the code and get an idea of how the front-end operates.
+
+{{{TEASER_END}}}
+
+* Characteristics of Javascript
+:properties:
+:header-args:js: :session "*Javascript REPL*"
+:end:
+  
+  - Javascript variables are untyped.
+
+  - To be useful, every language must have a platform, or /standard
+    library/, for performing things like basic input and output. The
+    core JavaScript language defines a minimal API for working with
+    *numbers, text, arrays, sets, maps*, and so on, but *does not include
+    any input or output* functionality. Input and output (as well as
+    more sophisticated features, such as networking, storage, and
+    graphics) are the responsibility of the “host environment” within
+    which JavaScript is embedded. 
+
+  - The original host environment for JavaScript was a web
+
+  - Since 2010, another host environment has been available for
+    JavaScript code. Node gives JavaScript access to the entire
+    operating system, allowing JavaScript programs to read and write
+    files, send and receive data over the network, and make and serve
+    HTTP requests.
+
+
+* First Quick Intro and Javascript in Org Babel
+:properties:
+:header-args:sh: :session "*Javascript REPL*" :results output
+:header-args:js: :session "*Javascript REPL*" :results silent
+:end:
+
+  Ok so usually people save their code into a javascript file, say
+  =hello.js= and then would run it via shell as =node hello.js=.
+
+  You can work in org babel in the following way.
+
+  See for instance the following snippet that amounts to a print
+  statement in python. Notice that the code will display on the
+  REPL. So you have to work with this opened. Could not find a way to
+  this stage to have a nicely formatted result in org-babel, directly
+  in org mode.
+
+#+BEGIN_SRC js
+console.log ("Hello world");
+#+END_SRC
+
+
+#+BEGIN_SRC js
+console.log ("hello world");
+x = 3;
+#+END_SRC
+
+
+#+BEGIN_SRC js 
+// Anything following double slashes is an English-language comment.
+// Read the comments carefully: they explain the JavaScript code.
+
+// A variable is a symbolic name for a value.
+// Variables are declared with the let keyword:
+let x;                     // Declare a variable named x.
+
+// Values can be assigned to variables with an = sign
+x = 0;                     // Now the variable x has the value 0
+x                          // => 0: A variable evaluates to its value.
+
+// JavaScript supports several types of values
+x = 1;                     // Numbers.
+x = 0.01;                  // Numbers can be integers or reals.
+x = "hello world";         // Strings of text in quotation marks.
+x = 'JavaScript';          // Single quote marks also delimit strings.
+x = true;                  // A Boolean value.
+x = false;                 // The other Boolean value.
+x = null;                  // Null is a special value that means "no value."
+x = undefined;             // Undefined is another special value like null.
+#+END_SRC
+
+
+* JavaScript Citizens
+:properties:
+:header-args:sh: :session "*Javascript REPL*" :results output
+:header-args:js: :session "*Javascript REPL*" :results silent
+:end:
+
+
+** Object
+   
+   This is javascript most important datatype. It corresponds to the
+   dictionary in python. It is a collection of name/value pairs, or a
+   string to value  map
+
+   #+BEGIN_SRC js :results silent
+let book = {               // Objects are enclosed in curly braces.
+    topic: "JavaScript",   // The property "topic" has value "JavaScript."
+    edition: 7             // The property "edition" has value 7
+};                         // The curly brace marks the end of the object.
+
+// Access the properties of an object with . or []:
+book.topic                 // => "JavaScript"
+book["edition"]            // => 7: another way to access property values.
+book.author = "Flanagan";  // Create new properties by assignment.
+book.contents = {};        // {} is an empty object with no properties.
+book.contents;             // retrieve empty object
+   #+END_SRC
+
+   Note the following property - two objects are *never equal*
+
+   #+BEGIN_SRC js 
+let o = {x: 1}, p = {x: 1};  // Two objects with the same properties
+o === p                      // => false: distinct objects are never equal
+let a = [], b = [];          // Two distinct, empty arrays
+a === b                      // => false: distinct arrays are never equal
+   #+END_SRC
+
+   Note however:
+
+   #+BEGIN_SRC js 
+let a = [];   // The variable a refers to an empty array.
+let b = a;    // Now b refers to the same array.
+b[0] = 1;     // Mutate the array referred to by variable b.
+a[0]          // => 1: the change is also visible through variable a.
+a === b       // => true: a and b refer to the same object, so they are equal.
+   #+END_SRC
+
+   Note that the =new= operator initializes a new object. The =new=
+   keyword must be followed by a class/function invocation. Such a
+   function is called a /constructor/.
+
+   #+BEGIN_SRC js 
+// Example
+let o = new Object();  // Create an empty object: same as {}.
+let a = new Array();   // Create an empty array: same as [].
+   #+END_SRC
+
+*** Object Inheritance
+
+    This is again the very principle of object oriented programming
+
+    #+BEGIN_SRC js 
+// Example
+
+let o = {};               // o inherits object methods from Object.prototype - base class
+o.x = 1;                  // and it now has an own property x.
+let p = Object.create(o); // p inherits properties from o and Object.prototype
+p.y = 2;                  // and has an own property y.
+let q = Object.create(p); // q inherits properties from p, o, and...
+q.z = 3;                  // ...Object.prototype and has an own property z.
+let f = q.toString();     // toString is inherited from Object.prototype
+q.x + q.y                 // => 3; x and y are inherited from o and p
+    #+END_SRC
+
+
+*** Extending Objects
+
+    One intuitive way
+
+
+    #+BEGIN_SRC js 
+let target = {x: 1}, source = {y: 2, z: 3};
+for(let key of Object.keys(source)) {
+    target[key] = source[key];
+}
+target  // => {x: 1, y: 2, z: 3}
+    #+END_SRC
+
+
+    The JavaScript way; the methods =assign= and =extend=. It is
+    impressive to see every time how much python and JavaScript are
+    related.
+
+** Arrays
+
+   Standard stuff. Same as python lists
+
+   #+BEGIN_SRC js 
+// JavaScript also supports arrays (numerically indexed lists) of values:
+let primes = [2, 3, 5, 7]; // An array of 4 values, delimited with [ and ].
+primes[0]                  // => 2: the first element (index 0) of the array.
+primes.length              // => 4: how many elements in the array.
+primes[primes.length-1]    // => 7: the last element of the array.
+primes[4] = 9;             // Add a new element by assignment.
+primes[4] = 11;            // Or alter an existing element by assignment.
+let empty = [];            // [] is an empty array with no elements.
+empty.length               // => 0
+   #+END_SRC
+
+   Notice that Arrays and objects can hold other arrays and objects:
+
+#+BEGIN_SRC js 
+let points = [             // An array with 2 elements.
+    {x: 0, y: 0},          // Each element is an object.
+    {x: 1, y: 1}
+];
+let data = {                 // An object with 2 properties
+    trial1: [[1,2], [3,4]],  // The value of each property is an array.
+    trial2: [[2,3], [4,5]]   // The elements of the arrays are arrays.
+};
+#+END_SRC   
+
+   So up to now very similar syntax to Python.
+
+   
+*** Spreader Operator
+
+    The spread operator =...=, to include the elements of one array
+    within an array literal. I.e. it spreads the argument into your
+    array. See for instance the following:
+
+
+    #+BEGIN_SRC js 
+a = [1, 2, 3];
+b = [0, ...a, 4];  // b == [0, 1, 2, 3, 4]
+
+// vs
+
+b = [0, a, 4] // // b == [0, [1, 2, 3], 4]
+    #+END_SRC
+
+    Notice that the operator can also be used to quickly create a copy
+    of an object
+
+    #+BEGIN_SRC js 
+let original = [1,2,3];
+let copy = [...original];
+copy[0] = 0;  // Modifying the copy does not change the original
+original[0]   // => 1
+    #+END_SRC
+
+    Note moreover that the spread operator does not just work with
+    arrays but rather with any iterable object. To understand this
+    consider
+
+    #+BEGIN_SRC js 
+let digits = [..."0123456789ABCDEF"];
+digits // => ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"]
+    #+END_SRC
+
+    
+*** Array Extension
+
+    This corresponds to the =[].extend()= method in Python.
+
+    In JavaScript it is the =[].push()= method.
+
+    #+BEGIN_SRC js 
+a = []
+a.push("a", "b", "c") // without assignment; returns 3
+a // notice that it was updated. Returns [ 'a', 'b', 'c' ]
+    #+END_SRC
+
+    For deleting simply use the =delete= command
+
+    #+BEGIN_SRC js 
+delete a[0]
+
+a // => [ <1 empty item>, 'b', 'c' ]; length still 3.
+    #+END_SRC
+
+*** forEach
+
+    It is the lambda functions and the =apply= logic in Python/R.
+
+    I.e. it is an array method that offers a functional approach to
+    array iteration.
+
+    #+BEGIN_SRC js 
+// Example
+let letters = [..."Hello world"];  // An array of letters
+
+let uppercase = "";
+letters.forEach(letter => {  // Note arrow function syntax here,
+			     // i.e. input letter maps to ... Note
+			     // that the input is given by the forEach
+			     // method
+    uppercase += letter.toUpperCase();
+});
+uppercase  // => "HELLO WORLD"
+
+// Example 2
+
+let data = [1,2,3,4,5], sum = 0;
+// Compute the sum of the elements of the array
+data.forEach(value => { sum += value; });          // sum == 15
+    #+END_SRC
+
+*** Map
+
+    That is the same as the map method in python. It passes each
+    element of the array on which it is invoked to the function you
+    specify.
+
+    #+BEGIN_SRC js 
+// Example
+a = [1, 2, 3];
+a.map(x => x*x)   // => [1, 4, 9]: the function takes input x and returns x*x
+
+
+// so that is ultimately similar in funcition to the forEach method
+// see for instance
+bx = []; a.forEach(x => {bx.push(x*x)})
+
+bx // => [1, 4, 9]
+    #+END_SRC
+
+*** Filter
+
+    Filter is also very intuitive and similar to the one you use in
+    python
+
+    #+BEGIN_SRC js 
+let a = [5, 4, 3, 2, 1];
+// note that you pass a function that should return either true or false, so a boolean
+a.filter(x => x < 3)         // => [2, 1]; values less than 3
+
+// note that here the i is the index.
+a.filter((x,i) => i%2 === 0) // => [5, 3, 1]; every other value
+
+// in order to see this check the following
+bx = []; a.map((x,i) => bx.push(i))
+bx // => [ 0, 1, 2, 3, 4 ]
+    #+END_SRC
+
+
+    To skip missing values in a sparse array you can also use the
+    =filter= command, filtering out all of the empty entries
+
+#+BEGIN_SRC js 
+let sparse = [1,,,,4]
+
+bx = sparse.filter(() => true)
+
+bx // => [1, 4]
+#+END_SRC
+    
+*** Find & Findindex
+
+    The find() and findIndex() methods are like filter() in that they
+    iterate through your array looking for elements for which your
+    predicate function returns a truthy value. Unlike filter(),
+    however, these two methods *stop iterating the first time the
+    predicate finds an element*.
+
+    #+BEGIN_SRC js 
+let a = [1,2,3,4,5];
+a.findIndex(x => x === 3)  // => 2; the value 3 appears at index 2
+a.findIndex(x => x < 0)    // => -1; no negative numbers in the array
+a.find(x => x % 5 === 0)   // => 5: this is a multiple of 5
+a.find(x => x % 7 === 0)   // => undefined: no multiples of 7 in the array
+    #+END_SRC
+
+    
+*** Every and Some
+
+    The =every()= and =some()= methods are array predicates: they
+    apply a predicate function you specify to the elements of the
+    array, then return true or false.
+
+    =every()= returns true if the condition holds for all of the
+    values.
+
+    =some()= returns true if just for at least 1 value the condition
+    holds true.
+
+    #+BEGIN_SRC js 
+// every
+let a = [1,2,3,4,5];
+a.every(x => x < 10)      // => true: all values are < 10.
+a.every(x => x % 2 === 0) // => false: not all values are even.
+
+// some
+let a = [1,2,3,4,5];
+a.some(x => x%2===0)  // => true; a has some even numbers.
+a.some(isNaN)         // => false; a has no non-numbers.
+    #+END_SRC
+
+
+*** Reduce
+
+    Here again is the same as in python and together with map you are
+    back to your favourite Map-Reduce framework.
+
+    #+BEGIN_SRC js 
+let a = [1,2,3,4,5];
+a.reduce((x,y) => x+y, 0)          // => 15; the sum of the values
+a.reduce((x,y) => x*y, 1)          // => 120; the product of the values
+a.reduce((x,y) => (x > y) ? x : y) // => 5; the largest of the values
+
+// recall thatt the paradigm is to combine two sequentially.
+
+// note the syntax! the 0 and 1 after the comma above are the
+// initializers values. The first argument is the accumulated result
+// of the reduction so far.  On the first call to the function, this
+// first argument is the initial value you passed as the second
+// argument to reduce(). On subsequent calls, it is the value returned
+// by the previous invocation of the function.
+
+// Note that in the third example above there is no intializer.  When
+// you invoke reduce() like this with no initial value, it uses the
+// first element of the array as the initial value.
+    #+END_SRC
+
+*** Flat
+
+    In ES2019, the =flat()= method creates and returns a new array that
+    contains the same elements as the array it is called on, except
+    that any elements that are themselves arrays are “flattened” into
+    the returned array. For example:
+
+    #+BEGIN_SRC js 
+[1, [2, 3]].flat()    // => [1, 2, 3]
+[1, [2, [3]]].flat()  // => [1, 2, [3]]
+
+// and note moreover
+
+let a = [1, [2, [3, [4]]]];
+a.flat(1)   // => [1, 2, [3, [4]]]
+a.flat(2)   // => [1, 2, 3, [4]]
+a.flat(3)   // => [1, 2, 3, 4]
+a.flat(4)   // => [1, 2, 3, 4]
+    #+END_SRC
+
+    
+*** Flatmap
+
+    Just works like the =flat()= function combining with a =map()=
+    part.
+
+    #+BEGIN_SRC js 
+let phrases = ["hello world", "the definitive guide"];
+let words = phrases.flatMap(phrase => phrase.split(" "));
+words // => ["hello", "world", "the", "definitive", "guide"];
+    #+END_SRC
+        
+** Shorthand Arithmetics
+
+   #+BEGIN_SRC js 
+// JavaScript defines some shorthand arithmetic operators
+let count = 0;             // Define a variable
+count++;                   // Increment the variable. Weird for some
+			   // reason it returns the number before in
+			   // the REPL.
+count--;                   // Decrement the variable
+count += 2;                // Add 2: same as count = count + 2;
+count *= 3;                // Multiply by 3: same as count = count * 3;
+count                      // => 6: variable names are expressions, too.
+   #+END_SRC
+
+   
+** Shorthand Declaration
+
+   #+BEGIN_SRC js 
+let [x,y] = [1,2];  // Same as let x=1, y=2
+[x,y] = [x+1,y+1];  // Same as x = x + 1, y = y + 1
+[x,y] = [y,x];      // Swap the value of the two variables
+[x,y]               // => [3,2]: the incremented and swapped values
+   #+END_SRC
+
+
+** Equality and Logical Operators
+
+   Notice that in contrast to python here equality (strict equality
+   without conversion) is expressed by triple /===/.
+
+   #+BEGIN_SRC js 
+x = 2; let y = 3;          // These = signs are assignment, not equality tests
+x === y;                   // => false: equality ;; notice that does
+			   // not type conversion.
+   #+END_SRC
+
+   For the logical operators it hold
+
+   #+BEGIN_SRC js 
+// Logical operators combine or invert boolean values
+(x === 2) && (y === 3)     // => true: both comparisons are true. && is AND
+(x > 3) || (y < 3)         // => false: neither comparison is true. || is OR
+!(x === y)                 // => true: ! inverts a boolean value
+   #+END_SRC
+
+
+   Notice that in Javascript there is also the usual equality. This is
+   the /==/ operator.
+
+   The “strict equality operator,” /===/, does not consider its operands
+   to be equal if they are not of the same type, and this is almost
+   always the right operator to use when coding. But because
+   JavaScript is so flexible with type conversions, it also defines
+   the /==/ operator with a flexible definition of equality. All of the
+   following comparisons are true, for example:
+
+   #+BEGIN_SRC js 
+null == undefined // => true: These two values are treated as equal.
+"0" == 0          // => true: String converts to a number before comparing.
+0 == false        // => true: Boolean converts to number before comparing.
+"0" == false      // => true: Both operands convert to 0 before comparing!
+   #+END_SRC
+
+
+** Casting
+   
+   In contrast to this you can work with explicit conversions directly
+
+   #+BEGIN_SRC js 
+Number("3")    // => 3
+String(false)  // => "false":  Or use false.toString()
+Boolean([])    // => true
+   #+END_SRC
+
+   Other more fancy conversion styles include
+
+   #+BEGIN_SRC js
+x = 3
+x + ""   // => String(x)
++x       // => Number(x); i.e. back to a numeric variable
+   #+END_SRC
+
+   
+** Functions Syntax
+
+   #+BEGIN_SRC js 
+let square = function(x) { // Functions are values and can be assigned to vars
+    return x * x;          // Compute the function's value
+};                         // Semicolon marks the end of the assignment.
+
+square(y)                  // => 9: invoke the function above
+   #+END_SRC
+
+   There is also a shorthand notation for defining functions. Think of
+   it as a lambda function in python.
+
+   #+BEGIN_SRC js 
+const square = x => x * x;  // The input x maps to the output x * x
+
+square(4)                   // => 16
+   #+END_SRC
+
+
+   
+** Methods
+
+   When functions are assigned to the properties of an object, we call
+   them "methods." Notice that in javascript it is not necessary to go
+   as far as OOP to specifiy methods. Note that this is quite a cool
+   feature of Javascript that is not shared with Python.
+
+   All JavaScript objects (including arrays) have methods:
+   
+   #+BEGIN_SRC js 
+let a = [];                // Create an empty array
+a.push(1,2,3);             // The push() method adds elements to an array
+a.reverse();               // Another method: reverse the order of elements
+   #+END_SRC
+
+   We can define our own methods, too.
+
+   The "this" keyword refers to the object on which the method is
+   defined: in this case, the points array from earlier. I.e. the
+   points object we previously defined.
+   
+#+BEGIN_SRC js 
+points.dist = function() { // Define a method to compute distance between points
+    let p1 = this[0];      // First element of array we're invoked on
+    let p2 = this[1];      // Second element of the "this" object
+    let a = p2.x-p1.x;     // Difference in x coordinates
+    let b = p2.y-p1.y;     // Difference in y coordinates
+    return Math.sqrt(a*a + // The Pythagorean theorem
+                     b*b); // Math.sqrt() computes the square root
+};
+points.dist()              // => Math.sqrt(2): distance between our 2 points
+#+END_SRC
+
+
+** Flow control in Javascript
+
+   Just notice the syntax
+
+   #+BEGIN_SRC js 
+function abs(x) {          // A function to compute the absolute value.
+    if (x >= 0) {          // The if statement...
+        return x;          // executes this code if the comparison is true.
+    }                      // This is the end of the if clause.
+    else {                 // The optional else clause executes its code if
+        return -x;         // the comparison is false.
+    }                      // Curly braces optional when 1 statement per clause.
+}                          // Note return statements nested inside if/else.
+abs(-10) === abs(10)       // => true
+
+function sum(array) {      // Compute the sum of the elements of an array
+    let sum = 0;           // Start with an initial sum of 0.
+    for(let x of array) {  // Loop over array, assigning each element to x. Same as =for i in array= in Python.
+        sum += x;          // Add the element value to the sum.
+    }                      // This is the end of the loop.
+    return sum;            // Return the sum.
+}
+sum(primes)                // => 28: sum of the first 5 primes 2+3+5+7+11
+
+function factorial(n) {    // A function to compute factorials
+    let product = 1;       // Start with a product of 1
+    while(n > 1) {         // Repeat statements in {} while expr in () is true
+        product *= n;      // Shortcut for product = product * n;
+        n--;               // Shortcut for n = n - 1
+    }                      // End of loop
+    return product;        // Return the product
+}
+factorial(4)               // => 24: 1*4*3*2
+
+function factorial2(n) {   // Another version using a different loop
+    let i, product = 1;    // Start with 1
+    for(i=2; i <= n; i++)  // Automatically increment i from 2 up to n
+        product *= i;      // Do this each time. {} not needed for 1-line loops
+    return product;        // Return the factorial
+}
+factorial2(5)              // => 120: 1*2*3*4*5
+   #+END_SRC
+
+*** On Using Const in Loops
+
+    This is handy and it is a further guarantee that you will not mess
+    up with the variable when looping.
+
+    It may seem surprising, but you can also use const to declare the
+    loop “variables” for for/in and for/of loops, as long as the body
+    of the loop does not reassign a new value. In this case, the const
+    declaration is just saying that the value is *constant for the
+    duration of one loop iteration*:
+
+    #+BEGIN_SRC js
+    // Example
+    for(const datum of data) console.log(datum);
+    for(const property in object) console.log(property);
+    #+END_SRC
+
+*** For/in loops
+
+A for/in loop looks a lot like a for/of loop, with the of keyword
+changed to in. While a for/of loop requires an iterable object after
+the of, a for/in loop works with any object after the in.
+
+    #+BEGIN_SRC js 
+let o = { x: 1, y: 2, z: 3 };
+
+for(let element in o) { // Throws TypeError because o is not iterable
+    console.log(element); 
+} // =>  : x : y : z
+    #+END_SRC
+
+*** Jumps
+
+    Notice that you can *name* statements in Javascript. That is
+    quite a cool and particular characteristic.
+
+    You can then use the classical =continue=, =break= statements
+    etc.
+
+    Think for instance to the following example
+
+#+BEGIN_SRC js 
+mainloop: while(token !== null) {
+    // Code omitted...
+    continue mainloop;  // Jump to the next iteration of the named loop
+    // More code omitted...
+}
+#+END_SRC
+
+    You need the labeled form of the jump statement when you want to
+    break out of a statement that is not the nearest enclosing loop.
+
+
+** Conditional Property Access
+
+    Note that *ES2020* (check well and be sure you have it) adds two
+    new kinds of property access expressions:
+
+    #+BEGIN_SRC js 
+    expression?.identifier
+
+     // and
+
+     expression?.[expression]
+    #+END_SRC
+    
+    In JavaScript, the values null and undefined are the only two values
+    that do not have properties. In a regular property access expression
+    using . or [], you get a TypeError if the expression on the left
+    evaluates to null or undefined. You can use =?.= and =?.[]= syntax to
+    guard against errors of this type.
+
+    #+BEGIN_SRC js
+// example
+let a = { b: null };
+a.b?.c.d   // => undefined
+    #+END_SRC
+
+    #+RESULTS:
+    : undefined
+
+    Note that this might be handy for having shortcut notation when
+    using *optional functions*. Think for instance to the following
+    situation:
+
+#+BEGIN_SRC js 
+function square(x, log) { // The second argument is an optional function
+    if (log) {            // If the optional function is passed
+        log(x);           // Invoke it
+    }
+    return x * x;         // Return the square of the argument
+}
+
+// skip the invocation next
+function square(x, log) { // The second argument is an optional function
+    log?.(x);             // Call the function if there is one
+    return x * x;         // Return the square of the argument
+}
+#+END_SRC
+
+     I.e. the above is handy if you want to use conditional variables
+     representing functions.
+
+     Note, however, that ?.() only checks whether the lefthand side is
+     null or undefined. It *does not verify that the value is actually
+     a function*. So the square() function in this example would still
+     throw an exception if you passed two numbers to it, for example.
+
+     Note moreover that the conditional invocation is
+     short-circuiting, that is:
+
+     #+BEGIN_SRC js 
+let f = null, x = 0;
+try {
+    f(x++); // Throws TypeError because f is null
+} catch(e) {
+    x       // => 1: x gets incremented before the exception is thrown
+}
+f?.(x++)    // => undefined: f is null, but no exception thrown
+x           // => 1: increment is skipped because of short-circuiting
+     #+END_SRC
+
+     #+RESULTS:
+
+     Conditional invocation expressions with ?.() *work just as well
+     for methods as they do for functions*.
+     
+
+** Variables Scope    
+
+    The scope of a variable is the region of your program source code in
+    which it is defined. Variables and constants declared with let and
+    const are block scoped. This means that they are only defined within
+    the block of code in which the let or const statement
+    appears.
+
+    JavaScript class and function definitions are blocks, and so are the
+    bodies of if/else statements, while loops, for loops, and so on.
+
+    Roughly speaking, if a variable or constant is declared within a set
+    of curly braces, then those curly braces delimit the region of code in
+    which the variable or constant is defined.
+
+    When a declaration appears at the top level, outside of any code
+    blocks, we say it is a global variable or constant and has global
+    scope.
+
+    In =Node= and in client-side JavaScript modules (see Chapter
+    10), the scope of a global variable is the *file that it is defined
+    in*.
+
+    In traditional client-side JavaScript, however, the scope of a
+    global variable is the *HTML document* in which it is defined. That
+    is: if one <script> declares a global variable or constant, that
+    variable or constant is defined in all of the <script> elements in
+    that document (or at least all of the scripts that execute after
+    the let or const statement executes).
+
+*** Warning BAD PRACTICE
+
+    It is a syntax error to use the *same name* with more than one let
+    or const declaration *in the same scope*. It is legal (though a
+    practice best avoided) to declare a new variable with the same
+    name in a nested scope:
+
+    #+BEGIN_SRC js 
+const x = 1;        // Declare x as a global constant
+if (x === 1) {
+    let x = 2;      // Inside a block x can refer to a different value
+    console.log(x); // Prints 2
+}
+console.log(x);     // Prints 1: we're back in the global scope now
+let x = 3;          // ERROR! Syntax error trying to re-declare x
+    #+END_SRC
+   
+
+** Var vs Let - Warning quite Different
+
+    Variables declared with var *do not have block scope*. Instead, they
+    are scoped to the body of the containing function no matter how
+    deeply nested they are inside that function.
+
+    If you use var outside of a function body, it declares a global
+    variable. But global variables declared with var differ from
+    globals declared with let in an important way. Globals declared
+    with var are implemented as properties of the global object
+    (§3.7). The global object can be referenced as globalThis.
+
+    So if you write var x = 2; outside of a function, it is like you
+    wrote globalThis.x = 2;
+
+    Unlike variables declared with let, it is *legal to declare the
+    same variable multiple times with var*. I.e. =let= one time and
+    that was it.
+
+    One of the most unusual features of var declarations is known as
+    =hoisting=. When a variable is declared with var, the declaration is
+    /lifted up (or “hoisted”) to the top of the enclosing function/. The
+    initialization of the variable remains where you wrote it, but the
+    definition of the variable moves to the top of the function.
+
+
+    
+** The /in/ operator
+
+   Understand the following concepts
+
+   #+BEGIN_SRC js 
+let point = {x: 1, y: 1};  // Define an object
+"x" in point               // => true: object has property named "x"
+"z" in point               // => false: object has no "z" property.
+"toString" in point        // => true: object inherits toString method
+
+let data = [7,8,9];        // An array with elements (indices) 0, 1, and 2
+"0" in data                // => true: array has an element "0"
+1 in data                  // => true: numbers are converted to strings
+3 in data                  // => false: no element 3
+   #+END_SRC
+
+
+** Instanceof
+
+   The instanceof operator expects a left-side operand that is an
+   *object* and a right-side operand that identifies a *class* of
+   objects.
+
+   Some examples in this sense are:
+
+   #+BEGIN_SRC js 
+let d = new Date();  // Create a new object with the Date() constructor
+d instanceof Date    // => true: d was created with Date()
+d instanceof Object  // => true: all objects are instances of Object
+d instanceof Number  // => false: d is not a Number object
+let a = [1, 2, 3];   // Create an array with array literal syntax
+a instanceof Array   // => true: a is an array
+a instanceof Object  // => true: all arrays are objects
+a instanceof RegExp  // => false: arrays are not regular expressions
+   #+END_SRC
+
+
+** Logical OR
+
+   Note the following usage of the OR operator =||=. Note that this is
+   quite funny. You can avoid with it lengthy conditional statements.
+
+   Should try to check also in Python how it looks with it.
+
+   #+BEGIN_SRC js 
+// If maxWidth is truthy, use that. Otherwise, look for a value in
+// the preferences object. If that is not truthy, use a hardcoded constant.
+let max = maxWidth || preferences.maxWidth || 500;
+   #+END_SRC
+
+   
+** The /eval/ command
+
+   Note, this is another funny one. It says that it is common to many
+   interpreted languages. You should check if this is the case in
+   python as it might be handy as you might have the argument coming
+   as a string in a loop that you can pass to a function in such a way
+   using and =f-string=.
+
+   #+BEGIN_SRC js 
+// example 1
+x = 4;
+eval("x"); // => 4
+
+// example 2
+function f(x){return x * 2};
+eval("f(4)"); // => 8
+   #+END_SRC
+
+   
+** Quick Intro to OOP in JavaScript
+
+   #+BEGIN_SRC js 
+class Point {              // By convention, class names are capitalized.
+
+    // Notice the constructor below corresponds to the __init__ in python.
+    
+    constructor(x, y) {    // Constructor function to initialize new instances.
+        this.x = x;        // This keyword is the new object being initialized.
+        this.y = y;        // Store function arguments as object properties.
+    }                      // No return is necessary in constructor functions.
+
+    // Class Method 
+    distance() {           // Method to compute distance from origin to point.
+        return Math.sqrt(  // Return the square root of x² + y².
+            this.x * this.x +  // this refers to the Point object on which
+            this.y * this.y    // the distance method is invoked.
+        );
+    }
+}
+
+// Use the Point() constructor function with "new" to create Point objects
+let p = new Point(1, 1);   // The geometric point (1,1).
+
+// Now use a method of the Point object p
+p.distance()               // => Math.SQRT2
+   #+END_SRC
+
+   #+RESULTS:
+
+   *Note:* Technically, it is only JavaScript objects that have
+   methods. But numbers, strings, boolean, and symbol values behave as
+   if they have methods. In JavaScript, null and undefined are the
+   only values that methods cannot be invoked on.
+
+   
+** Multiline Comments
+
+#+BEGIN_SRC js 
+/*
+ * This is a multi-line comment. The extra * characters at the start of
+ * each line are not a required part of the syntax; they just look cool!
+ */
+#+END_SRC   
+
+
+** Constants
+
+   #+BEGIN_SRC js 
+const xx = 3;
+
+xx = 4  // will throw an error. constants are ment to stay
+	// constant. Nice feature missing from python
+   #+END_SRC
+
+   
+** Strings
+
+   Note that strings are *immutable*. They are primitives
+
+   #+BEGIN_SRC js 
+   miele =  'miele'
+   miele                  // => miele
+
+   miele[0]               // => m
+
+   miele[0] = 'r'         // does not throw an error but does not
+			  // update because of immutabilitiy.
+
+   miele                  // => miele
+
+   // Nonetheless you can change the entire string
+
+   miele = "latte"
+
+   miele                 // => latte
+
+   // Another example
+   let s = "hello";
+   s.toUpperCase();   // Returns "HELLO", but doesn't alter s
+   s                  // => "hello": the original string has not changed
+
+   // so you can use the above and assign it to a new variable
+   let s1 = s.toUpperCase();
+   s1                 // => "HELLO"
+   #+END_SRC
+
+   Note the possible syntax
+
+   #+BEGIN_SRC js 
+   // A string representing 2 lines written on one line:
+   'two\nlines'
+
+   // A one-line string written on 3 lines:
+   "one\
+    long\
+    line"
+
+   // A two-line string written on two lines:
+   `the newline character at the end of this line
+   is included literally in this string`
+   #+END_SRC
+
+
+   On math operators in strings. Same as python.
+
+   #+BEGIN_SRC js 
+   let msg = "Hello, " + "world";   // Produces the string "Hello, world"
+
+   let name = 'Marco'
+
+   let greeting = "Welcome to my blog," + " " + name;
+   #+END_SRC
+
+   Standard string methods
+
+   #+BEGIN_SRC js 
+let s = "Hello, world"; // Start with some text.
+
+// Obtaining portions of a string
+s.substring(1,4)        // => "ell": the 2nd, 3rd, and 4th characters.
+s.slice(1,4)            // => "ell": same thing
+s.slice(-3)             // => "rld": last 3 characters
+s.split(", ")           // => ["Hello", "world"]: split at delimiter string
+
+// Searching a string
+s.indexOf("l")          // => 2: position of first letter l
+s.indexOf("l", 3)       // => 3: position of first "l" at or after 3
+s.indexOf("zz")         // => -1: s does not include the substring "zz"
+s.lastIndexOf("l")      // => 10: position of last letter l
+
+// Boolean searching functions in ES6 and later
+s.startsWith("Hell")    // => true: the string starts with these
+s.endsWith("!")         // => false: s does not end with that
+s.includes("or")        // => true: s includes substring "or"
+
+// Creating modified versions of a string
+s.replace("llo", "ya")  // => "Heya, world"
+s.toLowerCase()         // => "hello, world"
+s.toUpperCase()         // => "HELLO, WORLD"
+s.normalize()           // Unicode NFC normalization: ES6
+s.normalize("NFD")      // NFD normalization. Also "NFKC", "NFKD"
+
+// Inspecting individual (16-bit) characters of a string
+s.charAt(0)             // => "H": the first character
+s.charAt(s.length-1)    // => "d": the last character
+s.charCodeAt(0)         // => 72: 16-bit number at the specified position
+s.codePointAt(0)        // => 72: ES6, works for codepoints > 16 bits
+
+// String padding functions in ES2017
+"x".padStart(3)         // => "  x": add spaces on the left to a length of 3
+"x".padEnd(3)           // => "x  ": add spaces on the right to a length of 3
+"x".padStart(3, "*")    // => "**x": add stars on the left to a length of 3
+"x".padEnd(3, "-")      // => "x--": add dashes on the right to a length of 3
+
+// Space trimming functions. trim() is ES5; others ES2019
+" test ".trim()         // => "test": remove spaces at start and end
+" test ".trimStart()    // => "test ": remove spaces on left. Also trimLeft
+" test ".trimEnd()      // => " test": remove spaces at right. Also trimRight
+
+// Miscellaneous string methods
+s.concat("!")           // => "Hello, world!": just use + operator instead
+"<>".repeat(5)          // => "<><><><><>": concatenate n copies. ES6
+   #+END_SRC
+
+   F-strings equivalent
+
+   #+BEGIN_SRC js 
+ name = "Marco";
+
+ // Note the special ` marks. With normal " it will not work.
+ greeting = `Hello ${ name }.`;  // greeting == "Hello Bill."
+
+ // Everything between ${ and the matching } is interpreted as a JavaScript expression.
+   #+END_SRC
+   
+
+** Null and Undefined
+
+=null= is a language keyword that evaluates to a special value that is
+usually used to indicate the absence of a value. Using the typeof
+operator on null returns the string “object”, indicating that null can
+be thought of as a special object value that indicates “no object”. In
+practice, however, null is typically regarded as the sole member of
+its own type, and it can be used to indicate “no value” for numbers
+and strings as well as objects. Most programming languages have an
+equivalent to JavaScript’s null: you may be familiar with it as NULL,
+nil, or None.
+
+JavaScript also has a second value that indicates absence of
+value. The =undefined= value represents a deeper kind of absence. It is
+the value of variables that have not been initialized and the value
+you get when you query the value of an object property or array
+element that does not exist. If you apply the typeof operator to the
+undefined value, it returns “undefined”, indicating that this value is
+the sole member of a special type.
+
+
+** Infinity, NaN and other numerical values
+
+   #+BEGIN_SRC js 
+  Infinity
+
+
+  NaN
+
+  Infinity/Infinity // => NaN
+
+  -1/Infinity // => -0; i.e. negative 0. Funny notion. Like limit.
+
+   -0 === 0 // => true; they are equal
+
+
+   // The following Number properties are defined in ES6. Note, Number is built-in
+   Number.parseInt()       // Same as the global parseInt() function
+   Number.parseFloat()     // Same as the global parseFloat() function
+   Number.isNaN(x)         // Is x the NaN value?
+   Number.isFinite(x)      // Is x a number and finite?
+   Number.isInteger(x)     // Is x an integer?
+   Number.isSafeInteger(x) // Is x an integer -(2**53) < x < 2**53?
+   Number.MIN_SAFE_INTEGER // => -(2**53 - 1)
+   Number.MAX_SAFE_INTEGER // => 2**53 - 1
+   Number.EPSILON          // => 2**-52: smallest difference between numbers
+   #+END_SRC
+
+   
+
+** Regex
+
+   Notice the following interesting fact. When searching for Regex you
+   do not do it through a package. You do it by *declaring* a
+   variable with your regex expression. This will be interpreted as
+   some object. It is in fact a datatype known as RegExp and it has
+   several *methods* associated with it to deal with regexp stories.
+
+#+BEGIN_SRC js 
+let text = "testing: 1, 2, 3";   // Sample text
+
+// See below how you define your regexp variable
+let pattern = /\d+/g;            // Matches all instances of one or more digits
+
+// Some methods associated to the object.
+pattern.test(text)               // => true: a match exists
+
+// Some methods associated with the string object
+text.search(pattern)             // => 9: position of first match
+text.match(pattern)              // => ["1", "2", "3"]: array of all matches
+text.replace(pattern, "#")       // => "testing: #, #, #"
+text.split(/\D+/)                // => ["","1","2","3"]: split on nondigits
+#+END_SRC
+
+
+** Throwing Errors
+
+   Similar to python you throw exceptions and specify errors using the
+   =throw command=.
+
+#+BEGIN_SRC js 
+throw expression;
+#+END_SRC
+   
+   Note that theoretically expression, may evaluate to any
+   expression. I.e. you might throw a number that represents an error
+   code or a string that contains a human-readable error message. 
+
+   That being said, the =Error class= and its subclasses are used when
+   the JavaScript interpreter itself throws an error, and you can use
+   them as well. This is what usually makes the most sense.
+
+   A concrete example is the following
+
+#+BEGIN_SRC js 
+function factorial(x) {
+    // If the input argument is invalid, throw an exception!
+    if (x < 0) throw new Error("x must not be negative");
+    // Otherwise, compute a value and return normally
+    let f;
+    for(f = 1; x > 1; f *= x, x--) /* empty */ ;
+    return f;
+}
+factorial(4)   // => 24
+#+END_SRC
+
+   When an exception is thrown, the JavaScript interpreter immediately
+   stops normal program execution and jumps to the nearest exception
+   handler. Exception handlers are written using the catch clause of
+   the *try/catch/finally* statement. These operates in the same way
+   as Python.
+
+   
+** with Statements
+
+   The =with= statement runs a block of code as if the properties of a
+   specified object were variables in scope for that code
+
+   Example if you need to write expressions like this a number of
+   times, you can use the with statement to treat the properties of
+   the form object like variables:
+
+#+BEGIN_SRC js 
+let f = document.forms[0];
+f.name.value = "";
+f.address.value = "";
+f.email.value = "";
+
+// vs.
+
+with(document.forms[0]) {
+    // Access form elements directly here. For example:
+    name.value = "";
+    address.value = "";
+    email.value = "";
+}
+#+END_SRC
+
+
+** Peculiarities of JavaScript
+
+   JavaScript differs from more static languages in that functions and
+   classes are not just part of the language syntax: they are
+   /themselves values that can be manipulated by JavaScript programs/.
+
+   Like any JavaScript value that is not a primitive value, functions
+   and classes are a *specialized kind of object*.
+
+   The JavaScript interpreter performs *automatic garbage collection*
+   for memory management. This means that a JavaScript programmer
+   generally does not need to worry about destruction or deallocation
+   of objects or other values.
+
+   
+
+
+
+
+
+
+
+
+* Asynchronous Javascript
+:properties:
+:header-args:sh: :session "*Javascript REPL*" :results output
+:header-args:js: :session "*Javascript REPL*" :results silent
+:end:
+
+
+This is in fact the most interesting property of JavaScript. Here is
+where it takes a clear edge over python for the backend development. 
+
+I.e. the asynchronous execution allows you a degree of flexibility
+that is not possible in other languages. 
+
+To understand asynchronous JavaScript understand the following
+video. This makes the point ultra-well. It is a bit focused on the
+browser side of JavaScript but it makes the point.
+
+I have to still write down promises, subscribe etc... syntax. This is
+however syntax. I will keep it to the moment where I will start
+working in javascript projects. To this stage just watch the video and
+understand the logic. Pretty clear the idea.
+
+ #+Begin_export html
+<style>
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+<div class="container"> 
+  <iframe class="responsive-iframe" src="https://www.youtube.com/embed/8aGhZQkoFbQ" frameborder="0" allowfullscreen;> </iframe>
+</div>
+ #+end_export
+
+
+* Angular
+
+   Here some notes on Angular. I did not read any book or worked in a
+   structured way. It is more jump into the project and make your way
+   through. 
+  
+   So don't take at golden what is written here. You can probably find
+   much better notes and explanations. 
+
+   Basically the structure of Angular consists of the following,
+   where components and services are the building blocks:
+
+   - you call components in html pages and call the functions of the
+     components from there. components also define html tags that
+     perform given functionalities.
+
+   - in the =<name>.components.ts= you write in typescript the
+     functions of interest and eventually load and call services
+     functions. you import the services at the beginning of your
+     component files as you would import python modules. html tags for
+     the component exists then generally via the
+     =<app-component_name>=.
+
+   - services implement functions that can be called from components
+     but are unrelated from html and get not embedded in there.
+
+   - an =app.component= part, which consists of:
+
+     + =app.component.html= this is the root governing html calls all
+       of the routes to the other components via <router-outlet> 
+
+     + =app.component.ts= this just refers to the component html and
+       css as it is a component itself. 
+
+     + =app-routing.module.ts= specifies all of the routes to the
+       other compoents and the website *routes* associated with it.
+
+     + Example of component syntax in the =app.component.ts= file
+       where you actually specify the component
+
+       #+begin_src js
+     @Component({
+		 selector: 'app-chat',
+		 templateUrl: './chat.component.html',
+		 styleUrls: ['./chat.component.css']
+	       })
+       #+end_src
+
+       Moreover you have some modules built-in angular. for instance
+       you work with ngOnInit() which is similar to the =__init__=
+       module in python that immediately runs when importing a
+       module. I.e. this makes specific API calls, loads variables
+       etc. when the component is first called.
+
+     + =app.module.ts= here you import all of the modules you will use
+       throughout your implementations. there are also maps to the
+       components you specify yourself. such maps and "syslinks" are
+       created automatically when creating a component via =ng
+       generate compoent= use such command therefore. 
+
+   - um ein neues component zu machen: ~ng generate component~
