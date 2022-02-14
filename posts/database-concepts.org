@@ -1,8 +1,8 @@
   #+BEGIN_COMMENT
 .. title: Database Concepts
 .. slug: database-concepts
-.. date: 2021-09-18 17:11:47 UTC+01:00
-.. tags: Data
+.. date: 2022-02-13 17:11:47 UTC+01:00
+.. tags: Data, Databases
 .. category: 
 .. link: 
 .. description: 
@@ -66,336 +66,63 @@ at a high level but he does it in a good way that I always enjoyed.
 
 {{{TEASER_END}}}
 
-* Datbase Partitioning
-
-  This sections notes are based on: [[https://www.digitalocean.com/community/tutorials/understanding-database-sharding][this]].
-
-  In the vertical partition you split by column. In horizontal you
-  have different tables with the same schema saved over different
-  instances. So your database is in fact distributed.
-
-#+begin_export html
- <img src="../../images/db_partitioning.png" class="center">
-#+end_export
-
-** Database Sharding
-
-   Basically as mentioned this is /horizontal partitioning/.
-
-   Database shards exemplify a shared-nothing architecture. This means
-   that the shards are autonomous; they don’t share any of the same data
-   or computing resources.
-
-   Oftentimes, sharding is implemented at the *application level*,
-   meaning that the application includes code that defines which shard
-   to transmit reads and writes to. However, some database management
-   systems have sharding capabilities built in, allowing you to
-   /implement sharding directly at the database level/.
-
-   Note the following *reasons for sharding*:
-
-   First and foremost you scale out with it. This is essentially the
-   idea of the Big Data frameworks that you saw in your multiple
-   classes at University time. 
-
-   #+begin_quote
-Another reason why some might choose a sharded database architecture
-is to *speed up query response times*. When you submit a query on a
-database that hasn’t been sharded, it may have to search every row in
-the table you’re querying before it can find the result set you’re
-looking for. For an application with a large, monolithic database,
-queries can become prohibitively slow. By sharding one table into
-multiple, though, queries have to go over fewer rows and their result
-sets are returned much more quickly.
-   #+end_quote
-
-   As a final reason the article mentions this one:
-
-   #+begin_quote
-Sharding can also help to make an application more reliable by
-mitigating the impact of outages. If your application or website
-relies on an unsharded database, an outage has the potential to make
-the entire application unavailable. With a sharded database, though,
-an outage is likely to affect only a single shard. Even though this
-might make some parts of the application or website unavailable to
-some users, the overall impact would still be less than if the entire
-database crashed.
-   #+end_quote
-
-   I mean to be honest I think there are more elegant solutions for
-   the above. It is a bit a forced point but I list it nonetheless in
-   here.
-
-   Note that there are as well quite some concepts as mentioned on the
-   referred source above that speaks counter the sharding idea.
-
-   Then for instance one classical sharding possibility is the
-   following:
-   
-#+begin_export html
- <img src="../../images/db_key_sharding.png" class="center">
-#+end_export
-
-   Note that the above is just one possibility among the many sharding
-   possibilities.
-   
-
-* Linked Servers
-
-  These enable you to implement distributed databases that can fetch
-  and update data in other databases.
-
-  They are for instance a good solution in the scenarios where you
-  need to implement database sharding without need to create a custom
-  application code or directly load from remote data sources.
-
-  So basically with them you can do the following:
-
-  - The ability to access data from outside of SQL Server
-
-  - The ability to issue distributed queries, updates, commands, and
-    transactions on heterogeneous data sources across the enterprise.
-
-    Think for instance again to the case of sharding. 
-
-  Note that the reason why we use this solution as a team is different
-  but this is another discussion I will not dig too much into.
-
-  Basically the way you implment this architecture is then the
-  following:
-
-  
-#+begin_export html
- <img src="../../images/linked_server.png" class="center">
-#+end_export
-  
-
-* Data Dictionary
-
-  A data dictionary, or metadata repository, as defined in the IBM
-  Dictionary of Computing, is a "centralized repository of information
-  about data such as meaning, relationships to other data, origin,
-  usage, and format".
-
-  The term can have one of several closely related meanings pertaining
-  to databases and database management systems (DBMS):
-
-  - A document describing a database or collection of databases
-
-  - An integral component of a DBMS that is required to determine its
-    structure
-
-  - A piece of middleware that extends or supplants the native data
-    dictionary of a DBMS. This is the one I am reffering to in my notes.
-
-
-* Table Views
-
-  This is a powerful concepts.
-
-  The wikipedia definition for it is sufficient to get a basic
-  understanding of what /views/ are:
-
-  #+begin_quote
-  A view is the result set of a stored query on the data, which the
-  database users can query just as they would in a persistent database
-  collection object.
-
-  This pre-established query command is kept in the database
-  dictionary.
-
-  Unlike ordinary base tables in a relational database, a view does
-  not form part of the physical schema: as a result set, *it is a
-  virtual table computed or collated dynamically* *from data in the
-  database when access to that view is requested*. Changes applied to
-  the data in a relevant underlying table are reflected in the data
-  shown in subsequent invocations of the view
-  #+end_quote
-
-  Views are helpful in the follwoing cases:
-
-  - can represent a subset of data. can be used for access
-    permissions. You expose a /view/ to some user without exposing the
-    entire database. 
-
-  - views can *join* and simplify *multiple tables* into a single
-    virtual table. (note that though the performance will likely still
-    suffer from the burden of computing the joins each time one of the
-    underlying queries changes)
-
-  - you can hide some complexity using views such that is useful for
-    some other person of your team to work with.
-
-  - views just take very little space to store. the DB just contains
-    the definiton of a view and not a copy of all the data that it
-    presents.
-
-  *Note* that in a similar way to the programming concepts you can
-  *nest* views such that you can /a view/ aggregating the information
-  from multiple views.
-
-
-  *Note a table is a set:* A view is a relational table, and the
-  relational model defines a table as a set of rows. Since sets are
-  not ordered — by definition — neither are the rows of a
-  view. Therefore, an ~ORDER BY~ clause in the view definition is
-  meaningless.
-
-
-* Stored Procedures  
-
-  So that is probably the big discussion in my larger team.
-
-  The question is if to keep the business logic into the application
-  code or into sql-queries.
-
-  I always embedded my business logic at the application layer
-  performing the necessary data withdrawl and transformation steps at
-  the application layer.
-
-  There is the tendency in my team to use a different approach and to
-  /store the business logic into stored procedures/. I am too fresh
-  into the entire systems of my team to take an informed about the
-  topic.
-
-  So develop on this and explore the topic further until you can take
-  an informed position about the topic.
-
-  Starting with the basic 15 min. research the following picture
-  emerge.
-
-  Stored procedures are essentially SQL statements that are saved in
-  the database /data dictionary/. You can pass parameters to your
-  stored procedures. Such parameters will be passed by the client
-  triggering a stored procedure. It is therefore possible to expose
-  some business logic in a flexible way through them. 
-
-  *Note* that they do not have to return a table (set of rows) or a
-  value as in the case of functions and there is in this sense a
-  difference between the two. You can for instance perform CRUD
-  operations via stored procedures.
-
-  Now the arguments that I am reading around in favour of stored
-  procedures are the following:
-  
-  1. It can be *easily modified*: We can easily modify the code inside
-     the stored procedure without the need to restart or deploying the
-     application. For example, if the SQL queries are written in the
-     application and if we need to change the logic, we must change
-     the code in the application and re-deploy it.
-
-     That is true for compiled languages and not for scripting
-     languages. There there is no big difference as I usually develop
-     keeping a runtime open where I do my on the fly development
-     running the application logic of interest.
-
-     Moreover, this sounds like a little benefit to justify the usage
-     of such stored procedures. 
-
-  2. *Reduceded Network Traffic*: A major advantage of stored
-     procedures is that they can run directly within the database
-     engine. They are in fact *stored on the DB* and from there the
-     database engine executes them.
-
-     In a production system, this typically means that the procedures
-     run entirely on a specialized database server, which has /direct
-     access to the data being accessed/. You just ship your parameters
-     and that is it. The benefit here is that network communication costs can be
-     avoided completely. *This becomes more important for complex
-     series of SQL statements*.
-
-     As if you have to traffic all of the SQL results back and
-     forth, make transformations and then run other queries based on
-     that you see that you quickly get a huge amount of traffic and
-     everything becomes messy.
-
-     /My Comment:/ I do see the argument. I am not sure that it is
-     really the definitive solution. As you are running SQL statements
-     theoretically you can ship the very same SQL statement via the
-     application and you can do that in 1 shot so if you structure
-     things properly you should be able to keep your network bandwidth
-     safe. 
-
-  3. *Centralized business logic*: this point follows directly from
-     the above. To see this consider the follwoing wording above:
-
-     /They are in fact *stored on the DB* and from there the database
-     engine executes them./
-
-     So this means that you have no chance of having a curropted
-     client-program logic that was not properly managed across your
-     software development teams. There is a single source of truth for
-     the business logic and that reside at the database location.
-
-     /My comment:/ The strongest argument for me. Probably the one and
-     only that makes really sense and the ultimate reason for stored
-     procedures.
-
-     /Note:/ I even read the following as advantage.
-
-     #+begin_quote
-     The database system can ensure data integrity and consistency
-     with the help of stored procedures.
-     #+end_quote
-
-     /My comment:/ I think that is very important. Would need some more detailed
-     explaination of how that would be exactly implemented to make
-     sense of it in a real way.
-
-  4. *Delegating access-rights*: In many systems, stored procedures can
-     be granted access rights to the database that users who execute
-     those procedures do not directly have.
-
-  5. *Performance:* Because stored procedure statements are stored
-     directly in the database, they may remove all or part of the
-     compiling overhead that is typically needed in situations where
-     software applications send inline (dynamic) SQL queries to a
-     database. (However, most database systems implement statement
-     caches and other methods to avoid repetitively compiling dynamic
-     SQL statements.) Also, while they avoid some pre-compiled SQL,
-     statements add to the complexity of creating an optimal execution
-     plan because not all arguments of the SQL statement are supplied
-     at compile time. Depending on the specific database
-     implementation and configuration, *mixed performance results will
-     be seen from stored procedures versus generic queries* or user
-     defined functions.
-
-  Note that there are important *disadvantages* as well.
-
-  1. Stored procedure languages are often vendor-specific. Changing
-     database vendors usually requires rewriting existing stored
-     procedures.
-
-     /My comment:/ interesting that they decided to go so heavily on
-     them. I think that the lock-up must not be extreme otherwise I
-     would not imagine them to rely so much on them.
-
-  2. Changes to stored procedures are harder to keep track of within a
-     version control system than other code.
-
-     /My comment:/ This is in fact what the team is complaining
-     about. There is a single individual that has a good overview of
-     them and all of the others are masked and if they want to dig
-     into it is annoying to start reading huge SQL statements that can
-     be hardly broken apart in which there are parameters embedded.
-
-  Note that it must be a thing in the DB world the one of working with
-  DBs.
-
-  I also heard talking about it in databricks sessions about a company
-  working with them before switching to databricks.
-
 
 * On the key refresher
 
   Recall the basics of relational databses. Nothing new but alternate
   keys. Did not recall that definition.
 
+** Superkey
+   
+   A subset of attributes /S/ is a superkey if - there is a functional
+   dependency among all of the other attributes in one table and the
+   subset of attributes: /S/.
+
+   A functional dependency is when the value of an attribute is fully
+   determined by another one.
+
+   Formally:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-02-10 162823.png" class="center">
+   #+end_export
+
+   i.e. two values of an attribute which is functionally dependent to
+   another are equal given that the attribute value which they are
+   dependent to are equal.
+
+** Candidate Key
+
+   A minimum Superkey.
+
+   You should reason in terms of candidate keys for your entire
+   universe.
+
+   Meaning it should hold *for all of the tables* in your DB.
+
+** Closure
+
+   Take a set of attributes /T/.
+
+   Then you can compute the closure of /T/ by listing all of the
+   attributes that are functionally determined by the set T.
+
+   Example with notation:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-02-10 164844.png" class="center">
+   #+end_export
+
+** Minimal Basis
+
+   Is the minimal set /R/ to get to a given closure /U/.
+
 ** Primary Key
   
    The *primary* key is the one that specifies the columns that make a
    row entry of the table uniquely identifiable.
 
+   Should be a candidate key.
 
 ** Foreign Key
    
@@ -418,7 +145,6 @@ database crashed.
    You can then see that you can implement some relational logic with
    the help of foreign keys. Note that /foreign keys/ /can/ but do not
    have to match existing /primary keys/.
-
    
 ** Alternate Key / Secondary Keys
 
@@ -433,9 +159,590 @@ database crashed.
 
    So basically with them you can as well identify unique entries in
    the table.
+
+** Primary Foreign Key
+
+   Primary Foreign Key (PFK) - key which acts as primary key in more
+   than one table which occurs in tables with an *identifying
+   relationship*[fn:1].
+
+* Database Design Theory
+
+  So now that I am starting to design some tables I indeed got back to
+  the good old  [[https://www.youtube.com/c/GhislainFournysLectures/playlists][good old Ghislain]].
+
+  Here some notes.
+  
+** Boyce-Codd Normal Form
+
+   Work in this way when designing your tables:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-02-10 171016.png" class="center">
+   #+end_export
+
+   Now note the very important bit of it - check at the video and
+   understand what you are loosing when designing your tables in this
+   way and what you are getting. Recall the *impossibility triangle*:
+
+      #+begin_export html
+   <div class="container"> 
+     <iframe class="responsive-iframe" src="https://www.youtube.com/embed/v=mCIs63sasH4&list=PLs5KPrcFtb0VaveUT-vsBswwl7RWvFeNf&index=22&t=1750s" frameborder="0" allowfullscreen;> </iframe>
+   </div>
+   #+end_export
+
+   Impossibility triangle:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-02-11 090858.png" class="center">
+   #+end_export
+
+   So note that with broken dependency we mean that when splitting up a
+   bigger table in order to follow the Boyce-Codd Normal Form we might
+   loose functional dependencies in the smaller projected tables.
+
+   Losslessjoin - means that if you join the smaller tables that are
+   in Boyce-Codd normal form, then if a record existed in the bigger
+   table it will also exist after joining the smaller tables. 
+
+** Parent-Child relations
+
+   It’s usually used to specify where one table’s value refers to the
+   value in another table (usually a primary key of another table). 
+
+   For example, imagine a news article. This could be represented by a
+   table called articles and has fields for id, headline, body,
+   published_date and author. But instead of placing a name in the
+   author field, you could instead put the ID value of a user in a
+   separate table—maybe called authors—that has information on authors
+   such as id, name, and email. 
+
+   Therefore, if you need to update an author’s name, you only need to
+   do so in the authors (parent) table; because the articles (child)
+   table only contains the ID of the corresponding author record.
+
+   So basically this is a basics principle.
+
+* Best practices of data modeling
+  
+  Start to work with sqlstyle-guides: [[https://www.sqlstyle.guide/][see link]].
+  
+** Naming conventions
+
+   - IDs should get an =_id= suffix, and primary keys should be called
+     $OBJECT_id (e.g., order_id, user_id, subscription_id,
+     order_item_name_id). 
+
+   - Timestamps should get an =_at= suffix and dates should get an
+     =_date= suffix (e.g., ordered_at or user_creation_date).
+
+   - Booleans should begin with =is_= or =has_= (e.g., is_canceled or
+     has_discounted_item).
+
+** Materialization
+
+   By "materialization" I mean (roughly) whether or not a given
+   relation is created as a table or as a view.
+
+   If you create the relation *as a table*, you precompute any
+   required calculations, which means that your users will see *faster
+   query response times*. If you leave the relation as a view, your
+   users will get more up-to-date data when they query, but response
+   times will be slower.
+   
+** Grain
+
+   The most important data modeling concept is the grain of a
+   relation. (I'm using the abstract term "relation" to refer
+   generically to tables or views.) The grain of the relation defines
+   what a single row represents in the relation.
+
+   So basically you are saying what a row is in the DB.
+
+   You should then call tables as the /pluralized version of the
+   grain/.
    
 
-* Some SQL Notes
+* Toad Data Modeler
+
+  So start by checking at [[https://help.natureserve.org/biotics/content/DataModel/DM_HowToRead_DataModel.htm][this url]].
+  
+** How to read a table in Toad
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-02-10 142848.png" class="center">
+   #+end_export
+
+   Note, especially interesting to me is the last column.
+
+   See there the references to [[*Alternate Key / Secondary Keys][Alternate Key / Secondary Keys]] and
+   Indices. 
+
+** Relations
+
+    Understand the following few concepts:
+
+    - =Identifying relations= vs. =Non-identifying relations=:
+
+      So this is strictly tight to the concept of /primary keys/ and
+      /primary foreign key/ - see [[*On the key refresher][On the key refresher]].
+
+      The basic idea is that for:
+
+      - for =identifying relations=
+
+	you have a primary foreign key relation among the tables. 
+
+      - for =non-identifying relations=
+
+	you have a primary key for each table and the two tables primary
+	keys are non-related.
+
+	However when creating the relation, the primary key of one
+        table usually becomes an entry - foreign key - of the other
+        table.
+
+
+    This is possibly the most important characteristic.
+
+    However, note that [[https://support.quest.com/technical-documents/toad-data-modeler/6.4/user-guide/25#TOPIC-918537][the following]] holds in general terms. Check at
+    it in order to properly define relations. 
+
+** Reverse Engineer with Toad
+
+   Check at [[https://blog.toadworld.com/toad-data-modeler-reverse-engineering-convert-model-wizards][this url]].
+
+   Understand that you might have to do it for some databases where no
+   proper schema was constructed in time.
+
+   Then you can start organizing the schema.
+   
+** Indexes and Constraints
+
+   So the part of indexes you can well understand given your recent
+   study of the relevant bit.
+
+   Note that the indexes mentioned are similar to the one mentioned on
+   the Microsoft SQL Server.
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-02-14 122328.png" class="center">
+   #+end_export
+
+   Note as well the possibility to impose constraints on your DB
+   tables.
+
+   That is of first-order importance and in such a way you can set in
+   the DB the relevant constraints instead of pushing them to the
+   application layer.
+
+   In order to implement such constraints the syntax is the following:
+
+   #+begin_src sql
+ CREATE TABLE table_name (
+    ...,
+    CONSTRAINT constraint_name CHECK ( predicate ),
+    ...
+ )
+
+
+--------------
+
+ ALTER TABLE table_name
+    ADD CONSTRAINT constraint_name CHECK ( predicate )
+   #+end_src
+
+   As always you can enter such constraints in Toad and you will be
+   able to preview the relevant SQL query out of it.    
+   
+*** TODO understand that better. what sql server is the basis for it
+
+    cause so far I did not connect it to any databse. so there must be
+    an issue of a different kind. 
+    
+
+* Working with Relational Systems
+
+  Views, stored procedures and indices.
+
+  In general it will be a good choice to take some time and read the
+  official documentation of the [[https://docs.microsoft.com/en-us/sql/relational-databases/graphs/sql-graph-overview?view=sql-server-ver15][Microsoft SQL Server]]. There you will
+  find many interesting bits of information such as the graph
+  capabilities etc.
+
+  Especially the internals architecture and design might be an
+  interesting section.
+  
+** Indices
+
+   Idea you can leverage on this for getting to faster query times.
+
+   Note that if you want [[https://www.youtube.com/watch?v=IhfRbhcC4Ec&list=PLs5KPrcFtb0VaveUT-vsBswwl7RWvFeNf&index=24][this class]] goes over two of the most basic
+   indices.
+
+   You can then find the time yourself to go over the other
+   indices.
+
+   Note that you have the following types of indices in Microsoft SQL
+   Server: [[https://docs.microsoft.com/en-us/sql/relational-databases/indexes/indexes?view=sql-server-ver15][indices]].
+
+   Always recall the following trade-off:
+
+   - if you have and index: writing is slower, cause you will have as
+     well to update the index. But reading will be much faster if it
+     can leverage on that index.
+
+   - and vice versa without index.
+
+** Table Views
+
+   This is a powerful concepts.
+
+   The wikipedia definition for it is sufficient to get a basic
+   understanding of what /views/ are:
+
+   #+begin_quote
+   A view is the result set of a stored query on the data, which the
+   database users can query just as they would in a persistent database
+   collection object.
+
+   This pre-established query command is kept in the database
+   dictionary.
+
+   Unlike ordinary base tables in a relational database, a view does
+   not form part of the physical schema: as a result set, *it is a
+   virtual table computed or collated dynamically* *from data in the
+   database when access to that view is requested*. Changes applied to
+   the data in a relevant underlying table are reflected in the data
+   shown in subsequent invocations of the view
+   #+end_quote
+
+   Views are helpful in the follwoing cases:
+
+   - can represent a subset of data. can be used for access
+     permissions. You expose a /view/ to some user without exposing the
+     entire database. 
+
+   - views can *join* and simplify *multiple tables* into a single
+     virtual table. (note that though the performance will likely still
+     suffer from the burden of computing the joins each time one of the
+     underlying queries changes)
+
+   - you can hide some complexity using views such that is useful for
+     some other person of your team to work with.
+
+   - views just take very little space to store. the DB just contains
+     the definiton of a view and not a copy of all the data that it
+     presents.
+
+   *Note* that in a similar way to the programming concepts you can
+   *nest* views such that you can /a view/ aggregating the information
+   from multiple views.
+
+   *Note a table is a set:* A view is a relational table, and the
+   relational model defines a table as a set of rows. Since sets are
+   not ordered — by definition — neither are the rows of a
+   view. Therefore, an ~ORDER BY~ clause in the view definition is
+   meaningless.
+
+   
+*** On Updating a view
+
+    *Very Important Note - on updating a view*: note that if you update a
+    view you will actually update the underlying *persisted* table.
+    Such table will be updated such that your view will ultimately
+    match your update condition.
+
+    So this is very important. You cannot only work with views for the
+    projection exercises and informatin retrieval you need.
+
+    You can as well use the view in a very neat way for writing and
+    updating into your DBs.
+
+    Note that in this sense it might make sense to restrict the view
+    to allow just specific insert operations.
+
+    Note as well the following:
+
+    #+begin_quote
+If your view is a projection of a subset of attributes from the
+underlying table, you will not be able to update the view if the
+missing attributes do not accept null values or do not have a default.
+
+This because by product such an update would require the attributes to
+become nulls and/or fall back to the default values.
+    #+end_quote
+
+
+    Note as well that recursion is not possible in updating a
+    view. For instance a nested table in the =where= clause.
+
+    
+*** Materialize Views
+
+    You can materialize a view such that it is stored physically on
+    the disk.
+
+    It will be must faster query-time then.
+
+    If you decide to materialize do not forget then to referesh the
+    materialized view if you update the underlying table.
+
+    The two will not be in sync if you do not refresh.
+
+    You should therefore be particularly careful when working with this.
+
+** Stored Procedures  
+
+   So that is probably the big discussion in my larger team.
+
+   The question is if to keep the business logic into the application
+   code or into sql-queries.
+
+   I always embedded my business logic at the application layer
+   performing the necessary data withdrawl and transformation steps at
+   the application layer.
+
+   There is the tendency in my team to use a different approach and to
+   /store the business logic into stored procedures/. I am too fresh
+   into the entire systems of my team to take an informed about the
+   topic. (Update 11/02 - I see why they do so. Working in languages
+   as Java for data wrangling is just plain horror)
+
+   So develop on this and explore the topic further until you can take
+   an informed position about the topic.
+
+   Starting with the basic 15 min. research the following picture
+   emerge.
+
+   Stored procedures are essentially SQL statements that are saved in
+   the database /data dictionary/. You can *pass parameters* to your
+   stored procedures. Such parameters will be passed by the client
+   triggering a stored procedure. It is therefore possible to expose
+   some business logic in a flexible way through them.[fn:2]
+
+   *Note* that they do not have to return a table (set of rows) or a
+   value as in the case of functions and there is in this sense a
+   difference between the two. You can for instance perform CRUD
+   operations via stored procedures.
+
+   Now the arguments that I am reading around in favour of stored
+   procedures are the following:
+  
+   1. It can be *easily modified*: We can easily modify the code inside
+      the stored procedure without the need to restart or deploying the
+      application. For example, if the SQL queries are written in the
+      application and if we need to change the logic, we must change
+      the code in the application and re-deploy it.
+
+      That is true for compiled languages and not for scripting
+      languages. There there is no big difference as I usually develop
+      keeping a runtime open where I do my on the fly development
+      running the application logic of interest.
+
+      Moreover, this sounds like a little benefit to justify the usage
+      of such stored procedures. 
+
+   2. *Reduceded Network Traffic*: A major advantage of stored
+      procedures is that they can run directly within the database
+      engine. They are in fact *stored on the DB* and from there the
+      database engine executes them.
+
+      In a production system, this typically means that the procedures
+      run entirely on a specialized database server, which has /direct
+      access to the data being accessed/. You just ship your parameters
+      and that is it. The benefit here is that network communication costs can be
+      avoided completely. *This becomes more important for complex
+      series of SQL statements*.
+
+      As if you have to traffic all of the SQL results back and
+      forth, make transformations and then run other queries based on
+      that you see that you quickly get a huge amount of traffic and
+      everything becomes messy.
+
+      /My Comment:/ I do see the argument. I am not sure that it is
+      really the definitive solution. As you are running SQL statements
+      theoretically you can ship the very same SQL statement via the
+      application and you can do that in 1 shot so if you structure
+      things properly you should be able to keep your network bandwidth
+      safe. 
+
+   3. *Centralized business logic*: this point follows directly from
+      the above. To see this consider the follwoing wording above:
+
+      /They are in fact *stored on the DB* and from there the database
+      engine executes them./
+
+      So this means that you have no chance of having a curropted
+      client-program logic that was not properly managed across your
+      software development teams. There is a single source of truth for
+      the business logic and that reside at the database location.
+
+      /My comment:/ The strongest argument for me. Probably the one and
+      only that makes really sense and the ultimate reason for stored
+      procedures.
+
+      /Note:/ I even read the following as advantage.
+
+      #+begin_quote
+      The database system can ensure data integrity and consistency
+      with the help of stored procedures.
+      #+end_quote
+
+      /My comment:/ I think that is very important. Would need some more detailed
+      explaination of how that would be exactly implemented to make
+      sense of it in a real way.
+
+   4. *Delegating access-rights*: In many systems, stored procedures can
+      be granted access rights to the database that users who execute
+      those procedures do not directly have.
+
+   5. *Performance:* Because stored procedure statements are stored
+      directly in the database, they may remove all or part of the
+      compiling overhead that is typically needed in situations where
+      software applications send inline (dynamic) SQL queries to a
+      database. (However, most database systems implement statement
+      caches and other methods to avoid repetitively compiling dynamic
+      SQL statements.) Also, while they avoid some pre-compiled SQL,
+      statements add to the complexity of creating an optimal execution
+      plan because not all arguments of the SQL statement are supplied
+      at compile time. Depending on the specific database
+      implementation and configuration, *mixed performance results will
+      be seen from stored procedures versus generic queries* or user
+      defined functions.
+
+   Note that there are important *disadvantages* as well.
+
+   1. Stored procedure languages are often vendor-specific. Changing
+      database vendors usually requires rewriting existing stored
+      procedures.
+
+      /My comment:/ interesting that they decided to go so heavily on
+      them. I think that the lock-up must not be extreme otherwise I
+      would not imagine them to rely so much on them.
+
+   2. Changes to stored procedures are harder to keep track of within a
+      version control system than other code.
+
+      /My comment:/ This is in fact what the team is complaining
+      about. There is a single individual that has a good overview of
+      them and all of the others are masked and if they want to dig
+      into it is annoying to start reading huge SQL statements that can
+      be hardly broken apart in which there are parameters embedded.
+
+   Note that it must be a thing in the DB world the one of working with
+   DBs.
+
+   I also heard talking about it in databricks sessions about a company
+   working with them before switching to databricks.
+
+* On Database Architecture   
+  
+** Datbase Partitioning
+
+   This sections notes are based on: [[https://www.digitalocean.com/community/tutorials/understanding-database-sharding][this]].
+
+   In the vertical partition you split by column. In horizontal you
+   have different tables with the same schema saved over different
+   instances. So your database is in fact distributed.
+
+ #+begin_export html
+  <img src="../../images/db_partitioning.png" class="center">
+ #+end_export
+
+*** Database Sharding
+
+    Basically as mentioned this is /horizontal partitioning/.
+
+    Database shards exemplify a shared-nothing architecture. This means
+    that the shards are autonomous; they don’t share any of the same data
+    or computing resources.
+
+    Oftentimes, sharding is implemented at the *application level*,
+    meaning that the application includes code that defines which shard
+    to transmit reads and writes to. However, some database management
+    systems have sharding capabilities built in, allowing you to
+    /implement sharding directly at the database level/.
+
+    Note the following *reasons for sharding*:
+
+    First and foremost you scale out with it. This is essentially the
+    idea of the Big Data frameworks that you saw in your multiple
+    classes at University time. 
+
+    #+begin_quote
+ Another reason why some might choose a sharded database architecture
+ is to *speed up query response times*. When you submit a query on a
+ database that hasn’t been sharded, it may have to search every row in
+ the table you’re querying before it can find the result set you’re
+ looking for. For an application with a large, monolithic database,
+ queries can become prohibitively slow. By sharding one table into
+ multiple, though, queries have to go over fewer rows and their result
+ sets are returned much more quickly.
+    #+end_quote
+
+    As a final reason the article mentions this one:
+
+    #+begin_quote
+ Sharding can also help to make an application more reliable by
+ mitigating the impact of outages. If your application or website
+ relies on an unsharded database, an outage has the potential to make
+ the entire application unavailable. With a sharded database, though,
+ an outage is likely to affect only a single shard. Even though this
+ might make some parts of the application or website unavailable to
+ some users, the overall impact would still be less than if the entire
+ database crashed.
+    #+end_quote
+
+    I mean to be honest I think there are more elegant solutions for
+    the above. It is a bit a forced point but I list it nonetheless in
+    here.
+
+    Note that there are as well quite some concepts as mentioned on the
+    referred source above that speaks counter the sharding idea.
+
+    Then for instance one classical sharding possibility is the
+    following:
+   
+ #+begin_export html
+  <img src="../../images/db_key_sharding.png" class="center">
+ #+end_export
+
+    Note that the above is just one possibility among the many sharding
+    possibilities.
+   
+
+** Linked Servers
+
+   These enable you to implement distributed databases that can fetch
+   and update data in other databases.
+
+   They are for instance a good solution in the scenarios where you
+   need to implement database sharding without need to create a custom
+   application code or directly load from remote data sources.
+
+   So basically with them you can do the following:
+
+   - The ability to access data from outside of SQL Server
+
+   - The ability to issue distributed queries, updates, commands, and
+     transactions on heterogeneous data sources across the enterprise.
+
+     Think for instance again to the case of sharding. 
+
+   Note that the reason why we use this solution as a team is different
+   but this is another discussion I will not dig too much into.
+
+   Basically the way you implment this architecture is then the
+   following:
+
+  
+ #+begin_export html
+  <img src="../../images/linked_server.png" class="center">
+ #+end_export
+  
+
+* Some SQL Notes - Language Itself
 
   This is fairly standard material. I just was not a too heavy user of
   SQL recently, which I have to become again.
@@ -579,6 +886,7 @@ CROSS APPLY sys.dm_exec_query_plan(der.plan_handle) deqp
 where des.session_id <> @@spid
    #+end_src
    
+
 ** To see key relations for a column/table
 
    #+BEGIN_SRC sql
@@ -589,7 +897,7 @@ SELECT
 FROM
     INFORMATION_SCHEMA.KEY_COLUMN_USAGE
 WHERE
-    TABLE_NAME = 'result'
+    TABLE_NAME = 'result' AND
     COLUMN_NAME = 'extract'
    #+END_SRC
 
@@ -599,6 +907,7 @@ WHERE
   You can then check at all of the tables/columns affected by a given
   key constraint.
    
+
 ** Some useful sql snippets
 
    These will pose some very basic queries and concepts that you will
@@ -620,7 +929,8 @@ WHERE
     #+begin_src sql
 select mark.*  -- select the different one.
                 -- the general idea is the following:
-		--   1. get all of rows where you have a match for the specified columns (see join)		--   2. make a full outer join on the results of 1. and check which record are null
+		--   1. get all of rows where you have a match for the specified columns (see join)
+                --   2. make a full outer join on the results of 1. and check which record are null
                 --      meaning there was not a match. 
 		
 from (select *
@@ -641,3 +951,17 @@ full outer join (
 				    -- so would have to check also at the other ones..
 				    -- double check next time you will properly use it.
     #+end_src
+
+
+    
+* Footnotes
+
+[fn:2] Note as well that here is the big difference with Views. In
+views you cannot pass any paramters. 
+
+[fn:1] An identifying relationship is a relationship between two
+entities in which an instance of a child entity is identified through
+its association with a parent entity, which means the child entity is
+dependent on the parent entity for its identity and cannot exist
+without it. 
+
