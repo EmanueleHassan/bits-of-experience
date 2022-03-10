@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>General Notes on Data Lakes | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/general-notes-on-data-lakes/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../istio/" title="Istio" type="text/html">
+<link rel="next" href="../helm/" title="Helm" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="General Notes on Data Lakes">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/general-notes-on-data-lakes/">
+<meta property="og:description" content="Some general notes on data lakes. Sum up a bit the general decisions
+in the data world.
+
+
+
+More interesting is the Zaloni approach discussed later in the notes.
+
+
+
+
+
+Important points
+
+
+Perhaps more im">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-05-27T16:57:36+02:00">
+<meta property="article:tag" content="Data">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">General Notes on Data Lakes</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2021-05-27T16:57:36+02:00" itemprop="datePublished" title="2021-05-27 16:57">2021-05-27 16:57</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/data/" rel="tag">Data</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+Some general notes on data lakes. Sum up a bit the general decisions
+in the data world.
+</p>
+
+<p>
+More interesting is the Zaloni approach discussed later in the notes.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org53d773c" class="outline-2">
+<h2 id="org53d773c">Important points</h2>
+<div class="outline-text-2" id="text-org53d773c">
+<p>
+Perhaps more important, most data warehouses require that business
+users rely on IT to do any manipulation or enrichment of data, largely
+because of the inflexible design, system complexity, and intolerance
+for human error in data warehouses. This slows down business
+innovation.
+</p>
+
+<p>
+<b>Schema-on-read allows users to build custom schemas into their queries
+upon query execution.</b>
+</p>
+
+<p>
+Unlike a monolithic view of a single enterprise-wide data model, the
+data lake allows you to put off modeling until you actually use the
+data, which creates opportunities for better operational insights and
+data discovery.
+</p>
+
+<p>
+Data warehouses are notorious for not being able to scale beyond a
+certain volume due to restrictions of the architecture. Data
+processing takes so long that organizations are prevented from
+exploiting all their data to its fullest extent.
+</p>
+
+<p>
+Because data can be unstructured as well as structured, you can store
+everything from blog postings to product reviews. And the data doesn’t
+need to be consistent to be stored in a data lake.
+</p>
+
+<p>
+This would be problematic in a data warehouse; in a data lake,
+however, you can put all sorts of data into a single repository
+without worrying about schemas that define the integration points
+between different data sets.
+</p>
+
+<p>
+Unlike data warehouses, data lakes don’t come with governance built
+in. This augments the risk of creating a proper data swamp.
+</p>
+
+<p>
+Metadata is not automatically applied when data is ingested into the
+data lake.  Without the technical, operational, and business metadata
+that gives you information about the data you have, it is impossible
+to organize your data lake and apply governance policies. Metadata is
+what allows you to track data lineage, monitor and understand data
+quality, enforce data privacy and role-based security, and manage data
+life cycle policies. This is particularly critical for organizations
+in tightly regulated industries.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf53dffc" class="outline-2">
+<h2 id="orgf53dffc">On-premise vs. Cloud</h2>
+<div class="outline-text-2" id="text-orgf53dffc">
+<p>
+Whether to use on-premises or cloud storage and processing is a complicated
+and important decision point for any organization.
+</p>
+
+<p>
+Generally speaking, on-premises storage and processing offers tighter
+control over data security and data privacy, whereas public cloud
+systems offer highly scalable and elastic storage and computing
+resources to meet enterprises’ need for large scale processing and
+data storage without having the overheads of provisioning and
+maintaining expensive infrastructure.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6f14912" class="outline-2">
+<h2 id="org6f14912">Schema on Write vs. Schema on Read</h2>
+<div class="outline-text-2" id="text-org6f14912">
+<p>
+This is the essential difference between data lakes and traditional
+data warehouses.
+</p>
+</div>
+
+<div id="outline-container-orgdf5275d" class="outline-3">
+<h3 id="orgdf5275d">Schema on Write</h3>
+<div class="outline-text-3" id="text-orgdf5275d">
+<p>
+Schema on write is defined as creating a schema for data before
+writing into the database. If you have done any kind of development
+with a database you understand the structured nature of Relational
+Database(RDBMS) because you have used Structured Query Language (SQL)
+to read data from the database. This is the standard ETL pipeline.
+Transformation to fit the desired schema is necessary in traditional
+data warehouses.
+</p>
+
+<p>
+Remember just because the data is structured doesn’t mean it starts
+out that way. Most of the data that exist is in an unstructured
+fashion. Not only do you have to define the schema for the data but
+you must also structure it based on that schema.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgba0475c" class="outline-3">
+<h3 id="orgba0475c">Schema on Read</h3>
+<div class="outline-text-3" id="text-orgba0475c">
+<p>
+Schema on read differs from schema on write because you create the
+schema only when reading the data. Structured is applied to the data
+only when it’s read, this allows unstructured data to be stored in the
+database. Since it’s not necessary to define the schema before storing
+the data it makes it easier to bring in new data sources on the fly.
+</p>
+
+<p>
+The exploding growth of unstructured data and overhead of ETL for
+storing data in RDBMS is the main reason for shift to schema on
+read. This is why the most companies are shifting to datalakes.
+</p>
+
+<p>
+<a href="https://www.thomashenson.com/schema-read-vs-schema-write-explained/">nice overview over databases technologies history and schema on write
+vs schema on read</a>.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbb950f4" class="outline-2">
+<h2 id="orgbb950f4">Storage options</h2>
+<div class="outline-text-2" id="text-orgbb950f4">
+<p>
+A sample technology stack for the storage function of a data lake may consist of
+the following:
+</p>
+
+<ul class="org-ul">
+<li>Hadoop Distributed File System (HDFS)</li>
+</ul>
+<p>
+A Java-based filesystem that provides scalable and reliable data
+storage. It is designed to span large clusters of commodity
+servers. For on-premises data lakes, HDFS seems to be the storage of
+choice because it is highly reliable, fault tolerant, scalable, and
+can store structured and unstructured data. This allows for faster
+processing of the big data use-cases. HDFS also allows enterprises
+to create storage tiers to allow for data life cycle management, using
+those tiers to save costs while maintaining data retention policies
+and regulatory requirements.
+</p>
+
+<ul class="org-ul">
+<li>Object storage</li>
+</ul>
+<p>
+Object stores (Amazon Simple Storage Service [Amazon S3], Microsoft
+Azure Blob Storage, Google Cloud Storage) provide scalable, reliable
+data storage. Cloud-based storage offers a unique advantage. They are
+designed to decouple storage from computing so that they can autoscale
+compute power to meet the real-time processing needs.
+</p>
+
+<ul class="org-ul">
+<li>Apache Hive tables</li>
+</ul>
+<p>
+An open source <b>data warehouse</b> system for querying and analyzing large
+datasets stored in Hadoop files.
+</p>
+
+<ul class="org-ul">
+<li>HBase</li>
+</ul>
+<p>
+An open source, nonrelational, distributed database that is modeled
+after Google’s BigTable. Developed as part of Apache Software
+Foundation’s Apache Hadoop project, it runs on top of HDFS, providing
+BigTable-like capabilities for Hadoop.
+</p>
+
+<ul class="org-ul">
+<li>ElasticSearch</li>
+</ul>
+<p>
+An open source, RESTful search engine built on top of Apache Lucene
+and released under an Apache license. It is Java-based and can search
+and index document files in diverse formats.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org602c8c6" class="outline-2">
+<h2 id="org602c8c6">Batch vs Streaming Data Processing</h2>
+<div class="outline-text-2" id="text-org602c8c6">
+<p>
+Batch processing is where the processing happens of blocks of data
+that have already been stored over a period of time. For example,
+processing all the transaction that have been performed by a major
+financial firm in a week.
+</p>
+
+<p>
+Batch processing works well in situations where you don’t need
+real-time analytics results, and when it is more important to process
+large volumes of data to get more detailed insights than it is to get
+fast analytics results.
+</p>
+
+<p>
+Stream processing is a golden key if you want analytics results in
+real time. Stream processing allows us to process data in real time as
+they arrive and quickly detect conditions within small time period
+from the point of receiving the data. 
+</p>
+
+<p>
+In Batch Processing it processes over all or most of the data but In
+Stream Processing it processes over data on rolling window or most
+recent record. So Batch Processing handles a large batch of data while
+Stream processing handles Individual records or micro batches of few
+records.
+</p>
+
+<p>
+Stream processing allows you to feed data into analytics tools as soon
+as they get generated and get instant analytics results. There are
+multiple open source stream processing platforms such as Apache Kafka,
+Apache Flink, Apache Storm, Apache Samza, etc.
+</p>
+
+<p>
+Different tools are needed, based on whether your use case involves
+batch or streaming. For batch use cases, organizations generally use
+Pig, Hive, Spark, and MapReduce. For streaming use cases, they would
+likely use different tools such as Spark-Streaming, Kafka, Flume, and
+Storm.
+</p>
+
+<p>
+Interesting here is especially: <b>Apache Beam</b>
+</p>
+
+<p>
+Apache Beam provides an abstraction on top of the processing
+cluster. It is an open source framework that allows you to use a
+single programming model for both batch and streaming use cases, and
+execute pipelines on multiple execution environments like Spark,
+Flink, and others. By utilizing Beam, enterprises can develop their
+data processing pipelines using Beam SDK and then choose a Beam Runner
+to run the pipelines on a specific largescale data processing
+system. The runner can be a number of things: a Direct Runner, Apex,
+Flink, Spark, Dataflow, or Gearpump (incubating). This design allows
+for the processing pipeline to be portable across different runners,
+thereby providing flexibility to the enterprises to take advantage of
+the best platform to meet their data processing requirements in a
+future-proof way.  Data Lake
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1c05d60" class="outline-2">
+<h2 id="org1c05d60">Data lake management</h2>
+<div class="outline-text-2" id="text-org1c05d60">
+<p>
+Data lakes created with an integrated data management framework can
+eliminate the cumbersome data preparation process of ETL that
+traditional data warehouse requires. Data is smoothly ingested into
+the data lake, where it is managed using metadata tags that help
+locate and connect the information when business users need it. This
+approach frees analysts for the important task of finding value in the
+data without involving IT in every step of the process, thus
+conserving IT resources.
+</p>
+
+<p>
+Key to a solid data management and governance strategy is having the
+right metadata management structure in place. With accurate and
+descriptive meta-data, you can set policies and standards for
+managing and using data.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org64e3991" class="outline-2">
+<h2 id="org64e3991">Zaloni Schema</h2>
+<div class="outline-text-2" id="text-org64e3991">
+<p>
+A reference architecture is a framework that organizations can refer to in order
+to
+</p>
+
+<ol class="org-ol">
+<li>understand industry best practices</li>
+<li>track a process and the steps it takes,</li>
+<li>derive a template for solutioning</li>
+<li>understand the components and technologies involved</li>
+</ol>
+<p>
+We recommend organizing your data lake into four zones, plus a
+sandbox. Throughout the zones, data is tracked, validated, cataloged,
+assigned metadata, refined, and more.
+</p>
+</div>
+
+<div id="outline-container-org108f530" class="outline-3">
+<h3 id="org108f530">Zone 1: The Transient Landing Zone</h3>
+<div class="outline-text-3" id="text-org108f530">
+<p>
+We recommend loading data into a transient loading zone, where basic
+data quality checks are performed using MapReduce or Spark processing
+capabilities.
+</p>
+
+<p>
+Many firms moreover require strict regulation over the saved
+data. Think about companies saving personal &amp; confidential data. This
+is where the importance of the transient landing zone becomes
+clear. Data will be encrypted and masked in this zone so that all of
+the data requirements are met.
+</p>
+
+<p>
+The transient zone is temporary; it is a landing zone for data where
+security measures can be applied before it is stored or accessed. With
+GDPR being enacted in the EU, this zone might become even more
+important because there will be higher levels of regulation and
+compliance, applicable to more industries.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge8de44e" class="outline-3">
+<h3 id="orge8de44e">Zone 2: The Raw Zone</h3>
+<div class="outline-text-3" id="text-orge8de44e">
+<p>
+After the quality checks and security transformations have been performed in the
+Transient Zone, the data is then loaded into in the Raw Data zone for storage.
+However, in some situations, a Transient Zone is not needed, and the Raw Zone
+is the beginning of the data lake journey.
+</p>
+
+<p>
+Within this zone, you can mask or tokenize data as needed, add it to
+catalogs, and enhance it with metadata. In the Raw Zone, data is
+stored permanently and in its original form, so it is known as “the
+single source of truth.”
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfecd901" class="outline-3">
+<h3 id="orgfecd901">Zone 3: The Trusted Zone</h3>
+<div class="outline-text-3" id="text-orgfecd901">
+<p>
+The Trusted Zone imports data from the Raw Zone. This is where data is
+altered so that it is in compliance with all government and industry
+policies as well as checked for quality. Organizations perform
+standard data cleansing and data validation methods here.
+</p>
+
+<p>
+Often the data within this zone is known as a “single version of
+truth.”
+</p>
+
+<p>
+*This trusted repository can contain both master data and reference
+data. Master data is a compilation of the basic datasets that have
+been cleansed and validated. An organization needs to ensure that data
+kept in the trusted zone is up to date using change data capture (CDC)
+mechanisms.* (this is what you were operating on at Expedia).
+</p>
+
+<p>
+Reference data, on the other hand, is considered the single version of
+truth for more complex, blended datasets. For example, that healthcare
+organization might have a reference dataset that merges information
+from multiple source tables in the master data store.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0667b53" class="outline-3">
+<h3 id="org0667b53">Zone 4: The Refined Zone</h3>
+<div class="outline-text-3" id="text-org0667b53">
+<p>
+Within the Refined Zone, data goes through its last few steps before
+being used to derive insights. Data here is integrated into a common
+format for ease of use, and goes through possible detokenization,
+further quality checks, and life cycle management. This ensures that
+the data is in a format from which you can easily use it to create
+models. Consumers of this zone are those with appropriate role-based
+access.
+</p>
+
+<p>
+Data is often transformed to reflect the needs of specific lines of
+business in this zone.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org95629d0" class="outline-3">
+<h3 id="org95629d0">Sandbox</h3>
+<div class="outline-text-3" id="text-org95629d0">
+<p>
+The Sandbox is integral to a data lake because it allows data
+scientists and managers to create ad hoc exploratory use cases
+without the need to involve the IT department.
+</p>
+
+<p>
+Data can be imported into the Sandbox from any of the zones, as well
+as directly from the source. This allows companies to explore how
+certain variables could affect business outcomes and therefore derive
+further insights to help make business management decisions. You can
+send some of these insights directly back to the raw zone, allowing
+derived data to act as sourced data and thus giving data scientists
+and analysts more with which to work.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org001b5ec" class="outline-2">
+<h2 id="org001b5ec">Data Ingestion</h2>
+<div class="outline-text-2" id="text-org001b5ec">
+<p>
+Organizations have a number of options when transferring data to a
+data lake.  Managed ingestion gives you control over how data is
+ingested, where it comes from, when it arrives, and where it is stored
+in the data lake.
+</p>
+
+<p>
+With managed ingestion, data (both structured and unstructured) and
+metadata are linked. There are two approaches to link data and
+metadata. 
+</p>
+
+<ul class="org-ul">
+<li>The first approach is when metadata is known; for example, a meta
+file that describes the column name and data type that comes with
+the data file (consider for instance the case of importing data from
+an existing datawarehouse with named columns).</li>
+
+<li>The second approach is when metadata is not known ahead of time and
+the data stewards identify and tag individual cells after data is
+ingested.</li>
+</ul>
+<p>
+The result is a giant table: "With managed ingestion, you enter all
+data into a giant table organized with metadata tags. Each piece of
+data—whether a customer’s name, a photograph, or a Facebook post—is
+placed in an individual cell. It doesn’t matter where in the data lake
+that individual cell is located, where the data came from, or its
+format.  You can connect all of the data easily through the tags. You
+can add or change tags as your analytic requirements evolve—one of the
+key distinctions between a data warehouse and a data lake."
+</p>
+
+<p>
+Using a managed ingestion process with a data lake opens up tremendous
+possibilities. *You can quickly and easily ingest unstructured data
+and make it available for analysis without needing to transform it in
+any way*.
+</p>
+
+<p>
+<i>Regulating Privacy:</i>
+</p>
+
+<p>
+You can also protect sensitive information. As data is ingested into
+the data lake and moves from the Transient Zone to the Raw Zone, each
+cell is tagged according to how “visible” it is to different users in
+the organization.
+</p>
+
+<p>
+An integrated data lake management platform will perform managed
+ingestion, which involves getting the data from the source systems
+into the data lake, guaranteeing a repeatable process, and ensuring
+that if anything fails in the ingest cycle, there will be operational
+functions that take care of it.
+</p>
+</div>
+
+<div id="outline-container-org4831682" class="outline-4">
+<h4 id="org4831682">The Stream Data Ingestion Case</h4>
+<div class="outline-text-4" id="text-org4831682">
+<p>
+Additionally, as we see more and more workloads moving to streaming,
+whatever data management functions you applied to batch ingestion—when
+data was coming in periodically—now needs to be applied to data that
+is streaming in continuously. Integrated data lake management
+platforms should be able to detect whether certain streams are not
+being ingested based on the service-level agree‐ ments (SLAs) you set.
+</p>
+
+<p>
+Additionally, as we see more and more workloads moving to streaming,
+whatever data management functions you applied to batch ingestion—when
+data was coming in periodically—now needs to be applied to data that
+is streaming in continuously. Integrated data lake management
+platforms should be able to detect whether certain streams are not
+being ingested based on.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgb93c463" class="outline-4">
+<h4 id="orgb93c463">Top Down vs. Bottom Up Data Governance Approach</h4>
+<div class="outline-text-4" id="text-orgb93c463">
+<p>
+In a bottom-up approach, consumers of the data lake are probably data
+scientists or data analysts. Collective input from these consumers
+decides which datasets are valuable and useful and have good quality
+data. The data lake then exposes those datasets to other consumers so
+that they can see the ways that their peers have been successful with
+the data lake. (this was the way expedia operated).
+</p>
+
+<p>
+A top-down method takes best practices from organizations’ data
+warehouse experiences and attempts to impose governance and management
+from the moment the data is ingested into the data lake.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd3d4fff" class="outline-2">
+<h2 id="orgd3d4fff">Trends and Opportunities</h2>
+<div class="outline-text-2" id="text-orgd3d4fff">
+</div>
+<div id="outline-container-org5756446" class="outline-3">
+<h3 id="org5756446">Logical Data Lakes &amp; Federated Queries</h3>
+<div class="outline-text-3" id="text-org5756446">
+<p>
+We are seeing more and more requirements for hybrid data stores, in
+which data can be stored not only in Hadoop Distributed File System
+(HDFS), but also in object data stores, such as Amazon Simple Storage
+Service (Amazon S3) or Microsoft Azure Elastic Block storage, or in
+No-SQL databases.
+</p>
+
+<p>
+To make this work, enterprises need a <b>unified view of data that
+exists across these multiple data stores</b> across the multiple
+environments in an enterprise.
+</p>
+
+<p>
+The integration of these various technologies and stores within an
+organization can lead to what is, in effect, a logical data lake.
+</p>
+
+<p>
+This goes hand in hand with the necessity of running <b>federated
+queries</b>. As data is stored in different physical and virtual
+environments, you might need to use different query tools and
+decompose a user’s query into multiple queries—sending them to
+on-premises data stores as well as cloud-based data stores, each of
+which possesses part of the answer. Then, the answers are aggregated
+and combined and sent back to the user such that they get one version
+of the truth across the entire logical data lake.
+</p>
+
+<p>
+<i>The above would be big revolution</i>. <i>Would be interesting to read
+about how much research is going into the area</i>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org92d6ac1" class="outline-3">
+<h3 id="org92d6ac1">Enterprise Data Marketplace</h3>
+<div class="outline-text-3" id="text-org92d6ac1">
+<p>
+Another trend is to make data available to consumers via rich metadata
+data cata‐ logs in a shopping cart. Many enterprises are already
+building these portals out of shared Hadoop environments, where users
+can browse relevant parts of the data lake and have an Amazon-like
+shopping cart experience in which they select data based on various
+filters.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgabccfd9" class="outline-3">
+<h3 id="orgabccfd9">Intelligent Data Lakes</h3>
+<div class="outline-text-3" id="text-orgabccfd9">
+<p>
+Not far off in the future are more advanced data environments that use
+automation and machine learning to create intelligent data
+lakes. With machine learning, you can build advanced capabilities such
+as text mining, forecast modeling, data mining, statistical model
+building, and predictive analytics. The data lake becomes “responsive”
+and “self-correcting,” with an automated data life cycle process and
+self-service ingestion and provision. Business users have access and
+insight into the data they need (for instance 360-degree views of
+customer profiles), and they don’t need IT assistance to extract the
+data that they want.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6c0f170" class="outline-3">
+<h3 id="org6c0f170">IoT and streaming of Data</h3>
+<div class="outline-text-3" id="text-org6c0f170">
+<p>
+As the Internet of Things (IoT) continues to grow, much of the data
+that used to come in via a batch mode is coming in via streaming
+because the data is being generated at such high velocity. In such
+cases, enterprises are beginning to keep the data in memory for
+near-real-time streaming and analytics, to generate insights extremely
+quickly. This adds another dimension to data lakes—that is, not just
+being able to process high volumes of data at scale, but to provide
+lowlatency views of that data to the enterprise so that it can react
+and make better decisions on a near-real-time basis.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5b6ee11" class="outline-2">
+<h2 id="org5b6ee11">Literature</h2>
+<div class="outline-text-2" id="text-org5b6ee11">
+<p>
+<a href="https://www.oreilly.com/data/free/files/architecting-data-lakes.pdf">O'Reilly: Architecting Data Lakes</a>
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../istio/" rel="prev" title="Istio">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../helm/" rel="next" title="Helm">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

@@ -1,0 +1,383 @@
+#+BEGIN_COMMENT
+.. title: Python - My Projects Strucuture
+.. slug: python-my-projects-strucuture
+.. date: 2021-07-01 16:03:15 UTC+02:00
+.. tags: Python
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+.. status: published
+#+END_COMMENT
+
+Here are some notes about how to set up a project.
+
+I will use this strucuture in the following projects I will have to
+do.
+
+For the last project I set up the project from scratch and I think
+that I finally found my way to structure Python Projects in the right
+way.
+
+Right way - this means - a way that satisfies the following properties:
+
+- It is modular. This is extremely important. If you manage to work in
+  a modular way by clearly separating logical structures you might use
+  some of these structures for further projects you will work on. 
+
+- It is portable - by the very same argument explained above. 
+
+- It is minimal - no double effort
+
+- It has strong logic - i.e. it is clear what modules and sub-modules
+  represent.
+
+I will go into structure and some examples of how to reach such
+components next.
+
+Note again that this is my second larger project where starting from a
+green field I could set everything up. You might want to change and
+expand on this structure in following projects.
+
+Please, do so and do not forget to expand on that.
+
+{{{TEASER_END}}}
+
+
+* General Basic Strucutre
+
+  Starting from the very beginning the general structure for the
+  project would look as follows. 
+
+#+begin_example
+.
+├── libraries
+├── log
+├── Dockerfile
+├── postman
+├── src
+└── test
+#+end_example
+
+  This general structure is motived by the following:
+
+  - =libraries=: here is a repository where you save the libraries you
+    work with in your project. This is the usual =requirements.txt=
+    text file in python. Like this it will be possible for your peers
+    or yourself to download all the necessary dependencies when
+    creating a new virtual environment or pushing to the cloud.
+
+  - =log=: here is a module that will hold the logged information of
+    your application. this is especially important for doing properly
+    devOps. Especially when pushing to the cloud you will have the
+    possibility to double check at later moments important logged
+    situations. You can then trigger mail alters based on the type of
+    the logs etc. 
+
+  - =postman=: here you save all of your endpoints when you test them
+    together with all the typical payloads etc. It is especially
+    useful when you define and expand RESTful API such that you can
+    quickly share them with your team and so that they can test and
+    try your endpoints. This especially when they work in the
+    back-end without being exposed through web-interfaces. 
+
+  - =src=: a repo for the code of the project.
+
+  - =test=: a repo for the unit-tests of the project.
+
+  - =Dockerfile=: the =Dockerfile= with the build image for running
+    the application.
+
+  I will explore the =src= repo structure next.
+
+* On the Structure of the Source Code
+
+  So given the general structure you should now understand better how
+  you structure your projects.
+
+  The general structure of my =src= repository looks as follows
+
+  #+begin_example
+├── app.py
+├── app_init
+├── forms
+├── dataschema
+├── log_init
+├── migrations
+├── models
+├── queries
+├── routes
+├── swagger_config
+└── templates
+  #+end_example
+
+  This is a structure I feel particularly well with and it allows the
+  modularization property previously described.
+
+  In this sense you have a single script at root level. This is the
+  application script. I.e. the script your python runtime executes.
+
+  All of the rest originates from there.
+
+  I like to keep this script minimal and application agnostic. This
+  should just run the flask application. The application and its
+  configuration is not defined in the script, but rather in a separate
+  application module - the =app_init= module.
+
+  An example for such a minimal python script is the following:
+
+  #+begin_src python
+from swagger_config.swaggerConfig import api
+from app_init import app
+
+c## Run the application
+if __name__ == "__main__":
+    app.run(debug=True)
+  #+end_src
+
+  #+RESULTS:
+
+  So you can see that the script is minimal. You import the modules
+  and components of interest, i.e. the flask application you specified
+  in the =app_init= module as well as the =api= specifications your
+  application will serve. You can expose these in different ways,
+  which I will explore next.
+
+
+  One option that I particularly like is the one of leveraging the
+  =flask_restful_swagger_2= package.
+
+  This allows a very strong integration with swagger and it allows you
+  a very solid structure to work with. You can then build RESTful
+  endpoints and document everything properly in your code base.
+
+  I like it as it allows a python native possibility to well annotate
+  your code and endpoints. You do not separate the two processes and
+  are less prone to ignore the step because you have to write
+  everything yourself at the end of the day. In this sense it allows
+  you to make sure that your documentation develops at the same speed
+  of your code and allows to have a great documentation both in your
+  code and easily accessible through the =swaggerui=.
+
+** app_init
+
+  Note that this one, together with many other repositories in the
+  =src= directory are python modules.
+
+  This package is usually configured in the following way:
+
+  #+begin_example
+.
+├── __init__.py
+├── app.db
+└── config.py
+
+  #+end_example
+
+  I.e. I usually keep all of the application configuration in the
+  configuration file =config.py=.
+
+  There all of the important parameters such as the database URL you
+  connect with are specified. Notice that as I usually push such file
+  I do not store sensible information in here. Just specifications on
+  how my flask application should be running.
+
+  I rather keep the sensible information in an =.env= file that I load
+  into the different modules where I need that information. Especially
+  useful in this sense is the =dotenv= package.
+
+  In any case, once you specified all of the specifics of your
+  application into the =config.py= file, you import it into the
+  =__init__.py= module where you actually specify your app flask
+  object and configure it accordingly. Finally, as previously noted
+  you will import such module and the configured application object
+  from your =app.py= script.
+  
+** forms
+
+   here I store the flask-forms you use to parse content from a =html=
+   page. I never worked too much with them apart from implementing a
+   minimal login front-end.
+
+   I understand the basic structure, but that is not my bread and
+   butter and do not even want to waste too much energy on it.
+
+   You can check the repos in your projects should you want to make
+   sense of them. Basically you just specify in these forms what the
+   user should input and can set some validation check to see if an
+   input that you get makes sense.
+
+** dataschema
+
+   this is an especially important repository where I hold the schema
+   of my data.
+
+   Once, more I think it is especially important to have a dedicated
+   module for it as otherwise you start to have the specifications of
+   the data models all over the place or implicitly defined in the
+   code and after some point when the project starts to grow you will
+   be quickly in troubled waters.
+
+   Whilst, if you hold such a data schema repository you will have a
+   centralized location where you store the entire structure of your
+   data in a very human readable format. You will not have to go
+   through the code from all over the place and infer from it the data
+   models.
+
+   Finally, once you well specify your =data schema= in such a
+   repository you can start to pass it as schema to the
+   =flask_restful_swagger_2= package and in such a way you will have
+   everything well documented on your swaggerui. You should then again
+   be careful to follow some standards in the way you specify such
+   schema such as the =openapi= specifications.
+
+   On the top of it you can also pass such schema to the
+   =flask_expects_json= package that will validate the input of given
+   API and will throw errors in the case the received input does not
+   comply.
+
+** log_init
+
+   In this package I specify the logger specifications you will use
+   for your application. This is important as especially then when you
+   deploy to the cloud you must have a solid logging mechanism.
+
+   You can also set alarms and get mails in the case of some
+   logging-triggers.
+
+   Recall the logger has different priority levels. You can configure
+   the way your messages should be generally logged - i.e. if you want
+   date, time, minute or whatever... Finally once your logger is
+   specified in this package you can start to import it in your other
+   modules of your projects and start to log the information according
+   to its priority etc.
+
+   I guess that there are nowadays one of these many 100s
+   cloud-services doing these kind of job for you. However if you want
+   the open-source way to do it inherently in python that is the way.
+
+** migrations
+
+   This is an auto-generated repository and is not a python
+   package. It is auto-generated by the flask-sqlAlchemy package when
+   doing sql-*lite* DB migrations.
+
+** models
+
+   here I save some models classes that are needed to store data to
+   the DB.
+
+   I.e. here you specify the database schema and based on this you
+   will have the possibility to create objects in order to read and
+   write in that DB. Each class might also have methods that allow to
+   do some processing before saving everything into the DB.
+   
+** queries
+
+   That is also a useful repository I use. I started to notice that
+   sometimes my DB queries were starting to get too long.
+
+   They started to occupy too much space within the scripts and it
+   becomes annoying to navigate and get the structure of the
+   code. This despite all of the different tricks you apply by coding
+   in emacs - such as the wonderful =hide-show= mode.
+
+   So eventually, I decided to start also to save queries in a
+   separate package and in different modules depending on what their
+   task/implementation is.
+
+   Such modules are nothing special. They just contain variables
+   storing multi-line strings with the queries of interest. You can
+   then import these in other modules and query/write to your DB based
+   on that.
+
+   #+begin_src python
+   ## Example of modules
+
+   createFirstLayer = \
+    """
+    CREATE (start_0_1:Indication{
+	    layer: 0, 
+	    title: 'Unique Histologies',
+	    message: 'Special Considerations for Unique Histologies',
+	    selected: False,
+	    selectedTimestamp: '',
+	    patient: $uuid,
+	    user: $user,
+	    state: 'Workup'
+	    })
+    CREATE (start_0_2:Indication{
+	    layer: 0, 
+	    title: 'Other Soft Issue Sarcomas',
+	    message: 'Other soft tissue sarcomas of the extremity/body wall, head/neck',
+	    selected: False,
+	    selectedTimestamp: '',
+	    patient: $uuid,
+	    user: $user,
+	    state: 'Workup'
+	    })
+    """
+
+    # ...
+   #+end_src
+
+** routes
+
+   In this package I specify all of the routes of the application.
+
+   I might split the routes in different modules depending on how big
+   the application is.
+
+   Also interesting is to mention the different ways you have to
+   specify routes.
+
+   As I previously said, I got into the =flask_restful_swagger_2=
+   module and I usually specify my RESTful endpoints in such a way.
+
+   That is a very powerful module. It allows you to specify an api
+   object and add endpoints to it by specifying classes inheriting
+   from the =Resource= class of =flask_restful= package.
+
+   You can then specify =GET=, =POST=, =PUT=, =DELETE= methods to such
+   derived class and add such classes to the api via the
+   =api.add_resource()= method.
+
+   Moreover, as previously noted a module I also like is the =from
+   flask_expects_json= one. From there you can import the
+   =expects_json= flag that you can use with the =@=, passing a
+   validation schema.
+
+   Note that here I usually keep one module to serve and specify the
+   =angular= routes from which the front-end will be served. I do not
+   program the front-end myself however it is pretty simply to embed
+   it into your application once you receive it from a front-end
+   developer.   
+
+** templates
+
+   Here you keep your =html= files you can serve from your
+   backend. Notice that this is not the angular front-end. This one I
+   usually save it in a different repository. This is much more simple
+   static or dynamic websites you serve through your
+   backend. I.e. this is the old way of doing front-end.
+
+   In most of my projects I do not even have such a repository as
+   either I am working with front-end people using modern
+   web-technologies developing in =angular= or =react=, or in the
+   other case I usually do not use a front-end at all.
+
+* Final word
+
+  You note that when structuring projects in such a way everything is
+  well defined and the logic is clear.
+
+  Moreover, once you start to write projects in such a way, you will
+  start to collect modules you can reuse from project to project. Just
+  think for instance at how easy it is now to import and use the
+  logger mechanism or the login-mechanism you implemented into another
+  project.
+
+  Therefore, you see that the properties of =modularity=,
+  =portablity=, =minimality= are fulfilled.
+
+  Go and expand from here. Find your perfect structure and grow it. 

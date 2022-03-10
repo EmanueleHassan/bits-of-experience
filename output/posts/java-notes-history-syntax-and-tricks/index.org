@@ -1,0 +1,5898 @@
+#+BEGIN_COMMENT
+.. title: Java Notes - History, Syntax and Tricks
+.. slug: java-notes-history-syntax-and-tricks
+.. date: 2021-09-17 16:38:55 UTC+02:00
+.. tags: java
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+#+end_export
+
+Java should become my major programming lanaguage in the next
+years. The goal is to get proficient at in a couple of months.
+
+I think it is a good thing cause as a programmer the fact that I was
+never was exposed to Java was in fact a pity. Many of the most
+interesting software of 21st century is written in Java (think of
+Hadoop stack, Kafka & Co.). While coming from the world of data
+science I see the point for python I must say that once you have
+extremely wide productive systems it might very well make sense to use
+a more structured language as Java. Plus you should get up to speed
+the functional language possibilities of Java available from Java 8
+on. I think that this might boost even more the Java lanaguage and
+make it a strong candidate for python-alike workflows.
+
+That said let's go. Enjoy this new ride and absorb the language.
+
+Note that all of the notes about the general syntax of the language
+come from "Java the complete reference - 7th edition (Herbert
+Schildt)" publicly available on the world wide web at [[https://gfgc.kar.nic.in/sirmv-science/GenericDocHandler/138-a2973dc6-c024-4d81-be6d-5c3344f232ce.pdf][this url]].
+
+{{{TEASER_END}}}
+
+* Reference
+
+  A nice website to navigate some Java is [[https://www.javabrahman.com/category/java-8/][this]]. 
+
+* History
+
+  Java primary motivation was the need for a platform-independent
+  (that is, architecture-neutral) language that could be used to
+  create software to be embedded in various consumer electronic
+  devices, such as microwave ovens and remote controls.
+
+  This was in fact the revolution and what JVM brought about on the
+  table.
+
+  The idea is the following. The previous languages such as C
+  (giving a high level language that was both flexible and powerful
+  to the world) and C++ (i.e. C with classes - giving the possibility
+  to maintain the complexity of expanding code via OOP concepts) was
+  the compiling limitations.
+
+  As you can probably guess, many different types of CPUs are used as
+  controllers. The trouble with C and C++ (and most other languages)
+  is that they are designed to be compiled for a specific
+  target. Although it is possible to compile a C++ program for just
+  about any type of CPU, to do so requires a full C++ /compiler
+  targeted for that CPU/.
+
+  The idea was then to create a platform-independent language that
+  could be used to produce code that would run on a variety of CPUs
+  under differing environments. This is ultimately how /Java/ came
+  about.
+
+  Note that while this was the major point through which Java came
+  about another important point for Java was the rise of the
+  internet. In fact Java gave the possibility to program in a way
+  that was suitable to deal with the different specifications of the
+  systems spanning the conundrum of systems existing across the world
+  wide web.
+
+
+  Java innovated a new type of networked program called the applet
+  that changed the way the online world thought about content. Java
+  also addressed some of the thorniest issues associated with the
+  Internet: *portability* and *security*.
+
+  In this sense we will check next at Java Applets to understand how
+  Java addressed that issues.
+   
+** Java Applets
+
+    #+begin_quote
+An applet is a special kind of Java program that is designed to be transmitted over the
+Internet and automatically executed by a Java-compatible web browser.
+
+Furthermore, an applet is downloaded on demand, without further
+interaction with the user. 
+    #+end_quote
+
+    So you can see that this was the /strength/ of Java.
+
+    In this sense the /applet/ was the first kind of *active* program
+    available in the world wide web. I.e. you were running programs
+    and not simply fetch passive data.
+
+    #+begin_quote
+The applet is a dynamic, self-executing program.  Such a program is an
+active agent on the client computer, yet it is initiated by the
+server.
+    #+end_quote
+
+    From it the question of *security*.
+
+    Obviously, a program that /downloads and executes automatically/ on
+    the client computer must be prevented from doing harm.
+
+    With respect to portability the case is clear. JVM gave the
+    possibility of running such applets across platforms and were in
+    the sense architecture independent.
+
+
+** The JVM
+
+    #+begin_quote
+The key that allows Java to solve both the security and the
+portability problems just described is that the output of a Java
+compiler /is not executable code/. Rather, it is *bytecode*.
+
+*Bytecode* is a highly optimized /set of instructions/ designed to be
+executed by the *Java run-time system*, which is called the *Java Virtual
+Machine (JVM)*.
+
+In essence, the original *JVM* was designed as an *interpreter for
+bytecode*.
+    #+end_quote
+
+    So that is basically the story of Java.
+
+
+    #+begin_quote
+Once the run-time package exists for a given system, any Java program
+can run on it. Remember, although the details of the JVM will differ
+from platform to platform, all understand the same Java bytecode. *If
+a Java program were compiled to native -executable- code* , then *different versions
+of the same program would have to exist* for each type of CPU
+connected to the Internet. This is, of course, not a feasible
+solution. Thus, the execution of bytecode by the JVM is the easiest
+way to create truly portable programs.
+    #+end_quote
+
+    So now you understand the important piece that Java brought about
+    on the table.
+
+    Note now that Java - as other interpreter languages - will have a
+    lower performance in comparison to the C++ cousin. This is natural
+    given that your output is not executable code.
+
+    However, with Java, the /differential between the two is not so
+    great/. This becasue bytecode has been highly optimized.
+
+    This because Java has another *secret skill*.
+
+
+    Although Java was /designed as an interpreted language/, there is
+    nothing about Java that prevents *on-the-fly compilation of
+    bytecode into native code* in order to boost performance.
+
+    Such on the fly compilation technologiy was developed into the
+    *Just-In-Time (JIT)* compiler for bytecode.
+
+    #+begin_quote
+    When a JIT compiler is part of the JVM, selected portions of
+    bytecode are compiled into executable code in real time, on a
+    piece-by-piece, demand basis.
+    #+end_quote
+
+    So that badaboom. You have very strong performace. 
+   
+
+** Servlets
+
+   Not long after the initial release of Java, it became obvious that
+   Java would also be useful on the server side. The result was the
+   servlet. /A servlet is a small program that executes on the
+   server/. Just as applets dynamically extend the functionality of a
+   *web browser*, servlets dynamically extend the functionality of a
+   web server. Thus, with the advent of the servlet, Java spanned
+   both sides of the client/server connection.
+
+   Servlets are used to create dynamically generated content that is
+   then served to the client.
+
+   The very same idea of applets and of Java applies to
+   /servlets/. Because servlets (like all Java programs) are compiled
+   into bytecode and executed by the JVM, they are highly
+   portable. Thus, the /same servlet can be used in a variety of
+   different server/ environments.
+
+
+* Important Notes
+   
+   Note that in Java all code must reside *into a class*.
+
+   One tricky thing is that you have to name the file after the class
+   it specfies. Otherwise the java compiler will not be able to deal
+   and understand the dependencies of it.
+
+   Once you have specified a source file with the corresponding naming
+   notation as described above you can compile it with the =javac=
+   command. The result will be a =.class= file. Note that this is not
+   executable code, rather it is Bytecode as described above.
+
+   The reason why you should name the file as your class is the way
+   the java runtime executes the code:
+
+   #+begin_quote
+When Java source code is compiled, each individual class is put into
+its own output file named after the class and using the .class
+extension. This is why it is a good idea to give your Java source
+files the same name as the class they contain—the name of the source
+file will match the name of the .class file. When you execute java as
+just shown, you are actually specifying the name of the class that you
+want to execute. It will automatically search for a file by that name
+that has the .class extension.
+   #+end_quote
+
+   It is then straightforward that due to this structure you should
+   *always name your source code file after your class*.
+
+
+* Syntax
+
+** if
+
+   #+begin_src java 
+   if(x < y) {System.out.println("x is less than y");}
+   #+end_src 
+
+** for
+   :LOGBOOK:
+   CLOCK: [2021-09-08 Mi. 15:40]--[2021-09-08 Mi. 16:05] =>  0:25
+   :END:
+
+   #+begin_src java 
+for(int x = 0; x<10; x = x+1) {
+    System.out.println("This is x: " + x);
+}
+   #+end_src 
+
+** java key-words
+
+   here an overview of all of the available java-keywords.
+
+  #+begin_export html
+   <img src="../../images/Screenshot 2021-09-08 155756.png" class="center">
+  #+end_export
+   
+   In addition to the above emacs reserves the following *true*,
+   *false*, *null*.
+    
+** primitive types
+
+    8 primitive types of data: *byte, short, int, long, char, float,
+    double, and boolean*.
+
+    recall the standard difference among them:
+
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-09-08 160537.png">
+#+end_export
+
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-09-08 160659.png">
+#+end_export
+
+** casting
+
+   you specify the casting to a variable by entering the type wihtin parentheses.
+
+   #+begin_src java
+    int i; float d;
+
+    i = (int) d;
+   #+end_src 
+    
+** automatic type promotion
+
+    consider the following example
+
+    #+begin_src java 
+byte a = 40;
+byte b = 50;
+byte c = 100;
+int d = a * b / c;
+    #+end_src
+
+    The result of the intermediate term /a * b/ easily exceeds the range
+    of either of its byte operands. To handle this kind of problem,
+    Java automatically promotes each byte, short, or char operand /to
+    int/ when evaluating an expression.
+
+    Note that this automatic type promotion might even give rise to
+    errors as the following:
+
+    #+begin_src java 
+byte b = 50;
+b = b * 2; // Error! Cannot assign an int to a byte
+    #+end_src
+
+    In such a case you might need to specify some casting to go back
+    to the desired type
+
+    #+begin_src java 
+byte b = 50;
+b = (byte)(b * 2);
+    #+end_src 
+
+    Note as well the following type promotion rule.
+
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-09-08 161942.png">
+#+end_export
+
+** Array
+
+   Group of like-typed variables. Note that array are static data
+   objects. I.e. they do not increase automatically in
+   size. I.e. they are not dynamic objects that can change the memory
+   allocation on the fly. For this reason it is often suggested to
+   work with =lists= data objects. They are not built-in though.
+
+   Creation of array
+
+   #+begin_src java 
+    int month_days[];
+   #+end_src
+
+   Although this declaration establishes the fact that /month_days is
+   an array variable, no array actually exists/. In fact, the value of
+   month_days is set to null, which represents an array with no
+   value. To link month_days with an actual, physical array of
+   integers, you must allocate one using new and assign it to
+   month_days. =new= is a special operator that *allocates memory*.
+
+   So in order to create the actual array and allocate memory use:
+
+   #+begin_src java 
+    month_days = new int[12];
+   #+end_src
+
+   You can as well combine the two steps above doing the following:
+
+   #+begin_src java 
+    int month_days[] = new int[12];
+   #+end_src
+
+   Finally you can also use an /array initializer/ by passing a list
+   of dates to it. Say the following:
+
+   #+begin_src java 
+    int month_days[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+   #+end_src 
+
+   *Note* that when doing the above there is no need to specify the
+   =new= variable with it.    
+
+   You can then assign a value to a specific entry in the array in a
+   python-alike notation
+
+   #+begin_src java 
+    month_days[1] = 28;
+   #+end_src
+
+   #+BEGIN_SRC java :results output drawer :classname myArrayTest
+class myArrayTest {
+    public static void main(String args[]) {
+	int oneD[]= new int[5];
+	int i, k = 0;
+
+	// populate the multi-array
+	for(i=0; i<5; i++){
+	    oneD[i] = k;
+	    k++;
+
+	    System.out.print(oneD [i] + " ");
+	}
+	System.out.println();
+
+	int[] subset = java.util.Arrays.copyOfRange(oneD, 0, 1);
+
+
+	for(i=0; i<1; i++){	
+	    // print the multi-array	
+	    System.out.print(subset [i] + " ");
+	}
+	System.out.println();
+    }
+}
+
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   0 1 2 3 4 
+   0 
+   :end:
+
+** Multidimensional Array
+
+   Same as before. just muplitiple dimensions. You are very used to
+   it from your python data science background. 
+    
+   #+begin_src java 
+    int twoD[][] = new int[4][5];
+   #+end_src
+
+   You can then populate it as follows:
+
+   #+begin_src java :classname TwoDArray
+class TwoDArray {
+    public static void main(String args[]) {
+	int twoD[][]= new int[4][5];
+	int i, j, k = 0;
+
+	// populate the multi-array
+	for(i=0; i<4; i++)
+	    for(j=0; j<5; j++) {
+		twoD[i][j] = k;
+		k++;
+	    }
+
+	// print the multi-array	
+	for(i=0; i<4; i++) {
+	    for(j=0; j<5; j++)
+		System.out.print(twoD[i][j] + " ");
+	    System.out.println();
+	}
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   |  0 |  1 |  2 |  3 |  4 |
+   |  5 |  6 |  7 |  8 |  9 |
+   | 10 | 11 | 12 | 13 | 14 |
+   | 15 | 16 | 17 | 18 | 19 |
+
+   Note that it is as well possible to allocate the memory
+   sequentially. I.e. you can first allocate the memory of your first
+   dimension of the array and then subsequently pass the dimension of
+   the other.
+
+   #+begin_src java 
+int twoD[][] = new int[4][];
+twoD[0] = new int[1];
+twoD[1] = new int[2];
+twoD[2] = new int[3];
+twoD[3] = new int[4];
+   #+end_src 
+
+   Note that in such a way it is possible to allocate arrays of
+   different dimensions to the second dimension of the
+   multi-array. This is not possible when specifying directly the
+   dimension of the second dimension as a single argument.
+
+   You can then populate such an array as usual via for loops.
+
+   Another possibility is to populate the array by directly passing
+   lists of arguments.
+
+   #+begin_src java :classname Matrix
+// Initialize a two-dimensional array.
+class Matrix {
+    public static void main(String args[]) {
+	double m[][] = {
+	    { 0*0, 1*0, 2*0, 3*0 },
+	    { 0*1, 1*1, 2*1, 3*1 },
+	    { 0*2, 1*2, 2*2, 3*2 },
+	    { 0*3, 1*3, 2*3, 3*3 }
+	};
+	int i, j;
+	for(i=0; i<4; i++) {
+	    for(j=0; j<4; j++)
+		System.out.print(m[i][j] + " ");
+	    System.out.println();
+	}
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   | 0.0 | 0.0 | 0.0 | 0.0 |
+   | 0.0 | 1.0 | 2.0 | 3.0 |
+   | 0.0 | 2.0 | 4.0 | 6.0 |
+   | 0.0 | 3.0 | 6.0 | 9.0 |
+
+   Note that when instantiating multiple arrays what you can actually
+   do is to use the following notation with the parentheses =[]=
+   immediately following the type and not following the array.
+
+   #+begin_src java 
+    int[] nums, nums2, nums3; // create three arrays
+
+    // same - but more practical - than
+    int nums[], nums2[], nums3[]; // create three arrays
+   #+end_src 
+
+** Math oprator
+
+   This is also fairly standard. All of the math operations can be
+   performed with the usual shortcuts.
+
+   The only tricky point is the following:
+
+   #+begin_src java 
+    x = 42;
+    y = ++x; // note as well that x is incremented by 1 i.e. it also
+	     // performs x = x + 1
+   #+end_src 
+
+   In this case, *y is set to 43* as you would expect, because the
+   increment occurs before x is assigned to y.
+
+   #+begin_src java 
+    x = 42;
+    y = x++;
+   #+end_src 
+
+   the value of x is obtained before the increment operator is
+   executed, so the value of *y is 42*.
+
+    
+   #+begin_src java :classname Assign
+class Assign {
+    public static void main(String args[]) {
+	int x, y, z;
+
+	x = y = z = 100; // set x, y, and z to 100
+
+	System.out.println(x);
+
+	System.out.println(y);
+
+	System.out.println(z);
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   | 100 |
+   | 100 |
+   | 100 |
+
+** ? Operator
+
+    The general idea is the following:
+
+    #+begin_quote
+expression1 ? expression2 : expression3
+    #+end_quote
+
+    expression1 = boolean expression.
+
+    -> if true = evaluate expression2
+    
+    -> if false = evaluate expression3
+
+    Both expression2 and expression3 are required to return the same
+    type, which can’t be void.
+
+    #+BEGIN_SRC java :results output drawer :classname question
+class question {
+    public static void main(String args[]) {
+
+	int h = 4;
+
+	int x = 3;
+
+	x = h <= 4 ? 2 : 3;  // ok so note that you must
+			     // return. cannot define it after
+			     // question mark.
+
+	System.out.println(x);
+    }
+}
+    #+END_SRC
+
+    #+RESULTS:
+    :results:
+    2
+    :end:
+
+** Optional
+
+   The Optional object, which is the state-appointed /null deodorizer/
+   in Java allows you to deal with the case when the result may be
+   absent.
+
+   So it should be the result type in that case.
+
+   It protects us from getting a NullPointerException by accident and
+   makes it quite explicit to the reader that “no result found” is a
+   possible outcome.
+
+   Given a result type beloning to such a class we can inquire if an
+   object is present by using the ~isPresent()~ method, and we can obtain
+   the current value using its ~get()~ method.
+
+   Alternatively, we could suggest a substitute value , using the
+   method ~orElse()~.
+
+   #+BEGIN_SRC java :results output drawer :classname myClass
+import java.util.Optional;
+
+class myClass {
+
+    public static void main(String args[]) {
+
+	Optional<String> opt = Optional.empty();
+
+	opt.ifPresentOrElse(
+			    value -> System.out.println("Found: " + value),
+			    () -> System.out.println("Not found")
+			    );
+
+
+	opt =  Optional.of("baeldung");;
+
+	opt.ifPresentOrElse(
+			    value -> System.out.println("Found: " + value),
+			    () -> System.out.println("Not found")
+			    );
+
+	String name = null;
+	opt = Optional.ofNullable(name);
+	opt.ifPresentOrElse(
+			    value -> System.out.println("Found: " + value),
+			    () -> System.out.println("Not found")
+			    );
+	
+    }
+}
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   Not found
+   Found: baeldung
+   Not found
+   :end:
+
+** Switch
+
+   Note that this is the usual stuff. On the top of it you have a
+   default condition:
+
+   #+begin_src java  :classname SampleSwitch :results output raw
+// A simple example of the switch.
+class SampleSwitch {
+    public static void main(String args[]) {
+	for(int i=0; i<6; i++)
+	    switch(i) {
+	    case 0:
+		System.out.println("i is zero.");
+		break;
+	    case 1:
+		System.out.println("i is one.");
+		break;
+	    case 2:
+		System.out.println("i is two.");
+		break;
+	    case 3:
+		System.out.println("i is three.");
+ 		break;
+	    default: // see default. no matching condition redirects here.
+		System.out.println("i is greater than 3.");
+	    }
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   i is zero.
+   i is one.
+   i is two.
+   i is three.
+   i is greater than 3.
+   i is greater than 3.
+
+   Note that if your case does not hit any of the existing ones it
+   redirects to default.
+
+   #+begin_src java  :classname SampleSwitch :results output drawer
+// A simple example of the switch.
+class SampleSwitch {
+    public static void main(String args[]) {
+	for(int i=0; i<6; i++)
+	    switch(i) {
+	    case 0:
+		System.out.println("i is zero.");
+		break;
+	    case 2:
+		System.out.println("i is two.");
+		break;
+	    case 3:
+		System.out.println("i is three.");
+ 		break;
+	    default: // see default. no matching condition redirects here.
+		System.out.println("i is greater than 3.");
+	    }
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   :results:
+   i is zero.
+   i is greater than 3.
+   i is two.
+   i is three.
+   i is greater than 3.
+   i is greater than 3.
+   :end:
+
+   Note that if you insert an empty case that is hit, it redirects to
+   the code of the next case statement
+
+   #+begin_src java  :classname SampleSwitchWithEmptyCase :results output drawer
+// A simple example of the switch.
+class SampleSwitchWithEmptyCase {
+    public static void main(String args[]) {
+	for(int i=0; i<6; i++)
+	    switch(i) {
+	    case 0:
+		System.out.println("i is zero.");
+		break;
+	    case 1:
+	    case 2:
+		System.out.println("i is two.");
+		break;
+	    case 3:
+		System.out.println("i is three.");
+ 		break;
+	    default: // see default. no matching condition redirects here.
+		System.out.println("i is greater than 3.");
+	    }
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   :results:
+   i is zero.
+   i is two.
+   i is two.
+   i is three.
+   i is greater than 3.
+   i is greater than 3.
+   :end:
+   
+** Do-while
+
+   This is a feature of many other languages I have never used that
+   much but it is in fact practical as if I think about my classical
+   development pattern I often come into such a situation where I
+   write some piece of code *out of the while loop*. Think for
+   instance at instantiating some variables. 
+
+   Another option is to use this /do-while/ notation. I think that
+   this /improves readability/.
+
+   #+begin_src java 
+do {
+    // body of loop
+} while (condition);
+   #+end_src 
+
+   In such a way you guarantee that the execution of the do statement
+   is performed at least 1 time as the condition is executed /before/
+   the while condition.
+
+** Scope of variables within Iterators
+
+   Recall the classical point when working with operators.
+
+   When you declare a variable inside a for loop, there is one
+   important point to remember: the *scope of that variable ends when
+   the for statement does*.
+
+** For iterations with comma
+
+   Note that it is as well possible to include multiple operations
+   int the for statement separated by a comma in =java=.
+
+   Think for instance to the following piece of code
+
+   #+begin_src java :classname Comma :results raw
+// Using the comma.
+class Comma {
+    public static void main(String args[]) {
+	int a, b;
+	for(a=1, b=4; a<b; a++, b--) { // you see that you include here two operations
+	    System.out.println("a = " + a);
+	    System.out.println("b = " + b);
+	}
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   a = 1
+   b = 4
+   a = 2
+   b = 3
+
+*** Naming for loops
+
+    This is a nice feature. I am using it for testing an application.
+
+    I do not want to waste time and want my program to be minimal, in
+    the sense it should run quickly as I am not sure what is going on
+    in the background and I fear that simply stopping it alltogether
+    might not be the ideal solution.
+
+    So in case you have nested loops, switch statements etc, the first
+    break will just break from the direct parent but not from the
+    overall loop. In this sense if you name the overall loop you can
+    then quickly escape it.
+
+    Example from stackoverflow
+
+    #+BEGIN_SRC java :results output drawer :classname 
+myLoop: while(sc.hasNextInt()){
+    typing = sc.nextInt();
+    switch(typing){
+        case 0:
+          break myLoop; 
+        case 1:
+          System.out.println("You choosed 1");
+          break;
+        case 2:
+          System.out.println("You choosed 2");
+          break;
+        default:
+          System.out.println("No such choice");
+    }
+}
+    #+END_SRC
+
+** For-each type
+    
+   Note that when you work with data-structures that *are iterable* you
+   do not need to work with conditions in the iterators. I.e. you can
+   work directly with the following syntax
+
+   #+begin_src java 
+    for(type itr-var : collection) statement-block
+   #+end_src 
+
+
+   Note that you can even use it
+
+   #+begin_src java :classname ForEach3 :results output raw
+// Use for-each style for on a two-dimensional array.
+class ForEach3 {
+    public static void main(String args[]) {
+	int sum = 0;
+	int nums[][] = new int[3][5];
+	// give nums some values
+	for(int i = 0; i < 3; i++)
+	    for(int j=0; j < 5; j++)
+		nums[i][j] = (i+1)*(j+1);
+	// use for-each for to display and sum the values
+	for(int x[] : nums) { // note that here you iterate across the multiple arrays. i.e. at each iteration a different array
+	    for(int y : x) { // iterate among the values of the array.
+		System.out.println("Value is: " + y);
+		sum += y;
+	    }
+	}
+	System.out.println("Summation: " + sum);
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   Value is: 1
+   Value is: 2
+   Value is: 3
+   Value is: 4
+   Value is: 5
+   Value is: 2
+   Value is: 4
+   Value is: 6
+   Value is: 8
+   Value is: 10
+   Value is: 3
+   Value is: 6
+   Value is: 9
+   Value is: 12
+   Value is: 15
+   Summation: 90
+
+** break as form of goto
+
+   Note that you can *notate pieces of code*. Then you can use the
+   /break/ statement to break out of a particular piece of code.
+
+   Check for instance at the following example.
+
+   #+begin_src java :classname Break :results raw
+// Using break as a civilized form of goto.
+class Break {
+    public static void main(String args[]) {
+	boolean t = true;
+	first: {
+	    second: {
+		third: {
+		    System.out.println("Before the break.");
+		    if(t) break second; // break out of second block
+		    System.out.println("This won't execute");
+		}
+		System.out.println("This won't execute");
+	    }
+	    System.out.println("This is after second block.");
+	}
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   Before the break.
+   This is after second block.
+
+   This is a nice feature that I never encounterd that far.
+
+   This might for instance be useful when you have multiple levels of
+   nestedness in loops. You can declare such loops and break out on
+   different levels.
+
+   #+begin_src java  :classname BreakLoop4
+// Using break to exit from nested loops
+class BreakLoop4 {
+    public static void main(String args[]) {
+	outer: for(int i=0; i<3; i++) {
+	    System.out.print("Pass " + i + ": ");
+	    for(int j=0; j<100; j++) {
+		if(j == 10) break outer; // exit both loops
+		System.out.print(j + " ");
+	    }
+	    System.out.println("This will not print");
+	}
+	System.out.println("Loops complete.");
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   : Pass 0: 0 1 2 3 4 5 6 7 8 9 Loops complete.
+    
+** print and println
+
+   note that these two are essentially the same. the first does not
+   append a /newline/ at the end while the second does. Note that both
+   lets you pass built-in java data types to them.
+
+** Classes
+
+    Specify a class 
+
+    #+begin_src java 
+class Box {
+    double width;
+    double height;
+    double depth;
+}
+    #+end_src 
+
+    Then you instantiate objects of it via the following syntax
+
+    #+begin_src java 
+Box mybox = new Box(); // create a Box object called mybox
+    #+end_src 
+    
+
+    Note that you can also simply assign a /reference to an object/
+    without instantiating the object itself and assigning memory to
+    it.
+
+    To understand that understand the following:
+
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-09-09 093617.png">
+#+end_export
+
+    
+    Note that such *references* allow the possibility to have two
+    variables referencing the same object.
+
+    Think for instance at the following:
+
+    #+begin_src java 
+Box b1 = new Box();
+Box b2 = b1;  // reference to b1 object. 
+    #+end_src 
+
+    Note that b2 will not store a copy of the b1 object. It will
+    rather have a *reference* to the existing b1 object in the
+    memory.
+
+    Note now the following illustration and /important point/.
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-09-09 095508.png">
+#+end_export
+
+** Constructors
+
+   A *constructor* initializes an object immediately upon
+   creation. It has the /same name as the class in which it resides
+   and is syntactically similar to a method/.
+
+   Note that constructor methods do not have any return type - *not
+   even void*. This is because the implicit return type of a class’
+   constructor is the class type itself.
+
+   Example of constructor syntax
+
+   #+begin_src java :classname BoxDemo6 :results output raw
+class Box {
+    double width;
+    double height;
+    double depth;
+
+
+    // Constructor Syntax
+    Box() {
+	System.out.println("Constructing Box");
+	width = 10;
+	height = 10;
+	depth = 10;
+    }
+    // compute and return volume
+    double volume() {
+	return width * height * depth;
+    }
+}
+class BoxDemo6 {
+    public static void main(String args[]) {
+	// declare, allocate, and initialize Box objects
+	Box mybox1 = new Box();
+	Box mybox2 = new Box();
+	double vol;
+	// get volume of first box
+	vol = mybox1.volume();
+	System.out.println("Volume is " + vol);
+	// get volume of second box
+	vol = mybox2.volume();
+	System.out.println("Volume is " + vol);
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   Constructing Box
+   Constructing Box
+   Volume is 1000.0
+   Volume is 1000.0
+
+   Note that the standard case is to use *parameterized* versions of
+   the constructors.
+
+   I.e. you would specify something like
+
+   #+begin_src java 
+// This is the constructor for Box.
+Box(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+}
+   #+end_src 
+
+   And then you would instantiate a new object with the desired
+   properties via the following syntax:
+
+   #+begin_src java 
+Box mybox1 = new Box(10, 20, 15);
+   #+end_src
+
+   Note then the classical /overloading/ property that you so often
+   use in constructors. You can specify multiple constructors and
+   based on the parameters you pass when creating the *new* object
+   the correct constructor is called.
+
+   For instance a basic example of constructors overloading
+
+   #+begin_src java 
+class Box {
+    double width;
+    double height;
+    double depth;
+    // constructor used when all dimensions specified
+    Box(double w, double h, double d) {
+	width = w;
+	height = h;
+	depth = d;
+    }
+    // constructor used when no dimensions specified
+    Box() {
+	width = -1; // use -1 to indicate
+	height = -1; // an uninitialized
+	depth = -1; // box
+    }
+    // constructor used when cube is created
+    Box(double len) {
+	width = height = depth = len;
+    }
+    // compute and return volume
+    double volume() {
+	return width * height * depth;
+    }
+}
+   #+end_src 
+    
+** Copies of Objects
+
+   A clasical way to copy obejcts to a new one is to specify a
+   constructor that takes an object as parameter.
+
+   To understand this check at the following:
+
+   #+begin_src java 
+class Box {
+    double width;
+    double height;
+    double depth;
+
+    // Notice this constructor. It takes an object of type Box.
+    Box(Box ob) { // pass object to constructor
+	width = ob.width;
+	height = ob.height;
+	depth = ob.depth;
+    }
+
+
+    // constructor used when all dimensions specified
+    Box(double w, double h, double d) {
+	width = w;
+	height = h;
+	depth = d;
+    }    
+
+    // constructor used when no dimensions specified
+    Box() {
+	width = -1; // use -1 to indicate
+	height = -1; // an uninitialized
+	depth = -1; // box
+    }
+
+
+
+    class OverloadCons2 {
+	public static void main(String args[]) {
+	    // create boxes using the various constructors
+	    Box mybox1 = new Box(10, 20, 15);
+	    Box mybox2 = new Box();
+
+	    // create copy of mybox1
+	    Box myclone = new Box(mybox1); 
+	}
+    }    
+   #+end_src 
+
+
+   So note that this is a *copy* and *not a reference*.    
+    
+** this keyword in classes
+
+   Note that this is similar to the /self/ in python.
+
+   =this= can be used inside any method to refer to the current
+   object.
+
+   Note that this is particularly useful when you have *local
+   variables* that you use within methods or in methods parameters
+   that overlap with *instance variables* of the class.
+
+   In that case within a method local variables will *overwrite the
+   instance variables*. This is where =this= comes at rescue as in
+   sucha way it will be possible to differentiate among the two and
+   actually refer to the *instance variables/ methods*.
+
+   In order to understand that check at the example above. There we
+   used =w = width, h = height, d = depth= in order to avoid this
+   kind of confusion among local and instance variables.
+
+   Note however that it is as well possible to avoid that confusion
+   by:
+
+   #+begin_src java 
+// Use this to resolve name-space collisions.
+Box(double width, double height, double depth) {
+    this.width = width;
+    this.height = height;
+    this.depth = depth;
+}
+   #+end_src 
+
+** finalize () method
+
+   Sometimes an object will need to *perform some action when it is
+   destroyed*. For example, if an object is /holding some non-Java
+   resource such as a file handle/ or character font, then you might
+   want to make sure these resources are freed before an object is
+   destroyed.
+
+   In order to do that you use the =finialize= method. Then when the
+   run-time garbage collector wants to release an object it will
+   first execute such =fianlize ()= method.
+
+   In order to specify it use the following syntax
+
+   #+begin_src java 
+protected void finalize( )
+{
+    // finalization code here
+}
+   #+end_src 
+
+** Nested Classes
+
+   Recall that if if class B is a nested class defined within class
+   A, then B does not exist independently of A. A nested class has
+   access to the members, including private members, of the class in
+   which it is nested. *However, the enclosing class does not have
+   access to the members of the nested class.* So this is the added
+   modeling possibility allowed through nested classes.
+
+   The most important type of nested class is the /inner class/. An
+   inner class is a non-static nested class. It has *access to all of
+   the variables and methods of its outer class* and may refer to them
+   directly in the same way that other non-static members of the
+   outer class do.
+
+   Note as well the following important property. It is important to
+   realize that an *instance of Inner can be created only within the
+   scope of class Outer*. The Java compiler generates an error message
+   if any code outside of class Outer attempts to instantiate class
+   Inner.
+
+   /Basic Example/:
+
+   #+begin_src java :classname InnerClassDemo :results output raw
+// Demonstrate an inner class.
+class Outer {
+    int outer_x = 100;
+
+    void test() { // outer class reference inner class and instatiate
+		  // object from it -> fine.
+	Inner inner = new Inner();
+	inner.display();
+    }
+
+    // this is an inner class
+    class Inner { 
+	void display() {
+	    System.out.println("display: outer_x = " + outer_x);
+	}
+    }
+}
+class InnerClassDemo {
+    public static void main(String args[]) {
+	Outer outer = new Outer();
+	outer.test();
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   display: outer_x = 100
+
+   Note that *syntactically* you can instantiate an object of the
+   inner class by *dotted notation*. I.e. you can declare a =new
+   Outer.Inner= object. This is useful when you want to instantiate
+   an object outside of the Outer class source file.
+
+** Variable number of arguments
+
+   That is also one of the classics in programming and is often
+   useful.
+
+   Avariable-length argument is specified by three periods
+   =(...)=. For example, here is how vaTest( ) is written using a
+   vararg:
+
+   #+begin_src java 
+static void vaTest(int ... v) { blabla }
+   #+end_src 
+
+   This syntax tells the compiler that vaTest( ) can be *called with
+   zero or more arguments*. As a result, *v is implicitly declared as
+   an array of type int[ ]*. Thus, inside vaTest( ), *v is accessed
+   using the normal array syntax*.
+
+   /Example/:
+
+   #+begin_src java :classname VarArgs :results output raw
+// Demonstrate variable-length arguments.
+class VarArgs {
+    // vaTest() now uses a vararg.
+    static void vaTest(int ... v) {
+	System.out.print("Number of args: " + v.length +
+			 " Contents: ");
+	for(int x : v)
+	    System.out.print(x + " ");
+	System.out.println();
+    }
+    public static void main(String args[])
+    {
+	// Notice how vaTest() can be called with a
+	// variable number of arguments.
+	vaTest(10); // 1 arg
+	vaTest(1, 2, 3); // 3 args
+	vaTest(); // no args
+    }
+}
+    
+   #+end_src 
+
+   #+RESULTS:
+   Number of args: 1 Contents: 10 
+   Number of args: 3 Contents: 1 2 3 
+   Number of args: 0 Contents:
+
+   Note that the dotted notation implements everything as an
+   *array*.
+
+   First, as explained, inside vaTest( ), v is operated on as an
+   array. This is because v is an array. The =...= syntax simply
+   tells the compiler that a variable number of arguments will be
+   used, and that these *arguments will be stored in the array
+   referred to by v*. *The arguments are automatically put in an
+   array and passed to v*. In the case of no arguments, the length of
+   the array is zero.
+
+   Amethod can have “normal” parameters along with a variable-length
+   parameter. However, the variable-length parameter *must be the last
+   parameter* declared by the method.
+
+   #+begin_src java 
+int doIt(int a, int b, double c, int ... vals) {
+   #+end_src 
+
+   Then when you call =doIt=, the first three parameters are mapped
+   to the first three arguments and the others go in the array
+   =vals=.
+    
+** Inheritance
+
+   Recall general terminology. Subclass -> class that is
+   inheriting. Superclass -> reference class.
+
+   /Basic Syntax/:
+
+   #+begin_src java :classname SimpleInheritance :results output raw
+// A simple example of inheritance.
+// Create a superclass.
+class A {
+    int i, j;
+    void showij() {
+	System.out.println("i and j: " + i + " " + j);
+    }
+}
+// Create a subclass by extending class A.
+class B extends A {
+    int k;
+    void showk() {
+	System.out.println("k: " + k);
+    }
+    void sum() {
+	System.out.println("i+j+k: " + (i+j+k));
+    }
+}
+
+class SimpleInheritance {
+    public static void main(String args[]) {
+	A superOb = new A();
+	B subOb = new B();
+	// The superclass may be used by itself.
+	superOb.i = 10;
+	superOb.j = 20;
+	System.out.println("Contents of superOb: ");
+	superOb.showij();
+	System.out.println();
+	/* The subclass has access to all public members of
+	   its superclass. */
+	subOb.i = 7;
+	subOb.j = 8;
+	subOb.k = 9;
+	System.out.println("Contents of subOb: ");
+	subOb.showij();
+	subOb.showk();
+	System.out.println();
+	System.out.println("Sum of i, j and k in subOb:");
+	subOb.sum();
+    }
+}    
+   #+end_src 
+
+   #+RESULTS:
+   Contents of superOb: 
+   i and j: 10 20
+
+   Contents of subOb: 
+   i and j: 7 8
+   k: 9
+
+   Sum of i, j and k in subOb:
+   i+j+k: 24
+
+   Note that /subclasses/ has access to all of the *members* of the
+   /superclass/. This is why you have access to /i, j, showij/.
+    
+*** Superclass reference Subclass                        :reference_variable:
+
+    It is possible for a superclass *object* to refer to a subclass
+    object.
+
+    #+begin_src java :results output raw :classname RefDemo
+// This program uses inheritance to extend Box.
+class Box {
+    double width;
+    double height;
+    double depth;
+    // construct clone of an object
+    Box(Box ob) { // pass object to constructor
+	width = ob.width;
+	height = ob.height;
+	depth = ob.depth;
+    }
+    // constructor used when all dimensions specified
+    Box(double w, double h, double d) {
+	width = w;
+	height = h;
+	depth = d;
+    }
+    // constructor used when no dimensions specified
+    Box() {
+	width = -1; // use -1 to indicate
+	height = -1; // an uninitialized
+	depth = -1; // box
+    }
+    // constructor used when cube is created
+    Box(double len) {
+	width = height = depth = len;
+    }
+    // compute and return volume
+    double volume() {
+	return width * height * depth;
+    }
+}
+// Here, Box is extended to include weight.
+class BoxWeight extends Box {
+    double weight; // weight of box
+    // constructor for BoxWeight
+    BoxWeight(double w, double h, double d, double m) {
+	width = w;
+	height = h;
+	depth = d;
+	weight = m;
+    }
+}
+
+class RefDemo {
+    public static void main(String args[]) {
+	BoxWeight weightbox = new BoxWeight(3, 5, 7, 8.37);
+
+	// Instantiate a new box object
+	Box plainbox = new Box();
+
+	double vol;
+	vol = weightbox.volume();
+	System.out.println("Volume of weightbox is " + vol);
+	System.out.println("Weight of weightbox is " +
+			   weightbox.weight);
+	System.out.println();
+
+	// assign BoxWeight reference to Box reference
+	plainbox = weightbox;
+
+	vol = plainbox.volume(); // OK, volume() defined in Box
+
+	System.out.println("Volume of plainbox is " + vol);
+	/* The following statement is invalid because plainbox
+	   does not define a weight member. */
+	// System.out.println("Weight of plainbox is " + plainbox.weight);
+    }
+}
+    #+end_src 
+
+    #+RESULTS:
+    Volume of weightbox is 105.0
+    Weight of weightbox is 8.37
+
+    Volume of plainbox is 105.0
+
+    Note that even if you assign a reference to Boxweight object you
+    cannot access all of the members of it as the *type of the
+    assignment ultimately determines what you can access and not*.
+
+    Note that you *cannot access members* of the referenced object that
+    are not implemented in the superclass though. 
+     
+** on the super keyword
+
+   This is useful in the case you would not want to expose the entire
+   logic of an application to the end user. I.e. in the case you want
+   to keep some of the variables of the subclass private and
+   instantiate them via the superclass.
+
+   In practice you can use the =super= keyword in two ways to achieve
+   that goal. The first *calls the superclass’ constructor*. The
+   second is used to *access a member of the superclass that has been
+   hidden by a member of a subclass*.
+
+
+   /On calling the superclass constructor/:
+
+   #+begin_src java :results output raw 
+// BoxWeight now uses super to initialize its Box attributes.
+class BoxWeight extends Box {
+    double weight; // weight of box
+    // initialize width, height, and depth using super()
+    BoxWeight(double w, double h, double d, double m) {
+	super(w, h, d); // call superclass constructor. note that it
+			// must be the first call in the constructor
+	weight = m;
+    }
+}
+   #+end_src 
+
+   Note now that as you do not have to initialize the =w, h, d=
+   directly in the subclass you do not have to grant access to the
+   members to the subclass. I.e. you can safely define them as
+   *private* in the superclass as such variables will always be
+   instatiated by the superclass even when calling the constructor of
+   the subclass.
+
+   Note that when you overload the constructor and have multiple
+   initalizer for it you can use in a similar way multiple
+   constructors for the subclass. You can then pass the =super()=
+   with the different parameters reflecting the desired arguments of
+   the superclass constructor.
+
+   The only constructor where you should pay attention in the
+   subclass in inheritance cases is the one of:
+
+   #+begin_src java :results output raw 
+// construct clone of an object
+BoxWeight(BoxWeight ob) { // pass object to constructor
+    super(ob);
+    weight = ob.weight;
+}
+   #+end_src 
+
+   #+RESULTS:
+
+   i.e. the constructor by passing the reference to an object. Here
+   it is important to realize that you pass an object of type
+   *BoxWeight* not *Box*. Here super still calls the constructor
+   =Box(Box ob)=.
+
+   As mentioned earlier, a superclass variable can be used to
+   reference any object derived from that class. Thus, we are able to
+   pass a BoxWeight object to the Box constructor.
+
+   /On the use of super to access superclass members:/
+
+   This is used when the member names of the /subclass/ hide members
+   by the same name in the superclass.
+
+   Consider this simple hierarchy
+
+   #+begin_src java :results output raw :classname UseSuper
+// Using super to overcome name hiding.
+class A {
+    int i;
+}
+// Create a subclass by extending class A.
+class B extends A {
+    int i; // this i hides the i in A
+    B(int a, int b) {
+	super.i = a; // i in A
+	i = b; // i in B
+    }
+    void show() {
+	System.out.println("i in superclass: " + super.i);
+	System.out.println("i in subclass: " + i);
+    }
+}
+class UseSuper {
+    public static void main(String args[]) {
+	B subOb = new B(1, 2);
+	subOb.show();
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   i in superclass: 1
+   i in subclass: 2
+
+   So you see that you can access the members of the superclass from
+   the subclass which might be useful at times.
+
+** Method overloading vs overwriting in class hierarchies
+
+   Note that when you have subclasses you overwrite =methods= just
+   when the method has *exactly the same name and arguments* of the
+   superclass. If you have a method with the same name but different
+   arguments you simply overload that method.
+
+   #+begin_src java :results output raw :classname Override
+/////////////
+// Example //
+/////////////
+
+// Methods with differing type signatures are overloaded – not
+// overridden.
+class A {
+    int i, j;
+    A(int a, int b) {
+	i = a;
+	j = b;
+    }
+    // display i and j
+    void show() {
+	System.out.println("i and j: " + i + " " + j);
+    }
+}
+// Create a subclass by extending class A.
+class B extends A {
+    int k;
+    B(int a, int b, int c) {
+	super(a, b);
+	k = c;
+    }
+    // overload show()
+    void show(String msg) {
+	System.out.println(msg + k);
+    }
+}
+
+class Override {
+    public static void main(String args[]) {
+	B subOb = new B(1, 2, 3);
+	subOb.show("This is k: "); // this calls show() in B
+	subOb.show(); // this calls show() in A
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   This is k: 3
+   i and j: 1 2
+
+** On overwritten Methods and dynamic method dispatch
+
+   Note that Java can resolve overwritten methods at run-time;
+   i.e. it decides at run time which methods to run.
+
+   This is done by checking the *type of the object being referred
+   to* and not the *type of reference variable*.(Note that this is in
+   contrast to the case when the type of the reference variable say a
+   superclass object - determines which methods are available for
+   it).
+
+   In order to see this check at the following:
+
+   #+begin_src java :results output raw :classname Dispatch
+// Dynamic Method Dispatch
+class A {
+    void callme() {
+	System.out.println("Inside A's callme method");
+    }
+}
+class B extends A {
+    // override callme()
+    void callme() {
+	System.out.println("Inside B's callme method");
+    }
+}
+class C extends A {
+    // override callme()
+    void callme() {
+	System.out.println("Inside C's callme method");
+    }
+}
+class Dispatch {
+    public static void main(String args[]) {
+	A a = new A(); // object of type A
+	B b = new B(); // object of type B
+	C c = new C(); // object of type C
+	A r; // obtain a reference of type A
+
+	// UNDERSTAND THE BELOW - type of refereced objected is
+	// entscheidend
+
+	r = a; // r refers to an A object
+	r.callme(); // calls A's version of callme
+	r = b; // r refers to a B object
+	r.callme(); // calls B's version of callme
+	r = c; // r refers to a C object
+	r.callme(); // calls C's version of callme
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   Inside A's callme method
+   Inside B's callme method
+   Inside C's callme method
+
+   So you see that despite the reference variable is of type =A= the
+   methods of the subclasses are called when the reference variable
+   refer to them.
+
+** Annotations
+
+   Index :
+
+   [[*@Override][@Override]]
+   [[*@Retention][@Retention]]
+   [[*@Documented][@Documented]]
+   [[*@Target][@Target]]
+   [[*@Inherited][@Inherited]]
+   [[*@Deprecated][@Deprecated]]
+   [[*@SuppressWarnings][@SuppressWarnings]]
+   [[*@FunctionalInterface][@FunctionalInterface]]
+
+   You have built-in Annotations that you can use out of the box.
+
+   On the top of it, you have user-defined Annotations that we will
+   explore next.
+   
+*** Built-in Annotations
+**** @Override
+
+     This is powerful notation construct. Note that it is not mandatory
+     to use for the correct syntax of the program. I noted though that
+     this is quite extensively used in our team.
+
+     It is quite practical in fact. With it you specify that a method
+     will be overrriden next. This will be useful in two ways:
+
+     1. if you make a mistake when spelling out the name of the method
+	or you pass a wrong number of arguments such that you will
+	ultimately not override the method you will be thrown an error
+	at compile time. It is hence a *safety check*. You are telling
+	the compiler that the next method should be an overrriden method.
+
+     2. the second way it helps is by navigating the code. it is then
+	useful to see what went wrong.
+
+     /Example/
+
+     #+begin_src java :results output raw :classname SubClass
+class ParentClass
+{
+	public void displayMethod(String msg){
+		System.out.println(msg);
+	}
+}
+class SubClass extends ParentClass
+{
+	@java.lang.Override
+	public void displayMethod(String msg){
+		System.out.println("Message is: "+ msg);
+	}
+	public static void main(String args[]){
+		SubClass obj = new SubClass();
+		obj.displayMethod("Hey!!");
+	}
+}
+     #+end_src 
+
+     #+RESULTS:
+     Message is: Hey!!
+
+**** @Deprecated
+
+     @Deprecated annoation marks that this method is deprecated so
+     *compiler prints warning*. It informs user that it may be removed in
+     the future versions. So, it is better not to use such methods.
+
+**** @SuppressWarnings
+
+     @SuppressWarnings annotation: is used to suppress warnings issued
+     by the compiler.
+
+
+    
+
+
+*** User defined Annotations
+
+    So first of all you have to understand how you define your
+    user-specific annotations.
+
+    
+**** Syntax
+
+     In order to define an interface you can use the following
+
+     #+begin_src java :results output raw 
+     @interface MyAnnotation{}  
+     #+end_src 
+
+     Note that such custom annotations can just be used under the
+     following settings:
+
+     - annotated method should not have any throws clauses
+     - method should return one of the following:
+       1. primitives
+       2. String
+       3. Class
+       4. enum
+       5. array
+     - method should not have any parameter
+
+     Note now the following general constructs:
+
+     - an annotation that has no method is called a =marker=.
+
+       for instance the following
+
+       #+begin_src java :results output raw 
+       @interface MyAnnotation{}  
+       #+end_src 
+
+       Note that the built-in annotations above are all markers.
+       
+     - =single-value= annotation
+
+       an annotation that /has one method/.
+
+       see for instance the following
+
+       #+begin_src java :results output raw 
+@interface MyAnnotation{  
+int value();  
+}  
+       #+end_src 
+
+       or the following
+
+       #+begin_src java :results output raw 
+@interface MyAnnotation{  
+int value() default 0;  
+}  
+       #+end_src 
+
+       You can then set the value for the single methods
+
+       #+begin_src java :results output raw 
+@MyAnnotation(value=10)  
+       #+end_src 
+       
+     - =multi-value= annotation
+
+       for instance the following
+
+       #+begin_src java :results output raw 
+@interface MyAnnotation{  
+int value1() default 1;  
+String value2() default "";  
+String value3() default "xyz";  
+}
+       #+end_src
+
+
+   *Recall:* albeit you have members within the annotation when an
+   annotation member is passed a value when instantiating it, only its
+   name is used.
+
+   For instance in the above, as was the case of single-value.
+
+   #+begin_src java :results output raw 
+@MyAnnotation{  
+value1 = 3;  
+value2 = "hello";  
+value3 = "world";  
+}
+   #+end_src 
+     
+**** @Retention
+**** @Documented
+**** @Target
+**** @Inherited
+**** @FunctionalInterface
+
+     You can use this annotation to specify that an interface fulfills
+     the properties of the functional interface. 
+     
+     Note that these are important, as these are the basical logical
+     construct for *functional programming in Java*.
+
+     Functional interfaces are now simply defined as any interface
+     with a sinlge abstract method.
+
+     Note that this is the basis of functional programming as the
+     implementation of the single abstract method is then the lambda
+     expression you can use in your lambda function.      
+
+     If a method takes a functional interface as a parameter - note
+     that this is the case of functional programming -, then we can
+     pass the following:
+
+     - An anonymous inner class, the old-fashioned way - meaning not
+       functional - (but why would we?). See your notes on object
+       oriented programming in order to understand that better.
+
+       This is for instance the example you have in these document in
+       the =forEach= loop.
+      
+     - A lambda expression, like the map() method
+
+     - A method or constructor reference
+
+** Abstract Classes
+
+   *Important* Concrete methods are still /allowed in abstract classes/.
+
+   There are situations in which you will want to define a superclass
+   that declares the structure of a given abstraction without
+   providing a complete implementation of every method. That is,
+   sometimes you will want to create a superclass that only defines a
+   generalized form that will be shared by all of its subclasses,
+   /leaving it to each subclass to fill in the details/.
+
+   So the classical idea is to determine a class that will pose the
+   structure and *determines the structure that a subclass must
+   implement*.
+
+   In order to do that you can use the *abstract* keyword to a method
+   of the superclass that specifies that such method *must be
+   overrriden* by the subclasses.
+
+   *Important Note:* /Any class that contains one or more abstract
+   methods must also be declared abstract/. To declare a class
+   abstract, you simply use the abstract keyword in front of the
+   class keyword. *There can be no objects of an abstract
+   class*. Also, *you cannot declare abstract constructors, or
+   abstract static methods*.
+
+   #+begin_src java :results output raw :classname AbstractDemo
+// A Simple demonstration of abstract.
+abstract class A {
+    abstract void callme();
+    // concrete methods are still allowed in abstract classes
+    void callmetoo() {
+	System.out.println("This is a concrete method.");
+    }
+}
+class B extends A {
+    void callme() {
+	System.out.println("B's implementation of callme.");
+    }
+}
+class AbstractDemo {
+    public static void main(String args[]) {
+	B b = new B();
+	b.callme();
+	b.callmetoo();
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   B's implementation of callme.
+   This is a concrete method.
+
+   Although abstract classes cannot be used to instantiate objects,
+   they /can be used to create object references/, because Java’s
+   approach to run-time polymorphism is implemented through the use
+   of superclass references.
+
+   So consider this general last example on how to use abstract
+   classes
+
+   #+begin_src java :results output raw :classname AbstractAreas
+// Using abstract methods and classes.
+abstract class Figure {
+    double dim1;
+    double dim2;
+    Figure(double a, double b) {
+	dim1 = a;
+	dim2 = b;
+    }
+    // area is now an abstract method
+    abstract double area();
+}
+class Rectangle extends Figure {
+    Rectangle(double a, double b) {
+	super(a, b);
+    }
+    // override area for rectangle
+    double area() {
+	System.out.println("Inside Area for Rectangle.");
+	return dim1 * dim2;
+    }
+}
+class Triangle extends Figure {
+    Triangle(double a, double b) {
+	super(a, b);
+    }
+    // override area for right triangle
+    double area() {
+	System.out.println("Inside Area for Triangle.");
+	return dim1 * dim2 / 2;
+    }
+}
+class AbstractAreas {
+    public static void main(String args[]) {
+	// Figure f = new Figure(10, 10); // illegal now
+	Rectangle r = new Rectangle(9, 5);
+	Triangle t = new Triangle(10, 8);
+
+	//
+	// NOTE THAT IT IS FINE AND GOOD PRACTICE TO USE THE ABSTRACT
+	// CLASS AS A REFERENCE VARIABLE GIVEN THE DISCUSSION ABOVE
+        //
+
+	Figure figref; // this is OK, no object is created
+	figref = r;
+	System.out.println("Area is " + figref.area());
+	figref = t;
+	System.out.println("Area is " + figref.area());
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   Inside Area for Rectangle.
+   Area is 45.0
+   Inside Area for Triangle.
+   Area is 40.0
+
+** Object Class
+
+   There is one special class, Object, defined by Java. *All other
+   classes are subclasses of Object*.
+
+   That is, Object is a superclass of all other classes. This means
+   that a *reference variable of type Object can refer to an object of
+   any other class*. Also, since arrays are implemented as classes, a
+   variable of type Object can also refer to any array.
+
+
+** Interfaces
+
+   Index:
+
+   [[*General idea][General idea]]
+   [[*Definition][Definition]]
+   [[*Addition since Java 8][Addition since Java 8]]
+   [[*On reference variables using interafaces][On reference variables using interafaces]]
+   [[*Partial Implementations][Partial Implementations]]
+   [[*Nested Interfaces][Nested Interfaces]]
+   [[*Variables in Interfaces][Variables in Interfaces]]
+   [[*Interface Inheritance][Interface Inheritance]]
+
+   
+*** General idea
+   
+    Using the keyword interface, you can fully abstract a class'
+    interface from its implementation.
+
+    I.e. using *interface* you specify what a class must do, but /not
+    how it does it/.
+
+    Note that due to the rather declarative notion of interfaces, the
+    latter are *specified without any instance variables* and with
+    *empty methods bodys*.
+
+    So they are essentially *relatives* of abstract classes with an
+    important difference:
+
+    #+begin_quote
+ Once it is defined, any number of classes can implement an
+ interface. Also, one class can implement any number of interfaces.
+ While, in contrast, you have tighter relation among the classes
+ relation in Java that bound your flexibility in specfying subclasses
+ that can import from multiple superclasses. 
+    #+end_quote
+
+    To implement an interface, a class must *create the complete set of
+    methods* defined by the interface.
+
+    However, /each class is free to determine the details of its own
+    implementation/. It is both permissible and common for classes
+    that implement interfaces /to define additional members of their
+    own/.
+
+    By providing the interface keyword, Java allows you to fully
+    utilize the “one interface, multiple methods” aspect of
+    polymorphism.
+
+    Interfaces *add most of the functionality* that is required for
+    many applications that would normally resort to using *multiple
+    inheritance* in a language such as C++. I talked with Sergio and
+    apparently from a given version of Java you even have multiple
+    inheritance - so you would have to understand in this sense what
+    Java developers use ourtime when programming and what the best
+    practice for organizing the code is.
+
+*** Definition
+
+    The general syntax for generating interfaces is the following:
+
+    #+begin_example
+access interface name {
+return-type method-name1(parameter-list);
+return-type method-name2(parameter-list);
+type final-varname1 = value;
+type final-varname2 = value;
+// ...
+return-type method-nameN(parameter-list);
+type final-varnameN = value;
+}
+    #+end_example
+
+    So you see that this is the usual story. with methods with empty
+    bodies.
+
+    Note that when you define interfaces you should your file names
+    where the interface is specfied after the name of the interface.
+
+    *Note* that all of the methods and variables are implicitly
+    /public/.
+
+    *Note* that you can have as well variables defined in
+    interfaces. They are implicitly and must be *final* and
+    *static*. I.e. they define general global variables that would
+    ultimately apply to the classes referring to the interfaces. 
+
+    The syntax to *implement* an interface is the following:
+
+    #+begin_example
+class classname [extends superclass] [implements interface [,interface...]] {
+// class-body
+}
+    #+end_example
+
+    The methods that implement an interface must be declared *public*.
+
+    *Note* that top-level interfaces that are not implemented within a
+    class or nested in another interface must be declared as *public*
+    as well.
+    
+*** Addition since Java 8
+
+    There was an important addition in Java 8. That is you can
+    specify a body for a method that you want to implement and then
+    you can pass it to /implementing/ the interface as the *default*
+    method.
+
+    The syntax for doing this is for instance the following
+
+    #+begin_src java :results output raw :classname MyInterfaceTest
+interface MyInterface
+{
+  
+  /** Were any errors found */
+  default public boolean   hasErrors()  { return false; }
+
+}
+
+class MyClass implements MyInterface {
+    // other stuff of your choice.
+}
+
+
+class MyInterfaceTest
+{
+
+    public static void main(String[] args){
+	MyClass myObject = new MyClass();
+
+	System.out.println("The default boolean is " + myObject.hasErrors()); 
+
+    }
+} // end of IUploader
+
+    #+end_src 
+
+    #+RESULTS:
+    The default boolean is false
+
+*** On reference variables using interafaces             :reference_variable:
+
+    This is convenient. Recall that it was possible to define
+    reference variables as superclasses and to reference then objects
+    of subclasses. It was then possible to call the different abstract
+    methods of the superclass that would then trigger the right call
+    to the actual implementation of it in the subclass.
+
+    In a similar way it is possible to create reference variables as
+    interfaces and point then to the different objects of classes
+    implementing such interface.
+
+    *Any instance of any class that implements the declared interface
+    can be referred to by such a variable*.
+
+    The exact way the interface is implemented depends then on the
+    type of object that the reference interface variable points
+    at. This in a very similar way to what was already explained for
+    the case of superclass reference variable.
+
+    *Note:* interestingly when you implement a reference variable of
+    type interface and then refer to an object of some class referring
+    to that interface you can access all of the methods specified by
+    the interface via the reference variable but *you cannot access
+    any other members defined in the class* implementing the
+    interface.
+    
+    The method to be executed is looked up dynamically at run time,
+    allowing classes to be created later than the code which calls
+    methods on them.
+
+    #+begin_quote
+CAUTION Because dynamic lookup of a method at run time incurs a
+significant overhead when compared with the normal method invocation
+in Java, you should be careful not to use interfaces casually in
+performance-critical code.
+    #+end_quote
+    
+*** Partial Implementations
+
+    This is as well a very powerful tool.
+
+    Recall that a class that implements an interface should implement
+    all of its methods if you want to instantiate objects out of it.
+
+    When you create a class that implements an interface but does not
+    implement all of its methods, then it should be an abstract class
+    and you should classify it as that.
+
+    Then further classes inheriting from such an abstract class should
+    implement the interface methods that were not implemented in the
+    abstract class if you want to instantiate objects out of them.
+
+*** Nested Interfaces
+
+    In comparison to top-level interfaces a nested interface can be
+    implemented as =public=, =private= or =protected=.
+
+    When a nested interface is used *outside of its enclosing scope*, it
+    *must be qualified* by the name of the class or interface of which
+    it is a member. Thus, outside of the class or interface in which a
+    nested interface is declared, its name must be *fully qualified*.
+
+    So understand that nested interfaces do not alter the extent to
+    which interfaces operate. They rather allow a *finer degree of
+    access modeling possibilities* as they are not restricted to be
+    public interfaces.
+
+    /Example/
+
+    #+begin_src java :results output raw :classname NestedIFDemo
+// A nested interface example.
+// This class contains a member interface.
+class A {
+    // this is a nested interface
+    public interface NestedIF {
+	boolean isNotNegative(int x);
+    }
+}
+// B implements the nested interface.
+class B implements A.NestedIF {
+    public boolean isNotNegative(int x) {
+	return x < 0 ? false : true;
+    }
+}
+class NestedIFDemo {
+    public static void main(String args[]) {
+	// use a nested interface reference
+	A.NestedIF nif = new B();
+	if(nif.isNotNegative(10))
+	    System.out.println("10 is not negative");
+	if(nif.isNotNegative(-12))
+	    System.out.println("this won't be displayed");
+    }
+}
+    #+end_src 
+
+    #+RESULTS:
+    10 is not negative
+
+    So note that the above does not differ extensively from the
+    top-level interface. It just differ in the way you can refer to
+    the interface. Try to replace the type of interface from =public=
+    to =private= and see what happens though. 
+
+*** Variables in Interfaces
+
+    This is equal to creating a large number of constants in C++ via
+    the =#defined= operation.
+
+    The idea is to implement an interface containing all of the
+    global constants you want to define.
+
+    When you include that interface in a class, all of those variable
+    names will be in scope as constants.
+
+    Note that when you include that interface in a class (that is,
+    when you “implement” the interface), *all of those variable names
+    will be in scope as constants*.
+
+    It is as if that class were importing the constant fields into
+    the class name space as =final= variables.
+
+    #+begin_src java :results output raw :classname AskMe
+import java.util.Random;
+interface SharedConstants {
+    int NO = 0;
+    int YES = 1;
+    int MAYBE = 2;
+    int LATER = 3;
+    int SOON = 4;
+    int NEVER = 5;
+}
+class Question implements SharedConstants {
+    Random rand = new Random();
+    int ask() {
+	int prob = (int) (100 * rand.nextDouble());
+	if (prob < 30)
+	    return NO; // 30%
+	else if (prob < 60)
+	    return YES; // 30%
+	else if (prob < 75)
+	    return LATER; // 15%
+	else if (prob < 98)
+	    return SOON; // 13%
+	else
+	    return NEVER; // 2%
+    }
+}
+class AskMe implements SharedConstants {
+    static void answer(int result) {
+	switch(result) {
+	case NO:
+	    System.out.println("No");
+	    break;
+	case YES:
+	    System.out.println("Yes");
+	    break;
+	case MAYBE:
+	    System.out.println("Maybe");
+	    break;
+	case LATER:
+	    System.out.println("Later");
+	    break;
+	case SOON:
+	    System.out.println("Soon");
+	    break;
+	case NEVER:
+	    System.out.println("Never");
+	    break;
+	}
+    }
+    public static void main(String args[]) {
+	Question q = new Question();
+	answer(q.ask());
+	answer(q.ask());
+	answer(q.ask());
+	answer(q.ask());
+    }
+}    
+    #+end_src 
+
+    #+RESULTS:
+    Later
+    Yes
+    Soon
+    Yes
+
+    Have to test if such a pattern for interface variables is valid
+    even in the case where some methods are specified.
+
+    Pretty much sure it is the case. I.e. variables always enter the
+    case as *final* general constants.
+     
+*** Interface Inheritance
+
+    Note that it is possible for one interface to extend another as
+    in the usual case for classes.
+
+    #+begin_src java :results output raw 
+// One interface can extend another.
+interface A {
+    void meth1();
+    void meth2();
+}
+// B now includes meth1() and meth2() -- it adds meth3().
+interface B extends A {
+    void meth3();
+}
+
+// This class must implement all of A and B
+class MyClass implements B {
+    public void meth1() {
+	System.out.println("Implement meth1().");
+    }
+    public void meth2() {
+	System.out.println("Implement meth2().");
+    }
+    public void meth3() {
+	System.out.println("Implement meth3().");
+    }
+}
+
+class IFExtend {
+    public static void main(String arg[]) {
+	MyClass ob = new MyClass();
+	ob.meth1();
+	ob.meth2();
+	ob.meth3();
+    }
+}
+    #+end_src 
+
+
+** enumerations
+
+   Created using ~enum~.
+
+   Example for an enumeration
+
+   #+begin_src java :results output raw 
+// An enumeration of apple varieties.
+enum Apple {
+Jonathan, GoldenDel, RedDel, Winesap, Cortland
+}
+   #+end_src 
+
+   The identifiers of such a collection: Jonathan, GoldenDel
+   etc... are called /enumeration constants/. They are implicitly
+   defined as *static final* members. (recall static - you can call
+   them without first initiating an =Apple= object). Moreover note
+   that they are *constants*.
+
+   Once you have defined an enumeration, you can /create a variable
+   of that type/.
+
+   However, even though enumerations define a class type, you do not
+   instantiate an enum using new. Instead, you declare and use an
+   enumeration variable in much the same way as you do one of the
+   primitive types.
+
+   Note that enumerations *are not* a /struct/ as you
+   encounterd it in C++. You do not assign to an object =enum= the
+   entire possible list of variables. You just assign *one* of the
+   possible constants. Basically =enum= objects can just be assigned
+   to one of the available enumerated options.
+
+   I.e. you can then for instance perform an assignment via:
+
+   #+begin_src java :results output raw 
+    Apple ap;
+    ap = Apple.Cortland
+   #+end_src 
+
+   A typical use case is then the one of using such enumerators in
+   combination with switch statements
+
+   #+begin_src java :results output raw 
+// Use an enum to control a switch statement.
+switch(ap) {
+case Jonathan:
+// ...
+case Winesap:
+// ...
+   #+end_src 
+
+   Note that there are two =built-in= methods: ~values~ and
+   ~valueOf~.
+
+   Their type if of the follwoing form:
+
+   #+begin_src java :results output raw 
+    // returns an array with the possible values
+    public static enum-type[] values( )
+
+    // returns an enum-constant whose value correspond to the passed string.	
+    public static enum-type valueOf(String str)
+   #+end_src
+
+   *Note* that being a class you can easily extend your enum class
+   types with constructors etc. That is the strength of java in
+   comparison to other languages.
+
+   Check for instance the following =enum= class:
+
+   #+begin_src java :results output raw :classname EnumDemo3
+// Use an enum constructor, instance variable, and method.
+enum Apple {
+    Jonathan(10), GoldenDel(9), RedDel(12), Winesap(15), Cortland(8);
+
+    private int price; // price of each apple
+
+    // Constructor
+    Apple(int p) { price = p; } // so note that here you are
+				// specifying the form of the
+				// constructor of apple. the above
+				// constants would then refer to such
+				// a constructor
+
+    int getPrice() { return price; } // so note how you can define
+				     // methods that you can use on
+				     // enum objects. In fact enum is
+				     // a special type of
+				     // class. I.e. also enum are
+				     // obejcts such that everything
+				     // falls back into the frist
+				     // class citizens of the app.
+}
+class EnumDemo3 {
+    public static void main(String args[])
+    {
+  	Apple ap;
+	// Display price of Winesap.
+	System.out.println("Winesap costs " +
+			   Apple.Winesap.getPrice() +
+			   " cents.\n");
+	// Display all apples and prices.
+	System.out.println("All apple prices:");
+	for(Apple a : Apple.values())
+	    System.out.println(a + " costs " + a.getPrice() +
+			       " cents.");
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   Winesap costs 15 cents.
+   All apple prices:
+   Jonathan costs 10 cents.
+   GoldenDel costs 9 cents.
+   RedDel costs 12 cents.
+   Winesap costs 15 cents.
+   Cortland costs 8 cents.
+   
+*** Check if one variable in enum
+
+    There are apparently libraries to do that: check online.
+
+    Another way to do that natively yourself is using the ~values~
+    method of your enumerator.
+
+#+BEGIN_SRC java :results output drawer :classname EnumDemo4
+// Use an enum constructor, instance variable, and method.
+enum Apple {
+    Jonathan(10), GoldenDel(9), RedDel(12), Winesap(15), Cortland(8);
+
+    private int price; // price of each apple
+
+    // Constructor
+    Apple(int p) { price = p; } // so note that here you are
+				// specifying the form of the
+				// constructor of apple. the above
+				// constants would then refer to such
+				// a constructor
+
+    int getPrice() { return price; } // so note how you can define
+				     // methods that you can use on
+				     // enum objects. In fact enum is
+				     // a special type of
+				     // class. I.e. also enum are
+				     // obejcts such that everything
+				     // falls back into the frist
+				     // class citizens of the app.
+}
+class EnumDemo4 {
+
+
+    @FunctionalInterface
+    interface myInterface {
+	boolean run(String Name);
+    }
+    
+    public static void main(String args[])
+    {
+	Apple ap;
+
+	myInterface r = (String Name) -> {
+	    for (Apple a : Apple.values()) {
+		if (a.name().equals(Name)) {
+		    return true;
+		}
+	    }
+	    return false;
+	};
+
+	if (r.run("Jonathan")){
+	    // Display price of Winesap.
+	    System.out.println("Winesap costs " +
+			       Apple.Winesap.getPrice() +
+			       " cents.\n");
+	    // Display all apples and prices.
+	    System.out.println("All apple prices:");
+	    for(Apple a : Apple.values())
+		System.out.println(a + " costs " + a.getPrice() +
+				   " cents.");
+	}
+	else if(r.run("Alberto")) {
+
+	    System.out.println("Note this is not printed");
+	    
+	    // Display price of Winesap.
+	    System.out.println("Winesap costs " +
+			       Apple.Winesap.getPrice() +
+			       " cents.\n");
+	    // Display all apples and prices.
+	    System.out.println("All apple prices:");
+	    for(Apple a : Apple.values())
+		System.out.println(a + " costs " + a.getPrice() +
+				   " cents.");	    
+	}
+    }
+}
+
+#+END_SRC   
+
+#+RESULTS:
+:results:
+Winesap costs 15 cents.
+
+All apple prices:
+Jonathan costs 10 cents.
+GoldenDel costs 9 cents.
+RedDel costs 12 cents.
+Winesap costs 15 cents.
+Cortland costs 8 cents.
+:end:
+
+** TODO Autoboxing                                                 :noexport:
+
+   Have to read it. It is important cause it happens multiple times
+   that you have Objects you work with that you need to compare with
+   primitives.
+
+   This essentially because most of the data-structures in Java cannot
+   store primitives but they rather have to work with the Objects
+   counterparties of them. 
+
+** Generics
+
+   Note that this is a very powerful element of the
+   language. Understand it properly as it will give you strong
+   modeling possibilities when writing your code.
+
+*** Syntax and Logic
+
+    Note that these resembles much the C++ templates at an intuitive level. 
+
+    Through the use of generics, it is possible to *create classes,
+    interfaces, and methods* that will *work in a /type-safe/ manner with
+    various kinds of data*. Many algorithms are logically the same no
+    matter what type of data they are being applied to.
+
+    With generics, you can /define an algorithm once, independently of
+    any specific type of data/, and then apply that algorithm to a
+    wide variety of data types without any additional effort.
+
+    Note that prior to Java 5 you used to implement algorithms working
+    with multiple types of data by operating through references of
+    type Object. I.e. you were passing object references as
+    arguments. Given the fact that an Object could then contain
+    different types of data you had implemented your general algorithm
+    working with mulitple data types. The issue with such an approach
+    is that you could not have any *type safety*. This is what
+    Generics brought to the table.
+
+    Example of generic class
+
+    #+begin_src java :results output raw :classname GenDemo
+// A simple generic class.
+// Here, T is a type parameter that
+// will be replaced by a real type
+// when an object of type Gen is created.
+class Gen<T> {
+    T ob; // declare an object of type T
+    // Pass the constructor a reference to
+    // an object of type T.
+    Gen(T o) {
+	ob = o;
+    }
+    // Return ob. Note that you are specifying here the return type of
+    // ob as being of type T. This matches the type of ob and is ok in this sense.
+    // This is also the reason why you need no casting. 
+    T getob() {
+	return ob;
+    }
+    // Show type of T.
+    void showType() {
+	System.out.println("Type of T is " +
+			   ob.getClass().getName());
+    }
+}
+// Demonstrate the generic class.
+class GenDemo {
+    public static void main(String args[]) {
+	// Create a Gen reference for Integers.
+	Gen<Integer> iOb;
+	// Create a Gen<Integer> object and assign its
+	// reference to iOb. Notice the use of autoboxing
+	// to encapsulate the value 88 within an Integer object.
+	iOb = new Gen<Integer>(88);
+	// Show the type of data used by iOb.
+	iOb.showType();
+	// Get the value in iOb. Notice that
+	// no cast is needed.
+	int v = iOb.getob();
+	System.out.println("value: " + v);
+	System.out.println();
+	// Create a Gen object for Strings.
+	Gen<String> strOb = new Gen<String>("Generics Test");
+	// Show the type of data used by strOb.
+	strOb.showType();
+	// Get the value of strOb. Again, notice
+	// that no cast is needed.
+	String str = strOb.getob();
+	System.out.println("value: " + str);
+
+	// Note that type safety is guaranteed when running Generics
+	Gen<Integer> iOb;
+	iOb = new Gen<Double>(88.0); // Error!
+
+	// If you were to work with generic objects you can reference
+	// new objects of a different type without noticing it
+	// breaking some structural logic of your code.  Watch out for
+	// that in this sense.  There are examples for that in the
+	// book if you are interested.
+    }
+}
+
+    #+end_src 
+
+    #+RESULTS:
+    Type of T is java.lang.Integer
+    value: 88
+
+    Type of T is java.lang.String
+    value: Generics Test
+
+    *Note* the above syntax. *Whenever a type parameter is declared,
+    it is specified within angle brackets*.
+
+    *Note* that the above uses the /Integer/ class type not its
+    primitive. When declaring an instance of a generic type, the type
+    argument passed to the *type parameter must be a class type*. You
+    cannot use a primitive type, such as int or char. For example,
+    with Gen, it is possible to pass any class type to T, but you
+    cannot pass a primitive type to a type parameter. Therefore, the
+    following declaration is illegal: Gen<int> strOb = new
+    Gen<int>(53); // Error, can't use primitive type.
+
+    Of course, not being able to specify a primitive type is not a
+    serious restriction because you can use the type wrappers (as the
+    preceding example did) to encapsulate a primitive type.  Further,
+    Java’s autoboxing and auto-unboxing mechanism makes the use of the
+    type wrapper transparent.
+
+
+*** Bounded Types
+
+    Note that it is possible to impose restrictions on the types of
+    parameters you can enter in generics. It is in this sense a
+    /bounded/ generics.
+
+    Look at the following example making the case for such an
+    optionality.
+
+    #+begin_src java :results output raw 
+// Stats attempts (unsuccessfully) to
+// create a generic class that can compute
+// the average of an array of numbers of
+// any given type.
+//
+// The class contains an error!
+class Stats<T> {
+    T[] nums; // nums is an array of type T
+    // Pass the constructor a reference to
+    // an array of type T.
+    Stats(T[] o) {
+	nums = o;
+    }
+    // Return type double in all cases.
+    double average() {
+	double sum = 0.0;
+	for(int i=0; i < nums.length; i++)
+	    sum += nums[i].doubleValue(); // Error!!!
+	return sum / nums.length;
+    }
+}
+    #+end_src 
+
+    The reason because the above fails is that the class is too
+    generic. I.e. Once you try to call the method ~doubleValue()~ you
+    get an error as this is just defined for all of the subclasses of
+    =Number=. I.e. for =Double=, =Integer= etc.
+
+    So the above would work if you would just specify the above for
+    subclasses of the =Number= class. This is ultimately your idea as
+    you do not want to perform the above on general objects.
+
+    So this is where /bounded types/ come at rescue. Here you specify
+    the superclass of the class that you pass. I.e. you are
+    explicitely telling that the class passed to the generics must be
+    a subclass of the specified superclass.
+
+    #+begin_src java :results output raw :classname BoundsDemo
+// In this version of Stats, the type argument for
+// T must be either Number, or a class derived
+// from Number.
+class Stats<T extends Number> {
+    T[] nums; // array of Number or subclass
+	      // Pass the constructor a reference to
+	      // an array of type Number or subclass.
+    Stats(T[] o) {
+	nums = o;
+    }
+    // Return type double in all cases.
+    double average() {
+	double sum = 0.0;
+	for(int i=0; i < nums.length; i++)
+	    sum += nums[i].doubleValue();
+	return sum / nums.length;
+    }
+}
+
+
+// Demonstrate Stats.
+class BoundsDemo {
+    public static void main(String args[]) {
+	Integer inums[] = { 1, 2, 3, 4, 5 };
+	Stats<Integer> iob = new Stats<Integer>(inums);
+	double v = iob.average();
+	System.out.println("iob average is " + v);
+	Double dnums[] = { 1.1, 2.2, 3.3, 4.4, 5.5 };
+	Stats<Double> dob = new Stats<Double>(dnums);
+	double w = dob.average();
+	System.out.println("dob average is " + w);
+	// This won't compile because String is not a
+	// subclass of Number.
+	// String strs[] = { "1", "2", "3", "4", "5" };
+	// Stats<String> strob = new Stats<String>(strs);
+	// double x = strob.average();
+	// System.out.println("strob average is " + v);
+    }
+}
+    #+end_src 
+
+    #+RESULTS:
+    iob average is 3.0
+    dob average is 3.3
+
+    The above works without any issues.
+
+    You can even specifiy multiple classes and *interfaces* as
+    bounds.
+
+    #+begin_src java :results output raw 
+class Gen<T extends MyClass & MyInterface> { // ...
+    #+end_src 
+
+    In the above case any type argument passed to T must be a
+    subclass of MyClass and implement MyInterface.
+
+
+*** wildcard argument
+
+    Note that despite type safety is generally useful and desired
+    there might be situations where this will limit your modeling
+    possibilities.
+
+    There is a good example in the book in this sense. Think of the
+    follwoing. You have a generics Stats<T> generics and you want to
+    create a method that compares the average of two objects. Note
+    that the objects might be of different types.
+
+    I.e. for your application is totally fine to compare averages of
+    objects involving /integers/ and /doubles/.
+
+    Note however that it will not be possible to create a method in
+    the generics as the following:
+
+    #+begin_src java :results output raw 
+// This won't work!
+// Determine if two averages are the same.
+boolean sameAvg(Stats<T> ob) {
+    if(average() == ob.average())
+	return true;
+    return false;
+}
+    #+end_src 
+     
+    This because as soon as you pass to the method an object that
+    does not match the type of the object initalizing the generics
+    the parameter argument does not match the specified type-safed
+    object and an error results.
+
+    In order to deal with the above *wildcards* were created. Check
+    at the following:
+
+    #+begin_src java :results output raw 
+// Determine if two averages are the same.
+// Notice the use of the wildcard.
+boolean sameAvg(Stats<?> ob) {
+    if(average() == ob.average())
+	return true;
+    return false;
+}
+    #+end_src
+
+    Note that this is the difference. Here, =Stats<?>= matches any
+    Stats object, allowing any two Stats objects to have their
+    averages compared. And it does not just have to match the type T
+    you specified when instantiating an object from that generics
+    class.
+
+    In order to see this in an example check at the follwoing:
+
+
+    #+begin_src java :results output raw :classname WildcardDemo
+// Use a wildcard.
+class Stats<T extends Number> {
+    T[] nums; // array of Number or subclass
+    // Pass the constructor a reference to
+    // an array of type Number or subclass.
+    Stats(T[] o) {
+	nums = o;
+    }
+    // Return type double in all cases.
+    double average() {
+	double sum = 0.0;
+	for(int i=0; i < nums.length; i++)
+	    sum += nums[i].doubleValue();
+	return sum / nums.length;
+    }
+    // Determine if two averages are the same.
+    // Notice the use of the wildcard.
+    boolean sameAvg(Stats<?> ob) {
+	if(average() == ob.average())
+	    return true;
+	return false;
+    }
+}
+// Demonstrate wildcard.
+class WildcardDemo {
+    public static void main(String args[]) {
+	Integer inums[] = { 1, 2, 3, 4, 5 };
+	Stats<Integer> iob = new Stats<Integer>(inums);
+	double v = iob.average();
+	System.out.println("iob average is " + v);
+	Double dnums[] = { 1.1, 2.2, 3.3, 4.4, 5.5 };
+	Stats<Double> dob = new Stats<Double>(dnums);
+	double w = dob.average();
+	System.out.println("dob average is " + w);
+	Float fnums[] = { 1.0F, 2.0F, 3.0F, 4.0F, 5.0F };
+	Stats<Float> fob = new Stats<Float>(fnums);
+	double x = fob.average();
+	System.out.println("fob average is " + x);
+	// See which arrays have same average.
+	System.out.print("Averages of iob and dob ");
+	if(iob.sameAvg(dob))
+	    System.out.println("are the same.");
+	else
+	    System.out.println("differ.");
+	System.out.print("Averages of iob and fob ");
+	if(iob.sameAvg(fob))
+	    System.out.println("are the same.");
+	else
+	    System.out.println("differ.");
+    }
+}
+    #+end_src 
+
+    #+RESULTS:
+    iob average is 3.0
+    dob average is 3.3
+    fob average is 3.0
+    Averages of iob and dob differ.
+    Averages of iob and fob are the same.
+
+     
+*** bounded wildcard argument
+
+    this is as well a very interesting feature.
+
+    Note that here the bounded name is a bit misleading. It does in
+    fact bound the specified method within a generics but not in the
+    way that you would expect. In the sense that on the top of
+    bounding the method to some special object instantiation it also
+    tells the generics to execute exactly that method and not a
+    different one if the passed object belongs to the class or
+    subclass of the bounding class condition.
+
+    Note that the bounding condition can either be an *upper* or
+    *lower* bound. I.e. with the *upper* bound you will impöement the
+    method to any object belonging to the class or below. In the
+    *lower* bound you specfiy exactly the opposite.. i.e. if the
+    object is higher in the class hierachy than the one specfied then
+    apply the method to it.  
+
+    /Example/ to make this clear:
+          
+    #+begin_src java :results output raw :classname BoundedWildcard
+// Bounded Wildcard arguments.
+// Two-dimensional coordinates.
+class TwoD {
+    int x, y;
+    TwoD(int a, int b) {
+	x = a;
+	y = b;
+    }
+}
+// Three-dimensional coordinates.
+class ThreeD extends TwoD {
+    int z;
+    ThreeD(int a, int b, int c) {
+	super(a, b);
+	z = c;
+    }
+}
+// Four-dimensional coordinates.
+class FourD extends ThreeD {
+    int t;
+    FourD(int a, int b, int c, int d) {
+	super(a, b, c);
+	t = d;
+    }
+}
+// This class holds an array of coordinate objects.
+class Coords<T extends TwoD> {
+    T[] coords;
+    Coords(T[] o) { coords = o; }
+}
+// Demonstrate a bounded wildcard.
+class BoundedWildcard {
+    static void showXY(Coords<?> c) {
+	System.out.println("X Y Coordinates:");
+	for(int i=0; i < c.coords.length; i++)
+	    System.out.println(c.coords[i].x + " " +
+			       c.coords[i].y);
+	System.out.println();
+    }
+    static void showXYZ(Coords<? extends ThreeD> c) {
+	System.out.println("X Y Z Coordinates:");
+	for(int i=0; i < c.coords.length; i++)
+	    System.out.println(c.coords[i].x + " " +
+			       c.coords[i].y + " " +
+			       c.coords[i].z);
+	System.out.println();
+    }
+    static void showAll(Coords<? extends FourD> c) {
+	System.out.println("X Y Z T Coordinates:");
+	for(int i=0; i < c.coords.length; i++)
+	    System.out.println(c.coords[i].x + " " +
+			       c.coords[i].y + " " +
+			       c.coords[i].z + " " +
+			       c.coords[i].t);
+	System.out.println();
+    }
+    public static void main(String args[]) {
+	TwoD td[] = {
+	    new TwoD(0, 0),
+	    new TwoD(7, 9),
+	    new TwoD(18, 4),
+	    new TwoD(-1, -23)
+	};
+	Coords<TwoD> tdlocs = new Coords<TwoD>(td);
+	System.out.println("Contents of tdlocs.");
+	showXY(tdlocs); // OK, is a TwoD
+	// showXYZ(tdlocs); // Error, not a ThreeD
+	// showAll(tdlocs); // Error, not a FourD
+	// Now, create some FourD objects.
+	FourD fd[] = {
+	    new FourD(1, 2, 3, 4),
+	    new FourD(6, 8, 14, 8),
+	    new FourD(22, 9, 4, 9),
+	    new FourD(3, -2, -23, 17)
+	};
+	Coords<FourD> fdlocs = new Coords<FourD>(fd);
+	System.out.println("Contents of fdlocs.");
+	// These are all OK.
+	showXY(fdlocs);
+	showXYZ(fdlocs);
+	showAll(fdlocs);
+    }
+}
+    #+end_src 
+
+    #+RESULTS:
+    Contents of tdlocs.
+    X Y Coordinates:
+    0 0
+    7 9
+    18 4
+    -1 -23
+
+    Contents of fdlocs.
+    X Y Coordinates:
+    1 2
+    6 8
+    22 9
+    3 -2
+
+    X Y Z Coordinates:
+    1 2 3
+    6 8 14
+    22 9 4
+    3 -2 -23
+
+    X Y Z T Coordinates:
+    1 2 3 4
+    6 8 14 8
+    22 9 4 9
+    3 -2 -23 17
+
+    *Important note*:
+
+    The above is an example of an *upper bound*. Note that the
+    general syntax is the following:
+
+    #+begin_src java :results output raw 
+     <? extends superclass>
+    #+end_src 
+
+    Moreover, note that in the above as mentioned the superclass is
+    *included* in the bounding condition.
+
+    The syntax for the *lower* bound is the follwoing.
+
+    #+begin_src java :results output raw 
+     <? super subclass>
+    #+end_src 
+
+    Note that in the above the subclass is *excluded*.
+
+
+     
+*** Generics Methods
+
+    You basically already saw the usage of generics in methods in the
+    previous sections. Note that such methods were citizens of some
+    generics classes.
+
+    You can even have generics methods inside of non-generics
+    classes.
+
+    Such methods are useful and important cause in such a way you can
+    implement generic methods. For instance a method performing an
+    operation on any array - independently of its type -.
+
+    Note that there is as well quite an important difference among
+    what is shown /here and in the previous section/.
+
+    I.e. you define the *type parameters* - i.e. the parameters for
+    the type *before* the return type of the method. 
+
+    #+begin_src java :results output raw
+     static <T, V extends T> boolean isIn(T x, V[] y) {
+    #+end_src 
+
+    Note as well that due to autoboxing you do not have to always
+    specify the type of the arguements when calling such methods.
+
+     
+*** Generic Constructros
+
+    here the idea is that you can creeate generics constructors even
+    if the class is not generic.
+
+    that might be sometimes useful and is best illustrated according
+    to the following example:
+
+    #+begin_src java :results output raw 
+// Use a generic constructor.
+class GenCons {
+    private double val;
+    <T extends Number> GenCons(T arg) {
+	val = arg.doubleValue();
+    }
+    void showval() {
+	System.out.println("val: " + val);
+    }
+}
+class GenConsDemo {
+    public static void main(String args[]) {
+	GenCons test = new GenCons(100);
+	GenCons test2 = new GenCons(123.5F);
+	test.showval();
+	test2.showval();
+    }
+}
+    #+end_src
+
+    So you have at the end a =double val= specifying that
+    constraints. However you can reach that value from any object
+    deriving from =Numbers= such that you leave the user the
+    possibility of specifying multiple input formats for it.
+
+     
+*** Generics Interfaces
+
+    This is again the same thing. You can check in the book how that
+    is defined.
+
+    The idea is always the same. You specify a method without writing
+    the implementation for it but you keep the return type of such
+    method open using *type parameters*.
+
+    *Note* that due to logical reasons: In general, if a class
+    implements a generic interface, then that class must also be
+    generic, at least to the extent that it takes a type parameter
+    that is passed to the interface.
+
+    The generic interface offers *two benefits*.
+
+    - First, it can be implemented for different types of data. 
+
+    - Second, it allows you to put constraints (that is, bounds) on
+      the types of data for which the interface can be implemented.
+
+    so recall as well the second method when you are working with interfaces.
+
+
+*** TODO generics call hierarchy :noexport:
+
+    check at it later again. reread the entire chapter one time that
+    you have time.
+     
+
+** Text Blocks Feature
+
+   This was your goto way to write longer query to be embedded in
+   application logic. It is just available for Java 15 onwards.
+
+   We are not there yet. Cannot use it in this sense.
+
+   I use the alternative way for writing multiline queries as this is
+   to my humble opinion the best way to have the overview of the
+   screen.
+
+   #+begin_src java :results output raw 
+   ""
+   + " my query " 
+   + " my query " 
+   + " my query "
+   +       
+   ""	
+   #+end_src 
+
+** Try with resource statements
+
+   This is implemented since Java 7. You can read the official
+   documentation in [[https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html][here]].
+
+   The idea is the following... check this function snippet
+
+   #+begin_src java :results output raw 
+try(BatchSQL myBatchQueryObject = new BatchSQL()){	
+   // my logic for my batchSQL job
+}
+#+end_src 
+
+   then the idea is to say try to perform the batch-query as specified
+   within parenthesis.
+
+   A =resource=, i.e. the thing you pass within =()= after the =try=
+   expression, is an object that *must be closed* after the program is
+   finished with it. The try-with-resources statement ensures that
+   each resource is closed at the end of the statement.
+
+   #+begin_quote
+It can take any object that implements java.lang.AutoCloseable, which includes all
+objects which implement java.io.Closeable.
+   #+end_quote
+
+   This because if that interface is implemented you know that there
+   is a ~close~ method implemented for it. This will be triggered by
+   this try-with-resource statements.
+   
+** On Strings Parsing
+
+   Have to structure the documentation more at some point and check at
+   which library implements everything and understand a bit its API.
+
+   In the meanwhile here some ways of working with it.
+
+   Basically you have ~String.format()~ way of working where you work
+   as in the f-strings you saw in multiple programming languages.
+
+   The idea is simply to pass some data types to the string. Moreover
+   it is interesting that you can impose some structure to the string
+   in such a way.
+
+   This is especially important cause in such a way you can perform
+   the necessary checks in your data pipelines.
+
+   Consider for instance the following 
+
+   #+begin_src java :results output raw 
+   String.format("|%020d|", 93); // prints: |00000000000000000093|
+   #+end_src 
+
+   in such a way you can pad with 0, the desired amount of times. This
+   will be useful for instance to keep the RUC number consistent.
+
+** On regex
+
+   In order to check if a single regular expression matches you can
+   work directly with the convention
+
+   #+BEGIN_SRC java :results output drawer :classname 
+   "myString".matches(myCoolRegex)
+   #+END_SRC
+
+   In case you have multiple regex than the above will not be
+   sufficient. You have to start to work with the Pattern class.
+
+   Check at the methods on the official website. You can then either
+   get back the string that it matches as a string or a bool as in the
+   example below.
+
+   Then regex the same stuff as in all programming languages.
+
+   In order to check if a pattern matches some regular expressions you
+   can use the following:
+
+   #+BEGIN_SRC java :results output drawer :classname Regex
+import java.util.regex.Pattern;
+
+class Regex {
+    public static void main(String args[]) {
+
+	Pattern patternInclude = Pattern.compile("EM_(.*)|HELLO_(.*)");
+
+	System.out.println(patternInclude.matcher("HELLO_EM_CORP_DTS_AFRICA").matches());
+    }
+}
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   true
+   :end:
+
+   Use the [[https://regex101.com/r/pW6oL2/2][following website]] when you have to do your regex.
+
+   Note that to create complex hierarchical logics it is not
+   recommended to do it whole in a single regex. That becomes much
+   complex quickly and you risk making mistakes.
+
+   It is much better to embedd the hierarchical structure in the
+   application code
+
+   #+BEGIN_SRC java :results output drawer :classname 
+import java.util.regex.Pattern;
+
+class Regex {
+    public static void main(String args[]) {
+
+
+	// i.e. say you want to include all regex and then exclude for the matching... some that fullfill some criteria...
+	
+	Pattern patternInclude = Pattern.compile("EM_(.*)|HELLO_(.*)"); // include all that you have to include
+
+	PatternExclude = Pattern.compile("myPatternToExclude");         // exclude all that you have to exclude
+
+	// then apply the two pattern filters sequentially.
+    }
+}
+
+   #+END_SRC
+   
+** F-strings similars
+
+   Check at the below. This was your standard pyhton way of using
+   parameterized strings. 
+
+   #+begin_src java :results output raw 
+System.out.println(String.format("Found %d names", startsWithN.size()));
+   #+end_src 
+   
+** Java Beans
+
+   You will have to make proper notes about it at some later
+   point. You come across it multiple times in the Java world
+   paradigm.
+
+   A JavaBean is just a standard
+
+   All properties are private (use getters/setters).
+
+   A public no-argument constructor Implements Serializable.
+
+   That's it. It's just a convention. Lots of libraries depend on it
+   though.
+
+   The standard allows libraries to programmatically do things with
+   class instances you define in a predefined way. For example, if a
+   library wants to stream any object you pass into it, it knows it
+   can because your object is serializable (assuming the library
+   requires your objects be proper JavaBeans).
+   
+
+
+   
+
+** Intersting point - no parameter initialization
+
+   Check at [[https://stackoverflow.com/questions/997482/does-java-support-default-parameter-values][this article]].
+
+   Also interesting in there the thing about builder pattern.
+
+   there is a long post with all of the options where builder patterns
+   are outlined. Nothing too fancy. Try to keep it in the back of your
+   mind but do not know if you will really use it.
+  
+
+* argument Passing
+
+  Note that this is as well similar as with C++. When you pass
+  arguments to a subrutine you have to possibilities.
+
+  - /call-by-value/: here you pass the value itself to the
+    method. note that here the method will copy the value of an
+    argument into the parameter of the subrutine. You will then
+    ultimately operate on the copy of that value such that changes in
+    the method will not affect the argument passed.
+
+  - /call-by-reference/: a reference to an argument (not the value of
+    the argument) is passed to the parameter. Here the parameter will
+    reference the argument and the method will apply changes to it
+    directly.
+
+  In order to cristallize this consider the following example:
+
+  #+begin_src java :classname CallByValue :results output raw
+// Primitive types are *passed by value*.
+class Test {
+    void meth(int i, int j) {
+	i *= 2;
+	j /= 2;
+    }
+}
+class CallByValue {
+    public static void main(String args[]) {
+	Test ob = new Test();
+	int a = 15, b = 20;
+	System.out.println("a and b before call: " +
+			   a + " " + b);
+
+	ob.meth(a, b);  // pass by value does not change the results.
+
+	System.out.println("a and b after call: " +
+			   a + " " + b);
+    }
+}
+  #+end_src 
+
+  #+RESULTS:
+  a and b before call: 15 20
+  a and b after call: 15 20
+
+  In comparison passing by *reference* can be performed by passing
+  objects and applying changes directly to the data encapsulated in
+  such methods.
+
+  An example for that is the following:
+
+  #+begin_src java :classname CallByRef :results output raw
+// Objects are passed by reference.
+class Test {
+    int a, b;
+    Test(int i, int j) {
+	a = i;
+	b = j;
+    }
+    // pass an object
+    void meth(Test o) { // passing by reference
+	o.a *= 2;
+	o.b /= 2;
+    }
+}
+class CallByRef {
+    public static void main(String args[]) {
+Test ob = new Test(15, 20);
+	System.out.println("ob.a and ob.b before call: " +
+			   ob.a + " " + ob.b);
+	ob.meth(ob);
+	System.out.println("ob.a and ob.b after call - passing by reference - : " +
+			   ob.a + " " + ob.b);
+    }
+}
+  #+end_src 
+
+  #+RESULTS:
+  ob.a and ob.b before call: 15 20
+  ob.a and ob.b after call - passing by reference - : 30 10
+
+
+* Garbage Collection
+
+  Since objects are dynamically allocated by using the new operator,
+  you might be wondering how such objects are destroyed and their
+  memory released for later reallocation. In some languages, such as
+  C++, dynamically allocated objects must be manually released by use
+  of a delete operator. Java takes a different approach; it handles
+  deallocation for you automatically.  The technique that
+  accomplishes this is called garbage collection.
+
+  It works like this: when no references to an object exist, that
+  object is assumed to be no longer needed, and the memory occupied
+  by the object can be reclaimed
+
+  Note that when Garbage collection is performed depend on the
+  different Java run-times etc.
+
+
+* Packages
+
+** General definition
+
+    These define namespaces. All of the classes defined in a package
+    will be in that namespace so to say.
+
+    In order to define a package jsut include the package command as
+    the first statement in a Java source file.
+
+    In order to see this consider the following
+
+    #+begin_src java :results output raw 
+// Using abstract methods and classes.
+package geometry;
+
+abstract class Figure {
+    double dim1;
+    double dim2;
+    Figure(double a, double b) {
+	dim1 = a;
+	dim2 = b;
+    }
+    // area is now an abstract method
+    abstract double area();
+}
+class Rectangle extends Figure {
+    Rectangle(double a, double b) {
+	super(a, b);
+    }
+    // override area for rectangle
+    double area() {
+	System.out.println("Inside Area for Rectangle.");
+	return dim1 * dim2;
+    }
+}
+class Triangle extends Figure {
+    Triangle(double a, double b) {
+	super(a, b);
+    }
+    // override area for right triangle
+    double area() {
+	System.out.println("Inside Area for Triangle.");
+	return dim1 * dim2 / 2;
+    }
+}
+class AbstractAreas {
+    public static void main(String args[]) {
+	// Figure f = new Figure(10, 10); // illegal now
+	Rectangle r = new Rectangle(9, 5);
+	Triangle t = new Triangle(10, 8);
+
+	//
+	// NOTE THAT IT IS FINE AND GOOD PRACTICE TO USE THE ABSTRACT
+	// CLASS AS A REFERENCE VARIABLE GIVEN THE DISCUSSION ABOVE
+        //
+
+	Figure figref; // this is OK, no object is created
+	figref = r;
+	System.out.println("Area is " + figref.area());
+	figref = t;
+	System.out.println("Area is " + figref.area());
+    }
+}
+
+    #+end_src 
+
+    Java uses /file system directories to store packages/. For
+    example, the =.class= files for any classes you declare to be part
+    of MyPackage must be =stored in a directory called MyPackage=.
+
+    /More than one file can include the same package statement/. The
+    package statement simply specifies to which package the classes
+    defined in a file belong.
+
+    Note that a hierarchy of packages is also possible and this is
+    what is usually done.
+
+    #+begin_src java :results output raw 
+package pkg1[.pkg2[.pkg3]];
+    #+end_src
+
+    Note that the package hierarchy must be *reflected in the file
+    system* of your Java development system.
+
+    For example, a package declared as
+
+    #+begin_src java :results output raw 
+package java.awt.image; 
+    #+end_src 
+
+    needs to be stored in =java\awt\image= in a Windows environment.
+
+    So recall this in Java as there are quite some requrirements in
+    how you have to structure your file system.
+
+    *Note* that once you specify java source file as being part of a
+    package you cannot run them anymore directly.
+
+    In order to see this understand the following:
+
+    #+begin_src java :results output raw 
+// A simple package
+package MyPack;
+class Balance {
+    String name;
+    double bal;
+    Balance(String n, double b) {
+	name = n;
+	bal = b;
+    }
+    void show() {
+	if(bal<0)
+	    System.out.print("--> ");
+	System.out.println(name + ": $" + bal);
+    }
+}
+class AccountBalance {
+    public static void main(String args[]) {
+	Balance current[] = new Balance[3];
+	current[0] = new Balance("K. J. Fielding", 123.23);
+	current[1] = new Balance("Will Tell", 157.02);
+	current[2] = new Balance("Tom Jackson", -12.33);
+	for(int i=0; i<3; i++) current[i].show();
+    }
+}
+    #+end_src
+
+    Then you must store such a file as *AccountBalance.java* in a
+    *MyPack* directory. Then in order to run the file you must be in
+    the directory one level higher than MyPack. You can then run
+
+    #+begin_src shell
+    java MyPack.AccountBalance
+    #+end_src
+
+    *Important*: Note that you *cannot run AccountBalance directly*
+    anymore even if you are wihtin the =MyPack= directory in your file
+    system.
+
+    #+begin_src java :results output raw 
+    java AccountBalance
+    #+end_src 
+
+
+    
+** Package and Access Control of classes
+
+    note that in Java zou have essentially 4 categories of visibility
+    for class members:
+
+    - sublcasses in the same packages
+
+    - non-subclasses in the same packages
+
+    - subclasses in different packages
+
+    - classes that are neither subclasses nor part of the package
+
+    we will see how to manage access control in the 4 different cases.
+
+    in order to understand how Java behaves in the 4 different cases
+    above think at the following table:
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-09-14 115124.png">
+#+end_export
+
+    no modifier means simply that the element is defined without the
+    specification of any =private=, =protected= or =public= keyword.
+
+    
+** Importing Packages
+
+   Note that in Java there are *no core* classes in the unnamed
+   default package.
+
+   Note that as you do not want to access classes by appending it to
+   the package it is contained in you use the *import* statement in a
+   similar way as you do in Python.
+
+   import statements occur immediately following the package
+   statement (if it exists) and before any class definitions.
+
+   #+begin_src java :results output raw 
+import pkg1[.pkg2].(classname|*);
+   #+end_src 
+
+   Note that =*= is the usual wildcard. You import all of the classes
+   from the package in such a way. Otherwise you can specify the
+   particular classes you are willing to import.
+
+   You can then refer to the specfic class simply by name after you
+   imported it correctly.
+    
+    
+* Frameworks 
+
+** Iterator Interface
+
+   THis is a very important one that you should understand. As you
+   well know much of the logic of programming is built on the top of
+   the concept of object iteration.
+
+   So what you will often do in Java is work with objects beloning to
+   some class of maps or collections. There you will store the data,
+   and you will use iterators for performing transformations and
+   applying in there your business logic.
+
+   Given that the iterator interface defines what you can do and how
+   the iterating procedure works and is in fact the basis for the
+   iterator implementation of the Collections you should well
+   understand it. 
+
+   Check at that interface and its method cause all of the most
+   important data structures in the Collection Framework implement
+   such an interface and that is actually the interface that will
+   allow you to quickly navigate throughout all of your important
+   data-structures and this in a much more convenient way than doing
+   that through indexing operations.
+
+   Note that the for-each loop is a valid subsititute to the iterator
+   interface in the case you want to iterate in the existing order of
+   the data structure. *Know the both of them well* in any case.
+
+   Recall that any data-structure of the Collections framework
+   implements the Iterators interface and provides an =iterator()=
+   method that returns an iterator at the start of the collection. That
+   means that you can use the following iterator methods to work with
+   it:
+  
+ #+begin_export html
+  <img src="../../images/Screenshot 2021-10-25 101403.png" class="center">
+ #+end_export
+
+   You can then see that you can cycle across classes of the Collection
+   framework by using such iterators. This in a very similar taste to
+   what you used to do when working in C++.
+
+   You can find basic examples next:
+
+   #+begin_src java :results output raw :classname IteratorDemo
+// Demonstrate iterators.
+import java.util.*;
+class IteratorDemo {
+    public static void main(String args[]) {
+	// Create an array list.
+	ArrayList<String> al = new ArrayList<String>();
+	// Add elements to the array list.
+	al.add("C");
+	al.add("A");
+	al.add("E");
+	al.add("B");
+	al.add("D");
+	al.add("F");
+
+	// Use iterator to display contents of al.
+	System.out.print("Original contents of al: ");
+	Iterator<String> itr = al.iterator();
+	while(itr.hasNext()) {
+	    String element = itr.next();
+	    System.out.print(element + " ");
+	}
+	System.out.println();
+
+	// Modify objects being iterated.
+	ListIterator<String> litr = al.listIterator();
+	while(litr.hasNext()) {
+	    String element = litr.next();
+	    litr.set(element + "+");
+	}
+	System.out.print("Modified contents of al: ");
+	itr = al.iterator();
+	while(itr.hasNext()) {
+	    String element = itr.next();
+	    System.out.print(element + " ");
+	}
+	System.out.println();
+	// Now, display the list backwards.
+	System.out.print("Modified list backwards: ");
+	while(litr.hasPrevious()) {
+	    String element = litr.previous();
+	    System.out.print(element + " ");
+	}
+	System.out.println();
+    }
+}
+   #+end_src 
+
+   #+RESULTS:
+   Original contents of al: C A E B D F 
+   Modified contents of al: C+ A+ E+ B+ D+ F+ 
+   Modified list backwards: F+ D+ B+ E+ A+ C+ 
+
+   Note that you have to instantiate an =iterator= object out of the
+   Collection class in order to call the iterator methods.
+
+   The for-each alternative is more your pythonic way of doing
+   things. Check at the functional methods to work as lambda
+   expressions were a great killer in Python in this sense. 
+   
+*** On a note of care when iterating.
+
+    Note that here sits a foundamental difference with other languages
+    you were used to work with.
+
+    In the sense that you can not iterate over an object that you are
+    modifying. This will cause a
+    =ConcurrentModificationException=. You can read more in [[https://www.baeldung.com/java-concurrentmodificationexception][here]].
+
+    This already happen to due to the my natural tendency to work in
+    such way in Python. 
+
+    So my strategy is then among the one in the post above the one of
+    creating interim helper objects. Probably not the best from the
+    performance perspective... but it is general and its ok. Plus Java
+    Garbage collection will take care of the rest.
+
+    Example:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+List<Data>  explodeMissingBl   = new LinkedList<>();
+
+this.table.data.stream()
+    .filter(d -> mySecretFilter(d))
+    .forEach(d -> mySecretMap(d)
+	     .stream().
+	     forEach(
+		     (m) ->  {
+			 // add the relevant business logic to the table db
+			 Data data = new Data();
+									 
+			 data.put(XXX); 
+			 data.put(XXX); 
+			 data.put(XXX); 
+									 
+			 explodeMissingBl.add( data );			// cannot add here directly to table, otherwise you will get that Exception	 
+		     }
+		     )
+	     );
+		 
+table.data.addAll(explodeMissingBl);	
+    #+END_SRC
+
+
+** Collection Frameworks
+
+   You can have the general overview of the collections framework
+   here.
+
+   This is fundamental as each time you will have to implement a thing
+   youself you will have to use one these native data structures.
+
+   So the following image is a good way to have the overview. 
+
+   
+#+begin_export html
+ <img src="../../images/Screenshot 2021-11-12 162739.png" class="center">
+#+end_export
+
+
+   ------------------------
+   
+   Note that some of the most important data structures that you will
+   use when coding are implemented in the ~java.util~ module.
+
+   Based on this you will have a lot of the most basic functionality
+   of the language that make the operability of it possible.
+    
+    
+   #+begin_src java :results output raw
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+   #+end_src
+
+   So you see that there are a lot of basic data structures.
+
+   First understand that the =java.util= package implements many
+   different classes and interfaces of first-order importance.
+
+   Among the others - the follwoing *classes* are implemented:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2021-09-21 154011.png">
+   #+end_export
+
+   And the follwoing *interfaces* are implemented 
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2021-09-21 154313.png">
+   #+end_export
+
+   Note that we will describe next methods and interfaces from the
+   =java.util= being part of the *Collection Framework*.
+
+   This is a collection of java *classes* and *interfaces* that has
+   been developed in an homogenous way in order to assure a basic
+   common operability of the classes and interfaces.
+
+   Note that there are some basic functionalities that such
+   collections must guarantee such that you can then generally extend
+   and build on the top of them. You can think of them as a set of
+   rules or as an software API defining how you interact with such
+   collection objects.
+
+   Note for instance that each collection object *implements* an
+   ~iterator interface~. Note therefore that you can always iterate
+   across the objects of such a collection.
+
+   We will explore next the basic interfaces of the *collections
+   framework* on which the collections framework classes will build
+   upon for implementing the most important data structures. 
+
+
+*** Collections Frameworks - Interfaces
+
+    We start by discussing the most important interfaces in the
+    collections frameworks.
+
+    We start with the interfaces as the collection classes will
+    actually base on such interfaces.
+
+    The basic interfaces are:
+
+ #+begin_export html
+  <img src="../../images/Screenshot 2021-09-21 163450.png">
+ #+end_export
+
+    In addition to the above collection methods also use:
+
+    - Comparator
+
+    - RandomAccess
+
+    - Iterator
+
+    - ListIterator
+
+    so in order to totally understand such framework a basic
+    understanding of the above interfaces is necessary.
+
+    We will explore next all of these different interfaces.
+
+   
+**** Collection Interfaces
+
+     The Collection interface is the foundation upon which the
+     Collections Framework is built because /it must be implemented by
+     any class that defines a collection/.
+
+     Definition of the collection interface
+
+     #+begin_src java :results output raw 
+    interface Collection<E>
+     #+end_src 
+
+     Note that =E= defines the type of object the collection will
+     hold.
+
+     Note that the interface *collection extends the iterator
+     interface*. This means that collection can be cycled though using
+     the ~for-each~ type of loop.
+
+     You can check then in the book - but I guess also easily online
+     all of the different types of errors you can make when creating a
+     collection.
+
+     Methods of that interface:
+
+     - ~add( )~: add an object to a collection. takes an argument of
+       type E, which means that objects added to a collection must be
+       compatible with the type of data expected by the collection.
+
+     - ~addAll()~: add the entire contents of one collection to another
+       one. 
+
+     - ~remove( )~: pops an object from the collection.
+
+     - ~clear ()~: empty an entire collection.
+
+     - ~contains( )~: check if an object is within a collection.
+
+     - ~containsAll( )~: determines if a collection contains all of the
+       obejcts of another one.
+
+     - ~isEmpty()~: checks if collection is empty.
+
+     - ~size()~: returns the collection size.
+
+     - ~toArray( )~: return an array with the objects of the collection.
+
+     - ~iterator( )~: returns an iterator to a collection
+    
+**** List Interface
+
+     This is an /interface/. It extends the *Collection* and declares
+     the behavior that stores a sequence of elements. Note that
+     indexing start as 0 as was the case in python.
+
+     *List* is a /generic/ interface that has this declaration:
+
+     #+begin_src java :results output raw 
+     interface List<E>
+     #+end_src
+
+     note that this is in the generic notation and once again E
+     specify the class type that the list will contain.
+
+     You can check then online the methods available for it but that
+     is the common data structure.
+
+**** Set Interface
+
+     It extends the collection and specfies the behaviour of the set
+     data structure. I.e. a data structure that does not allow
+     duplicates.
+
+     Definition
+
+     #+begin_src java :results output raw 
+     interface Set<E>
+     #+end_src 
+
+**** Sorted Set Interface
+
+     It is a data structure that does not allow duplicates and that
+     sorts the objects in ascending order. Again it extends a
+     collection and the interfaces specifies its methods.
+     
+**** NavigableSet Interface
+
+     It extends SortedSet and declares the behavior of a collection
+     that *supports the retrieval of elements based on the closest
+     match* to a given value or values.
+     
+**** Queue Interface
+
+     The Queue interface extends Collection and declares the behavior
+     of a queue, *which is often a first-in, first-out list*.
+
+     You can then check the general methods associated with it.
+
+     Note that the benefit is that it imposes some ordering in the way
+     the elements int he Queue are processed. I.e. you can just
+     proceed the head of the Queue etc.
+     
+**** Deque Interface
+
+     It extends Queue and declares the behavior of a double-ended
+     queue. *Double-ended queues* can function as standard, first-in,
+     first-out queues *or as last-in, first-out stacks*.
+
+     
+     
+
+     
+
+     
+     
+
+     
+   
+*** Collections Frameworks - Classes
+
+     These classes implements the interfaces above and poses the basic
+     data structures you will often work with in your coding exercises.
+
+     Here an overview of such classes
+
+ #+begin_export html
+  <img src="../../images/Screenshot 2021-09-24 144205.png">
+ #+end_export
+
+     We will explore the above in little bit more detail next.
+
+**** ArrayList
+
+     This extends =AbstractList= and implements the =List=
+     interface. Note that it is a *generic* class.
+
+     #+begin_src java :results output raw 
+     class ArrayList<E>
+     #+end_src
+
+     Note that Arrays as in every language you used that far are of
+     fixed length as they do not allow dynamic memory management and
+     reallocation. ArrayList comes into play at this stage.
+
+     That is the exact strength of it. It supports dynamic arrays that
+     can grow as needed. Note that as in common lanaguages =ArrayList=
+     are created with an initial size. When this size is exceeded the
+     collection is automatically enlarged. When objects are removed,
+     the array can be shrunk. Check at standard data structures books
+     in order to check the exact operation of it.
+
+     Different *constructors* for it.
+
+     #+begin_src java :results output raw 
+     // Builds an empty array
+     ArrayList();
+
+     // Builds an array based on the Collection c
+     ArrayList(Collection<? extends E> c);
+
+     // Builds an array of the specified capacity
+     ArrayList(int capacity)
+     #+end_src 
+
+     Note that you can avoid expensive reallocations at runtime be
+     ensuring a minimum capacity to the array. You can check at the
+     methods of the object in the Java documentation to understand
+     that.
+
+     You can also trim its size such that the memory associated to it
+     is exactly equal to the number of elements it contains.
+
+     Note that sometimes it is convenient for you to transform
+     =ArrayList= objects to =Arrays= when performing some
+     computations. Say for instance mathematical operations. This
+     because of some low-level stories you would need to check and
+     understand at a later point.
+
+     Note that in theory collections can jsut store references to and
+     not values of primitive types. You can however pass directly
+     primitive types to =add= as *autoboxing* will perform the
+     necessary casting for you.
+     
+**** LinkedList
+
+     The LinkedList class extends AbstractSequentialList and
+     implements the List, Deque, and Queue interfaces.
+
+     Note the beauty of using interfaces in the design as it allows
+     you to perform the modularity of the logic as above and to
+     understand at a high level the functionalities implemented by a
+     class. Very beautiful way to keep everything regular.
+
+     #+begin_src java :results output raw 
+// Empty Linked List
+LinkedList( );
+
+// Linked List with the elements of the collection
+LinkedList(Collection<? extends E> c)
+     #+end_src
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2021-09-24 151553.png">
+     #+end_export
+
+     Then as mentioned you have all of the methods of the queue
+     interfaces to navigate such a linked_list and read from the head
+     and tail etc. 
+          
+**** HashSet
+
+     This is a class that implements a Set that is referenced via a
+     Hashtable.
+
+     recall the strength of the hash-table. For each key you generate
+     a hash that defines where the obejct is stored. This comes with
+     great gain in terms of search time as that is independent of the
+     size of the set. 
+
+     Note that this implementes the =Set= interface.
+
+     So basically this is a Set where independently of the size the
+     performance of the methods should remain constant.
+
+**** LinkedHashSet
+
+     It is basically a Hashset were on the top of it a *linked list* of
+     the entries in the set, in the order in which they were inserted,
+     is mantained.
+
+     This allows insertion-order iteration over the set. That is, when
+     cycling through a LinkedHashSet using an iterator, the elements
+     will be returned in the order in which they were inserted.
+    
+**** TreeSet
+
+     TreeSet extends =AbstractSet= and implements the =NavigableSet=
+     interface.
+
+     The collection uses a *tree* data structure for *storage*.
+
+     This is similar to the idea that you saw in the database lecture
+     when looking at B+-trees. Actually B+-trees are a tree data
+     structure so that the above does not specify exactly which
+     tree-data strucutre that uses behind.
+
+     You have probably to read a book about data structures if you
+     want to get such details.
+
+     Anyways: *TreeSet an excellent choice when storing large amounts
+     of sorted information that must be found quickly*.
+
+     Because TreeSet stores its elements in a tree, they are
+     automatically arranged in sorted order, as the output
+     confirms. This is as well the ultimate reason why it implements
+     the =NavigableSet= Interface. 
+     
+**** PriorityQueue
+
+     This is a queue where the order is not based on a general =FIFO=
+     concept but it rather bases on some comparator.
+
+     You can specify the comparator yourself. Then the object will be
+     ordered in the queue in the right way depending on the
+     comparator.
+
+     Note that you can construct the =PriorityQueue= in the following way
+
+     #+begin_src java :results output raw 
+PriorityQueue( )
+PriorityQueue(int capacity)
+PriorityQueue(int capacity, Comparator<? super E> comp)
+PriorityQueue(Collection<? extends E> c)
+PriorityQueue(PriorityQueue<? extends E> c)
+PriorityQueue(SortedSet<? extends E> c)
+     #+end_src
+
+     *Note:* If no comparator is specified when a PriorityQueue is
+     constructed, then the default comparator for the type of data
+     stored in the queue is used. The default comparator will order
+     the queue in ascending order. Thus, the head of the queue will be
+     the smallest value.
+
+**** ArrayDeque
+
+     That is a dynamic array which size shrinks and augments
+     dynamically. Moreover it implements the deque operator such that
+     you can ultimately implement an *stack* with it or in general any
+     deque method.
+
+**** EnumSet
+
+      EnumSet extends AbstractSet and implements Set. It is
+      *specifically for use with keys of an enum type*.
+
+      Recall that in enum you specify a given set of constants among
+      you choose an instantion from. This is an especially used data
+      structure within my team as there is a lot of cases where you
+      actually choose among the set of available securities etc.
+
+      You call this in the following way:
+
+      #+begin_src java :results output raw 
+class EnumSet<E extends Enum<E>>
+      #+end_src 
+
+      Notice that E must *extend* =Enum<E>=, which enforces the requirement
+      that the elements must be of the specified enum type.
+
+      Note that constructurs are a bit special for such a data class.
+
+      You can use the following:
+
+      #+begin_export html
+       <img src="../../images/Screenshot 2021-09-24 161528.png">
+      #+end_export
+
+      A classical pattern is to create enum object to reference
+      resources that might change at a later time point.
+
+      In this case when they change at a later time point you just
+      adjust them where they changed without having to change them
+      everywhere.
+
+      That should become an instinct when you program. Otherwise it
+      will be a painful refactoring exercise that is as well prone to
+      error.
+
+
+*** Collection Algorithms
+
+    Note that the Collection Framework has a set of algorithm that are
+    usable across the classes of the framework. You can have an
+    overview of such algorithms in the following table:
+
+    They are a tons of methods. The syntax is the one of the
+    Generics. So nothing special just a more solid type-safe
+    implementation of them. You can read more in detail into them in
+    the book if interested.
+
+    Keep the follwoing tables as a reference and come back here in case of you want to
+    do one search and withdrawal, ordering operation in order to see
+    how to do it at best:
+
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-25 105112.png" class="center">
+#+end_export
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-25 105126.png" class="center">
+#+end_export
+    
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-25 105141.png" class="center">
+#+end_export    
+ 
+
+** Maps Frameworks
+
+   Note that these are the functions for performing the classical
+   =key-value= operations.
+
+   Recall their importance in the hadoop ecosystem. As you will
+   likely work with it in the next recent future understand such
+   structures correctly.
+
+   Note that when performing mapping operations the *key* must be
+   unique.
+
+   Note that maps are not collections such that you cannot apply
+   =iterators= or =for-each= loops to them.
+
+   However, note that there options to *collect the views* of maps
+   that will result in collection objects such that you can apply your
+   usual workflow for iterating and dealing with results.
+    
+*** Maps Frameworks - Interfaces
+
+    Note that there exists the follwoing interfaces to Maps
+
+ #+begin_export html
+  <img src="../../images/Screenshot 2021-09-24 170632.png">
+ #+end_export
+
+    Let's discuss the following interfaces
+
+**** Maps
+
+     #+begin_src java :results output raw 
+interface Map<K,V>
+     #+end_src
+
+     this is the interface for the map data structure. The interface
+     implements the following:
+
+     it throws exceptions when an object is incompatible with the
+     elements in a map - i.e. for instance if the keys are not unique.
+
+     The basic methods are the =get()= method, to get a value given a
+     key, and the =put ()= method, to add a key-value pair.
+
+     To get the *Collection* view of a map you can leverage the
+     =entrySet()= method. It returns a set that contains the elements
+     inthe map. You can even get a set for the keys of the map via the
+     =keySet()= method.
+
+     You have on the top of it some more methods that you can check online.
+
+**** SortedMaps
+    
+     #+begin_src java :results output raw 
+interface SortedMap<K,V>
+     #+end_src
+
+     This *extends* the Map interface.
+
+     Sorted maps allow very efficient manipulations of submaps (in
+     other words, subsets of a map). To obtain a submap, use headMap(
+     ), tailMap( ), or subMap( ). To get the first key in the set, call
+     firstKey( ). To get the last key, use lastKey( )
+   
+**** NaviagableMaps
+ 
+     #+begin_src java :results output raw 
+interface NavigableMap<K,V>
+     #+end_src
+
+     It extends SortedMap and declares the behavior of a map that
+     supports the retrieval of entries based on the closest match to a
+     given key or keys.
+        
+**** Map.Entry
+   
+     #+begin_src java :results output raw 
+interface Map.Entry<K,V>
+     #+end_src
+
+    The =Map.Entry= interface enables you to work with a map
+    entry. Recall that the =entrySet( )= method declared by the Map
+    interface returns a Set containing the map entries. Each of these
+    set elements is a Map.Entry object.
+
+    You have then functions as =getKey=, =getValue= etc..
+
+**** Unmodifiable Map
+
+     Interesting is this concept and similar. You can read about it
+     [[https://www.geeksforgeeks.org/collections-unmodifiablemap-method-in-java-with-examples/][here]]. So nice feature of collection in java is that you can
+     specify such unmodifiable objects.
+
+     Note that I had this question when reading about it: /what is
+     added on the top of a declaration with final/. The answer is
+     always the same and it is [[https://stackoverflow.com/questions/7996499/creating-hashtable-as-final-in-java][this one]]. I.e. you have to recall and
+     make explicit your understanding of what is a final reference and
+     an obejct. You should start thinking in these terms when you
+     program given the new lanaguage paradigm shift.
+
+    
+*** Maps Frameworks - Classes
+
+    This is the general overview
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2021-09-24 175633.png">
+    #+end_export
+
+    Notice that =AbstractMap= is a superclass for all concrete map implementations.
+
+    =WeakHashMap= implements a map that uses “weak keys,” which allows an element in
+    a map to be /garbage-collected/ when its key is otherwise unused. This class is not discussed
+    further here.
+   
+**** HashMap
+
+     Creates a hash-table to store the map. This is especially useful
+     for the computational benefit of using hash-maps.
+
+     Note that you can have a single key-value pair in your hash-table
+     as the Map data structure requires the keys to be unique.
+
+     So if you =put()= into the hash-map two times the same key the
+     second one will overwrite the entry of the first.
+
+     #+begin_src java :results output raw :classname MapsBasics :results drawer
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;    
+
+class MapsBasics {
+    public static void main(String args[]) {
+        Map<String, List<Integer>> map = new HashMap<>();
+
+	List<Integer> myList = new ArrayList<>();
+
+	myList.add(1); // add the desired value
+	    
+	map.put("hello", myList);
+
+	if (map.containsKey("hello")) {
+		List<Integer> myTest = map.get("hello");
+
+		myTest.add(2);
+
+		map.put("hello", myTest);
+	}
+
+
+	List<Integer> myTest = map.get("hello");
+
+	myTest.stream().forEach(System.out::println);
+
+    }
+}
+     #+end_src 
+
+     #+RESULTS:
+     :results:
+     1
+     2
+     :end:
+     1
+     2
+
+     Understand how to get all of the values of a map.
+
+     Note the importance of functional programming and
+     streams. Without it, it would be extremely cumbersome to work
+     with such data structures.
+
+     In such a way you come closer to a python development speed, even
+     though after 3 months I am still rather biased towards that
+     language. 
+     
+     #+begin_src java :results output raw :classname MapsValues :results drawer
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;    
+
+class MapsValues {
+    public static void main(String args[]) {
+        Map<String, Integer> map = new HashMap<>();
+
+	map.put("a",1); // add the desired value
+	map.put("b",2); // add the desired value
+	map.put("c",3); // add the desired value
+	map.put("d",4); // add the desired value	
+
+
+	System.out.println("My set of keys");
+	map.entrySet().stream()
+	    .forEach(d -> System.out.println(d.getKey()));
+
+	System.out.println("My set of keys - Method 2");
+	map.keySet().stream()
+	    .forEach(System.out::println);
+
+	System.out.println("My set of values");
+	map.entrySet().stream()
+	    .forEach(d -> System.out.println(d.getValue()));
+
+	System.out.println("My set of values - Method 2");
+	map.values().stream().forEach(System.out::println);
+    }
+}
+     #+end_src 
+
+     #+RESULTS:
+     :results:
+     My set of keys
+     a
+     b
+     c
+     d
+     My set of keys - Method 2
+     a
+     b
+     c
+     d
+     My set of values
+     1
+     2
+     3
+     4
+     My set of values - Method 2
+     1
+     2
+     3
+     4
+     :end:
+
+**** TreeMap
+
+     Implements =AbstractMap= and implements the =NavigableMap=
+     interface.
+
+     Note once more that the TreeMap uses a tree data structure for
+     storing the Map. It therefore provides an efficient means of
+     storing key/value pairs in sorted order and allows rapid
+     retrieval.
+
+**** LinkedHashMap
+
+     =LinkedHashMap= extends =HashMap=. It maintains a /linked list/ of the
+     entries in the map, /in the order in which they were inserted/. This
+     allows insertion-order iteration over the map. That is, when
+     iterating through a collection-view of a LinkedHashMap, the
+     elements will be returned in the order in which they were
+     inserted.
+
+**** IdentityHashMap
+
+     IdentityHashMap extends AbstractMap and implements the Map
+     interface. It is similar to HashMap except that it uses *reference
+     equality* when comparing elements.
+
+**** EnumMap
+
+     =EnumMap= extends =AbstractMap= and implements Map. It is
+     specifically for use with keys of an =enum= type.
+
+
+** Comparators
+
+   that is an important class that will allow you to specify the
+   ordering of the elements of your objects implementing the
+   =NavigableSet=/=NavigableMap= interfaces.
+
+   You can define the comporator yourself. 
+
+   
+** Java Threading                                                  :noexport:
+
+   This is important as it allows to work with multiple threads in
+   Java.
+
+   This notes are based on [[https://www.iitk.ac.in/esc101/05Aug/tutorial/essential/threads/index.html][this source]].
+
+   As a sequential flow of control, a thread must carve out some of
+   its own resources *within a running program*.
+
+   For example, a thread must have its own execution stack and program
+   counter. The code running within the thread works only within that
+   context. Some other texts use execution context as a synonym for
+   thread.
+   
+*** High level timer API - used threads in the background but shields a bit the user
+
+    This is nice as it allows to easily work with threads.
+
+    You can see for instance the following program:
+
+    #+begin_src java :results output raw :classname Reminder :results drawer
+import java.util.Timer;
+import java.util.TimerTask;
+
+/**
+ ,* Simple demo that uses java.util.Timer to schedule a task 
+ ,* to execute once 5 seconds have passed.
+ ,*/
+
+public class Reminder {
+    Timer timer;
+
+    public Reminder(int seconds) {
+        timer = new Timer();
+        timer.schedule(new RemindTask(), seconds*1000);
+	
+    }
+
+    class RemindTask extends TimerTask {
+        public void run() {
+            System.out.println("Time's up!");
+            timer.cancel(); //Terminate the timer thread
+        }
+    }
+
+    public static void main(String args[]) {
+        new Reminder(5);
+	System.out.println("Task scheduled.");	
+	int i = 0;
+	while(i < 5){
+	    System.out.println("hello world");
+	    i++;
+	}	
+        
+    }
+}
+    #+end_src 
+
+    #+RESULTS:
+    :results:
+    Task scheduled.
+    hello world
+    hello world
+    hello world
+    hello world
+    hello world
+    Time's up!
+    :end:
+
+    So you see that while the timer schedule thread sleeps in the
+    background and triggers the task just upon task completion the
+    main program thread goes on in performing its standard things.
+
+    So this is the same concept as the one of Javascript that you
+    looked up in the recent past. You can check at that video in your
+    Javascripts notes as it was explaining asynchronous programming in
+    a very neat way and the ultimate concept is the same here.
+
+** Mustache                                                        :noexport:
+
+   Mustache is a web framework  that is *logicless*.
+
+   That is important. It means that there are no if-else statements
+   nor for loops.
+
+   Note that how the framework actually works is then in the following
+   way:
+
+   - you define a template with your ={{}}= - i.e. the mustaches
+     containing your variables that you will pass to the template
+     dynamically. 
+
+   - you compile the framework.
+
+   Note then the following schema for using the framework.
+
+   #+begin_src plantuml :file ../../images/mustache.png :exports none :results drawer
+@startuml
+(*) -right-> "Create template in the form <b>MYNAME.mustache</b>"
+
+ -right->"Create a <b>MYNAME</b> class where you save the parameters 
+     you pass to the template.
+
+     The fields must be equivalent to the ones in the mustaches."
+
+ -right-> "Compile the mustache template"
+
+ -down-> "Execute the compiled mustache template passing it 
+           the necessary object containing the parameterized fields.
+
+	   Flush the results to a stringwriter.   
+	  "
+
+  --> (*)
+@enduml
+#+end_src
+
+#+RESULTS:
+:results:
+[[file:../../images/mustache.png]]
+:end:
+
+
+#+begin_export html
+ <img src="../../images/mustache.png" class="center">
+#+end_export
+
+Note that this is just the basics but it is sufficient to get an
+idea for the moment.
+
+What you are missing then is the following:
+
+- passing a list of objects. then if setting properly tags you will
+  generate a template containing all of the entries for the objects in
+  the list.
+
+  I guess it is therefore the way to do dynamic allocation etc. 
+
+- tags that are triggered just when you pass an empty list, a
+  non-existing key of a map, a false or null.
+
+  i.e. you trigger this generally to display info for the case of
+  abnormal events.
+
+- tags processing lambda function. I.e you can for instance use a
+  =Function<Object, Object>= and the result from it will be passed to
+  to the appropriate tag.
+
+You can read more of the above cases [[https://www.baeldung.com/mustache][here]]. Let's leave it for now. 
+   
+
+* Important Libraries
+
+** Standard Classes
+
+   All of the standard Java classes are stored in a package called
+   *java*.
+
+   The basic language functions are stored in a package inside of the
+   java package called /java.lang/. This is implicitly imported by
+   the compiler for all programs.
+   
+** Logger Package
+
+   As you know, this is a quite fundamental component when writing
+   your apps.
+
+*** Logger Object Configuration
+
+    In order to create a Logger object zou can use the following:
+
+    #+begin_src java :results output raw 
+import java.util.logging.Logger;
+
+// assumes the current class is called MyLogger
+private final static Logger LOGGER = Logger.getLogger(<ClassName>.class.getname());
+    #+end_src 
+
+    What the above does is actually to implement a hierarchy of
+    loggers.
+
+    To understand what the above sentence means understand the
+    following:
+
+    If for instance you specify a logger for the =com.example=
+    package, that logger would be a child of the =com= Logger, which
+    is itself a child of the =String= Logger (default). 
+   
+*** Levels
+
+    The module works the same way your logger in python used to
+    work. This means that you have multiple levels of logging.
+
+    - SEVERE (highest)
+    - WARNING
+    - INFO
+    - CONFIG
+    - FINE
+    - FINER
+    - FINEST
+    - OFF (turns the logger off)
+    - ALL (log everything)
+
+    You can choose the level of your log in the following way:
+
+    #+begin_src java :results output raw
+// set logger at info level
+LOGGER.setLevel(Level.INFO);
+    #+end_src 
+
+    In the case above log levels =INFO= and above will be automatically
+    written to the console. This in a very similar way to the logger in
+    python you have used multiple times.
+
+    Note that through the =LogManager= it is possible to set the
+    logging levels for a set of packages at once. 
+  
+*** Formatter
+
+    Here again in a similar way than python you can specify the output
+    for the logger and how logged entry are returned / logged in the
+    console.
+
+    It is common practice to use the fully qualified name of each
+    class whose activity is being logged as a message category,
+    because this allows developers to fine-tune log settings for each
+    class.
+
+    Make sure this is the case in your team.
+
+
+** Project Lombok
+
+   You can read more about it [[https://www.baeldung.com/intro-to-project-lombok][here]].
+
+   It is basically a way to short-circuit all of the getters, setters
+   and equals stuff that you so often use in Java.
+
+   You can read about it online. Check how stable is the framework as
+   here you are dealing with code that has to survive over very long
+   periods of time.
+
+   I mean if it is stable it is quite handy as through it you will
+   manage Java-Beans quite easily and these will be very readable.
+
+   Nice as it also handles Logger and adds it to the class in case of
+   need.
+
+*** TODO do documentation on lombok                                :noexport:
+
+    I like this as it will reduce quite a bit of boilerplate code.
+
+    Note that you will have to configure your IDE to properly read
+    Lombok. Otherwise you will have plenty of errors in your code as
+    you will not easily find your =getters= and =setters= and all of
+    the other stuff that you would ultimately implement through
+    annotators and less through the code itself. 
+
+    See in this sense [[https://www.baeldung.com/lombok-ide][this guide]].
+    
+
+** JDBC
+
+*** What is it?
+
+    From [[https://www.baeldung.com/java-jdbc][here]]:
+
+    #+begin_quote
+A JDBC driver is a JDBC API implementation used for connecting to a
+particular type of database. There are several types of JDBC drivers:
+
+- Type 1 – contains a mapping to another data access API; an example
+  of this is the JDBC-ODBC driver
+
+- Type 2 – is an implementation that uses client-side libraries of the
+  target database; also called a native-API driver
+
+- Type 3 – uses middleware to convert JDBC calls into
+  database-specific calls; also known as a network protocol driver 
+
+- Type 4 – connect directly to a database by converting JDBC calls
+  into database-specific calls; known as database protocol drivers or
+  thin drivers,
+
+The most commonly used type is *type 4*, as it has the advantage of
+being platform-independent. Connecting directly to a database server
+provides better performance compared to other types. The downside of
+this type of driver is that it's database-specific – given each
+database has its own specific protocol.
+    #+end_quote
+
+    What this basically means is that if you use type 4, you will have
+    to download the specific database protocol driver, for instance
+    you can download via gradle or maven your specific artifact say
+    for instance the =mysql-connector-java= connector.
+
+    So now when working with JDBC you should make the following
+    important distinctions...  you have various way to interact with
+    the database. These are fundamentally different among each other.
+
+    So it is important not to get confused and understand the merits
+    of each and when to use one vis-a-vis another one.
+
+    There are basically three objects ~Statement~,
+    ~PreparedStatement~, ~CallableStatement~.
+
+    We will check at the difference among the three next. What you
+    basically have to remember that all of the three are called by a
+    ~SqlConnection.Connection~ object.
+
+*** Statement
+
+    Note that the ~Connection~, ~Statement~ and ~ResultSet~ all block
+    resources. You should free up such resources when you are over
+    with your processing.
+
+    This is why you should always work with [[*Try with resource statements][Try with resource statements]]
+    condtions. 
+
+    #+BEGIN_SRC java :results output drawer :classname
+
+// basic example of working with it. 
+    try (Statement stmt = con.createStatement()) {
+      ResultSet rs = stmt.executeQuery(query);
+      while (rs.next()) {
+        String coffeeName = rs.getString("COF_NAME");
+        int supplierID = rs.getInt("SUP_ID");
+        float price = rs.getFloat("PRICE");
+        int sales = rs.getInt("SALES");
+        int total = rs.getInt("TOTAL");
+        System.out.println(coffeeName + ", " + supplierID + ", " + price +
+                           ", " + sales + ", " + total);
+      }
+    } catch (SQLException e) {
+      JDBCTutorialUtilities.printSQLException(e);
+    }
+    #+END_SRC
+
+    Note that it is not possible to insert any parameters in simple
+    statements. So use them for static queries in this sense.
+
+    Finally note that there are the following three methods options to
+    execute statements:
+
+    #+begin_quote
+- execute: Returns true if the first object that the query returns is
+  a ResultSet object.
+
+  Use this method if the query could return one or more ResultSet
+  objects. Retrieve the ResultSet objects returned from the query by
+  repeatedly calling Statement.getResultSet.
+
+- executeQuery: Returns one ResultSet object.
+
+- executeUpdate: *Returns an integer* representing the number of rows
+  affected by the SQL statement. Use this method if you are using
+  INSERT, DELETE, or UPDATE SQL statements.
+    #+end_quote
+
+    So note that the above is not the best design to my
+    mind. *Different return types*. Don't get tricked and refer to the
+    documentation - especially at the beginning while your mind is
+    still not set-up.
+
+    Note that ~stmt.getUpdateCount()~ method returns the number of
+    rows affected.
+
+    If the *result is 0* then either no rows were affected, or it was a
+    database structure update command.
+
+    If the *value is -1*, then the command was a SELECT query; we can then
+    obtain the result using stmt.getResultSet().
+   
+*** PreparedStatement
+
+    This basically shares all of the functionalities with the
+    Statement above. I.e. similar methods, application etc.
+
+    What is different?
+
+    PreparedStatement objects contain precompiled SQL sequences. They
+    can have one or more parameters denoted by a question mark.
+
+    #+BEGIN_SRC java :results output drawer :classname 
+@Override
+public void testPreparedStatement() throws SQLException {
+
+    insert = <MYCOOLPREPAREDSTATEMENT>;
+			  
+    /* Prepared Statement
+
+       Note that this is very similar to executing directly against a
+       connection. So have to dig a little bit at lower level in order
+       to properly understand where the difference truly lies.
+
+    ,*/
+    insert.setInt(1, asof().asofVersionID);
+    insert.setString(2, "hello2");
+    insert.setString(3, "hello3");
+    insert.setDouble(4, 3.0); 
+
+    /*
+      note that you use this executeUpdate() method in the case of
+      updates and inserts.  In contrast you use the plain execute()
+      method when you get a resultset from which you extract the results
+      then.
+
+      Note as well the nice property that the executeUpdate()
+      method returns an integer with the amount of rows affected by the
+      query.
+
+      Finally note from your experience that once you set your
+      parameters for the thing of choice you are good to go.
+      You do not have to add all of the parameters after each execution.
+      YOu just have to change the ones you want to change. 
+
+    ,*/
+    
+    int row = insert.executeUpdate(); 
+    
+    System.out.println("HEREE: " + row);
+			
+};
+	
+    #+END_SRC
+
+*** CallableStatement
+
+    This is used for *stored procedures*.
+
+    You can create such a statement as follows:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+String preparedSql = "{call insertEmployee(?,?,?,?)}";
+try (CallableStatement cstmt = con.prepareCall(preparedSql)) {
+    cstmt.setString(2, "ana");
+    cstmt.setString(3, "tester");
+    cstmt.setDouble(4, 2000);
+
+    cstmt.registerOutParameter(1, Types.INTEGER);
+
+    cstmt.execute();               // executes the statement
+    int new_id = cstmt.getInt(1);  // get the results of the preparedStatement
+                                   // there are equally other getX() methods
+}
+    #+END_SRC
+
+    Note the classical [[*Try with resource statements][Try with resource statements]] structure.
+
+    The above uses a preparedstatement of the form:
+
+    #+begin_src sql
+delimiter //
+CREATE PROCEDURE insertEmployee(OUT emp_id int, 
+  IN emp_name varchar(30), IN position varchar(30), IN salary double) 
+BEGIN
+INSERT INTO employees(name, position,salary) VALUES (emp_name,position,salary);
+SET emp_id = LAST_INSERT_ID();
+END //
+delimiter ;
+    #+end_src
+
+*** TODO [#A] On batchadd - How that works
+*** TODO write about the logic of committing the results and executing them :noexport:
+*** Note that your libraries for working with JDBC are in the following repo
+
+    =com.zurich.im.lib.basics.sql=
+
+    consult them at development time to find the method that best fits
+    your use-case. 
+
+** TODO Hiberante
+
+   Check at it. Everybody talks about it.
+
+   The idea is to stay in the OOP logic when working with data tables
+   etc.
+
+   I must say that it is very funny to work with Java as it is not
+   simply another programming language. It is so far apart from Python
+   in the frameworks and ideas that it is a complete revolution in
+   terms of mental process.
+
+
+
+  
+** TODO check at guava
+
+   [[https://github.com/google/guava][url]]
+
+   It seems to be a thing in the Java world.
+
+   Already encountered it a couple of times.
+
+   Check at it in a more thorough way when you have time. 
+      
+   
+
+
+* On The RandomAcess Interface
+
+  This is a quite fun interface. It is an *interface that implements
+  no methods*.
+
+  However, by implementing this interface, a collection signals that
+  it supports efficient random access to its elements.
+
+  By checking for the RandomAccess interface, client code can
+  determine at run time whether a collection is suitable for certain
+  types of random access operations—especially as they apply to large
+  collections. (You can use instanceof to determine if a class
+  implements an interface.) RandomAccess is implemented by ArrayList
+  and by the legacy Vector class, among others.
+
+  So very interesting way of setting up your project. Keep that in
+  mind when setting up your projects.
+   
+
+* On the main method
+
+  Note that as in ~C++~ all Java applicaitons begin execution by
+  calling =main( )=.
+
+  Note that the =main ()= method is always static. This is necessary
+  since =main( )= is called by the Java Virtual Machine before any
+  objects are made.
+
+
+* Doc Comments and JavaDocs
+
+  One of the most powerful tools in python was the docstrings
+  available in there.
+
+  There you could well document all of your python functions. You
+  could even run tests through it.
+
+  Moreover given your lsp-ui module it was helpful to quickly refer
+  to the documentation you had written.
+
+  The counterpart of that in java are =doc comments=. There you can
+  specify the parameters for your functions etc. and add a good layer
+  of documentation in your code.
+
+  Moreover through =JavaDoc= it is apparently possible to generate
+  html to see the visualize such doc-comments.
+
+  You should then read more carefully in detail about it.
+
+  I am testing it out even with Java lsp integration and it works
+  like a charm.
+
+  Note that you should keep the notation on the top of the classes -
+  i.e. for instance here:
+
+  #+begin_src java :results output raw 
+/**
+ ,* This method is used to add two integers. This is
+ ,* a the simplest form of a class method, just to
+ ,* show the usage of various javadoc Tags.
+ ,* @param numA This is the first paramter to addNum method
+ ,* @param numB  This is the second parameter to addNum method
+ ,* @return int This returns sum of numA and numB.
+ ,*/
+public int addNum(int numA, int numB) {
+      return numA + numB;
+   }
+  #+end_src 
+
+  You will then get displayed such a documentation when howering over
+  the class.
+
+  #+begin_export html
+   <img src="../../images/Screenshot 2021-09-15 111541.png" class="center">
+  #+end_export
+
+  Note that you can get an idea of the created documentation by
+  =JavaDoc= [[https://www.tutorialspoint.com/java/index.html][here]]. This looks very similar to the one you created in
+  C++. I do not recall the name of the program to do that there.
+
+  In order to use doc-comments properly in Java you should learn the
+  [[https://www.tutorialspoint.com/java/java_documentation.htm][avaiable tags]] properly.
+
+  *Note* that there is a function to run =JavaDoc= in Eclipse. You
+  should understand that at some point. You also have the option to
+  generate such =JavaDocs= from within your built-tool.
+
+  You can find an example of generated =JavaDocs= [[https://docs.gradle.org/current/javadoc/index.html][here]].
+  
+** Important parameters to properly write java-docs
+
+   So in order to start to properly document your code you have to
+   interiorize the following java-doc annotations.
+
+   Do it and all of your team-mates will be thankful to you in a
+   couple of years.
+
+   Before starting with all of the different tags, understand the
+   following basics distinction:
+
+   - if a tag is of the form =@tag=, then it is a /stand-alone/
+     tag. I.e. you must use it on a single line. I.e. the line must
+     start with the tag. 
+
+   - if a tag is of the form ={@tag}=, then it is a /in-line/
+     tag. This means you can embed it in your general comments.
+
+   --------
+
+   I continue here with a set of tags that you can and should use when
+   writing your documentation.
+
+
+   1. =@author=:
+
+      so this is of the follwoing form
+
+      ~@author description~
+
+      note that the description is usually your name. You have to add
+      a tag when generating docstrings if you want to have this
+      compoenent included.
+
+   2. =@param=:
+
+      documents a parameter type to the method.
+
+      ~@param parameter-name explanation~
+
+      Here, parameter-name specifies the name of a parameter. The
+      meaning of that parameter is described by explanation.
+
+      Note that you do not specify the type of parameter by default.
+
+   3. =@deprecated=:
+
+      Deprecated specifies that a class, interface, or a member is
+      deprecated.
+
+      You then usually include the =@see= or ={@link}= tags in order
+      to point to the alternatives.
+
+      ~@deprecated description~
+
+      note that this tag can be used in documentation for variables,
+      methods, classes, and interfaces.
+
+   4. =@exception=:
+
+      this tag describes an exception to a method.
+
+      It has the following syntax:
+
+      ~@exception exception-name explanation~
+
+      Here, the fully qualified name of the exception is specified by
+      =exception-name= say IOException etc., and explanation is a string
+      that describes how the exception can occur.
+
+      I like the standard of including then the error documentation as
+      a reference via =@see=.
+
+      For instance:
+
+      #+begin_src java :results output raw 
+ /**
+ ,* This method inputs a number from the user.
+ ,* @return The value input as a double.
+ ,* @exception IOException On input error.
+ ,* @see IOException
+ ,*/
+      #+end_src 
+
+   5. =@return=:
+
+      here you specify what the method returns.
+
+   6. =@see=:
+
+      this is an important one, as with this tag you can specify
+      references to other packages.
+
+      you can use it as follows:
+
+      ~@see anchor~
+
+      ~@see pkg.calss#member text~
+
+      so you see that in its second form it is the same as the
+      ={@link}= below. read that in order to understand it. Note that
+      you can also specify references to entire packages simply by
+      excluding the ~#member~ piece from the above.
+
+      In the first form you pass an URL.
+
+      Usually you use this in combination with ={@link}=. In this way
+      your doc-strings will be properly set up with the correct amount
+      of visibility, as your references will be saved in the /See
+      Also/ section.
+
+   7. =@serial=:
+
+      this is just there since *java 14*. you are using 11. so just
+      consider it if you are updating.
+      
+   8. =@serialData=:
+
+      A class that customizes the serialization format by implementing
+      ~writeObject( )~ or ~writeExternal( )~ should annotate those
+      methods with an @serialData tag explaining in detail the format
+      written.
+
+      ~@serialData description~
+
+      where in the description you document what is written for that
+      data etc. 
+      
+
+   9. =@serialField=:
+
+      should be there since java 11. I do not see it in my IDE as an
+      available tag. Intersting - undestand it at some point.
+
+      For a class that *implements Serializable*, the @serialField tag
+      provides comments for an ObjectStreamField component.
+
+      ~@serialField name type description~
+
+   10. =@since=:
+
+       this specifies that a class or member was introduced in a
+       specific release.
+
+       ~@since release~
+
+   11. =@throws=:
+
+       this has the same meaning as the ~@exception~ tag.
+
+   12. =@version=:
+
+       this is the usual way to write the version of it. 
+
+   13. ={@code}=
+
+       this allos you to embed a code snippet into a comment.
+
+       ~{@code code-snippet}~
+
+       
+   14. ={@value}=
+
+       It has two forms.
+
+       The first displays the value of the constant that it precedes,
+       which must be a /static/ field.
+
+       In this case the usage form is simple
+
+       ~{@value}~
+
+       have still to understand better how to use this. Would be
+       useful to get an example in this sense.
+
+   15. ={@docRoot}=
+
+       it specifies the root repository of the document. you will not
+       use it much.
+
+   16. ={@inheritDoc}=
+
+       so this is used when you inherit in order to inherit the
+       documentation of the inherited class/method as well.
+
+   17. ={@link}=
+
+       It provides an in-line link to additional information.
+
+       ~{@link pkg.class#member text}~
+
+       The =pkg.class#member= specifies the name of a class or method
+       to which a link is added, and =text= is the string that is
+       displayed.
+
+       Note that the above is not that well explained. In the sense
+       that you have to include =()= to the member as well write the
+       parameter types of it in order for it to work properly.
+
+       Understand it properly. Another time when including the
+       arguments it was not accepted. Do some trial and error. 
+
+   18. ={@linkplain}=
+
+       this is the same as the ={@link}= above. It just creates input
+       in a different format when creating the java-doc. Can try to
+       esperiment the difference among the two at some point.
+
+   19. ={@literal}=
+
+       this is another javadoc rendering thing. this is not that
+       important to me at this stage. check at it later in case of
+       interest. 
+
+
+** Working standards
+
+*** Top level info for class
+   
+    On the top of each main class of each document have an entry of the
+    following form
+
+    #+begin_src java 
+ /**
+ ,* General description of the source file.
+ ,* <p>
+ ,* (c) YYYY, Zurich Insurance Group
+ ,* @author MYNAME MYLASTNAME
+ ,* @version 1.2
+ ,*/
+    #+end_src
+
+    Note the =<p>= method through which you order your
+    documentation. I.e. you separate different paragraphs and make
+    everything more ordered.
+    
+*** Package Documentation
+
+    In general *always include a general documentation for each
+    pacakge*, documenting the sense and the meaning of it.
+
+    In Java in order to do that you have to create a
+    =package-info.java= file. This you have to position within a
+    package repository.
+
+    You then write the documentation for the pacakge in that file in
+    the following form:
+
+    #+begin_src java :results output raw 
+/**
+ * Provides the classes necessary to create an applet and the classes an applet uses 
+ * to communicate with its applet context. 
+ * <p>
+ * The applet framework involves two entities: 
+ * the applet and the applet context. An applet is an embeddable window (see the 
+ * {@link java.awt.Panel} class) with a few extra methods that the applet context 
+ * can use to initialize, start, and stop the applet.
+ *
+ * @since 1.0
+ * @see java.awt
+ */
+package java.lang.applet;
+    #+end_src 
+
+    I.e. you write your comment and finally you specify the package it
+    applies to.
+
+    
+*** General notation for methods
+
+    In order to consistently annotate your methods use the following
+    strucutre.
+
+    #+begin_src java :results output raw 
+/** One-liner description of the method as in PEP8
+,   <p>
+,   Longer serious documentation
+,   <p>
+,   TODO .... 
+,*/
+    #+end_src 
+
+
+* Code Standards
+
+  Even though there is not a very big rigor in here in the way you
+  structure your code I think it beneficial to have some.
+
+  In this sense I think that to comply with a standard or style guide
+  as it could be PEP8 for python is beneficial.
+
+  I did not find a good standard in this sense in Java yet. I have to
+  spend some time checking for it at some point.
+
+  To this stage I found this. Now as always I do not have the time to
+  go deep into [[https://www.oracle.com/java/technologies/javase/codeconventions-introduction.html][this topic]]. Did put it in your calendar though. Go back
+  to it at some point when you have time. 
+   
+  
+* On Java Persistence API - JPA
+
+  [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][Read this]]. The following notes are a simple copy and paste of that
+  article.
+
+  ------------------
+  
+** JPA in the historic context
+
+   The core question here is about /persistence/, which loosely means any
+   mechanism by which Java objects outlive the application process that
+   created them.
+
+   The JPA specification lets you define which objects should be
+   persisted, and how those objects should be persisted in your Java
+   applications.
+
+   So this is more a styling-guide at the macro-level. You have then
+   all of the different frameworks through which you can implement such
+   theoretical construct.
+
+   So Java Persistence API is highly related with ORM. As this is the
+   old-school way of programming and was the norm the two developed
+   hand in hand. Today with the advent of NoSQL you have Java
+   Persistence API being developed and formed for the NoSQL databases. 
+
+   ORM - object-relational mapping. So through ORM you are able to work
+   through objects and stay within the first-class citizens of Java and
+   still, at the same time, interact with the relational tables of your
+   application.
+
+   Hibernate is the default ORM used across the industries as you
+   quickly learned after 2 months of exposure to the Java world.
+
+** JPA in the application context
+
+   So this is how the JPA fits the application logic.
+   
+#+begin_export html
+ <img src="../../images/Screenshot 2021-11-02 134907.png" class="center">
+#+end_export
+
+   You can then quickly imagine how the picture would change to the
+   NoSQL space. Nothing big would change. Just the connector, the
+   general theoretical API specifications to interact with NoSQL etc.
+
+   But in general the high-level structure will persist.
+   
+** On JPA Annotations
+
+   Note that here you specify as well all of the annotators to
+   properly interact with your relational model.
+
+   This is integral part of the JPA API. You can read more about it at
+   the same link in [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][here]].
+
+   Note that we do not work a lot through such JPA layer. We work
+   directly through SQL. I think this is not a bad idea as through it
+   you will be able to more quickly transition from one language to
+   the other in the future.
+
+   Moreover, I prefer SQL as being declarative it is much more
+   straightforward to understand what is needed.
+
+   So on this I prefer to keep one layer of abstraction and work in
+   the way the team is working. 
+  
+
+
+* Encapsulation
+  
+*** Access Control
+
+    There are as usual 3 specifiers. =public=, =private=, =protected=.
+
+    - =public=: a member can be accessed by any other code. When no
+      access specifier is used, then by default the member of a class
+      is public *within its own package*, but *cannot be accessed outside
+      of its package*.
+
+    - =private=: member can only be accessed by *other methodes of
+      that class*.
+
+    - =protected=: relevant for inheritance. Although a subclass
+      includes all of the members of its superclass, it cannot access
+      those members of the superclass that have been declared as
+      private. *A class member that has been declared as private will
+      remain private to its class.* *It is not accessible by any code
+      outside its class, including subclasses.* This is where
+      protected differs. If a method is protected it can be visible to
+      subclasses of the class even if they are sitting in different
+      packages.
+
+      Moreover, it also differs in the nature of same-package
+      non-subclasses access. In order to see this check at [[*Package and Access Control of classes][Package and
+      Access Control of classes]]. 
+
+    On the top of it there is the =final= specification for
+    *variables*. This means that the variable cannot be modified at
+    later stages. Note that you have to specify a variable as *final*
+    when it is declared. Note that is good practice to write all such
+    variables in =UPPERCASE=.
+    
+
+*** Calling methods
+    
+**** Static
+
+     =static= allows method to be called without having to create an
+     object for that class. so same as =@staticmethod= in python.
+
+     Note actually that you can create *both methods and variables to
+     be static*.
+
+     Note that static variables are essentially *global
+     variables*. When objects of its class are declared, no copy of a
+     static variable is made. Instead, *all instances of the class
+     share the same static variable*.
+     
+#+begin_export html
+ <img src="../../images/Screenshot 2021-10-15 153909.png" class="center">
+#+end_export
+     
+***** Static Methods Restrictions
+
+      - static methods can *only call other static methods*.
+
+      - must *only access static data*.
+
+      - cannot refer to *this* or *super*.
+    
+***** Static Initialization
+
+      If you need to do computation in order to initialize your static
+      variables, you can *declare a static block* that gets *executed*
+      exactly once, *when the class is first loaded*.
+
+      #+begin_src java 
+// Example of Static stuff
+class UseStatic {
+    static int a = 3;
+    static int b;
+
+    static void meth(int x) {
+	System.out.println("x = " + x);
+	System.out.println("a = " + a); // referencing static variables
+	System.out.println("b = " + b);
+    }
+
+    // Static block; just executed once when the *class* is first
+    // loaded
+    static {
+	System.out.println("Static block initialized.");
+	b = a * 4;
+    }
+
+    public static void main(String args[]) {
+	meth(42);
+    }
+}
+
+      #+end_src 
+
+      As soon as the UseStatic class is loaded, all of the static
+      statements are run. /First/, a is set to 3, /then the static block/
+      executes, which prints a message and then initializes b to a * 4
+      or 12. Then main( ) is called, which calls meth( ), passing 42
+      to x.
+
+      You can then call the static methods and variables independently
+      from any object instances as you used to do sometimes in pyhton.
+
+      The syntax is the same =classname.method()=. Equally you can
+      call static variables by the usual dot notation
+      =classname.variable=.
+
+
+*** Subclasses vs Inheritance
+
+    There is some theoretically overlap between the two. Though they
+    are different and should not be confused with each other.
+
+    In order to understand that think of the following from
+    [[https://stackoverflow.com/questions/33421432/inner-classes-vs-subclasses-in-java][stackoverflow]].
+
+    #+begin_quote
+There are big differences between inner classes and subclasses:
+
+- inner classes are in the same file, whereas subclasses can be in
+  another file, maybe in another package.
+
+- You cannot get an instance of an inner class without an instance of
+  the class that contains it. 
+
+- inner classes have the methods they want, whereas subclasses have
+  the methods of their parent class. Subclasses can of course define
+  additional methods, but they'll always have those of their parent.
+
+About the situation:
+
+- inner classes are used when your big class needs a (usually short)
+  class, related to its internal operation, and when nobody else needs
+  it. A good example Nik G quoted is the LinkedList: it needs a Node
+  class to work, that is short, and that no other class
+  needs. Therefore Node is an inner class of LinkedList.
+
+- Subclasses are used when you defines a "is-a" reliationship. Picture
+  this: you want to make different types of cars. They have common
+  properties and features: they all can move, they all have
+  passengers, etc. So you create an abstract class "Car" with these
+  common things. And you create a subclass for every different type of
+  car.
+    #+end_quote
+      
+
+*** Final in class methods
+
+    Though polymorphism is one of the most useful tool in OOP there
+    are occasions where when defining a method in a superclass you
+    want to *prevent it from being overridden*.
+
+    In order to do that you can associate the =final= keyword to the
+    methods.
+
+    #+begin_src java :results output raw 
+class A {
+    final void meth() {
+	System.out.println("This is a final method.");
+    }
+}
+class B extends A {
+    void meth() { // ERROR! Can't override.
+	System.out.println("Illegal!");
+    }
+}
+    #+end_src 
+    
+
+*** Final Class
+
+    The same holds for classes. You can specify that you cannot
+    inherit from a class.
+
+    #+begin_src java :results output raw 
+final class A {
+    // ...
+}
+// The following class is illegal.
+class B extends A { // ERROR! Can't subclass A
+    // ...
+}
+    #+end_src 
+    
+  
+
+
+
+* Snippets
+  
+** Time a Method Execution
+
+   Use this basic one now. Then start to use more advanced stuff.
+
+   Think for instance to the guava library. There you have useful
+   utilities in this sense. 
+
+   #+BEGIN_SRC java :results output drawer :classname TimeMe
+// import java.util.concurrent.TimeUnit;
+
+import java.lang.Math;
+// import java.lang.Math.pow;
+
+class TimeMe {
+
+    static void wait(int ms)
+    {
+	try
+	    {
+		Thread.sleep(ms);
+	    }
+	catch(InterruptedException ex)
+	    {
+		Thread.currentThread().interrupt();
+	    }
+    }
+    
+    static void meth() {
+	System.out.println("hello");
+	wait(1000); // in milliseconds
+	System.out.println("world");
+    }
+
+    public static void main(String args[]) {
+	double startTime = System.nanoTime();
+	meth();
+	double endTime = System.nanoTime();
+
+	double duration = (endTime - startTime) / Math.pow(10, 9);
+
+	System.out.println(duration);
+    }
+}
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   hello
+   world
+   1.0027841
+   :end:
+
+   Start to make serious research on how to do the profiling in java
+   in this sense. Like this you will seriously start to track the
+   performance of your programs.
+
+
+* TODO Profiling
+   
+
+* On the DataFrame issue
+
+  Ok so this is a *huge huge* issue in Java.
+
+  It is quite a funny thing that nobody managed to solve the issue so
+  far.
+
+  I mean you can create your dataframe internal representation pretty
+  quickly as with the libraries you have in here.
+
+  Still there are too big hurdles cause even when you have these
+  internal representations you will miss basics functionalities such
+  as joins etc.
+
+  So what I understand it is the classical way of working in java is
+  the following:
+
+  - you work with your internal representation of the table. you write
+    it to a staging table in the db - plenty of libraries for doing
+    it - 
+
+    you use a stored procedure to do your sql business logic in there.
+
+    you get back your transformed table - plenty of libraries to do
+    that - you continue to operate in your business. 
+
+  so this is basically the logic of java but you see it is pretty
+  rough and not that nice. 
+
+** TODO data management libraries                                  :noexport:
+
+   Have as well still to understand what libraries are available for
+   data management in Java. Explore =poi=. Understand what other
+   libraries are available for managing data frames etc.
+
+
+   
