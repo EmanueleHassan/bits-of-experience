@@ -746,7 +746,30 @@ become nulls and/or fall back to the default values.
 
   This is fairly standard material. I just was not a too heavy user of
   SQL recently, which I have to become again.
+  
+** Set Identity Key - On/Off
 
+   Note that when this is off it basically means that you cannot set
+   the identity key.
+
+   Note that with identity key - the primary key is ment.
+
+   The idea is essentially the following:
+
+   #+begin_quote
+The primary key column is often set to auto-increment when
+constructing a SQL Server database. The IDENTITY limit is set on for
+the primary key column to do this. The starting location and step of
+increment are transferred to the IDENTITY column as parameters. Then
+whenever a new record is added, and the identity insert is set to OFF,
+the value of the IDENTITY column is increased by the pre-defined step
+normally a number.  
+   #+end_quote
+
+   So set it on or off depending on your needs. And it is obvious that
+   depending on your choice you will get errors or not if trying to
+   insert the primary key in an insert statement. 
+   
 ** Insert Syntax
   
    Recall inserting syntax
@@ -952,7 +975,20 @@ full outer join (
 				    -- double check next time you will properly use it.
     #+end_src
 
+** Bit
 
+   Note that this is a very particular data type.
+
+   The idea is that it can be either =0= or =1=.
+
+   But note the tricky part of it. If you insert numbers higher than
+   =1=, it does not raise an error. It simply enters 1.
+
+   In this sense if you would like to have a proper boolean variable
+   with quality control you would have to insert a constraints in your
+   DB to check for it. 
+
+   
     
 * Footnotes
 

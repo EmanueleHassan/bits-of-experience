@@ -95,107 +95,47 @@ the following sources
 <a href="http://www.javier8a.com/itc/bd1/articulo.pdf">desing patterns</a> - apparently <i>THE BOOK</i> in order to write proper
 software .</li>
 </ul>
-<!-- TEASER_END --><div id="outline-container-orgfcd5cb4" class="outline-2">
-<h2 id="orgfcd5cb4">Callback Methods</h2>
-<div class="outline-text-2" id="text-orgfcd5cb4">
+<!-- TEASER_END --><div id="outline-container-org83c4a1a" class="outline-2">
+<h2 id="org83c4a1a">Design Patterns</h2>
+<div class="outline-text-2" id="text-org83c4a1a">
 <p>
-So the basic idea is to create an interface with the methods that
-the callback will leverage.
+So taking now a moment to dig into design patterns.
 </p>
 
 <p>
-Then basically depedning on the object that will implement that
-intereface you will fallback to different implementations of it.
+Basically understand that they are broadly defined in to 3
+categories:
 </p>
 
+<ul class="org-ul">
+<li>
+<code>Creational patterns</code>: provide object creation mechanisms that
+increase flexibility and reuse of existing code.</li>
+
+<li>
+<code>Structural patterns</code>: explain how to assemble objects and classes
+into larger structures, while keeping the structures flexible and
+efficient.</li>
+
+<li>
+<code>Behavioral patterns</code>: take care of effective communication and
+the assignment of responsibilities between objects.</li>
+</ul>
 <p>
-Check as well at this event. <a href="https://www.tutorialspoint.com/Callback-using-Interfaces-in-Java">Equally good - if not better</a>. 
-</p>
-
-<p>
-Say for instance the following
-</p>
-
-<div class="highlight"><pre><span></span>  <span class="c1">// Java program to demonstrate callback mechanism</span>
-  <span class="c1">// using interface is Java</span>
-
-  <span class="c1">// Create interface</span>
-  <span class="kn">import</span> <span class="nn">java.util.Scanner</span><span class="p">;</span>
-  <span class="kd">interface</span> <span class="nc">STax</span> <span class="p">{</span>
-      <span class="kt">double</span> <span class="nf">stateTax</span><span class="p">();</span>
-  <span class="p">}</span>
-
-  <span class="c1">// Implementation class of Punjab state tax</span>
-  <span class="kd">class</span> <span class="nc">Punjab</span> <span class="kd">implements</span> <span class="n">STax</span> <span class="p">{</span>
-      <span class="kd">public</span> <span class="kt">double</span> <span class="nf">stateTax</span><span class="p">()</span>
-      <span class="p">{</span>
-	  <span class="k">return</span> <span class="mf">3000.0</span><span class="p">;</span>
-      <span class="p">}</span>
-  <span class="p">}</span>
-
-  <span class="c1">// Implementation class of Himachal Pardesh state tax</span>
-  <span class="kd">class</span> <span class="nc">HP</span> <span class="kd">implements</span> <span class="n">STax</span> <span class="p">{</span>
-      <span class="kd">public</span> <span class="kt">double</span> <span class="nf">stateTax</span><span class="p">()</span>
-      <span class="p">{</span>
-	  <span class="k">return</span> <span class="mf">1000.0</span><span class="p">;</span>
-      <span class="p">}</span>
-  <span class="p">}</span>
-
-  <span class="kd">class</span> <span class="nc">TAX</span> <span class="p">{</span>
-      <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span>
-	  <span class="kd">throws</span> <span class="n">ClassNotFoundException</span><span class="p">,</span> <span class="n">IllegalAccessException</span><span class="p">,</span> <span class="n">InstantiationException</span>
-      <span class="p">{</span>
-	  <span class="n">Scanner</span> <span class="n">sc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Scanner</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">in</span><span class="p">);</span>
-	  <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Enter the state name"</span><span class="p">);</span>
-	  <span class="n">String</span> <span class="n">state</span> <span class="o">=</span> <span class="n">sc</span><span class="p">.</span><span class="na">next</span><span class="p">();</span> <span class="c1">// name of the state</span>
-
-	  <span class="c1">// The state name is then stored in an object c</span>
-	  <span class="n">Class</span> <span class="n">c</span> <span class="o">=</span> <span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
-
-	  <span class="c1">// Create the new object of the class whose name is in  c</span>
-	  <span class="c1">// Stax interface reference is now referencing that new object</span>
-	  <span class="n">STax</span> <span class="n">ref</span> <span class="o">=</span> <span class="p">(</span><span class="n">STax</span><span class="p">)</span><span class="n">c</span><span class="p">.</span><span class="na">newInstance</span><span class="p">();</span>
-
-	  <span class="cm">/*Call the method to calculate total tax</span>
-<span class="cm">	    and pass interface reference - this is callback .</span>
-<span class="cm">	    Here, ref may refer to stateTax() of Punjab or HP classes</span>
-<span class="cm">	    depending on the class for which the object is created</span>
-<span class="cm">	    in the previous step</span>
-<span class="cm">	  */</span>
-
-	  <span class="n">calculateTax</span><span class="p">(</span><span class="n">ref</span><span class="p">);</span>
-      <span class="p">}</span>
-      <span class="kd">static</span> <span class="kt">void</span> <span class="nf">calculateTax</span><span class="p">(</span><span class="n">STax</span> <span class="n">t</span><span class="p">)</span>
-      <span class="p">{</span>
-	  <span class="c1">// calculate central tax</span>
-	  <span class="kt">double</span> <span class="n">ct</span> <span class="o">=</span> <span class="mf">2000.0</span><span class="p">;</span>
-
-	  <span class="c1">// calculate state tax</span>
-	  <span class="kt">double</span> <span class="n">st</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="na">stateTax</span><span class="p">();</span>
-	  <span class="kt">double</span> <span class="n">totaltax</span> <span class="o">=</span> <span class="n">st</span> <span class="o">+</span> <span class="n">ct</span><span class="p">;</span>
-
-	  <span class="c1">// display total tax</span>
-	  <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Total tax ="</span> <span class="o">+</span> <span class="n">totaltax</span><span class="p">);</span>
-      <span class="p">}</span>
-  <span class="p">}</span>
-</pre></div>
-
-<p>
-Note that in your code - for instance in the case of the zipParser
-you use this concept coupled with the one of functional
-programming.
-</p>
-
-<p>
-I.e. your callback interface is implemented directly via functional
-programming and it is never explicitely written anywehere.
+At the end you will see that many things you already started to use
+out of the box after a couple of month working more in an OOP way.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orga73263a" class="outline-2">
-<h2 id="orga73263a">Factory Methods</h2>
-<div class="outline-text-2" id="text-orga73263a">
+
+<div id="outline-container-org5b0e5a9" class="outline-2">
+<h2 id="org5b0e5a9">Creational Patterns</h2>
+<div class="outline-text-2" id="text-org5b0e5a9">
+</div>
+<div id="outline-container-org3a589a1" class="outline-3">
+<h3 id="org3a589a1">Factory Methods</h3>
+<div class="outline-text-3" id="text-org3a589a1">
 <p>
 Basically this is the one I was already noting when making some
 notes generally about Java.
@@ -238,10 +178,9 @@ from that file and refactor them.
 </p>
 </div>
 
-<div id="outline-container-orgcf214a8" class="outline-4">
-<h4 id="orgcf214a8">On reference variables using interafaces   <span class="tag"><span class="reference_variable">reference_variable</span></span>
-</h4>
-<div class="outline-text-4" id="text-orgcf214a8">
+<ul class="org-ul">
+<li>
+<a id="org56d0efa"></a>On reference variables using interafaces   <span class="tag"><span class="reference_variable">reference_variable</span></span><br><div class="outline-text-5" id="text-org56d0efa">
 <p>
 This is convenient. Recall that it was possible to define
 reference variables as superclasses and to reference then objects
@@ -291,13 +230,141 @@ in Java, you should be careful not to use interfaces casually in
 performance-critical code.
 </p>
 </div>
-</div>
+</li>
+</ul>
 </div>
 
 
-<div id="outline-container-org2aeb6e8" class="outline-2">
-<h2 id="org2aeb6e8">Anonymous Inner Classes</h2>
-<div class="outline-text-2" id="text-org2aeb6e8">
+
+<div id="outline-container-orge0a4cdb" class="outline-3">
+<h3 id="orge0a4cdb">Abstract Factory</h3>
+<div class="outline-text-3" id="text-orge0a4cdb">
+<p>
+This is also trivial.
+</p>
+
+<p>
+It is simply a interface that must be implemented by the lower
+level classes.
+</p>
+
+<p>
+Like this you force the implementation of the methods of the
+interface and gurantee consistency.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf63b43b" class="outline-2">
+<h2 id="orgf63b43b">Structural Patterns</h2>
+</div>
+
+<div id="outline-container-org8301211" class="outline-2">
+<h2 id="org8301211">Some core OOP principles you just have to keep on your mind</h2>
+<div class="outline-text-2" id="text-org8301211">
+</div>
+<div id="outline-container-org55992c5" class="outline-3">
+<h3 id="org55992c5">Callback Methods</h3>
+<div class="outline-text-3" id="text-org55992c5">
+<p>
+So the basic idea is to create an interface with the methods that
+the callback will leverage.
+</p>
+
+<p>
+Then basically depedning on the object that will implement that
+intereface you will fallback to different implementations of it.
+</p>
+
+<p>
+Check as well at this event. <a href="https://www.tutorialspoint.com/Callback-using-Interfaces-in-Java">Equally good - if not better</a>. 
+</p>
+
+<p>
+Say for instance the following
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1">// Java program to demonstrate callback mechanism</span>
+   <span class="c1">// using interface is Java</span>
+
+   <span class="c1">// Create interface</span>
+   <span class="kn">import</span> <span class="nn">java.util.Scanner</span><span class="p">;</span>
+   <span class="kd">interface</span> <span class="nc">STax</span> <span class="p">{</span>
+       <span class="kt">double</span> <span class="nf">stateTax</span><span class="p">();</span>
+   <span class="p">}</span>
+
+   <span class="c1">// Implementation class of Punjab state tax</span>
+   <span class="kd">class</span> <span class="nc">Punjab</span> <span class="kd">implements</span> <span class="n">STax</span> <span class="p">{</span>
+       <span class="kd">public</span> <span class="kt">double</span> <span class="nf">stateTax</span><span class="p">()</span>
+       <span class="p">{</span>
+	   <span class="k">return</span> <span class="mf">3000.0</span><span class="p">;</span>
+       <span class="p">}</span>
+   <span class="p">}</span>
+
+   <span class="c1">// Implementation class of Himachal Pardesh state tax</span>
+   <span class="kd">class</span> <span class="nc">HP</span> <span class="kd">implements</span> <span class="n">STax</span> <span class="p">{</span>
+       <span class="kd">public</span> <span class="kt">double</span> <span class="nf">stateTax</span><span class="p">()</span>
+       <span class="p">{</span>
+	   <span class="k">return</span> <span class="mf">1000.0</span><span class="p">;</span>
+       <span class="p">}</span>
+   <span class="p">}</span>
+
+   <span class="kd">class</span> <span class="nc">TAX</span> <span class="p">{</span>
+       <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span>
+	   <span class="kd">throws</span> <span class="n">ClassNotFoundException</span><span class="p">,</span> <span class="n">IllegalAccessException</span><span class="p">,</span> <span class="n">InstantiationException</span>
+       <span class="p">{</span>
+	   <span class="n">Scanner</span> <span class="n">sc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Scanner</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">in</span><span class="p">);</span>
+	   <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Enter the state name"</span><span class="p">);</span>
+	   <span class="n">String</span> <span class="n">state</span> <span class="o">=</span> <span class="n">sc</span><span class="p">.</span><span class="na">next</span><span class="p">();</span> <span class="c1">// name of the state</span>
+
+	   <span class="c1">// The state name is then stored in an object c</span>
+	   <span class="n">Class</span> <span class="n">c</span> <span class="o">=</span> <span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+
+	   <span class="c1">// Create the new object of the class whose name is in  c</span>
+	   <span class="c1">// Stax interface reference is now referencing that new object</span>
+	   <span class="n">STax</span> <span class="n">ref</span> <span class="o">=</span> <span class="p">(</span><span class="n">STax</span><span class="p">)</span><span class="n">c</span><span class="p">.</span><span class="na">newInstance</span><span class="p">();</span>
+
+	   <span class="cm">/*Call the method to calculate total tax</span>
+<span class="cm">	     and pass interface reference - this is callback .</span>
+<span class="cm">	     Here, ref may refer to stateTax() of Punjab or HP classes</span>
+<span class="cm">	     depending on the class for which the object is created</span>
+<span class="cm">	     in the previous step</span>
+<span class="cm">	   */</span>
+
+	   <span class="n">calculateTax</span><span class="p">(</span><span class="n">ref</span><span class="p">);</span>
+       <span class="p">}</span>
+       <span class="kd">static</span> <span class="kt">void</span> <span class="nf">calculateTax</span><span class="p">(</span><span class="n">STax</span> <span class="n">t</span><span class="p">)</span>
+       <span class="p">{</span>
+	   <span class="c1">// calculate central tax</span>
+	   <span class="kt">double</span> <span class="n">ct</span> <span class="o">=</span> <span class="mf">2000.0</span><span class="p">;</span>
+
+	   <span class="c1">// calculate state tax</span>
+	   <span class="kt">double</span> <span class="n">st</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="na">stateTax</span><span class="p">();</span>
+	   <span class="kt">double</span> <span class="n">totaltax</span> <span class="o">=</span> <span class="n">st</span> <span class="o">+</span> <span class="n">ct</span><span class="p">;</span>
+
+	   <span class="c1">// display total tax</span>
+	   <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Total tax ="</span> <span class="o">+</span> <span class="n">totaltax</span><span class="p">);</span>
+       <span class="p">}</span>
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+Note that in your code - for instance in the case of the zipParser
+you use this concept coupled with the one of functional
+programming.
+</p>
+
+<p>
+I.e. your callback interface is implemented directly via functional
+programming and it is never explicitely written anywehere.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org926bd85" class="outline-3">
+<h3 id="org926bd85">Anonymous Inner Classes</h3>
+<div class="outline-text-3" id="text-org926bd85">
 <p>
 This is something quite interesting.
 </p>
@@ -346,15 +413,15 @@ box.</li>
 Example
 </p>
 
-<div class="highlight"><pre><span></span>  <span class="c1">// Anonymous class - no name.</span>
-  <span class="c1">// It basically is an inner class of the parentclass: Book</span>
-  <span class="n">myNewObject</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Book</span><span class="p">(</span><span class="s">"Design Patterns"</span><span class="p">)</span> <span class="c1">// constructors arguments of parent class</span>
-  <span class="p">{</span>
-      <span class="nd">@Override</span>
-      <span class="kd">public</span> <span class="n">String</span> <span class="nf">description</span><span class="p">()</span> <span class="p">{</span>   <span class="c1">// inner class with this method</span>
-	  <span class="k">return</span> <span class="s">"Famous GoF book."</span><span class="p">;</span>
-      <span class="p">}</span>
-  <span class="p">}</span>
+<div class="highlight"><pre><span></span>   <span class="c1">// Anonymous class - no name.</span>
+   <span class="c1">// It basically is an inner class of the parentclass: Book</span>
+   <span class="n">myNewObject</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Book</span><span class="p">(</span><span class="s">"Design Patterns"</span><span class="p">)</span> <span class="c1">// constructors arguments of parent class</span>
+   <span class="p">{</span>
+       <span class="nd">@Override</span>
+       <span class="kd">public</span> <span class="n">String</span> <span class="nf">description</span><span class="p">()</span> <span class="p">{</span>   <span class="c1">// inner class with this method</span>
+	   <span class="k">return</span> <span class="s">"Famous GoF book."</span><span class="p">;</span>
+       <span class="p">}</span>
+   <span class="p">}</span>
 </pre></div>
 
 <p>
@@ -371,26 +438,26 @@ question and do not spend too much time on it now… too many things
 to learn. 
 </p>
 
-<div class="highlight"><pre><span></span>  <span class="kd">class</span> <span class="nc">Person</span><span class="p">{</span>
-      <span class="kt">void</span> <span class="nf">eat</span><span class="p">(){};</span>
+<div class="highlight"><pre><span></span>   <span class="kd">class</span> <span class="nc">Person</span><span class="p">{</span>
+       <span class="kt">void</span> <span class="nf">eat</span><span class="p">(){};</span>
 
-      <span class="kt">void</span> <span class="nf">helloWorld</span> <span class="p">(){</span>
-	  <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span> <span class="p">(</span><span class="s">"hello world"</span><span class="p">);</span>
-      <span class="p">};</span>
-  <span class="p">}</span>
+       <span class="kt">void</span> <span class="nf">helloWorld</span> <span class="p">(){</span>
+	   <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span> <span class="p">(</span><span class="s">"hello world"</span><span class="p">);</span>
+       <span class="p">};</span>
+   <span class="p">}</span>
 
-  <span class="kd">class</span> <span class="nc">TestAnnonymousInner</span><span class="p">{</span>
-      <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[]</span><span class="p">){</span>
-	  <span class="n">Person</span> <span class="n">p</span><span class="o">=</span><span class="k">new</span> <span class="n">Person</span><span class="p">(){</span>
+   <span class="kd">class</span> <span class="nc">TestAnnonymousInner</span><span class="p">{</span>
+       <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[]</span><span class="p">){</span>
+	   <span class="n">Person</span> <span class="n">p</span><span class="o">=</span><span class="k">new</span> <span class="n">Person</span><span class="p">(){</span>
 
-		  <span class="nd">@Override</span>
-		  <span class="kt">void</span> <span class="nf">eat</span><span class="p">(){</span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"nice fruits"</span><span class="p">);}</span>
-	      <span class="p">};</span>
+		   <span class="nd">@Override</span>
+		   <span class="kt">void</span> <span class="nf">eat</span><span class="p">(){</span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"nice fruits"</span><span class="p">);}</span>
+	       <span class="p">};</span>
 
-	  <span class="n">p</span><span class="p">.</span><span class="na">eat</span><span class="p">();</span>
-	  <span class="n">p</span><span class="p">.</span><span class="na">helloWorld</span> <span class="p">();</span>
-      <span class="p">}</span>
-  <span class="p">}</span>
+	   <span class="n">p</span><span class="p">.</span><span class="na">eat</span><span class="p">();</span>
+	   <span class="n">p</span><span class="p">.</span><span class="na">helloWorld</span> <span class="p">();</span>
+       <span class="p">}</span>
+   <span class="p">}</span>
 </pre></div>
 
 <p>
@@ -401,9 +468,9 @@ well there.
 </div>
 </div>
 
-<div id="outline-container-org62223d3" class="outline-2">
-<h2 id="org62223d3">Polymorphism</h2>
-<div class="outline-text-2" id="text-org62223d3">
+<div id="outline-container-org8636d7e" class="outline-3">
+<h3 id="org8636d7e">Polymorphism</h3>
+<div class="outline-text-3" id="text-org8636d7e">
 <p>
 Overridden methods are another way that Java implements the “one
 interface, multiple methods” aspect of polymorphism.
@@ -418,6 +485,7 @@ defines those methods that the derived class must implement on its
 own. This allows the subclass the flexibility to define its own
 methods, yet still enforces a consistent interface.
 </p>
+</div>
 </div>
 </div>
     </div>

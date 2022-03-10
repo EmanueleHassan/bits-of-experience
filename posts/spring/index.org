@@ -10,6 +10,70 @@
 
 #+END_COMMENT
 
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+
+<style>
+ {
+  box-sizing: border-box;
+  margin-top: 60px;
+  margin-bottom: 60px;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 0px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+</style>
+
+#+end_export
+
+
 So this is the next piece of the cake. As we transition to the cloud
 it makes sense to have the spring-framework in your skillset.
 
@@ -61,6 +125,7 @@ This is the bit I learned from my current recent experience.
 - [[*Deploying with Spring Boot][Deploying with Spring Boot]]
 - [[*Generating a Docker Image out of your Spring Application][Generating a Docker Image out of your Spring Application]]
 
+
 * General Idea
 
    At its core, Spring offers a container, often referred to as the
@@ -90,15 +155,6 @@ This is the bit I learned from my current recent experience.
    application development.
 
    
-** NOTE:                                                           :noexport:
-
-   So that is interesting. You always heard about Spring because of
-   all of the rest.
-
-   It is interesting that the main component - the container was never
-   properly addressed.
-
-
 * Spring Project Structure
 
   - =TacoCloudApplication.java= - This is the Spring Boot main class
@@ -453,6 +509,7 @@ public class HomeController {
    components that are key to every proper Spring application and that
    you should accordingly set.
 
+
 ** Embedded Server
 
    Here you can decide where your embedded server will communicate.
@@ -488,6 +545,7 @@ server:
    =application.yml= with all of the desired properties you would like
    to set. 
    
+
 ** Data
 
    Here you can specify the driver and the location of the DB you will
@@ -516,6 +574,7 @@ server:
    with the different tables schema etc. I refer to the book in case
    you want to go down that road. 
    
+
 ** Logging
 
    This is nice, you can set there the standard output of your
@@ -532,6 +591,7 @@ server:
 
    So basically double check the book to see the way to configure your
    logging across your applications. 
+
 
 ** Property injection via special property values
 
@@ -556,6 +616,7 @@ greeting:
 
    This is what is actully handeled in the next section.   
 
+   
 ** Creating your own configuration properties
 
    Configuration properties are nothing more than properties of beans
@@ -744,6 +805,7 @@ public class OrderProps {
 }
    #+END_SRC
    
+
 ** Profiles
 
    This is an important concept when configuring your spring
@@ -829,6 +891,7 @@ spring:
    - prod
     #+end_src
 
+
 ** Profile-dependent Beans
 
    Note now that it is as well possible to create beans that will just
@@ -848,113 +911,124 @@ public CommandLineRunner dataLoader(IngredientRepository repo,
    #+END_SRC
 
 
-
-
 * Web-applications with Spring
 
   You can even read more into the detail about working with Spring at
   the following source [[https://docs.spring.io/spring-restdocs/docs/current/reference/html5/][here.]]
   
-** Spring MVC
 
-   With it you can both display information to the front-end in a
-   dynamic way.
+** Synchronous REST
 
-   Or, alternatively, it will be possible for you to develop REST
-   endpoints with it.
+*** Spring MVC
 
-   I will not make big notes of the first. It is not my bread and
-   butter. Note that it is pretty much what you saw at the times of
-   your IBM projects when you worked with flask.
+    With it you can both display information to the front-end in a
+    dynamic way.
 
-   I.e. you serve the static content via MVC, and you have different
-   =views=, through which it is possible to embedd the application
-   logic into the front-end.
+    Or, alternatively, it will be possible for you to develop REST
+    endpoints with it.
 
-   The book worked with Thymeleaf as a view framework in order to
-   embedd the application logic into the front-end. We work with
-   Mustache. Though, you can imagine that the two are quite similar -
-   and again, from what you can read this is exactly what you could
-   see when working on your flask-login module. 
+    I will not make big notes of the first. It is not my bread and
+    butter. In the sense that I am pushing for a clear front-end and
+    back-end cut in our org. Our team should be responsible for the
+    backend of the risk system, the more math intensive part of it but
+    we should not be full-stack developers. That would not be
+    beneficial to us or the team. 
 
-   Note that in general you always talk with the controller when
-   instatiating the HTTP request. Then you perform your application
-   logic and pass on the relevant info to the views.
+    Note that it is pretty much what you saw at the times of
+    your IBM projects when you worked with flask.
 
-   Note that you set up all of this =MVC= architecture and framework
-   through =@Controller=. This will handle requests and will trigger
-   and respond with views etc. In any case it is the /controller/
-   piece of the =MVC= architecture you can read about [[https://marcohassan.github.io/bits-of-experience/posts/on-classical-architectures/][classical
-   architectures]].
+    I.e. you serve the static content via MVC, and you have different
+    =views=, through which it is possible to embedd the application
+    logic into the front-end.
+
+    The book worked with Thymeleaf as a view framework in order to
+    embedd the application logic into the front-end. We work with
+    Mustache. Though, you can imagine that the two are quite similar -
+    and again, from what you can read this is exactly what you could
+    see when working on your flask-login module. 
+
+    Note that in general you always talk with the controller when
+    instatiating the HTTP request. Then you perform your application
+    logic and pass on the relevant info to the views.
+
+    Note that you set up all of this =MVC= architecture and framework
+    through =@Controller=. This will handle requests and will trigger
+    and respond with views etc. In any case it is the /controller/
+    piece of the =MVC= architecture you can read about [[https://marcohassan.github.io/bits-of-experience/posts/on-classical-architectures/][classical
+    architectures]].
 
    
-*** TODO check at the book for the CORS option
+**** CORS option
 
-    you did encounter it at some point in your architecture
-    preparation course.
+     Check if interested.
 
-    have to double check there the idea behind this etc.
+     The idea is essentially the following:
 
-** On important Annotations
+ #+begin_export html
+  <img src="../../images/cors_principle.png" class="center">
+ #+end_export
 
-   So understand the following annotations in order to properly set up
-   your application:
 
-   - =@RestController=:
+*** On important Annotations
 
-     Note that this is an annotation like @Controller and @Service
-     that marks a class for discovery by component scanning.
+    So understand the following annotations in order to properly set up
+    your application:
 
-     However, note the following *important difference* to the
-     general =@Controller= which might return /a view/ :
+    - =@RestController=:
 
-     #+begin_quote
-In the =@RestController= all handler methods in the controller should
-have their return value written directly to the body of the response,
-rather than being carried in the model to a view for rendering. 
-     #+end_quote
+      Note that this is an annotation like @Controller and @Service
+      that marks a class for discovery by component scanning.
 
-     Alternatively, you could have annotated DesignTacoController with
-     @Controller, just like with any Spring MVC controller. But then
-     you’d need to also annotate all of the handler methods with
-     @ResponseBody to achieve the same result. So basic point: /see
-     how IT architecture is modular/. You can compose it yourself or
-     use abstraction. For me the choice is no matter of big questions.
+      However, note the following *important difference* to the
+      general =@Controller= which might return /a view/ :
 
-     So the difference is that one specific controller for =REST=
-     endpoints. Use that.
+      #+begin_quote
+ In the =@RestController= all handler methods in the controller should
+ have their return value written directly to the body of the response,
+ rather than being carried in the model to a view for rendering. 
+      #+end_quote
 
-   - =@RequestMapping=
+      Alternatively, you could have annotated DesignTacoController with
+      @Controller, just like with any Spring MVC controller. But then
+      you’d need to also annotate all of the handler methods with
+      @ResponseBody to achieve the same result. So basic point: /see
+      how IT architecture is modular/. You can compose it yourself or
+      use abstraction. For me the choice is no matter of big questions.
 
-     Use it as follows:
+      So the difference is that one specific controller for =REST=
+      endpoints. Use that.
 
-     #+BEGIN_SRC java :results output drawer :classname 
+    - =@RequestMapping=
+
+      Use it as follows:
+
+      #+BEGIN_SRC java :results output drawer :classname 
 @RestController
 @RequestMapping(path="/design", 
  produces="application/json") // multiple formats are also possible: produces={"application/json", "text/xml"})
  public myClassHandlingEndpoints {
     ...
     }
-     #+END_SRC
+      #+END_SRC
 
-     Then basically in this way you are saying that all of the
-     handlers in the class will handle requests to endpoints with
-     basis =/design=.
+      Then basically in this way you are saying that all of the
+      handlers in the class will handle requests to endpoints with
+      basis =/design=.
 
-     Moreover you say that you will return =json= as it is often the
-     norm.
+      Moreover you say that you will return =json= as it is often the
+      norm.
 
-   - =@GetMapping=
+    - =@GetMapping=
 
-     Note that this is the way you handle get requests in your
-     =@RestController=.
+      Note that this is the way you handle get requests in your
+      =@RestController=.
 
-     Note that the path you specify in such annotations augments the
-     one from the base-mapping in the class-level =@RequestMapping=.
+      Note that the path you specify in such annotations augments the
+      one from the base-mapping in the class-level =@RequestMapping=.
 
-     Note that we make an example with a /placeholer/:
+      Note that we make an example with a /placeholer/:
 
-     #+BEGIN_SRC java :results output drawer :classname 
+      #+BEGIN_SRC java :results output drawer :classname 
 @GetMapping("/{id}")
 public Taco tacoById(@PathVariable("id") Long id) { // see pathvariable here. this is the value in the request.
     Optional<Taco> optTaco = tacoRepo.findById(id);
@@ -963,108 +1037,112 @@ public Taco tacoById(@PathVariable("id") Long id) { // see pathvariable here. th
     }
     return null;
 }
-     #+END_SRC
+      #+END_SRC
 
-   - =@RequestStatus=
+    - =@RequestStatus=
 
-     That is nice cause with that tag you can specify what the
-     endpoint will utlimately hand back as HTTP anser.
+      That is nice cause with that tag you can specify what the
+      endpoint will utlimately hand back as HTTP anser.
 
-     Check online at all of the options you have in this sense.
+      Check online at all of the options you have in this sense.
 
-   - =@RequestBody=
+    - =@RequestBody=
 
-     This is important when handling post requests.
+      This is important when handling post requests.
 
-     Simply put, the =@RequestBody= annotation maps the HttpRequest
-     body to a transfer or domain object, enabling automatic
-     /deserialization/ of the inbound HttpRequest body onto a /Java
-     object/. Spring automatically deserializes the JSON into a Java
-     type, assuming an appropriate one is specified.
+      Simply put, the =@RequestBody= annotation maps the HttpRequest
+      body to a transfer or domain object, enabling automatic
+      /deserialization/ of the inbound HttpRequest body onto a /Java
+      object/. Spring automatically deserializes the JSON into a Java
+      type, assuming an appropriate one is specified.
 
-     See [[https://www.baeldung.com/spring-request-response-body][this]] for more. So you see this is how you handle json
-     requests in a straightforward way without having to do all of
-     that big conversion in the way we are doing.
+      See [[https://www.baeldung.com/spring-request-response-body][this]] for more. So you see this is how you handle json
+      requests in a straightforward way without having to do all of
+      that big conversion in the way we are doing.
 
 
-** HETOAS
+*** HETOAS
 
-   Note that if you want you can work with /Hypermedia as the Engine
-   of Application State/ as a standard for setting up your REST
-   endpoints.
+    Note that if you want you can work with /Hypermedia as the Engine
+    of Application State/ as a standard for setting up your REST
+    endpoints.
 
-   You can read the idea [[https://en.wikipedia.org/wiki/HATEOAS][here]].
+    You can read the idea [[https://en.wikipedia.org/wiki/HATEOAS][here]].
 
-   I think the idea is nice. The idea is that you can give back some
-   endpoints in your responses such that you can then programatically
-   trigger some endpoints in a programmatic way without hard-coding
-   them.
+    I think the idea is nice. The idea is that you can give back some
+    endpoints in your responses such that you can then programatically
+    trigger some endpoints in a programmatic way without hard-coding
+    them.
 
-   The entire application is then more bounded to the code itself and
-   less on hard-coded strings.
+    The entire application is then more bounded to the code itself and
+    less on hard-coded strings.
 
-   Read again in the book if you want to go in that direction.
+    Read again in the book if you want to go in that direction.
    
-** Spring Data REST
 
-   Basically here the concept is the following.
+*** Spring Data REST
 
-   If you include the =spring-boot-starter-data-rest= dependency in
-   your configuration and you work with Spring Data, then Spring will
-   create out of the box endpoints for your Spring Data JPA
-   repositories and will even expose endpoints following =HETOAS=
-   convention as mentioned above.
+    Basically here the concept is the following.
 
-   So note how you should work with JPA if you want to work with
-   Spring Data REST.
+    If you include the =spring-boot-starter-data-rest= dependency in
+    your configuration and you work with Spring Data, then Spring will
+    create out of the box endpoints for your Spring Data JPA
+    repositories and will even expose endpoints following =HETOAS=
+    convention as mentioned above.
 
-   Otherwise if you want to work with pure SQL you will have to
-   manually set up the endpoints yourself as discussed in the previous
-   sections.
+    So note how you should work with JPA if you want to work with
+    Spring Data REST.
 
-   So this is a design choice you will have to face soonish. The point
-   remains open to this stage.
+    Otherwise if you want to work with pure SQL you will have to
+    manually set up the endpoints yourself as discussed in the previous
+    sections.
 
-   I think the question is if you want to stay generally in the same
-   environment or not.
+    So this is a design choice you will have to face soonish. The point
+    remains open to this stage.
+
+    I think the question is if you want to stay generally in the same
+    environment or not.
    
-*** Important Note
+**** Important Note
 
-    If you will ever decide to go down that road read chapter /6.3.1 -
-    Adjusting resource paths and relation names/ in the book.
+     If you will ever decide to go down that road read chapter /6.3.1 -
+     Adjusting resource paths and relation names/ in the book.
 
-    There is some tricky nounces with the endpoints that you will have
-    to keep in mind and remember.    
+     There is some tricky nounces with the endpoints that you will have
+     to keep in mind and remember.    
 
-** Consuming REST services
 
-   There are essentially three ways of consuming a REST interface:
+*** Consuming REST services
 
-   - =RestTemplate=: this is a synchronous REST client provided by the
-     Spring Framework.
+    There are essentially three ways of consuming a REST interface:
 
-   - =Traverson=: a hyperlink-aware synchronous REST client provided
-     by Spring HATEOAS. See more on hyperlink [[*HETOAS][here]].
+    - =RestTemplate=: this is a synchronous REST client provided by the
+      Spring Framework.
 
-   - =WebClient=: a *reactive* asynchronous REST client.
+    - =Traverson=: a hyperlink-aware synchronous REST client provided
+      by Spring HATEOAS. See more on hyperlink [[*HETOAS][here]].
 
-*** RestTemplate
+    - =WebClient=: a *reactive* asynchronous REST client - see [[*Consuming Webflux][here]].
 
-    basically RestTemplate provides 41 methods for interacting with
-    REST resources.
+**** RestTemplate
 
-    You can then surf around in the internet in order to see the
-    different methods.
+     basically RestTemplate provides 41 methods for interacting with
+     REST resources.
 
-    What you should take away is the following basic structure:
+     You can then surf around in the internet in order to see the
+     different methods.
+
+     What you should take away is the following basic structure:
     
-    - instantiate the RestTemplate
+     - instantiate the RestTemplate
 
-    You can do that either by instantiating an instance for it as
-    usual or by creating a =Bean= and injecting it around the
-    application.
+     You can do that either by instantiating an instance for it as
+     usual or by creating a =Bean= and injecting it around the
+     application.
 
-    #+BEGIN_SRC java :results output drawer :classname 
+     #+BEGIN_SRC java :results output drawer :classname 
+
+// creating an instance
 RestTemplate rest = new RestTemplate(); 
 
 // vs.
@@ -1073,15 +1151,16 @@ RestTemplate rest = new RestTemplate();
 public RestTemplate restTemplate() {
  return new RestTemplate();
 }
-    #+END_SRC
 
-    undestand this difference as it is core to the Spring-native way
-    of working.
+ #+END_SRC
 
-    Then that is basically it. You have then your methods you work
-    with:
+     undestand this difference as it is core to the Spring-native way
+     of working.
 
-    #+BEGIN_SRC java :results output drawer :classname 
+     Then that is basically it. You have then your methods you work
+     with:
+
+     #+BEGIN_SRC java :results output drawer :classname 
 
 // just one short example, then the basic structure is equal
 public Ingredient getIngredientById(String ingredientId) {
@@ -1092,46 +1171,39 @@ public Ingredient getIngredientById(String ingredientId) {
                                    // third argument -> paramter for the url.
  
 }
-    #+END_SRC
+     #+END_SRC
 
-    Note that this is a bit the idea. There are better methods then.
-    In this way it will be possible to work in a more structured
-    way. Check at the method involving maps in this sense.
+     Note that this is a bit the idea. There are better methods then.
+     In this way it will be possible to work in a more structured
+     way. Check at the method involving maps in this sense.
 
-    The basic idea stays. You can consume your endpoints in such way,
-    passing parameters and deserializing the response to Java native
-    Objects.
+     The basic idea stays. You can consume your endpoints in such way,
+     passing parameters and deserializing the response to Java native
+     Objects.
     
-*** Traverson
+**** Traverson
 
-    Basically this is similar to the simple RestTemplate and it is the
-    way to cconsume hypermedia APIs.
+     Basically this is similar to the simple RestTemplate and it is the
+     way to cconsume hypermedia APIs.
 
-    I leave this section for now as I am still not sure I will work
-    with HATEOAS.
+     I leave this section for now as I am still not sure I will work
+     with HATEOAS.
 
-    Recall in any case that once you have hypermedia APIs you consume
-    API by traversing multiple API based on the response.
+     Recall in any case that once you have hypermedia APIs you consume
+     API by traversing multiple API based on the response.
 
-** TODO read about the asynchronous messaging and working with queues
 
-   I skipped this chapter for now. I am aware it will come again as
-   this is the way to write proper software nowadays.
+*** Document Spring APIs via OpenApi standards
 
-   I push it back to the stage where I will start writing some
-   software involving it. 
+    This is essentially what you were doing in your last projects at
+    IBM.
 
-** Document Spring APIs via OpenApi standards
+    Check at this [[https://www.baeldung.com/spring-rest-openapi-documentation][website]]. This is what you will start to do here as
+    well.
 
-   This is essentially what you were doing in your last projects at
-   IBM.
+    See then the subchapter 9. in order to see how that is done.
 
-   Check at this [[https://www.baeldung.com/spring-rest-openapi-documentation][website]]. This is what you will start to do here as
-   well.
-
-   See then the subchapter 9. in order to see how that is done.
-
-   #+BEGIN_SRC java :results output drawer :classname 
+    #+BEGIN_SRC java :results output drawer :classname 
 @Operation(summary = "Get a book by its id")
 @ApiResponses(value = { 
   @ApiResponse(responseCode = "200", description = "Found the book", 
@@ -1146,19 +1218,182 @@ public Book findById(@Parameter(description = "id of book to be searched")
   @PathVariable long id) {
     return repository.findById(id).orElseThrow(() -> new BookNotFoundException());
 }
-   #+END_SRC
+    #+END_SRC
 
-   i.e. this is how you annotate the different things in your API.
+    i.e. this is how you annotate the different things in your API.
 
-   You can then properly expose them.
+    You can then properly expose them.
 
-   Note that I am having some minor troubles to set it up properly.
-   In order to do that, check at the following: [[https://blog.mestwin.net/openapi-3-documentation-for-your-spring-rest-api-with-springdoc-openapi/][link]].
+    Note that I am having some minor troubles to set it up properly.
+    In order to do that, check at the following: [[https://blog.mestwin.net/openapi-3-documentation-for-your-spring-rest-api-with-springdoc-openapi/][link]].
 
-   Ok - so the normal way where everything is integrated
-   out-of-the-box should be done via the following plugin: [[https://github.com/springdoc/springdoc-openapi-gradle-plugin][here]]. Note
-   that apparently this is not on MavenCentral and you would have to
-   install it manually. Follow the instructions on Github for it. 
+    Ok - so the normal way where everything is integrated
+    out-of-the-box should be done via the following plugin: [[https://github.com/springdoc/springdoc-openapi-gradle-plugin][here]]. Note
+    that apparently this is not on MavenCentral and you would have to
+    install it manually. Follow the instructions on Github for it. 
+
+
+     
+** Asynchoronous Communication
+
+   #+begin_quote
+   Asynchronous messaging is a way of indirectly sending messages from
+   one application to another without waiting for a response. This
+   indirection affords looser coupling and greater scalability between
+   the communicating applications.
+   #+end_quote
+   
+   So basically this you will use when you ship long-running jobs for
+   which there is no chance to get an immediate response from the
+   service.
+
+   As you well know the most standard way to implement asynchoronous
+   communication is via message brokers.
+
+   We will see in this sense the possibilities that Spring offers to
+   work through message brokers with the goal of setting up solid and
+   reliable asynchronous communication.
+
+   We will check in this sense:
+
+   - =Java Message Service (JMS)= 
+
+     JMS is a Java standard that defines a common API for working with
+     message brokers.
+
+     This is nice as independently of the message broker of choice you
+     use the same. A bit like JDBC for relational DBs.
+
+     Should be also easy to swap across message brokers for your
+     Spring application.
+
+     Spring supports JMS through a template-based abstraction known
+     as JmsTemplate.  Using JmsTemplate, it’s easy to send messages
+     across queues and topics from the producer side and to receive
+     those messages on the consumer side.
+
+     This is in fact what you already saw with the Azure Service
+     Bus. There it was as well recommended to use the JMS API to
+     interact with the broker.
+
+     However, note that as you already stated in your notes everything
+     is based on polled operations here.
+
+     I will not go in depth again in the module. You get the thing at
+     conceptual level and that is enough. If you decide to work in
+     such a polled way then you can start to work with it. 
+
+   - =Advanced Message Queueing Protocol (AMQP)=
+
+     Whereas JMS messages are addressed with the name of a destination
+     from which the receiver will retrieve them, AMQP messages are
+     addressed with the *name of an exchange and a routing key*, which
+     are decoupled from the queue that the receiver is listening to.
+
+     If you want to have the *easy message* to the point without too
+     much boilerplate understand the following:
+
+     #+begin_quote
+     The most important thing to understand is that messages are sent to
+     exchanges with routing keys and they’re consumed from queues. How
+     they get from an exchange to a queue depends on the binding
+     definitions and what best suits your use cases.
+     #+end_quote
+
+     See more on RabbitMQ below.
+     
+   - =RabbitMQ=
+
+     This is one of the most prominent implementation of AMQP.
+
+     See below the idea of exchanges.
+     
+   #+begin_export html
+    <img src="../../images/rabbitIdea.png" class="center">
+   #+end_export
+
+   #+begin_quote
+   When a message arrives at the RabbitMQ broker, it goes to the exchange
+   for which it was addressed. The exchange is responsible for routing it
+   to one or more queues, depending on the type of exchange, the binding
+   between the exchange and queues, and the value of the message’s
+   routing key.
+   #+end_quote
+   
+   So you see that the architecture of such broker is slightly more
+   complex in comparison of a simple queue with a fix address that
+   you connect to with JMS.
+
+   I think that this is a too complex architecture for what you want
+   to accomplish at the moment. 
+
+   In any case here an overview of the thingy:
+     
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-04 101611.png" class="center">
+   #+end_export
+
+   In the sense that simple default and fanout routing should be
+   sufficient to accomplish what you have in mind. 
+     
+   - =Apache Kafka=
+
+     So essentially Kafka is a broker as others. I.e. the task it
+     fulfills is the one of a message broker.
+
+     
+   However, note that Kafka is not an exchange as a pure
+   RabbitMQ. It simply offers the possibility of brokering messages
+   via topics in order to accomplish pub-sub tasks.
+
+   The big difference with other pub-sub solutions lies in resiliency.
+
+   The big major difference between Kafka brokers and other brokers
+   is that Kafka is designed to *run into a cluster*.
+
+   Understand as well the following architectural design of Kafka:
+
+   #+begin_quote
+   Kafka topics are replicated across all brokers in the cluster.
+
+   Each node in the cluster acts as a leader for one or more topics,
+   being responsible for that topic’s data and replicating it to the
+   other nodes in the cluster.
+
+   Going a step further, each topic can be split into multiple
+   partitions. In that case, each node in the cluster is the leader for
+   one or more partitions of a topic, but not for the entire
+   topic. Responsibility for the topic is split across all nodes.
+   #+end_quote
+
+   So you see that resiliency is a first class citizen of Kafka.
+     
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-04 110855.png" class="center">
+   #+end_export
+
+   So good to know what that is at high level.
+
+   Clearly not interesting for you as it has nothing to do with the
+   thing you want to achieve. 
+
+   - =POJO=
+
+     Well I must say that what is written in - Spring in Action 5th
+     edition - is quite confusing. Not the best explanation that you
+     can find out there according to me.
+
+     In any case I think it is smth that goes in the direction of
+     Hibernate, i.e. stay always in the OOP paradigma and treat
+     everything as objects - i.e. your first class citizens in Java -
+     and interact with your brokers directly through objects. 
+
+     #+begin_quote
+Spring also supports the notion of message-driven POJOs: simple Java
+objects that react to messages arriving on a queue or topic in an
+asynchronous fashion.
+     #+end_quote
+
 
 
 * Spring Data
@@ -1361,6 +1596,7 @@ alter table Taco_Order_Tacos
    some insert statements in a =data.sql= file also saved on the same
    repo.
 
+
 ** Spring JPA
 
    Ok - here there is a big discussion among the Java experts in my
@@ -1403,6 +1639,14 @@ pipeline through which data flows.
   This is something that you want to explore. It basically is an
   entire suit that will allow you to easily interface with external
   systems.
+
+  In fact look at the perfect match in the various components of the
+  integration chain described in spring and in the book as described
+  on this [[https://www.enterpriseintegrationpatterns.com/patterns/messaging/][website]].
+
+  So note that sooner or later you will have to master these different
+  components. Recall that the idea is always the same. [[https://marcohassan.github.io/bits-of-experience/posts/on-a-brownfield-play/][Pattern Up or
+  Surrender]]. 
   
 ** FileSystem Integration
 
@@ -1568,6 +1812,731 @@ public interface FileWriterGateway {
     Just understand how you inject the stuff in your application here
     and there.
 
+    Now your next task will be an integration task. So you will likely
+    use this module extensively. Dig into it. 
+
+* Reactive Programming in Spring
+
+  This is very cool and is the next gen. architecture mechanism. Very
+  cool idea. You can read about it [[https://medium.com/@rarepopa_68087/reactive-programming-with-spring-boot-and-webflux-734086f8c8a5][here]]. This should guide you
+  throughout this section. 
+
+  So basically Spring has embedded /Project Reactor/ to reactively
+  process streams of data.
+
+  The concept is similar to Java Streams processing a collection with
+  the difference that streams occur not on in-memory collections but
+  are rather triggered in a reactive way over communication networks.
+
+  You will see in fact that much of the API concepts are shared. So
+  you start to see an entire pattern here. All of the reactive,
+  parallel things share a lot of these APIs. Think of /spark, streams
+  and reactors/. Lots of overlap.
+  
+  Or in words of /Spring in Action/:
+
+  #+begin_quote
+Project Reactor is an implementation of the Reactive Streams
+specification that provides a functional API for composing Reactive
+Streams.
+  #+end_quote
+  
+** Mono vs. Flux
+
+   These are the two Reactor's core types.
+
+   - =Mono=:
+
+     #+begin_quote
+     Is a specialized reactive type that’s optimized for when the dataset
+     is known to have no more than one data item.
+     #+end_quote   
+
+   - =Flux=:
+
+     #+begin_quote
+     represents a pipeline of zero, one, or many (potentially
+     infinite) data items.
+     #+end_quote
+
+** Basic APIs for working on Flux and Mono
+
+   So first of all we will see how to use =Flux= and =Mono= in basic
+   settings without input from external runtimes.
+
+   This in a sense very much close to the one of Java Streams. In a
+   second round we will see how to work properly with input from
+   external systems being reactively processed.
+
+   #+BEGIN_SRC java :results output drawer :classname SpringReactor
+import reactor.core.publisher.Flux;
+
+class SpringReactor {
+    
+    public static void createAFlux_just() {
+	Flux<String> fruitFlux = Flux
+	    .just("Apple", "Orange", "Grape", "Banana", "Strawberry");
+
+	fruitFlux.subscribe(
+			    f -> System.out.println("Here's some fruit: " + f)
+			    );    
+
+    }
+
+    
+    public static void main(String args[]) {
+
+	createAFlux_just();
+
+    }
+}
+
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+Here's some fruit: Apple
+Here's some fruit: Orange
+Here's some fruit: Grape
+Here's some fruit: Banana
+Here's some fruit: Strawberry
+   :end:
+
+   Note that above you created a =Flux= by passing objects of type
+   =<String>=. This was achieved through the ~just()~ method.
+
+   Note that in a similar way it is possible to create =Flux= and
+   =Mono= out of =Iterable= objects and =Streams= with the following
+   two methods: ~Flux.fromIterable()~, ~Flux.fromStream()~.
+
+   Note now the following big chuncks of code. They will explain the
+   functioning of the reactor APIs.
+
+   #+BEGIN_SRC java :results output drawer :classname 
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
+
+public class SpringReactorTest {
+    @Test
+    public void createAFlux_range() { // check at the range
+				      // function. similar to Python.
+	Flux<Integer> intervalFlux =
+	    Flux.range(1, 5);
+	StepVerifier.create(intervalFlux)
+	    .expectNext(1)
+	    .expectNext(2)
+	    .expectNext(3)
+	    .expectNext(4)
+	    .expectNext(5)
+	    .verifyComplete();
+    }
+	
+    @Test
+    @Disabled("For demonstration purposes - this test will fail.")
+    @Timeout(value = 3, unit = TimeUnit.SECONDS) // see how this is
+						 // failing. just
+						 // passing one thing
+						 // every second
+    public void createAFlux_interval() {
+	Flux<Long> intervalFlux =
+	    Flux.interval(Duration.ofSeconds(1)) // every interval
+						 // increases a long
+						 // timer and streams
+						 // it
+	    .take(5);
+	StepVerifier.create(intervalFlux)
+	    .expectNext(0L)
+	    .expectNext(1L)
+	    .expectNext(2L)
+	    .expectNext(3L)
+	    .expectNext(4L)
+	    .verifyComplete();
+    }
+	
+    @Test
+    @Timeout(value = 10, unit = TimeUnit.SECONDS) // see how this is
+						  // failing. just
+						  // passing one thing
+						  // every second
+    public void createAFlux_intervalHighTimeout() {
+	Flux<Long> intervalFlux =
+	    Flux.interval(Duration.ofSeconds(1)) 
+	    .take(5);
+	StepVerifier.create(intervalFlux)
+	    .expectNext(0L)
+	    .expectNext(1L)
+	    .expectNext(2L)
+	    .expectNext(3L)
+	    .expectNext(4L)
+	    .verifyComplete();
+    }
+
+}
+   #+END_SRC
+
+   So the above is again quite some basics methods.
+
+*** Mergining different streams
+
+    Two simple methods:
+
+    - =mergewith=
+
+    - =zip=
+
+    Visual Comparison:
+
+#+begin_export html
+<div class="row">
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot 2022-03-07 091552.png">
+  </div>
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot 2022-03-07 091629.png">
+  </div>
+</div>
+#+End_export
+    
+    Code:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+import org.junit.jupiter.api.Test;
+
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
+import reactor.util.function.Tuple2;
+
+public class SpringReactorTest {
+	
+    // Merging Flux
+    @Test
+    public void mergeFluxes() {
+		
+	Flux<String> characterFlux = Flux
+	    .just("Garfield", "Kojak", "Barbossa")
+	    .delayElements(Duration.ofMillis(500)); // delay streaming time of each element
+	 
+	Flux<String> foodFlux = Flux
+	    .just("Lasagna", "Lollipops", "Apples")
+	    .delaySubscription(Duration.ofMillis(250)) // i.e. 250
+						       // starts
+						       // sending
+						       // messages to
+						       // subscriber. you
+						       // see then
+						       // these
+						       // messages
+						       // within the
+						       // one above.
+	    .delayElements(Duration.ofMillis(500));
+	 
+	Flux<String> mergedFlux = characterFlux.mergeWith(foodFlux); // merging the two fluxes 
+	 
+	StepVerifier.create(mergedFlux)
+	    .expectNext("Garfield")
+	    .expectNext("Lasagna")
+	    .expectNext("Kojak")
+	    .expectNext("Lollipops")
+	    .expectNext("Barbossa")
+	    .expectNext("Apples")
+	    .verifyComplete();
+    } 
+	
+	
+    // Note that mergewith cannot guarantee a perfect back and forth
+    // between its sources, you may want to consider the zip()
+    // operation instead.  When two Flux objects ar zipped together,
+    // it results in a new Flux that produces a tuple of items, where
+    // the tuple contains one item from each source Flux.  Note this
+    // is the exact same function you already encountered in Spark
+	
+    @Test
+    public void zipFluxes() {
+	Flux<String> characterFlux = Flux
+	    .just("Garfield", "Kojak", "Barbossa");
+	Flux<String> foodFlux = Flux
+	    .just("Lasagna", "Lollipops", "Apples");
+	Flux<Tuple2<String, String>> zippedFlux =
+	    Flux.zip(characterFlux, foodFlux);
+	StepVerifier.create(zippedFlux)
+	    .expectNextMatches(p ->
+			       p.getT1().equals("Garfield") &&
+			       p.getT2().equals("Lasagna"))
+	    .expectNextMatches(p ->
+			       p.getT1().equals("Kojak") &&
+			       p.getT2().equals("Lollipops"))
+	    .expectNextMatches(p ->
+			       p.getT1().equals("Barbossa") &&
+			       p.getT2().equals("Apples"))
+	    .verifyComplete();
+    }	 
+
+}
+
+    #+END_SRC
+
+    Note that the default of zipping things together is a =Tuple2=
+    object, i.e. a container with two elements.
+
+    If you want to zip together items into a single object of a
+    different type you can pass a lambda expression as the second
+    element to the zip function in order to get your object of
+    choice.
+
+    See for instance as per - Spring in Action
+
+    #+BEGIN_SRC java :results output drawer :classname 
+Flux<String> zippedFlux =
+ Flux.zip(characterFlux, foodFlux, (c, f) -> c + " eats " + f);
+    #+END_SRC
+
+*** Many other APIs
+
+    Ok so I do not want to waste any more time here testing the APIs
+    of the book as - luckily for me - I already encountered them.
+
+    They are in fact at logical 1:1 to correspondents of the Spark
+    API methods.
+
+    The difference is merely in the framework and how the two work.
+
+    While Spark works on batch processing here the focus is much more
+    on reacting/merging/filtering streams of data.
+
+    You have then the option to skip, merge, take the first elements
+    based as well on some queueing high level concept as well based on
+    some timing concepts.
+
+    I will just put here screenshots of the Marble diagrams of
+    interest such that you can get a high level overview of them and
+    select the correct one you have to use in the different cases.
+
+    
+    #+begin_export html
+    <div class="row">
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 093930.png">
+      </div>
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094010.png">
+      </div>
+    </div>
+    #+End_export
+
+    #+begin_export html
+    <div class="row">
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094101.png">
+      </div>
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094148.png">
+      </div>
+    </div>
+    #+End_export
+
+    #+begin_export html
+    <div class="row">
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094213.png">
+      </div>
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094242.png">
+      </div>
+    </div>
+    #+End_export
+
+    #+begin_export html
+    <div class="row">
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094330.png">
+      </div>
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094429.png">
+      </div>
+    </div>
+    #+End_export
+
+    #+begin_export html
+    <div class="row">
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094454.png">
+      </div>
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094523.png">
+      </div>
+    </div>
+    #+End_export
+
+    #+begin_export html
+    <div class="row">
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094622.png">
+      </div>
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094644.png">
+      </div>
+    </div>
+    #+End_export
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-03-07 094715.png" class="center">
+    #+end_export
+
+    That is most and basically it.
+
+    
+
+** WebFlux - Reactive Web Interface
+
+   So here is the interesting bit.
+
+   Here is where things start to get interesting. The idea is that in
+   a way not too distant from Spring MVC you can start to set up your
+   reactive architectures and start to set up web-interfaces consuming
+   streams of data through the pub-subscribe model.
+
+   The idea is the following - *core point* understand this -:
+
+   #+begin_quote
+   Typical Servlet-based web frameworks, such as Spring MVC, are blocking
+   and multithreaded in nature, using a single thread per connection.
+
+   As requests are handled, a worker thread is pulled from a thread pool
+   to process the request. Meanwhile, the request thread is blocked until
+   it’s notified by the worker thread that it’s finished.
+   #+end_quote
+
+   So you see that multi-threading is core embedded into Spring
+   MVC. But the issue is that *each incoming request blocks one
+   thread*.
+
+   Webflux and other asynchronous web-frameworks solve this issue
+   through =Event Loops=:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-07 122247.png" class="center">
+   #+end_export
+
+   The idea of *Event Loops* is essentially the following:
+
+   #+begin_quote
+   When a costly operation is needed, the event loop registers a
+   callback for that operation to be performed in parallel, while it
+   moves on to handle other events.
+   #+end_quote
+
+   So the idea is then to possibly create fully end-to-end reactive
+   architectures streaming data through the system.
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-08 103621.png" class="center">
+   #+end_export
+
+
+*** Basics of Webflux
+
+    In order to work with webflux you have to enter the correct
+    dependency in your project.
+
+    #+begin_src gradle
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    #+end_src
+
+    This should replace the most classical =implementation
+    'org.springframework.boot:spring-boot-starter-web'= boot. 
+
+    Finally one *last very important note* is the following:
+
+    #+begin_quote
+An interesting side-effect of using WebFlux instead of Spring MVC is
+that the *default embedded server for WebFlux is Netty* instead of
+Tomcat. Netty is one of a handful of asynchronous, event-driven
+servers and is a natural fit for a reactive web framework like Spring
+WebFlux.
+    #+end_quote
+
+    So in the case that you wish to continuously operate with Tomcat
+    you would have to specify it accordingly. Check at your Spring
+    config options above. However, note that generally there are good
+    reasons to go for Netty. If you use Tomcat - you should rather go
+    with Tomcat 3.1+. See the discussion [[https://stackoverflow.com/questions/56794263/spring-webflux-differrences-when-netty-vs-tomcat-is-used-under-the-hood][here]]. So it is all stuff you
+    would need to consider as you know where your team stays and how
+    the argue on given topics. 
+    
+    Because Spring MVC and Spring WebFlux share the same annotations,
+    Spring WebFlux is, in many ways, indistinguishable from Spring
+    MVC.
+
+    This means that the programming model for defining a reactive
+    WebFlux controller is no different than for a non-reactive Spring
+    MVC controller. Both are annotated with @RestController and a
+    high-level @RequestMapping at the =class level=. And both have
+    request-handling functions that are annotated with @GetMapping at
+    the =method level=. It’s truly a matter of what type the handler
+    methods return.
+
+    However, note that there is a second way to define your web-flux
+    interfaces that is based upon the idea of functional programming.
+    Note that I will not go down that road as I am more used to work
+    in that annotation alike experience. 
+
+*** Webflux and Reactor API
+
+    Essentially, the cool thing is that with webflux your Controllers
+    are able to accept =Mono= and =Flux= from the Reactor project.
+
+    Note that Spring MVC can also return =Mono= and =Flux=. However,
+    the difference is the way you can make use of the objects with the
+    two different libraries.
+
+    #+begin_quote
+The difference is in how those types are used. Whereas Spring WebFlux
+is a truly reactive web framework, allowing for *requests to be
+handled in an event loop*, Spring MVC is Servlet-based, relying on
+multithreading to handle multiple requests.
+    #+end_quote
+
+    So how do you create an Endpoint using Webflux staying within the
+    first logic - the one of MVC?
+
+    Check the following snippet
+
+    #+BEGIN_SRC java :results output drawer :classname
+@RestController
+@RequestMapping(path="/design",
+		produces="application/json")
+		public class DesignTacoController {
+		    ...
+			@GetMapping("/recent")
+			public Flux<Taco> recentTacos() {
+			return tacoRepo.findAll().take(12);
+		    }
+		    ...
+		}
+
+  
+    #+END_SRC
+
+    So note one last time that the tags are all equal. Note as well
+    that you do not return a subscribe() method on your Flux.
+
+    This is actually automatically invoked by the framework when
+    calling the endpoint.
+
+    Note as well then the following important characteristic of
+    working with webflux - you return the object and open the
+    subscribe channel even before you start streaming the data.
+
+*** Testing WebFlux
+
+    I am skipping this section to this stage. I had some notes for it
+    already when reading about mockito and co. So double check if you
+    have notes for it in there.
+
+    Otherwise double check the chapter 11.3. Would hold the notes for
+    it with the testing notes. Easier then.
+    
+*** Consuming Webflux
+
+    The [[*Basics of Webflux][Basics of Webflux]] and [[*Webflux and Reactor API][Webflux and Reactor API]] briefly touched
+    upon the idea of creating webflux reactive endpoints.
+
+    The basic result was that the entire MVC set up is pretty
+    consistent. So the only big differece is the concept of working
+    with the =Reactor API objects= or alternatively with the =RXJAVA
+    Data Types=.
+
+    The question is now on how to consume these.
+
+    While in Spring =MVC= you have the concept of =RestTemplate=, this
+    can just consume endpoints through *non-reactive domain types and
+    collections*.
+
+    So the alternative to this is - from Spring 5 onwards -
+    =WebClient= as a reactive alternative to RestTemplate.
+
+    You can as well read more about WebClient [[https://www.baeldung.com/spring-5-webclient][here]].
+
+    WebClient lets you both send and receive reactive types when
+    making requests to external APIs.
+
+    Using WebClient is quite different from using RestTemplate. Rather
+    than having several methods to handle different kinds of requests,
+    WebClient has a fluent builder-style interface that lets you
+    describe and send requests. The general usage pattern for working
+    with WebClient is:
+
+    - Create an instance of WebClient (or inject a WebClient bean)
+    - Specify the HTTP method of the request to send
+    - Specify the URI and any headers that should be in the request
+    - Submit the request
+    - Consume the response
+
+    There are esssentially two ways for consuming a request, which
+    will be addressed next.
+    
+**** Retrieve Methods
+
+     These are used when you are simply interested in the body of the
+     response. Headers etc. are simply ignored. 
+
+     So an example for it is the following - *not recommended* see the
+     next option -:
+
+     #+BEGIN_SRC java :results output drawer :classname 
+Mono<Ingredient> ingredient = WebClient.create()
+    .get()
+    .uri("http://localhost:8080/ingredients/{id}", ingredientId)
+    .retrieve()
+    .bodyToMono(Ingredient.class);
+
+ingredient.subscribe(i -> { ... }) // The idea is that above you just
+				   // return a Mono.  You do not
+				   // subscribe to it yet.  This
+				   // allows the end user to further
+				   // subscribe to the ingredient. In
+				   // such a way it is even possible
+				   // to perform some operations on
+				   // the Mono when specifying the
+				   // subscription.
+     #+END_SRC
+
+     *Better Option:* Note that a better option in comparison to the
+     above is to use the standard concept of *Beans* in Spring.
+
+     I.e. you specify a *Bean* with the base URI and then you inject it
+     into all of the different classes needing it.
+
+     #+BEGIN_SRC java :results output drawer :classname 
+// declare your Bean somewhere
+@Bean
+public WebClient webClient() {
+    return WebClient.create("http://localhost:8080");
+}
+
+//  Inject it
+@Autowired
+WebClient webClient;
+
+// Use the injected bean
+public Mono<Ingredient> getIngredientById(String ingredientId) {
+    Mono<Ingredient> ingredient = webClient
+	.get() 
+	.uri("/ingredients/{id}", ingredientId) // just use the relative path then. 
+	.retrieve()
+	.bodyToMono(Ingredient.class);
+    ingredient.subscribe(i -> { ... })
+	}
+     #+END_SRC
+
+     Note that other CRUD operations are very similar in this
+     dimension.
+
+     Note that in case of errors 400 & 500 the webclient above just
+     logs the errors and goes on silently.
+
+     If you need to handle the errors you can use the ~onStatus()~
+     method:
+
+     #+BEGIN_SRC java :results output drawer :classname 
+Mono<Ingredient> ingredientMono = webClient
+    .get()
+    .uri("http://localhost:8080/ingredients/{id}", ingredientId)
+    .retrieve()
+    .onStatus(HttpStatus::is4xxClientError,
+	      response -> Mono.just(new UnknownIngredientException()))
+    .bodyToMono(Ingredient.class);
+     #+END_SRC
+
+     The first argument in the ~onStatus()~ call /is a predicate that’s
+     given an HttpStatus/ and returns true if the status code is one
+     you want to handle.
+
+     Note that ~onStatus()~ can be any of the =HttpStatus=
+     methods. However, it can be as well any lambda function returning
+     a *boolean*.
+     
+**** Exchange Methods
+
+     In this case you actually parse the entire message.
+
+     You can then access headers, read cookies etc. 
+    
+
+*** Timing out
+
+    This is an important feature. Especially in our team where I
+    understood we have often to deal with a client that is not as
+    reliable.
+
+    So the idea is to say, if I open a connection to consume something
+    and client does not answer within a time-frame then trigger a
+    timeout and stop that reactive endpoint consumption.
+
+    You can do that in the following way:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+Flux<Ingredient> ingredients = WebClient.create()
+    .get()
+    .uri("http://localhost:8080/ingredients")
+    .retrieve()
+    .bodyToFlux(Ingredient.class);
+
+ingredients
+    .timeout(Duration.ofSeconds(1))
+    .subscribe(
+	       i -> { ... },
+	       e -> {
+		   // handle timeout error
+	       })
+    #+END_SRC
+
+
+** End-to-end reactive pipeline
+
+   So that is basically it. Check at the following picture again:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-08 103621.png" class="center">
+   #+end_export
+
+   Now the issue is that with your current stack you have no chance to
+   get to this stage.
+
+   Well expected. Sad but expected.
+
+   The situtation is the following:
+
+   #+begin_quote
+Unfortunately, there’s no support for reactive JPA.
+
+Although relational databases are certainly the most prolific
+databases in the industry, supporting a reactive programming model
+with Spring Data JPA would require that the databases and JDBC drivers
+involved also support non-blocking reactive models.
+
+It’s unfortunate that, at least for now, there’s no support for
+working with relational databases reactively. Hopefully, this
+situation will be resolved in the near future.
+   #+end_quote
+
+   So basically that is the end of my reading in this space.
+
+   Or maybe not. In the sense that if you work with the following DBs
+   you might start to do smth with it:
+
+   #+begin_quote
+   This includes support for a reactive programming model when
+   persisting data with Cassandra, MongoDB, Couchbase, or Redis
+   #+end_quote
+    
 * Securing Spring
 
   There is even all of the layer about securing the spring application
@@ -1579,7 +2548,6 @@ public interface FileWriterGateway {
   back to it when the project will require it.
 
   So basically it is all about the key generation and exchange. 
-
 
 * Application Restart
 
@@ -1593,19 +2561,19 @@ public interface FileWriterGateway {
   restart is the following:
 
   #+begin_quote
- More precisely, when DevTools is in play, the application is loaded
- into two separate class loaders in the Java virtual machine
+  More precisely, when DevTools is in play, the application is loaded
+  into two separate class loaders in the Java virtual machine
  (JVM).
 
- One class loader is loaded with your Java code, property files, and
- pretty much anything that’s in the src/main/ path of the
- project. These are items that are likely to change frequently. The
- other class loader is loaded with dependency libraries, which aren’t
- likely to change as often.  When a change is detected, DevTools
- reloads only the class loader containing your project code and
- restarts the Spring application context, but leaves the other class
- loader and the JVM intact. Although subtle, this strategy affords a
- small reduction in the time it takes to start the application.
+  One class loader is loaded with your Java code, property files, and
+  pretty much anything that’s in the src/main/ path of the
+  project. These are items that are likely to change frequently. The
+  other class loader is loaded with dependency libraries, which aren’t
+  likely to change as often.  When a change is detected, DevTools
+  reloads only the class loader containing your project code and
+  restarts the Spring application context, but leaves the other class
+  loader and the JVM intact. Although subtle, this strategy affords a
+  small reduction in the time it takes to start the application.
 
   The downside of this strategy is that changes to dependencies won’t
   be available in automatic restarts. That’s because the class loader
@@ -1615,7 +2583,6 @@ public interface FileWriterGateway {
   application for those changes to take effect.
   #+end_quote
 
-
 * Deploying with Spring Boot
 
   In order to deploy with Spring Boot you can use the shell command
@@ -1623,7 +2590,6 @@ public interface FileWriterGateway {
   #+begin_src 
   ./gradlew.bat bootRun
   #+end_src
-
 
 * Generating a Docker Image out of your Spring Application
 
