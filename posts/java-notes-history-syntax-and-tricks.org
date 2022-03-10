@@ -261,6 +261,7 @@ that has the .class extension.
    It is then straightforward that due to this structure you should
    *always name your source code file after your class*.
 
+
 * Syntax
 
 ** if
@@ -644,6 +645,46 @@ class question {
 
    Alternatively, we could suggest a substitute value , using the
    method ~orElse()~.
+
+   #+BEGIN_SRC java :results output drawer :classname myClass
+import java.util.Optional;
+
+class myClass {
+
+    public static void main(String args[]) {
+
+	Optional<String> opt = Optional.empty();
+
+	opt.ifPresentOrElse(
+			    value -> System.out.println("Found: " + value),
+			    () -> System.out.println("Not found")
+			    );
+
+
+	opt =  Optional.of("baeldung");;
+
+	opt.ifPresentOrElse(
+			    value -> System.out.println("Found: " + value),
+			    () -> System.out.println("Not found")
+			    );
+
+	String name = null;
+	opt = Optional.ofNullable(name);
+	opt.ifPresentOrElse(
+			    value -> System.out.println("Found: " + value),
+			    () -> System.out.println("Not found")
+			    );
+	
+    }
+}
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   Not found
+   Found: baeldung
+   Not found
+   :end:
 
 ** Switch
 
@@ -3239,6 +3280,7 @@ class GenConsDemo {
     check at it later again. reread the entire chapter one time that
     you have time.
      
+
 ** Text Blocks Feature
 
    This was your goto way to write longer query to be embedded in
@@ -3508,6 +3550,7 @@ Test ob = new Test(15, 20);
   ob.a and ob.b before call: 15 20
   ob.a and ob.b after call - passing by reference - : 30 10
 
+
 * Garbage Collection
 
   Since objects are dynamically allocated by using the new operator,
@@ -3524,6 +3567,7 @@ Test ob = new Test(15, 20);
 
   Note that when Garbage collection is performed depend on the
   different Java run-times etc.
+
 
 * Packages
 
@@ -4869,6 +4913,7 @@ LOGGER.setLevel(Level.INFO);
 
     See in this sense [[https://www.baeldung.com/lombok-ide][this guide]].
     
+
 ** JDBC
 
 *** What is it?
@@ -4928,7 +4973,8 @@ database has its own specific protocol.
     condtions. 
 
     #+BEGIN_SRC java :results output drawer :classname
-    // basic example of working with it. 
+
+// basic example of working with it. 
     try (Statement stmt = con.createStatement()) {
       ResultSet rs = stmt.executeQuery(query);
       while (rs.next()) {
@@ -5070,9 +5116,14 @@ delimiter ;
     #+end_src
 
 *** TODO [#A] On batchadd - How that works
-    
 *** TODO write about the logic of committing the results and executing them :noexport:
-   
+*** Note that your libraries for working with JDBC are in the following repo
+
+    =com.zurich.im.lib.basics.sql=
+
+    consult them at development time to find the method that best fits
+    your use-case. 
+
 ** TODO Hiberante
 
    Check at it. Everybody talks about it.
