@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>RDDs Transformations and Actions | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/rdds-transformations-and-actions/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../how-to-verify-your-github-page-with-brave-rewards/" title="On The Brave Browser" type="text/html">
+<link rel="next" href="../slovak-learning/" title="Slovak Learning" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="RDDs Transformations and Actions">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/rdds-transformations-and-actions/">
+<meta property="og:description" content="This post continues the discussion started a few times ago on RDD and
+Spark.
+
+
+
+I will try to go here in the lifecycle of an RDD and will present the
+major Transformation and Actions functions. I will">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-05-03T15:51:24+02:00">
+<meta property="article:tag" content="Big Data">
+<meta property="article:tag" content="Spark">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">RDDs Transformations and Actions</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2020-05-03T15:51:24+02:00" itemprop="datePublished" title="2020-05-03 15:51">2020-05-03 15:51</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/big-data/" rel="tag">Big Data</a></li>
+            <li><a class="tag p-category" href="../../categories/spark/" rel="tag">Spark</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <br><br><p>
+This post continues the discussion started a few times ago on <a href="https://marcohassan.github.io/bits-of-experience/posts/spark-session-initalization/">RDD and
+Spark</a>.
+</p>
+
+<p>
+I will try to go here in the lifecycle of an RDD and will present the
+major Transformation and Actions functions. I will moreover touch on
+the physical implementation of Spark as this will give you the mental
+tools to properly understand how to properly structure your Spark
+workflow in order to optimize the performance.   
+</p>
+
+<!-- TEASER_END -->
+
+<br><div id="outline-container-org4a34d83" class="outline-2">
+<h2 id="org4a34d83">On RDDs</h2>
+<div class="outline-text-2" id="text-org4a34d83">
+<p>
+A brief overview on RDDs was given in the previous post and you are
+referred to it for a brief introduction.
+</p>
+
+<p>
+RDDs are lazy. This, means that only if the data is needed for a
+certain computation the data is read from the underlying storage
+system.
+</p>
+
+<p>
+An RDD in Spark is simply an immutable distributed collection of
+objects. Each RDD can be split into multiple partitions, which may be
+computed on different nodes of the cluster.
+</p>
+
+<p>
+The typical RDD lifecycle is as follows:
+</p>
+
+<ul class="org-ul">
+<li>An RDDs is first created from stable storage or by some Python objects.</li>
+</ul>
+<p>
+RDDs offer then two types of operations: <b>transformations</b> and <b>actions</b>.
+</p>
+
+<ul class="org-ul">
+<li>
+<b>Transformations</b> create a new RDD from an existing one.
+Transformations are lazy, meaning that no transformation is executed
+until you execute an action.</li>
+
+<li>
+<b>Actions</b> compute a result based on an RDD, and either return it to
+the driver program or save it to an external storage system (e.g.,
+HDFS). This is the end of the lifecycle.</li>
+</ul>
+<p>
+Transformations and actions are different because of the way Spark
+computes RDDs. Although you can define new RDDs any time, Spark
+computes them only in a <b>lazy</b> fashion, that is, the first time they
+are used in an <b>action</b>.
+</p>
+
+<p>
+For the creation of RDDs and the partitions of them please refer to
+the previous post I will now briefly introduce the physical execution
+of spark before illustrating some of the most the key transformations
+and actions.
+</p>
+
+<br>
+</div>
+</div>
+
+
+<div id="outline-container-orgaf835f7" class="outline-2">
+<h2 id="orgaf835f7">Transformations</h2>
+<div class="outline-text-2" id="text-orgaf835f7">
+<p>
+Following are examples of some of the common transformations
+available.
+</p>
+
+<p>
+For a detailed list, see <a href="https://spark.apache.org/docs/2.0.0/programming-guide.html#transformations">RDD Transformations</a>
+</p>
+
+<p>
+Run some transformations below to understand this better.
+</p>
+
+<p>
+<b>Note:</b> If some of the queries are taking too long to complete, try
+restarting the kernel, and rerunning the cell <i>above</i>.
+</p>
+
+
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span> \
+    <span class="o">.</span><span class="n">builder</span> \
+    <span class="o">.</span><span class="n">master</span> <span class="p">(</span><span class="s2">"local[8]"</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">"My first Spark Session"</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+
+<span class="n">sc</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sparkContext</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span> <span class="n">fruits</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">'file:///Users/marcohassan/Desktop/spark_files_data/fruit.txt'</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span> <span class="n">fruits</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example">
+['Peaches',
+ 'Apples',
+ 'Strawberries',
+ 'Grapes',
+ 'Oranges',
+ 'Apples',
+ 'Peaches',
+ 'Melon']
+</pre>
+</div>
+
+
+<div id="outline-container-org3e787db" class="outline-3">
+<h3 id="org3e787db">On the filter transformation</h3>
+<div class="outline-text-3" id="text-org3e787db">
+<p>
+A further important transformation is the one allowing the projection
+in relational algebra terms. This is taken care by the <code>filter</code>
+transformation.
+</p>
+
+<p>
+It just projects the RDDs objects satisfying the given criteria of
+the boolean function specified within the <code>filter</code>.  
+</p>
+
+<div class="highlight"><pre><span></span> <span class="c1"># filter</span>
+ <span class="n">shortFruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">fruit</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">)</span>
+ <span class="n">shortFruits</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example">
+['Melon']
+</pre>
+
+
+
+<div class="highlight"><pre><span></span><span class="n">shortFruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="n">fruit</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"oranges"</span><span class="p">)</span>
+<span class="n">shortFruits</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example">
+['Oranges']
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orge0b6f65" class="outline-3">
+<h3 id="orge0b6f65">On the Map Transformation</h3>
+<div class="outline-text-3" id="text-orge0b6f65">
+<p>
+The map function takes each element for the RDD and applies a
+function <code>mapping</code> the element input to a transformed new RDD. It is
+therefore an action.
+</p>
+
+<div class="highlight"><pre><span></span> <span class="c1"># map</span>
+ <span class="n">fruitsReversed</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="n">fruit</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="c1">## the fruit[::-1] inverts the letters of the word</span>
+
+ <span class="c1"># Note: the `collect` command is NOT a Transformation, it is an Action</span>
+ <span class="c1"># used here for the purposes of showing the results! Just use it when</span>
+ <span class="c1"># you know that the action will be small enough to be handled by the</span>
+ <span class="c1"># memeory of the machine you are working on. Otherwise, no chance you</span>
+ <span class="c1"># will be able to display your results and you will better have to</span>
+ <span class="c1"># save the results on a HDFS cluster.</span>
+ <span class="n">fruitsReversed</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example">
+['sehcaeP',
+ 'selppA',
+ 'seirrebwartS',
+ 'separG',
+ 'segnarO',
+ 'selppA',
+ 'sehcaeP',
+ 'noleM']
+</pre>
+
+
+<div class="highlight"><pre><span></span> <span class="c1"># map</span>
+ <span class="n">fruitsReversed</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="n">fruit</span> <span class="o">+</span> <span class="s2">"bau"</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> 
+
+ <span class="n">fruitsReversed</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example">
+['Peachesbaubaubau',
+ 'Applesbaubaubau',
+ 'Strawberriesbaubaubau',
+ 'Grapesbaubaubau',
+ 'Orangesbaubaubau',
+ 'Applesbaubaubau',
+ 'Peachesbaubaubau',
+ 'Melonbaubaubau']
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org322d5ba" class="outline-3">
+<h3 id="org322d5ba">On the FlatMap Function</h3>
+<div class="outline-text-3" id="text-org322d5ba">
+<p>
+The <code>flatmap</code> transformation extends the <code>map</code> function giving the
+possibility to the users to return an object of higher dimension than
+the map input and then flattening it in one go.
+</p>
+
+<p>
+Important is to understand that here the object is <i>flattened</i> and
+saved into a new RDD. So that you won't notice the different map
+output when observing the transformed RDD. I.e. you won't have
+different subsets indicating the higher dimensional objects returned
+by your flatmap.
+</p>
+
+<div class="highlight"><pre><span></span> <span class="c1"># flatMap</span>
+ <span class="n">characters</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">flatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">fruit</span><span class="p">))</span>
+ <span class="n">characters</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example" id="org3ffef69">
+['P',
+ 'e',
+ 'a',
+ 'c',
+ 'h',
+ 'e',
+ 's',
+ 'A',
+ 'p',
+ 'p',
+ 'l',
+ 'e',
+ 's',
+ 'S',
+ 't',
+ 'r',
+ 'a',
+ 'w',
+ 'b',
+ 'e',
+ 'r',
+ 'r',
+ 'i',
+ 'e',
+ 's',
+ 'G',
+ 'r',
+ 'a',
+ 'p',
+ 'e',
+ 's',
+ 'O',
+ 'r',
+ 'a',
+ 'n',
+ 'g',
+ 'e',
+ 's',
+ 'A',
+ 'p',
+ 'p',
+ 'l',
+ 'e',
+ 's',
+ 'P',
+ 'e',
+ 'a',
+ 'c',
+ 'h',
+ 'e',
+ 's',
+ 'M',
+ 'e',
+ 'l',
+ 'o',
+ 'n']
+</pre>
+
+<p>
+Notice how this stays in contrast to a simple map performing the same
+operation.
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">characters</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">fruit</span><span class="p">))</span>
+<span class="n">characters</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example">
+[['P', 'e', 'a', 'c', 'h', 'e', 's'],
+ ['A', 'p', 'p', 'l', 'e', 's'],
+ ['S', 't', 'r', 'a', 'w', 'b', 'e', 'r', 'r', 'i', 'e', 's'],
+ ['G', 'r', 'a', 'p', 'e', 's'],
+ ['O', 'r', 'a', 'n', 'g', 'e', 's'],
+ ['A', 'p', 'p', 'l', 'e', 's'],
+ ['P', 'e', 'a', 'c', 'h', 'e', 's'],
+ ['M', 'e', 'l', 'o', 'n']]
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-orga085953" class="outline-3">
+<h3 id="orga085953">On the Union Transformation</h3>
+<div class="outline-text-3" id="text-orga085953">
+<p>
+This returns the classical relational algebra union of two different
+RDDs.
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">yellowThings</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">'file:///Users/marcohassan/Desktop/spark_files_data/yellow.txt'</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span> <span class="c1"># union</span>
+ <span class="n">fruitsAndYellowThings</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">yellowThings</span><span class="p">)</span>
+ <span class="n">fruitsAndYellowThings</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example" id="org06943de">
+['Peaches',
+ 'Apples',
+ 'Strawberries',
+ 'Grapes',
+ 'Oranges',
+ 'Apples',
+ 'Peaches',
+ 'Melon',
+ 'giallo',
+ 'biondo',
+ 'yellow',
+ 'gelb',
+ 'gold',
+ 'blond',
+ 'jeune']
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org5f39ae9" class="outline-3">
+<h3 id="org5f39ae9">On the intersection Transformation</h3>
+<div class="outline-text-3" id="text-org5f39ae9">
+<p>
+This returns the intersection for two RDDs. It is then clear that it
+is possible to obtain the relational algebra set difference from it.
+</p>
+
+<div class="highlight"><pre><span></span> <span class="c1"># intersection</span>
+ <span class="n">yellowFruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">yellowThings</span><span class="p">)</span>
+ <span class="n">yellowFruits</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example">
+[]
+</pre>
+
+
+<div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s2">"Oranges"</span> &gt;&gt; /Users/marcohassan/Desktop/spark_files_data/yellow.txt
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="n">yellowFruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">yellowThings</span><span class="p">)</span>
+<span class="n">yellowFruits</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example">
+['Oranges']
+</pre>
+
+
+<p>
+Get the set difference, i.e. the objects present in a RDD but not in
+the other
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">yellowFruits</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+<span class="n">fruit</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">a</span><span class="p">)</span>
+<span class="n">fruit</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example">
+['Peaches', 'Apples', 'Strawberries', 'Grapes', 'Apples', 'Peaches', 'Melon']
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org0a91d5a" class="outline-3">
+<h3 id="org0a91d5a">On the distinct transformation</h3>
+<div class="outline-text-3" id="text-org0a91d5a">
+<p>
+This allows to take the distinct objects in an RDD
+</p>
+
+<div class="highlight"><pre><span></span> <span class="c1"># distinct</span>
+ <span class="n">distinctFruitsAndYellowThings</span> <span class="o">=</span> <span class="n">fruitsAndYellowThings</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span>
+ <span class="n">distinctFruitsAndYellowThings</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example" id="orgc44e8de">
+['Peaches',
+ 'Apples',
+ 'Oranges',
+ 'giallo',
+ 'gelb',
+ 'blond',
+ 'Strawberries',
+ 'jeune',
+ 'Melon',
+ 'biondo',
+ 'yellow',
+ 'gold',
+ 'Grapes']
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org1c79a09" class="outline-3">
+<h3 id="org1c79a09">On the Reduce Transformation</h3>
+<div class="outline-text-3" id="text-org1c79a09">
+<p>
+The reduce function is powerful albeit its logic is not
+straight. You will have to exercise it at first. Its logic is as
+follows
+</p>
+
+<p>
+<img src="../../images/Bildschirmfoto_2020-05-04_um_17.54.18.png" alt="nil"></p>
+
+<div class="highlight"><pre><span></span>  <span class="n">input_list</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">input_list</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+
+  <span class="nb">print</span><span class="p">(</span><span class="n">input_list</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+
+  <span class="n">sum_of_cubes</span> <span class="o">=</span> <span class="n">input_list</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+  <span class="n">product_of_cubes</span> <span class="o">=</span> <span class="n">input_list</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+
+  <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">sum of cubes </span><span class="si">%s</span><span class="s2">:"</span> <span class="o">%</span> <span class="n">sum_of_cubes</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">"product of cubes </span><span class="si">%s</span><span class="s2">:"</span> <span class="o">%</span> <span class="n">product_of_cubes</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example">
+[0, 1, 2, 3, 4]
+[0, 1, 8, 27, 64]
+
+sum of cubes 100:
+product of cubes 0:
+</pre>
+
+
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-orge4f907e" class="outline-3">
+<h3 id="orge4f907e">On the Sort By Transformation</h3>
+<div class="outline-text-3" id="text-orge4f907e">
+<p>
+Notice that for sorting multiple elements through the spark API you
+should pack them into a single array.
+</p>
+
+<div class="highlight"><pre><span></span>entries.filter (lambda x: x["guess"] == x["target"]).sortBy (lambda x: [x["target"], x["country"], x["date"] ] , 1).take (5)
+</pre></div>
+
+<p>
+Notice how the final element states if it should be ascending or
+descending.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org38802a3" class="outline-3">
+<h3 id="org38802a3">On Joins Transformation Syntax</h3>
+<div class="outline-text-3" id="text-org38802a3">
+<div class="highlight"><pre><span></span><span class="n">heroes</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example" id="org73c6a76">
++--------+---+
+|    name| id|
++--------+---+
+|Deadpool|  3|
+|Iron man|  1|
+|   Groot|  7|
++--------+---+
+</pre>
+
+
+<div class="highlight"><pre><span></span><span class="n">races</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example" id="org89c99d2">
++----------+---+
+|      race| id|
++----------+---+
+|Kryptonian|  5|
+|    Mutant|  3|
+|     Human|  1|
++----------+---+
+</pre>
+
+<div class="highlight"><pre><span></span><span class="n">heroes</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">races</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">'id'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'inner'</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+<pre class="example" id="orgefa78db">
++---+--------+------+ 
+| id|    name|  race|
++---+--------+------+
+|  1|Iron man| Human|
+|  3|Deadpool|Mutant|
++---+--------+------+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb96d0f2" class="outline-2">
+<h2 id="orgb96d0f2">Working with <i>key-value</i> pairs</h2>
+<div class="outline-text-2" id="text-orgb96d0f2">
+<p>
+Spark provides special operations on RDDs containing key/value pairs.
+These RDDs are called <i>pair RDDs</i>. Pair RDDs are a useful building
+block in many programs, as they expose operations that allow you to
+<b>act on each key in parallel</b> or regroup data across the network.
+</p>
+</div>
+
+
+<div id="outline-container-orgce1746f" class="outline-3">
+<h3 id="orgce1746f">Group by Key</h3>
+<div class="outline-text-3" id="text-orgce1746f">
+<p>
+Notice that in spark, in contrast to MapReduce, the input must not be
+of key-value store type. But if you are dealing with key-value pairs
+objects such as hash-tables then there are plenty of functions that
+will help you to deal with and operate at the key level.
+</p>
+
+<p>
+One prominent example for the above is the <code>groupByKey</code> that allows
+you to perform a given function for each key.
+</p>
+
+<p>
+To understand that look at the following transformation
+</p>
+
+
+<div class="highlight"><pre><span></span><span class="n">yellowThingsByFirstLetter</span> <span class="o">=</span> <span class="n">yellowThings</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">thing</span><span class="p">:</span> <span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">thing</span><span class="p">))</span><span class="o">.</span><span class="n">groupByKey</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">yellowThingsByFirstLetter</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+</pre></div>
+
+<pre class="example">
+[('g', &lt;pyspark.resultiterable.ResultIterable object at 0x119ff27d0&gt;), ('b', &lt;pyspark.resultiterable.ResultIterable object at 0x119ff2490&gt;), ('y', &lt;pyspark.resultiterable.ResultIterable object at 0x119ff2550&gt;), ('j', &lt;pyspark.resultiterable.ResultIterable object at 0x119ff25d0&gt;), ('O', &lt;pyspark.resultiterable.ResultIterable object at 0x119ff2290&gt;)]
+</pre>
+
+
+<p>
+The above returned a set of tuples involving a key being the first
+letter and a value being an <code>iterable</code> spark object on which it is
+possible to perform the desired function.
+</p>
+
+<p>
+Notice that above we first applied a function generating our key-value tuple
+</p>
+
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yellowThings</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">thing</span><span class="p">:</span> <span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">thing</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+</pre></div>
+
+
+<pre class="example">
+[('g', 'giallo'),
+ ('b', 'biondo'),
+ ('y', 'yellow'),
+ ('g', 'gelb'),
+ ('g', 'gold'),
+ ('b', 'blond'),
+ ('j', 'jeune'),
+ ('O', 'Oranges')]
+</pre>
+
+
+<p>
+and then grouping based on the keys of such newly transformed RDD.
+</p>
+
+<p>
+For the function you can apply, you can be as imaginative as you want
+</p>
+
+<div class="highlight"><pre><span></span> <span class="c1"># groupByKey</span>
+ <span class="n">yellowThingsByFirstLetter</span> <span class="o">=</span> <span class="n">yellowThings</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">thing</span><span class="p">:</span> <span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">thing</span><span class="p">))</span><span class="o">.</span><span class="n">groupByKey</span><span class="p">()</span>
+ <span class="k">for</span> <span class="n">letter</span><span class="p">,</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">yellowThingsByFirstLetter</span><span class="o">.</span><span class="n">collect</span><span class="p">():</span>
+	 <span class="nb">print</span><span class="p">(</span><span class="s2">"For letter"</span><span class="p">,</span> <span class="n">letter</span><span class="p">)</span>
+	 <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+		 <span class="nb">print</span><span class="p">(</span><span class="s2">" &gt; "</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example" id="org0679798">
+For letter g
+ &gt;  giallo
+ &gt;  gelb
+ &gt;  gold
+For letter b
+ &gt;  biondo
+ &gt;  blond
+For letter y
+ &gt;  yellow
+For letter j
+ &gt;  jeune
+For letter O
+ &gt;  Oranges
+</pre>
+
+<div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+
+<span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="p">))</span>
+</pre></div>
+
+<pre class="example">
+[2, 3, 4, 5]
+</pre>
+
+
+
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yellowThingsByFirstLetter</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">yellowThingsByFirstLetter</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span> <span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+
+<span class="c1">## notice finally that maps exists in python also outside of spark</span>
+<span class="c1">## with the following syntax map(function, iterable object)</span>
+<span class="c1">## it is clear therefore that you can do games such as</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">yellowThingsByFirstLetter</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])))))</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+</pre></div>
+
+<pre class="example">
+[('g', ['giallo', 'gelb', 'gold']), ('b', ['biondo', 'blond']), ('y', ['yellow']), ('j', ['jeune']), ('O', ['Oranges'])]
+[('g', ['giallo giallo', 'gelb gelb', 'gold gold']), ('b', ['biondo biondo', 'blond blond']), ('y', ['yellow yellow']), ('j', ['jeune jeune']), ('O', ['Oranges Oranges'])]
+[('g', ['giallogiallo', 'gelbgelb', 'goldgold']), ('b', ['biondobiondo', 'blondblond']), ('y', ['yellowyellow']), ('j', ['jeunejeune']), ('O', ['OrangesOranges'])]
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org3edeb1c" class="outline-3">
+<h3 id="org3edeb1c">On the Mapvalues Transformation</h3>
+<div class="outline-text-3" id="text-org3edeb1c">
+<p>
+Mapvalues operates on PairRDDs, i.e. data of the key-value form,
+meaning RDDs of the form <code>RDD[(A, B)]</code>. In that case, mapValues
+operates on the value only (the second part of the tuple), while map
+operates on the entire record (tuple of key and value).
+</p>
+
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Original data: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">numFruitsByLength</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Mapvalued data: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">numFruitsByLength</span><span class="o">.</span><span class="n">mapValues</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+</pre></div>
+
+<pre class="example">
+Original data: [(4, 2), (5, 2), (6, 4)]
+Mapvalued data: [(4, 6), (5, 6), (6, 12)]
+</pre>
+
+
+<p>
+Notice that this might reduce by a product the complexity of your
+code. Think for instance at:
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">aba</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([(</span><span class="s2">"hel"</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="s2">"hel"</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="p">(</span><span class="s2">"bye"</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="s2">"bye"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="p">(</span><span class="s2">"bye"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Number per key: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">aba</span><span class="o">.</span><span class="n">groupByKey</span><span class="p">()</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))))</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+
+<span class="c1"># vs.</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Number per key: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">abba</span><span class="o">.</span><span class="n">groupByKey</span><span class="p">()</span><span class="o">.</span><span class="n">mapValues</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+</pre></div>
+
+<pre class="example">
+Number per key: [('hel', 2), ('bye', 3)]
+Number per key: [('hel', 2), ('bye', 2)]
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-orgeebe761" class="outline-3">
+<h3 id="orgeebe761">On the Reduce by Key Transformation</h3>
+<div class="outline-text-3" id="text-orgeebe761">
+<p>
+Given the above understanding of the Reduce transformation it is
+clear that the reduce by key is essentially a reduce function on
+each of the key iterable values.
+</p>
+
+<div class="highlight"><pre><span></span>  <span class="n">fruits</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="s2">"apple"</span><span class="p">,</span> <span class="s2">"orange"</span><span class="p">,</span> <span class="s2">"java"</span><span class="p">,</span> <span class="s2">"call++"</span><span class="p">])</span>
+
+  <span class="n">numFruitsByLength</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fruit</span><span class="p">:</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fruit</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">"Data : </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">numFruitsByLength</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+
+  <span class="n">numFruitsByLength</span> <span class="o">=</span> <span class="n">numFruitsByLength</span><span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">"Sum value by keys: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">numFruitsByLength</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+</pre></div>
+
+<pre class="example">
+Data : [(5, 2), (6, 2), (4, 2), (6, 2)]
+Sum value by keys: [(4, 2), (5, 2), (6, 4)]
+</pre>
+
+
+
+<br><br>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org829ac0a" class="outline-2">
+<h2 id="org829ac0a">Actions</h2>
+<div class="outline-text-2" id="text-org829ac0a">
+<p>
+As mentioned above Actions compute a result based on an RDD, and
+either return it to the driver program or save it to an external
+storage system (e.g., HDFS). This is the end of the lifecycle.
+</p>
+
+<p>
+The most prominent example of an action is <code>collect()</code>. Important is
+however to keep in mind that this should be used only when you are
+sure that your local hardware might be able to deal with the
+collected RDD. We are dealing with <code>Big Data</code> and therefore your
+operations should have compressed enough your problem so that you
+might able to collect something in a meaningful way. The alternative,
+to save to HDFS might be otherwise necessary. 
+</p>
+
+<p>
+Following are examples of some of the common actions available. For a
+detailed list, see <a href="https://spark.apache.org/docs/2.3.0/programming-guide.html#actions">RDD Actions</a>.
+</p>
+</div>
+
+<div id="outline-container-org7e3e90b" class="outline-3">
+<h3 id="org7e3e90b">Count</h3>
+<div class="outline-text-3" id="text-org7e3e90b">
+<div class="highlight"><pre><span></span>   <span class="c1"># count</span>
+   <span class="nb">print</span><span class="p">(</span><span class="s2">"Data: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">fruits</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+   <span class="n">numFruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+   <span class="n">numFruits</span>
+</pre></div>
+
+<pre class="example">
+Data: ['apple', 'orange', 'java', 'call++']
+
+4
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org1b129f5" class="outline-3">
+<h3 id="org1b129f5">Take</h3>
+<div class="outline-text-3" id="text-org1b129f5">
+<p>
+This might be especially useful also given the issues when dealing
+with <code>collect()</code> mentioned above.
+</p>
+
+<p>
+It is essentially the <code>LIMIT</code> function of SQL
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1"># take</span>
+    <span class="n">first3Fruits</span> <span class="o">=</span> <span class="n">fruits</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">first3Fruits</span>
+</pre></div>
+
+<pre class="example">
+['apple', 'orange', 'java']
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org5aff54d" class="outline-3">
+<h3 id="org5aff54d">Aggregate</h3>
+<div class="outline-text-3" id="text-org5aff54d">
+<p>
+This is again a tricky one. Please
+refer to the link: <a href="https://stackoverflow.com/questions/28240706/explain-the-aggregate-functionality-in-spark/38949457">Explaination of Aggregate</a>. 
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">seqOp</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">local_result</span><span class="p">,</span> <span class="n">list_element</span><span class="p">:</span> <span class="p">(</span><span class="n">local_result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">list_element</span><span class="p">,</span> <span class="n">local_result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">combOp</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">some_local_result</span><span class="p">,</span> <span class="n">another_local_result</span><span class="p">:</span> <span class="p">(</span><span class="n">some_local_result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">another_local_result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">some_local_result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">another_local_result</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
+
+    <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">aggregate</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">seqOp</span><span class="p">,</span> <span class="n">combOp</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example">
+(6, 4)
+</pre>
+
+
+
+
+<br>
+</div>
+</div>
+</div>
+
+<div id="outline-container-persistence-caching" class="outline-2">
+<h2 id="persistence-caching">Persistence (Caching)</h2>
+<div class="outline-text-2" id="text-persistence-caching">
+<p>
+Spark's RDDs are by default recomputed each time you run an action on
+them. 
+</p>
+
+<p>
+This is however suboptiomal. Just think of the following situation:
+</p>
+
+<img width="100%" height="100%" src="../../images/Bildschirmfoto_2020-05-23_um_14.01.28.png" class="center"><p>
+Then it is clear that no matter the final RDD transformation, you will
+have to do the same set of operations. In such a case recomputing the
+entire DAG makes no sense and persisting the result that is
+continuously used makes sense.
+</p>
+
+<p>
+This is done using <code>RDD.persist()</code>. After computing it the first time,
+Spark will store the RDD contents in memory (partitioned across the
+machines in your cluster), and reuse them in future actions.
+Persisting RDDs <b>on disk</b> instead of <b>memory</b> is also possible.
+</p>
+
+<p>
+If you attempt to cache too much data to fit in memory, Spark will
+automatically evict old partitions using a Least Recently Used (LRU)
+cache policy. This practically means, that for the <b>memory-only
+storage</b> levnels, it will recompute these partitions the next time they
+are accessed, while for the <b>memory-and-disk ones</b>, it will write them
+out to disk. In either case, this means that you don't have to worry
+about your job breaking if you ask Spark to cache toxo much
+data. However, caching unnecessary data can lead to eviction of useful
+data and more recomputation time. Finally, RDDs come with a method
+called <code>unpersist()</code> that lets you manually remove them from the
+cache.
+</p>
+
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org0350899" class="outline-2">
+<h2 id="org0350899">Literature</h2>
+<div class="outline-text-2" id="text-org0350899">
+<p>
+<a href="https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material">Big Data for Engineers - ETH course</a>
+</p>
+
+<p>
+<a href="https://stackoverflow.com/questions/36696326/map-vs-mapvalues-in-spark">MapValues Stackoverflow</a>
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../how-to-verify-your-github-page-with-brave-rewards/" rel="prev" title="On The Brave Browser">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../slovak-learning/" rel="next" title="Slovak Learning">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
