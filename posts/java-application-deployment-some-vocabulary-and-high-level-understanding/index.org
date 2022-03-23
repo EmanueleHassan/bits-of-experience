@@ -34,7 +34,8 @@ application. Server side operations etc. for the Java world.
    *the server environment*, a web container.
 
    The web-app server can be any of Tomcat or Jetty or a Java EE
-   server such as JBoss or Glassfish.
+   server such as JBoss or Glassfish. - in order to understand the
+   differences among the many [[https://marcohassan.github.io/bits-of-experience/posts/wsgi-apache-and-nginx/][check at this]].
 
    Note that in simple words you can say the following:
 
@@ -50,7 +51,11 @@ application. Server side operations etc. for the Java world.
    the entire bundle.
    
    #+begin_export html
+   <br>
+   <br>
     <img src="../../images/strucutre.png" class="center">
+   <br>
+   <br>
    #+end_export
 
    So your app is deployed as =.war= and underneath you might refer to
@@ -62,8 +67,154 @@ application. Server side operations etc. for the Java world.
    build and deployment well functioned.
 
    In this sense refer to your notes about gradle, as like this is
-   possible to start to connect the dots. 
+   possible to start to connect the dots.
+   
+*** More thorough notes on .war structure 
 
+    /Update 21/03/22:/
+
+    So I am starting to connecting the dots. I had a very good session
+    with Sergio where we could understand a little bit better the
+    current set up. Check at the end of this section. You will start
+    to understand a couple of things. 
+
+    I had to spend a little bit more time on the understanding of the
+    general java deployment set up. That is important as if you miss
+    that one you will never be able to call yourself a java developer.
+
+    So basically the idea is to [[https://www.oreilly.com/library/view/learning-java-4th/9781449372477/ch15s03.html][look at the following]]. Below just a
+    couple of notes based on it. You might refer to the url directly. 
+
+    Understand that one of the most important bit of the packaged java
+    applications is the =web.xml= file. This tells the server what to
+    run and how to run it.
+
+    You can inspect the structure of a =.war= through the =jar= tool.
+
+    #+begin_src sh
+ jar tvf shoppingcart.war
+    #+end_src
+
+    When you build in gradle this should create one of such war
+    files. When deployed the /name of the war/ becomes the /root path/ of
+    the web-applicaiton.
+
+    #+begin_quote
+    The WEB-INF directory (all caps, hyphenated) is a special
+    directory that contains all deployment information and application
+    code. This directory is protected by the web server, and its
+    contents are not visible to outside users of the application, even
+    if you add WEB-INF to the base URL.
+
+     The WEB-INF directory also contains the =web.xml= file.
+    #+end_quote
+
+    The WEB-INF/classes and WEB-INF/lib directories contain Java class
+    files and JAR libraries, respectively.
+
+    The =WEB-INF/classes= directory is automatically added to the
+    classpath of the web application, so any class files placed here
+    (using the normal Java package conventions) are available to the
+    application.
+
+    After that, any JAR files located in =WEB-INF/lib= are appended to
+    the web app’s classpath (the order in which they are appended is,
+    unfortunately, not specified). You can place your classes in
+    either location.
+
+    Nonetheless what is standard is that your source code goes into
+    =WEB-INF/classes=, while the libraries you work with will be
+    packaged into =WEB-INF/lib=.
+
+    Note now the following bit:
+
+    #+begin_quote
+It’s also possible to install JAR files directly in the servlet
+container to make them available to all web apps running on that
+server. This is often done for common libraries that will be used by
+many web apps. It’s also possible to install JAR files directly in the
+servlet container to make them available to all web apps running on
+that server. This is often done for common libraries that will be used
+by many web apps.
+    #+end_quote
+
+    The above is important in order to understand what is happening in
+    our case. Cause that is the current situation. A big, fat
+    web-server with a big chunck of libraries that are installed there
+    in the =lib/xtra= etc. that are used across application.
+
+    This has as well the following issue:
+
+    #+begin_quote
+The location for placing the libraries, however, is not standard and
+any classes that are deployed in this way cannot be automatically
+reloaded if changed—a feature of WAR files that we’ll discuss later.
+    #+end_quote
+
+    Which is the thing that is disturbing the developer team quite
+    much.
+
+*** web.xml working
+
+    The web.xml file is an XML configuration file that /lists servlets
+    and related entities to be deployed/, the relative names (URL
+    paths) under which to deploy them, their initialization
+    parameters, and their deployment details, including security and
+    authorization.
+
+    For most of the history of Java web applications, this was the
+    only deployment configuration mechanism.
+
+    However, as of the Servlet 3.0 API, there are additional
+    options. Most configuration can now be done using Java
+    annotations. - This is how you are used to work with.
+
+    So check online at the url described above if you want to go in
+    the details. You might have to at some point as you are working
+    with legacy code. Would not surprise me if the entire structure of
+    the endpoints would be actually defined over there.
+
+*** On reloading web apps
+
+    #+begin_quote
+    All servlet containers are supposed to provide a facility for
+    reloading WAR files; many support reloading of individual servlet
+    classes after they have been modified.
+
+    Reloading WARs is part of the servlet specification and is
+    especially useful during development. Support for reloading web
+    apps varies from server to server.
+
+    Normally, all that you have to do is drop a new WAR in place of
+    the old one in the proper location (e.g., the webapps directory
+    for Tomcat) and the container shuts down the old application and
+    deploys the new version.
+    #+end_quote
+
+    So this is generally what happens when you build your webapp
+    through gradle and the ultimate way why you do not have to stop
+    the web container and start it again.
+
+    
+
+    
+
+    
+
+    
+
+
+*** So understand that unorthodoxy with the packaged libraries
+
+    They are in the webapps directory in tomcat.
+
+    So either then the libraries there are added to the classpath
+    manually or by default tomcat inspects all of the files in the
+    =webapps=.
+
+    This is an open question I will not dig further for now. I will
+    ask for more info at the right moment.     
+    
 ** Jakarta Servlet
 
    A java servlet simply stores a class in Jakarta EE that is conform
@@ -97,6 +248,7 @@ application. Server side operations etc. for the Java world.
 
    - Jakarta XML Web Services (JAX-WS) useful for SOAP Web Services
       
+
 ** On web-container and Java
 
    A web-container - also called web-servlet - is the component of a

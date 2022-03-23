@@ -105,8 +105,6 @@ always be possible for an external to join and take over your work.
 
 This is the bit I learned from my current recent experience.
 
-
-
 {{{TEASER_END}}}
 
 * Index
@@ -1815,6 +1813,7 @@ public interface FileWriterGateway {
     Now your next task will be an integration task. So you will likely
     use this module extensively. Dig into it. 
 
+
 * Reactive Programming in Spring
 
   This is very cool and is the next gen. architecture mechanism. Very
@@ -2537,6 +2536,7 @@ situation will be resolved in the near future.
    persisting data with Cassandra, MongoDB, Couchbase, or Redis
    #+end_quote
     
+
 * Securing Spring
 
   There is even all of the layer about securing the spring application
@@ -2548,6 +2548,7 @@ situation will be resolved in the near future.
   back to it when the project will require it.
 
   So basically it is all about the key generation and exchange. 
+
 
 * Application Restart
 
@@ -2590,6 +2591,93 @@ situation will be resolved in the near future.
   #+begin_src 
   ./gradlew.bat bootRun
   #+end_src
+
+** Under the Hood
+  
+   So that is the easy version. You can work in such a way without
+   understanding what happens under the hood.
+
+   Under the hood a couple of interesting things happen.
+
+   This should give you a rough understanding of what is going on and
+   it is good in order to properly understand the frameworks out
+   there as what they are essentially doing is packaging the entire
+   complexity of the past and abstracting it away.
+
+   In this sense you see that when you build your springboot
+   application in gradle you will have a =.jar= file in the =./build=
+   repository.
+
+   This is a fat =.jar= containing nested =.jar= with all of the
+   relevant dependencies.
+
+   You can inspect such =jar= in the following way:
+
+   #+begin_src sh
+jar tvf ./spring-boot-0.0.1-SNAPSHOT.jar 
+   #+end_src
+
+   Then you see in there the structure of a spring-boot applicaiton.
+
+   You have two essential repositories that is worth for you to
+   understand:
+
+   - The =META-INF= folder
+
+     is the home for the MANIFEST.MF file. This file contains meta
+     data about the contents of the JAR.
+
+     For example, there is an entry called Main-Class that specifies
+     the name of the Java class with the static main() for executable
+     JAR files.
+
+   - =BOOT-INF=
+
+     Spring Boot applications load from the BOOT-INF folder.
+
+     Therefore the application classes must be placed in a nested
+     BOOT-INF/classes directory. Dependencies should be placed in a
+     nested BOOT-INF/lib directory.
+
+     So this is the same structure of the =WEB-INF= directory for
+     deploying your Java Servlets.
+
+*** understand the following - where is web-inf? 
+
+    in order to understand the question check at check the second
+    answer [[https://stackoverflow.com/questions/19786142/what-is-web-inf-used-for-in-a-java-ee-web-application][here]].
+
+    You will have more or less to understand that structure as many
+    applications still work in such a way. 
+    
+    is the java Servlet API respected in spring boot? is there
+    somewhere a web.xml file generation under the hood in Spring?
+
+    Spring MVC still works with Servlets. So there must be some
+    conversion under the hood. Do not know where but it is fine.
+
+    Just take it as good and understand that - all of the low level
+    stuff was abstracted away.
+
+    In fact MVC is a more rigid architectural pattern than
+    servlets. So basically Spring MVC must still base on servlets
+    under the hood but lots of the dynamics are hidden.
+
+    Spring is in fact that a very comprehensive framework covering
+    lots of stuff and abstracting it away. 
+
+    Yeah it was abstracted away. Do not know exactly how but it was
+    simply extracted away - take it for good now. Do not have the time
+    to go in the depth with it. Check [[https://stackify.com/spring-mvc/][here]].
+
+*** TODO war :noexport:
+
+    Why is it a =.jar=. I guess that if you start serving content from
+    there it should be a =.war=.
+
+    Double check at it when you have time once you start deploying the
+    entire thingy.    
+
 
 * Generating a Docker Image out of your Spring Application
 

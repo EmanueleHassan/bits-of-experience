@@ -82,18 +82,18 @@ application. Server side operations etc. for the Java world.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org09ab603" class="outline-2">
-<h2 id="org09ab603">Java Application</h2>
-<div class="outline-text-2" id="text-org09ab603">
+<div id="outline-container-org8279498" class="outline-2">
+<h2 id="org8279498">Java Application</h2>
+<div class="outline-text-2" id="text-org8279498">
 <p>
 This section answers the question: how are the bytecode, the relevant
 static front-end files etc. bundled?
 </p>
 </div>
 
-<div id="outline-container-org0cfe039" class="outline-3">
-<h3 id="org0cfe039">On WAR</h3>
-<div class="outline-text-3" id="text-org0cfe039">
+<div id="outline-container-org030657b" class="outline-3">
+<h3 id="org030657b">On WAR</h3>
+<div class="outline-text-3" id="text-org030657b">
 <p>
 A WAR (web application archive) file is used to bundle web
 components, compiled classes, and other resource files like
@@ -108,7 +108,8 @@ To run a Java web application, the WAR file needs to be deployed to
 
 <p>
 The web-app server can be any of Tomcat or Jetty or a Java EE
-server such as JBoss or Glassfish.
+server such as JBoss or Glassfish. - in order to understand the
+differences among the many <a href="https://marcohassan.github.io/bits-of-experience/posts/wsgi-apache-and-nginx/">check at this</a>.
 </p>
 
 <p>
@@ -130,7 +131,7 @@ system. Can be a package dependency, a bytecode app etc. <code>war</code> is
 the entire bundle.
 </p>
 
-<img src="../../images/strucutre.png" class="center"><p>
+<br><br><img src="../../images/strucutre.png" class="center"><br><br><p>
 So your app is deployed as <code>.war</code> and underneath you might refer to
 <code>.jar</code> that package your libraries.
 </p>
@@ -144,14 +145,231 @@ build and deployment well functioned.
 
 <p>
 In this sense refer to your notes about gradle, as like this is
-possible to start to connect the dots. 
+possible to start to connect the dots.
+</p>
+</div>
+
+<div id="outline-container-org36011af" class="outline-4">
+<h4 id="org36011af">More thorough notes on .war structure</h4>
+<div class="outline-text-4" id="text-org36011af">
+<p>
+<i>Update 21/03/22:</i>
+</p>
+
+<p>
+So I am starting to connecting the dots. I had a very good session
+with Sergio where we could understand a little bit better the
+current set up. Check at the end of this section. You will start
+to understand a couple of things. 
+</p>
+
+<p>
+I had to spend a little bit more time on the understanding of the
+general java deployment set up. That is important as if you miss
+that one you will never be able to call yourself a java developer.
+</p>
+
+<p>
+So basically the idea is to <a href="https://www.oreilly.com/library/view/learning-java-4th/9781449372477/ch15s03.html">look at the following</a>. Below just a
+couple of notes based on it. You might refer to the url directly. 
+</p>
+
+<p>
+Understand that one of the most important bit of the packaged java
+applications is the <code>web.xml</code> file. This tells the server what to
+run and how to run it.
+</p>
+
+<p>
+You can inspect the structure of a <code>.war</code> through the <code>jar</code> tool.
+</p>
+
+<div class="highlight"><pre><span></span>    jar tvf shoppingcart.war
+</pre></div>
+
+<p>
+When you build in gradle this should create one of such war
+files. When deployed the <i>name of the war</i> becomes the <i>root path</i> of
+the web-applicaiton.
+</p>
+
+<blockquote>
+<p>
+The WEB-INF directory (all caps, hyphenated) is a special
+directory that contains all deployment information and application
+code. This directory is protected by the web server, and its
+contents are not visible to outside users of the application, even
+if you add WEB-INF to the base URL.
+</p>
+
+<p>
+The WEB-INF directory also contains the <code>web.xml</code> file.
+</p>
+</blockquote>
+
+<p>
+The WEB-INF/classes and WEB-INF/lib directories contain Java class
+files and JAR libraries, respectively.
+</p>
+
+<p>
+The <code>WEB-INF/classes</code> directory is automatically added to the
+classpath of the web application, so any class files placed here
+(using the normal Java package conventions) are available to the
+application.
+</p>
+
+<p>
+After that, any JAR files located in <code>WEB-INF/lib</code> are appended to
+the web app’s classpath (the order in which they are appended is,
+unfortunately, not specified). You can place your classes in
+either location.
+</p>
+
+<p>
+Nonetheless what is standard is that your source code goes into
+<code>WEB-INF/classes</code>, while the libraries you work with will be
+packaged into <code>WEB-INF/lib</code>.
+</p>
+
+<p>
+Note now the following bit:
+</p>
+
+<blockquote>
+<p>
+It’s also possible to install JAR files directly in the servlet
+container to make them available to all web apps running on that
+server. This is often done for common libraries that will be used by
+many web apps. It’s also possible to install JAR files directly in the
+servlet container to make them available to all web apps running on
+that server. This is often done for common libraries that will be used
+by many web apps.
+</p>
+</blockquote>
+
+<p>
+The above is important in order to understand what is happening in
+our case. Cause that is the current situation. A big, fat
+web-server with a big chunck of libraries that are installed there
+in the <code>lib/xtra</code> etc. that are used across application.
+</p>
+
+<p>
+This has as well the following issue:
+</p>
+
+<blockquote>
+<p>
+The location for placing the libraries, however, is not standard and
+any classes that are deployed in this way cannot be automatically
+reloaded if changed—a feature of WAR files that we’ll discuss later.
+</p>
+</blockquote>
+
+<p>
+Which is the thing that is disturbing the developer team quite
+much.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgb1b8936" class="outline-3">
-<h3 id="orgb1b8936">Jakarta Servlet</h3>
-<div class="outline-text-3" id="text-orgb1b8936">
+<div id="outline-container-org80c7653" class="outline-4">
+<h4 id="org80c7653">web.xml working</h4>
+<div class="outline-text-4" id="text-org80c7653">
+<p>
+The web.xml file is an XML configuration file that <i>lists servlets
+and related entities to be deployed</i>, the relative names (URL
+paths) under which to deploy them, their initialization
+parameters, and their deployment details, including security and
+authorization.
+</p>
+
+<p>
+For most of the history of Java web applications, this was the
+only deployment configuration mechanism.
+</p>
+
+<p>
+However, as of the Servlet 3.0 API, there are additional
+options. Most configuration can now be done using Java
+annotations. - This is how you are used to work with.
+</p>
+
+<p>
+So check online at the url described above if you want to go in
+the details. You might have to at some point as you are working
+with legacy code. Would not surprise me if the entire structure of
+the endpoints would be actually defined over there.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org58b8bb7" class="outline-4">
+<h4 id="org58b8bb7">On reloading web apps</h4>
+<div class="outline-text-4" id="text-org58b8bb7">
+<blockquote>
+<p>
+All servlet containers are supposed to provide a facility for
+reloading WAR files; many support reloading of individual servlet
+classes after they have been modified.
+</p>
+
+<p>
+Reloading WARs is part of the servlet specification and is
+especially useful during development. Support for reloading web
+apps varies from server to server.
+</p>
+
+<p>
+Normally, all that you have to do is drop a new WAR in place of
+the old one in the proper location (e.g., the webapps directory
+for Tomcat) and the container shuts down the old application and
+deploys the new version.
+</p>
+</blockquote>
+
+<p>
+So this is generally what happens when you build your webapp
+through gradle and the ultimate way why you do not have to stop
+the web container and start it again.
+</p>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div id="outline-container-org6dd4043" class="outline-4">
+<h4 id="org6dd4043">So understand that unorthodoxy with the packaged libraries</h4>
+<div class="outline-text-4" id="text-org6dd4043">
+<p>
+They are in the webapps directory in tomcat.
+</p>
+
+<p>
+So either then the libraries there are added to the classpath
+manually or by default tomcat inspects all of the files in the
+<code>webapps</code>.
+</p>
+
+<p>
+This is an open question I will not dig further for now. I will
+ask for more info at the right moment.     
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org79ddfc6" class="outline-3">
+<h3 id="org79ddfc6">Jakarta Servlet</h3>
+<div class="outline-text-3" id="text-org79ddfc6">
 <p>
 A java servlet simply stores a class in Jakarta EE that is conform
 to the specifications of the servlet API. This is simply a standard
@@ -201,9 +419,10 @@ and REST services</li>
 </div>
 </div>
 
-<div id="outline-container-org8a3db25" class="outline-3">
-<h3 id="org8a3db25">On web-container and Java</h3>
-<div class="outline-text-3" id="text-org8a3db25">
+
+<div id="outline-container-orga023ead" class="outline-3">
+<h3 id="orga023ead">On web-container and Java</h3>
+<div class="outline-text-3" id="text-orga023ead">
 <p>
 A web-container - also called web-servlet - is the component of a
 web-server that interacts with Jakarta Servlets. (wiki)
