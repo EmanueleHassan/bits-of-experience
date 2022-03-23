@@ -166,6 +166,7 @@ at a high level but he does it in a good way that I always enjoyed.
    than one table which occurs in tables with an *identifying
    relationship*[fn:1].
 
+
 * Database Design Theory
 
   So now that I am starting to design some tables I indeed got back to
@@ -223,6 +224,7 @@ at a high level but he does it in a good way that I always enjoyed.
 
    So basically this is a basics principle.
 
+
 * Best practices of data modeling
   
   Start to work with sqlstyle-guides: [[https://www.sqlstyle.guide/][see link]].
@@ -261,7 +263,7 @@ at a high level but he does it in a good way that I always enjoyed.
 
    You should then call tables as the /pluralized version of the
    grain/.
-   
+
 
 * Toad Data Modeler
 
@@ -344,7 +346,6 @@ at a high level but he does it in a good way that I always enjoyed.
     CONSTRAINT constraint_name CHECK ( predicate ),
     ...
  )
-
 
 --------------
 
@@ -636,6 +637,7 @@ become nulls and/or fall back to the default values.
    I also heard talking about it in databricks sessions about a company
    working with them before switching to databricks.
 
+
 * On Database Architecture   
   
 ** Datbase Partitioning
@@ -770,6 +772,7 @@ normally a number.
    depending on your choice you will get errors or not if trying to
    insert the primary key in an insert statement. 
    
+
 ** Insert Syntax
   
    Recall inserting syntax
@@ -975,6 +978,7 @@ full outer join (
 				    -- double check next time you will properly use it.
     #+end_src
 
+
 ** Bit
 
    Note that this is a very particular data type.
@@ -989,7 +993,48 @@ full outer join (
    DB to check for it. 
 
    
-    
+
+** Raising Errors
+
+   So we have a heavy user of stored procedures in the team.
+
+   So he puts a lot of the business logic in SQL.
+
+   So there are stored procedures performing the relevant bit of the
+   application logic.
+
+   Now note that these stored procedures hold difficult business
+   logic.
+
+   Say for instance:
+
+   - declaring interim tables
+
+   - try catch expressions raising errors
+
+   etc.
+
+   On the last one you need to understand a bit the logic of the error
+   messages.
+
+   This is all the info you have at times. But the developer is giving
+   you some info if you understand that error messages.
+
+   Apart from the message itself that is not always 100% exhaustive -
+   you have the severity number. 
+
+   #+begin_src sql
+RAISERROR (N'This is message %s %d.', -- Message text.  
+           10, -- Severity,  
+           1, -- State,  
+           N'number', -- First argument.  
+           5); -- Second argument.  
+-- The message text returned is: This is message number 5.  
+   #+end_src
+
+   That is important as it gives you an idea about who should be
+   informed about what. 
+   
 * Footnotes
 
 [fn:2] Note as well that here is the big difference with Views. In
