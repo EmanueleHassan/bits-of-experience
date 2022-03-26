@@ -1,0 +1,1645 @@
+<style>
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+<p>
+This posts goes over the syntax of XML and Json; two of the most
+widely used formats for storing data in tree form. 
+</p>
+
+<p>
+It also goes over the validation of the data in the two
+formats. Recall that today other formats are more used in the Big Data
+world. Think for instance at <code>parquet</code>. With a basic understanding of
+the formats above it will however be easy for you to get on going with
+the other formats.
+</p>
+
+<!-- TEASER_END -->
+
+<br>
+<br>
+
+<div id="outline-container-org0f02133" class="outline-2">
+<h2 id="org0f02133">Well-formed vs. Valid Data Entries</h2>
+<div class="outline-text-2" id="text-org0f02133">
+<p>
+First of all it is important to understand the difference between a
+<i>well-formed</i> document and a <i>valid</i> document.
+</p>
+
+<p>
+Both Json and XML have a syntax that we will shortly explore. A
+<i>well-formed</i> document is a document that respects such syntax.
+</p>
+
+<p>
+On top of it, once you ingest data encoded and saved through the
+json/XML syntax in your data lake you might for instance add <b>ex-post</b>
+a validation layer on them. This will specify some format requirements
+that you as a data engineer want to set on your data - for instance
+there must be a leaf "robert" -.
+</p>
+
+<p>
+Such validation is then applied on your data and you might have
+compliant data entries with your validation policy - i.e. valid
+entries - or non-compliant data entries - i.e. non-valid entries
+-. However, this has nothing to do with whether a data entry is
+well-formed or not. A data entry might be well-formed (in terms of
+json/XML syntax), but not compliant as not respecting your validations
+schema. 
+</p>
+
+<p>
+Always recall the following validation pipeline:
+</p>
+
+<br>
+<br>
+
+<img width="60%" height="100%" src="../../images/Bildschirmfoto_2020-06-25_um_12.50.38.png" class="center">
+
+<br>
+<br>
+
+<p>
+Notice, that interesting in the Big Data World and NoSQL world the
+paradigm is in sharp contrast to the SQL world.
+There you have first to specify your validation schema and just after
+can you populate your tables. Here it is the exact opposite. You first
+save your data and populate your data lakes. You then validate your
+data. 
+</p>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org358da34" class="outline-2">
+<h2 id="org358da34">Json</h2>
+<div class="outline-text-2" id="text-org358da34">
+</div>
+<div id="outline-container-orgb43bb39" class="outline-3">
+<h3 id="orgb43bb39">Syntax</h3>
+<div class="outline-text-3" id="text-orgb43bb39">
+</div>
+<div id="outline-container-org1d679bf" class="outline-4">
+<h4 id="org1d679bf">On the atomic types</h4>
+<div class="outline-text-4" id="text-org1d679bf">
+<p>
+There are 6 different building units in Json. 
+</p>
+
+<ul class="org-ul">
+<li><p>
+Strings
+</p>
+
+<p>
+This are always double quoted <code>"string"</code>. 
+</p>
+
+<p>
+For escaping in a string you would use the backlash command, for
+instance  "\n". For escaping with unicode "\u0111".
+</p></li>
+
+<li><p>
+Numbers
+</p>
+
+<p>
+<code>3.145</code> with <b>no quotes</b>
+</p>
+
+<p>
+<code>-1.23E+5</code> scientific notation valid
+</p></li>
+
+<li><p>
+Boolean 
+</p>
+
+<p>
+<code>true</code>; <code>false</code> -&gt; no quotes and <code>.lower ()</code>
+</p></li>
+
+<li><p>
+Null
+</p>
+
+<p>
+<code>null</code> -&gt; no quotes and <code>.lower ()</code>
+</p></li>
+
+<li><p>
+Array
+</p>
+
+<p>
+<code>[2, "hello", true, null]</code> -&gt; can have multiple different data types
+within it.
+</p></li>
+
+<li><p>
+Object
+</p>
+
+<p>
+<code>{"foo": "romeo", "bar": "er mejo der Colosseo"}</code>; this is
+essentially a key-value pair store.
+</p>
+
+<p>
+Given its key-value pair idea, and the one of hash-tables which
+backs json objects it is not possible to have multiple <b>equal</b> keys
+but they rather have to be <b>unique</b>.
+</p>
+
+<p>
+Moreover, the syntax of object requires the keys to be <b>double
+quoted</b>.
+</p></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org8473981" class="outline-4">
+<h4 id="org8473981">On other Syntax characteristics</h4>
+<div class="outline-text-4" id="text-org8473981">
+<p>
+Notice that both in Json and in XML you do have to have a root
+element. In 
+</p>
+
+<ul class="org-ul">
+<li><p>
+On different levels 
+</p>
+
+<p>
+This practically means that you cannot have the following json
+document as a well-formed document.
+</p>
+
+<div class="highlight"><pre><span></span>    {
+	  &quot;burger&quot;: {
+		  &quot;extraIngredients&quot;: null,
+		  &quot;bun&quot;: [
+			  &quot;pickles&quot;,
+			  &quot;cheese&quot;,
+			  &quot;patty&quot;
+		  ]
+	  }
+     }, {
+	     &quot;burger2&quot;: {
+		     &quot;extraIngredients&quot;: null,
+		     &quot;bun&quot;: [
+			     &quot;pickles&quot;,
+			     &quot;cheese&quot;,
+			     &quot;ham&quot;
+		     ]
+	     }
+     }
+</pre></div>
+
+<p>
+You would rather have to enter a root element containing the two in
+an array
+</p>
+
+<div class="highlight"><pre><span></span>    {
+	&quot;burger_offer&quot;: [
+	    {
+		&quot;burger1&quot;: {
+		    &quot;extraIngredients&quot;: null,
+		    &quot;bun&quot;: [
+			&quot;pickles&quot;,
+			&quot;cheese&quot;,
+			&quot;patty&quot;
+		    ]
+		}
+	    },
+	    {
+		&quot;burger2&quot;: {
+		    &quot;extraIngredients&quot;: null,
+		    &quot;bun&quot;: [
+			&quot;pickles&quot;,
+			&quot;cheese&quot;,
+			&quot;ham&quot;
+		    ]
+		}
+	    }
+	]
+    }
+</pre></div>
+
+<p>
+Or alternatively you would have a root element containing all of
+the multiple key-value paris as different objects
+</p>
+
+<div class="highlight"><pre><span></span>    {
+	&quot;burger1&quot;: {
+	    &quot;extraIngredients&quot;: null,
+	    &quot;bun&quot;: [
+		&quot;pickles&quot;,
+		&quot;cheese&quot;,
+		&quot;patty&quot;
+	    ]
+	},
+	&quot;burger2&quot;: {
+	    &quot;extraIngredients&quot;: null,
+	    &quot;bun&quot;: [
+		&quot;pickles&quot;,
+		&quot;cheese&quot;,
+		&quot;ham&quot;
+	    ]
+	}
+    }
+</pre></div></li>
+</ul>
+
+
+<p>
+Given the syntax above it is clear that it is easy to break out from
+first normal form and have nested tables:
+</p>
+
+<br>
+<br>
+
+<img width="70%" height="100%" src="../../images/Bildschirmfoto_2020-06-25_um_11.02.26.png" class="center">
+
+<br>
+<br>
+<br>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org099f6b0" class="outline-3">
+<h3 id="org099f6b0">Json Validation</h3>
+<div class="outline-text-3" id="text-org099f6b0">
+<p>
+Here I use the python's <code>jsonschema</code> package to validate json
+objects. Notice that other options are possible
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">import</span> <span class="nn">json</span>                                                                    
+   <span class="kn">from</span> <span class="nn">jsonschema</span> <span class="kn">import</span> <span class="n">validate</span>
+</pre></div>
+
+<p>
+Next, you define the schema you want to apply to your json document.
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">schema</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span> 
+	<span class="s1">&#39;properties&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">},</span>
+		       <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;array&#39;</span><span class="p">,</span> 
+				   <span class="s1">&#39;items&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">}},</span>\
+		       <span class="s1">&#39;guess&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">},</span> 
+		       <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">},</span> 
+		       <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">},</span> 
+		       <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">}}</span> <span class="p">,</span>\
+	<span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">,</span> 
+		     <span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="s1">&#39;sample&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>
+Define an array of JSON objects to validate; i.e. your json document.
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">Records</span><span class="o">=</span><span class="p">[{</span><span class="s1">&#39;guess&#39;</span><span class="p">:</span> <span class="s1">&#39;Norwegian&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;Norwegian&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;AU&#39;</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Maori&#39;</span><span class="p">,</span> <span class="s1">&#39;Mandarin&#39;</span><span class="p">,</span> <span class="s1">&#39;Norwegian&#39;</span><span class="p">,</span> <span class="s1">&#39;Tongan&#39;</span><span class="p">],</span> <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;48f9c924e0d98c959d8a6f1862b3ce9a&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;2013-08-19&#39;</span><span class="p">},</span>
+<span class="p">{</span><span class="s1">&#39;guess&#39;</span><span class="p">:</span> <span class="s1">&#39;Dinka&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;Dinka&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;AU&#39;</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Danish&#39;</span><span class="p">,</span> <span class="s1">&#39;Dinka&#39;</span><span class="p">,</span> <span class="s1">&#39;Khmer&#39;</span><span class="p">,</span> <span class="s1">&#39;Lao&#39;</span><span class="p">],</span> <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;af5e8f27cef9e689a070b8814dcc02c3&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;2013-08-19&#39;</span><span class="p">},</span>
+<span class="p">{</span><span class="s1">&#39;guess&#39;</span><span class="p">:</span> <span class="s1">&#39;Turkish&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;Samoan&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;AU&#39;</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;German&#39;</span><span class="p">,</span> <span class="s1">&#39;Hungarian&#39;</span><span class="p">,</span> <span class="s1">&#39;Samoan&#39;</span><span class="p">,</span> <span class="s1">&#39;Turkish&#39;</span><span class="p">],</span> <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;509c36eb58dbce009ccf93f375358d53&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;2013-08-19&#39;</span><span class="p">},</span>
+<span class="p">{</span><span class="s1">&#39;guess&#39;</span><span class="p">:</span> <span class="s1">&#39;Latvian&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;Somali&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;AU&#39;</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Danish&#39;</span><span class="p">,</span> <span class="s1">&#39;Korean&#39;</span><span class="p">,</span> <span class="s1">&#39;Latvian&#39;</span><span class="p">,</span> <span class="s1">&#39;Somali&#39;</span><span class="p">],</span> <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;a505ab771ae7c32744ad31b3051b8ee9&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;2013-08-19&#39;</span><span class="p">},</span>
+<span class="p">{</span><span class="s1">&#39;guess&#39;</span><span class="p">:</span> <span class="s1">&#39;Japanese&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;Japanese&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;AU&#39;</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Bangla&#39;</span><span class="p">,</span> <span class="s1">&#39;Dinka&#39;</span><span class="p">,</span> <span class="s1">&#39;Italian&#39;</span><span class="p">,</span> <span class="s1">&#39;Japanese&#39;</span><span class="p">],</span> <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;3569611136ea04bab18a0cd605ced358&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;2013-08-19&#39;</span><span class="p">},</span>
+<span class="p">{</span><span class="s1">&#39;guess&#39;</span><span class="p">:</span> <span class="s1">&#39;Maltese&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;Turkish&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;AU&#39;</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Hindi&#39;</span><span class="p">,</span> <span class="s1">&#39;Lao&#39;</span><span class="p">,</span> <span class="s1">&#39;Maltese&#39;</span><span class="p">,</span> <span class="s1">&#39;Turkish&#39;</span><span class="p">],</span> <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;af0e25c7637fb0dcdc56fac6d49aa55e&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;2013-08-19&#39;</span><span class="p">},</span>
+<span class="p">{</span><span class="s1">&#39;guess&#39;</span><span class="p">:</span> <span class="s1">&#39;French&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;French&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;AU&#39;</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Burmese&#39;</span><span class="p">,</span> <span class="s1">&#39;Danish&#39;</span><span class="p">,</span> <span class="s1">&#39;French&#39;</span><span class="p">,</span> <span class="s1">&#39;Swedish&#39;</span><span class="p">],</span> <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;92f9e1c17e6df988780527341fdb471d&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;2013-08-19&#39;</span><span class="p">},</span>
+<span class="p">{</span><span class="s1">&#39;guess&#39;</span><span class="p">:</span> <span class="s1">&#39;German&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;German&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;AU&#39;</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;German&#39;</span><span class="p">,</span> <span class="s1">&#39;Serbian&#39;</span><span class="p">,</span> <span class="s1">&#39;Swedish&#39;</span><span class="p">,</span> <span class="s1">&#39;Vietnamese&#39;</span><span class="p">],</span> <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;e77d97b712adffc39e531e20237a5589&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;2013-08-19&#39;</span><span class="p">},</span>
+<span class="p">{</span><span class="s1">&#39;guess&#39;</span><span class="p">:</span> <span class="s1">&#39;Spanish&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;Spanish&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;AU&#39;</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Amharic&#39;</span><span class="p">,</span> <span class="s1">&#39;Czech&#39;</span><span class="p">,</span> <span class="s1">&#39;Sinhalese&#39;</span><span class="p">,</span> <span class="s1">&#39;Spanish&#39;</span><span class="p">],</span> <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;dc3ace49393de518e87d4f8d3ae8d9db&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;2013-08-19&#39;</span><span class="p">},</span>
+<span class="p">{</span><span class="s1">&#39;guess&#39;</span><span class="p">:</span> <span class="s1">&#39;Romanian&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;Romanian&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;AU&#39;</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Estonian&#39;</span><span class="p">,</span> <span class="s1">&#39;Japanese&#39;</span><span class="p">,</span> <span class="s1">&#39;Lao&#39;</span><span class="p">,</span> <span class="s1">&#39;Romanian&#39;</span><span class="p">],</span> <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;901fc45cba5245f21deaaca3966f825b&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;2013-08-19&#39;</span><span class="p">}]</span>
+</pre></div>
+
+<p>
+Validate the Json objects with the "validate" function (if no exceptions
+are raised, the objects are valid).
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">Records</span><span class="p">:</span>
+    <span class="n">validate</span><span class="p">(</span><span class="n">instance</span><span class="o">=</span><span class="n">line</span><span class="p">,</span><span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Validation took place. No Error was found. The document is valid.&quot;</span><span class="p">)</span>
+</pre></div>
+
+<p>
+Consider now the object 
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">obj</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;guess&#39;</span><span class="p">:</span> <span class="s1">&#39;Dinka&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;Dinka&#39;</span><span class="p">,</span> 
+     <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;AU&#39;</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="s1">&#39;Dinka&#39;</span><span class="p">,</span> 
+     <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;af5e8f27cef9e689a070b8814dcc02c3&#39;</span><span class="p">,</span> 
+     <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;2013-08-19&#39;</span><span class="p">}</span>
+</pre></div>
+
+<p>
+It is clear that choices above does not respect your validation schema
+as that it is not an array.
+</p>
+
+<p>
+In such a case we expect to observe an error
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">validate</span><span class="p">(</span><span class="n">instance</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span><span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">)</span>
+</pre></div>
+
+<p>
+This is a very minimum example for json validation. For more
+information on it google it. A good starting point is <a href="https://json-schema.org/understanding-json-schema/">this one</a>.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2e81ef0" class="outline-2">
+<h2 id="org2e81ef0">XML</h2>
+<div class="outline-text-2" id="text-org2e81ef0">
+<p>
+XML document involves two parts – prolog and body. The prolog part of
+the XML consist of administrative metadata such as XML declaration,
+optional processing instruction, Document type declaration and
+comments. The body part is partitioned into two parts – structural and
+the content (Present in the plain text).
+</p>
+</div>
+
+<div id="outline-container-orgb8fd7e5" class="outline-3">
+<h3 id="orgb8fd7e5">XML Syntax</h3>
+<div class="outline-text-3" id="text-orgb8fd7e5">
+</div>
+<div id="outline-container-org09debf0" class="outline-4">
+<h4 id="org09debf0">On the atomic types</h4>
+<div class="outline-text-4" id="text-org09debf0">
+<p>
+There are more building units in XML in comparison to Json. 
+</p>
+
+<ul class="org-ul">
+<li><p>
+elements
+</p>
+
+<p>
+an element is composed by an starting and ending tag <code>&lt;tag&gt;</code>. 
+</p>
+
+<p>
+For instance an element might be:
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;my_first_element&gt;
+     .... some nested XML ...
+     &lt;/my_first_element&gt;
+</pre></div>
+
+<p>
+This is the same as HTML in fact both are markup languages. 
+</p>
+
+<p>
+Moreover notice that you might have empty elements
+<code>&lt;startandendelement/&gt;</code>
+</p>
+
+<ul class="org-ul">
+<li>On tags names
+
+<ol class="org-ol">
+<li><p>
+<code>&lt;_bar/&gt;</code> 
+</p>
+
+<p>
+is correct. You can start a tag with an underscore.
+</p></li>
+
+<li><p>
+<code>&lt;Xmlelement/&gt;</code>
+</p>
+
+<p>
+is correct. You can start a tag with xml. It cannot be
+simply <code>&lt;xml&gt;</code>
+</p></li>
+
+<li><p>
+<code>&lt;Foo/&gt;</code>
+</p>
+
+<p>
+correct. you can start a tag with a capital letter.
+</p></li>
+
+<li><p>
+<code>&lt;foo123/&gt;</code>
+</p>
+
+<p>
+correct. you can have numbers in name tags. you cannot however
+start a tag name with a number.
+</p></li>
+
+<li><p>
+<code>&lt;foo_123/&gt;</code>
+</p>
+
+<p>
+correct.
+</p></li>
+
+<li><p>
+<code>&lt;foo-123/&gt;</code>
+</p>
+
+<p>
+correct.
+</p></li>
+
+<li><p>
+<code>&lt;foo#123/&gt;</code>
+</p>
+
+<p>
+not correct. hashtag is not allowed in tag names. Notice moreover
+that hashtags are used for escaping and inserting special
+characters. You can find a list of possible characters under <a href="https://www.dvteclipse.com/documentation/svlinter/How_to_use_special_characters_in_XML.3F.html">this
+link</a>.
+</p>
+
+<p>
+Notice moreover, that also <code>&amp;</code> are not allowed in XML tag names.
+Many other characters not allowed such as <code>;</code>, <code>:</code>, <code>?</code>, <code>+</code>, <code>!</code>.
+</p></li>
+
+<li><p>
+<code>&lt;foo.123/&gt;</code>
+</p>
+
+<p>
+correct. You cannot start the tag name with a <code>.</code>
+</p></li>
+
+<li><p>
+<code>&lt;-123/&gt;</code>
+</p>
+
+<p>
+Not allowed. You could however start with an underscore. For
+instance <code>_123</code> would be valid. In general you have always to start
+with either a letter or an underscore.
+</p></li>
+
+<li><p>
+<code>&lt;123foo/&gt;</code>
+</p>
+
+<p>
+Not allowed. Cannot start with a number.
+</p></li>
+
+<li><p>
+<code>&lt;123/&gt;</code>
+</p>
+
+<p>
+Not allowed. Cannot be just numbers as you are in 10.
+</p></li>
+
+<li><p>
+<code>&lt;doctype/&gt;</code>
+</p>
+
+<p>
+correct.
+</p></li>
+</ol></li>
+</ul></li>
+
+<li><p>
+attributes
+</p>
+
+<p>
+these are <b>key-value pairs</b> specified in the <code>opening tag</code> of an
+element. 
+</p>
+
+<p>
+Think for instance at HMTL where you can specify <code>CSS</code> properites
+with <code>"height = 100%"</code>. 
+</p>
+
+<p>
+The concept is the same. The syntax different. Here you have
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;open_tag attribute = &quot;nutella&quot;&gt;
+     .... some nested XML ...
+     &lt;/open_tag&gt;
+</pre></div>
+
+<p>
+Notice that the attribute key is <b>without</b> quotation marks. The
+value might be <b>double or single quoted</b>.
+</p>
+
+<p>
+Notice moreover that you cannot insert booleans or number as
+values. They should always be in double quotes. 
+</p>
+
+<p>
+Finally, notice that as quotes are delimiters of the attribute
+value you cannot have quotes inside a value written as such. You
+should rather escape them through the predefined entities below.
+</p></li>
+
+<li><p>
+text
+</p>
+
+<p>
+goes within an element as plain text
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;my_first_element&gt;
+     Here you can enter your desired text in the way you want.
+     &lt;/my_first_element&gt;
+</pre></div></li>
+
+<li><p>
+comments
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;!-- like this you enter comments --&gt;
+     &lt;my_first_element&gt;
+     Here you can enter your desired text in the way you want.
+     &lt;/my_first_element&gt;
+</pre></div></li>
+
+<li><p>
+specify xml verison and encoding
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;?xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+     &lt;my_first_element&gt;
+     Here you can enter your desired text in the way you want.
+     &lt;/my_first_element&gt;
+</pre></div></li>
+
+<li><p>
+predefined entities
+</p>
+
+<p>
+XML has only 5 predefined entities. Associate each escape code with the
+corresponding character. 
+</p>
+
+<ol class="org-ol">
+<li><code>&amp;lt;</code> "&lt;"</li>
+
+<li><code>&amp;amp;</code> "&amp;"</li>
+
+<li><code>&amp;gt;</code> "&gt;"</li>
+
+<li><code>&amp;quot;</code> """</li>
+
+<li><code>&amp;apos;</code> "'"</li>
+</ol></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org3fa2a0f" class="outline-4">
+<h4 id="org3fa2a0f">On other Syntax characteristics</h4>
+<div class="outline-text-4" id="text-org3fa2a0f">
+<ul class="org-ul">
+<li><p>
+on element levels
+</p>
+
+<p>
+As in Json an important aspect when it comes to syntax you cannot
+have more than one opening tag. In this sense the following entry
+would <b>not be well-formed</b>.
+</p>
+
+<div class="highlight"><pre><span></span>       &lt;Burger&gt;
+	   &lt;Bun&gt;
+	       &lt;Pickles/&gt;
+	       &lt;Cheese/&gt;
+	       &lt;Patty/&gt;
+	   &lt;/Bun&gt;
+       &lt;/Burger&gt;
+       &lt;Cola&gt;
+	   &lt;Sugar/&gt;
+	   &lt;Water/&gt;
+       &lt;/Cola&gt;
+       &lt;Fries kind=&quot;French&quot;/&gt;
+</pre></div>
+
+<p>
+Not valid. You cannot have multiple opening tags. 
+Correct version
+</p>
+
+<div class="highlight"><pre><span></span>       &lt;food&gt;
+	 &lt;Burger&gt;
+	   &lt;Bun&gt;
+	     &lt;Pickles/&gt;
+	     &lt;Cheese/&gt;
+	     &lt;Patty/&gt;
+	   &lt;/Bun&gt;
+	 &lt;/Burger&gt;
+	 &lt;Cola&gt;
+	   &lt;Sugar/&gt;
+	   &lt;Water/&gt;
+	 &lt;/Cola&gt;
+	 &lt;Fries kind=&quot;French&quot;/&gt;
+       &lt;/food&gt;
+</pre></div></li>
+
+<li><p>
+On the element nestedness
+</p>
+
+<p>
+Notice that an element can be nested into an element but cannot
+be nested in an element tag. 
+</p>
+
+<p>
+<b>Not valid</b>
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;food&gt;
+       &lt;Cola &lt;sparkling/&gt; &gt;
+	 &lt;Sugar/&gt;
+	 &lt;Water/&gt;
+       &lt;/Cola&gt;
+       &lt;Fries kind=&quot;French&quot;/&gt;
+     &lt;/food&gt;
+</pre></div></li>
+</ul>
+
+
+
+<ul class="org-ul">
+<li><p>
+Notice the escaping of greater and smaller than
+</p>
+
+<p>
+Important is to notice that you might well escape both the
+greater and less than symbols. This is because should you have
+them in text then your parser would start to do mess with the
+elements tags. In this sense you cannot have such symbols in the
+text, nor even in attributes values etc.
+</p>
+
+<p>
+In a similar way in a comment <code>--</code> is reserved.
+</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org3b3513f" class="outline-3">
+<h3 id="org3b3513f">XML Validation</h3>
+<div class="outline-text-3" id="text-org3b3513f">
+<p>
+In the case of XML you generally create a single <code>XML document</code>
+specifying the schema to apply to your <code>XML data document</code>. You would
+then in fact work with two XML documents. 
+</p>
+
+<p>
+To bind the two <code>XML documents</code> you would use:
+</p>
+
+<ul class="org-ul">
+<li>On the schema side:</li>
+</ul>
+
+<div class="highlight"><pre><span></span>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;xs:schema
+ xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+ &lt;!-- enter your schema here; for instance for foo--&gt;
+ &lt;xs:element name = &quot;foo&quot; type = &quot;xs:integer&quot; /&gt;
+&lt;/xs:schema&gt;
+</pre></div>
+
+<p>
+Notice that "<a href="http://www.w3.org/2001/XMLSchema">http://www.w3.org/2001/XMLSchema</a>"  describes the XML
+schema involving the built-in data types we will shortly see and the
+<code>SimpleType</code> and <code>ComplexType</code> to create your customed schema. 
+</p>
+
+<ul class="org-ul">
+<li>On the document side</li>
+</ul>
+
+<div class="highlight"><pre><span></span>&lt;?xml version= &quot;1.0&quot; encoding = &quot;UFT-8&quot; ?&gt;
+&lt;foo
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:noNamespaceSchemaLocation=&quot;schema.xsd&quot;&gt;
+  17 
+&lt;/foo&gt;
+</pre></div>
+
+
+<p>
+Notice that the above method you specify the schema for your document
+by referring to the validation schema in the root element. Notice that
+here you do not leverage Namespaces. You would have to do that for
+larger projects. To keep your work structured.
+</p>
+
+<p>
+Given such basics structure you have now to understand how to properly
+specify the schema of your data. 
+</p>
+
+<p>
+As said in the schema <code>XML doucment</code> you refer to the XML document
+provided by the XML defined by the W3C foundation. 
+</p>
+
+<p>
+There you have already a few built-in <b>simple types</b>:
+</p>
+
+<br>
+<br>
+
+<style>
+ {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 0px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+</style>
+
+<div class="row">
+  <div class="column">
+    <img style="width:100%" src="../../images/Bildschirmfoto_2020-06-25_um_16.42.21.png">
+  </div>
+  <div class="column">
+    <img style="width:100%" src="../../images/Bildschirmfoto_2020-06-25_um_16.42.46.png">
+  </div>
+</div>
+
+<br>
+<br>
+
+<p>
+An example of using such basic data types is the one above.
+</p>
+
+<p>
+When such basic built-in data types do not suffice for your business
+case you can specify your customized validation for elements. 
+</p>
+
+<p>
+In this sense in XML you distinguish among:
+</p>
+
+<ul class="org-ul">
+<li>simpleType</li>
+
+<li>complexType</li>
+</ul>
+
+<p>
+We will look at both in turn
+</p>
+</div>
+
+
+<div id="outline-container-orgfd36448" class="outline-4">
+<h4 id="orgfd36448">simpleType</h4>
+<div class="outline-text-4" id="text-orgfd36448">
+<p>
+This class is composed of
+</p>
+
+<ul class="org-ul">
+<li>Restriction</li>
+
+<li>Union</li>
+
+<li>List</li>
+</ul>
+
+<p>
+Notice therefore that all refer to a single XML element and you
+specify the properties of it; i.e. the properites of the content
+within the tags <b>not the structure of the element in the
+tree</b>. This is in fact the task of the complexType we will see
+later. Moreover you cannot specify properties of
+<b>attributes</b>. simpleType cannot have any of these.
+</p>
+
+<p>
+Three examples for the above are
+</p>
+
+
+<ul class="org-ul">
+<li>Restricting string of 3 letters</li>
+</ul>
+
+<div class="highlight"><pre><span></span>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;xs:schema
+      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+      &lt;xs:simpleType name=&quot;myFixedLengthString&quot;&gt;
+	&lt;xs:restriction base=&quot;xs:string&quot;&gt;
+	  &lt;xs:length value=&quot;3&quot;/&gt;
+	&lt;/xs:restriction&gt;
+      &lt;/xs:simpleType&gt;
+      &lt;xs:element name=&quot;foo&quot; type=&quot;myFixedLengthString&quot;/&gt;
+    &lt;/xs:schema&gt;
+</pre></div>
+
+<div class="highlight"><pre><span></span>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;foo
+      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+      xsi:noNamespaceSchemaLocation=&quot;schema.xsd&quot;&gt;ZRH&lt;/foo&gt;
+</pre></div>
+
+<ul class="org-ul">
+<li>Specifying either a type or the other (= union)</li>
+</ul>
+
+<div class="highlight"><pre><span></span>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;xs:schema
+      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+      &lt;xs:simpleType name=&quot;myUnion&quot;&gt;
+	&lt;xs:union memberTypes=&quot;xs:integer xs:boolean&quot;/&gt;
+      &lt;/xs:simpleType&gt;
+
+      &lt;xs:element name=&quot;foo&quot; type=&quot;myUnion&quot;/&gt;
+    &lt;/xs:schema&gt;
+</pre></div>
+
+<div class="highlight"><pre><span></span>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;foo
+      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+      xsi:noNamespaceSchemaLocation=&quot;schema.xsd&quot;&gt;
+    true
+    &lt;/foo&gt;
+</pre></div>
+
+<ul class="org-ul">
+<li>Specify a list of strings</li>
+</ul>
+
+<div class="highlight"><pre><span></span>    &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+    &lt;xs:schema
+      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+      &lt;xs:simpleType name=&quot;myList&quot;&gt;
+	&lt;xs:list itemType=&quot;xs:string&quot;/&gt;
+      &lt;/xs:simpleType&gt;
+
+      &lt;xs:element name=&quot;foo&quot; type=&quot;myList&quot;/&gt;
+    &lt;/xs:schema&gt;
+</pre></div>
+
+<div class="highlight"><pre><span></span>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;foo
+      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+      xsi:noNamespaceSchemaLocation=&quot;schema.xsd&quot;&gt;
+    myfirst_element mysecond_element mythird_element 
+    &lt;/foo&gt;
+</pre></div>
+
+
+<p>
+Notice that the above are also simple Classes as them must act on
+the tree <b>end nodes</b>. It is not possible to apply them at higher
+levels in the tree as they would then involve other sub-elements
+and become complex. 
+</p>
+
+<p>
+In such a case you need to specify a complex data type as we will
+see next - i.e. the complex content / mixed content - type.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org9e4c1c4" class="outline-4">
+<h4 id="org9e4c1c4">complexType</h4>
+<div class="outline-text-4" id="text-org9e4c1c4">
+<p>
+This are used as said above for dealing with the case of
+specifying the form of elements that are not at the end of the
+tree hierarchy but rather stand on top of the tree. 
+</p>
+
+<p>
+Finally notice that only <code>elements</code> can have <code>complexType</code>,
+attributes always have <code>simpleType</code>. Recall the logic that with
+<code>complexType</code> you specify the properties that goes within the
+element. 
+</p>
+
+
+<p>
+The major types belonging to the class are:
+</p>
+
+<ul class="org-ul">
+<li><p>
+Empty Content
+</p>
+
+<p>
+Here you specify that a particular element is empty
+</p></li>
+
+<li><p>
+Simple Content
+</p>
+
+<p>
+Here you specify that the element cannot have nested elements
+</p></li>
+
+<li><p>
+Complex Content
+</p>
+
+<p>
+Here you do not allow text for the element but rather a set of
+element children that goes deeper in the tree. You can specify
+which element children are allowed.
+</p></li>
+
+<li><p>
+Mixed Content
+</p>
+
+<p>
+here you specify that the element might contain different data
+types: i.e. strings, further elements, integers etc.
+</p></li>
+</ul>
+
+<p>
+Examples:
+</p>
+
+<ul class="org-ul">
+<li><p>
+Empty type
+</p>
+
+<div class="highlight"><pre><span></span>    &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+    &lt;xs:schema
+      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+      &lt;xs:complexType name=&quot;EmptyElement&quot;&gt;
+	&lt;xs:sequence/&gt;
+      &lt;/xs:complexType&gt;
+
+      &lt;xs:element name=&quot;foo&quot; type=&quot;EmptyElement&quot;/&gt;
+    &lt;/xs:schema&gt;
+</pre></div>
+
+<div class="highlight"><pre><span></span>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;foo/&gt;
+</pre></div></li>
+
+<li><p>
+simple Content
+</p>
+
+<p>
+Recall that in simple Content you are not allowed to have
+children in your elements sequence. This is different for complex
+Content. You can just have text for an element. 
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+     &lt;xs:schema
+       xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+       &lt;xs:complexType name=&quot;JustElements&quot;&gt;
+	 &lt;xs:simpleContent&gt;
+	   &lt;xs:extension base = &quot;xs:string&quot;/&gt;
+	 &lt;/xs:simpleContent&gt;
+       &lt;/xs:complexType&gt;
+
+       &lt;xs:element name=&quot;foo&quot; type=&quot;JustElements&quot;/&gt;
+     &lt;/xs:schema&gt;
+</pre></div>
+
+<p>
+Notice that you always have to specify the extension of your
+<code>simpleContent</code> otherwise you get an error. It cannot be empty.
+</p>
+
+<p>
+Notice moreover that being it of <code>complexType</code> you might even
+specify the attribute there.
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+     &lt;xs:schema
+       xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+       &lt;xs:complexType name=&quot;JustElements&quot;&gt;
+	 &lt;xs:simpleContent&gt;
+	   &lt;xs:extension base = &quot;xs:string&quot;&gt;
+	     &lt;xs:attribute name=&quot;bar&quot; type=&quot;xs:string&quot; use = &quot;required&quot;/&gt;
+	   &lt;/xs:extension&gt;
+	 &lt;/xs:simpleContent&gt;
+       &lt;/xs:complexType&gt;
+
+       &lt;xs:element name=&quot;foo&quot; type=&quot;JustElements&quot;/&gt;
+     &lt;/xs:schema&gt;
+</pre></div>
+
+<p>
+Then the following document would be valid
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;foo bar = &quot;jdfhakj adf&quot;&gt;
+     dlsaflk aldjfldaj alfÃ¶jla
+     &lt;/foo&gt;
+</pre></div></li>
+
+<li><p>
+complex Content
+</p>
+
+<div class="highlight"><pre><span></span>    &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+    &lt;xs:schema
+      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+      &lt;xs:complexType name=&quot;NestedElements&quot;&gt;
+	&lt;xs:sequence&gt;
+	  &lt;xs:element name= &quot;bau&quot;/&gt;
+	  &lt;xs:element name= &quot;miao&quot;/&gt;
+	&lt;/xs:sequence&gt;
+      &lt;/xs:complexType&gt;
+
+      &lt;xs:element name=&quot;foo&quot; type=&quot;NestedElements&quot;/&gt;
+    &lt;/xs:schema&gt;
+</pre></div>
+
+<div class="highlight"><pre><span></span>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;foo&gt;
+      &lt;bau/&gt;
+      &lt;miao/&gt;
+    &lt;/foo&gt;
+</pre></div>
+
+<p>
+Notice that with the above you specify that foo is a sequence of
+elements. You cannot have text beside the elements. In contrast to
+simple Content you <b>can have</b> nested elements.
+</p>
+
+<p>
+However within each of the elements of the sequence you can do
+pretty much whatever you want as you did not specify any
+particular validation form for them. For instance you can specify 
+</p>
+
+<div class="highlight"><pre><span></span>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;foo&gt;
+      &lt;bau&gt;
+	  bulldog
+	  &lt;ricky/&gt;
+      &lt;/bau&gt;
+      &lt;miao/&gt;
+    &lt;/foo&gt;
+</pre></div>
+
+<p>
+It is now clear given the previous discussion that you can combine
+<code>simpleType</code> and <code>complexType</code> to make more specific validation
+schema. For instance you might set:
+</p>
+
+<div class="highlight"><pre><span></span>    &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+    &lt;xs:schema
+      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+      &lt;xs:complexType name=&quot;NestedElements&quot;&gt;
+	&lt;xs:sequence&gt;
+	  &lt;xs:element name= &quot;bau&quot;/&gt;
+	  &lt;xs:element name= &quot;miao&quot;&gt;
+	     &lt;xs:simpleType&gt;
+	       &lt;xs:restriction base = &quot;xs:string&quot;&gt;
+		 &lt;xs:length value= &quot;3&quot;/&gt;
+	       &lt;/xs:restriction&gt;
+	     &lt;/xs:simpleType&gt;
+	  &lt;/xs:element&gt;
+	&lt;/xs:sequence&gt;
+      &lt;/xs:complexType&gt;
+
+      &lt;xs:element name=&quot;foo&quot; type=&quot;NestedElements&quot;/&gt;
+    &lt;/xs:schema&gt;
+</pre></div>
+
+<div class="highlight"><pre><span></span>    &lt;foo&gt;
+      &lt;bau&gt;
+      &lt;/bau&gt;
+      &lt;miao&gt;ZRH&lt;/miao&gt;
+    &lt;/foo&gt;
+</pre></div>
+
+<p>
+Notice moreover that white spaces count in the length so that
+while the above would be validated with the above schema the
+following would <b>not be valid</b>
+</p>
+
+<div class="highlight"><pre><span></span>    &lt;foo&gt;
+      &lt;bau&gt;
+      &lt;/bau&gt;
+      &lt;miao&gt;
+      ZRH
+      &lt;/miao&gt;
+    &lt;/foo&gt;
+</pre></div>
+
+<p>
+Finally notice that with the schema above your are fixing the
+schema on which the child elements are allowed to
+appear. I.e. changing the order will result in a validation
+error. 
+</p>
+
+<p>
+To give flexibility to the order of the element children you
+might leverage the <code>&lt;xs:all&gt;</code> type defined in the XLS W3C
+schema. This tells the schema processor that each of the
+contained elements must appear once in the target document, but
+can appear in any order. 
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+     &lt;xs:schema
+       xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+       &lt;xs:complexType name=&quot;NestedElements&quot;&gt;
+	 &lt;xs:all&gt;
+	   &lt;xs:element name= &quot;bau&quot;/&gt;
+	   &lt;xs:element name= &quot;miao&quot;/&gt;
+	 &lt;/xs:all&gt;
+       &lt;/xs:complexType&gt;
+
+       &lt;xs:element name=&quot;foo&quot; type=&quot;NestedElements&quot;/&gt;
+     &lt;/xs:schema&gt;
+</pre></div>
+
+<p>
+Such that the following document would be valid.
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;foo&gt;
+       &lt;miao/&gt;
+       &lt;bau/&gt;
+     &lt;/foo&gt;
+</pre></div>
+
+<p>
+In some cases, what is desired is that one and only one element
+appear from a collection of possibilities. The <code>xs:choice</code> element
+supports this.
+</p>
+
+<p>
+For instance in 
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+     &lt;xs:schema
+       xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+       &lt;xs:complexType name=&quot;NestedElements&quot;&gt;
+	 &lt;xs:choice&gt;
+	   &lt;xs:element name= &quot;bau&quot;/&gt;
+	   &lt;xs:element name= &quot;miao&quot;/&gt;
+	 &lt;/xs:choice&gt;
+       &lt;/xs:complexType&gt;
+
+       &lt;xs:element name=&quot;foo&quot; type=&quot;NestedElements&quot;/&gt;
+     &lt;/xs:schema&gt;
+</pre></div>
+
+<p>
+Like that you would have the following document to be valid:
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;foo&gt;
+       &lt;miao/&gt;
+     &lt;/foo&gt;
+</pre></div>
+
+<p>
+Notice however that a document involving all of the elements
+would <b>not be valid</b>:
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;foo&gt;
+       &lt;miao/&gt;
+       &lt;bau/&gt;
+     &lt;/foo&gt;
+</pre></div></li>
+
+<li><p>
+Mixed Content
+</p>
+
+<p>
+As said this is especially important when you want to mix text
+and elements within a element. It extends the complex Content in
+this sense.
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+     &lt;xs:schema
+       xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+       &lt;xs:complexType name=&quot;NestedMixedElements&quot; mixed = &quot;true&quot;&gt;
+	 &lt;xs:sequence&gt;
+	   &lt;xs:element name= &quot;bau&quot;/&gt;
+	   &lt;xs:element name= &quot;miao&quot;/&gt;
+	 &lt;/xs:sequence&gt;
+       &lt;/xs:complexType&gt;
+
+       &lt;xs:element name=&quot;foo&quot; type=&quot;NestedMixedElements&quot;/&gt;
+     &lt;/xs:schema&gt;
+</pre></div>
+
+<p>
+Then the following document would now be accepted
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;foo&gt;
+       genZ
+       &lt;bau/&gt;
+       &lt;miao/&gt;
+     &lt;/foo&gt;
+</pre></div></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org82c03e9" class="outline-4">
+<h4 id="org82c03e9">On <b>attributes in complexType</b>.</h4>
+<div class="outline-text-4" id="text-org82c03e9">
+<p>
+Finally notice that for <code>attributes</code> it is different. When you
+specify an attribute you might use it or not.
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+     &lt;xs:schema
+       xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+       &lt;xs:complexType name=&quot;JustElements&quot;&gt;
+	 &lt;xs:sequence&gt;
+	   &lt;xs:element name= &quot;bau&quot;/&gt;
+	   &lt;xs:element name= &quot;miao&quot;&gt;
+	     &lt;xs:complexType&gt;
+	       &lt;xs:attribute name=&quot;colour&quot;/&gt;
+	     &lt;/xs:complexType&gt;
+	   &lt;/xs:element&gt;
+	 &lt;/xs:sequence&gt;
+       &lt;/xs:complexType&gt;
+
+       &lt;xs:element name=&quot;foo&quot; type=&quot;JustElements&quot;/&gt;
+     &lt;/xs:schema&gt;
+</pre></div>
+
+<p>
+So both of the following would be  fine
+</p>
+
+<div class="highlight"><pre><span></span>     &lt;foo&gt;
+       &lt;bau/&gt;
+       &lt;miao/&gt;
+     &lt;/foo&gt;
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>     &lt;foo&gt;
+       &lt;bau/&gt;
+       &lt;miao colour = &quot;brown&quot;/&gt;
+     &lt;/foo&gt;
+</pre></div>
+
+
+<p>
+In order to specify that an attribute is strictly required you can
+use <code>use = "required"</code> as in the next example:
+</p>
+
+<div class="highlight"><pre><span></span>    &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+    &lt;xs:schema
+      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+      &lt;xs:complexType name=&quot;JustElements&quot;&gt;
+	&lt;xs:sequence&gt;
+	  &lt;xs:element name= &quot;bau&quot;/&gt;
+	  &lt;xs:element name= &quot;miao&quot;&gt;
+	    &lt;xs:complexType&gt;
+	      &lt;xs:attribute name=&quot;colour&quot; use = &quot;required&quot; /&gt;
+	    &lt;/xs:complexType&gt;
+	  &lt;/xs:element&gt;
+	&lt;/xs:sequence&gt;
+      &lt;/xs:complexType&gt;
+
+      &lt;xs:element name=&quot;foo&quot; type=&quot;JustElements&quot;/&gt;
+    &lt;/xs:schema&gt;
+</pre></div>
+
+<p>
+Then the following document would not be valid
+</p>
+
+<div class="highlight"><pre><span></span>    &lt;foo&gt;
+      &lt;bau/&gt;
+      &lt;miao/&gt;
+    &lt;/foo&gt;
+</pre></div>
+</div>
+</div>
+
+
+
+
+
+<div id="outline-container-orgd408abe" class="outline-4">
+<h4 id="orgd408abe">On the way of naming and assigning user defined Types</h4>
+<div class="outline-text-4" id="text-orgd408abe">
+<p>
+Finally notice that there two methods for assigning a user defined
+type. One is by naming the created <code>simpleType</code> and <code>complexType</code>
+and specifying an element must fulfill the properties by referring
+to the assigned name in the <code>type</code> of the element; see for
+instance.
+</p>
+
+<p>
+This is what was done the most of the time. See for instance in
+</p>
+
+<div class="highlight"><pre><span></span>    &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+    &lt;xs:schema
+      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+      &lt;!-- here you specify the new user defined type --&gt;
+      &lt;xs:complexType name=&quot;JustElements&quot;&gt;
+	&lt;xs:sequence&gt;
+	  &lt;xs:element name= &quot;bau&quot;/&gt;
+	  &lt;xs:element name= &quot;miao&quot;/&gt;
+	&lt;/xs:sequence&gt;
+      &lt;/xs:complexType&gt;
+
+      &lt;!-- here you specify the type for your element --&gt;
+      &lt;xs:element name=&quot;foo&quot; type=&quot;JustElements&quot;/&gt; 
+    &lt;/xs:schema&gt;
+</pre></div>
+
+<p>
+A second option is to specify the type directly within the element
+without using a name. This was for instance used for the <code>miao</code>
+element above.
+</p>
+
+
+<div class="highlight"><pre><span></span>    &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+    &lt;xs:schema
+      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+      &lt;xs:complexType name=&quot;JustElements&quot;&gt;
+	&lt;xs:sequence&gt;
+	  &lt;xs:element name= &quot;bau&quot;/&gt;
+	  &lt;xs:element name= &quot;miao&quot;&gt;
+	     &lt;xs:simpleType&gt;
+	       &lt;xs:restriction base = &quot;xs:string&quot;&gt;
+		 &lt;xs:length value= &quot;3&quot;/&gt;
+	       &lt;/xs:restriction&gt;
+	     &lt;/xs:simpleType&gt;
+	  &lt;/xs:element&gt;
+	&lt;/xs:sequence&gt;
+      &lt;/xs:complexType&gt;
+
+      &lt;xs:element name=&quot;foo&quot; type=&quot;JustElements&quot;/&gt;
+    &lt;/xs:schema&gt;
+</pre></div>
+
+
+<p>
+Notice finally that keeping consistency and using just <b>named</b>
+calsses you could write the above in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>    &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+    &lt;xs:schema
+      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+      &lt;xs:complexType name=&quot;JustElements&quot;&gt;
+	&lt;xs:sequence&gt;
+	  &lt;xs:element name= &quot;bau&quot;/&gt;
+	  &lt;xs:element name= &quot;miao&quot; type = &quot;MiaoInt&quot; /&gt;
+	&lt;/xs:sequence&gt;
+      &lt;/xs:complexType&gt;
+
+      &lt;xs:simpleType name = &quot;MiaoInt&quot;&gt;
+	&lt;xs:restriction base = &quot;xs:string&quot;&gt;
+	  &lt;xs:length value= &quot;3&quot;/&gt;
+	&lt;/xs:restriction&gt;
+      &lt;/xs:simpleType&gt;
+
+      &lt;xs:element name=&quot;foo&quot; type=&quot;JustElements&quot;/&gt;
+
+    &lt;/xs:schema&gt;
+</pre></div>
+
+<p>
+Finally using the other option you can just <b>specify all of the
+types</b> directly without naming them and assigning them.
+</p>
+
+<div class="highlight"><pre><span></span>    &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+    &lt;xs:schema
+      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+      &lt;xs:element name=&quot;foo&quot;&gt;
+	&lt;xs:complexType&gt;
+	  &lt;xs:sequence&gt;
+	    &lt;xs:element name= &quot;bau&quot;/&gt;
+	    &lt;xs:element name= &quot;miao&quot;&gt;
+	       &lt;xs:simpleType&gt;
+		 &lt;xs:restriction base = &quot;xs:string&quot;&gt;
+		   &lt;xs:length value= &quot;3&quot;/&gt;
+		 &lt;/xs:restriction&gt;
+	       &lt;/xs:simpleType&gt;
+	    &lt;/xs:element&gt;
+	  &lt;/xs:sequence&gt;
+	&lt;/xs:complexType&gt;
+      &lt;/xs:element&gt;
+    &lt;/xs:schema&gt;
+</pre></div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org9a46db8" class="outline-3">
+<h3 id="org9a46db8">XML Keys</h3>
+<div class="outline-text-3" id="text-org9a46db8">
+<p>
+This section goes briefly over the concept of keys in XML. The idea
+is that you might want to specify a <code>primary key</code> similar to the
+SQL concept so that two elements can be identified by it and must
+be unique.
+</p>
+
+<p>
+This can be done through the <code>&lt;xs:key&gt;</code> XLS type.
+</p>
+
+<p>
+Consider first
+</p>
+
+<div class="highlight"><pre><span></span>   &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+   &lt;xs:schema
+     xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+     &lt;xs:complexType name=&quot;JustElements&quot;&gt;
+       &lt;xs:sequence&gt;
+	 &lt;xs:element name= &quot;bau&quot;/&gt;
+	 &lt;xs:element name= &quot;miao&quot;/&gt;
+       &lt;/xs:sequence&gt;
+     &lt;/xs:complexType&gt;
+
+     &lt;xs:element name=&quot;foo&quot; type=&quot;JustElements&quot;/&gt;
+
+   &lt;/xs:schema&gt;
+</pre></div>
+
+<div class="highlight"><pre><span></span>   &lt;foo&gt;
+     &lt;bau&gt;
+	&lt;dog&gt;
+	   labrador
+	&lt;/dog&gt;
+	&lt;dog&gt;
+	   maltese
+	&lt;/dog&gt;
+     &lt;/bau&gt;
+    &lt;miao/&gt;
+   &lt;/foo&gt;
+</pre></div>
+
+<p>
+Consider now the specification of the following schema
+</p>
+
+<div class="highlight"><pre><span></span>    &lt;? xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?&gt;
+     &lt;xs:schema
+     xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+
+     &lt;xs:element name=&quot;foo&quot;&gt;
+       &lt;xs:complexType&gt;
+	 &lt;xs:sequence&gt;
+	   &lt;xs:element name= &quot;dogs&quot;/&gt;
+	   &lt;xs:element name= &quot;miao&quot;/&gt;
+	 &lt;/xs:sequence&gt;
+       &lt;/xs:complexType&gt;
+       &lt;xs:key name= &quot;bau-name&quot;&gt;
+	 &lt;xs:selector xpath = &quot;dogs/bau&quot;/&gt;
+	 &lt;xs:field xpath = &quot;@id&quot;/&gt;
+       &lt;/xs:key&gt;
+     &lt;/xs:element&gt;
+
+   &lt;/xs:schema&gt;
+</pre></div>
+
+<p>
+Then you would get an error with a document as the one above as a
+(primary) key is missing
+</p>
+
+<div class="highlight"><pre><span></span>   &lt;foo&gt;
+     &lt;dogs&gt;
+	&lt;bau&gt;
+	   labrador
+	&lt;/bau&gt;
+	&lt;bau&gt;
+	   maltese
+	&lt;/bau&gt;
+     &lt;/dogs&gt;
+    &lt;miao/&gt;
+   &lt;/foo&gt;
+</pre></div>
+
+<p>
+However the following document would be valid
+</p>
+
+<div class="highlight"><pre><span></span>   &lt;foo&gt;
+     &lt;dogs&gt;
+	&lt;bau id = &quot;1&quot;&gt;
+	   labrador
+	&lt;/bau&gt;
+	&lt;bau id = &quot;2&quot;&gt;
+	   maltese
+	&lt;/bau&gt;
+     &lt;/dogs&gt;
+    &lt;miao/&gt;
+   &lt;/foo&gt;
+</pre></div>
+</div>
+</div>
+</div>
