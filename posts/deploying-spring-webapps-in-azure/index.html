@@ -13,6 +13,7 @@
 <link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/deploying-spring-webapps-in-azure/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
 <link rel="prev" href="../macro-variables/" title="Macro Variables" type="text/html">
+<link rel="next" href="../azure-pipelines/" title="Azure Pipelines" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="Deploying Spring Webapps in Azure">
 <meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/deploying-spring-webapps-in-azure/">
@@ -28,6 +29,7 @@ to properly experiment in your Sandbox.
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2022-03-21T16:34:55+01:00">
 <meta property="article:tag" content="azure">
+<meta property="article:tag" content="software-engineering">
 </head>
 <body>
     <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -66,6 +68,7 @@ to properly experiment in your Sandbox.
 <i class="fa fa-tags"></i> Tags:</h3>
         <ul itemprop="keywords" class="tags-ul">
 <li><a class="tag p-category" href="../../categories/azure/" rel="tag">azure</a></li>
+            <li><a class="tag p-category" href="../../categories/software-engineering/" rel="tag">software-engineering</a></li>
         </ul>
 </div>
 
@@ -83,9 +86,9 @@ to properly experiment in your Sandbox.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org4a9cecf" class="outline-2">
-<h2 id="org4a9cecf">Choosing the right subscription</h2>
-<div class="outline-text-2" id="text-org4a9cecf">
+<div id="outline-container-org3327fa1" class="outline-2">
+<h2 id="org3327fa1">Choosing the right subscription</h2>
+<div class="outline-text-2" id="text-org3327fa1">
 <p>
 Ok so had a little bit of an hiccup at the beginning. Could not find
 the new subscription to the sandbox environment I could get for
@@ -116,9 +119,9 @@ the resource group and directly set up stuff over there.
 </div>
 </div>
 
-<div id="outline-container-orgc23a41a" class="outline-2">
-<h2 id="orgc23a41a">Choosing the runtime</h2>
-<div class="outline-text-2" id="text-orgc23a41a">
+<div id="outline-container-orgd2bd2e4" class="outline-2">
+<h2 id="orgd2bd2e4">Choosing the runtime</h2>
+<div class="outline-text-2" id="text-orgd2bd2e4">
 <p>
 So the first thing is to choose the right config for your
 applications.
@@ -145,9 +148,9 @@ underlying bytecode.
 </div>
 </div>
 
-<div id="outline-container-orgc6d86a6" class="outline-2">
-<h2 id="orgc6d86a6">One Good tool to monitor your application - Kudu</h2>
-<div class="outline-text-2" id="text-orgc6d86a6">
+<div id="outline-container-org527ab6a" class="outline-2">
+<h2 id="org527ab6a">One Good tool to monitor your application - Kudu</h2>
+<div class="outline-text-2" id="text-org527ab6a">
 <p>
 This is an open source project you would need to understand more if
 you will work a lot with webapps.
@@ -185,9 +188,9 @@ response time in comparison to the ssh option.
 </div>
 </div>
 
-<div id="outline-container-org9bcb661" class="outline-2">
-<h2 id="org9bcb661">Gradle Deployment</h2>
-<div class="outline-text-2" id="text-org9bcb661">
+<div id="outline-container-orgd9c5328" class="outline-2">
+<h2 id="orgd9c5328">Gradle Deployment</h2>
+<div class="outline-text-2" id="text-orgd9c5328">
 <p>
 There is a nice plug-in in both gradle and maven that will handle
 the deployment and set up of webapps resources.
@@ -228,14 +231,31 @@ Good.
 </p>
 
 <p>
+Note that in general the above is good but should be now embedded in
+a bigger devOps logic. Otherwise it makes little sense.
+</p>
+
+<p>
+The other option is to abstract in the DevOps from all of this. Just
+create a proper environment with all of the relevant
+resources. Deploy then to that targeted resources. 
+</p>
+
+<p>
+Anyways that is a different topic that will just come in time. Back
+to it. Will be useful in any case for my sandbox env. I will have to
+decide soon how I want to work over there.
+</p>
+
+<p>
 Now there is a bit of a distinction you have to do depending on the
-server you are using for your deployment. 
+server you are using for your deployment.
 </p>
 </div>
 
-<div id="outline-container-org180fe78" class="outline-3">
-<h3 id="org180fe78">JAVA SE</h3>
-<div class="outline-text-3" id="text-org180fe78">
+<div id="outline-container-org845803a" class="outline-3">
+<h3 id="org845803a">JAVA SE</h3>
+<div class="outline-text-3" id="text-org845803a">
 <p>
 This should be the way to run SpringBoot on Linux. It is clearly
 stated by one person of the App service team on the Microsoft
@@ -279,9 +299,10 @@ It just may take a while.
 </div>
 </div>
 
-<div id="outline-container-org876b5b5" class="outline-3">
-<h3 id="org876b5b5">TOMCAT</h3>
-<div class="outline-text-3" id="text-org876b5b5">
+
+<div id="outline-container-orgd13edec" class="outline-3">
+<h3 id="orgd13edec">TOMCAT</h3>
+<div class="outline-text-3" id="text-orgd13edec">
 <p>
 So here the thing is a bit different as your TOMCAT reads and works
 with <code>.war</code>.
@@ -355,7 +376,7 @@ Note that in such a case you deploy a <code>.war</code> to the
 </p>
 
 <p>
-So not good enough as often you should live in the
+So not good enough as you should live in the
 <code>/home/site/wwwroot/webapps</code>.
 </p>
 
@@ -365,12 +386,12 @@ Check now the following testing etc.
 </div>
 </div>
 
-<div id="outline-container-org0ab35ef" class="outline-3">
-<h3 id="org0ab35ef">
+<div id="outline-container-org1142b4b" class="outline-3">
+<h3 id="org1142b4b">
 <span class="todo TODO">TODO</span> open issues</h3>
-<div class="outline-text-3" id="text-org0ab35ef">
+<div class="outline-text-3" id="text-org1142b4b">
 <p>
-Not working correctly. The application seems to deployed but I
+Not working correctly. The application seems to be deployed but I
 cannot hit the endpoint. Get 404 error.
 </p>
 
@@ -418,9 +439,9 @@ check what answers you get over there. <a href="https://stackoverflow.com/questi
 </div>
 </div>
 
-<div id="outline-container-org568a349" class="outline-2">
-<h2 id="org568a349">Understand pricing tiers in Azure</h2>
-<div class="outline-text-2" id="text-org568a349">
+<div id="outline-container-orgc917c00" class="outline-2">
+<h2 id="orgc917c00">Understand pricing tiers in Azure</h2>
+<div class="outline-text-2" id="text-orgc917c00">
 <p>
 How are they constrcuted? What are the specifics?
 </p>
@@ -450,6 +471,9 @@ you mostly work and live in there.
     <aside class="postpromonav"><nav><ul class="pager hidden-print">
 <li class="previous">
                 <a href="../macro-variables/" rel="prev" title="Macro Variables">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../azure-pipelines/" rel="next" title="Azure Pipelines">Next post</a>
             </li>
         </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             

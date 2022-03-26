@@ -1,0 +1,228 @@
+#+BEGIN_COMMENT
+.. title: Azure Storage
+.. slug: azure-storage
+.. date: 2022-03-24 15:13:24 UTC+01:00
+.. tags: azure
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+So quickly understand how to work with storage in Azure.
+
+Understand there is a clear split between storage and databases.
+
+You manage all of the files via storage accounts.
+
+This post explores the way to set up and use everything properly in
+Azure.
+
+It will be also of paramount importance as just upon a clear
+understanding of the specifics of the microsoft storage service you
+will be able to properly understand and use the azure SDK. Meaning you
+will have no difficulty in understanding for instance when to use a
+=BlobContainerClientBuilder= or a =BlobContainerBuilder=.
+
+In general you can find the java SDK for java [[https://docs.microsoft.com/en-us/java/api/com.azure.storage.blob.blobcontainerclient?view=azure-java-stable][here]].
+
+{{{TEASER_END}}}
+
+** Storage Account
+
+   A storage account provides a unique namespace in Azure for your
+   data.
+
+   Every object that you store in Azure Storage has an address that
+   includes your unique account name.
+
+   You have different types of storage accounts:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-24 153624.png" class="center">
+   #+end_export
+
+   So you see that depending on the use case a different solution is
+   preferred.
+   
+** Containers
+
+   That is simply a logical layer for grouping blobs.
+
+   To the best of my knowledge - did not research that much data do
+   not live on the same machines etc.
+
+   So it is pretty much it.
+
+   Just recall the hierarchy.
+
+   Note now that containers can hold the following objects:
+
+   - blobs
+
+   - queues
+
+   - tables
+
+*** Blobs
+
+    The combination of the account name and the Blob Storage endpoint
+    forms the base address for the objects in your storage account.
+
+    So understand that you have multiple types of blobs. Depending on
+    what you want to do you will have to choose the correct one.
+
+    That is the role of V. Do not spend too much time in there.
+
+    Just recall that general overview:
+
+    - Block blobs store text and binary data. Block blobs are made up
+      of blocks of data that can be managed individually. Block blobs
+      can store up to about 190.7 TiB.
+
+    - Append blobs are made up of blocks like block blobs, but are
+      optimized for append operations. Append blobs are ideal for
+      scenarios such as logging data from virtual machines.
+
+    - Page blobs store random access files up to 8 TiB in size. Page
+      blobs store virtual hard drive (VHD) files and serve as disks for
+      Azure virtual machines. For more information about page blobs,
+      see Overview of Azure page blobs
+
+    That is pretty much it to this stage. You know blobs from your
+    past.
+
+*** Tables
+
+    Check [[https://docs.microsoft.com/en-us/azure/storage/tables/table-storage-overview][here]].
+
+    Interesting stuff. Did not spend again too much time over there.
+
+    But the idea is to save large tables.
+
+    Different though in comparison to a relational DB. In the sense
+    here the idea is not to make large joins or trigger stored
+    procedures.
+
+    You rather save a bunch of relational data over there.
+
+    The question is though: in which format?
+
+    Would be interesting in order to understand if that might be
+    useful to you at some point.
+
+    Bahh seems like a weird solution this one to this stage.
+
+    I am not able to properly set into a frame to this stage. 
+
+** Azure SDK
+
+   So the above was a bit at the high level the structure of Azure
+   storage.
+
+   You need to understand now better how everything works.
+
+   So I am experimenting a bit with it in my Spring playground
+   application.
+
+   So while I am writing these notes I clearly see the tendency of
+   have three different ways of doing the thing. That is very standard
+   in the IT world.
+
+   I see that this is what happens all of the time. Then the issue
+   when you learn is to quickly identify the best way to do what you
+   want to do.
+
+   Sometimes you will make the right decision. Sometimes you will
+   not. The important bit as in life is to move on. There is lots to
+   do.
+
+   Place your bets and understand where you have to dig a lot and
+   spend a lot of time in understanding how a thing works. And
+   understand where you can move faster. 
+
+*** BlobServiceClient
+
+    Find the docu [[https://docs.microsoft.com/en-us/dotnet/api/azure.storage.blobs.blobserviceclient?view=azure-dotnet][here]].
+
+    So with this you work at the highest level of the storage
+    account.
+
+    I.e. you work at the =container= level here.
+
+    Here you have packaged functions calling the APIs for making
+    standard operations on containers.
+
+    Note now that you can work in the code by using that hierarchical
+    structure. Meaning.
+
+    You can ~create~ a =blobContainer= or get a connection to and
+    existing one.
+
+    The idea then that after creating or getting an existing Blob the
+    java SDK returns you an object for it.
+
+    See for instance the ~GetBlobContainer~ method.
+
+    It returns a =BlobContainerClient=. Through it then you have all
+    of the methods for acting on that specific layer.
+
+    So you see how you can chain the thing.
+
+    Given my discussion in the previous section of choosing the
+    correct way of working I guess to work in such a way.
+
+    Start always from the top of it and then chain until your level of
+    interest. And then act on such hierarchical level.
+
+    In such a way you might be able to keep everything into the code
+    and work programatically.
+
+    The other option is to work through system level parameter that
+    you might for instance specify in the =.env= file.
+
+    You can then use the paramters over there to jump directly to your
+    hierarchical level of interest. Building the client for that
+    specific hierarchical layer and working straight on that level.
+
+*** BlobContainer level
+
+    So this is the lower level.
+
+    Here you act directly on the Blob level.
+
+    You have a basic understanding of the SDK now cause you inferred
+    the logic of it and how that was constructed.
+
+    So check for instance at the following snippet in order to list
+    all of the available blobs.
+
+    #+BEGIN_SRC java :results output drawer 
+// Option 1 - Connect directly at the hierarchical level of choice
+
+// Create a BlobContainerClient object pointing to your Blob of choice
+BlobContainerClient blobClient = new BlobContainerClientBuilder()
+    .credential(defaultCredential)
+    .endpoint(dotenv.get("BlobContainerEndpoint"))
+    .buildClient();
+
+
+// Option 2 - Connect at the highest and work sequentially to it
+
+// Create a BlobServiceClient Returning your Blob of choice
+BlobContainerClient blobClient = new BlobContainerClientBuilder()
+    .credential(defaultCredential)
+    .endpoint("https://<myStorageEndpoint>.blob.storage.windows.net/")
+    .buildClient();
+
+// List the blob(s) in the container.
+// ok good working now. note that feeds is a container and it lists all blobs into it.
+for (BlobItem blobItem : blobClient.listBlobs()) {
+    System.out.println("\t" + blobItem.getName());
+}
+    #+END_SRC
+
+    
+
+    
