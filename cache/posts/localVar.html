@@ -1,0 +1,99 @@
+<br>
+<br>
+
+<p>
+During the last couple of weeks I completed an emacs integration I
+desired to complete since long time. I managed to fully synchronize my
+emacs calendar with an online one.
+</p>
+
+<p>
+This allows me to have an integrated look and finally work on a
+consistent agenda across devices to organize myself better. It
+moreover allows me to have a quick glimpse on my agenda in emacs.
+</p>
+
+<p>
+In order to do that I relied on <a href="https://cestlaz.github.io/posts/using-emacs-26-gcal/">this</a> nice video of <i>C'est la Z</i>. The
+basic idea is to integrate the Emacs Calendar and synchronize it with
+your Google Calendar such that each time you open your agenda on Emacs
+your org-agenda will be imported in the Google Calendar and conversely
+the Google Calendar entries will be integrated into your org
+agenda. You can find the details of the step up in the above link and
+this will not be discussed in the post.
+</p>
+
+<p>
+Nonetheless, I further enriched the approach with an integration via
+<code>mobileorg</code>. This allows me to write new entries in my agenda directly
+from my mobile and allows me a more emacs-focused approach and better
+deletion and archiving possibilities in comparison to working on the
+Google Calendar on my phone. The structure is the following.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org9ba4d48" class="outline-2">
+<h2 id="org9ba4d48">Beorg</h2>
+<div class="outline-text-2" id="text-org9ba4d48">
+<p>
+The idea of the second, above mentioned integration, is to create
+an org files to be added to your agenda files list that will
+automatically synchronize with Dropbox and accordingly with the
+<code>Beorg</code> application. This is a very well done application
+where you can edit all of your calendar entries.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1">;; Create and Specify Agenda folder.</span>
+    <span class="p">(</span><span class="nf">setq</span> <span class="nv">org-agenda-files</span> <span class="p">(</span><span class="nb">list </span><span class="s">&quot;~/Dropbox/Applicazioni/MobileOrg/capture.org&quot;</span>
+				 <span class="s">&quot;~/Dropbox/Applicazioni/MobileOrg/mobileorg.org&quot;</span>
+				 <span class="s">&quot;~/Dropbox/Applicazioni/MobileOrg/inbox.org&quot;</span>
+				 <span class="s">&quot;~/Dropbox/Applicazioni/MobileOrg/todos.org&quot;</span><span class="p">))</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span>    <span class="p">(</span><span class="nf">setq</span> <span class="nv">org-mobile-directory</span> <span class="s">&quot;~/Dropbox/Applicazioni/MobileOrg/&quot;</span><span class="p">)</span> 
+</pre></div>
+
+<p>
+Like this it will possible for you to update your agenda directly
+from the well done <code>beorg app</code>. Moreover it will be possible to
+automatically update your agenda from any of your devices given
+the compatibility with dropbox. 
+</p>
+
+<p>
+Finally you can integrate any of the google calendar events
+automatically to your org agenda and your mobile app
+automatically. In case you will want to increase security you can
+even encrypt all of the storage on dropbox and have a bullet proof
+security in terms of who can read your agenda in case dropbox
+security fails.
+</p>
+
+<p>
+A final but unrelated mention is given to <code>local variables</code> in
+emacs. This is a nice feature I discovered duckduckgoing around
+searching for possibilities to properly use my org-agenda. 
+These are specific settings that apply to the specific document
+and perform a piece of emacs code automatically just for the file
+where they are specified in. This is a quite handy emacs
+trick. You can see an example below if you want to automatically
+create an <code>.ics</code> for this specific files (assuming you would have
+some scheduled event), which you could actually use to integrate
+it with your apps.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0c677c8" class="outline-2">
+<h2 id="org0c677c8">Local var</h2>
+<div class="outline-text-2" id="text-org0c677c8">
+<pre class="example" id="org471961e">
+# Local Variables:
+# eval: (add-hook 'after-save-hook 'org-icalendar-export-to-ics nil t)
+# End:
+
+with just one comment mark it functions.
+</pre>
+</div>
+</div>

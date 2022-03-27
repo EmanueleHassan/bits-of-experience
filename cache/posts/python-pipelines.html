@@ -1,0 +1,429 @@
+<br>
+
+<p>
+Pipelines are important when working on ML projects in python. They
+first appeared through the implementation of ML tasks sklearn. There
+the design setting of the maintainer of the library was to design a
+set of APIs through which to govern the entire ML process. The three
+major class of APIs are <code>tranformers</code>, i.e. transformations to the
+feature and dependent variables, <code>estimators</code>, i.e. the ML model that
+you fit on your transformed features matrix, and finally <code>predictors</code>,
+i.e. the API method used for predicting your desired variable based on
+your fitted estimator.
+</p>
+
+<p>
+The above logic became so widespread that further important
+libraries - such as the spark ML modules for using ML models
+leveraging the spark engine for distributed computation - decided to
+keep the same design setting and keep the above API structure.
+</p>
+
+<p>
+This posts aims at keeping an overview of some important transformers,
+estimators and predictors as well as to set up the general framework
+to combine the three together in easy to use Pipelines. 
+</p>
+
+<!-- TEASER_END -->
+
+<br>
+<br>
+
+<div id="outline-container-orge9281b7" class="outline-2">
+<h2 id="orge9281b7">The general Case</h2>
+<div class="outline-text-2" id="text-orge9281b7">
+<p>
+In fact, all of the ML models in the sklearn and Spark-ML libraries -
+for instance RandomForest, SVM, LogisticRegression etc. - are built
+according to the three general <code>APIs</code> mentioned above. It is therefore
+clear that given this design setting you can formulate your model as
+following:
+</p>
+
+<ul class="org-ul">
+<li>choose your transformers</li>
+
+<li>fit your tranformers</li>
+
+<li>transform the data</li>
+
+<li>choose your ML model</li>
+
+<li>fit your ML Model to the transformed data</li>
+
+<li>use predictors to achieve your goals.</li>
+</ul>
+
+<p>
+Your goal will then be to apply all of the above steps given your
+application and to combine them into Pipelines that are easy to work
+with in production.
+</p>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org618da94" class="outline-2">
+<h2 id="org618da94">An Example with Pipeline Understanding</h2>
+<div class="outline-text-2" id="text-org618da94">
+<p>
+A simple basic example that aims to provide your with the general
+workflow is the following:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">SelectKBest</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">median_absolute_error</span><span class="p">,</span> <span class="n">r2_score</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_boston</span>
+
+<span class="c1">## notice the elegance of the sklearn library. you have different</span>
+<span class="c1">## modules - model_selection, ensemble, pipeline, feature_selection</span>
+<span class="c1">## etc.- that exposes the user directly to the logic of each method.</span>
+
+<span class="c1">## load the boston dataset</span>
+<span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">boston</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">boston</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">boston</span><span class="p">[</span><span class="s1">&#39;feature_names&#39;</span><span class="p">]</span>
+
+<span class="c1"># split in training and testing dataset - i.e. look at generalization</span>
+<span class="c1"># of your model out of sample</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># create your pipeline that you can apply directly to your data. you</span>
+<span class="c1"># can then fit the pipeline and predict using it.</span>
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">&quot;scaler&quot;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span> <span class="c1">## standardize your</span>
+
+					       <span class="c1">## data according to</span>
+					       <span class="c1">## the normal</span>
+					       <span class="c1">## standardization. </span>
+		 <span class="p">(</span><span class="s2">&quot;featsel&quot;</span><span class="p">,</span> <span class="n">SelectKBest</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)),</span> <span class="c1">## notice that this</span>
+						 <span class="c1">## selectes the 10</span>
+						 <span class="c1">## feutures that</span>
+						 <span class="c1">## explain the most</span>
+						 <span class="c1">## of the variance in</span>
+						 <span class="c1">## the predictor</span>
+						 <span class="c1">## variable. it is</span>
+						 <span class="c1">## based on a</span>
+						 <span class="c1">## multiple ANOVA</span>
+						 <span class="c1">## given the</span>
+						 <span class="c1">## different</span>
+						 <span class="c1">## features.</span>
+		 <span class="p">(</span><span class="s2">&quot;rf&quot;</span><span class="p">,</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">20</span><span class="p">))])</span> <span class="c1">## specify</span>
+								 <span class="c1">## a</span>
+								 <span class="c1">## fit</span>
+								 <span class="c1">## via</span>
+								 <span class="c1">## a</span>
+								 <span class="c1">## RandomForest</span>
+								 <span class="c1">## with</span>
+								 <span class="c1">## 20</span>
+								 <span class="c1">## estimated</span>
+								 <span class="c1">## bootstrapped</span>
+								 <span class="c1">## trees</span>
+
+<span class="c1">## train the data</span>
+<span class="n">pipe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1">## evaluate the model</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;R^2=</span><span class="si">%.2f</span><span class="s1">, MAE=</span><span class="si">%.2f</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">),</span> <span class="n">median_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)))</span>
+</pre></div>
+
+<pre class="example">
+R^2=0.75, MAE=1.51
+</pre>
+
+
+<p>
+Notice that you could have performed the above also without pipelining
+all of the different methods
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## Scale the data</span>
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+
+<span class="c1"># print(X_train.shape)</span>
+<span class="c1"># print(y_train.shape)</span>
+
+<span class="c1">## merge the data and apply the scaler on the entire matrix in one shot</span>
+<span class="n">train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">379</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+
+<span class="c1"># print (train.shape)</span>
+
+<span class="n">scaled_fit</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit</span> <span class="p">(</span><span class="n">train</span><span class="p">)</span>
+
+<span class="n">scaled</span> <span class="o">=</span> <span class="n">scaled_fit</span><span class="o">.</span><span class="n">transform</span> <span class="p">(</span><span class="n">train</span><span class="p">)</span>
+
+<span class="n">featsel_fit</span> <span class="o">=</span> <span class="n">SelectKBest</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span> <span class="p">(</span><span class="n">scaled</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">13</span><span class="p">],</span> <span class="n">scaled</span><span class="p">[:,</span> <span class="mi">13</span><span class="p">])</span>
+
+<span class="n">featsel</span> <span class="o">=</span> <span class="n">featsel_fit</span><span class="o">.</span><span class="n">transform</span> <span class="p">(</span><span class="n">scaled</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">13</span><span class="p">])</span>
+
+<span class="c1"># the extracted 10 features</span>
+<span class="c1"># print (featsel.shape)</span>
+
+<span class="c1">## Fit the data</span>
+
+<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span> <span class="p">(</span><span class="n">featsel</span><span class="p">,</span> <span class="n">scaled</span><span class="p">[:,</span> <span class="mi">13</span><span class="p">])</span>
+
+
+<span class="c1"># get corrected testing data</span>
+
+<span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span> <span class="p">(</span><span class="n">y_test</span><span class="p">),</span><span class="mi">1</span><span class="p">)))</span>
+
+<span class="n">ttt</span> <span class="o">=</span> <span class="n">scaled_fit</span><span class="o">.</span><span class="n">transform</span> <span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">featsel_fit</span><span class="o">.</span><span class="n">transform</span> <span class="p">(</span><span class="n">ttt</span><span class="p">[:,:</span><span class="mi">13</span><span class="p">])</span>
+
+<span class="c1"># print (X.shape)</span>
+
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">predict</span> <span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="c1"># print (y_pred.shape)</span>
+
+<span class="c1"># print (ttt[:, 13].shape)</span>
+
+<span class="n">ttt1</span> <span class="o">=</span> <span class="n">scaled_fit</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">ttt</span><span class="p">)</span>
+
+<span class="n">ttt2</span> <span class="o">=</span> <span class="n">scaled_fit</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">ttt</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">13</span><span class="p">],</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span> <span class="p">(</span><span class="n">y_pred</span><span class="p">),</span><span class="mi">1</span><span class="p">))))</span>
+
+
+<span class="c1">## Get your metrics for the fit</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;R^2=</span><span class="si">%.2f</span><span class="s1">, MAE=</span><span class="si">%.2f</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">ttt1</span><span class="p">[:,</span><span class="mi">13</span><span class="p">],</span> <span class="n">ttt2</span><span class="p">[:,</span><span class="mi">13</span><span class="p">]),</span> 
+			     <span class="n">median_absolute_error</span><span class="p">(</span><span class="n">ttt1</span><span class="p">[:,</span><span class="mi">13</span><span class="p">],</span> <span class="n">ttt2</span><span class="p">[:,</span><span class="mi">13</span><span class="p">])))</span>
+
+<span class="c1"># print (scaled_X.shape) ## we have 13 features</span>
+<span class="c1"># print (scaled_X)</span>
+</pre></div>
+
+<p>
+Notice that the results for the above are comparable to the one
+obtained above. So you get the idea of what is behind a pipeline.
+</p>
+
+<p>
+You fit all of the transformers and your predictor given your training
+data. You then apply such fit to the training data. You scale back
+your data and you compute the metrics on the original scaled data.
+</p>
+
+
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-orgd949851" class="outline-2">
+<h2 id="orgd949851">Why you should always work through Pipelines</h2>
+<div class="outline-text-2" id="text-orgd949851">
+<p>
+It is recommended that you always work with pipelines for your
+workflow. 
+</p>
+
+<p>
+This will help you to clearly define your workflow. On top of it you
+might access and perform the usual transform and fit operations on
+specific transformers /  models.
+</p>
+
+<p>
+In order to see that consider the following example:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## load the boston dataset</span>
+<span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">boston</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">boston</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">boston</span><span class="p">[</span><span class="s1">&#39;feature_names&#39;</span><span class="p">]</span>
+
+<span class="c1"># split in training and testing dataset - i.e. look at generalization</span>
+<span class="c1"># of your model out of sample</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">## notice that the split was not stratified here. </span>
+
+<span class="c1"># This stratify parameter makes a split so that the proportion of</span>
+<span class="c1"># values in the sample produced will be the same as the proportion of</span>
+<span class="c1"># values provided to parameter stratify.</span>
+<span class="c1"># For example, if variable y is a binary categorical variable with</span>
+<span class="c1"># values 0 and 1 and there are 25% of zeros and 75% of ones,</span>
+<span class="c1"># stratify=y will make sure that your random split has 25% of 0&#39;s and</span>
+<span class="c1"># 75% of 1&#39;s.</span>
+
+<span class="c1"># create your pipeline that you can apply directly to your data. you</span>
+<span class="c1"># can then fit the pipeline and predict using it.</span>
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">&quot;scaler&quot;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span> <span class="c1">## standardize your</span>
+
+					       <span class="c1">## data according to</span>
+					       <span class="c1">## the normal</span>
+					       <span class="c1">## standardization. </span>
+		 <span class="p">(</span><span class="s2">&quot;featsel&quot;</span><span class="p">,</span> <span class="n">SelectKBest</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)),</span> <span class="c1">## notice that this</span>
+						 <span class="c1">## selectes the 10</span>
+						 <span class="c1">## feutures that</span>
+						 <span class="c1">## explain the most</span>
+						 <span class="c1">## of the variance in</span>
+						 <span class="c1">## the predictor</span>
+						 <span class="c1">## variable. it is</span>
+						 <span class="c1">## based on a</span>
+						 <span class="c1">## multiple ANOVA</span>
+						 <span class="c1">## given the</span>
+						 <span class="c1">## different</span>
+						 <span class="c1">## features.</span>
+		 <span class="p">(</span><span class="s2">&quot;rf&quot;</span><span class="p">,</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">20</span><span class="p">))])</span> <span class="c1">## specify</span>
+								 <span class="c1">## a</span>
+								 <span class="c1">## fit</span>
+								 <span class="c1">## via</span>
+								 <span class="c1">## a</span>
+								 <span class="c1">## RandomForest</span>
+								 <span class="c1">## with</span>
+								 <span class="c1">## 20</span>
+								 <span class="c1">## estimated</span>
+								 <span class="c1">## bootstrapped</span>
+								 <span class="c1">## trees</span>
+
+
+<span class="n">scaled_fit</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">[</span><span class="s1">&#39;scaler&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fit</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">379</span><span class="p">,</span><span class="mi">1</span><span class="p">))))</span>
+
+<span class="n">scaled</span> <span class="o">=</span> <span class="n">scaled_fit</span><span class="o">.</span><span class="n">transform</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">379</span><span class="p">,</span><span class="mi">1</span><span class="p">))))</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="n">scaled</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example" id="org628587e">
+[[-0.3906002   0.42637011 -0.74491444 ...  0.34049624  0.82212111
+  -0.44484602]
+ [-0.40127639  0.5525335  -0.84901832 ...  0.42774893 -0.46241699
+  -0.32575001]
+ [-0.40110543  1.18335044 -0.66648002 ...  0.34184377 -0.90310809
+   1.14670973]
+ ...
+ [-0.3954927  -0.49882807 -0.15309105 ...  0.40091059 -0.31227617
+  -0.36905765]
+ [-0.38599992 -0.49882807 -0.59517599 ...  0.38103449  0.86938766
+  -0.6505573 ]
+ [-0.39692832 -0.49882807 -1.003035   ...  0.42774893  0.29801844
+   0.05319184]]
+</pre>
+
+
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org4fc44c0" class="outline-2">
+<h2 id="org4fc44c0">Differentiated Pipelines for different variables</h2>
+<div class="outline-text-2" id="text-org4fc44c0">
+<p>
+The process previously described performs the same transformations to
+all of the variables passed to the pipeline. 
+</p>
+
+<p>
+It is obvious that we might often need different pipelines treating
+different variables in a different way. For instance it is obvious
+that when you are dealing with <b>categorical</b> and <b>numerical</b> variables
+you might well want to transform such variables in different ways. 
+</p>
+
+<p>
+Even in the case of working on the same <b>numerical</b> variables you
+might desire to pre-process the variables differently. Think for
+instance at using different normalization techniques or at filling up
+missing values differently. 
+</p>
+
+<p>
+In such a case you can specify the column names of the features that
+you want to treat differently and pass a list with them to specific
+pipelines through the <code>ColumnTransformer</code> as shown in the below case
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## preprocessing pipeline</span>
+<span class="n">numeric_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;num_streams&#39;</span><span class="p">]</span>
+
+<span class="c1"># a more elegant option for the above - especially when you have very</span>
+<span class="c1"># numerous features</span>
+<span class="n">numeric_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+<span class="c1"># notice that in this script you add a simpleimputer despite the fact</span>
+<span class="c1"># that no values are missing. This is a sensible solution as you might</span>
+<span class="c1"># want your slution to stay strong even in production when the data</span>
+<span class="c1"># that you might gather might be empty or in general when null values</span>
+<span class="c1"># might well easily occur.</span>
+
+<span class="n">numeric_transformer</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;imputer&#39;</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">())])</span>
+
+<span class="n">categorical_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="s1">&#39;subscriber_type&#39;</span><span class="p">]</span>
+
+<span class="n">categorical_transformer</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;imputer&#39;</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;onehot&#39;</span><span class="p">,</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">))])</span>
+
+<span class="n">preprocessor</span> <span class="o">=</span> <span class="n">ColumnTransformer</span><span class="p">(</span>
+    <span class="n">transformers</span><span class="o">=</span><span class="p">[</span>
+	<span class="p">(</span><span class="s1">&#39;num&#39;</span><span class="p">,</span> <span class="n">numeric_transformer</span><span class="p">,</span> <span class="n">numeric_features</span><span class="p">),</span>
+	<span class="p">(</span><span class="s1">&#39;cat&#39;</span><span class="p">,</span> <span class="n">categorical_transformer</span><span class="p">,</span> <span class="n">categorical_features</span><span class="p">)])</span>
+
+<span class="n">preprocessor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+
+<p>
+Notice finally that you can combine Pipelines in new Pipelines. This
+is what happened under the hood in the <code>ColumnTransformer</code> above. To
+make it more explicit you might then create a final Pipeline for the
+above case implementing a ML implementation:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## Baseline</span>
+<span class="n">param_grid_svm</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;svm__C&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">10.0</span><span class="p">],</span>
+    <span class="s1">&#39;svm__gamma&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.1</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">best_params</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">pipe_svm</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">),</span>
+			   <span class="p">(</span><span class="s1">&#39;svm&#39;</span><span class="p">,</span><span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;rbf&#39;</span><span class="p">,</span>
+				      <span class="n">class_weight</span><span class="o">=</span><span class="s1">&#39;balanced&#39;</span><span class="p">))])</span>
+
+<span class="c1"># svc_fit = pipe_svm.fit(X_train, y_train)</span>
+
+<span class="c1"># y_pred = svc_fit.predict(X_test)</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">pipe_svm</span><span class="p">,</span>
+		    <span class="n">param_grid</span><span class="o">=</span><span class="n">param_grid_svm</span><span class="p">,</span>
+		    <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">best_params</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">best_params_</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fitted Pipeline</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;--&gt;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pipe_svm</span><span class="o">.</span><span class="n">named_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="o">*</span><span class="mi">35</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;f1_score&quot;</span><span class="p">,</span><span class="nb">round</span><span class="p">(</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span><span class="n">average</span><span class="o">=</span><span class="s1">&#39;binary&#39;</span><span class="p">),</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+
+<pre class="example" id="org602ca72">
+Fitted Pipeline
+pre--&gt;svm
+===================================
+
+f1_score 0.634
+</pre>
+</div>
+</div>
