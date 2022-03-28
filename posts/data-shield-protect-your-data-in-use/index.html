@@ -80,9 +80,9 @@ steps to create a SGX enabled kubernetes or openshift cluster and how
 to secure data encryption in use for containers deployed there.
 </p>
 
-<br><!-- TEASER_END --><div id="outline-container-org507c94a" class="outline-2">
-<h2 id="org507c94a">A very quick and dirty intro to better understand DataShield</h2>
-<div class="outline-text-2" id="text-org507c94a">
+<br><!-- TEASER_END --><div id="outline-container-org80288b1" class="outline-2">
+<h2 id="org80288b1">A very quick and dirty intro to better understand DataShield</h2>
+<div class="outline-text-2" id="text-org80288b1">
 <br><br><iframe width="800" height="400" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.82.5/mwEmbedFrame.php/p/1773841/uiconf_id/44837961/entry_id/0_qy62q1zo?wid=_1773841&amp;iframeembed=true&amp;playerId=kplayer&amp;entry_id=0_qy62q1zo&amp;flashvars%5BstreamerType%5D=auto">
 </iframe>
 
@@ -91,14 +91,14 @@ to secure data encryption in use for containers deployed there.
 </div>
 
 
-<div id="outline-container-org36ce9e9" class="outline-2">
-<h2 id="org36ce9e9">Necessary Dependencies</h2>
-<div class="outline-text-2" id="text-org36ce9e9">
+<div id="outline-container-orgfd95265" class="outline-2">
+<h2 id="orgfd95265">Necessary Dependencies</h2>
+<div class="outline-text-2" id="text-orgfd95265">
 </div>
 
-<div id="outline-container-org7099905" class="outline-3">
-<h3 id="org7099905">Configure your K8s or Openshift Cluster</h3>
-<div class="outline-text-3" id="text-org7099905">
+<div id="outline-container-org19f16e7" class="outline-3">
+<h3 id="org19f16e7">Configure your K8s or Openshift Cluster</h3>
+<div class="outline-text-3" id="text-org19f16e7">
 <p>
 First and foremost it is important to underlying that the above
 mentioned technology does not work on standard hardware, when setting
@@ -121,9 +121,9 @@ e-mail once it is done.
 </div>
 </div>
 
-<div id="outline-container-orge8a1e95" class="outline-3">
-<h3 id="orge8a1e95">Install the necessary Software CLIs</h3>
-<div class="outline-text-3" id="text-orge8a1e95">
+<div id="outline-container-org58a6661" class="outline-3">
+<h3 id="org58a6661">Install the necessary Software CLIs</h3>
+<div class="outline-text-3" id="text-org58a6661">
 <p>
 Install the <i><a href="https://cloud.ibm.com/docs/cli?topic=cloud-cli-getting-started">IBM CLI</a></i>
 </p>
@@ -136,7 +136,7 @@ The above will install IBMCloud together with a couple of CLI useful for every d
 In particular it will install:
 </p>
 
-<pre class="example" id="orgb207ba4">
+<pre class="example" id="orgf457c9b">
 - Homebrew (Mac only)
 - Git
 - Docker
@@ -221,9 +221,9 @@ and the commands are pretty much similar.
 </div>
 </div>
 
-<div id="outline-container-org6097925" class="outline-3">
-<h3 id="org6097925">Connect to your openshift cluster through the kubernetes CLI</h3>
-<div class="outline-text-3" id="text-org6097925">
+<div id="outline-container-org8e2761e" class="outline-3">
+<h3 id="org8e2761e">Connect to your openshift cluster through the kubernetes CLI</h3>
+<div class="outline-text-3" id="text-org8e2761e">
 <p>
 Now that your cluster is up and running and the necessary software
 was installed on your local machine you should connect to the oc
@@ -261,7 +261,7 @@ openshift one mentioned before.
 <div class="highlight"><pre><span></span>   oc config current-context
 </pre></div>
 
-<pre class="example" id="orge345a15">
+<pre class="example" id="orgce68088">
 default/c100-e-eu-de-containers-cloud-ibm-com:32644/IAM#marco.hassan@ibm.com
 </pre>
 
@@ -274,9 +274,9 @@ other cluster.
 </div>
 </div>
 
-<div id="outline-container-org15e9ea3" class="outline-3">
-<h3 id="org15e9ea3">Set up the IAM access management credentials in order to convert your container images to run with encryption</h3>
-<div class="outline-text-3" id="text-org15e9ea3">
+<div id="outline-container-org4b17b5d" class="outline-3">
+<h3 id="org4b17b5d">Set up the IAM access management credentials in order to convert your container images to run with encryption</h3>
+<div class="outline-text-3" id="text-org4b17b5d">
 <p>
 In order to encrypt your data in use in your container you will
 need to convert standard deployed containers on your cluster
@@ -303,7 +303,7 @@ Create an API key for the container converter.
 <div class="highlight"><pre><span></span>  ibmcloud iam service-api-key-create <span class="s1">'IBM Cloud Data Shield Container Converter'</span> data-shield-container-converter
 </pre></div>
 
-<pre class="example" id="orge148d09">
+<pre class="example" id="orgdea2d67">
 Service ID API key IBM Cloud Data Shield Container Converter is created
 
 Please preserve the API key! It cannot be retrieved after it's created.
@@ -345,9 +345,9 @@ middle or at the end of the encoded string.
 </div>
 </div>
 
-<div id="outline-container-org76ad411" class="outline-3">
-<h3 id="org76ad411">Install the Certificate Manager Chart on your Cluster</h3>
-<div class="outline-text-3" id="text-org76ad411">
+<div id="outline-container-orgcf5a0bf" class="outline-3">
+<h3 id="orgcf5a0bf">Install the Certificate Manager Chart on your Cluster</h3>
+<div class="outline-text-3" id="text-orgcf5a0bf">
 <p>
 The next step necessary to encrypt your data in use on your
 clusters is to install the certificate manager chart so that you
@@ -398,7 +398,7 @@ cert-manager chart and run your containers.
    --set webhook.enabled<span class="o">=</span>falsewebhook.enabled<span class="o">=</span><span class="nb">false</span>
 </pre></div>
 
-<pre class="example" id="org5c1630d">
+<pre class="example" id="org406fe29">
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "jetstack" chart repository
 ...Successfully got an update from the "incubator" chart repository
@@ -431,9 +431,9 @@ https://docs.cert-manager.io/en/latest/reference/ingress-shim.html
 </div>
 </div>
 
-<div id="outline-container-org0019822" class="outline-3">
-<h3 id="org0019822">Install the DataShield Service</h3>
-<div class="outline-text-3" id="text-org0019822">
+<div id="outline-container-org52ffd75" class="outline-3">
+<h3 id="org52ffd75">Install the DataShield Service</h3>
+<div class="outline-text-3" id="text-org52ffd75">
 <p>
 Now that you've installed the prerequisites and created and configured
 your secrets, you're ready to install the service. You can use the
