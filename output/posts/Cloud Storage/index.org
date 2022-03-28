@@ -1,0 +1,112 @@
+#+BEGIN_COMMENT
+.. title: Cloud Storage
+.. slug: Cloud Storage
+.. date: 2019-09-18 18:21:43 UTC+02:00
+.. tags: IT Architecture, Storage
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+#+END_COMMENT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+In the cloud environment, when deploying an application through a
+kubernetes cluster a question that naturally arise is how to save
+data and general information. 
+
+What you actually want to achieve is to mount a file system on your
+containers and read it as it was local.
+
+This posts tries to make the point for the general approached used to
+tackle the issue.
+
+{{{TEASER_END}}}
+
+** Storage possibilities
+
+Without entering into the details of the different storage
+possibilities it is important to understand the differences among
+different storage options.
+
+In this sense we distinguish among:
+
+1. /dynamic & static/ storage or as usually called in the kubernetes infrastructure /persistent volume/[fn:1].
+
+2. *Storage access mode*: 
+   - /RWO/: read and write once
+
+   - /ROX/: read only many
+
+   - /RWX/: read write many.
+
+3. *Data Retention Models*:
+   - Retain
+
+   - Delete
+
+   - Recycle
+
+** Storage lifecycle 
+
+Given the above possibilities a brief outline of the typical /workload
+block storage/ will be exposed.
+
+Before starting it is though important to understand that what your
+application is trying to achieve is to connect to some storage and to
+consume this within the application. Kubernetes supports multiple
+storage classes. The access to such file systems is usually defined
+within a /YAML/ file where the IP, user, and psswd together with all
+of the other necessary information are stored. Given such /YAML/ file
+it is then possible to consume that storage. Notice, that if you do
+not provide such /YAML/ file the container will chose the default
+storage class, and if no default is specified it will simply use the
+first one it finds that meets your requirements.
+
+Given this basic outline, everything starts from a PVC, i.e. a
+persistent volume claim, within the application deployment. Here your
+application basically requires access to a persistent volume and
+claims that it wants to utilize that for reading or writing of
+data. Here the /storage access mode/ mentioned above comes into play.
+
+If the PVC is /RWO/ then the application request unique write to read
+and write to the persistent volume, no other application container can
+access the persistent storage in this case and access the file
+system. In contrast to that /ROX/ allows the possibility for many
+containers to mount the persistent volume and read it but restricts
+the possibility to write to it. Finally /RWX/ offers the possibility
+to mount the storage and consume it both by reading and mounting it.
+
+Given that the only other important point to be made is on the
+retention mode described above. If the storage class is on /Retain/
+mode, then the PV never goes away. That is if I write some data to the
+PV and I delete my application, the written data will as well as the
+modified PV will stay around. This case might be useful for data that
+you are requested to keep on your systems. You can then write a second
+program that goes over your PV, backs up the data and deletes the PV.
+In contrast to that in /Delete/ mode your application request a PV (a
+dynamic one) and once you are over with your application and delete
+it, you automatically delete your PV.  The final option is /Recycle/
+this is tricky cause in the recycle mode the PV will stay around but a
+~rm -rf /~ is executed and therefore the PV will be empty. Do not use
+it therefore for sensible data you want to keep.
+
+A final note is given to PV mode. When it is /static/ it means that
+the PV must have been manually created *ex-ante* application
+deployment and must be manually deleted or recycled. In contrast to
+that a /dynamic/ PV will be generated within the application through
+the PVC.
+
+** Literature
+
+IBM - Journey to Cloud Series.
+
+** Footnotes
+
+[fn:1] notice that the name is confusing. Persistent does not mean
+that the information will be stored for long term purposes in a
+/persistent/ way. Whether this is or not the case depends rather on
+the combination of the PV possibilities mentioned above.

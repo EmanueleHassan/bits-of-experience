@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>On Python Structures - Understand it to understand how to properly organize your Projects | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/on-python-structures-understand-it-to-understand-how-to-properly-organize-your-projects/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../book-review-il-confine-del-futuro/" title="Book Review - Il Confine del Futuro" type="text/html">
+<link rel="next" href="../java-notes-history-syntax-and-tricks/" title="Java Notes - History, Syntax and Tricks" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="On Python Structures - Understand it to understand how to properly org">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/on-python-structures-understand-it-to-understand-how-to-properly-organize-your-projects/">
+<meta property="og:description" content="So I finally took some time to go over the documentation and make some
+notes about the different naming conventions and some basics
+structures you should get when building larger projects.
+
+
+
+I just f">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-07-07T10:50:22+02:00">
+<meta property="article:tag" content="Python">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">On Python Structures - Understand it to understand how to properly organize your Projects</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2021-07-07T10:50:22+02:00" itemprop="datePublished" title="2021-07-07 10:50">2021-07-07 10:50</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/python/" rel="tag">Python</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+So I finally took some time to go over the documentation and make some
+notes about the different naming conventions and some basics
+structures you should get when building larger projects.
+</p>
+
+<p>
+I just finished a third larger python project and I am by now
+conscious of the strength of well organized code. It can save you a
+very big amount of time, especially when your projects start to grow
+very large and it becomes difficult to keep a clean mental structure
+over the code-base.
+</p>
+
+<p>
+I therefore started to write a couple of posts where I am writing and
+will update my way of working and structuring projects. I will expand
+on it in time once my knowledge will expand and more sophistication
+will occur.
+</p>
+
+<p>
+This particular posts deals with the basics structures that you have
+to understand to properly set up projects and manage to well deal with
+larger code-bases. 
+</p>
+
+<!-- TEASER_END -->
+
+<p>
+The first important difference you have to understand is the one among
+<code>script</code>, <code>modules</code> and <code>packages</code>. Just when you will understand this
+properly you will be able to well structure projects.
+</p>
+
+<div id="outline-container-org7ce6876" class="outline-2">
+<h2 id="org7ce6876">Script vs. Module vs. Package</h2>
+<div class="outline-text-2" id="text-org7ce6876">
+<p>
+So notice that there is an inherit difference among the three. The
+first one; the <code>script</code> is the ultimate file you pass to your
+python interpreter when running your program.
+</p>
+
+<p>
+A <code>module</code> is a support file containing some python code that you
+call from within a runtime. Or using python official documentation
+terms:
+</p>
+
+<blockquote>
+<p>
+To support this, Python has a way to put definitions in a file and use
+them in a script or in an interactive instance of the
+interpreter. Such a file is called a module; definitions from a module
+can be imported into other modules or into the main module (the
+collection of variables that you have access to in a script executed
+at the top level and in calculator mode).
+</p>
+</blockquote>
+
+<p>
+So that is basically it and the distinction between a module and a
+script is not that big.
+</p>
+
+<p>
+Note as well this <code>__name__</code> object that you often use when
+programming. This has the following meaning:
+</p>
+
+<p>
+Within a module, the module’s name (as a string) is available as
+the value of the global variable <code>__name__</code>. In such a way you can
+easily write if statements that depending on the case where the
+file will be a <code>module</code> or a <code>script</code> (in this case the <code>__name__</code>
+is bounded to "<span class="underline"><span class="underline">main</span></span>") will perform different actions.
+</p>
+
+<p>
+However, what is important to understand is that the scope of each
+variables is dependent on the file it resides in. This is important
+to understand. Once you get this, it will be possible for you to
+avoid loosing time because of issues relating to some
+non-accessible variables etc.
+</p>
+
+<p>
+In order to understand this, note again the words of the official
+documentation:
+</p>
+
+<pre class="example" id="org0c4c022">
+Each module has its own *private symbol table*, which is used as the
+global symbol table by all functions defined in the module. Thus,
+the *author* of a module can use global variables in the module
+without worrying about accidental clashes with a user’s global
+variables.
+
+On the other hand, if you know what you are doing you
+can touch a module’s global variables with the same notation used
+to refer to its functions, =modname.itemname=.
+</pre>
+
+<p>
+So that is essentially the idea.. each module has its own global
+variables and namespace. This has pro and cons. It will help you to
+avoid conflicts as everything is well separated. On the other hand
+this means that modules that are installed in another module are
+not automatically in the private symbol table of a particular
+module such that you will have to import them once more.
+</p>
+
+<p>
+As following coding best practices you should write your code one
+and one time only it makes sense to organize functions and
+libraries you often use and import in your modules in a distinct
+package that you might call <code>utils</code>.
+</p>
+
+<p>
+The final component that you will use when creating your Python
+projects are <code>packages</code>. You can think about packages as a way to
+organize modules.
+</p>
+
+<p>
+In official docu terms:
+</p>
+
+<pre class="example" id="orgf5e6d93">
+Just like the use of modules saves the authors of different modules
+from having to worry about each other’s global variable names, the use
+of dotted module names saves the authors of multi-module packages like
+NumPy or Pillow from having to worry about each other’s module names.
+</pre>
+
+<p>
+So you get the point… although from a practical point of view I
+see it more as way to separate your modules and program in logical
+structure and keep the code clean.
+</p>
+
+<p>
+Note just that in order for a repository to count as package you
+have to add to it the <code>__init__.py</code> module. You can either leave it
+blank or you can put code into it that it will be executed when the
+package is imported as such, i.e. when you import the package name
+without a path to a module in that package.
+</p>
+
+<p>
+It is recommended to use such a module to store global variables
+and to store packages that you will use within your project.
+</p>
+
+<p>
+You can then access such global variables within the module in the
+following way:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">from</span> <span class="nn">PACKAGENAME</span> <span class="kn">import</span> <span class="n">GLOBAL</span><span class="o">-</span><span class="n">VARIABLE</span><span class="o">-</span><span class="n">SAVED</span><span class="o">-</span><span class="n">IN</span><span class="o">-</span><span class="n">THE</span><span class="o">-</span><span class="n">INIT</span>
+</pre></div>
+
+<p>
+and even if you run the above in a module inside a given package it
+will work well.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8347a27" class="outline-2">
+<h2 id="org8347a27">On that many .pyc modules</h2>
+<div class="outline-text-2" id="text-org8347a27">
+<p>
+To speed up loading modules, Python caches the compiled version of
+each module in the <span class="underline"><span class="underline">pycache</span></span> directory under the name
+module.version.pyc, where the version encodes the format of the
+compiled file; it generally contains the Python version number.
+</p>
+
+<p>
+So that is what all of these auto-generated directories are. You
+can safely ignore them when committing your code, however you
+should not cancel them at any time form your project. This is order
+to not have to recompile the entire module each time. 
+</p>
+
+<p>
+Python checks the modification date of the source against the
+compiled version to see if it’s out of date and needs to be
+recompiled. This is a completely automatic process. Also, the
+compiled modules are platform-independent, so the same library can
+be shared among systems with different architectures.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org4efbd90" class="outline-2">
+<h2 id="org4efbd90">On relative paths</h2>
+<div class="outline-text-2" id="text-org4efbd90">
+<p>
+Here you should specify the path relative to the package you are
+currently working (i.e. relative to the package where your module
+resides).
+</p>
+
+<p>
+Note that the directory from which relative paths are defined is
+the one of your <code>script</code> file.
+</p>
+
+<p>
+Note that relative path just work across <code>packages</code>, i.e. you
+cannot reference a module that is not part of a package with
+relative paths.
+</p>
+
+<p>
+Note that the directory where your script is running is the root
+directory. I.e. everything is defined relative to that. Notice that
+you cannot go higher in the tree in comparison to that directory.
+</p>
+
+<p>
+Or at least you should use tricks then. A very good entry is under
+<a href="https://stackoverflow.com/questions/16981921/relative-imports-in-python-3">this url</a>. The one you up-voted.
+</p>
+
+<p>
+And within it there is this trick of defining a function from which
+you can change the root directory for relative paths so to say.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span> <span class="ow">and</span> <span class="n">__package__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+       <span class="sd">"""</span>
+<span class="sd">       basic test procedure for logger.py</span>
+<span class="sd">       """</span>
+
+       <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">importlib</span>
+       <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+       <span class="k">def</span> <span class="nf">import_parents</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+	   <span class="k">global</span> <span class="n">__package__</span>
+	   <span class="n">file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+	   <span class="n">parent</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="n">level</span><span class="p">]</span>
+
+	   <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">top</span><span class="p">))</span>
+	   <span class="k">try</span><span class="p">:</span>
+	       <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parent</span><span class="p">))</span>
+	   <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span> <span class="c1"># already removed</span>
+	       <span class="k">pass</span>
+
+	   <span class="n">__package__</span> <span class="o">=</span> <span class="s1">'.'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">top</span><span class="o">.</span><span class="n">parts</span><span class="p">):])</span>
+	   <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">__package__</span><span class="p">)</span> <span class="c1"># won't be needed after that</span>
+
+       <span class="c1">## Relative to 2 directories higher</span>
+       <span class="n">import_parents</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># N = 2</span>
+
+       <span class="c1">## do your code for running the file as script</span>
+</pre></div>
+
+<p>
+That is quite useful, for instance when you want to test some of
+your modules that require a different module in a different
+package.
+</p>
+
+<p>
+Note however that if you start to import modules in different
+packages you will run into errors when working in such a way.
+</p>
+
+<p>
+This because when you program all of your code you specify all of
+the relative path in relation to the <code>src</code> directory - i.e. the
+directory where your <code>__main__</code> script is.
+</p>
+
+<p>
+You will hence get errors as, in the case above, the relative path
+would be in relation to the module you are running your tests for.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org7172399" class="outline-2">
+<h2 id="org7172399">Adding the root directory from which the imports are specified</h2>
+<div class="outline-text-2" id="text-org7172399">
+<p>
+So the one strategy you can use to circumvent this would be to set
+the root where your normal <code>__main__.py</code> <i>script</i> is. Then you do
+not have to modify the relative path of all of your modules.
+</p>
+
+<p>
+You can do that in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span> <span class="ow">and</span> <span class="n">__package__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+       <span class="sd">"""</span>
+<span class="sd">       basic test procedure for logger.py</span>
+<span class="sd">       """</span>
+
+       <span class="c1">## add the path of the root directory so that you get relative</span>
+       <span class="c1">## imports from there</span>
+       <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span><span class="nn">os</span>
+       <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="s1">'..'</span><span class="p">))</span>
+
+       <span class="c1">## your module tests when running it as a script.</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org3629382" class="outline-2">
+<h2 id="org3629382">On Naming Conventions According to PEP8</h2>
+<div class="outline-text-2" id="text-org3629382">
+<p>
+<code>Modules</code> should have short, all-lowercase names. Underscores can
+be used in the module name if it improves readability. Python
+<code>packages</code> should also have short, all-lowercase names, although
+the use of underscores is <b>discouraged</b>.
+</p>
+
+<hr>
+<p>
+Some other practice; I do not think it is PEP but would have to
+double check it.
+</p>
+
+<p>
+Note that some people like to call their <i>script</i>, i.e. the file
+they execute the <code>__main__.py</code>.
+</p>
+
+<p>
+It is up to you if you want to follow that structure or not. You
+can make some research on the best practice in the following
+depending on the time.
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../book-review-il-confine-del-futuro/" rel="prev" title="Book Review - Il Confine del Futuro">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../java-notes-history-syntax-and-tricks/" rel="next" title="Java Notes - History, Syntax and Tricks">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
