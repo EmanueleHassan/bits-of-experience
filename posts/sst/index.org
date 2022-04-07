@@ -467,6 +467,7 @@ or explicit safety margins/.
    An understanding of the risk margin is a little bit tricky and it
    is outlined in [[*Risk Margin][Risk Margin]].
 
+
 ** Risk Margin
 
    The risk margin of an insurance portfolio is defined as the
@@ -524,7 +525,71 @@ or explicit safety margins/.
 
    Note that the rate of covergence to the optimally replicating
    portfolio one is a function of the liquidity of your assets etc.
+
+*** Actual calculation
+
+    Update 07/04/2022:
    
+    Ok so here it is interesting to check at the different material and
+    sources. They are not perfectly aligned.
+
+    I guess that while the closing remarks of the previous sections
+    point to a theoretical motivation for the risk margin. The actual
+    calculation is not based on that concept.
+
+    It is actually much easier.
+
+    The idea is to say. Another dude in the private sector will take
+    over that book and will *run it off*.
+
+    So basically you have to think:
+
+    - how much capital will you need to set aside in order to meet the
+      required target capital in time?
+
+    - how much will the target capital be?
+
+    So basically you answer all of these questions in the following
+    way.
+
+    You say - it is difficult to estimate the target capital that the
+    other dude will need because of the reasoning expressed at the end
+    of the previous paragraph. Moreover it is fun cause I am not even
+    sure that the other dude will ultimately run off the entire book.
+
+    Maybe he will as per regulatory imposion. Not that interesting to
+    me in any case. Take it as given.
+
+    So what you basically say is that:
+
+    - target capital will be prop. to the best-estimate for the
+      libabilities.
+
+    Such that once you have an estimate of the run off pattern of the
+    liabilities based on how quickly you can sell all of these books
+    you can compute your risk margin as follows - with a discounting
+    rate /s/ fixed by the regulator, usually 8-10%:
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-04-07 172244.png" class="center">
+    #+end_export
+
+    So you see that the ratio - target capital to liabilities is given
+    based on the one of today and is assumed to be constant in time.
+
+    
+    Note that all of this is again quite arbitrary. Cause it is
+    fun. The capital of one year is likely the same of the next year
+    so makes little sense to sum it according to my mind. So basically
+    the issue mentioned in the other source and expressed in the
+    previous section is not accounted for. 
+
+    Anyways you see that this side of the world functions like
+    this. At the end you just ask the insurances to put a little bit
+    more capital aside. I guess the motivation is the one of the
+    previous section.
+       
+
 ** On the standard models
 
    I am making some very quick notes here as I guess that in any case
@@ -698,10 +763,55 @@ intransparency.
 *** QUESTION come back to it at some point                      :methodology:
    
 
-
 * TODO Credit Risk in the Standard Models
   
-* TODO Scenarios and Aggregation with Standard Models
+
+* Scenarios and Aggregation with Standard Models
+
+  So that is as well quite simple.
+
+  There is just a shift into the quantile that is not as
+  straightforward.
+
+  I mean could not infer it from the source I am checking at but it is
+  not explained there the methodology. You just have the
+  formula. Would have to find some material where they explain the
+  things a little bit more.
+
+  Anyways getting back to sauce the situation is as follows:
+  
+  #+begin_export html
+   <img src="../../images/Screenshot 2022-04-07 165148.png" class="center">
+  #+end_export
+
+  So read the target capital in the following way - much clearer then
+  to get the idea - quite simple one.
+
+  #+BEGIN_src latex :results drawer :exports results
+\[ TC = ES_{\alpha^'} - \frac{p}{\alpha} * (ES_{\alpha^'} + \sum c_i * w_i) \]
+  #+END_src
+
+  #+RESULTS:
+  :RESULTS:
+\[ TC = ES_{\alpha^'} - \frac{p}{\alpha} * (ES_{\alpha^'} + \sum c_i * w_i) \]
+  :END:
+
+  So you basically see that it is the expected shortfall for that 
+  adjusted quantile corrected by some additional risk occurring for
+  the scenario case. 
+
+  So that is pretty trivial. There are still some sign things that
+  make such an interpretation a little bit confusing but I am pretty
+  much sure that the ultimate idea behind it is that one.
+
+  The only thing is that quantile adjustment. That looks pretty much
+  arbitrary.
+  
+  #+begin_export html
+   <img src="../../images/Screenshot 2022-04-07 170417.png" class="center">
+  #+end_export
+
+  
 
 * Connecting the dots with your Risk System
   
@@ -735,7 +845,6 @@ intransparency.
     - Stock Market Crash 2000
     - Default of reinsurer
     - etc.
-
 
 * TODO note that you now got both methodological papers
 
