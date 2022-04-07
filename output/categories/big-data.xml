@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bits of Experience (Posts about Big Data)</title><link>https://marcohassan.github.io/bits-of-experience/</link><description></description><atom:link href="https://marcohassan.github.io/bits-of-experience/categories/big-data.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2022 &lt;a href="mailto:marco.hassan30@gmail.com"&gt;Marco Hassan&lt;/a&gt; </copyright><lastBuildDate>Fri, 01 Apr 2022 18:25:49 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>On the Architecture of Query Engines - Batch vs Streaming</title><link>https://marcohassan.github.io/bits-of-experience/posts/on-the-architecture-of-query-engines-batch-vs-streaming/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;p&gt;
+In the previous post we addressed the Jsoniq declarative and
+functional language for querying data in tree shape. It was mentioned
+that due to data independence it is possible to run such Java Library
+in combination to many Big Data frameworks and in general in
+combination with the Hadoop framework - MapReduce, Spark, HDFS etc -.
+&lt;/p&gt;
+
+&lt;p&gt;
+This post addresses the importance of understanding how a query engine
+operates despite the data independence. 
+&lt;/p&gt;
+
+&lt;p&gt;
+I.e. you might well be able to run and retrieve your desired data
+without understanding how different engines work under the hood;
+however you might then not write meaningful queries or run into issue
+if your hardware infrastructure is not suited to fit your desired data
+size and query engine operations.
+&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://marcohassan.github.io/bits-of-experience/posts/on-the-architecture-of-query-engines-batch-vs-streaming/"&gt;Read more…&lt;/a&gt; (4 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>Big Data</category><guid>https://marcohassan.github.io/bits-of-experience/posts/on-the-architecture-of-query-engines-batch-vs-streaming/</guid><pubDate>Sat, 27 Jun 2020 09:46:43 GMT</pubDate></item><item><title>On Data Idependence - Querying Trees. </title><link>https://marcohassan.github.io/bits-of-experience/posts/on-data-idependence-querying-trees/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;style&gt;
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+}
+&lt;/style&gt;
+
+&lt;p&gt;
+So far we introduced data objects in their tree format. We saw that
+being HDFS agnostic you can save data in their tree shape - be it
+&lt;code&gt;JSON&lt;/code&gt; or &lt;code&gt;XML&lt;/code&gt; - in &lt;code&gt;HDFS&lt;/code&gt;. We see how it was possible to operate on
+such tree data directly via the pyspark RDD low level API. Moreover,
+we briefly tackled the idea of compressing the information in the tree
+data model into dataframes and on how to handle these via &lt;code&gt;sparkSQL&lt;/code&gt;
+with its &lt;a href="https://marcohassan.github.io/bits-of-experience/posts/spark-session-initalization/"&gt;explode operators&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+Finally, we addressed document stores, &lt;code&gt;NoSQL&lt;/code&gt; databases that are
+especially designed to deal with data in their tree shape. We saw the
+extent to which document stores rely on indices and the consequent
+benefit over HDFS when it comes to find indexed data as no scan over
+the entire dataset has to be executed.
+&lt;/p&gt;
+
+&lt;p&gt;
+Given the interesting case for document store but the limited
+scalability the question is on whether we could leverage data
+independence for using a &lt;b&gt;declarative language&lt;/b&gt; in a similar spirit of
+the &lt;b&gt;SQL&lt;/b&gt; that is appositely created to deal with tree-modeled data. 
+&lt;/p&gt;
+
+&lt;p&gt;
+This posts confronts with the above case and introduces a &lt;b&gt;Jsoniq&lt;/b&gt; one
+of the many languages that are emerging in this Big Data decade to
+deal with tree-modeled data in a declarative way. This will allow to
+deal with tree-data without having to use the low-level RDD API or the
+approximative mapping of the tree structure into dataframes.
+&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://marcohassan.github.io/bits-of-experience/posts/on-data-idependence-querying-trees/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>Big Data</category><guid>https://marcohassan.github.io/bits-of-experience/posts/on-data-idependence-querying-trees/</guid><pubDate>Sat, 27 Jun 2020 07:23:56 GMT</pubDate></item><item><title>Document Stores</title><link>https://marcohassan.github.io/bits-of-experience/posts/document-stores/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;style&gt;
+img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+&lt;/style&gt;
+
+
+&lt;p&gt;
+This post briefly goes over the idea of document stores. These are
+databases that were appositely creating for dealing with data in its
+tree shape. Some act on top of &lt;code&gt;json&lt;/code&gt; documents some on top of &lt;code&gt;XML&lt;/code&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+The idea is that albeit you might find some tweaks for working with
+tree data shapes (think for instance at the &lt;code&gt;EXPLODE&lt;/code&gt; function of
+sparkSQL) you will always have difficulties in storing a tree data
+model into a relational table.
+&lt;/p&gt;
+
+&lt;p&gt;
+This is mainly due to the two properties of trees that are not
+available in relational tables being:
+&lt;/p&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;heterogeneity&lt;/li&gt;
+
+&lt;li&gt;nestedness&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+In this sense document stores are schemaless. You might save the
+document however you want and validate them ex-post.
+&lt;/p&gt;
+
+&lt;p&gt;
+To overcome data impedance of storing tree modeled data into
+relational tables new databases are emerging that allows to store and
+query directly json documents. However, notice that such databases are
+at their infancy and to this stage they don't have the scaling force
+of HDFS. I.e. you they scale just up to handful of machines.
+&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://marcohassan.github.io/bits-of-experience/posts/document-stores/"&gt;Read more…&lt;/a&gt; (9 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>Big Data</category><guid>https://marcohassan.github.io/bits-of-experience/posts/document-stores/</guid><pubDate>Fri, 26 Jun 2020 15:46:36 GMT</pubDate></item><item><title>Wide Column Store - HBase</title><link>https://marcohassan.github.io/bits-of-experience/posts/wide-column-store-hbase/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;style&gt;
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+&lt;/style&gt;
+
+
+&lt;p&gt;
+The idea of wide column store is to extend the idea of RDBMS,
+i.e. storing and managing data in tabular format, and to bring it into
+the BigData world. 
+&lt;/p&gt;
+
+&lt;p&gt;
+This post will briefly address the different characteristics of
+Hbase. I.e. it will first look at the logical idea for keeping data in
+a tabular form in the big data world. It will then look at the
+architecture behind Hbase and as you will see the basis for it is the
+good old &lt;i&gt;master-slave&lt;/i&gt; in parallel to HDFS that will be here used as
+the storage layer.
+&lt;/p&gt;
+
+&lt;p&gt;
+Finally it will briefly address the physical storage layer.
+&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://marcohassan.github.io/bits-of-experience/posts/wide-column-store-hbase/"&gt;Read more…&lt;/a&gt; (11 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>Big Data</category><guid>https://marcohassan.github.io/bits-of-experience/posts/wide-column-store-hbase/</guid><pubDate>Fri, 26 Jun 2020 10:55:39 GMT</pubDate></item><item><title>Working with Trees - Json And XML Sytanx and Validation</title><link>https://marcohassan.github.io/bits-of-experience/posts/working-with-trees-json-and-xml-sytanx-and-validation/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;style&gt;
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+&lt;/style&gt;
+
+&lt;p&gt;
+This posts goes over the syntax of XML and Json; two of the most
+widely used formats for storing data in tree form. 
+&lt;/p&gt;
+
+&lt;p&gt;
+It also goes over the validation of the data in the two
+formats. Recall that today other formats are more used in the Big Data
+world. Think for instance at &lt;code&gt;parquet&lt;/code&gt;. With a basic understanding of
+the formats above it will however be easy for you to get on going with
+the other formats.
+&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://marcohassan.github.io/bits-of-experience/posts/working-with-trees-json-and-xml-sytanx-and-validation/"&gt;Read more…&lt;/a&gt; (17 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>Big Data</category><guid>https://marcohassan.github.io/bits-of-experience/posts/working-with-trees-json-and-xml-sytanx-and-validation/</guid><pubDate>Thu, 25 Jun 2020 08:10:01 GMT</pubDate></item><item><title>HDFS</title><link>https://marcohassan.github.io/bits-of-experience/posts/hdfs/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;br&gt;
+&lt;br&gt;
+
+&lt;p&gt;
+After having discussed Object Storage, this posts continues to dig
+into the storage layer by briefly introducing HDFS. It will briefly
+make the point for the difference between Object Storage and HDFS as a
+distributed storage option.
+&lt;/p&gt;
+
+&lt;p&gt;
+Moreover, it tries to draw a line between Block Storage via Storage
+Area Network (SAN), HDFS block storage and the local file system (LFS)
+block storage, three topics that highly confused me at first when
+writing this posts series.
+&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://marcohassan.github.io/bits-of-experience/posts/hdfs/"&gt;Read more…&lt;/a&gt; (5 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>Big Data</category><guid>https://marcohassan.github.io/bits-of-experience/posts/hdfs/</guid><pubDate>Sun, 24 May 2020 15:01:55 GMT</pubDate></item><item><title>Storage Layer - Object Storage</title><link>https://marcohassan.github.io/bits-of-experience/posts/storage-layer-object-storage/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;style&gt;
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+&lt;/style&gt;
+
+&lt;br&gt;
+&lt;br&gt;
+
+&lt;p&gt;
+There are essentially three major storage options. The first being
+Block Storage, the second being File Storage and the last being Object
+Storage. You can find a good introduction to the three different
+options at the &lt;a href="https://www.ibm.com/cloud/learn/block-storage"&gt;following link&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+This post briefly introduces the third storage option above
+i.e. object storage.
+&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://marcohassan.github.io/bits-of-experience/posts/storage-layer-object-storage/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>Big Data</category><guid>https://marcohassan.github.io/bits-of-experience/posts/storage-layer-object-storage/</guid><pubDate>Sun, 24 May 2020 13:31:11 GMT</pubDate></item><item><title>Spark Architecture</title><link>https://marcohassan.github.io/bits-of-experience/posts/spark-architecture/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;br&gt;
+&lt;br&gt;
+
+&lt;p&gt;
+After the different posts written on setting up a spark session and
+working with RDDs &lt;a href="https://marcohassan.github.io/bits-of-experience/categories/spark/"&gt;available here&lt;/a&gt;, this post briefly goes a more into
+the detail of the spark physical layer.
+&lt;/p&gt;
+
+&lt;p&gt;
+It will introduce the concept of DAGs and will make a comparison of
+spark and the more restrictive &lt;a href="https://marcohassan.github.io/bits-of-experience/posts/mapreduce/"&gt;MapReduce&lt;/a&gt;. 
+&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://marcohassan.github.io/bits-of-experience/posts/spark-architecture/"&gt;Read more…&lt;/a&gt; (4 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>Big Data</category><category>Spark</category><guid>https://marcohassan.github.io/bits-of-experience/posts/spark-architecture/</guid><pubDate>Sun, 24 May 2020 09:44:04 GMT</pubDate></item><item><title>MapReduce</title><link>https://marcohassan.github.io/bits-of-experience/posts/mapreduce/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;br&gt;
+&lt;br&gt;
+
+&lt;p&gt;
+This post go briefly over the key idea of using MapReduce as a way to
+parallelize operations over multiple distributed machines. 
+&lt;/p&gt;
+
+&lt;p&gt;
+This was in fact the first tool that was developed for parallelizing
+computation over multiple machines and not simply to use multiple
+machines for the storage layer.
+&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://marcohassan.github.io/bits-of-experience/posts/mapreduce/"&gt;Read more…&lt;/a&gt; (7 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>Big Data</category><guid>https://marcohassan.github.io/bits-of-experience/posts/mapreduce/</guid><pubDate>Sat, 23 May 2020 12:25:10 GMT</pubDate></item><item><title>YARN</title><link>https://marcohassan.github.io/bits-of-experience/posts/yarn/</link><dc:creator>Marco Hassan</dc:creator><description>&lt;div&gt;&lt;br&gt;
+&lt;br&gt;
+
+&lt;p&gt;
+This post briefly introduces YARN - &lt;b&gt;Yet Another Resource Negotiator&lt;/b&gt;.
+It was introduced to overcome the limits of MapReduce v 1.0,
+especially the idle resources component, &lt;a href="https://marcohassan.github.io/bits-of-experience/posts/mapreduce/"&gt;discussed in the previous post&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://marcohassan.github.io/bits-of-experience/posts/yarn/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>Big Data</category><guid>https://marcohassan.github.io/bits-of-experience/posts/yarn/</guid><pubDate>Sat, 23 May 2020 12:21:55 GMT</pubDate></item></channel></rss>

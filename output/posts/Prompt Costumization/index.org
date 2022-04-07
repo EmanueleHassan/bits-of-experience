@@ -1,0 +1,78 @@
+#+BEGIN_COMMENT
+.. title: Prompt Costumization
+.. slug: Prompt Costumization
+.. date: 2019-09-08 18:21:43 UTC+02:00
+.. tags: Prompt
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+
+#+BEGIN_HTML
+<br>
+<br>
+#+END_HTML
+
+This month I started to work for the first time with a Mac OS. 
+
+As this recently became my primar working OS I immediately started by
+downloading /emacs/ and customize the editor in order to optimize my
+workflow.
+
+Annoyingly after pinning the Emacs executable to the Mac Dock and
+launching Emacs from there I got troubles with the =$PATH=.
+
+Emacs launched in such a way will not inherit the =$PATH= specified
+within the =~/.bash_profile= file nor will the =M-x shell= command of
+emacs display a nice prompt.
+
+This article goes over my fix and the way I customized my set up to
+get a nice informative prompt in the terminal.
+
+
+{{{TEASER_END}}}
+
+*** The Issue
+
+The issue turn out to be rather trivial. Launching Emacs executable
+directly and not from the terminal will imply that Emacs will not have
+the Terminal.app as a super process at any level so that Emacs cannot
+inherit anything form the shell in Terminal.
+
+This will mean that you have to make the environment the same by sourcing the same files.
+
+In this sense I decided to create a single =.bashrc= file where to
+configure my entire terminal options and to refer to this set-up in my
+=.bash_profile= file through the following command.
+
+#+BEGIN_EXAMPLE
+if [ -f ~/.bashrc ]; then . ~/.bashrc; fi 
+#+END_EXAMPLE
+
+Once this is set up you can finally modify your set up so that =M-x
+shell= as well as your standard terminal prompt will display the information you like.
+
+In my specific case, I decided to go for
+
+#+BEGIN_EXAMPLE
+export PS1="(\d) \u@\w[\j]\$"
+#+END_EXAMPLE
+
+This will allow me to read the current data at first (as I am
+especially bad at them this is a nice reminder for myself).  On top of
+that I will have an overview on the user, the working directory as
+well as the processes managed by the shell. Especially the last
+information is necessary for me as when running processes in the
+background I can easily forget about them. Finally I add the
+additional information on whether I am leveraging the root user or
+not.
+
+If you are interested on what it is possible to dynamically display in
+the prompt follow [[https://www.cyberciti.biz/tips/howto-linux-unix-bash-shell-setup-prompt.html][this nice article]].
+
+If you are interested in coloring your prompt check at [[https://www.ostechnix.com/hide-modify-usernamelocalhost-part-terminal/][this other]].
+
+

@@ -1,0 +1,101 @@
+<p>
+Wow&#x2026; everything is a fight on this new system.
+</p>
+
+<p>
+even with nikola there were some issues. first of all I was getting an
+execute-error concerining some zipped-function defined in the markdown
+file. the solution for it was to downgrade to a <a href="https://forum.drawbot.com/topic/247/markdown-syntax-for-formattedstring">previous version of
+markdown</a>. Actually it turned out that was not that important in the
+first place as the very root cause was not cause by some missing/malfunctioning
+python packages but rather by the following.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org53fffdd" class="outline-2">
+<h2 id="org53fffdd">Issue with .smth files</h2>
+<div class="outline-text-2" id="text-org53fffdd">
+<p>
+The issue is created as you imported the nikola project that was built
+on unix OS. Now I did not go into the internal mechanism of Nikola in
+a deep way&#x2026; Though, what I think is that you use a <code>sqllite</code> alike
+way to operate in an RDMS like way with files on your file system -
+i.e. you have an RDMS alike interface without the need to set up and
+use a proper database.
+</p>
+
+<p>
+Nonethess the way the files through which you manage such SQL
+compability are named (in terms of file extension) and the way they
+operate on different OS is different. Hence when you port your blog
+from one OS to the next you should pay attention to such detail.
+</p>
+
+<p>
+The solution is to generate a dummy blog with the command
+</p>
+
+<div class="highlight"><pre><span></span>nikola init --demo mysite
+</pre></div>
+
+<p>
+Then you will find the basic structure with the necessary DB-alike
+files.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5bbe1eb" class="outline-2">
+<h2 id="org5bbe1eb">How to deploy in my new workflow.</h2>
+<div class="outline-text-2" id="text-org5bbe1eb">
+<p>
+Not having a native bash language on my laptop I could not use the
+bash scripts I wrote in order to automate the deployment of my
+blog.
+</p>
+
+<p>
+What I did in order to solve that is to write some lisp function in
+order to trigger some <code>eshell</code> functions that operates in an bash
+alike way.
+</p>
+
+<p>
+The workflow is not that smooth that far but it should be fine.
+</p>
+
+<p>
+Here the steps you need to perform for the deployment. Automate even
+further when you have time.
+</p>
+</div>
+
+<div id="outline-container-orgc40c981" class="outline-3">
+<h3 id="orgc40c981">For local deployment</h3>
+<div class="outline-text-3" id="text-orgc40c981">
+<p>
+trigger the <code>blog/move_blog_files()</code> function you defined. this
+will copy all of the static resources of your blog to
+<code>blog/output/images</code>.
+</p>
+
+<p>
+note that it is not important from where you trigger such function
+in your file system as I specified the correct change of directory
+in there.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org480dfb5" class="outline-3">
+<h3 id="org480dfb5">For github deployment</h3>
+<div class="outline-text-3" id="text-org480dfb5">
+<p>
+First deploy via <code>nikola github_deploy</code>. Then call the
+<code>blog/push_resources_to_blog()</code> function to copy all of the static
+files used by the blog into the deployed branch.
+</p>
+</div>
+</div>
+</div>
