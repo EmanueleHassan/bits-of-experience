@@ -1,0 +1,325 @@
+#+BEGIN_COMMENT
+.. title: Object Oriented Programming - Some Notes
+.. slug: object-oriented-programming-some-notes
+.. date: 2021-11-17 16:37:49 UTC+01:00
+.. tags: oop
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+.. status: 
+#+END_COMMENT
+
+So here are some notes on concepts you have to use when working in a
+proper OOP way.
+
+Once upon a time, I had written some notes about major OOP
+concepts. Unfortunately it got lost. Learn your lesson from it as this
+is a real pity.
+
+In any case start anew here. Basically this should cover a little bit
+of Software Design best practices. Add some notes for instance through
+the following sources
+
+- [[https://refactoring.guru/design-patterns][design-patterns and refactoring]] - online source. 
+
+- [[http://www.javier8a.com/itc/bd1/articulo.pdf][desing patterns]] - apparently /THE BOOK/ in order to write proper
+  software .
+
+{{{TEASER_END}}}
+
+* Design Patterns
+
+  So taking now a moment to dig into design patterns.
+
+  Basically understand that they are broadly defined in to 3
+  categories:
+
+  - =Creational patterns=: provide object creation mechanisms that
+    increase flexibility and reuse of existing code.
+
+  - =Structural patterns=: explain how to assemble objects and classes
+    into larger structures, while keeping the structures flexible and
+    efficient.
+
+  - =Behavioral patterns=: take care of effective communication and
+    the assignment of responsibilities between objects.
+
+
+  At the end you will see that many things you already started to use
+  out of the box after a couple of month working more in an OOP way.
+
+
+* Creational Patterns
+
+** Factory Methods
+
+   Basically this is the one I was already noting when making some
+   notes generally about Java.
+
+   This is very core in order to write a bit of solid code. You have to
+   understand and interiorize it.
+
+   Basically the idea is the following:
+
+   - Define an interface for creating an object, but let subclasses
+     decide which class to instantiate. Factory Method lets a class
+     defer instantiation to subclasses. 
+
+   - So that is basically a /virtual/ constructor.
+
+   So the idea is essentailly the following:
+  
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-01-28 122956.png" class="center">
+   #+end_export
+
+   This was essentially the note that you made when writing your notes
+   about java.
+
+   See now how everything fits in this factory methods picture and good
+   to have it here in order to have a minimum order and reference it in
+   a faster way.
+
+   You see see in this sense how you start to extract important info
+   from that file and refactor them.
+
+**** On reference variables using interafaces            :reference_variable:
+
+     This is convenient. Recall that it was possible to define
+     reference variables as superclasses and to reference then objects
+     of subclasses. It was then possible to call the different abstract
+     methods of the superclass that would then trigger the right call
+     to the actual implementation of it in the subclass.
+
+     In a similar way it is possible to create reference variables as
+     interfaces and point then to the different objects of classes
+     implementing such interface.
+
+     *Any instance of any class that implements the declared interface
+     can be referred to by such a variable*.
+
+     The exact way the interface is implemented depends then on the
+     type of object that the reference interface variable points
+     at. This in a very similar way to what was already explained for
+     the case of superclass reference variable.
+
+     *Note:* interestingly when you implement a reference variable of
+     type interface and then refer to an object of some class referring
+     to that interface you can access all of the methods specified by
+     the interface via the reference variable but *you cannot access
+     any other members defined in the class* implementing the
+     interface.
+    
+     The method to be executed is looked up dynamically at run time,
+     allowing classes to be created later than the code which calls
+     methods on them.
+
+     #+begin_quote
+ CAUTION Because dynamic lookup of a method at run time incurs a
+ significant overhead when compared with the normal method invocation
+ in Java, you should be careful not to use interfaces casually in
+ performance-critical code.
+  
+** Abstract Factory
+
+   This is also trivial.
+
+   It is simply a interface that must be implemented by the lower
+   level classes.
+
+   Like this you force the implementation of the methods of the
+   interface and gurantee consistency.
+
+   
+ 
+* Structural Patterns
+  
+* Some core OOP principles you just have to keep on your mind
+
+** Callback Methods
+
+   So the basic idea is to create an interface with the methods that
+   the callback will leverage.
+
+   Then basically depedning on the object that will implement that
+   intereface you will fallback to different implementations of it.
+
+   Check as well at this event. [[https://www.tutorialspoint.com/Callback-using-Interfaces-in-Java][Equally good - if not better]]. 
+  
+   Say for instance the following
+
+   #+begin_src java :results output raw  
+// Java program to demonstrate callback mechanism
+// using interface is Java
+ 
+// Create interface
+import java.util.Scanner;
+interface STax {
+    double stateTax();
+}
+ 
+// Implementation class of Punjab state tax
+class Punjab implements STax {
+    public double stateTax()
+    {
+        return 3000.0;
+    }
+}
+ 
+// Implementation class of Himachal Pardesh state tax
+class HP implements STax {
+    public double stateTax()
+    {
+        return 1000.0;
+    }
+}
+ 
+class TAX {
+    public static void main(String[] args)
+	throws ClassNotFoundException, IllegalAccessException, InstantiationException
+    {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the state name");
+        String state = sc.next(); // name of the state
+ 
+        // The state name is then stored in an object c
+        Class c = Class.forName(state);
+ 
+        // Create the new object of the class whose name is in  c
+        // Stax interface reference is now referencing that new object
+        STax ref = (STax)c.newInstance();
+ 
+        /*Call the method to calculate total tax
+	  and pass interface reference - this is callback .
+	  Here, ref may refer to stateTax() of Punjab or HP classes
+	  depending on the class for which the object is created
+	  in the previous step
+	,*/
+ 
+        calculateTax(ref);
+    }
+    static void calculateTax(STax t)
+    {
+        // calculate central tax
+        double ct = 2000.0;
+ 
+        // calculate state tax
+        double st = t.stateTax();
+        double totaltax = st + ct;
+ 
+        // display total tax
+        System.out.println("Total tax =" + totaltax);
+    }
+}
+   #+end_src 
+
+   Note that in your code - for instance in the case of the zipParser
+   you use this concept coupled with the one of functional
+   programming.
+
+   I.e. your callback interface is implemented directly via functional
+   programming and it is never explicitely written anywehere.
+
+** Anonymous Inner Classes
+
+   This is something quite interesting.
+
+   Anonymous classes are /inner classes with no name/.
+
+   Since they have no name, we can't use them in order to create
+   instances of anonymous classes.
+
+   As a result, we have to *declare and instantiate anonymous classes in
+   a single expression at the point of use*. -> so essentially this is
+   ultimately the idea.
+
+   The way you declare this anonymous inner class with no name is the
+   following:
+
+   #+begin_quote
+ new ParentClass (...) {}
+
+ where:
+
+ - ParentClass the class you want to create the inner class in
+
+ - (...) here you have to pass the constructor arguments. Note that
+   this is /necessary/ as you are creating a new object out of the
+   box. 
+
+ - {} here you have the methods your anonymous class should implement
+   #+end_quote
+
+   Example
+
+   #+BEGIN_SRC java :results output drawer :classname
+// Anonymous class - no name.
+// It basically is an inner class of the parentclass: Book
+myNewObject = new Book("Design Patterns") // constructors arguments of parent class
+{
+    @Override
+    public String description() {   // inner class with this method
+        return "Famous GoF book.";
+    }
+}
+   #+END_SRC
+
+   Note that this is essentially it. The question is then why it is an
+   /inner/ class? Not that clear to me at this stage. I think that the
+   naming is a bit confusing.
+
+   Check at the following minor test that I did. You can in fact as
+   well access the methods of the parent class. So it looks to me
+   simply as an extended class object. So don't know keep it as an open
+   question and do not spend too much time on it now... too many things
+   to learn. 
+
+   #+BEGIN_SRC java :results output drawer :classname TestAnnonymousInner
+class Person{
+    void eat(){};
+
+    void helloWorld (){
+	System.out.println ("hello world");
+    };
+}
+
+class TestAnnonymousInner{
+    public static void main(String args[]){
+	Person p=new Person(){
+
+		@Override
+		void eat(){System.out.println("nice fruits");}
+	    };
+
+	p.eat();
+	p.helloWorld ();
+    }
+}
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   nice fruits
+   hello world
+   :end:
+
+   *Finally note*: that it is very common as well to use the /abstract
+   inner class/ patterns as well for interfaces. You can use this as
+   well there.
+
+** Polymorphism
+
+   Overridden methods are another way that Java implements the “one
+   interface, multiple methods” aspect of polymorphism.
+
+   Part of the key to successfully applying polymorphism is understanding
+   that the superclasses and subclasses form a hierarchy which moves from
+   lesser to greater specialization.  Used correctly, the superclass
+   provides all elements that a subclass can use directly. It also
+   defines those methods that the derived class must implement on its
+   own. This allows the subclass the flexibility to define its own
+   methods, yet still enforces a consistent interface.
+
+
+  
