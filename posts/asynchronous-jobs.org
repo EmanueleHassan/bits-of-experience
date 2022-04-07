@@ -179,6 +179,7 @@ ETL            -> marketRiskDB : storing the relvant infroamtion in the DB
 ETL            -> myBrokerPubSub : Informing the job has been successful completed
 myBrokerPubSub -> BusinessUser   : fan-out to business end users/ applications.\nSpecific job completed.
 BusinessUser   -> marketRiskDB   : can withdraw the relevant inforamtion
+
 @enduml
    #+end_src
 
@@ -202,7 +203,6 @@ BusinessUser   -> marketRiskDB   : can withdraw the relevant inforamtion
    there and it is quite similar to what you had in mind. 
 
    Another [[https://developer.ibm.com/tutorials/auto-scale-rabbitmq-consumers-by-queue-size-on-openshift/][source]] for making that pattern.
-
 
 ** Second round of Thinking - gathering evidence
 
@@ -367,12 +367,11 @@ BusinessUser   -> marketRiskDB   : can withdraw the relevant inforamtion
      So with it you would already have a solution for the UI to get
      the relevant information about the processing status of a job.
 
-     For more refer to the relevant section over [[https://docs.microsoft.com/en-us/azure/architecture/guide/technology-choices/messaging][here]].     
+     For more refer to the relevant section over [[https://docs.microsoft.com/en-us/azure/architecture/guide/technology-choices/messaging][here]].
 
-     
-** Putting it all together
+*** Putting it all together
 
-   #+begin_src plantuml :file ../../images/ETLstateMachine.png :exports none
+    #+begin_src plantuml :file ../../images/ETLstateMachine.png :exports none
 @startuml
 
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -417,43 +416,443 @@ ETL            -> EventGrid    : Publish the completition of some jobs \nunder a
 
 EventGrid      -> BusinessUser : Informs (mail) subscribers of topic about successful completion of a given topic.
 @enduml
-   #+end_src
+    #+end_src
 
-   #+RESULTS:
-   [[file:../../images/ETLstateMachine.png]]
+    #+RESULTS:
+    [[file:../../images/ETLstateMachine.png]]
 
-#+begin_export html
- <img src="../../images/ETLstateMachine.png" class="center">
-#+end_export
+ #+begin_export html
+  <img src="../../images/ETLstateMachine.png" class="center">
+ #+end_export
 
    
-   If you go for a push model you have to solve the following points:
+    If you go for a push model you have to solve the following points:
 
-   - pushing out of the queue - how do you trigger the eventGrid
-     event if the message in the queue was not processed?
+    - pushing out of the queue - how do you trigger the eventGrid
+      event if the message in the queue was not processed?
 
-   - polling you can do it yourself by implementing ETL jobs pulling
-     out from the queue. See the basic API of the bus.
+    - polling you can do it yourself by implementing ETL jobs pulling
+      out from the queue. See the basic API of the bus.
 
-   - check as well the option to work with Azure functions. It
-     probably makes most sense to work in such a way.
+    - check as well the option to work with Azure functions. It
+      probably makes most sense to work in such a way.
 
-     Check [[https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-storage-blob-triggered-function][this documentation]] in this sense. (actually the event Grid
-     also mentioned [[https://stackoverflow.com/questions/47570207/message-from-azure-blob-storage-to-azure-service-bus][here]]). So in any case you are on the right track
-     to construct your solution architecture. Check at [[https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-storage-queue-triggered-function][this]]
-     documentation.
+      Check [[https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-storage-blob-triggered-function][this documentation]] in this sense. (actually the event Grid
+      also mentioned [[https://stackoverflow.com/questions/47570207/message-from-azure-blob-storage-to-azure-service-bus][here]]). So in any case you are on the right track
+      to construct your solution architecture. Check at [[https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-storage-queue-triggered-function][this]]
+      documentation.
 
-   - you need to check at the costs. you need Premium Service Bus if
-     you want to go down the full road. Check if this makes sense but
-     yeah probably makes sense to work with functions. 
+    - you need to check at the costs. you need Premium Service Bus if
+      you want to go down the full road. Check if this makes sense but
+      yeah probably makes sense to work with functions. 
 
-**** on service bus - eventgrid integration
+***** on service bus - eventgrid integration
 
-     See the [[https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-to-event-grid-integration-concept?tabs=event-grid-event-schema][following page]].
+      See the [[https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-to-event-grid-integration-concept?tabs=event-grid-event-schema][following page]].
 
-**** TODO open questions - how to make the service resilient
+***** TODO open questions - how to make the service resilient
 
-     
+** Third Round of Thinking
+
+   So going back to it now.
+
+   The issue is that I was told that we have to make everything fit
+   in our VNet for security reasons.
+
+   Makes well sense to me. The only thing that is disturbing is that
+   there is the general statement of staying within the existing stack
+   and not using additional services.
+
+   That of course makes little sense. If the cloud provides
+   you 100. Use it. Plus services makes you very agile and take lots
+   of pain from you away.
+
+   Continue in this sense to explore them. Just check if they can be
+   integrated in the VNet at a reasonable cost. If that is the case go
+   for it cause as long as the explanation is the one above makes
+   little sense not to move in that direction and move faster by doing
+   so.
+
+   Note now that the Service Bus might be a too costly service. We
+   would need the premium thing in order to integrate it in the VNet
+   and obviously it is not indispensable to this stage. So I will
+   think about something different. Meaning for instance Azure
+   Functions as said above. There I will as well to convince some
+   people and make them see the point for it. Cause they argue too
+   much on a lower level. I agree that on that level you do not really
+   need it. Meaning you can make it work with a general application
+   that is more portable across cloud.
+
+   However, then in that case forget pure event-driven
+   architectures. So it is a choice of design of a system. And it is
+   clear that one is slow and cumbersome. The other is integrated and
+   seamless and event-driven with more lock-in and more pain in a
+   future migration.
+
+   Trade-off in life.
+
+   Now proceed as follows in the coming week.
+
+   - You already talked and got the approval to use eventgrid.
+
+     Use this. Just check quickly how to integrate it into the VNet
+     and the cost. Just out of curiosity. 
+
+   - You already downloaded that Azure functions tool to develop these
+     on your local machine.
+
+     Try to explore this. Should you start to get issue in designing a
+     pure event-grid architecture integrated with a webapp on the
+     backend.
+
+   Understand as well if that fits the asynchronous logic that should
+   be there. 
+
+* On EventGrid
+
+  So this is becoming a message-driven post. Giving an overview of how
+  to do it. But whatever... fine by me.
+
+  So anyways the todos for the week are the following:
+
+  - integrate eventgrid with Blob. How to generate a message when a
+    new file arrives over there.
+
+  - consume eventgrid event. Check at the Java SDK for interacting
+    with EventGrid. Probably the info you are looking for is over
+    there.
+ 
+  - publish eventgrid event. Is it possible for an application to
+    publish there?
+
+    I can think of good use-cases in this sense. So start to explore
+    it. 
+
+    Check at the Java SDK for interacting with EventGrid. Probably the
+    info you are looking for is over there.
+
+** EventGrid and VNets
+
+   So in order to properly understand this, you have to understand
+   where EventGrid live in terms of infrastructure.
+
+   Cause if you want to mask them from the outside world they must
+   live in some protected subnet.
+
+   At least that is my initial guess. But let's see cause I am not
+   that sure about it.
+
+   -----------------------
+
+   So you see that in order to well understand the cloud you should
+   think it in boxes. Or these lego component. As soon as you enter
+   the security section of the service you are back to the [[https://docs.microsoft.com/en-us/azure/event-grid/network-security][security
+   concepts]] of Azure.
+
+   I.e. for instance service tags, IP firewall options etc. So makes
+   little sense probably to study it over there. Have to find the time
+   at some to approach it as a unity.
+
+   Just upon tackling the thing in such a way you might be able to
+   come out of it successful. You will have a clear understanding of
+   which box is what. And you will have the chance to work
+   accordingly.
+
+   So do not spend too much time with it right now. You will have to
+   make Azure certifications in order to get the broad understanding
+   at high level.
+
+   Then you will be mentally ready to set everything in the right
+   buckets. 
+
+   -----------------------
+
+   That said it is obvious that the service will integrate with our
+   existing architecture through the use of private endpoints.
+
+   #+begin_quote
+   You can use private endpoints to allow ingress of events directly
+   from your virtual network to your topics and domains securely over
+   a private link without going through the public internet. A private
+   endpoint is a special network interface for an Azure service in
+   your VNet.
+
+   When you create a private endpoint for your topic or domain, it
+   provides secure connectivity between clients on your VNet and your
+   Event Grid resource.
+
+   The private endpoint is assigned an IP address from the IP address
+   range of your VNet. The connection between the private endpoint and
+   the Event Grid service uses a secure private link.
+   #+end_quote
+
+   So this is the idea I guess. Check at the following:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-29 120745.png" class="center">
+   #+end_export
+
+   Then EventGrid does not live in your private Subnet.
+
+   The concept is that as it is not a store even when cracked at any
+   given point of time there will be nothing in there. It is a
+   serverless service so there might even be no active runtime at a
+   given moment.
+
+   Then you generate messages but these are immediately transferred
+   through your private link. I guess there should also be encryption
+   at transfer on the top of it.
+
+   So you see that generally it is quite a secure service even if
+   living outside of your subnet.
+
+   So now the question is generally on how to create that private
+   endpoint through a webapp and how to connect it to EventGrid in
+   order to consume and generate events.
+
+   The idea at the end is essentially the same. Set up event-driven
+   architectures.
+
+
+** Concepts
+
+   So it is important to master [[https://docs.microsoft.com/en-us/azure/event-grid/event-schema][this section]]. Always start from here
+   when exploring a new service. At the end the structure of Azure is
+   this one. So exploit it. 
+
+   Especially important will be concept of topics.
+
+   You have to create a solid logic for all of the different topics.
+
+   Just upon this it will be able for you to get the relevant
+   information.
+
+   Basically understand that there are essentially two types of
+   topics, which we will explore next. There is then the concept of
+   partner topic - this will not be that important to you.
+
+*** System Topics
+
+    These are built-in topics provided by Azure services such as Azure
+    Storage, Azure Event Hubs, and Azure Service Bus. You can create
+    system topics in your Azure subscription and subscribe to them.
+
+    These will be of first order importance to you. Especially at the
+    beginning. You want to create an event driven mechanism in order
+    to process files on Blob.
+
+    So that is basically it. You can then check at the different
+    system topics on the official websites. See for instance Azure
+    Blob store [[https://docs.microsoft.com/en-us/azure/event-grid/event-schema-blob-storage?tabs=event-grid-event-schema][here]].
+
+*** Custom Topics
+
+    Are application and third-party topics. When you create or are
+    assigned access to a custom topic, you see that custom topic in
+    your subscription.
+
+    When designing your application, you have flexibility when
+    deciding how many topics to create. For large solutions, create a
+    custom topic for each category of related events.
+
+*** Partner Topics
+
+    The Partner Events feature allows a third-party SaaS provider to
+    publish events from its services to make them available to
+    consumers who can subscribe to those events. The SaaS provider
+    exposes a topic type, a partner topic, that subscribers use to
+    consume events.
+
+
+** Publish and Consume EventGrid - Java SDK :noexport:
+
+   All good. The relevant information for understanding the concept
+   and start to apply it, can be found [[https://docs.microsoft.com/en-us/java/api/com.azure.messaging.eventgrid?view=azure-java-stable][here]].
+
+   Check as well the following in order to get up and running in a
+   [[https://github.com/Azure-Samples/event-grid-java-publish-consume-events/tree/master/eventgrid-manage-producer-consumer][fast way]]. Check as well [[https://github.com/Azure-Samples/event-grid-java-publish-consume-events/blob/master/eventgrid-manage-producer-consumer/src/main/java/com/microsoft/azure/eventgrid/samples/EventGridSample.java][here]] for understanding it better. [[https://medium.com/microsoftazure/azure-event-grid-the-whole-story-4b7b4ec4ad23][This]] is
+   as well an walkthrough.
+
+   So note that all of the solutions you found online put a broker
+   between the event-producer and consumer. 
+   
+   I.e. note that there in between the event publisher - event grid -
+   and consumer - java app - sits an /event ingestor/. I..e a
+   component to decouple the production of an event stream from the
+   consumption of these events. So similar to the other solutions you
+   thought about that far.
+
+   You just have to make mental order and distinguish the following 3
+   services that can act as /event ingestors/:
+
+   - =EventHub=
+
+   - =Service Bus=
+
+   - =Azure Storage Queue=
+
+   Understand then for each the scope, merits and drawbacks.
+   
+*** TODO understand if you manage to consume directly in java w/o an event ingestor
+
+    In theory that should be possible.
+
+    I could imagine the following scenario:
+
+    - for each new event that arrives TOMCAT starts a new thread that
+      processes the event.
+
+    You note that without an even ingestor you have a couple of
+    drawback at the solution level.
+
+    - What happens to messages that your runtime does not manage to
+      process? - there is the concept of dead latter as well in
+      eventgrid. Read about it when you have time. 
+
+    - What happens if TOMCAT has not the capacity of processing a new
+      request? If you properly set up your cloud infra this should be
+      no issue on a theoretical level.
+
+    I guess that as always in IT you can find workarounds for these
+    limitations.
+
+    Nonetheless, it might well be that the different providers pose
+    restrictions / do not make such dirty architectures possible in
+    order to force well rounded solutions on the users.
+
+    Let's see.
+
+    Yes so what you basically want to do is the [[https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-event-quickstart][following]]. So stop
+    jumping around and dig a little bit lower on that thing. Even if
+    it is not clear what is happening there, it is clear that this has
+    to happen. So spend time to understand that properly.
+
+    No so even there if you follow the path you end up using an
+    event ingestor. So forget about it.
+
+**** TODO test if you can use a simple rest endpoint for managing the webhook call.
+
+     This seems to be an option based [[https://stackoverflow.com/questions/53609070/how-to-have-my-java-application-as-an-endpoint-for-webhook][on this]].
+
+     So check at this option.
+
+     In order to fulfill this you can use the following:
+
+     - make a webhook publishing to your application endpoint.
+
+     Good.
+
+     Seems clear how you can create that topic. The issue is that at
+     the creation time you have to enter the endpoint for the webhook.
+
+     So create that endpoint on your dummy helloworld machine. Then
+     check if everything is working out of the box.
+
+     ------------
+
+     So performed that step. I actually got the validation message.
+
+     What I am missing for some reason are the messages saying that
+     something occurred on the storage account - say blob creation
+     etc. -
+
+     Note that it seems that in the default subscriptions there is not
+     the one of a file upload. For it you probably have to create a
+     new one. 
+
+*** TODO Eventgrid Java SDK
+    
+    So basically looking at the SDK I see a lot of models. I.e. you
+    have all of these in order to properly map the things.
+
+    Now you just have to understand how to set up that relevant
+    endpoint and parse the json you receive.
+
+    So first idea to test if the webhook thing is working is to say:
+
+**** TODO use the sdk to deserialize the message and put it into objects
+
+     So this is specific to the Java stack. The idea is to convert the
+     json messages that you are receiving to objects.
+
+     Idea: from there on you are in your Java first class citizens
+     world. 
+
+     #+BEGIN_SRC java :results output drawer :classname 
+List<EventGridEvent> eventGridEventList = EventGridEvent.fromString(eventGridEventJsonString);
+EventGridEvent eventGridEvent = eventGridEventList.get(0);
+BinaryData eventGridEventData = eventGridEvent.getData();
+
+User objectValue = eventGridEventData.toObject(User.class);  // If data payload is a User object.
+int intValue = eventGridEventData.toObject(Integer.class);  // If data payload is an int.
+boolean boolValue = eventGridEventData.toObject(Boolean.class);  // If data payload is boolean.
+String stringValue = eventGridEventData.toObject(String.class);  // If data payload is String.
+String jsonStringValue = eventGridEventData.toString();  // The data payload represented in Json String.
+     #+END_SRC
+
+** TODO Integrate EventGrid with Blob :noexport:
+
+   So the first thing that you have to do is to create a =system
+   topic= that is connect to your storage account.
+
+   You basically have then two pieces of logic:
+
+   1. Subscriptions
+
+      These are the events generators.
+
+      So basically for this first round it is interesting to you that
+      you communicate with the storage account and that notifications
+      are triggered when events happens.
+
+   2. Handlers
+
+      This is the second bit fo the chain. Here the idea is to say:
+      once a message was generated where is it consumed?
+
+      This will be then the application component triggering all of
+      the logic. 
+   
+   What is failing on my part is the subscription component.
+
+   I managed to properly create a system topic. If you check at the
+   overview of it you will see the subscriptions associated to such a
+   topic.
+
+   The weird thing in my case is that in the validation message I
+   received there was the name of the subscription I did create but
+   this is not associated with the existing topic.
+
+   -----------------
+
+   So there are some issues with respect to this subscriptions.
+
+   Have to start dig again into some of the applications.
+
+   So you are able to create a subscription. You see it on your topic
+   at first.
+
+   Then after a while when you refresh the page it is gone.
+
+   You even have an error message when checking at the activity logs.
+
+   Understand where it orginates and how it comes to be.
+
+   ----------------
+
+* On storage Queue
+
+  Note that this is for sure available as we already have a storage
+  account in the VNet and as that lives in these spaces 1+1=2.
+
+  Now it is a way to store the messages. So in theory you can use it.
+
+  The only question here is how the messages are saved? Ordered or
+  not?
+
+  Similar concepts to ServiceBus? Where are the differences?
+
+
 * On Azure Functions
 
   Very nice way to integrate with the two services you want to use:
@@ -469,7 +868,7 @@ EventGrid      -> BusinessUser : Informs (mail) subscribers of topic about succe
   work in such a way without going too big on services.
 
   Start to test your workflow with Azure Functions Core Tools as soon
-  as you get the green light from IT to install it. 
+  as you get the green light from IT to install it.
 
 
 * On issues when working in such a fragmented Networking driven space
