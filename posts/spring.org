@@ -73,7 +73,6 @@ class: center;
 
 #+end_export
 
-
 So this is the next piece of the cake. As we transition to the cloud
 it makes sense to have the spring-framework in your skillset.
 
@@ -107,24 +106,107 @@ This is the bit I learned from my current recent experience.
 
 {{{TEASER_END}}}
 
-* Index
+
+* Creating and Using Beans 
+
+  The concept of Beans is of paramount importance in the Java and
+  Spring world. This section aims at presenting a basic understanding
+  of it. It is based on [[https://docs.spring.io/spring-javaconfig/docs/1.0.0.m3/reference/html/creating-bean-definitions.html][this section]].
+
+  So note that it is /common/ for some application components within
+  the Spring framework to have to depend on some object. Say for
+  instance a =RestTemplate= in order to consume REST endpoints.
+
+  Then as shown [[*RestTemplate][here]] there is an option of resolving this dependency
+  by instatiating an object of that class and work through it, or
+  there is the option of working through beans.
+
+  Note that the most up to date reference documentation is [[https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-definition][the
+  following]]. I just put on my agenda to read the first chapter
+  here. Will be necessary in order to properly manage this. 
   
-- [[*General Idea][General Idea]]
-- [[*Spring Project Structure][Spring Project Structure]]
-- [[*Gradle Configuration][Gradle Configuration]]
-- [[*Running the Spring web-application][Running the Spring web-application]]
-- [[*Important Spring Modules][Important Spring Modules]]
-- [[*Configuring Spring][Configuring Spring]]
-- [[*Web-applications with Spring][Web-applications with Spring]]
-- [[*Spring Data][Spring Data]]
-- [[*Spring Integration][Spring Integration]]
-- [[*Securing Spring][Securing Spring]]
-- [[*Application Restart][Application Restart]]
-- [[*Deploying with Spring Boot][Deploying with Spring Boot]]
-- [[*Generating a Docker Image out of your Spring Application][Generating a Docker Image out of your Spring Application]]
+** On the @Configuration
 
+   So basically the idea here is to have a class annotated in such a
+   way. In this class you will define the relevant Beans that you will
+   use and inject across the application.
 
-* General Idea
+   So @Configuration annotation indicates that the class will be
+   used by JavaConfig as a source of bean definitions.
+
+   #+BEGIN_SRC java :results output drawer :classname 
+// note that it is possible to explicitly set defaults for all
+// enclosed bean definitions. See the options in the parentheses.
+@Configuration(defaultAutowire = Autowire.BY_TYPE, defaultLazy = Lazy.FALSE)
+public class DataSourceConfiguration {
+    // bean definitions follow
+}
+   #+END_SRC
+
+   Note now that beans declarated in such a way will be available in
+   the =BeanFactory/ApplicationContext=.
+
+** Bean Visibility
+
+   Not making notes, this is the classical story.
+
+   What should be visible where.
+
+   You can check at the links above.
+   
+** Lazy-initialized Beans
+
+   By default, ApplicationContext implementations eagerly create and
+   configure /all singleton beans/ as part of the initialization
+   process.
+
+   So what that basically means is that all of your beans in your
+   configuration classes will be directly initialized at boot time.
+
+   This is I guess what actually happens when you start a SpringBoot
+   applicaiton. It starts your server etc, but it also instantiates
+   all of the Beans. You see there that what is actually returned is
+   an ApplicationContext and this will contain all of your Beans that
+   you will use throughout the application. 
+
+   Generally, this pre-instantiation is desirable, because errors in
+   the configuration or surrounding environment are discovered
+   immediately, as opposed to hours or even days later. When this
+   behavior is not desirable, you can prevent pre-instantiation of a
+   singleton bean by marking the bean definition as being
+   lazy-initialized. A /lazy-initialized bean tells the IoC container
+   to create a bean instance when it is first requested/, rather than
+   at startup.
+
+   Might be good for fast startup times etc.
+ 
+** @Autowired
+
+   The Spring container can autowire relationships between
+   collaborating beans.
+
+   You can let Spring *resolve collaborators (other beans)
+   automatically* for your bean by inspecting the contents of the
+   ApplicationContext.
+
+   This is also interesting:
+
+   #+begin_quote
+Autowiring can update a configuration as your objects evolve. For
+example, if you need to add a dependency to a class, that dependency
+can be satisfied automatically without you needing to modify the
+configuration. Thus autowiring can be especially useful during
+development, without negating the option of switching to explicit
+wiring when the code base becomes more stable.
+   #+end_quote
+
+   Note that you would wire then manually as you would eventually make
+   everything more stable, i.e. less random as less automatic - where
+   things can go wrong without you ever noticing it.
+   
+  
+* General Idea - Container
+
 
    At its core, Spring offers a container, often referred to as the
    Spring application context, that creates and manages application
@@ -155,6 +237,11 @@ This is the bit I learned from my current recent experience.
    
 * Spring Project Structure
 
+  This is based on the spring in action book. You understand well that
+  it is just one among the many possibilities.
+
+  There the structure was more less the following:
+
   - =TacoCloudApplication.java= - This is the Spring Boot main class
     that bootstraps the project.
 
@@ -167,8 +254,10 @@ This is the bit I learned from my current recent experience.
     render content to the browser. 
 
   - =TacoApplicationTests.java= - this is a simple test class that
-    ensures that the Spring application context loads successfully. 
+    ensures that the Spring application context loads successfully.
 
+  So you see that this is quite similar conceptually to your python
+  project structure.
 
 * Gradle Configuration
 
@@ -226,18 +315,6 @@ This is the bit I learned from my current recent experience.
   interested in the Spring MVC for writing your endpoints and do the
   back-end work.
 
-  Note as well there is a devtools dependency:
-  =spring-boot-starter-devtools=. This is handy when programming as
-  through it you will be able to have quicker updates and
-  deployments. It achieves similar results as running flask in
-  debugging mode. But it adds much more to it. There is also this
-  H2-console that you need to understand better at some later point.
-
-  Anyways read more into such devtools when you start properly
-  developing with it. For now focus on the general structure in these
-  notes.
-  
-
 * Running the Spring web-application
 
   This is a 101 example. Do not waste too much time if you do not get
@@ -245,6 +322,7 @@ This is the bit I learned from my current recent experience.
 
   Keep reading. But yeah take the idea if you want to start a 101
   spring app.
+
 
 ** Run App
 
@@ -353,6 +431,7 @@ public class HomeController {
 
   However, in general there are macroscopic classes, that you need to
   understand:
+
 
 ** Core Spring Framework
 
@@ -614,7 +693,6 @@ greeting:
 
    This is what is actully handeled in the next section.   
 
-   
 ** Creating your own configuration properties
 
    Configuration properties are nothing more than properties of beans
@@ -908,12 +986,15 @@ public CommandLineRunner dataLoader(IngredientRepository repo,
 	}
    #+END_SRC
 
-
+   
 * Web-applications with Spring
 
   You can even read more into the detail about working with Spring at
   the following source [[https://docs.spring.io/spring-restdocs/docs/current/reference/html5/][here.]]
-  
+
+  In order to properly develop solid endpoints you should read into
+  [[https://martinfowler.com/articles/richardsonMaturityModel.html][this]]. You will then see the three levels and you should aim to
+  program at level 3 and not at level 0 like a moron.
 
 ** Synchronous REST
 
@@ -954,7 +1035,6 @@ public CommandLineRunner dataLoader(IngredientRepository repo,
     and respond with views etc. In any case it is the /controller/
     piece of the =MVC= architecture you can read about [[https://marcohassan.github.io/bits-of-experience/posts/on-classical-architectures/][classical
     architectures]].
-
    
 **** CORS option
 
@@ -965,7 +1045,6 @@ public CommandLineRunner dataLoader(IngredientRepository repo,
  #+begin_export html
   <img src="../../images/cors_principle.png" class="center">
  #+end_export
-
 
 *** On important Annotations
 
@@ -1037,10 +1116,15 @@ public Taco tacoById(@PathVariable("id") Long id) { // see pathvariable here. th
 }
       #+END_SRC
 
-    - =@RequestStatus=
+    - =@ResponseStatus=
 
       That is nice cause with that tag you can specify what the
       endpoint will utlimately hand back as HTTP anser.
+
+      *Default:* Under normal circumstances (when no exceptions are thrown), all
+      responses will have an HTTP status code of 200 (OK).
+
+      See for instance an application in hte next java chunck.
 
       Check online at all of the options you have in this sense.
 
@@ -1054,9 +1138,52 @@ public Taco tacoById(@PathVariable("id") Long id) { // see pathvariable here. th
       object/. Spring automatically deserializes the JSON into a Java
       type, assuming an appropriate one is specified.
 
+      Note that this is important to include in your post endpoints
+      consuming json objects.
+
+      The reason is the following:
+
+      #+begin_quote
+This annotation is important—without it, Spring MVC would assume that
+you want request parameters (either query parameters or form
+parameters) to be bound to the object of interest.
+      #+end_quote
+
+      #+begin_src java
+@PostMapping(consumes="application/json")
+@ResponseStatus(HttpStatus.CREATED) // see how you can pass the
+                                    // response status you can then
+                                    // consume such status responses
+                                    // via ResponseEntity objects.
+public Taco postTaco(@RequestBody Taco taco) {
+ return tacoRepo.save(taco);
+}
+      #+end_src
+
       See [[https://www.baeldung.com/spring-request-response-body][this]] for more. So you see this is how you handle json
-      requests in a straightforward way without having to do all of
-      that big conversion in the way we are doing.
+      requests in a straightforward way. Not even jacksonjson is
+      needed.
+
+    - =@RequestParam=
+
+      Similar as =@RequestBody=, specifying what you want from there.
+
+      #+BEGIN_SRC java :results output drawer :classname 
+@GetMapping("/age")
+ResponseEntity<String> age(
+  @RequestParam("yearOfBirth") int yearOfBirth) {
+ 
+    if (isInFuture(yearOfBirth)) {
+        return new ResponseEntity<>(
+          "Year of birth cannot be in the future", 
+          HttpStatus.BAD_REQUEST);
+    }
+
+    return new ResponseEntity<>(
+      "Your age is " + calculateAge(yearOfBirth), 
+      HttpStatus.OK);
+}
+      #+END_SRC
 
 
 *** HETOAS
@@ -1075,8 +1202,28 @@ public Taco tacoById(@PathVariable("id") Long id) { // see pathvariable here. th
     The entire application is then more bounded to the code itself and
     less on hard-coded strings.
 
-    Read again in the book if you want to go in that direction.
-   
+    Set your mental framework correctly. Understand that each time you
+    have two components:
+
+    - *Producing*:
+
+      Here the idea is to generate the message with the relevant
+      endpoints information.
+
+    - *Consuming*:
+
+      Here the idea is to actually read the information produced by
+      the =producing= component and navigate everything
+      programatically. The
+
+      Note that while there is sdk to consume and create such in Java
+      I could not find anything like this in flask. You will have some
+      issues in this sense. 
+
+    Read again in the book if you want to go in that direction. Also
+    [[https://docs.spring.io/spring-hateoas/docs/current/reference/html/#fundamentals.representation-models][this]] is a good documentation.
+
+    Have to understand this dimension.
 
 *** Spring Data REST
 
@@ -1190,6 +1337,11 @@ public Ingredient getIngredientById(String ingredientId) {
      Recall in any case that once you have hypermedia APIs you consume
      API by traversing multiple API based on the response.
 
+     So you should use this in order to properly consume HETEOAS
+     endpoints.
+
+     How you write them is something different though. Understand this point.
+
 
 *** Document Spring APIs via OpenApi standards
 
@@ -1229,8 +1381,6 @@ public Book findById(@Parameter(description = "id of book to be searched")
     out-of-the-box should be done via the following plugin: [[https://github.com/springdoc/springdoc-openapi-gradle-plugin][here]]. Note
     that apparently this is not on MavenCentral and you would have to
     install it manually. Follow the instructions on Github for it. 
-
-
      
 ** Asynchoronous Communication
 
@@ -1594,7 +1744,6 @@ alter table Taco_Order_Tacos
    some insert statements in a =data.sql= file also saved on the same
    repo.
 
-
 ** Spring JPA
 
    Ok - here there is a big discussion among the Java experts in my
@@ -1840,6 +1989,7 @@ specification that provides a functional API for composing Reactive
 Streams.
   #+end_quote
   
+
 ** Mono vs. Flux
 
    These are the two Reactor's core types.
@@ -2537,7 +2687,7 @@ situation will be resolved in the near future.
    #+end_quote
     
 
-* Securing Spring
+* TODO Securing Spring
 
   There is even all of the layer about securing the spring application
   such that it properly communicate by encrypting data in transfer.
@@ -2550,13 +2700,15 @@ situation will be resolved in the near future.
   So basically it is all about the key generation and exchange. 
 
 
-* Application Restart
+* Application Restart - Spring DevTools
 
-  Have to integrate at some point the =Spring DevTools=.
+  This section talks about how to integrate =Spring DevTools= with
+  your local Gradle build.
 
-  With them as part of your project, you will be able to make changes
-  to Java code and properties files in the project and see those
-  changes applied after a brief moment.
+  In such a way it will be possible for you to make changes to your
+  code, Spring Boot will then automatically detect the changes and
+  restart a Spring Boot application such that you will have a live
+  reload and you will increase your development speed.
 
   Note that the quintessential idea of setting up this application
   restart is the following:
@@ -2568,21 +2720,60 @@ situation will be resolved in the near future.
 
   One class loader is loaded with your Java code, property files, and
   pretty much anything that’s in the src/main/ path of the
-  project. These are items that are likely to change frequently. The
-  other class loader is loaded with dependency libraries, which aren’t
-  likely to change as often.  When a change is detected, DevTools
-  reloads only the class loader containing your project code and
-  restarts the Spring application context, but leaves the other class
-  loader and the JVM intact. Although subtle, this strategy affords a
-  small reduction in the time it takes to start the application.
+  project. These are items that are likely to change frequently.
 
-  The downside of this strategy is that changes to dependencies won’t
-  be available in automatic restarts. That’s because the class loader
-  containing dependency libraries isn’t automatically reloaded. This
-  means that any time you add, change, or remove a dependency in your
-  build specification, you’ll need to do a *hard restart* of the
+  The other class loader is loaded with dependency libraries, which
+  aren’t likely to change as often.
+
+  When a change is detected, DevTools reloads only the *class loader*
+  containing your project code and restarts the Spring application
+  context, but leaves the other class loader and the JVM
+  intact. Although subtle, this strategy affords a small reduction in
+  the time it takes to start the application.
+
+  The downside of this strategy is that changes *to dependencies*
+  won’t be available in automatic restarts. That’s because the class
+  loader containing dependency libraries isn’t automatically
+  reloaded.
+
+  This means that any time you add, change, or remove a dependency in
+  your build specification, you’ll need to do a *hard restart* of the
   application for those changes to take effect.
   #+end_quote
+
+  So the question is now:
+
+  - How is it possible for DevTools to detect a change?
+
+    In order to understand this - check essentially at [[https://stackoverflow.com/questions/58013241/how-can-work-devtools-in-kotlin-and-gradle-project-when-i-guess-i-tried-a-lot-of][this answer]]:
+
+    #+begin_quote
+The devtools module will only reload classes on recompilation. So you
+could hit the "Build Project" button whenever you are ready for a
+reload to trigger a build with Gradle. But as this will also run unit
+tests and maybe even static code analysis (if you are using that), the
+turn-around time would still be rather high. You could manually run
+the classes task with Gradle to compile only classes, but doing this
+manually is annoying.
+
+Instead, to continuously compile your classes with Gradle, and only
+that, run this command in a terminal (assuming you use the wrapper):
+
+=gradlew -t classes=
+
+It will monitor the file system for changes and rerun the classes task
+on changes. So whenever you make a change to a source file and save
+it, Gradle will recompile it and the devtools module should pick up
+the change and reload it.
+    #+end_quote
+
+    So essentially this will be enough. Include =devtools= to your
+    gradle dependencies and make sure that it is active.
+
+    Then start your spring boot application in one shell and run
+    =gradlew -t classes= into another shell. Everything will work
+    properly then.
+
 
 * Deploying with Spring Boot
 
@@ -2591,7 +2782,6 @@ situation will be resolved in the near future.
   #+begin_src 
   ./gradlew.bat bootRun
   #+end_src
-
 
 
 ** Under the Hood
@@ -2680,6 +2870,7 @@ jar tvf ./spring-boot-0.0.1-SNAPSHOT.jar
     Double check at it when you have time once you start deploying the
     entire thingy.    
 
+
 ** Debugging Spring App
 
    Note that in order to debug a spring application on localhost you
@@ -2700,22 +2891,60 @@ jar tvf ./spring-boot-0.0.1-SNAPSHOT.jar
    use [[https://stackoverflow.com/questions/24113939/how-to-debug-spring-boot-application-with-eclipse][the following]]. Or obviously as always the official
    documentation. That might take a little bit longer though.
    
-* Generating a Docker Image out of your Spring Application
 
-  Note that this will be important and the way to go on the long run.
 
-  Interesting to see that spring is all integrated in the new
-  IT-ecosystem.
+** Generating a Docker Image out of your Spring Application
 
-  In this sense it is possible to generate out of the box the
-  necessary Docker image that you want to use.
+   Note that this will be important and the way to go on the long run.
 
-  You can build a container image (if you have a docker daemon) using
-  the Spring Boot build plugin:
+   Interesting to see that spring is all integrated in the new
+   IT-ecosystem.
 
-  #+begin_src shell
+   In this sense it is possible to generate out of the box the
+   necessary Docker image that you want to use.
+
+   You can build a container image (if you have a docker daemon) using
+   the Spring Boot build plugin:
+
+   #+begin_src shell
   ./gradlew.bat spring-boot:build-image
-  #+end_src
+   #+end_src
 
 
+* On local Variables and the issue of leaving the Spring Context
 
+  So there are a few things that you better consider.
+
+  Otherwise they will come to hunt you down in the future. That is
+  actually quite fun cause you might loose then tons of time for silly
+  design choices.
+
+  The idea is that I used to work with =.env= files in my pyhton
+  experience.
+
+  Was looking for smth similar and found essentially a module that
+  reads from such files as was your experience in python.
+
+  That caused some troubles due to the inherit difference of the
+  languages. At the core they are different.
+
+  Meaning that when you develop in spring and then use the PaaS
+  services what you would ultimately do is to package everything that
+  is within the spring context into some jar, deploy it to the PaaS
+  and then from there the service will take over.
+
+  So note now that if you have an =.env= file into your local machine
+  with the relevant variables, these will not be packaged into the
+  =war= such that they will not be in your applicaiton on the cloud
+  and you will start to have issues.
+
+  So to this stage I created an enumerator class in java holding the
+  relevant information.
+
+  I guess that this is not the most clean solution. Now that I am
+  writing the things down I am noticing that what the most clean
+  solution likely is, is the one of writing the variables in the
+  spring application settings or context.
+
+  So check at the way to do it but I am quite sure this is the way to
+  go.   

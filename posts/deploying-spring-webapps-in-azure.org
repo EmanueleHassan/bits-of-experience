@@ -1,8 +1,8 @@
 #+BEGIN_COMMENT
-.. title: Deploying Spring Webapps in Azure
+.. title: Deploying Webapps in Azure
 .. slug: deploying-spring-webapps-in-azure
 .. date: 2022-03-21 16:34:55 UTC+01:00
-.. tags: azure, software-engineering
+.. tags: azure, software-engineering, Pyhton, java
 .. category: 
 .. link: 
 .. description: 
@@ -39,27 +39,6 @@ az account list -o table
   Now it is possible to specify the subscriptionId of that table and
   the resource group and directly set up stuff over there.  
 
-
-* Choosing the runtime
-
-  So the first thing is to choose the right config for your
-  applications.
-
-  You can check at the available runtimes with the following:
-
-  #+begin_src sh
-az webapp list-runtimes --os linux | grep "JAVA\|TOMCAT\|JBOSSEAP"
-  #+end_src
-
-  Interesting is that there is for instance no =Jetty= server. Given
-  your recent exploration into async programming and the power of such
-  server in that dimension I am struck that azure did not offer such
-  an option yet.
-
-  Note that different runtimes need different packaging of the
-  underlying bytecode. 
-
-
 * One Good tool to monitor your application - Kudu
 
   This is an open source project you would need to understand more if
@@ -82,9 +61,29 @@ az webapp list-runtimes --os linux | grep "JAVA\|TOMCAT\|JBOSSEAP"
 
   *Note* there you have as well a bash shell which has a much higher
   response time in comparison to the ssh option.
-  
 
-* Java 
+
+* Java
+  
+** Choosing the runtime
+
+   So the first thing is to choose the right config for your
+   applications.
+
+   You can check at the available runtimes with the following:
+
+   #+begin_src sh
+az webapp list-runtimes --os linux | grep "JAVA\|TOMCAT\|JBOSSEAP"
+   #+end_src
+
+   Interesting is that there is for instance no =Jetty= server. Given
+   your recent exploration into async programming and the power of such
+   server in that dimension I am struck that azure did not offer such
+   an option yet.
+
+   Note that different runtimes need different packaging of the
+   underlying bytecode. 
+
 
 ** Gradle Deployment
 
@@ -322,6 +321,7 @@ az webapp up--runtime PYTHON:3.7 \
     --logs
    #+end_src
    
+
 ** Deploying
 
    So note that this section will be relevant as well for understand
@@ -359,6 +359,8 @@ az webapp up--runtime PYTHON:3.7 \
 
    Then with it it will be possible for you to deploy your code on a
    given application.
+
+   
 
 ** Set up the startup script
 
@@ -424,7 +426,8 @@ gunicorn --bind=0.0.0.0 --timeout 600 startup:app
 
    You are ready to push then to your app through git and the PaaS
    will then start to read and unpackage everything in the right way. 
-   
+
+
 ** Note that the inner architecture of Azure is complex
 
    Here the functioning and the hidden inner structrues are more
@@ -444,36 +447,74 @@ gunicorn --bind=0.0.0.0 --timeout 600 startup:app
    This will be then the source and the space where your app moves
    in. You can see it cause if you log to a file in the project, you
    will find the added log of the application over there. 
+
+
+* Debugging
+
+** Java
+  
+   So you have to get used to the things in life.
+
+   So basically by deploying via the gradle plugin you do not get a lot
+   of logged info.
+
+   So as mentioned it might seem that everything is working properly
+   when it is not.
+
+   Or at least will have to understand better how to properly log
+   everything. In this sense it makes sense to start with the Azure
+   certification soon. Will help you to gain that knowledge and it will
+   be a guided tour instead of an unstructured go and conquer.
+
+   In any case here you will have little info but if the applicaiton
+   is not able to boot despite the successfuly deployment of the
+   =.jar= on the webapp, then you will get an application error
+   response when trying to hit one of your endpoints.
+
+   If you then go on the diagnostic tools you should be able to have
+   an option where you can ultimately see the spring boot application
+   logs and there you will find the root cause of the issue.
+
+   Or at least will help you to understand what is going on wrong over
+   there. 
    
-** Do not forget to use log-stream for debugging
+** Python
 
-   This is nice way to check about what is happening in your deployed
-   webapp.
+   In the way you deploy via git integration you will get a lot of
+   feedback.
 
-   You will see there if the application did not start and it will
-   give you some hints on what went wrong.
+   So basically in this way of deploying your can check your
+   log-stream and you will get a good idea of the issues.
 
-   This is actually quite annoying of these webapps. I was used to
-   work in a different way.
+*** Use log-stream for debugging
 
-   Either everything started or you would get a failure message.
+     This is nice way to check about what is happening in your deployed
+     webapp.
 
-   Here you do not necessarily get a failure. Cause if you manage to
-   upload the files to AzureWebApps then you get a success message.
+     You will see there if the application did not start and it will
+     give you some hints on what went wrong.
 
-   Whether then the PaaS service manages to correcly unpack everything
-   and start the application out of the box is a different question
-   for this you would actually have to check at the logs.
+     This is actually quite annoying of these webapps. I was used to
+     work in a different way.
 
-   You can use is it as well to check at your logs for the
-   application.
+     Either everything started or you would get a failure message.
 
-   Note that I was used to write the logs to a file. I have to explore
-   all of the logging monitoring services more into detail. It is
-   clear nonetheless that with all of the log services and log queries
-   services it probably makes sense to log everything directly into
-   the console.
-    
+     Here you do not necessarily get a failure. Cause if you manage to
+     upload the files to AzureWebApps then you get a success message.
+
+     Whether then the PaaS service manages to correcly unpack everything
+     and start the application out of the box is a different question
+     for this you would actually have to check at the logs.
+
+     You can use is it as well to check at your logs for the
+     application.
+
+     Note that I was used to write the logs to a file. I have to explore
+     all of the logging monitoring services more into detail. It is
+     clear nonetheless that with all of the log services and log queries
+     services it probably makes sense to log everything directly into
+     the console.
+
 
 * Understand pricing tiers in Azure
 
