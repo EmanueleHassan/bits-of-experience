@@ -186,31 +186,162 @@ This is the bit I learned from my current recent experience.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org7f7dc4f" class="outline-2">
-<h2 id="org7f7dc4f">Index</h2>
-<div class="outline-text-2" id="text-org7f7dc4f">
-<ul class="org-ul">
-<li><a href="#org102ded9">General Idea</a></li>
-<li><a href="#orge752f30">Spring Project Structure</a></li>
-<li><a href="#orge9fce9d">Gradle Configuration</a></li>
-<li><a href="#org9df8846">Running the Spring web-application</a></li>
-<li><a href="#org3358c55">Important Spring Modules</a></li>
-<li><a href="#org8c7bdfd">Configuring Spring</a></li>
-<li><a href="#orgbe24b3a">Web-applications with Spring</a></li>
-<li><a href="#orgd141758">Spring Data</a></li>
-<li><a href="#orgf2dc911">Spring Integration</a></li>
-<li><a href="#org063f688">Securing Spring</a></li>
-<li><a href="#orga87cf0d">Application Restart</a></li>
-<li><a href="#org1e9df94">Deploying with Spring Boot</a></li>
-<li><a href="#org8946fdc">Generating a Docker Image out of your Spring Application</a></li>
-</ul>
+
+<div id="outline-container-org4c19e1f" class="outline-2">
+<h2 id="org4c19e1f">Creating and Using Beans</h2>
+<div class="outline-text-2" id="text-org4c19e1f">
+<p>
+The concept of Beans is of paramount importance in the Java and
+Spring world. This section aims at presenting a basic understanding
+of it. It is based on <a href="https://docs.spring.io/spring-javaconfig/docs/1.0.0.m3/reference/html/creating-bean-definitions.html">this section</a>.
+</p>
+
+<p>
+So note that it is <i>common</i> for some application components within
+the Spring framework to have to depend on some object. Say for
+instance a <code>RestTemplate</code> in order to consume REST endpoints.
+</p>
+
+<p>
+Then as shown <a href="#orga10b735">here</a> there is an option of resolving this dependency
+by instatiating an object of that class and work through it, or
+there is the option of working through beans.
+</p>
+
+<p>
+Note that the most up to date reference documentation is <a href="https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-definition">the
+following</a>. I just put on my agenda to read the first chapter
+here. Will be necessary in order to properly manage this. 
+</p>
+</div>
+
+<div id="outline-container-org48ff093" class="outline-3">
+<h3 id="org48ff093">On the @Configuration</h3>
+<div class="outline-text-3" id="text-org48ff093">
+<p>
+So basically the idea here is to have a class annotated in such a
+way. In this class you will define the relevant Beans that you will
+use and inject across the application.
+</p>
+
+<p>
+So @Configuration annotation indicates that the class will be
+used by JavaConfig as a source of bean definitions.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1">// note that it is possible to explicitly set defaults for all</span>
+   <span class="c1">// enclosed bean definitions. See the options in the parentheses.</span>
+   <span class="nd">@Configuration</span><span class="p">(</span><span class="n">defaultAutowire</span> <span class="o">=</span> <span class="n">Autowire</span><span class="p">.</span><span class="na">BY_TYPE</span><span class="p">,</span> <span class="n">defaultLazy</span> <span class="o">=</span> <span class="n">Lazy</span><span class="p">.</span><span class="na">FALSE</span><span class="p">)</span>
+   <span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataSourceConfiguration</span> <span class="p">{</span>
+       <span class="c1">// bean definitions follow</span>
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+Note now that beans declarated in such a way will be available in
+the <code>BeanFactory/ApplicationContext</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfd18995" class="outline-3">
+<h3 id="orgfd18995">Bean Visibility</h3>
+<div class="outline-text-3" id="text-orgfd18995">
+<p>
+Not making notes, this is the classical story.
+</p>
+
+<p>
+What should be visible where.
+</p>
+
+<p>
+You can check at the links above.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb1535db" class="outline-3">
+<h3 id="orgb1535db">Lazy-initialized Beans</h3>
+<div class="outline-text-3" id="text-orgb1535db">
+<p>
+By default, ApplicationContext implementations eagerly create and
+configure <i>all singleton beans</i> as part of the initialization
+process.
+</p>
+
+<p>
+So what that basically means is that all of your beans in your
+configuration classes will be directly initialized at boot time.
+</p>
+
+<p>
+This is I guess what actually happens when you start a SpringBoot
+applicaiton. It starts your server etc, but it also instantiates
+all of the Beans. You see there that what is actually returned is
+an ApplicationContext and this will contain all of your Beans that
+you will use throughout the application. 
+</p>
+
+<p>
+Generally, this pre-instantiation is desirable, because errors in
+the configuration or surrounding environment are discovered
+immediately, as opposed to hours or even days later. When this
+behavior is not desirable, you can prevent pre-instantiation of a
+singleton bean by marking the bean definition as being
+lazy-initialized. A <i>lazy-initialized bean tells the IoC container
+to create a bean instance when it is first requested</i>, rather than
+at startup.
+</p>
+
+<p>
+Might be good for fast startup times etc.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcf94ba0" class="outline-3">
+<h3 id="orgcf94ba0">@Autowired</h3>
+<div class="outline-text-3" id="text-orgcf94ba0">
+<p>
+The Spring container can autowire relationships between
+collaborating beans.
+</p>
+
+<p>
+You can let Spring <b>resolve collaborators (other beans)
+automatically</b> for your bean by inspecting the contents of the
+ApplicationContext.
+</p>
+
+<p>
+This is also interesting:
+</p>
+
+<blockquote>
+<p>
+Autowiring can update a configuration as your objects evolve. For
+example, if you need to add a dependency to a class, that dependency
+can be satisfied automatically without you needing to modify the
+configuration. Thus autowiring can be especially useful during
+development, without negating the option of switching to explicit
+wiring when the code base becomes more stable.
+</p>
+</blockquote>
+
+<p>
+Note that you would wire then manually as you would eventually make
+everything more stable, i.e. less random as less automatic - where
+things can go wrong without you ever noticing it.
+</p>
+</div>
 </div>
 </div>
 
 
-<div id="outline-container-org102ded9" class="outline-2">
-<h2 id="org102ded9">General Idea</h2>
-<div class="outline-text-2" id="text-org102ded9">
+<div id="outline-container-org69bfd3c" class="outline-2">
+<h2 id="org69bfd3c">General Idea - Container</h2>
+<div class="outline-text-2" id="text-org69bfd3c">
 <p>
 At its core, Spring offers a container, often referred to as the
 Spring application context, that creates and manages application
@@ -250,9 +381,18 @@ application development.
 </div>
 
 
-<div id="outline-container-orge752f30" class="outline-2">
-<h2 id="orge752f30">Spring Project Structure</h2>
-<div class="outline-text-2" id="text-orge752f30">
+<div id="outline-container-orgac76286" class="outline-2">
+<h2 id="orgac76286">Spring Project Structure</h2>
+<div class="outline-text-2" id="text-orgac76286">
+<p>
+This is based on the spring in action book. You understand well that
+it is just one among the many possibilities.
+</p>
+
+<p>
+There the structure was more less the following:
+</p>
+
 <ul class="org-ul">
 <li>
 <code>TacoCloudApplication.java</code> - This is the Spring Boot main class
@@ -273,13 +413,16 @@ render content to the browser.</li>
 <code>TacoApplicationTests.java</code> - this is a simple test class that
 ensures that the Spring application context loads successfully.</li>
 </ul>
+<p>
+So you see that this is quite similar conceptually to your python
+project structure.
+</p>
 </div>
 </div>
 
-
-<div id="outline-container-orge9fce9d" class="outline-2">
-<h2 id="orge9fce9d">Gradle Configuration</h2>
-<div class="outline-text-2" id="text-orge9fce9d">
+<div id="outline-container-org524838d" class="outline-2">
+<h2 id="org524838d">Gradle Configuration</h2>
+<div class="outline-text-2" id="text-org524838d">
 <p>
 Note that one of the most important thing that you have in your
 build configuration is that you deploy to a <code>jar</code> not into a <code>war</code>.
@@ -353,28 +496,12 @@ your bread and butter and neither your main interest. You are rather
 interested in the Spring MVC for writing your endpoints and do the
 back-end work.
 </p>
-
-<p>
-Note as well there is a devtools dependency:
-<code>spring-boot-starter-devtools</code>. This is handy when programming as
-through it you will be able to have quicker updates and
-deployments. It achieves similar results as running flask in
-debugging mode. But it adds much more to it. There is also this
-H2-console that you need to understand better at some later point.
-</p>
-
-<p>
-Anyways read more into such devtools when you start properly
-developing with it. For now focus on the general structure in these
-notes.
-</p>
 </div>
 </div>
 
-
-<div id="outline-container-org9df8846" class="outline-2">
-<h2 id="org9df8846">Running the Spring web-application</h2>
-<div class="outline-text-2" id="text-org9df8846">
+<div id="outline-container-orgea71b29" class="outline-2">
+<h2 id="orgea71b29">Running the Spring web-application</h2>
+<div class="outline-text-2" id="text-orgea71b29">
 <p>
 This is a 101 example. Do not waste too much time if you do not get
 these notes.
@@ -386,9 +513,10 @@ spring app.
 </p>
 </div>
 
-<div id="outline-container-org190652a" class="outline-3">
-<h3 id="org190652a">Run App</h3>
-<div class="outline-text-3" id="text-org190652a">
+
+<div id="outline-container-org4c72316" class="outline-3">
+<h3 id="org4c72316">Run App</h3>
+<div class="outline-text-3" id="text-org4c72316">
 <p>
 This is the equivalent to your <code>flask.run</code> command. 
 </p>
@@ -444,11 +572,11 @@ usually work with separate classes.
 </div>
 </div>
 
-<div id="outline-container-org44c2130" class="outline-3">
-<h3 id="org44c2130">MVC - through it you write your back-end endpoints</h3>
-<div class="outline-text-3" id="text-org44c2130">
+<div id="outline-container-org26a3299" class="outline-3">
+<h3 id="org26a3299">MVC - through it you write your back-end endpoints</h3>
+<div class="outline-text-3" id="text-org26a3299">
 <p>
-This is a web-framework. Again check the more detail section <a href="#orgbe24b3a">Web-applications with Spring</a>.
+This is a web-framework. Again check the more detail section <a href="#org02b7876">Web-applications with Spring</a>.
 </p>
 
 <p>
@@ -502,9 +630,9 @@ GET requests.
 </div>
 </div>
 
-<div id="outline-container-org1d8d1a2" class="outline-3">
-<h3 id="org1d8d1a2">Endpoints Testing</h3>
-<div class="outline-text-3" id="text-org1d8d1a2">
+<div id="outline-container-org5d2068a" class="outline-3">
+<h3 id="org5d2068a">Endpoints Testing</h3>
+<div class="outline-text-3" id="text-org5d2068a">
 <p>
 You can check in the book. This will be a quite big waste of time
 nonetheless.
@@ -526,9 +654,9 @@ use then a complete different testing-suite.
 </div>
 
 
-<div id="outline-container-org3358c55" class="outline-2">
-<h2 id="org3358c55">Important Spring Modules</h2>
-<div class="outline-text-2" id="text-org3358c55">
+<div id="outline-container-org6a83efd" class="outline-2">
+<h2 id="org6a83efd">Important Spring Modules</h2>
+<div class="outline-text-2" id="text-org6a83efd">
 <p>
 Note that on that spring initialzer page you can see all of the
 dependencies nicely integrated with the spring framework.
@@ -544,9 +672,10 @@ understand:
 </p>
 </div>
 
-<div id="outline-container-org812a958" class="outline-3">
-<h3 id="org812a958">Core Spring Framework</h3>
-<div class="outline-text-3" id="text-org812a958">
+
+<div id="outline-container-orgc006153" class="outline-3">
+<h3 id="orgc006153">Core Spring Framework</h3>
+<div class="outline-text-3" id="text-orgc006153">
 <p>
 This is the fundation of everything in the spring universe.
 </p>
@@ -570,9 +699,9 @@ It also provides the following essential features:m
 </div>
 </div>
 
-<div id="outline-container-org66dc616" class="outline-3">
-<h3 id="org66dc616">Spring Boot</h3>
-<div class="outline-text-3" id="text-org66dc616">
+<div id="outline-container-org96d3b45" class="outline-3">
+<h3 id="org96d3b45">Spring Boot</h3>
+<div class="outline-text-3" id="text-org96d3b45">
 <p>
 This is what makes autoconfiguration and starter-depencies
 possible.
@@ -617,9 +746,9 @@ Spring at macro-level.
 </div>
 </div>
 
-<div id="outline-container-orgd141758" class="outline-3">
-<h3 id="orgd141758">Spring Data</h3>
-<div class="outline-text-3" id="text-orgd141758">
+<div id="outline-container-org539df1a" class="outline-3">
+<h3 id="org539df1a">Spring Data</h3>
+<div class="outline-text-3" id="text-org539df1a">
 <p>
 What’s more, Spring Data is capable of working with a <i>several
 different kinds of databases</i>, including relational (JPA), document
@@ -639,9 +768,9 @@ across languages.
 </div>
 </div>
 
-<div id="outline-container-org85982be" class="outline-3">
-<h3 id="org85982be">Spring Security</h3>
-<div class="outline-text-3" id="text-org85982be">
+<div id="outline-container-orgd1359a7" class="outline-3">
+<h3 id="orgd1359a7">Spring Security</h3>
+<div class="outline-text-3" id="text-orgd1359a7">
 <p>
 Through it you can manage a broad range of application security
 needs, including authentication, authorization, and API security.
@@ -656,9 +785,9 @@ might have to do that at some point.
 </div>
 </div>
 
-<div id="outline-container-org2daf11b" class="outline-3">
-<h3 id="org2daf11b">Spring Integration and Spring Batch</h3>
-<div class="outline-text-3" id="text-org2daf11b">
+<div id="outline-container-org102de4b" class="outline-3">
+<h3 id="org102de4b">Spring Integration and Spring Batch</h3>
+<div class="outline-text-3" id="text-org102de4b">
 <p>
 <b>Spring Integration</b>: addresses real-time integration where data is
 processed as it’s made available.
@@ -679,9 +808,9 @@ programming and these frameworks in order to have a proper baby.
 </div>
 </div>
 
-<div id="outline-container-orgd97493a" class="outline-3">
-<h3 id="orgd97493a">Spring Cloud</h3>
-<div class="outline-text-3" id="text-orgd97493a">
+<div id="outline-container-org51abbe7" class="outline-3">
+<h3 id="org51abbe7">Spring Cloud</h3>
+<div class="outline-text-3" id="text-org51abbe7">
 <p>
 Microservices are a hot topic, addressing several practical
 development and runtime concerns. In doing so, however, they bring
@@ -706,9 +835,9 @@ in different runtimes.
 </div>
 
 
-<div id="outline-container-org8c7bdfd" class="outline-2">
-<h2 id="org8c7bdfd">Configuring Spring</h2>
-<div class="outline-text-2" id="text-org8c7bdfd">
+<div id="outline-container-org2d8f409" class="outline-2">
+<h2 id="org2d8f409">Configuring Spring</h2>
+<div class="outline-text-2" id="text-org2d8f409">
 <p>
 So basically Spring it is nice cause you have tons of beans in
 spring that will ultimately be injected in your context and you will
@@ -740,9 +869,9 @@ application and work with it in a smooth and agile way.
 </div>
 
 
-<div id="outline-container-org92c8286" class="outline-3">
-<h3 id="org92c8286">How the spring framework works</h3>
-<div class="outline-text-3" id="text-org92c8286">
+<div id="outline-container-org8ed1c51" class="outline-3">
+<h3 id="org8ed1c51">How the spring framework works</h3>
+<div class="outline-text-3" id="text-org8ed1c51">
 <p>
 In order to properly understand how to do <i>beans wiring</i> and
 <i>property injection</i> you should first understand the following
@@ -780,9 +909,9 @@ you should accordingly set.
 </div>
 
 
-<div id="outline-container-orgbade33e" class="outline-3">
-<h3 id="orgbade33e">Embedded Server</h3>
-<div class="outline-text-3" id="text-orgbade33e">
+<div id="outline-container-orgec6dc81" class="outline-3">
+<h3 id="orgec6dc81">Embedded Server</h3>
+<div class="outline-text-3" id="text-orgec6dc81">
 <p>
 Here you can decide where your embedded server will communicate.
 </p>
@@ -834,9 +963,9 @@ to set.
 </div>
 
 
-<div id="outline-container-orgc7d2764" class="outline-3">
-<h3 id="orgc7d2764">Data</h3>
-<div class="outline-text-3" id="text-orgc7d2764">
+<div id="outline-container-orgf046f2f" class="outline-3">
+<h3 id="orgf046f2f">Data</h3>
+<div class="outline-text-3" id="text-orgf046f2f">
 <p>
 Here you can specify the driver and the location of the DB you will
 interact with.
@@ -880,9 +1009,9 @@ you want to go down that road.
 </div>
 
 
-<div id="outline-container-orgcfe4d6a" class="outline-3">
-<h3 id="orgcfe4d6a">Logging</h3>
-<div class="outline-text-3" id="text-orgcfe4d6a">
+<div id="outline-container-orgedfc197" class="outline-3">
+<h3 id="orgedfc197">Logging</h3>
+<div class="outline-text-3" id="text-orgedfc197">
 <p>
 This is nice, you can set there the standard output of your
 logger.
@@ -911,9 +1040,9 @@ logging across your applications.
 </div>
 
 
-<div id="outline-container-org6c90e46" class="outline-3">
-<h3 id="org6c90e46">Property injection via special property values</h3>
-<div class="outline-text-3" id="text-org6c90e46">
+<div id="outline-container-org0207d08" class="outline-3">
+<h3 id="org0207d08">Property injection via special property values</h3>
+<div class="outline-text-3" id="text-org0207d08">
 <p>
 This is a nice way to make dynamic and intelligent properties
 injection into your spring environment - and consequently beans -.
@@ -948,10 +1077,9 @@ This is what is actully handeled in the next section.
 </div>
 </div>
 
-
-<div id="outline-container-orge73d093" class="outline-3">
-<h3 id="orge73d093">Creating your own configuration properties</h3>
-<div class="outline-text-3" id="text-orge73d093">
+<div id="outline-container-org24a30a2" class="outline-3">
+<h3 id="org24a30a2">Creating your own configuration properties</h3>
+<div class="outline-text-3" id="text-org24a30a2">
 <p>
 Configuration properties are nothing more than properties of beans
 that have been designated to accept configurations from Spring’s
@@ -1049,11 +1177,11 @@ described.
 </p>
 </div>
 
-<div id="outline-container-org07eb292" class="outline-4">
-<h4 id="org07eb292">
+<div id="outline-container-org8974a1a" class="outline-4">
+<h4 id="org8974a1a">
 <b>Important Design Point</b> - Note that usually you set configproperties to <b>component classes</b>
 </h4>
-<div class="outline-text-4" id="text-org07eb292">
+<div class="outline-text-4" id="text-org8974a1a">
 <p>
 So basically recall that component is a first class citizen in the
 Spring framework and these can then be picked up by the Spring
@@ -1138,9 +1266,9 @@ modular, reusable Component -.
 </div>
 
 
-<div id="outline-container-org1fe9cc8" class="outline-3">
-<h3 id="org1fe9cc8">Excurs - Validation</h3>
-<div class="outline-text-3" id="text-org1fe9cc8">
+<div id="outline-container-orga83be45" class="outline-3">
+<h3 id="orga83be45">Excurs - Validation</h3>
+<div class="outline-text-3" id="text-orga83be45">
 <p>
 Note that it makes sense to use <code>javax.validation.*</code> in combination
 with your spring application properties.
@@ -1183,9 +1311,9 @@ A 101 example of validation is the following:
 </div>
 
 
-<div id="outline-container-orgfac5e9a" class="outline-3">
-<h3 id="orgfac5e9a">Profiles</h3>
-<div class="outline-text-3" id="text-orgfac5e9a">
+<div id="outline-container-orgb45af53" class="outline-3">
+<h3 id="orgb45af53">Profiles</h3>
+<div class="outline-text-3" id="text-orgb45af53">
 <p>
 This is an important concept when configuring your spring
 application.
@@ -1222,7 +1350,7 @@ The name of the file <b>should follow this convention</b>:
 
 <p>
 The idea is then the following. You can activate profiles as
-described in <a href="#org3f1ed7a">Activating Profiles</a>.
+described in <a href="#orgcbc3a5f">Activating Profiles</a>.
 </p>
 
 <p>
@@ -1261,9 +1389,9 @@ the profile is active.
 </p>
 </div>
 
-<div id="outline-container-org3f1ed7a" class="outline-4">
-<h4 id="org3f1ed7a">Activating Profiles</h4>
-<div class="outline-text-4" id="text-org3f1ed7a">
+<div id="outline-container-orgcbc3a5f" class="outline-4">
+<h4 id="orgcbc3a5f">Activating Profiles</h4>
+<div class="outline-text-4" id="text-orgcbc3a5f">
 <p>
 Now you understand how to set the properties for different
 profiles. The question is then how you active the different
@@ -1298,9 +1426,9 @@ Or the second option:
 </div>
 
 
-<div id="outline-container-orgd498ae7" class="outline-3">
-<h3 id="orgd498ae7">Profile-dependent Beans</h3>
-<div class="outline-text-3" id="text-orgd498ae7">
+<div id="outline-container-org6c140b7" class="outline-3">
+<h3 id="org6c140b7">Profile-dependent Beans</h3>
+<div class="outline-text-3" id="text-org6c140b7">
 <p>
 Note now that it is as well possible to create beans that will just
 be active depending on the profile.
@@ -1326,23 +1454,28 @@ There are simple annotations for it.
 </div>
 
 
-<div id="outline-container-orgbe24b3a" class="outline-2">
-<h2 id="orgbe24b3a">Web-applications with Spring</h2>
-<div class="outline-text-2" id="text-orgbe24b3a">
+<div id="outline-container-org02b7876" class="outline-2">
+<h2 id="org02b7876">Web-applications with Spring</h2>
+<div class="outline-text-2" id="text-org02b7876">
 <p>
 You can even read more into the detail about working with Spring at
 the following source <a href="https://docs.spring.io/spring-restdocs/docs/current/reference/html5/">here.</a>
 </p>
+
+<p>
+In order to properly develop solid endpoints you should read into
+<a href="https://martinfowler.com/articles/richardsonMaturityModel.html">this</a>. You will then see the three levels and you should aim to
+program at level 3 and not at level 0 like a moron.
+</p>
 </div>
 
-
-<div id="outline-container-org317304b" class="outline-3">
-<h3 id="org317304b">Synchronous REST</h3>
-<div class="outline-text-3" id="text-org317304b">
+<div id="outline-container-org05b4f09" class="outline-3">
+<h3 id="org05b4f09">Synchronous REST</h3>
+<div class="outline-text-3" id="text-org05b4f09">
 </div>
-<div id="outline-container-orgfc7c711" class="outline-4">
-<h4 id="orgfc7c711">Spring MVC</h4>
-<div class="outline-text-4" id="text-orgfc7c711">
+<div id="outline-container-orge575446" class="outline-4">
+<h4 id="orge575446">Spring MVC</h4>
+<div class="outline-text-4" id="text-orge575446">
 <p>
 With it you can both display information to the front-end in a
 dynamic way.
@@ -1396,10 +1529,9 @@ architectures</a>.
 </p>
 </div>
 
-
 <ul class="org-ul">
 <li>
-<a id="org59c92af"></a>CORS option<br><div class="outline-text-5" id="text-org59c92af">
+<a id="orge57d7b7"></a>CORS option<br><div class="outline-text-5" id="text-orge57d7b7">
 <p>
 Check if interested.
 </p>
@@ -1414,10 +1546,9 @@ The idea is essentially the following:
 </ul>
 </div>
 
-
-<div id="outline-container-org7d09de8" class="outline-4">
-<h4 id="org7d09de8">On important Annotations</h4>
-<div class="outline-text-4" id="text-org7d09de8">
+<div id="outline-container-orgdbb453f" class="outline-4">
+<h4 id="orgdbb453f">On important Annotations</h4>
+<div class="outline-text-4" id="text-orgdbb453f">
 <p>
 So understand the following annotations in order to properly set up
 your application:
@@ -1523,12 +1654,21 @@ Note that we make an example with a <i>placeholer</i>:
 
 <li>
 <p>
-<code>@RequestStatus</code>
+<code>@ResponseStatus</code>
 </p>
 
 <p>
 That is nice cause with that tag you can specify what the
 endpoint will utlimately hand back as HTTP anser.
+</p>
+
+<p>
+<b>Default:</b> Under normal circumstances (when no exceptions are thrown), all
+responses will have an HTTP status code of 200 (OK).
+</p>
+
+<p>
+See for instance an application in hte next java chunck.
 </p>
 
 <p>
@@ -1554,19 +1694,72 @@ type, assuming an appropriate one is specified.
 </p>
 
 <p>
-See <a href="https://www.baeldung.com/spring-request-response-body">this</a> for more. So you see this is how you handle json
-requests in a straightforward way without having to do all of
-that big conversion in the way we are doing.
+Note that this is important to include in your post endpoints
+consuming json objects.
 </p>
+
+<p>
+The reason is the following:
+</p>
+
+<blockquote>
+<p>
+This annotation is important—without it, Spring MVC would assume that
+you want request parameters (either query parameters or form
+parameters) to be bound to the object of interest.
+</p>
+</blockquote>
+
+<div class="highlight"><pre><span></span>      <span class="nd">@PostMapping</span><span class="p">(</span><span class="n">consumes</span><span class="o">=</span><span class="s">"application/json"</span><span class="p">)</span>
+      <span class="nd">@ResponseStatus</span><span class="p">(</span><span class="n">HttpStatus</span><span class="p">.</span><span class="na">CREATED</span><span class="p">)</span> <span class="c1">// see how you can pass the</span>
+					  <span class="c1">// response status you can then</span>
+					  <span class="c1">// consume such status responses</span>
+					  <span class="c1">// via ResponseEntity objects.</span>
+      <span class="kd">public</span> <span class="n">Taco</span> <span class="nf">postTaco</span><span class="p">(</span><span class="nd">@RequestBody</span> <span class="n">Taco</span> <span class="n">taco</span><span class="p">)</span> <span class="p">{</span>
+       <span class="k">return</span> <span class="n">tacoRepo</span><span class="p">.</span><span class="na">save</span><span class="p">(</span><span class="n">taco</span><span class="p">);</span>
+      <span class="p">}</span>
+</pre></div>
+
+<p>
+See <a href="https://www.baeldung.com/spring-request-response-body">this</a> for more. So you see this is how you handle json
+requests in a straightforward way. Not even jacksonjson is
+needed.
+</p>
+</li>
+
+<li>
+<p>
+<code>@RequestParam</code>
+</p>
+
+<p>
+Similar as <code>@RequestBody</code>, specifying what you want from there.
+</p>
+
+<div class="highlight"><pre><span></span>      <span class="nd">@GetMapping</span><span class="p">(</span><span class="s">"/age"</span><span class="p">)</span>
+      <span class="n">ResponseEntity</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">age</span><span class="p">(</span>
+	<span class="nd">@RequestParam</span><span class="p">(</span><span class="s">"yearOfBirth"</span><span class="p">)</span> <span class="kt">int</span> <span class="n">yearOfBirth</span><span class="p">)</span> <span class="p">{</span>
+
+	  <span class="k">if</span> <span class="p">(</span><span class="n">isInFuture</span><span class="p">(</span><span class="n">yearOfBirth</span><span class="p">))</span> <span class="p">{</span>
+	      <span class="k">return</span> <span class="k">new</span> <span class="n">ResponseEntity</span><span class="o">&lt;&gt;</span><span class="p">(</span>
+		<span class="s">"Year of birth cannot be in the future"</span><span class="p">,</span> 
+		<span class="n">HttpStatus</span><span class="p">.</span><span class="na">BAD_REQUEST</span><span class="p">);</span>
+	  <span class="p">}</span>
+
+	  <span class="k">return</span> <span class="k">new</span> <span class="n">ResponseEntity</span><span class="o">&lt;&gt;</span><span class="p">(</span>
+	    <span class="s">"Your age is "</span> <span class="o">+</span> <span class="n">calculateAge</span><span class="p">(</span><span class="n">yearOfBirth</span><span class="p">),</span> 
+	    <span class="n">HttpStatus</span><span class="p">.</span><span class="na">OK</span><span class="p">);</span>
+      <span class="p">}</span>
+</pre></div>
 </li>
 </ul>
 </div>
 </div>
 
 
-<div id="outline-container-orgc9b4659" class="outline-4">
-<h4 id="orgc9b4659">HETOAS</h4>
-<div class="outline-text-4" id="text-orgc9b4659">
+<div id="outline-container-orgda5fce5" class="outline-4">
+<h4 id="orgda5fce5">HETOAS</h4>
+<div class="outline-text-4" id="text-orgda5fce5">
 <p>
 Note that if you want you can work with <i>Hypermedia as the Engine
 of Application State</i> as a standard for setting up your REST
@@ -1590,15 +1783,54 @@ less on hard-coded strings.
 </p>
 
 <p>
-Read again in the book if you want to go in that direction.
+Set your mental framework correctly. Understand that each time you
+have two components:
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+<b>Producing</b>:
+</p>
+
+<p>
+Here the idea is to generate the message with the relevant
+endpoints information.
+</p>
+</li>
+
+<li>
+<p>
+<b>Consuming</b>:
+</p>
+
+<p>
+Here the idea is to actually read the information produced by
+the <code>producing</code> component and navigate everything
+programatically. The
+</p>
+
+<p>
+Note that while there is sdk to consume and create such in Java
+I could not find anything like this in flask. You will have some
+issues in this sense. 
+</p>
+</li>
+</ul>
+<p>
+Read again in the book if you want to go in that direction. Also
+<a href="https://docs.spring.io/spring-hateoas/docs/current/reference/html/#fundamentals.representation-models">this</a> is a good documentation.
+</p>
+
+<p>
+Have to understand this dimension.
 </p>
 </div>
 </div>
 
-
-<div id="outline-container-org76b6fef" class="outline-4">
-<h4 id="org76b6fef">Spring Data REST</h4>
-<div class="outline-text-4" id="text-org76b6fef">
+<div id="outline-container-orgb75c5ad" class="outline-4">
+<h4 id="orgb75c5ad">Spring Data REST</h4>
+<div class="outline-text-4" id="text-orgb75c5ad">
 <p>
 Basically here the concept is the following.
 </p>
@@ -1635,7 +1867,7 @@ environment or not.
 
 <ul class="org-ul">
 <li>
-<a id="orgae4c396"></a>Important Note<br><div class="outline-text-5" id="text-orgae4c396">
+<a id="orgd1599cf"></a>Important Note<br><div class="outline-text-5" id="text-orgd1599cf">
 <p>
 If you will ever decide to go down that road read chapter <i>6.3.1 -
 Adjusting resource paths and relation names</i> in the book.
@@ -1651,9 +1883,9 @@ to keep in mind and remember.
 </div>
 
 
-<div id="outline-container-org2720884" class="outline-4">
-<h4 id="org2720884">Consuming REST services</h4>
-<div class="outline-text-4" id="text-org2720884">
+<div id="outline-container-org735d743" class="outline-4">
+<h4 id="org735d743">Consuming REST services</h4>
+<div class="outline-text-4" id="text-org735d743">
 <p>
 There are essentially three ways of consuming a REST interface:
 </p>
@@ -1665,16 +1897,16 @@ Spring Framework.</li>
 
 <li>
 <code>Traverson</code>: a hyperlink-aware synchronous REST client provided
-by Spring HATEOAS. See more on hyperlink <a href="#orgc9b4659">here</a>.</li>
+by Spring HATEOAS. See more on hyperlink <a href="#orgda5fce5">here</a>.</li>
 
 <li>
-<code>WebClient</code>: a <b>reactive</b> asynchronous REST client - see <a href="#org57bf0cc">here</a>.</li>
+<code>WebClient</code>: a <b>reactive</b> asynchronous REST client - see <a href="#orgc7d8c3d">here</a>.</li>
 </ul>
 </div>
 
 <ul class="org-ul">
 <li>
-<a id="orgf56f386"></a>RestTemplate<br><div class="outline-text-5" id="text-orgf56f386">
+<a id="orga10b735"></a>RestTemplate<br><div class="outline-text-5" id="text-orga10b735">
 <p>
 basically RestTemplate provides 41 methods for interacting with
 REST resources.
@@ -1745,7 +1977,7 @@ Objects.
 </li>
 
 <li>
-<a id="org6cfbc73"></a>Traverson<br><div class="outline-text-5" id="text-org6cfbc73">
+<a id="org55aced6"></a>Traverson<br><div class="outline-text-5" id="text-org55aced6">
 <p>
 Basically this is similar to the simple RestTemplate and it is the
 way to cconsume hypermedia APIs.
@@ -1760,15 +1992,24 @@ with HATEOAS.
 Recall in any case that once you have hypermedia APIs you consume
 API by traversing multiple API based on the response.
 </p>
+
+<p>
+So you should use this in order to properly consume HETEOAS
+endpoints.
+</p>
+
+<p>
+How you write them is something different though. Understand this point.
+</p>
 </div>
 </li>
 </ul>
 </div>
 
 
-<div id="outline-container-org2bb5cc8" class="outline-4">
-<h4 id="org2bb5cc8">Document Spring APIs via OpenApi standards</h4>
-<div class="outline-text-4" id="text-org2bb5cc8">
+<div id="outline-container-org99fd514" class="outline-4">
+<h4 id="org99fd514">Document Spring APIs via OpenApi standards</h4>
+<div class="outline-text-4" id="text-org99fd514">
 <p>
 This is essentially what you were doing in your last projects at
 IBM.
@@ -1822,11 +2063,9 @@ install it manually. Follow the instructions on Github for it.
 </div>
 </div>
 
-
-
-<div id="outline-container-org93c97f4" class="outline-3">
-<h3 id="org93c97f4">Asynchoronous Communication</h3>
-<div class="outline-text-3" id="text-org93c97f4">
+<div id="outline-container-org9e44166" class="outline-3">
+<h3 id="org9e44166">Asynchoronous Communication</h3>
+<div class="outline-text-3" id="text-org9e44166">
 <blockquote>
 <p>
 Asynchronous messaging is a way of indirectly sending messages from
@@ -2075,9 +2314,9 @@ asynchronous fashion.
 
 
 
-<div id="outline-container-orgd734408" class="outline-2">
-<h2 id="orgd734408">Spring Data</h2>
-<div class="outline-text-2" id="text-orgd734408">
+<div id="outline-container-org67582b2" class="outline-2">
+<h2 id="org67582b2">Spring Data</h2>
+<div class="outline-text-2" id="text-org67582b2">
 <p>
 So we will treat here how to interact with JDBC and JPA in Spring.
 </p>
@@ -2108,9 +2347,9 @@ application in a unified way: <a href="https://github.com/habuma/spring-in-actio
 </p>
 </div>
 
-<div id="outline-container-org40b80cf" class="outline-3">
-<h3 id="org40b80cf">Spring JDBC</h3>
-<div class="outline-text-3" id="text-org40b80cf">
+<div id="outline-container-org44685e7" class="outline-3">
+<h3 id="org44685e7">Spring JDBC</h3>
+<div class="outline-text-3" id="text-org44685e7">
 <p>
 Spring JDBC support is rooted in the JdbcTemplate class.
 </p>
@@ -2133,9 +2372,9 @@ I like this code as it is more lean than without the templates.
 </div>
 </div>
 
-<div id="outline-container-org2cbf090" class="outline-3">
-<h3 id="org2cbf090">Reading from RDMS</h3>
-<div class="outline-text-3" id="text-org2cbf090">
+<div id="outline-container-org3781169" class="outline-3">
+<h3 id="org3781169">Reading from RDMS</h3>
+<div class="outline-text-3" id="text-org3781169">
 <p>
 You would do that in the follwoing way leveraging on the JDBC templates
 </p>
@@ -2196,9 +2435,9 @@ as it just clutters the code.
 </div>
 </div>
 
-<div id="outline-container-org6e82291" class="outline-3">
-<h3 id="org6e82291">Writing to RDMS</h3>
-<div class="outline-text-3" id="text-org6e82291">
+<div id="outline-container-org0ef3c56" class="outline-3">
+<h3 id="org0ef3c56">Writing to RDMS</h3>
+<div class="outline-text-3" id="text-org0ef3c56">
 <p>
 To write into the RDMS using JDBC template you can use the
 <code>update</code> method.
@@ -2236,9 +2475,9 @@ with it. So wait for it and tackle this down at a later point.
 </div>
 </div>
 
-<div id="outline-container-orgc62a203" class="outline-3">
-<h3 id="orgc62a203">Creating and Populating your Tables</h3>
-<div class="outline-text-3" id="text-orgc62a203">
+<div id="outline-container-org3029095" class="outline-3">
+<h3 id="org3029095">Creating and Populating your Tables</h3>
+<div class="outline-text-3" id="text-org3029095">
 <p>
 You can define the db schema in Java in the following way:
 </p>
@@ -2341,10 +2580,9 @@ repo.
 </div>
 </div>
 
-
-<div id="outline-container-org0b49717" class="outline-3">
-<h3 id="org0b49717">Spring JPA</h3>
-<div class="outline-text-3" id="text-org0b49717">
+<div id="outline-container-org3724a7b" class="outline-3">
+<h3 id="org3724a7b">Spring JPA</h3>
+<div class="outline-text-3" id="text-org3724a7b">
 <p>
 Ok - here there is a big discussion among the Java experts in my
 team and other people coming from other programming languages.
@@ -2379,9 +2617,9 @@ this JPA experience in the way you develop in Java.
 </div>
 
 
-<div id="outline-container-orgf2dc911" class="outline-2">
-<h2 id="orgf2dc911">Spring Integration</h2>
-<div class="outline-text-2" id="text-orgf2dc911">
+<div id="outline-container-orga3dbe76" class="outline-2">
+<h2 id="orga3dbe76">Spring Integration</h2>
+<div class="outline-text-2" id="text-orga3dbe76">
 <p>
 That is also a nice feature.
 </p>
@@ -2423,9 +2661,9 @@ Surrender</a>.
 </p>
 </div>
 
-<div id="outline-container-org291be63" class="outline-3">
-<h3 id="org291be63">FileSystem Integration</h3>
-<div class="outline-text-3" id="text-org291be63">
+<div id="outline-container-org35689f3" class="outline-3">
+<h3 id="org35689f3">FileSystem Integration</h3>
+<div class="outline-text-3" id="text-org35689f3">
 <p>
 The file endpoint module offers the ability to ingest files from
 the filesystem into an integration flow and/or to write data from a
@@ -2545,9 +2783,9 @@ configuration possibilities.
 </p>
 </div>
 
-<div id="outline-container-org6a5f903" class="outline-4">
-<h4 id="org6a5f903">Integration Components</h4>
-<div class="outline-text-4" id="text-org6a5f903">
+<div id="outline-container-org37c6b75" class="outline-4">
+<h4 id="org37c6b75">Integration Components</h4>
+<div class="outline-text-4" id="text-org37c6b75">
 <p>
 Now note that in a similar way as you have created your file
 system integration and write into there, you can create similar
@@ -2693,9 +2931,9 @@ use this module extensively. Dig into it.
 </div>
 
 
-<div id="outline-container-org34efc3d" class="outline-2">
-<h2 id="org34efc3d">Reactive Programming in Spring</h2>
-<div class="outline-text-2" id="text-org34efc3d">
+<div id="outline-container-orgd155e3c" class="outline-2">
+<h2 id="orgd155e3c">Reactive Programming in Spring</h2>
+<div class="outline-text-2" id="text-orgd155e3c">
 <p>
 This is very cool and is the next gen. architecture mechanism. Very
 cool idea. You can read about it <a href="https://medium.com/@rarepopa_68087/reactive-programming-with-spring-boot-and-webflux-734086f8c8a5">here</a>. This should guide you
@@ -2733,9 +2971,10 @@ Streams.
 </blockquote>
 </div>
 
-<div id="outline-container-org1441c4b" class="outline-3">
-<h3 id="org1441c4b">Mono vs. Flux</h3>
-<div class="outline-text-3" id="text-org1441c4b">
+
+<div id="outline-container-org7b87445" class="outline-3">
+<h3 id="org7b87445">Mono vs. Flux</h3>
+<div class="outline-text-3" id="text-org7b87445">
 <p>
 These are the two Reactor's core types.
 </p>
@@ -2770,9 +3009,9 @@ infinite) data items.
 </div>
 </div>
 
-<div id="outline-container-orgdf8a734" class="outline-3">
-<h3 id="orgdf8a734">Basic APIs for working on Flux and Mono</h3>
-<div class="outline-text-3" id="text-orgdf8a734">
+<div id="outline-container-org43e4aaa" class="outline-3">
+<h3 id="org43e4aaa">Basic APIs for working on Flux and Mono</h3>
+<div class="outline-text-3" id="text-org43e4aaa">
 <p>
 So first of all we will see how to use <code>Flux</code> and <code>Mono</code> in basic
 settings without input from external runtimes.
@@ -2896,9 +3135,9 @@ So the above is again quite some basics methods.
 </p>
 </div>
 
-<div id="outline-container-orgbd693fc" class="outline-4">
-<h4 id="orgbd693fc">Mergining different streams</h4>
-<div class="outline-text-4" id="text-orgbd693fc">
+<div id="outline-container-orgd6fb9e0" class="outline-4">
+<h4 id="orgd6fb9e0">Mergining different streams</h4>
+<div class="outline-text-4" id="text-orgd6fb9e0">
 <p>
 Two simple methods:
 </p>
@@ -3021,9 +3260,9 @@ See for instance as per - Spring in Action
 </div>
 </div>
 
-<div id="outline-container-org05fb805" class="outline-4">
-<h4 id="org05fb805">Many other APIs</h4>
-<div class="outline-text-4" id="text-org05fb805">
+<div id="outline-container-orgf450634" class="outline-4">
+<h4 id="orgf450634">Many other APIs</h4>
+<div class="outline-text-4" id="text-orgf450634">
 <p>
 Ok so I do not want to waste any more time here testing the APIs
 of the book as - luckily for me - I already encountered them.
@@ -3119,9 +3358,9 @@ That is most and basically it.
 
 
 
-<div id="outline-container-orgfbab5e3" class="outline-3">
-<h3 id="orgfbab5e3">WebFlux - Reactive Web Interface</h3>
-<div class="outline-text-3" id="text-orgfbab5e3">
+<div id="outline-container-org2665520" class="outline-3">
+<h3 id="org2665520">WebFlux - Reactive Web Interface</h3>
+<div class="outline-text-3" id="text-org2665520">
 <p>
 So here is the interesting bit.
 </p>
@@ -3182,9 +3421,9 @@ architectures streaming data through the system.
 </div>
 
 
-<div id="outline-container-orga5d8c89" class="outline-4">
-<h4 id="orga5d8c89">Basics of Webflux</h4>
-<div class="outline-text-4" id="text-orga5d8c89">
+<div id="outline-container-org5cdfbf5" class="outline-4">
+<h4 id="org5cdfbf5">Basics of Webflux</h4>
+<div class="outline-text-4" id="text-org5cdfbf5">
 <p>
 In order to work with webflux you have to enter the correct
 dependency in your project.
@@ -3247,9 +3486,9 @@ in that annotation alike experience.
 </div>
 </div>
 
-<div id="outline-container-orgef79fb8" class="outline-4">
-<h4 id="orgef79fb8">Webflux and Reactor API</h4>
-<div class="outline-text-4" id="text-orgef79fb8">
+<div id="outline-container-org91d2ef2" class="outline-4">
+<h4 id="org91d2ef2">Webflux and Reactor API</h4>
+<div class="outline-text-4" id="text-org91d2ef2">
 <p>
 Essentially, the cool thing is that with webflux your Controllers
 are able to accept <code>Mono</code> and <code>Flux</code> from the Reactor project.
@@ -3310,9 +3549,9 @@ subscribe channel even before you start streaming the data.
 </div>
 </div>
 
-<div id="outline-container-org1771a3e" class="outline-4">
-<h4 id="org1771a3e">Testing WebFlux</h4>
-<div class="outline-text-4" id="text-org1771a3e">
+<div id="outline-container-org7d73d28" class="outline-4">
+<h4 id="org7d73d28">Testing WebFlux</h4>
+<div class="outline-text-4" id="text-org7d73d28">
 <p>
 I am skipping this section to this stage. I had some notes for it
 already when reading about mockito and co. So double check if you
@@ -3326,11 +3565,11 @@ it with the testing notes. Easier then.
 </div>
 </div>
 
-<div id="outline-container-org57bf0cc" class="outline-4">
-<h4 id="org57bf0cc">Consuming Webflux</h4>
-<div class="outline-text-4" id="text-org57bf0cc">
+<div id="outline-container-orgc7d8c3d" class="outline-4">
+<h4 id="orgc7d8c3d">Consuming Webflux</h4>
+<div class="outline-text-4" id="text-orgc7d8c3d">
 <p>
-The <a href="#orga5d8c89">Basics of Webflux</a> and <a href="#orgef79fb8">Webflux and Reactor API</a> briefly touched
+The <a href="#org5cdfbf5">Basics of Webflux</a> and <a href="#org91d2ef2">Webflux and Reactor API</a> briefly touched
 upon the idea of creating webflux reactive endpoints.
 </p>
 
@@ -3388,7 +3627,7 @@ will be addressed next.
 
 <ul class="org-ul">
 <li>
-<a id="org2b76e0b"></a>Retrieve Methods<br><div class="outline-text-5" id="text-org2b76e0b">
+<a id="org6845931"></a>Retrieve Methods<br><div class="outline-text-5" id="text-org6845931">
 <p>
 These are used when you are simply interested in the body of the
 response. Headers etc. are simply ignored. 
@@ -3486,7 +3725,7 @@ a <b>boolean</b>.
 </li>
 
 <li>
-<a id="org48d965d"></a>Exchange Methods<br><div class="outline-text-5" id="text-org48d965d">
+<a id="org858e7b7"></a>Exchange Methods<br><div class="outline-text-5" id="text-org858e7b7">
 <p>
 In this case you actually parse the entire message.
 </p>
@@ -3500,9 +3739,9 @@ You can then access headers, read cookies etc.
 </div>
 
 
-<div id="outline-container-org166d0d5" class="outline-4">
-<h4 id="org166d0d5">Timing out</h4>
-<div class="outline-text-4" id="text-org166d0d5">
+<div id="outline-container-org3a6263b" class="outline-4">
+<h4 id="org3a6263b">Timing out</h4>
+<div class="outline-text-4" id="text-org3a6263b">
 <p>
 This is an important feature. Especially in our team where I
 understood we have often to deal with a client that is not as
@@ -3538,9 +3777,9 @@ You can do that in the following way:
 </div>
 
 
-<div id="outline-container-orgc699995" class="outline-3">
-<h3 id="orgc699995">End-to-end reactive pipeline</h3>
-<div class="outline-text-3" id="text-orgc699995">
+<div id="outline-container-org8060494" class="outline-3">
+<h3 id="org8060494">End-to-end reactive pipeline</h3>
+<div class="outline-text-3" id="text-org8060494">
 <p>
 So that is basically it. Check at the following picture again:
 </p>
@@ -3597,9 +3836,10 @@ persisting data with Cassandra, MongoDB, Couchbase, or Redis
 </div>
 
 
-<div id="outline-container-org063f688" class="outline-2">
-<h2 id="org063f688">Securing Spring</h2>
-<div class="outline-text-2" id="text-org063f688">
+<div id="outline-container-org0f9c600" class="outline-2">
+<h2 id="org0f9c600">
+<span class="todo TODO">TODO</span> Securing Spring</h2>
+<div class="outline-text-2" id="text-org0f9c600">
 <p>
 There is even all of the layer about securing the spring application
 such that it properly communicate by encrypting data in transfer.
@@ -3621,17 +3861,19 @@ So basically it is all about the key generation and exchange.
 </div>
 
 
-<div id="outline-container-orga87cf0d" class="outline-2">
-<h2 id="orga87cf0d">Application Restart</h2>
-<div class="outline-text-2" id="text-orga87cf0d">
+<div id="outline-container-orgf7f6da4" class="outline-2">
+<h2 id="orgf7f6da4">Application Restart - Spring DevTools</h2>
+<div class="outline-text-2" id="text-orgf7f6da4">
 <p>
-Have to integrate at some point the <code>Spring DevTools</code>.
+This section talks about how to integrate <code>Spring DevTools</code> with
+your local Gradle build.
 </p>
 
 <p>
-With them as part of your project, you will be able to make changes
-to Java code and properties files in the project and see those
-changes applied after a brief moment.
+In such a way it will be possible for you to make changes to your
+code, Spring Boot will then automatically detect the changes and
+restart a Spring Boot application such that you will have a live
+reload and you will increase your development speed.
 </p>
 
 <p>
@@ -3649,30 +3891,97 @@ restart is the following:
 <p>
 One class loader is loaded with your Java code, property files, and
 pretty much anything that’s in the src/main/ path of the
-project. These are items that are likely to change frequently. The
-other class loader is loaded with dependency libraries, which aren’t
-likely to change as often.  When a change is detected, DevTools
-reloads only the class loader containing your project code and
-restarts the Spring application context, but leaves the other class
-loader and the JVM intact. Although subtle, this strategy affords a
-small reduction in the time it takes to start the application.
+project. These are items that are likely to change frequently.
 </p>
 
 <p>
-The downside of this strategy is that changes to dependencies won’t
-be available in automatic restarts. That’s because the class loader
-containing dependency libraries isn’t automatically reloaded. This
-means that any time you add, change, or remove a dependency in your
-build specification, you’ll need to do a <b>hard restart</b> of the
+The other class loader is loaded with dependency libraries, which
+aren’t likely to change as often.
+</p>
+
+<p>
+When a change is detected, DevTools reloads only the <b>class loader</b>
+containing your project code and restarts the Spring application
+context, but leaves the other class loader and the JVM
+intact. Although subtle, this strategy affords a small reduction in
+the time it takes to start the application.
+</p>
+
+<p>
+The downside of this strategy is that changes <b>to dependencies</b>
+won’t be available in automatic restarts. That’s because the class
+loader containing dependency libraries isn’t automatically
+reloaded.
+</p>
+
+<p>
+This means that any time you add, change, or remove a dependency in
+your build specification, you’ll need to do a <b>hard restart</b> of the
 application for those changes to take effect.
 </p>
 </blockquote>
+
+<p>
+So the question is now:
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+How is it possible for DevTools to detect a change?
+</p>
+
+<p>
+In order to understand this - check essentially at <a href="https://stackoverflow.com/questions/58013241/how-can-work-devtools-in-kotlin-and-gradle-project-when-i-guess-i-tried-a-lot-of">this answer</a>:
+</p>
+
+<blockquote>
+<p>
+The devtools module will only reload classes on recompilation. So you
+could hit the "Build Project" button whenever you are ready for a
+reload to trigger a build with Gradle. But as this will also run unit
+tests and maybe even static code analysis (if you are using that), the
+turn-around time would still be rather high. You could manually run
+the classes task with Gradle to compile only classes, but doing this
+manually is annoying.
+</p>
+
+<p>
+Instead, to continuously compile your classes with Gradle, and only
+that, run this command in a terminal (assuming you use the wrapper):
+</p>
+
+<p>
+<code>gradlew -t classes</code>
+</p>
+
+<p>
+It will monitor the file system for changes and rerun the classes task
+on changes. So whenever you make a change to a source file and save
+it, Gradle will recompile it and the devtools module should pick up
+the change and reload it.
+</p>
+</blockquote>
+
+<p>
+So essentially this will be enough. Include <code>devtools</code> to your
+gradle dependencies and make sure that it is active.
+</p>
+
+<p>
+Then start your spring boot application in one shell and run
+<code>gradlew -t classes</code> into another shell. Everything will work
+properly then.
+</p>
+</li>
+</ul>
 </div>
 </div>
 
-<div id="outline-container-org1e9df94" class="outline-2">
-<h2 id="org1e9df94">Deploying with Spring Boot</h2>
-<div class="outline-text-2" id="text-org1e9df94">
+
+<div id="outline-container-org0c91870" class="outline-2">
+<h2 id="org0c91870">Deploying with Spring Boot</h2>
+<div class="outline-text-2" id="text-org0c91870">
 <p>
 In order to deploy with Spring Boot you can use the shell command
 </p>
@@ -3682,10 +3991,9 @@ In order to deploy with Spring Boot you can use the shell command
 </div>
 
 
-
-<div id="outline-container-orgea94802" class="outline-3">
-<h3 id="orgea94802">Under the Hood</h3>
-<div class="outline-text-3" id="text-orgea94802">
+<div id="outline-container-org7b439d2" class="outline-3">
+<h3 id="org7b439d2">Under the Hood</h3>
+<div class="outline-text-3" id="text-org7b439d2">
 <p>
 So that is the easy version. You can work in such a way without
 understanding what happens under the hood.
@@ -3770,9 +4078,9 @@ deploying your Java Servlets.
 </ul>
 </div>
 
-<div id="outline-container-orga6c120b" class="outline-4">
-<h4 id="orga6c120b">understand the following - where is web-inf?</h4>
-<div class="outline-text-4" id="text-orga6c120b">
+<div id="outline-container-orgb764870" class="outline-4">
+<h4 id="orgb764870">understand the following - where is web-inf?</h4>
+<div class="outline-text-4" id="text-orgb764870">
 <p>
 in order to understand the question check at check the second
 answer <a href="https://stackoverflow.com/questions/19786142/what-is-web-inf-used-for-in-a-java-ee-web-application">here</a>.
@@ -3818,9 +4126,10 @@ to go in the depth with it. Check <a href="https://stackify.com/spring-mvc/">her
 </div>
 </div>
 
-<div id="outline-container-orgf361600" class="outline-3">
-<h3 id="orgf361600">Debugging Spring App</h3>
-<div class="outline-text-3" id="text-orgf361600">
+
+<div id="outline-container-orga7e770f" class="outline-3">
+<h3 id="orga7e770f">Debugging Spring App</h3>
+<div class="outline-text-3" id="text-orga7e770f">
 <p>
 Note that in order to debug a spring application on localhost you
 can do the following:
@@ -3847,11 +4156,12 @@ documentation. That might take a little bit longer though.
 </p>
 </div>
 </div>
-</div>
 
-<div id="outline-container-org8946fdc" class="outline-2">
-<h2 id="org8946fdc">Generating a Docker Image out of your Spring Application</h2>
-<div class="outline-text-2" id="text-org8946fdc">
+
+
+<div id="outline-container-orga849861" class="outline-3">
+<h3 id="orga849861">Generating a Docker Image out of your Spring Application</h3>
+<div class="outline-text-3" id="text-orga849861">
 <p>
 Note that this will be important and the way to go on the long run.
 </p>
@@ -3871,8 +4181,71 @@ You can build a container image (if you have a docker daemon) using
 the Spring Boot build plugin:
 </p>
 
-<div class="highlight"><pre><span></span>  ./gradlew.bat spring-boot:build-image
+<div class="highlight"><pre><span></span>   ./gradlew.bat spring-boot:build-image
 </pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgeb11a22" class="outline-2">
+<h2 id="orgeb11a22">On local Variables and the issue of leaving the Spring Context</h2>
+<div class="outline-text-2" id="text-orgeb11a22">
+<p>
+So there are a few things that you better consider.
+</p>
+
+<p>
+Otherwise they will come to hunt you down in the future. That is
+actually quite fun cause you might loose then tons of time for silly
+design choices.
+</p>
+
+<p>
+The idea is that I used to work with <code>.env</code> files in my pyhton
+experience.
+</p>
+
+<p>
+Was looking for smth similar and found essentially a module that
+reads from such files as was your experience in python.
+</p>
+
+<p>
+That caused some troubles due to the inherit difference of the
+languages. At the core they are different.
+</p>
+
+<p>
+Meaning that when you develop in spring and then use the PaaS
+services what you would ultimately do is to package everything that
+is within the spring context into some jar, deploy it to the PaaS
+and then from there the service will take over.
+</p>
+
+<p>
+So note now that if you have an <code>.env</code> file into your local machine
+with the relevant variables, these will not be packaged into the
+<code>war</code> such that they will not be in your applicaiton on the cloud
+and you will start to have issues.
+</p>
+
+<p>
+So to this stage I created an enumerator class in java holding the
+relevant information.
+</p>
+
+<p>
+I guess that this is not the most clean solution. Now that I am
+writing the things down I am noticing that what the most clean
+solution likely is, is the one of writing the variables in the
+spring application settings or context.
+</p>
+
+<p>
+So check at the way to do it but I am quite sure this is the way to
+go.   
+</p>
 </div>
 </div>
     </div>
