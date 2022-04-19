@@ -1,0 +1,2950 @@
+#+BEGIN_COMMENT
+.. title: Spring
+.. slug: spring
+.. date: 2022-02-02 16:46:56 UTC+01:00
+.. tags: java
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+
+<style>
+ {
+  box-sizing: border-box;
+  margin-top: 60px;
+  margin-bottom: 60px;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 0px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+</style>
+
+#+end_export
+
+So this is the next piece of the cake. As we transition to the cloud
+it makes sense to have the spring-framework in your skillset.
+
+The notes are based on Spring in Action - 5th edition.
+
+I must say that is not too far from the way I used to develop in
+Python. Of course you have some Java-based falvour here and
+there. Sometimes with pros sometimes with cons. There are things were
+I still believe that Python is clearly superior. So ultimately my goal
+is to go in a direction of microservices with reactive architectures
+mixing the best of breed.
+
+Anyways here and there I skipped some sections. Will go back to them
+later when the work will require it.
+
+Note that as per my usual way of working I read, make notes, such that
+when I work many things should be already familiar and you should have
+a high-level understanding of an application written through such
+framework.
+
+Then of course experience is the one where you fix/crystallize all of
+these concepts. That comes with time nothing to add.
+
+Creative will then make you deviate from the general structure you
+learned.
+
+You just have to be careful to document everything then as it should
+always be possible for an external to join and take over your work.
+
+This is the bit I learned from my current recent experience.
+
+{{{TEASER_END}}}
+
+
+* Creating and Using Beans 
+
+  The concept of Beans is of paramount importance in the Java and
+  Spring world. This section aims at presenting a basic understanding
+  of it. It is based on [[https://docs.spring.io/spring-javaconfig/docs/1.0.0.m3/reference/html/creating-bean-definitions.html][this section]].
+
+  So note that it is /common/ for some application components within
+  the Spring framework to have to depend on some object. Say for
+  instance a =RestTemplate= in order to consume REST endpoints.
+
+  Then as shown [[*RestTemplate][here]] there is an option of resolving this dependency
+  by instatiating an object of that class and work through it, or
+  there is the option of working through beans.
+
+  Note that the most up to date reference documentation is [[https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-definition][the
+  following]]. I just put on my agenda to read the first chapter
+  here. Will be necessary in order to properly manage this. 
+  
+** On the @Configuration
+
+   So basically the idea here is to have a class annotated in such a
+   way. In this class you will define the relevant Beans that you will
+   use and inject across the application.
+
+   So @Configuration annotation indicates that the class will be
+   used by JavaConfig as a source of bean definitions.
+
+   #+BEGIN_SRC java :results output drawer :classname 
+// note that it is possible to explicitly set defaults for all
+// enclosed bean definitions. See the options in the parentheses.
+@Configuration(defaultAutowire = Autowire.BY_TYPE, defaultLazy = Lazy.FALSE)
+public class DataSourceConfiguration {
+    // bean definitions follow
+}
+   #+END_SRC
+
+   Note now that beans declarated in such a way will be available in
+   the =BeanFactory/ApplicationContext=.
+
+** Bean Visibility
+
+   Not making notes, this is the classical story.
+
+   What should be visible where.
+
+   You can check at the links above.
+   
+** Lazy-initialized Beans
+
+   By default, ApplicationContext implementations eagerly create and
+   configure /all singleton beans/ as part of the initialization
+   process.
+
+   So what that basically means is that all of your beans in your
+   configuration classes will be directly initialized at boot time.
+
+   This is I guess what actually happens when you start a SpringBoot
+   applicaiton. It starts your server etc, but it also instantiates
+   all of the Beans. You see there that what is actually returned is
+   an ApplicationContext and this will contain all of your Beans that
+   you will use throughout the application. 
+
+   Generally, this pre-instantiation is desirable, because errors in
+   the configuration or surrounding environment are discovered
+   immediately, as opposed to hours or even days later. When this
+   behavior is not desirable, you can prevent pre-instantiation of a
+   singleton bean by marking the bean definition as being
+   lazy-initialized. A /lazy-initialized bean tells the IoC container
+   to create a bean instance when it is first requested/, rather than
+   at startup.
+
+   Might be good for fast startup times etc.
+ 
+** @Autowired
+
+   The Spring container can autowire relationships between
+   collaborating beans.
+
+   You can let Spring *resolve collaborators (other beans)
+   automatically* for your bean by inspecting the contents of the
+   ApplicationContext.
+
+   This is also interesting:
+
+   #+begin_quote
+Autowiring can update a configuration as your objects evolve. For
+example, if you need to add a dependency to a class, that dependency
+can be satisfied automatically without you needing to modify the
+configuration. Thus autowiring can be especially useful during
+development, without negating the option of switching to explicit
+wiring when the code base becomes more stable.
+   #+end_quote
+
+   Note that you would wire then manually as you would eventually make
+   everything more stable, i.e. less random as less automatic - where
+   things can go wrong without you ever noticing it.
+   
+  
+* General Idea - Container
+
+
+   At its core, Spring offers a container, often referred to as the
+   Spring application context, that creates and manages application
+   components.
+
+   These components, or beans, are wired together inside the Spring
+   application context to make a complete application, much like
+   bricks, mortar, timber, nails, plumbing, and wiring are bound
+   together to make a house.
+
+   The act of wiring beans together is based on a pattern known as
+   /dependency injection/ (DI).
+
+   Rather than have components create and maintain the lifecycle of
+   other beans that they depend on, a /dependency-injected
+   application/ relies on a *separate entity (the container)* to
+   create and maintain all components and inject those into the beans
+   that need them. This is done typically through constructor
+   arguments or property accessor methods.
+
+   On top of its core container, Spring and a full portfolio of
+   related libraries offer a web framework, a variety of data
+   persistence options, a security framework, integration with other
+   systems, runtime monitoring, microservice support, a reactive
+   programming model, and many other features necessary for modern
+   application development.
+
+   
+* Spring Project Structure
+
+  This is based on the spring in action book. You understand well that
+  it is just one among the many possibilities.
+
+  There the structure was more less the following:
+
+  - =TacoCloudApplication.java= - This is the Spring Boot main class
+    that bootstraps the project.
+
+  - =application.properties= - here you can specify the configuration
+    properties. 
+
+  - =static= - here you save your static files for your application.
+
+  - =templates= - here you have template files that will be used to
+    render content to the browser. 
+
+  - =TacoApplicationTests.java= - this is a simple test class that
+    ensures that the Spring application context loads successfully.
+
+  So you see that this is quite similar conceptually to your python
+  project structure.
+
+* Gradle Configuration
+
+  Note that one of the most important thing that you have in your
+  build configuration is that you deploy to a =jar= not into a =war=.
+
+  Whereas WAR files are perfectly suitable for deploying to a
+  traditional Java application server, they’re not a natural fit for
+  most cloud platforms.
+
+  Although some cloud platforms (such as Cloud Foundry) are capable of
+  deploying and running WAR files, *all Java cloud platforms are
+  capable of running an executable JAR file*. Therefore, the Spring
+  Initializer defaults to JAR packaging unless you tell it to do
+  otherwise.
+
+  Basically you can then set up your project with the required
+  dependecies. In order to do that, always work through
+  https://start.spring.io/.
+
+  This is useful as through it you can get your skeleton for working
+  with Spring and through it you can quickly jump-start into your
+  projects.
+
+  Note that through /transitive dependencies/ you will manage to keep
+  your build tools lean. This in the sense that by simply specifying
+  the follwoing dependecies:
+
+  - spring-boot-starter-thymeleaf
+
+  - spring-boot-starter-web
+
+  You get out of the box dependencies that makes the following
+  available:
+
+  - Spring’s MVC framework
+
+  - Embedded Tomcat
+
+  - Thymeleaf and the Thymeleaf layout dialect
+
+  Moreover, you get autoconfiguration libraries that automatically:
+
+  - Configure the beans in the Spring application context to enable Spring MVC
+
+  - Configure the embedded Tomcat server in the Spring application context
+
+  - Configure a Thymeleaf view resolver for rendering Spring MVC
+    views with Thymeleaf templates.
+
+
+  Note that Thymeleaf is a framework to handle the views. This is
+  front-end stuff. You did some stuff in there in Python but it is not
+  your bread and butter and neither your main interest. You are rather
+  interested in the Spring MVC for writing your endpoints and do the
+  back-end work.
+
+* Running the Spring web-application
+
+  This is a 101 example. Do not waste too much time if you do not get
+  these notes.
+
+  Keep reading. But yeah take the idea if you want to start a 101
+  spring app.
+
+
+** Run App
+
+   This is the equivalent to your =flask.run= command. 
+
+   #+begin_src java :results output raw 
+package myCoolPackage;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication 
+public class TacoCloudApplication {
+ public static void main(String[] args) {
+ SpringApplication.run(TacoCloudApplication.class, args);  // here you
+							   // run the
+							   // application. similar
+							   // to flask
+							   // run.
+ }
+}
+   #+end_src 
+
+   Through the Spring framework you know that this will be the entry
+   point for your application and its =main=.
+
+   You see that you call then the static =run= method. This does the
+   actual bootstrapping of the application, creating the *application
+   context* we mentioned before.
+
+   Note that you pass to the =run= method:
+
+   - a *configuration class*
+
+   - the *command-line arguments*
+
+   Note that in the example above the configuration class is the same
+   as the /bootstrap class/. This does not have to be the case.
+
+   We will see that in fact the larger the projects - the more you
+   usually work with separate classes.
+   
+** MVC - through it you write your back-end endpoints
+
+   This is a web-framework. Again check the more detail section [[*Web-applications with
+    Spring][Web-applications with Spring]].
+
+   At the center of it there is the concept of /controller/.
+
+   This is a class that handles requests and responds with
+   information. I.e. it is the class through which you classically
+   implement your endpoints.
+
+   So in order to implement the most basic endpoint you can work as
+   follows:
+
+   #+begin_src java :results output raw 
+package myCoolPackage;
+
+import org.springframework.stereotype.Controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller 
+public class HomeController {
+ @GetMapping("/") 
+ public String home() {
+ return "home"; 
+ }
+}
+   #+end_src 
+   
+
+   Note that the =@Controller= annotation doesn't do much. It is there
+   to identify the class as a component. This will be useful as you
+   will do some component-scanning in your Spring-application context
+   then.
+
+   I.e. through the annotation Spring’s component scanning
+   automatically discovers it and creates an instance of
+   Home-Controller as a bean in the Spring application context.
+
+   The =@GetMapping= is there to note that the endpoint will work with
+   GET requests. 
+
+** Endpoints Testing
+
+   You can check in the book. This will be a quite big waste of time
+   nonetheless.
+
+   Start first by deciding on which tests suite you want to use. All
+   of these books explain you the stuff pretending there would be just
+   a single way of doing it.
+
+   This is not the case. So get the general structure and idea. But do
+   not spend too much time on it now on doing documentation. You might
+   use then a complete different testing-suite.
+  
+
+* Important Spring Modules
+
+  Note that on that spring initialzer page you can see all of the
+  dependencies nicely integrated with the spring framework.
+
+  You can navigate it in detail in time.
+
+  However, in general there are macroscopic classes, that you need to
+  understand:
+
+
+** Core Spring Framework
+
+   This is the fundation of everything in the spring universe.
+
+   It provides the core container and dependencies injection
+   framework.
+
+   It also provides the following essential features:m
+
+   - Spring MVC
+
+   - Template based JDBC support
+
+   - Spring WebFlux (for *reactive* programming)
+
+** Spring Boot
+
+   This is what makes autoconfiguration and starter-depencies
+   possible.
+
+   Note that the starter-dependencies are exactly the thing we
+   mentioned. I.e. you specified these very general
+   =spring-boot-starter-xxx= dependencies and through it you get a ton
+   of others transitive dependencies and autoconfigurations of them.
+
+   Note that Spring Boot also allows the following:
+
+   - The *Actuator* provides runtime insight into the inner workings of
+     an application, including metrics, thread dump information,
+     application health, and environment properties available to the
+     application.
+     
+   - Flexible specification of environment properties.
+     
+   - Additional testing support on top of the testing assistance found
+     in the core framework.
+
+   Spring Boot offers an alternative programming model based on Groovy
+   scripts that’s called the Spring Boot CLI (command-line
+   interface). With the Spring Boot CLI, you can write entire
+   applications as a collection of Groovy scripts and run them from
+   the command line.
+
+   Not interesting to me. It is another layer of config. It seems that
+   this Groovy is quite some config language in the Java world as it
+   is used for both specifying things in Gradle as well as here in
+   Spring at macro-level.
+
+** Spring Data
+
+   What’s more, Spring Data is capable of working with a /several
+   different kinds of databases/, including relational (JPA), document
+   (Mongo), graph (Neo4j), and others.
+
+   So interesting altough as mentioned I do not like to work with such
+   interfaces as then you stick too much into a single language.
+
+   I prefer to work with the native declarative languages of each as
+   these are quite stable and will provide the necessary portability
+   across languages.
+
+** Spring Security
+
+   Through it you can manage a broad range of application security
+   needs, including authentication, authorization, and API security.
+
+   This is what you did in your last Flask project. So similar
+   thing. Was never a fun of it. I hope I will not have to dig too
+   much into it. However, with the Zero-trust Architecture paradigm I
+   might have to do that at some point. 
+
+** Spring Integration and Spring Batch
+
+    *Spring Integration*: addresses real-time integration where data is
+    processed as it’s made available.
+
+    *Spring Batch*: addresses batched integration where data is allowed
+    to collect for a time until some trigger (perhaps a time trigger)
+    signals that it’s time for the batch of data to be processed.
+
+    So this will be important as with it you can push the boundaries
+    of your market risk system and make a nice machine out of it. It
+    will be very important in this sense to master functional
+    programming and these frameworks in order to have a proper baby. 
+   
+** Spring Cloud
+
+    Microservices are a hot topic, addressing several practical
+    development and runtime concerns. In doing so, however, they bring
+    to fore their own challenges. Those challenges are met head-on by
+    Spring Cloud, a collection of projects for developing cloud-native
+    applications with Spring.
+
+    So that is interesting and what Sergio was mentioning. I am
+    interested in looking into it as many things were provided by
+    external dashboards on the cloud from my experience at IBM.
+
+    I am interested in this sense to understand how that is working
+    and how exactly is it monitoring things given that the things work
+    in different runtimes.
+   
+
+* Configuring Spring
+
+  So basically Spring it is nice cause you have tons of beans in
+  spring that will ultimately be injected in your context and you will
+  have a well rounded Java development environment.
+   
+  So this is basically the idea. You differentiate two components in
+  Java:
+
+  - /Bean wiring/: through this component you can define the beans
+    that you will use in your spring application. I.e. the beans that
+    will be discoverable from the spring context. Moreover, through
+    /beans wiring/ you specify how the different beans will be
+    injected into each other. 
+
+  - /Property injection/: this sets the values on the different beans
+    in the Spring context of the application.
+
+  We will see how to specify these two fundamental components through
+  Spring boot. You will then be able to create your modularized
+  application and work with it in a smooth and agile way.
+  
+
+** How the spring framework works
+
+   In order to properly understand how to do /beans wiring/ and
+   /property injection/ you should first understand the following
+   general flow spring boot follows.
+
+   The following chart of the book gives a good overview:
+
+#+begin_export html
+ <img src="../../images/Screenshot 2021-11-14 182534.png" class="center">
+#+end_export
+
+   I.e. what you do is to instantiate the spring application by
+   setting all of the relevant parameters that will be used in order
+   to instantiate the relevant beans with the relevant configurations.
+
+   I.e. you specify the spring configuration you want by specifying
+   the relevant paramters through cmd line, yaml configuration files
+   etc.
+
+   Spring boot will then refer to the relevant configuration available
+   in the /spring environment/ to initiate the relevant beans and make
+   them accessible by the proper injection into the spring context.
+
+   So given the general picture above understand the following
+   components that are key to every proper Spring application and that
+   you should accordingly set.
+
+
+** Embedded Server
+
+   Here you can decide where your embedded server will communicate.
+
+   The default embedded server is Tomcat. You can change the option
+   and work with different servers.
+
+   In order to do so set the following in the the =src/main/resources/application.yml=
+
+   #+begin_src yaml
+server:
+ port: 0
+   #+end_src
+
+   Note that port =0= is a sensible choice as you will be able in such
+   a way to do proper integration testing. You do not hard-wire a port
+   but each time a different port is selected.
+
+   You will therefore make sure that your tests do not simply pass
+   because a port was hard-wired.
+
+   Note that this is a good point but it can well be a moot
+   point. Everything ultimately depends on the infrastructure
+   initialization.
+
+   Here you can also specify all of the options for ssl, your
+   key-stores etc. I just note it here but again I do not think I will
+   never need that stuff as we are in the era of the cloud and I think
+   it is a sensible decision to leverage the abstraction layer in
+   there.
+
+   Note taht this is likely the way I will choose. Write tha
+   =application.yml= with all of the desired properties you would like
+   to set. 
+   
+
+** Data
+
+   Here you can specify the driver and the location of the DB you will
+   interact with.
+
+   You have to understand how this overlaps with Gradle. There you
+   specify as well parts of this.
+
+   So double check how these two fits together. I am quite sure that
+   if you work with spring you do not specify the stuff in
+   gradle. I.e. you just specify the spring dependencies in gradle.
+
+   Then once this is specified it is all of a game within spring. This
+   is the big difference. While when programming without Spring you
+   have to pull the modules one-by-one into gradle and you compose
+   everything yourself.
+
+   Moreover as there is not a framework putting everything in an
+   opinionated context you have to do the manual config yourself.
+
+   I mean in the notes above I put a bit of notes that are nose-driven
+   so I am not sure everything is correct at 100% but more or less it
+   should be that.
+
+   You can then see in the book how to properly instantiate your db
+   with the different tables schema etc. I refer to the book in case
+   you want to go down that road. 
+   
+
+** Logging
+
+   This is nice, you can set there the standard output of your
+   logger.
+
+   Refer to the book. But basically there is an option to do that via
+   a xml file.
+
+   Moreover on the top of it once you defined the output of the logger
+   you can define all of the different levels that should be printed
+   by the logger.
+
+   You can that through the standards yaml configuration files.
+
+   So basically double check the book to see the way to configure your
+   logging across your applications. 
+
+
+** Property injection via special property values
+
+   This is a nice way to make dynamic and intelligent properties
+   injection into your spring environment - and consequently beans -.
+
+   The standard format would be something like that:
+
+   #+begin_src  yaml
+greeting:
+ welcome: You are using ${spring.application.name}
+   #+end_src
+
+   i.e. you map =greeting.welcome= to "You are using
+   ${spring.application.name}", where =${spring.application.name}=
+   maps to the =spring.application.name= of the yaml.
+
+   I think that essentially and ultimately it is simple yaml syntax.
+
+   What is important to get is how this properties are injected into
+   spring. This is a different story.
+
+   This is what is actully handeled in the next section.   
+
+** Creating your own configuration properties
+
+   Configuration properties are nothing more than properties of beans
+   that have been designated to accept configurations from Spring’s
+   environment abstraction.
+
+   So the above configurations are easy to integrate.
+
+   This is the *important* section. We will see how the beans are
+   actually designed to consume the configuration in the spring
+   environment and how you can actually set up your configuration and
+   inject it into the beans.
+
+   In order to do that you have to understand a couple of flags as in
+   the usual case of spring - i.e. these are actually the first class
+   citizens of spring through which you can manage it all.
+
+   In this sense, one of the most important annotation is the
+   following:
+
+   - @ConfigurationProperties annotation. When placed on any Spring
+     bean, it specifies that the properties of that bean can be
+     injected from properties in the Spring environment.
+
+   It is then immediate to understand the logic. You can check at it
+   in the book and online but you get the essential idea of beans and
+   property injection and how that works.
+
+   So basically the idea is the following - take the example of
+   setting the page-size in the front-end displaying a given number of
+   taco orders - this is the example of the book of reference.
+
+   #+BEGIN_SRC java :results output drawer :classname 
+@Controller // recall controller is the way you denote the class
+	    // answers requests etc.
+@RequestMapping("/orders")
+@SessionAttributes("order")
+@ConfigurationProperties(prefix="taco.orders") // here you set your
+					       // configuration
+					       // property. Like this
+					       // it will be possible
+					       // to set the
+					       // properties in this
+					       // class with the
+					       // prefix mentioned
+					       // there.
+public class OrderController {
+
+    private int pageSize = 20; // note that then you can set the
+			       // default variables encapsulated in
+			       // the objects of the class.
+
+    public void setPageSize(int pageSize) {  // note the setter here.
+	this.pageSize = pageSize;
+    }
+
+    ...
+	@GetMapping
+	public String ordersForUser(
+				    @AuthenticationPrincipal User user, Model model) {
+	Pageable pageable = PageRequest.of(0, pageSize);
+	model.addAttribute("orders",
+			   orderRepo.findByUserOrderByPlacedAtDesc(user, pageable));
+	return "orderList";
+    }
+
+}
+   #+END_SRC
+
+   In such a way you can then set the properties in your application
+   =yaml= - for instance the default page size in your controller:
+
+   #+begin_src yaml
+taco:
+ orders:
+ pageSize: 10
+   #+end_src
+
+   Spring framework will then take care of property injection as
+   described.
+
+*** *Important Design Point* - Note that usually you set configproperties to *component classes*
+
+    So basically recall that component is a first class citizen in the
+    Spring framework and these can then be picked up by the Spring
+    context and injected into other classes.
+
+    So basically what you do in Spring is creating a couple of these
+    /components/ that will be holding some given properties that you
+    can instantiate via your defined =@ConfigurationProperties=.
+
+    You can then inject these components across the application into
+    the different controllers etc.
+
+    This will keep your application modular and will make it possible
+    for you to have a solid design. You also understand that when
+    refactoring you just change values at one spot and everything will
+    adjust as it will be referencing that given component through
+    property injection.
+
+    I.e. the example above
+
+    #+BEGIN_SRC java :results output drawer :classname 
+package tacos.web;
+
+import org.springframework.boot.context.properties.
+    ConfigurationProperties;
+import org.springframework.stereotype.Component;
+import lombok.Data;
+
+@Component
+@ConfigurationProperties(prefix="taco.orders")
+@Data // lombok will implement getters and setters.
+public class OrderProps {
+    private int pageSize = 20;
+}
+    #+END_SRC
+
+    Then you would inject that component in the controller - see the
+    difference with the above - more ordered OrderController, more
+    modular, reusable Component -.
+
+    #+BEGIN_SRC java :results output drawer :classname 
+@Controller
+@RequestMapping("/orders")
+@SessionAttributes("order")
+public class OrderController {
+
+    private OrderRepository orderRepo;
+    private OrderProps props;              // you will inject the component here.
+
+    public OrderController(OrderRepository orderRepo,
+			   OrderProps props) {
+	this.orderRepo = orderRepo;
+	this.props = props;
+    }
+
+    ...
+
+	@GetMapping
+	public String ordersForUser(
+				    @AuthenticationPrincipal User user, Model model) {
+	Pageable pageable = PageRequest.of(0, props.getPageSize());
+	model.addAttribute("orders",
+			   orderRepo.findByUserOrderByPlacedAtDesc(user, pageable));
+	return "orderList";
+    }
+
+    ...
+
+}
+    #+END_SRC
+
+    
+** Excurs - Validation
+
+   Note that it makes sense to use =javax.validation.*= in combination
+   with your spring application properties.
+
+   With it you can double check some variables etc.
+
+   This might be especially useful to apply to your =Components=. Then
+   the idea is that you write your componnents, you instantiate them
+   through config properties, you validate such config properties and
+   you inject them in your application.
+
+   A 101 example of validation is the following:
+
+   #+BEGIN_SRC java :results output drawer :classname 
+package tacos.web;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import org.springframework.boot.context.properties.
+    ConfigurationProperties;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
+import lombok.Data;
+@Component
+@ConfigurationProperties(prefix="taco.orders")
+@Data
+@Validated
+public class OrderProps {
+    @Min(value=5, message="must be between 5 and 25")
+    @Max(value=25, message="must be between 5 and 25")
+    private int pageSize = 20;
+}
+   #+END_SRC
+   
+
+** Profiles
+
+   This is an important concept when configuring your spring
+   application.
+
+   Profiles allow you to create *conditional configuration*
+   properties.
+
+   I.e. framed as per the book:
+
+   #+begin_quote
+Profiles are a type of /conditional configuration/ where different
+beans, configuration classes, and configuration properties are applied
+or ignored /based on what profiles are active/ at runtime.
+   #+end_quote
+
+   So how do you use such conditional properties? The idea is to
+   create multiple =yaml= files where you will store different bits of
+   information.
+
+   The name of the file *should follow this convention*:
+   =application-{profile name}.yml= *or* =application-{profile
+   name}.properties=.
+
+   The idea is then the following. You can activate profiles as
+   described in [[*Activating Profiles][Activating Profiles]].
+
+   Note that this is your choice of design. Note that there are as
+   well other ways to configure profiles - i.e. you set everything in
+   your =application.yml= file with the following syntax:
+
+   #+begin_src yaml
+  logging:
+    level:
+      tacos: DEBUG
+
+  # note tree lines to separate profiles. all below belongs to the
+  # prod profile.
+  ---  
+
+  # specify name of the profile
+  spring:
+    profiles: prod  
+    
+    datasource:
+      url: jdbc:mysql://localhost/tacocloud
+      username: tacouser
+      password: tacopassword
+      logging:
+        
+    level:
+      tacos: WARN
+   #+end_src
+
+
+    The basic idea is the following - the first section is the default
+    section. The properties of the second section are just active when
+    the profile is active.
+   
+*** Activating Profiles
+
+    Now you understand how to set the properties for different
+    profiles. The question is then how you active the different
+    profiles.
+
+    This is again done by configuring the =spring.profiles.active=
+    property with the desired profiles to be activated when launching
+    the applicaiton.
+
+    As always you can set the property in the =application.yml= or by
+    passing it via command line:
+
+    #+begin_src shell
+ export SPRING_PROFILES_ACTIVE=prod
+    #+end_src
+
+    Or the second option:
+
+    #+begin_src yml
+spring:
+ profiles:
+   active:
+   - prod
+    #+end_src
+
+
+** Profile-dependent Beans
+
+   Note now that it is as well possible to create beans that will just
+   be active depending on the profile.
+
+   You can well understand the usage of them.
+
+   There are simple annotations for it.
+
+   #+BEGIN_SRC java :results output drawer :classname 
+@Bean
+@Profile({"dev", "qa"}) // note that also the following works @Profile("dev") and @Profile("!dev")
+public CommandLineRunner dataLoader(IngredientRepository repo,
+				    UserRepository userRepo, PasswordEncoder encoder) {
+    ...
+	}
+   #+END_SRC
+
+   
+* Web-applications with Spring
+
+  You can even read more into the detail about working with Spring at
+  the following source [[https://docs.spring.io/spring-restdocs/docs/current/reference/html5/][here.]]
+
+  In order to properly develop solid endpoints you should read into
+  [[https://martinfowler.com/articles/richardsonMaturityModel.html][this]]. You will then see the three levels and you should aim to
+  program at level 3 and not at level 0 like a moron.
+
+** Synchronous REST
+
+*** Spring MVC
+
+    With it you can both display information to the front-end in a
+    dynamic way.
+
+    Or, alternatively, it will be possible for you to develop REST
+    endpoints with it.
+
+    I will not make big notes of the first. It is not my bread and
+    butter. In the sense that I am pushing for a clear front-end and
+    back-end cut in our org. Our team should be responsible for the
+    backend of the risk system, the more math intensive part of it but
+    we should not be full-stack developers. That would not be
+    beneficial to us or the team. 
+
+    Note that it is pretty much what you saw at the times of
+    your IBM projects when you worked with flask.
+
+    I.e. you serve the static content via MVC, and you have different
+    =views=, through which it is possible to embedd the application
+    logic into the front-end.
+
+    The book worked with Thymeleaf as a view framework in order to
+    embedd the application logic into the front-end. We work with
+    Mustache. Though, you can imagine that the two are quite similar -
+    and again, from what you can read this is exactly what you could
+    see when working on your flask-login module. 
+
+    Note that in general you always talk with the controller when
+    instatiating the HTTP request. Then you perform your application
+    logic and pass on the relevant info to the views.
+
+    Note that you set up all of this =MVC= architecture and framework
+    through =@Controller=. This will handle requests and will trigger
+    and respond with views etc. In any case it is the /controller/
+    piece of the =MVC= architecture you can read about [[https://marcohassan.github.io/bits-of-experience/posts/on-classical-architectures/][classical
+    architectures]].
+   
+**** CORS option
+
+     Check if interested.
+
+     The idea is essentially the following:
+
+ #+begin_export html
+  <img src="../../images/cors_principle.png" class="center">
+ #+end_export
+
+*** On important Annotations
+
+    So understand the following annotations in order to properly set up
+    your application:
+
+    - =@RestController=:
+
+      Note that this is an annotation like @Controller and @Service
+      that marks a class for discovery by component scanning.
+
+      However, note the following *important difference* to the
+      general =@Controller= which might return /a view/ :
+
+      #+begin_quote
+ In the =@RestController= all handler methods in the controller should
+ have their return value written directly to the body of the response,
+ rather than being carried in the model to a view for rendering. 
+      #+end_quote
+
+      Alternatively, you could have annotated DesignTacoController with
+      @Controller, just like with any Spring MVC controller. But then
+      you’d need to also annotate all of the handler methods with
+      @ResponseBody to achieve the same result. So basic point: /see
+      how IT architecture is modular/. You can compose it yourself or
+      use abstraction. For me the choice is no matter of big questions.
+
+      So the difference is that one specific controller for =REST=
+      endpoints. Use that.
+
+    - =@RequestMapping=
+
+      Use it as follows:
+
+      #+BEGIN_SRC java :results output drawer :classname 
+@RestController
+@RequestMapping(path="/design", 
+ produces="application/json") // multiple formats are also possible: produces={"application/json", "text/xml"})
+ public myClassHandlingEndpoints {
+    ...
+    }
+      #+END_SRC
+
+      Then basically in this way you are saying that all of the
+      handlers in the class will handle requests to endpoints with
+      basis =/design=.
+
+      Moreover you say that you will return =json= as it is often the
+      norm.
+
+    - =@GetMapping=
+
+      Note that this is the way you handle get requests in your
+      =@RestController=.
+
+      Note that the path you specify in such annotations augments the
+      one from the base-mapping in the class-level =@RequestMapping=.
+
+      Note that we make an example with a /placeholer/:
+
+      #+BEGIN_SRC java :results output drawer :classname 
+@GetMapping("/{id}")
+public Taco tacoById(@PathVariable("id") Long id) { // see pathvariable here. this is the value in the request.
+    Optional<Taco> optTaco = tacoRepo.findById(id);
+    if (optTaco.isPresent()) {
+	return optTaco.get();
+    }
+    return null;
+}
+      #+END_SRC
+
+    - =@ResponseStatus=
+
+      That is nice cause with that tag you can specify what the
+      endpoint will utlimately hand back as HTTP anser.
+
+      *Default:* Under normal circumstances (when no exceptions are thrown), all
+      responses will have an HTTP status code of 200 (OK).
+
+      See for instance an application in hte next java chunck.
+
+      Check online at all of the options you have in this sense.
+
+    - =@RequestBody=
+
+      This is important when handling post requests.
+
+      Simply put, the =@RequestBody= annotation maps the HttpRequest
+      body to a transfer or domain object, enabling automatic
+      /deserialization/ of the inbound HttpRequest body onto a /Java
+      object/. Spring automatically deserializes the JSON into a Java
+      type, assuming an appropriate one is specified.
+
+      Note that this is important to include in your post endpoints
+      consuming json objects.
+
+      The reason is the following:
+
+      #+begin_quote
+This annotation is important—without it, Spring MVC would assume that
+you want request parameters (either query parameters or form
+parameters) to be bound to the object of interest.
+      #+end_quote
+
+      #+begin_src java
+@PostMapping(consumes="application/json")
+@ResponseStatus(HttpStatus.CREATED) // see how you can pass the
+                                    // response status you can then
+                                    // consume such status responses
+                                    // via ResponseEntity objects.
+public Taco postTaco(@RequestBody Taco taco) {
+ return tacoRepo.save(taco);
+}
+      #+end_src
+
+      See [[https://www.baeldung.com/spring-request-response-body][this]] for more. So you see this is how you handle json
+      requests in a straightforward way. Not even jacksonjson is
+      needed.
+
+    - =@RequestParam=
+
+      Similar as =@RequestBody=, specifying what you want from there.
+
+      #+BEGIN_SRC java :results output drawer :classname 
+@GetMapping("/age")
+ResponseEntity<String> age(
+  @RequestParam("yearOfBirth") int yearOfBirth) {
+ 
+    if (isInFuture(yearOfBirth)) {
+        return new ResponseEntity<>(
+          "Year of birth cannot be in the future", 
+          HttpStatus.BAD_REQUEST);
+    }
+
+    return new ResponseEntity<>(
+      "Your age is " + calculateAge(yearOfBirth), 
+      HttpStatus.OK);
+}
+      #+END_SRC
+
+
+*** HETOAS
+
+    Note that if you want you can work with /Hypermedia as the Engine
+    of Application State/ as a standard for setting up your REST
+    endpoints.
+
+    You can read the idea [[https://en.wikipedia.org/wiki/HATEOAS][here]].
+
+    I think the idea is nice. The idea is that you can give back some
+    endpoints in your responses such that you can then programatically
+    trigger some endpoints in a programmatic way without hard-coding
+    them.
+
+    The entire application is then more bounded to the code itself and
+    less on hard-coded strings.
+
+    Set your mental framework correctly. Understand that each time you
+    have two components:
+
+    - *Producing*:
+
+      Here the idea is to generate the message with the relevant
+      endpoints information.
+
+    - *Consuming*:
+
+      Here the idea is to actually read the information produced by
+      the =producing= component and navigate everything
+      programatically. The
+
+      Note that while there is sdk to consume and create such in Java
+      I could not find anything like this in flask. You will have some
+      issues in this sense. 
+
+    Read again in the book if you want to go in that direction. Also
+    [[https://docs.spring.io/spring-hateoas/docs/current/reference/html/#fundamentals.representation-models][this]] is a good documentation.
+
+    Have to understand this dimension.
+
+*** Spring Data REST
+
+    Basically here the concept is the following.
+
+    If you include the =spring-boot-starter-data-rest= dependency in
+    your configuration and you work with Spring Data, then Spring will
+    create out of the box endpoints for your Spring Data JPA
+    repositories and will even expose endpoints following =HETOAS=
+    convention as mentioned above.
+
+    So note how you should work with JPA if you want to work with
+    Spring Data REST.
+
+    Otherwise if you want to work with pure SQL you will have to
+    manually set up the endpoints yourself as discussed in the previous
+    sections.
+
+    So this is a design choice you will have to face soonish. The point
+    remains open to this stage.
+
+    I think the question is if you want to stay generally in the same
+    environment or not.
+   
+**** Important Note
+
+     If you will ever decide to go down that road read chapter /6.3.1 -
+     Adjusting resource paths and relation names/ in the book.
+
+     There is some tricky nounces with the endpoints that you will have
+     to keep in mind and remember.    
+
+
+*** Consuming REST services
+
+    There are essentially three ways of consuming a REST interface:
+
+    - =RestTemplate=: this is a synchronous REST client provided by the
+      Spring Framework.
+
+    - =Traverson=: a hyperlink-aware synchronous REST client provided
+      by Spring HATEOAS. See more on hyperlink [[*HETOAS][here]].
+
+    - =WebClient=: a *reactive* asynchronous REST client - see [[*Consuming Webflux][here]].
+
+**** RestTemplate
+
+     basically RestTemplate provides 41 methods for interacting with
+     REST resources.
+
+     You can then surf around in the internet in order to see the
+     different methods.
+
+     What you should take away is the following basic structure:
+    
+     - instantiate the RestTemplate
+
+     You can do that either by instantiating an instance for it as
+     usual or by creating a =Bean= and injecting it around the
+     application.
+
+     #+BEGIN_SRC java :results output drawer :classname 
+
+// creating an instance
+RestTemplate rest = new RestTemplate(); 
+
+// vs.
+
+@Bean
+public RestTemplate restTemplate() {
+ return new RestTemplate();
+}
+
+ #+END_SRC
+
+     undestand this difference as it is core to the Spring-native way
+     of working.
+
+     Then that is basically it. You have then your methods you work
+     with:
+
+     #+BEGIN_SRC java :results output drawer :classname 
+
+// just one short example, then the basic structure is equal
+public Ingredient getIngredientById(String ingredientId) {
+ return rest.getForObject("http://localhost:8080/ingredients/{id}", // endpoint to be consumed
+ Ingredient.class, ingredientId);  // second argument object you want
+				   // to get. Will deserialize the
+				   // json object into such Object.
+                                   // third argument -> paramter for the url.
+ 
+}
+     #+END_SRC
+
+     Note that this is a bit the idea. There are better methods then.
+     In this way it will be possible to work in a more structured
+     way. Check at the method involving maps in this sense.
+
+     The basic idea stays. You can consume your endpoints in such way,
+     passing parameters and deserializing the response to Java native
+     Objects.
+    
+**** Traverson
+
+     Basically this is similar to the simple RestTemplate and it is the
+     way to cconsume hypermedia APIs.
+
+     I leave this section for now as I am still not sure I will work
+     with HATEOAS.
+
+     Recall in any case that once you have hypermedia APIs you consume
+     API by traversing multiple API based on the response.
+
+     So you should use this in order to properly consume HETEOAS
+     endpoints.
+
+     How you write them is something different though. Understand this point.
+
+
+*** Document Spring APIs via OpenApi standards
+
+    This is essentially what you were doing in your last projects at
+    IBM.
+
+    Check at this [[https://www.baeldung.com/spring-rest-openapi-documentation][website]]. This is what you will start to do here as
+    well.
+
+    See then the subchapter 9. in order to see how that is done.
+
+    #+BEGIN_SRC java :results output drawer :classname 
+@Operation(summary = "Get a book by its id")
+@ApiResponses(value = { 
+  @ApiResponse(responseCode = "200", description = "Found the book", 
+    content = { @Content(mediaType = "application/json", 
+      schema = @Schema(implementation = Book.class)) }),
+  @ApiResponse(responseCode = "400", description = "Invalid id supplied", 
+    content = @Content), 
+  @ApiResponse(responseCode = "404", description = "Book not found", 
+    content = @Content) })
+@GetMapping("/{id}")
+public Book findById(@Parameter(description = "id of book to be searched") 
+  @PathVariable long id) {
+    return repository.findById(id).orElseThrow(() -> new BookNotFoundException());
+}
+    #+END_SRC
+
+    i.e. this is how you annotate the different things in your API.
+
+    You can then properly expose them.
+
+    Note that I am having some minor troubles to set it up properly.
+    In order to do that, check at the following: [[https://blog.mestwin.net/openapi-3-documentation-for-your-spring-rest-api-with-springdoc-openapi/][link]].
+
+    Ok - so the normal way where everything is integrated
+    out-of-the-box should be done via the following plugin: [[https://github.com/springdoc/springdoc-openapi-gradle-plugin][here]]. Note
+    that apparently this is not on MavenCentral and you would have to
+    install it manually. Follow the instructions on Github for it. 
+     
+** Asynchoronous Communication
+
+   #+begin_quote
+   Asynchronous messaging is a way of indirectly sending messages from
+   one application to another without waiting for a response. This
+   indirection affords looser coupling and greater scalability between
+   the communicating applications.
+   #+end_quote
+   
+   So basically this you will use when you ship long-running jobs for
+   which there is no chance to get an immediate response from the
+   service.
+
+   As you well know the most standard way to implement asynchoronous
+   communication is via message brokers.
+
+   We will see in this sense the possibilities that Spring offers to
+   work through message brokers with the goal of setting up solid and
+   reliable asynchronous communication.
+
+   We will check in this sense:
+
+   - =Java Message Service (JMS)= 
+
+     JMS is a Java standard that defines a common API for working with
+     message brokers.
+
+     This is nice as independently of the message broker of choice you
+     use the same. A bit like JDBC for relational DBs.
+
+     Should be also easy to swap across message brokers for your
+     Spring application.
+
+     Spring supports JMS through a template-based abstraction known
+     as JmsTemplate.  Using JmsTemplate, it’s easy to send messages
+     across queues and topics from the producer side and to receive
+     those messages on the consumer side.
+
+     This is in fact what you already saw with the Azure Service
+     Bus. There it was as well recommended to use the JMS API to
+     interact with the broker.
+
+     However, note that as you already stated in your notes everything
+     is based on polled operations here.
+
+     I will not go in depth again in the module. You get the thing at
+     conceptual level and that is enough. If you decide to work in
+     such a polled way then you can start to work with it. 
+
+   - =Advanced Message Queueing Protocol (AMQP)=
+
+     Whereas JMS messages are addressed with the name of a destination
+     from which the receiver will retrieve them, AMQP messages are
+     addressed with the *name of an exchange and a routing key*, which
+     are decoupled from the queue that the receiver is listening to.
+
+     If you want to have the *easy message* to the point without too
+     much boilerplate understand the following:
+
+     #+begin_quote
+     The most important thing to understand is that messages are sent to
+     exchanges with routing keys and they’re consumed from queues. How
+     they get from an exchange to a queue depends on the binding
+     definitions and what best suits your use cases.
+     #+end_quote
+
+     See more on RabbitMQ below.
+     
+   - =RabbitMQ=
+
+     This is one of the most prominent implementation of AMQP.
+
+     See below the idea of exchanges.
+     
+   #+begin_export html
+    <img src="../../images/rabbitIdea.png" class="center">
+   #+end_export
+
+   #+begin_quote
+   When a message arrives at the RabbitMQ broker, it goes to the exchange
+   for which it was addressed. The exchange is responsible for routing it
+   to one or more queues, depending on the type of exchange, the binding
+   between the exchange and queues, and the value of the message’s
+   routing key.
+   #+end_quote
+   
+   So you see that the architecture of such broker is slightly more
+   complex in comparison of a simple queue with a fix address that
+   you connect to with JMS.
+
+   I think that this is a too complex architecture for what you want
+   to accomplish at the moment. 
+
+   In any case here an overview of the thingy:
+     
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-04 101611.png" class="center">
+   #+end_export
+
+   In the sense that simple default and fanout routing should be
+   sufficient to accomplish what you have in mind. 
+     
+   - =Apache Kafka=
+
+     So essentially Kafka is a broker as others. I.e. the task it
+     fulfills is the one of a message broker.
+
+     
+   However, note that Kafka is not an exchange as a pure
+   RabbitMQ. It simply offers the possibility of brokering messages
+   via topics in order to accomplish pub-sub tasks.
+
+   The big difference with other pub-sub solutions lies in resiliency.
+
+   The big major difference between Kafka brokers and other brokers
+   is that Kafka is designed to *run into a cluster*.
+
+   Understand as well the following architectural design of Kafka:
+
+   #+begin_quote
+   Kafka topics are replicated across all brokers in the cluster.
+
+   Each node in the cluster acts as a leader for one or more topics,
+   being responsible for that topic’s data and replicating it to the
+   other nodes in the cluster.
+
+   Going a step further, each topic can be split into multiple
+   partitions. In that case, each node in the cluster is the leader for
+   one or more partitions of a topic, but not for the entire
+   topic. Responsibility for the topic is split across all nodes.
+   #+end_quote
+
+   So you see that resiliency is a first class citizen of Kafka.
+     
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-04 110855.png" class="center">
+   #+end_export
+
+   So good to know what that is at high level.
+
+   Clearly not interesting for you as it has nothing to do with the
+   thing you want to achieve. 
+
+   - =POJO=
+
+     Well I must say that what is written in - Spring in Action 5th
+     edition - is quite confusing. Not the best explanation that you
+     can find out there according to me.
+
+     In any case I think it is smth that goes in the direction of
+     Hibernate, i.e. stay always in the OOP paradigma and treat
+     everything as objects - i.e. your first class citizens in Java -
+     and interact with your brokers directly through objects. 
+
+     #+begin_quote
+Spring also supports the notion of message-driven POJOs: simple Java
+objects that react to messages arriving on a queue or topic in an
+asynchronous fashion.
+     #+end_quote
+
+
+
+* Spring Data
+
+  So we will treat here how to interact with JDBC and JPA in Spring.
+
+  Note that the difference between the two is the level of
+  abstraction. Through JDBC you communicate directly with the DB by
+  passing SQL queries and interacting with the driver of the DB.
+
+  JPA is the higher level of abstraction. There you can work with the
+  first-class citzens of java: objects. Check your other post where
+  you digged a little bit more deeper into them.
+
+  Note that these notes are just approximate. You make sense of the
+  java way of developing in here. Note that you should then just refer
+  to these to get the gist of the idea when creating your first
+  restful service with data persistence.
+
+  You should then create the most logical and classical way for
+  persistence using the following repository holding the code for the
+  application in a unified way: [[https://github.com/habuma/spring-in-action-5-samples/tree/master/ch03/tacos-jdbc/src/main/java/tacos][here]].
+
+** Spring JDBC
+
+ Spring JDBC support is rooted in the JdbcTemplate class.
+
+ JdbcTemplate provides a means by which developers can perform SQL
+ operations against a relational database without all the ceremony and
+ boilerplate typically required when working with JDBC.
+
+ So basically with jdbc you do not have to handle all of the
+ connections and the error messages explicitely. So the module in Java
+ helps you to work without all of the boilerplate.
+
+ I like this code as it is more lean than without the templates. 
+
+** Reading from RDMS
+
+   You would do that in the follwoing way leveraging on the JDBC templates
+
+ #+begin_src java :results output raw 
+// Note how you focus on the query in here. No connection is handeled. 
+@Override
+public Ingredient findOne(String id) {
+ return jdbc.queryForObject(
+ "select id, name, type from Ingredient where id=?",
+ this::mapRowToIngredient, id);  
+}
+
+// Your function for mapping queries to results.
+private Ingredient mapRowToIngredient(ResultSet rs, int rowNum)
+ throws SQLException {
+ return new Ingredient(
+ rs.getString("id"),
+ rs.getString("name"),
+ Ingredient.Type.valueOf(rs.getString("type")));
+}
+ #+end_src
+
+
+ Note that the ~queryForObject~ above maps the query to a single
+ object.
+
+ If you want to map each row of the query to an object which you then
+ would save in a *Collection* you can use the ~query~ method. Check
+ the below in this sense:
+
+ #+begin_src java :results output raw 
+@Override
+// note the Collection result here.
+public Iterable<Ingredient> findAll() { 
+ return jdbc.query("select id, name, type from Ingredient",
+ this::mapRowToIngredient); // not same mapRowToIngredient method
+}
+ #+end_src
+
+ So basically that is how it works. you just have then to embedd such
+ methods into a class that is initialized with jdbc template.
+
+ You can do that as [[https://github.com/habuma/spring-in-action-5-samples/blob/master/ch03/tacos-jdbc/src/main/java/tacos/data/JdbcIngredientRepository.java][here]]. Note as well the constructor with
+ =@Autowired= there. This is a Spring specific annotation in order to
+ get things in the context etc. Note as well the installation of
+ =RowMapper=. Note that this necessary as the second argument of the
+ ~query~ etc. is in fact a rowmapper and the referenced methods are
+ interenally treated as such. You can find in the book an example on
+ how to work explicitely with Rowmapper but this is not in my interest
+ as it just clutters the code.
+ 
+** Writing to RDMS
+
+   To write into the RDMS using JDBC template you can use the
+   ~update~ method.
+
+   You can do that in the follwoing way
+
+   #+begin_src java :results output raw 
+@Override
+public Ingredient save(Ingredient ingredient) {
+ jdbc.update(
+ "insert into Ingredient (id, name, type) values (?, ?, ?)",
+ ingredient.getId(),
+ ingredient.getName(),
+ ingredient.getType().toString());
+ return ingredient;
+}
+   #+end_src 
+
+   Because it isn’t necessary to map ResultSet data to an object, the
+   ~update()~ method is much simpler than ~query()~ or
+   ~queryForObject()~.
+
+   There is then a messy section about writing the stuff in the DB
+   when you have to make sure all of the keys relations are
+   satisfied. I jumped it as it is not well written. In this book you
+   do not have an overview of what piece of code is written were, so I
+   thought I will understand at the time of getting my hands dirty
+   with it. So wait for it and tackle this down at a later point.
+
+** Creating and Populating your Tables
+
+   You can define the db schema in Java in the following way:
+
+   #+begin_src java :results output raw 
+create table if not exists Ingredient (
+ id varchar(4) not null,
+ name varchar(25) not null,
+ type varchar(10) not null
+);
+
+create table if not exists Taco (
+ id identity,
+ name varchar(50) not null,
+ createdAt timestamp not null
+);
+
+create table if not exists Taco_Ingredients (
+ taco bigint not null,
+ ingredient varchar(4) not null
+);
+
+alter table Taco_Ingredients
+ add foreign key (taco) references Taco(id);
+
+alter table Taco_Ingredients
+ add foreign key (ingredient) references Ingredient(id);
+
+create table if not exists Taco_Order (
+ id identity,
+ deliveryName varchar(50) not null,
+ deliveryStreet varchar(50) not null,
+ deliveryCity varchar(50) not null,
+ deliveryState varchar(2) not null,
+ deliveryZip varchar(10) not null,
+ ccNumber varchar(16) not null,
+ ccExpiration varchar(5) not null,
+ ccCVV varchar(3) not null,
+ placedAt timestamp not null
+);
+
+create table if not exists Taco_Order_Tacos (
+ tacoOrder bigint not null,
+ taco bigint not null
+);
+
+alter table Taco_Order_Tacos
+ add foreign key (tacoOrder) references Taco_Order(id);
+
+alter table Taco_Order_Tacos
+ add foreign key (taco) references Taco(id);
+   #+end_src 
+
+
+   Now the question is if you want to do it like that in Java or not.
+
+   I like the idea as this is plain SQL. So you can keep it in your
+   project repo. You can moverover generate the schema for localhost
+   embedded DB as H2 where you can test and work in dev mode.
+
+   Moreover once everything defined you can run the same sql file to
+   populate your DB of interest.
+
+   If you take this approach you just have to make sure that the H2
+   embedded DB has the same SQL dialect as the server you are using
+   and make all of these kind of reasoning. 
+
+   So the question is how do you execute the schema definition above?
+
+   Again Spring comes at rescue. In the moment where you will save the
+   stuff in the proper repo and adhere to some basic convention the
+   file *will be executed* against the DB when the application
+   starts.
+
+   I.e. you should save the file as =schema.sql= in the
+   =src/main/resources= repo.
+
+   You can find the example fo the book [[https://github.com/habuma/spring-in-action-5-samples/tree/master/ch03/tacos-jdbc/src/main/resources][here]].
+
+   You can as well pre-populate the DB with some records by writing
+   some insert statements in a =data.sql= file also saved on the same
+   repo.
+
+** Spring JPA
+
+   Ok - here there is a big discussion among the Java experts in my
+   team and other people coming from other programming languages.
+
+   I still have to understand it properly. Heavy Java users claim it
+   is the way to work with data in Java. It will allow the developer
+   to keep thinking and programming in terms of objects.
+
+   On the other hand it is true that if you work through such layer
+   you will create a strong dependency to Java. It will not be easy to
+   migrate to other modern data-driven languages that direct SQL.
+
+   Think for instance the SQL in the python environment where you can
+   apply it directly to pandas, apache-spark-sql etc.
+
+   I also have to understnad better the scope of Spring JPA - and the
+   extent to which it differs from Hibernate JPA. I think in fact that
+   Spring JPA leverages by default the Hibernate JPA but would have
+   eventually to check it up once and if you decided to go through
+   this JPA experience in the way you develop in Java.
+   
+
+* Spring Integration
+
+  That is also a nice feature.
+
+  See the book:
+
+  #+begin_quote
+Sring Integration is a ready-to-use implementation of many of the
+integration patterns that are catalogued in Enterprise Integration
+Patterns by Gregor Hohpe and Bobby Woolf (Addison-Wesley, 2003).
+
+Each pattern is implemented as a component through which messages
+ferry data in a pipeline, you can assemble these components into a
+pipeline through which data flows. 
+  #+end_quote
+
+  This is something that you want to explore. It basically is an
+  entire suit that will allow you to easily interface with external
+  systems.
+
+  In fact look at the perfect match in the various components of the
+  integration chain described in spring and in the book as described
+  on this [[https://www.enterpriseintegrationpatterns.com/patterns/messaging/][website]].
+
+  So note that sooner or later you will have to master these different
+  components. Recall that the idea is always the same. [[https://marcohassan.github.io/bits-of-experience/posts/on-a-brownfield-play/][Pattern Up or
+  Surrender]]. 
+  
+** FileSystem Integration
+
+   The file endpoint module offers the ability to ingest files from
+   the filesystem into an integration flow and/or to write data from a
+   flow to the filesystem.
+
+   This is important and you can start to see how you can work with
+   it. Think for instance to your feed application. This is what you
+   will need. 
+
+   Check for instance the following example
+
+   #+BEGIN_SRC java :results output drawer :classname 
+import org.springframework.integration.annotation.MessagingGateway;
+import org.springframework.integration.file.FileHeaders;
+import org.springframework.messaging.handler.annotation.Header;
+
+@MessagingGateway(defaultRequestChannel="textInChannel")  // open text channel.
+public interface FileWriterGateway {
+    void writeToFile(
+		     @Header(FileHeaders.FILENAME) String filename, // here
+								    // you
+								    // pass
+								    // the
+								    // filename
+								    // you
+								    // want
+								    // to
+								    // write
+								    // to.
+		     String data); // here is the stuff you write to the file.
+}
+   #+END_SRC
+
+   So you understand that this is much easier in comparison to
+   starting open Inputstreams and parse line by line.
+
+   Understand now the following:
+
+   - =@MessagingGateway=:
+
+     This annotation tells Spring Integration to generate an
+     *implementation of this interface* at runtime.  The others part
+     of the code will use then this interface when they need to write
+     a file.
+
+     Note now that any call to the implementation of the
+     MessagingGateway, will be sent to the given message channel. In
+     this case, you state that any messages that result from a call to
+     writeToFile() should be sent to the channel whose name is
+     textInChannel.
+
+     So you understand a bit at high level how the Spring Integration
+     framework works.
+
+   Note then that you can start to define how the write should be
+   performed thorugh different configuration options - say:
+
+   1. XML configuration
+   2. Java configuration
+   3. Java configuration with a DSL
+
+   If you work with XML one of the typical examples could be the
+   following:
+
+   #+begin_src xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-file="http://www.springframework.org/schema/integration/file"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+			   http://www.springframework.org/schema/beans/spring-beans.xsd
+			   http://www.springframework.org/schema/integration
+			   http://www.springframework.org/schema/integration/spring-integration.xsd
+			   http://www.springframework.org/schema/integration/file
+			   http://www.springframework.org/schema/integration/file/springintegration-file.xsd">
+  <int:channel id="textInChannel" /> 
+  <int:transformer id="upperCase"
+		   input-channel="textInChannel"
+		   output-channel="fileWriterChannel"
+		   expression="payload.toUpperCase()" /> <!-- interesting - it seems that you can enter java here. -->
+  <int:channel id="fileWriterChannel" /> 
+  <int-file:outbound-channel-adapter id="writer"
+				     channel="fileWriterChannel"
+				     directory="/tmp/sia5/files"
+				     mode="APPEND"
+				     append-new-line="true" />    <!-- see here you append and not do it. -->
+</beans>
+
+   #+end_src
+
+   You can then continue reading in the book for the other two
+   configuration possibilities.
+
+*** Integration Components
+
+    Now note that in a similar way as you have created your file
+    system integration and write into there, you can create similar
+    integration patterns around your application.
+
+    So that is basically it. Understand now that you have the
+    following lego components through which you can set up your
+    integration patterns. 
+        
+    - Channels:
+
+      pass messages from one element to the other. See for instance
+      the example above.
+
+    - Filters:
+
+      contionally allow messages to pass through
+
+    - Transformers:
+
+      change message values. See this is what you have used above in
+      the xml config file to make everything uppercase.      
+
+    - Routers:
+
+      direct messages to one of several channels.
+
+    - Splitters:
+
+      Split incoming messages into two or more messages, each sent to
+      *different channels*.
+
+    - Aggregators:
+
+      The opposite of splitters, *combining multiple messages* coming in
+      from separate channels into a single message. 
+    
+    - Service Activators:
+
+      Hand a message off to some Java method for processing, and then
+      publish the return value on an output channel.
+
+      /nice/.
+
+    - Channel Adapters:
+
+      Connect a channel to some external system or transport. Can
+      either accept input or write to the external system.
+
+    - Gateways:
+
+      pass data to an integration flow via an interface.
+
+    Note that to properly manage Spring integration is a job on its
+    own. Like all of the major components you came across that far.
+
+    Leave it on hold for now but note that you have multiple channels,
+    like:
+
+    - =pubSubscribe=
+
+    - =queues=
+
+    - etc.
+
+    Just understand how you inject the stuff in your application here
+    and there.
+
+    Now your next task will be an integration task. So you will likely
+    use this module extensively. Dig into it. 
+
+
+* Reactive Programming in Spring
+
+  This is very cool and is the next gen. architecture mechanism. Very
+  cool idea. You can read about it [[https://medium.com/@rarepopa_68087/reactive-programming-with-spring-boot-and-webflux-734086f8c8a5][here]]. This should guide you
+  throughout this section. 
+
+  So basically Spring has embedded /Project Reactor/ to reactively
+  process streams of data.
+
+  The concept is similar to Java Streams processing a collection with
+  the difference that streams occur not on in-memory collections but
+  are rather triggered in a reactive way over communication networks.
+
+  You will see in fact that much of the API concepts are shared. So
+  you start to see an entire pattern here. All of the reactive,
+  parallel things share a lot of these APIs. Think of /spark, streams
+  and reactors/. Lots of overlap.
+  
+  Or in words of /Spring in Action/:
+
+  #+begin_quote
+Project Reactor is an implementation of the Reactive Streams
+specification that provides a functional API for composing Reactive
+Streams.
+  #+end_quote
+  
+
+** Mono vs. Flux
+
+   These are the two Reactor's core types.
+
+   - =Mono=:
+
+     #+begin_quote
+     Is a specialized reactive type that’s optimized for when the dataset
+     is known to have no more than one data item.
+     #+end_quote   
+
+   - =Flux=:
+
+     #+begin_quote
+     represents a pipeline of zero, one, or many (potentially
+     infinite) data items.
+     #+end_quote
+
+** Basic APIs for working on Flux and Mono
+
+   So first of all we will see how to use =Flux= and =Mono= in basic
+   settings without input from external runtimes.
+
+   This in a sense very much close to the one of Java Streams. In a
+   second round we will see how to work properly with input from
+   external systems being reactively processed.
+
+   #+BEGIN_SRC java :results output drawer :classname SpringReactor
+import reactor.core.publisher.Flux;
+
+class SpringReactor {
+    
+    public static void createAFlux_just() {
+	Flux<String> fruitFlux = Flux
+	    .just("Apple", "Orange", "Grape", "Banana", "Strawberry");
+
+	fruitFlux.subscribe(
+			    f -> System.out.println("Here's some fruit: " + f)
+			    );    
+
+    }
+
+    
+    public static void main(String args[]) {
+
+	createAFlux_just();
+
+    }
+}
+
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+Here's some fruit: Apple
+Here's some fruit: Orange
+Here's some fruit: Grape
+Here's some fruit: Banana
+Here's some fruit: Strawberry
+   :end:
+
+   Note that above you created a =Flux= by passing objects of type
+   =<String>=. This was achieved through the ~just()~ method.
+
+   Note that in a similar way it is possible to create =Flux= and
+   =Mono= out of =Iterable= objects and =Streams= with the following
+   two methods: ~Flux.fromIterable()~, ~Flux.fromStream()~.
+
+   Note now the following big chuncks of code. They will explain the
+   functioning of the reactor APIs.
+
+   #+BEGIN_SRC java :results output drawer :classname 
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
+
+public class SpringReactorTest {
+    @Test
+    public void createAFlux_range() { // check at the range
+				      // function. similar to Python.
+	Flux<Integer> intervalFlux =
+	    Flux.range(1, 5);
+	StepVerifier.create(intervalFlux)
+	    .expectNext(1)
+	    .expectNext(2)
+	    .expectNext(3)
+	    .expectNext(4)
+	    .expectNext(5)
+	    .verifyComplete();
+    }
+	
+    @Test
+    @Disabled("For demonstration purposes - this test will fail.")
+    @Timeout(value = 3, unit = TimeUnit.SECONDS) // see how this is
+						 // failing. just
+						 // passing one thing
+						 // every second
+    public void createAFlux_interval() {
+	Flux<Long> intervalFlux =
+	    Flux.interval(Duration.ofSeconds(1)) // every interval
+						 // increases a long
+						 // timer and streams
+						 // it
+	    .take(5);
+	StepVerifier.create(intervalFlux)
+	    .expectNext(0L)
+	    .expectNext(1L)
+	    .expectNext(2L)
+	    .expectNext(3L)
+	    .expectNext(4L)
+	    .verifyComplete();
+    }
+	
+    @Test
+    @Timeout(value = 10, unit = TimeUnit.SECONDS) // see how this is
+						  // failing. just
+						  // passing one thing
+						  // every second
+    public void createAFlux_intervalHighTimeout() {
+	Flux<Long> intervalFlux =
+	    Flux.interval(Duration.ofSeconds(1)) 
+	    .take(5);
+	StepVerifier.create(intervalFlux)
+	    .expectNext(0L)
+	    .expectNext(1L)
+	    .expectNext(2L)
+	    .expectNext(3L)
+	    .expectNext(4L)
+	    .verifyComplete();
+    }
+
+}
+   #+END_SRC
+
+   So the above is again quite some basics methods.
+
+*** Mergining different streams
+
+    Two simple methods:
+
+    - =mergewith=
+
+    - =zip=
+
+    Visual Comparison:
+
+#+begin_export html
+<div class="row">
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot 2022-03-07 091552.png">
+  </div>
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot 2022-03-07 091629.png">
+  </div>
+</div>
+#+End_export
+    
+    Code:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+import org.junit.jupiter.api.Test;
+
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
+import reactor.util.function.Tuple2;
+
+public class SpringReactorTest {
+	
+    // Merging Flux
+    @Test
+    public void mergeFluxes() {
+		
+	Flux<String> characterFlux = Flux
+	    .just("Garfield", "Kojak", "Barbossa")
+	    .delayElements(Duration.ofMillis(500)); // delay streaming time of each element
+	 
+	Flux<String> foodFlux = Flux
+	    .just("Lasagna", "Lollipops", "Apples")
+	    .delaySubscription(Duration.ofMillis(250)) // i.e. 250
+						       // starts
+						       // sending
+						       // messages to
+						       // subscriber. you
+						       // see then
+						       // these
+						       // messages
+						       // within the
+						       // one above.
+	    .delayElements(Duration.ofMillis(500));
+	 
+	Flux<String> mergedFlux = characterFlux.mergeWith(foodFlux); // merging the two fluxes 
+	 
+	StepVerifier.create(mergedFlux)
+	    .expectNext("Garfield")
+	    .expectNext("Lasagna")
+	    .expectNext("Kojak")
+	    .expectNext("Lollipops")
+	    .expectNext("Barbossa")
+	    .expectNext("Apples")
+	    .verifyComplete();
+    } 
+	
+	
+    // Note that mergewith cannot guarantee a perfect back and forth
+    // between its sources, you may want to consider the zip()
+    // operation instead.  When two Flux objects ar zipped together,
+    // it results in a new Flux that produces a tuple of items, where
+    // the tuple contains one item from each source Flux.  Note this
+    // is the exact same function you already encountered in Spark
+	
+    @Test
+    public void zipFluxes() {
+	Flux<String> characterFlux = Flux
+	    .just("Garfield", "Kojak", "Barbossa");
+	Flux<String> foodFlux = Flux
+	    .just("Lasagna", "Lollipops", "Apples");
+	Flux<Tuple2<String, String>> zippedFlux =
+	    Flux.zip(characterFlux, foodFlux);
+	StepVerifier.create(zippedFlux)
+	    .expectNextMatches(p ->
+			       p.getT1().equals("Garfield") &&
+			       p.getT2().equals("Lasagna"))
+	    .expectNextMatches(p ->
+			       p.getT1().equals("Kojak") &&
+			       p.getT2().equals("Lollipops"))
+	    .expectNextMatches(p ->
+			       p.getT1().equals("Barbossa") &&
+			       p.getT2().equals("Apples"))
+	    .verifyComplete();
+    }	 
+
+}
+
+    #+END_SRC
+
+    Note that the default of zipping things together is a =Tuple2=
+    object, i.e. a container with two elements.
+
+    If you want to zip together items into a single object of a
+    different type you can pass a lambda expression as the second
+    element to the zip function in order to get your object of
+    choice.
+
+    See for instance as per - Spring in Action
+
+    #+BEGIN_SRC java :results output drawer :classname 
+Flux<String> zippedFlux =
+ Flux.zip(characterFlux, foodFlux, (c, f) -> c + " eats " + f);
+    #+END_SRC
+
+*** Many other APIs
+
+    Ok so I do not want to waste any more time here testing the APIs
+    of the book as - luckily for me - I already encountered them.
+
+    They are in fact at logical 1:1 to correspondents of the Spark
+    API methods.
+
+    The difference is merely in the framework and how the two work.
+
+    While Spark works on batch processing here the focus is much more
+    on reacting/merging/filtering streams of data.
+
+    You have then the option to skip, merge, take the first elements
+    based as well on some queueing high level concept as well based on
+    some timing concepts.
+
+    I will just put here screenshots of the Marble diagrams of
+    interest such that you can get a high level overview of them and
+    select the correct one you have to use in the different cases.
+
+    
+    #+begin_export html
+    <div class="row">
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 093930.png">
+      </div>
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094010.png">
+      </div>
+    </div>
+    #+End_export
+
+    #+begin_export html
+    <div class="row">
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094101.png">
+      </div>
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094148.png">
+      </div>
+    </div>
+    #+End_export
+
+    #+begin_export html
+    <div class="row">
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094213.png">
+      </div>
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094242.png">
+      </div>
+    </div>
+    #+End_export
+
+    #+begin_export html
+    <div class="row">
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094330.png">
+      </div>
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094429.png">
+      </div>
+    </div>
+    #+End_export
+
+    #+begin_export html
+    <div class="row">
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094454.png">
+      </div>
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094523.png">
+      </div>
+    </div>
+    #+End_export
+
+    #+begin_export html
+    <div class="row">
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094622.png">
+      </div>
+      <div class="column">
+	<img style="width:70%" src="../../images/Screenshot 2022-03-07 094644.png">
+      </div>
+    </div>
+    #+End_export
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-03-07 094715.png" class="center">
+    #+end_export
+
+    That is most and basically it.
+
+    
+
+** WebFlux - Reactive Web Interface
+
+   So here is the interesting bit.
+
+   Here is where things start to get interesting. The idea is that in
+   a way not too distant from Spring MVC you can start to set up your
+   reactive architectures and start to set up web-interfaces consuming
+   streams of data through the pub-subscribe model.
+
+   The idea is the following - *core point* understand this -:
+
+   #+begin_quote
+   Typical Servlet-based web frameworks, such as Spring MVC, are blocking
+   and multithreaded in nature, using a single thread per connection.
+
+   As requests are handled, a worker thread is pulled from a thread pool
+   to process the request. Meanwhile, the request thread is blocked until
+   it’s notified by the worker thread that it’s finished.
+   #+end_quote
+
+   So you see that multi-threading is core embedded into Spring
+   MVC. But the issue is that *each incoming request blocks one
+   thread*.
+
+   Webflux and other asynchronous web-frameworks solve this issue
+   through =Event Loops=:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-07 122247.png" class="center">
+   #+end_export
+
+   The idea of *Event Loops* is essentially the following:
+
+   #+begin_quote
+   When a costly operation is needed, the event loop registers a
+   callback for that operation to be performed in parallel, while it
+   moves on to handle other events.
+   #+end_quote
+
+   So the idea is then to possibly create fully end-to-end reactive
+   architectures streaming data through the system.
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-08 103621.png" class="center">
+   #+end_export
+
+
+*** Basics of Webflux
+
+    In order to work with webflux you have to enter the correct
+    dependency in your project.
+
+    #+begin_src gradle
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    #+end_src
+
+    This should replace the most classical =implementation
+    'org.springframework.boot:spring-boot-starter-web'= boot. 
+
+    Finally one *last very important note* is the following:
+
+    #+begin_quote
+An interesting side-effect of using WebFlux instead of Spring MVC is
+that the *default embedded server for WebFlux is Netty* instead of
+Tomcat. Netty is one of a handful of asynchronous, event-driven
+servers and is a natural fit for a reactive web framework like Spring
+WebFlux.
+    #+end_quote
+
+    So in the case that you wish to continuously operate with Tomcat
+    you would have to specify it accordingly. Check at your Spring
+    config options above. However, note that generally there are good
+    reasons to go for Netty. If you use Tomcat - you should rather go
+    with Tomcat 3.1+. See the discussion [[https://stackoverflow.com/questions/56794263/spring-webflux-differrences-when-netty-vs-tomcat-is-used-under-the-hood][here]]. So it is all stuff you
+    would need to consider as you know where your team stays and how
+    the argue on given topics. 
+    
+    Because Spring MVC and Spring WebFlux share the same annotations,
+    Spring WebFlux is, in many ways, indistinguishable from Spring
+    MVC.
+
+    This means that the programming model for defining a reactive
+    WebFlux controller is no different than for a non-reactive Spring
+    MVC controller. Both are annotated with @RestController and a
+    high-level @RequestMapping at the =class level=. And both have
+    request-handling functions that are annotated with @GetMapping at
+    the =method level=. It’s truly a matter of what type the handler
+    methods return.
+
+    However, note that there is a second way to define your web-flux
+    interfaces that is based upon the idea of functional programming.
+    Note that I will not go down that road as I am more used to work
+    in that annotation alike experience. 
+
+*** Webflux and Reactor API
+
+    Essentially, the cool thing is that with webflux your Controllers
+    are able to accept =Mono= and =Flux= from the Reactor project.
+
+    Note that Spring MVC can also return =Mono= and =Flux=. However,
+    the difference is the way you can make use of the objects with the
+    two different libraries.
+
+    #+begin_quote
+The difference is in how those types are used. Whereas Spring WebFlux
+is a truly reactive web framework, allowing for *requests to be
+handled in an event loop*, Spring MVC is Servlet-based, relying on
+multithreading to handle multiple requests.
+    #+end_quote
+
+    So how do you create an Endpoint using Webflux staying within the
+    first logic - the one of MVC?
+
+    Check the following snippet
+
+    #+BEGIN_SRC java :results output drawer :classname
+@RestController
+@RequestMapping(path="/design",
+		produces="application/json")
+		public class DesignTacoController {
+		    ...
+			@GetMapping("/recent")
+			public Flux<Taco> recentTacos() {
+			return tacoRepo.findAll().take(12);
+		    }
+		    ...
+		}
+
+  
+    #+END_SRC
+
+    So note one last time that the tags are all equal. Note as well
+    that you do not return a subscribe() method on your Flux.
+
+    This is actually automatically invoked by the framework when
+    calling the endpoint.
+
+    Note as well then the following important characteristic of
+    working with webflux - you return the object and open the
+    subscribe channel even before you start streaming the data.
+
+*** Testing WebFlux
+
+    I am skipping this section to this stage. I had some notes for it
+    already when reading about mockito and co. So double check if you
+    have notes for it in there.
+
+    Otherwise double check the chapter 11.3. Would hold the notes for
+    it with the testing notes. Easier then.
+    
+*** Consuming Webflux
+
+    The [[*Basics of Webflux][Basics of Webflux]] and [[*Webflux and Reactor API][Webflux and Reactor API]] briefly touched
+    upon the idea of creating webflux reactive endpoints.
+
+    The basic result was that the entire MVC set up is pretty
+    consistent. So the only big differece is the concept of working
+    with the =Reactor API objects= or alternatively with the =RXJAVA
+    Data Types=.
+
+    The question is now on how to consume these.
+
+    While in Spring =MVC= you have the concept of =RestTemplate=, this
+    can just consume endpoints through *non-reactive domain types and
+    collections*.
+
+    So the alternative to this is - from Spring 5 onwards -
+    =WebClient= as a reactive alternative to RestTemplate.
+
+    You can as well read more about WebClient [[https://www.baeldung.com/spring-5-webclient][here]].
+
+    WebClient lets you both send and receive reactive types when
+    making requests to external APIs.
+
+    Using WebClient is quite different from using RestTemplate. Rather
+    than having several methods to handle different kinds of requests,
+    WebClient has a fluent builder-style interface that lets you
+    describe and send requests. The general usage pattern for working
+    with WebClient is:
+
+    - Create an instance of WebClient (or inject a WebClient bean)
+    - Specify the HTTP method of the request to send
+    - Specify the URI and any headers that should be in the request
+    - Submit the request
+    - Consume the response
+
+    There are esssentially two ways for consuming a request, which
+    will be addressed next.
+    
+**** Retrieve Methods
+
+     These are used when you are simply interested in the body of the
+     response. Headers etc. are simply ignored. 
+
+     So an example for it is the following - *not recommended* see the
+     next option -:
+
+     #+BEGIN_SRC java :results output drawer :classname 
+Mono<Ingredient> ingredient = WebClient.create()
+    .get()
+    .uri("http://localhost:8080/ingredients/{id}", ingredientId)
+    .retrieve()
+    .bodyToMono(Ingredient.class);
+
+ingredient.subscribe(i -> { ... }) // The idea is that above you just
+				   // return a Mono.  You do not
+				   // subscribe to it yet.  This
+				   // allows the end user to further
+				   // subscribe to the ingredient. In
+				   // such a way it is even possible
+				   // to perform some operations on
+				   // the Mono when specifying the
+				   // subscription.
+     #+END_SRC
+
+     *Better Option:* Note that a better option in comparison to the
+     above is to use the standard concept of *Beans* in Spring.
+
+     I.e. you specify a *Bean* with the base URI and then you inject it
+     into all of the different classes needing it.
+
+     #+BEGIN_SRC java :results output drawer :classname 
+// declare your Bean somewhere
+@Bean
+public WebClient webClient() {
+    return WebClient.create("http://localhost:8080");
+}
+
+//  Inject it
+@Autowired
+WebClient webClient;
+
+// Use the injected bean
+public Mono<Ingredient> getIngredientById(String ingredientId) {
+    Mono<Ingredient> ingredient = webClient
+	.get() 
+	.uri("/ingredients/{id}", ingredientId) // just use the relative path then. 
+	.retrieve()
+	.bodyToMono(Ingredient.class);
+    ingredient.subscribe(i -> { ... })
+	}
+     #+END_SRC
+
+     Note that other CRUD operations are very similar in this
+     dimension.
+
+     Note that in case of errors 400 & 500 the webclient above just
+     logs the errors and goes on silently.
+
+     If you need to handle the errors you can use the ~onStatus()~
+     method:
+
+     #+BEGIN_SRC java :results output drawer :classname 
+Mono<Ingredient> ingredientMono = webClient
+    .get()
+    .uri("http://localhost:8080/ingredients/{id}", ingredientId)
+    .retrieve()
+    .onStatus(HttpStatus::is4xxClientError,
+	      response -> Mono.just(new UnknownIngredientException()))
+    .bodyToMono(Ingredient.class);
+     #+END_SRC
+
+     The first argument in the ~onStatus()~ call /is a predicate that’s
+     given an HttpStatus/ and returns true if the status code is one
+     you want to handle.
+
+     Note that ~onStatus()~ can be any of the =HttpStatus=
+     methods. However, it can be as well any lambda function returning
+     a *boolean*.
+     
+**** Exchange Methods
+
+     In this case you actually parse the entire message.
+
+     You can then access headers, read cookies etc. 
+    
+
+*** Timing out
+
+    This is an important feature. Especially in our team where I
+    understood we have often to deal with a client that is not as
+    reliable.
+
+    So the idea is to say, if I open a connection to consume something
+    and client does not answer within a time-frame then trigger a
+    timeout and stop that reactive endpoint consumption.
+
+    You can do that in the following way:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+Flux<Ingredient> ingredients = WebClient.create()
+    .get()
+    .uri("http://localhost:8080/ingredients")
+    .retrieve()
+    .bodyToFlux(Ingredient.class);
+
+ingredients
+    .timeout(Duration.ofSeconds(1))
+    .subscribe(
+	       i -> { ... },
+	       e -> {
+		   // handle timeout error
+	       })
+    #+END_SRC
+
+
+** End-to-end reactive pipeline
+
+   So that is basically it. Check at the following picture again:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-08 103621.png" class="center">
+   #+end_export
+
+   Now the issue is that with your current stack you have no chance to
+   get to this stage.
+
+   Well expected. Sad but expected.
+
+   The situtation is the following:
+
+   #+begin_quote
+Unfortunately, there’s no support for reactive JPA.
+
+Although relational databases are certainly the most prolific
+databases in the industry, supporting a reactive programming model
+with Spring Data JPA would require that the databases and JDBC drivers
+involved also support non-blocking reactive models.
+
+It’s unfortunate that, at least for now, there’s no support for
+working with relational databases reactively. Hopefully, this
+situation will be resolved in the near future.
+   #+end_quote
+
+   So basically that is the end of my reading in this space.
+
+   Or maybe not. In the sense that if you work with the following DBs
+   you might start to do smth with it:
+
+   #+begin_quote
+   This includes support for a reactive programming model when
+   persisting data with Cassandra, MongoDB, Couchbase, or Redis
+   #+end_quote
+    
+
+* TODO Securing Spring
+
+  There is even all of the layer about securing the spring application
+  such that it properly communicate by encrypting data in transfer.
+
+  You might need it for your next assignment.
+
+  Keep it in the back of your mind and skip it for the moment and go
+  back to it when the project will require it.
+
+  So basically it is all about the key generation and exchange. 
+
+
+* Application Restart - Spring DevTools
+
+  This section talks about how to integrate =Spring DevTools= with
+  your local Gradle build.
+
+  In such a way it will be possible for you to make changes to your
+  code, Spring Boot will then automatically detect the changes and
+  restart a Spring Boot application such that you will have a live
+  reload and you will increase your development speed.
+
+  Note that the quintessential idea of setting up this application
+  restart is the following:
+
+  #+begin_quote
+  More precisely, when DevTools is in play, the application is loaded
+  into two separate class loaders in the Java virtual machine
+ (JVM).
+
+  One class loader is loaded with your Java code, property files, and
+  pretty much anything that’s in the src/main/ path of the
+  project. These are items that are likely to change frequently.
+
+  The other class loader is loaded with dependency libraries, which
+  aren’t likely to change as often.
+
+  When a change is detected, DevTools reloads only the *class loader*
+  containing your project code and restarts the Spring application
+  context, but leaves the other class loader and the JVM
+  intact. Although subtle, this strategy affords a small reduction in
+  the time it takes to start the application.
+
+  The downside of this strategy is that changes *to dependencies*
+  won’t be available in automatic restarts. That’s because the class
+  loader containing dependency libraries isn’t automatically
+  reloaded.
+
+  This means that any time you add, change, or remove a dependency in
+  your build specification, you’ll need to do a *hard restart* of the
+  application for those changes to take effect.
+  #+end_quote
+
+  So the question is now:
+
+  - How is it possible for DevTools to detect a change?
+
+    In order to understand this - check essentially at [[https://stackoverflow.com/questions/58013241/how-can-work-devtools-in-kotlin-and-gradle-project-when-i-guess-i-tried-a-lot-of][this answer]]:
+
+    #+begin_quote
+The devtools module will only reload classes on recompilation. So you
+could hit the "Build Project" button whenever you are ready for a
+reload to trigger a build with Gradle. But as this will also run unit
+tests and maybe even static code analysis (if you are using that), the
+turn-around time would still be rather high. You could manually run
+the classes task with Gradle to compile only classes, but doing this
+manually is annoying.
+
+Instead, to continuously compile your classes with Gradle, and only
+that, run this command in a terminal (assuming you use the wrapper):
+
+=gradlew -t classes=
+
+It will monitor the file system for changes and rerun the classes task
+on changes. So whenever you make a change to a source file and save
+it, Gradle will recompile it and the devtools module should pick up
+the change and reload it.
+    #+end_quote
+
+    So essentially this will be enough. Include =devtools= to your
+    gradle dependencies and make sure that it is active.
+
+    Then start your spring boot application in one shell and run
+    =gradlew -t classes= into another shell. Everything will work
+    properly then.
+
+
+* Deploying with Spring Boot
+
+  In order to deploy with Spring Boot you can use the shell command
+
+  #+begin_src 
+  ./gradlew.bat bootRun
+  #+end_src
+
+
+** Under the Hood
+  
+   So that is the easy version. You can work in such a way without
+   understanding what happens under the hood.
+
+   Under the hood a couple of interesting things happen.
+
+   This should give you a rough understanding of what is going on and
+   it is good in order to properly understand the frameworks out
+   there as what they are essentially doing is packaging the entire
+   complexity of the past and abstracting it away.
+
+   In this sense you see that when you build your springboot
+   application in gradle you will have a =.jar= file in the =./build=
+   repository.
+
+   This is a fat =.jar= containing nested =.jar= with all of the
+   relevant dependencies.
+
+   You can inspect such =jar= in the following way:
+
+   #+begin_src sh
+jar tvf ./spring-boot-0.0.1-SNAPSHOT.jar 
+   #+end_src
+
+   Then you see in there the structure of a spring-boot applicaiton.
+
+   You have two essential repositories that is worth for you to
+   understand:
+
+   - The =META-INF= folder
+
+     is the home for the MANIFEST.MF file. This file contains meta
+     data about the contents of the JAR.
+
+     For example, there is an entry called Main-Class that specifies
+     the name of the Java class with the static main() for executable
+     JAR files.
+
+   - =BOOT-INF=
+
+     Spring Boot applications load from the BOOT-INF folder.
+
+     Therefore the application classes must be placed in a nested
+     BOOT-INF/classes directory. Dependencies should be placed in a
+     nested BOOT-INF/lib directory.
+
+     So this is the same structure of the =WEB-INF= directory for
+     deploying your Java Servlets.
+
+*** understand the following - where is web-inf? 
+
+    in order to understand the question check at check the second
+    answer [[https://stackoverflow.com/questions/19786142/what-is-web-inf-used-for-in-a-java-ee-web-application][here]].
+
+    You will have more or less to understand that structure as many
+    applications still work in such a way. 
+    
+    is the java Servlet API respected in spring boot? is there
+    somewhere a web.xml file generation under the hood in Spring?
+
+    Spring MVC still works with Servlets. So there must be some
+    conversion under the hood. Do not know where but it is fine.
+
+    Just take it as good and understand that - all of the low level
+    stuff was abstracted away.
+
+    In fact MVC is a more rigid architectural pattern than
+    servlets. So basically Spring MVC must still base on servlets
+    under the hood but lots of the dynamics are hidden.
+
+    Spring is in fact that a very comprehensive framework covering
+    lots of stuff and abstracting it away. 
+
+    Yeah it was abstracted away. Do not know exactly how but it was
+    simply extracted away - take it for good now. Do not have the time
+    to go in the depth with it. Check [[https://stackify.com/spring-mvc/][here]].
+
+*** TODO war :noexport:
+
+    Why is it a =.jar=. I guess that if you start serving content from
+    there it should be a =.war=.
+
+    Double check at it when you have time once you start deploying the
+    entire thingy.    
+
+
+** Debugging Spring App
+
+   Note that in order to debug a spring application on localhost you
+   can do the following:
+
+   #+begin_src sh
+./gradlew.bat bootRun --debug-jvm
+   #+end_src
+
+   The application is then suspended until you connect your debugger
+   to the port it is listening on (port 5005).
+
+   So all good. You can then point your remote debugger on that port
+   and once the connection will be established on that port the
+   application will start.
+
+   Note now that in the case you want to do more customization you can
+   use [[https://stackoverflow.com/questions/24113939/how-to-debug-spring-boot-application-with-eclipse][the following]]. Or obviously as always the official
+   documentation. That might take a little bit longer though.
+   
+
+
+** Generating a Docker Image out of your Spring Application
+
+   Note that this will be important and the way to go on the long run.
+
+   Interesting to see that spring is all integrated in the new
+   IT-ecosystem.
+
+   In this sense it is possible to generate out of the box the
+   necessary Docker image that you want to use.
+
+   You can build a container image (if you have a docker daemon) using
+   the Spring Boot build plugin:
+
+   #+begin_src shell
+  ./gradlew.bat spring-boot:build-image
+   #+end_src
+
+
+* On local Variables and the issue of leaving the Spring Context
+
+  So there are a few things that you better consider.
+
+  Otherwise they will come to hunt you down in the future. That is
+  actually quite fun cause you might loose then tons of time for silly
+  design choices.
+
+  The idea is that I used to work with =.env= files in my pyhton
+  experience.
+
+  Was looking for smth similar and found essentially a module that
+  reads from such files as was your experience in python.
+
+  That caused some troubles due to the inherit difference of the
+  languages. At the core they are different.
+
+  Meaning that when you develop in spring and then use the PaaS
+  services what you would ultimately do is to package everything that
+  is within the spring context into some jar, deploy it to the PaaS
+  and then from there the service will take over.
+
+  So note now that if you have an =.env= file into your local machine
+  with the relevant variables, these will not be packaged into the
+  =war= such that they will not be in your applicaiton on the cloud
+  and you will start to have issues.
+
+  So to this stage I created an enumerator class in java holding the
+  relevant information.
+
+  I guess that this is not the most clean solution. Now that I am
+  writing the things down I am noticing that what the most clean
+  solution likely is, is the one of writing the variables in the
+  spring application settings or context.
+
+  So check at the way to do it but I am quite sure this is the way to
+  go.   

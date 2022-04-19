@@ -1,0 +1,930 @@
+#+BEGIN_COMMENT
+.. title: Integration and Asynchronous Jobs
+.. slug: asynchronous-jobs
+.. date: 2022-02-24 15:43:59 UTC+01:00
+.. tags: java, IT Architecture, software-engineering, Integration
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+.. status: 
+
+#+END_COMMENT
+
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+#+end_export
+
+So new post.
+
+This is mainly about some integration exercise. It is not simple to
+set up properly integration patterns. You can refer to [[https://www.enterpriseintegrationpatterns.com/index.html][the following]]
+for a general overview.
+
+So let's start to explore.
+
+{{{TEASER_END}}}
+
+So the basic idea is to create an integration pattern via
+asynchronous API calls.
+
+So you will need to pieces:
+
+1. code implementation to work with that mental framework
+
+2. asynchronous API documentation
+
+The next two chapters deal with it.
+
+(Update as of 10-03 - actually the best way to work in such an
+asychronous way is through a ractive programming model. Check at your
+notes in [[https://marcohassan.github.io/bits-of-experience/posts/spring/][here]] - chapter on reactive programming. Note however that
+you will not be able to write full reactive programs as the relational
+model and JDBC is not being rewritten in a reactive way yet.)
+     
+* Asynchronous API - Documentation
+
+  Apparently there is an OpenAPI counterpart for async communication.
+
+  I mean you could simply document your endpoints with OpenAPI and
+  keep the structure of the async communication in some documentation
+  somewhere else.
+
+  I like in any case the idea of using a standard. Computer science is
+  fun and you have to leverage on such big projects as then you can
+  see that there are options to visulize this general asynch
+  communication and more likely many other projects will start to
+  emerge as this is just the beginning of the entire thingy. 
+
+  Check [[https://www.asyncapi.com/docs/getting-started/hello-world][this]]. You see that it is a quite intuitive scema.
+
+  Read into it [[https://www.asyncapi.com/blog/asyncapi_codegen_scst][here]] to get an idea of where the market is already
+  moving.
+
+  I think that this will come with time. Baby steps as always. Start
+  easy - then expand on it. Sooner or later you will start in any case
+  to work more with event-driven architectures. 
+
+
+* Coding and Designing Asynchronous Communication 
+
+  So basically there are two options:
+
+  - polling
+
+  - callback
+
+  You can briefly read about the two [[https://sanketdaru.com/blog/polling-model-async-rest-spring-boot/][here]]. It is clear now that the
+  most elegant option is the second one.
+
+** Polling
+
+   W.r.t. polling you can see the following two sources:
+
+   - [[https://sanketdaru.com/blog/polling-model-async-rest-spring-boot/][source 1]]
+
+   - [[https://github.com/PheaSoy/spring-boot-async-callback][source 2]] - note that name is misleading it is still mostly a
+     polling solution in my view. 
+
+
+** Callback
+
+   You can easily create callbacks with a seris of endpoints and
+   multi-threading on your machines.
+
+   A more solid way is to work with queues. Then you do not have to go
+   on multi-threading necessarily. This might simplify extensively the
+   development task at the cost of some resources loss.
+
+   You can then integrate queues with event-grids in order to create a
+   fully reactive architecture for your application that is not
+   polled operations dependent.
+
+   I.e. in comparison to [[https://github.com/PheaSoy/spring-boot-async-callback][source 2]] you do not have the client to
+   continuously ask for the feedback and check if execution completed.
+    
+
+* General Architecture for creating a scalable integrated ETL service
+  
+** First Round of Thinking - refinements are coming
+   
+   #+begin_src plantuml :file ../../images/callbackAsync.png :exports none
+@startuml
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'
+' Object Definition
+' - note that the elements below have to respect the order 
+' - through which they will be triggered in the activity diagram
+' - such that everything is well visible
+'
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+participant     Loader               as BarraLoader
+actor           BusinessUser         as "Business User"
+queue           myBrokerPubSub       as myBrokerPubSub
+queue           myBrokerQueue        as myBrokerQueue
+collections     ETL                  as "scalable ETL Service"
+database        Database             as marketRiskDB
+
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'
+' Activity Diagram
+'
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+BusinessUser -> myBrokerQueue : UI triggering lambda with a given message \nwith the location of the new file.
+BarraLoader  -> myBrokerQueue : lambda with a given message \nwith the location of the new file. 
+
+myBrokerQueue -> ETL          : ETL services consuming the queues
+ETL            -> marketRiskDB : storing the relvant infroamtion in the DB
+
+ETL            -> myBrokerPubSub : Informing the job has been successful completed
+myBrokerPubSub -> BusinessUser   : fan-out to business end users/ applications.\nSpecific job completed.
+BusinessUser   -> marketRiskDB   : can withdraw the relevant inforamtion
+
+@enduml
+   #+end_src
+
+   #+RESULTS:
+   [[file:../../images/callbackAsync.png]]
+
+
+   #+begin_export html
+    <img src="../../images/callbackAsync.png" class="center">
+   #+end_export
+
+   I mean so you see that at conceptual level it is not that difficult
+   to set up a solution performing your desired solutions.
+
+   Have just to read a bit into it - but basically you are very much
+   done.
+
+   You can read over [[https://www.freecodecamp.org/news/how-to-scale-microservices-with-message-queues-spring-boot-and-kubernetes-f691b7ba3acf/][here]] a basic example for such a similar solution
+   going more in the technological component. Note that you will
+   not be able to apply the exact same tech stack but the idea is
+   there and it is quite similar to what you had in mind. 
+
+   Another [[https://developer.ibm.com/tutorials/auto-scale-rabbitmq-consumers-by-queue-size-on-openshift/][source]] for making that pattern.
+
+** Second round of Thinking - gathering evidence
+
+    So the one above was a basic idea.
+
+    I think you have the general structure in mind. Have to become more
+    concrete now.
+
+    Explore better the available services in Azure and start to create
+    a solid architecture for it.
+
+    I.e. slowly start as well talks with your peers to see what is
+    doable and what is not.
+
+    Basic architectural patterns that you should consider for your
+    asynchronous messages are [[https://docs.microsoft.com/en-us/azure/architecture/guide/technology-choices/messaging][the following]].
+
+*** Request-Reply Pattern
+
+    Essentially what you aim to set up is an async request-reply
+    integration pattern.
+
+    You can read about it over [[https://docs.microsoft.com/en-us/azure/architecture/patterns/async-request-reply][here]]. There in the context and problem
+    you can see your exact situation and see how a queue is often the
+    solution architecture of choice for this kind of situations.
+
+    Note that the queue must be integrated with a status check.
+
+    You can see the most basic architecture to set something like this
+    up [[https://reflectoring.io/amqp-request-response/][here]]. I think this is quite basic and I will try to construct a
+    more solid architecture next. 
+
+    This is what I will develop on in the next sections.
+
+*** Service Bus
+
+    This is a queue service in Azure. So it is a managed queue that it
+    is easy to interact with.
+
+    If you want to go fully open source check the resources
+    above. Note as well that service bus is quite a simple message
+    broker. I understand that it does not allow neither the
+    flexibility of an exchange as RabbitMQ nor the resiliency of the
+    cluster topology of Kafka. (See quick notes [[https://marcohassan.github.io/bits-of-experience/posts/spring/][here]]). 
+
+    Important points for it are mentioned next. 
+    
+**** On operating the messages in a queue
+
+     So essentially understand the following basic operations you can
+     do with it:
+
+     - get messages from queue
+
+     - delete messages from queue
+
+     - peek messages from queue
+
+**** Getting the Messages
+     
+     Check at the following get operation for a message in the queue.
+
+     #+begin_quote
+ When a message is retrieved from the queue, the response includes
+ the message and a pop receipt value, which is required to delete the
+ message (have an API call for it).
+
+ The message is *not automatically deleted from the queue*, but after
+ it has been retrieved, it is *not visible to other clients* for the time
+ interval specified by the *visibilitytimeout parameter*.
+     #+end_quote
+
+     Note that upon getting a message from the queue the =delivery
+     count= is increased. This is of paramount importance to deal with
+     faulty messages and a first class citizen for the concept of [[*Dead Latter][Dead
+     Latter]]. 
+
+     So in this way you can keep track of what was processed and what
+     still needs to be processed. You have a state machine as long as
+     the queue is reliable. Have to discuss with V. in this sense to
+     question how important is that 0.01% of non-availability. I guess
+     that for us is not a major concern as worst you do the operation
+     again. Have to have a logging mechanismus keeping track of
+     everything nonetheless. 
+
+     Now the only thing is that in such a way you need polling from
+     the queue.
+
+     The other possibility is to set an event-grid or an azure
+     function trigger in between.
+
+**** Peeking the Messages
+
+     This function essentially works as the get orperator with the
+     difference that =delivery count= is *not increased*:
+
+     #+begin_quote
+  Service Bus allows a consumer to peek the queue and lock a message
+  from other consumers.
+
+  It's the responsibility of the consumer to *report the processing
+  status* of the message.
+
+  Only when the consumer marks the message as consumed, Service Bus
+  removes the message from the queue.
+
+  If a failure, timeout, or crash occurs, Service Bus unlocks the
+  message so that other consumers can retrieve it. This way messages
+  aren't lost in transfer.
+     #+end_quote
+     
+**** Deleting the Messages
+
+     As mentioned above in the two cases what you actually do in the
+     above is reading messages out of the queue.
+
+     You do not delete such from there. You just acquire a lock over
+     them for a limited amount of time.
+
+     Then you have to manually delete upon the successful processing
+     of a message.
+
+     You can well understand that this is very good as in such a case
+     you have an actual state machine about the messages that are
+     still to be completed.
+
+     The question is rather how you log finished jobs. I guess that
+     you are still interested in keeping track of that.
+
+     Need to couple the thing with a store then.
+     
+**** Dead Latter
+
+     See [[https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues][here]].
+
+     This is essentially a queue within the queue where unprocessed or
+     errors-bounded messages are being stored.
+
+     There are multiple reasons that make messages qualify as
+     dead-latter messages.
+
+     The most interesting one - among the many others - for your
+     application logic is the following:
+
+     - Maximum delivery count
+
+       Recall that when you get the message out of the queue its count-value
+       is incremented by one.
+
+       Then after a given amount of times that you tried to process
+       the message without success... i.e. when the count value is
+       large enough - you start to push the message 
+
+**** Note that there are ways to inspect the size of your queue
+
+**** Check-pointing for long running jobs
+
+     That is exactly the other bit that you need.
+
+     You can set the state for a session and get the state.
+
+     So with it you would already have a solution for the UI to get
+     the relevant information about the processing status of a job.
+
+     For more refer to the relevant section over [[https://docs.microsoft.com/en-us/azure/architecture/guide/technology-choices/messaging][here]].
+
+*** Putting it all together
+
+    #+begin_src plantuml :file ../../images/ETLstateMachine.png :exports none
+@startuml
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'
+' Object Definition
+' - note that the elements below have to respect the order 
+' - through which they will be triggered in the activity diagram
+' - such that everything is well visible
+'
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+participant     Loader               as BarraLoader
+actor           BusinessUser         as "Business User"
+
+collections     BlobStore            as BlobStore
+
+queue           EventGrid            as EventGrid
+queue           ServiceBus           as ServiceBus
+collections     ETL                  as "scalable ETL Services"
+database        marketRiskDB         as marketRiskDB
+
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'
+' Activity Diagram
+'
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+BusinessUser -> BlobStore : store new file - say for instance Feeds
+BarraLoader  -> BlobStore : get files from Barra and save them in Blob
+
+BlobStore    -> EventGrid  : publish message with new file location to be parsed
+EventGrid    -> ServiceBus : store jobs messages in Azure Service Bus
+ServiceBus   -> EventGrid  : fan out messages to consumer \n(note push logic instead of polling)
+
+
+EventGrid      -> ETL          : ETL services consuming the Queue
+ETL            -> ServiceBus   : Remove completed tasks from Queue
+ETL            -> marketRiskDB : Store relevant data for the given job
+
+ETL            -> EventGrid    : Publish the completition of some jobs \nunder a given topic.
+
+EventGrid      -> BusinessUser : Informs (mail) subscribers of topic about successful completion of a given topic.
+@enduml
+    #+end_src
+
+    #+RESULTS:
+    [[file:../../images/ETLstateMachine.png]]
+
+ #+begin_export html
+  <img src="../../images/ETLstateMachine.png" class="center">
+ #+end_export
+
+   
+    If you go for a push model you have to solve the following points:
+
+    - pushing out of the queue - how do you trigger the eventGrid
+      event if the message in the queue was not processed?
+
+    - polling you can do it yourself by implementing ETL jobs pulling
+      out from the queue. See the basic API of the bus.
+
+    - check as well the option to work with Azure functions. It
+      probably makes most sense to work in such a way.
+
+      Check [[https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-storage-blob-triggered-function][this documentation]] in this sense. (actually the event Grid
+      also mentioned [[https://stackoverflow.com/questions/47570207/message-from-azure-blob-storage-to-azure-service-bus][here]]). So in any case you are on the right track
+      to construct your solution architecture. Check at [[https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-storage-queue-triggered-function][this]]
+      documentation.
+
+    - you need to check at the costs. you need Premium Service Bus if
+      you want to go down the full road. Check if this makes sense but
+      yeah probably makes sense to work with functions. 
+
+***** on service bus - eventgrid integration
+
+      See the [[https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-to-event-grid-integration-concept?tabs=event-grid-event-schema][following page]].
+
+***** TODO open questions - how to make the service resilient
+
+** Third Round of Thinking
+
+   So going back to it now.
+
+   The issue is that I was told that we have to make everything fit
+   in our VNet for security reasons.
+
+   Makes well sense to me. The only thing that is disturbing is that
+   there is the general statement of staying within the existing stack
+   and not using additional services.
+
+   That of course makes little sense. If the cloud provides
+   you 100. Use it. Plus services makes you very agile and take lots
+   of pain from you away.
+
+   Continue in this sense to explore them. Just check if they can be
+   integrated in the VNet at a reasonable cost. If that is the case go
+   for it cause as long as the explanation is the one above makes
+   little sense not to move in that direction and move faster by doing
+   so.
+
+   Note now that the Service Bus might be a too costly service. We
+   would need the premium thing in order to integrate it in the VNet
+   and obviously it is not indispensable to this stage. So I will
+   think about something different. Meaning for instance Azure
+   Functions as said above. There I will as well to convince some
+   people and make them see the point for it. Cause they argue too
+   much on a lower level. I agree that on that level you do not really
+   need it. Meaning you can make it work with a general application
+   that is more portable across cloud.
+
+   However, then in that case forget pure event-driven
+   architectures. So it is a choice of design of a system. And it is
+   clear that one is slow and cumbersome. The other is integrated and
+   seamless and event-driven with more lock-in and more pain in a
+   future migration.
+
+   Trade-off in life.
+
+   Now proceed as follows in the coming week.
+
+   - You already talked and got the approval to use eventgrid.
+
+     Use this. Just check quickly how to integrate it into the VNet
+     and the cost. Just out of curiosity. 
+
+   - You already downloaded that Azure functions tool to develop these
+     on your local machine.
+
+     Try to explore this. Should you start to get issue in designing a
+     pure event-grid architecture integrated with a webapp on the
+     backend.
+
+   Understand as well if that fits the asynchronous logic that should
+   be there. 
+
+
+* On EventGrid
+
+  So this is becoming a message-driven post. Giving an overview of how
+  to do it. But whatever... fine by me.
+
+  So anyways the todos for the week are the following:
+
+  - integrate eventgrid with Blob. How to generate a message when a
+    new file arrives over there.
+
+  - consume eventgrid event. Check at the Java SDK for interacting
+    with EventGrid. Probably the info you are looking for is over
+    there.
+ 
+  - publish eventgrid event. Is it possible for an application to
+    publish there?
+
+    I can think of good use-cases in this sense. So start to explore
+    it. 
+
+    Check at the Java SDK for interacting with EventGrid. Probably the
+    info you are looking for is over there.
+
+** EventGrid and VNets
+
+   So in order to properly understand this, you have to understand
+   where EventGrid live in terms of infrastructure.
+
+   Cause if you want to mask them from the outside world they must
+   live in some protected subnet.
+
+   At least that is my initial guess. But let's see cause I am not
+   that sure about it.
+
+   -----------------------
+
+   So you see that in order to well understand the cloud you should
+   think it in boxes. Or these lego component. As soon as you enter
+   the security section of the service you are back to the [[https://docs.microsoft.com/en-us/azure/event-grid/network-security][security
+   concepts]] of Azure.
+
+   I.e. for instance service tags, IP firewall options etc. So makes
+   little sense probably to study it over there. Have to find the time
+   at some to approach it as a unity.
+
+   Just upon tackling the thing in such a way you might be able to
+   come out of it successful. You will have a clear understanding of
+   which box is what. And you will have the chance to work
+   accordingly.
+
+   So do not spend too much time with it right now. You will have to
+   make Azure certifications in order to get the broad understanding
+   at high level.
+
+   Then you will be mentally ready to set everything in the right
+   buckets. 
+
+   -----------------------
+
+   That said it is obvious that the service will integrate with our
+   existing architecture through the use of private endpoints.
+
+   #+begin_quote
+   You can use private endpoints to allow ingress of events directly
+   from your virtual network to your topics and domains securely over
+   a private link without going through the public internet. A private
+   endpoint is a special network interface for an Azure service in
+   your VNet.
+
+   When you create a private endpoint for your topic or domain, it
+   provides secure connectivity between clients on your VNet and your
+   Event Grid resource.
+
+   The private endpoint is assigned an IP address from the IP address
+   range of your VNet. The connection between the private endpoint and
+   the Event Grid service uses a secure private link.
+   #+end_quote
+
+   So this is the idea I guess. Check at the following:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-03-29 120745.png" class="center">
+   #+end_export
+
+   Then EventGrid does not live in your private Subnet.
+
+   The concept is that as it is not a store even when cracked at any
+   given point of time there will be nothing in there. It is a
+   serverless service so there might even be no active runtime at a
+   given moment.
+
+   Then you generate messages but these are immediately transferred
+   through your private link. I guess there should also be encryption
+   at transfer on the top of it.
+
+   So you see that generally it is quite a secure service even if
+   living outside of your subnet.
+
+   So now the question is generally on how to create that private
+   endpoint through a webapp and how to connect it to EventGrid in
+   order to consume and generate events.
+
+   The idea at the end is essentially the same. Set up event-driven
+   architectures.
+
+
+** Concepts
+
+   So it is important to master [[https://docs.microsoft.com/en-us/azure/event-grid/event-schema][this section]]. Always start from here
+   when exploring a new service. At the end the structure of Azure is
+   this one. So exploit it. 
+
+   Especially important will be concept of topics.
+
+   You have to create a solid logic for all of the different topics.
+
+   Just upon this it will be able for you to get the relevant
+   information.
+
+   Basically understand that there are essentially two types of
+   topics, which we will explore next. There is then the concept of
+   partner topic - this will not be that important to you.
+
+*** System Topics
+
+    These are built-in topics provided by Azure services such as Azure
+    Storage, Azure Event Hubs, and Azure Service Bus. You can create
+    system topics in your Azure subscription and subscribe to them.
+
+    These will be of first order importance to you. Especially at the
+    beginning. You want to create an event driven mechanism in order
+    to process files on Blob.
+
+    So that is basically it. You can then check at the different
+    system topics on the official websites. See for instance Azure
+    Blob store [[https://docs.microsoft.com/en-us/azure/event-grid/event-schema-blob-storage?tabs=event-grid-event-schema][here]].
+
+*** Custom Topics
+
+    Are application and third-party topics. When you create or are
+    assigned access to a custom topic, you see that custom topic in
+    your subscription.
+
+    When designing your application, you have flexibility when
+    deciding how many topics to create. For large solutions, create a
+    custom topic for each category of related events.
+
+*** Partner Topics
+
+    The Partner Events feature allows a third-party SaaS provider to
+    publish events from its services to make them available to
+    consumers who can subscribe to those events. The SaaS provider
+    exposes a topic type, a partner topic, that subscribers use to
+    consume events.
+
+
+** Publish and Consume EventGrid - Java SDK :noexport:
+
+   All good. The relevant information for understanding the concept
+   and start to apply it, can be found [[https://docs.microsoft.com/en-us/java/api/com.azure.messaging.eventgrid?view=azure-java-stable][here]].
+
+   Check as well the following in order to get up and running in a
+   [[https://github.com/Azure-Samples/event-grid-java-publish-consume-events/tree/master/eventgrid-manage-producer-consumer][fast way]]. Check as well [[https://github.com/Azure-Samples/event-grid-java-publish-consume-events/blob/master/eventgrid-manage-producer-consumer/src/main/java/com/microsoft/azure/eventgrid/samples/EventGridSample.java][here]] for understanding it better. [[https://medium.com/microsoftazure/azure-event-grid-the-whole-story-4b7b4ec4ad23][This]] is
+   as well an walkthrough.
+
+   So note that all of the solutions you found online put a broker
+   between the event-producer and consumer. 
+   
+   I.e. note that there in between the event publisher - event grid -
+   and consumer - java app - sits an /event ingestor/. I..e a
+   component to decouple the production of an event stream from the
+   consumption of these events. So similar to the other solutions you
+   thought about that far.
+
+   You just have to make mental order and distinguish the following 3
+   services that can act as /event ingestors/:
+
+   - =EventHub=
+
+   - =Service Bus=
+
+   - =Azure Storage Queue=
+
+   Understand then for each the scope, merits and drawbacks.
+   
+*** TODO understand if you manage to consume directly in java w/o an event ingestor
+
+    In theory that should be possible.
+
+    I could imagine the following scenario:
+
+    - for each new event that arrives TOMCAT starts a new thread that
+      processes the event.
+
+    You note that without an even ingestor you have a couple of
+    drawback at the solution level.
+
+    - What happens to messages that your runtime does not manage to
+      process? - there is the concept of dead latter as well in
+      eventgrid. Read about it when you have time. 
+
+    - What happens if TOMCAT has not the capacity of processing a new
+      request? If you properly set up your cloud infra this should be
+      no issue on a theoretical level.
+
+    I guess that as always in IT you can find workarounds for these
+    limitations.
+
+    Nonetheless, it might well be that the different providers pose
+    restrictions / do not make such dirty architectures possible in
+    order to force well rounded solutions on the users.
+
+    Let's see.
+
+    Yes so what you basically want to do is the [[https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-event-quickstart][following]]. So stop
+    jumping around and dig a little bit lower on that thing. Even if
+    it is not clear what is happening there, it is clear that this has
+    to happen. So spend time to understand that properly.
+
+    No so even there if you follow the path you end up using an
+    event ingestor. So forget about it.
+
+**** TODO test if you can use a simple rest endpoint for managing the webhook call.
+
+     This seems to be an option based [[https://stackoverflow.com/questions/53609070/how-to-have-my-java-application-as-an-endpoint-for-webhook][on this]].
+
+     So check at this option.
+
+     In order to fulfill this you can use the following:
+
+     - make a webhook publishing to your application endpoint.
+
+     Good.
+
+     Seems clear how you can create that topic. The issue is that at
+     the creation time you have to enter the endpoint for the webhook.
+
+     So create that endpoint on your dummy helloworld machine. Then
+     check if everything is working out of the box.
+
+     ------------
+
+     So performed that step. I actually got the validation message.
+
+     What I am missing for some reason are the messages saying that
+     something occurred on the storage account - say blob creation
+     etc. -
+
+     Note that it seems that in the default subscriptions there is not
+     the one of a file upload. For it you probably have to create a
+     new one. 
+
+*** TODO Eventgrid Java SDK
+    
+    So basically looking at the SDK I see a lot of models. I.e. you
+    have all of these in order to properly map the things.
+
+    Now you just have to understand how to set up that relevant
+    endpoint and parse the json you receive.
+
+    So first idea to test if the webhook thing is working is to say:
+
+**** TODO use the sdk to deserialize the message and put it into objects
+
+     So this is specific to the Java stack. The idea is to convert the
+     json messages that you are receiving to objects.
+
+     Idea: from there on you are in your Java first class citizens
+     world. 
+
+     #+BEGIN_SRC java :results output drawer :classname 
+List<EventGridEvent> eventGridEventList = EventGridEvent.fromString(eventGridEventJsonString);
+EventGridEvent eventGridEvent = eventGridEventList.get(0);
+BinaryData eventGridEventData = eventGridEvent.getData();
+
+User objectValue = eventGridEventData.toObject(User.class);  // If data payload is a User object.
+int intValue = eventGridEventData.toObject(Integer.class);  // If data payload is an int.
+boolean boolValue = eventGridEventData.toObject(Boolean.class);  // If data payload is boolean.
+String stringValue = eventGridEventData.toObject(String.class);  // If data payload is String.
+String jsonStringValue = eventGridEventData.toString();  // The data payload represented in Json String.
+     #+END_SRC
+
+
+** TODO Integrate EventGrid with Blob :noexport:
+
+   So the first thing that you have to do is to create a =system
+   topic= that is connect to your storage account.
+
+   You basically have then two pieces of logic:
+
+   1. Subscriptions
+
+      These are the events generators.
+
+      So basically for this first round it is interesting to you that
+      you communicate with the storage account and that notifications
+      are triggered when events happens.
+
+   2. Handlers
+
+      This is the second bit fo the chain. Here the idea is to say:
+      once a message was generated where is it consumed?
+
+      This will be then the application component triggering all of
+      the logic. 
+   
+   What is failing on my part is the subscription component.
+
+   I managed to properly create a system topic. If you check at the
+   overview of it you will see the subscriptions associated to such a
+   topic.
+
+   The weird thing in my case is that in the validation message I
+   received there was the name of the subscription I did create but
+   this is not associated with the existing topic.
+
+   -----------------
+
+   So there are some issues with respect to this subscriptions.
+
+   Have to start dig again into some of the applications.
+
+   So you are able to create a subscription. You see it on your topic
+   at first.
+
+   Then after a while when you refresh the page it is gone.
+
+   You even have an error message when checking at the activity logs.
+
+   Understand where it orginates and how it comes to be.
+
+   Basically there is an issue in the validation of the thing. This
+   step is failing. Check [[https://docs.microsoft.com/en-gb/azure/event-grid/security-authentication?WT.mc_id=Portal-fx#authenticate-event-delivery-to-webhook-endpoints][at the following]] in this sense. You need
+   bearer token authentication with AAD protected webhook in order for
+   it to properly run.
+   
+   ----------------
+
+
+* On storage Queue                                                 :noexport:
+
+  Note that this is for sure available as we already have a storage
+  account in the VNet and as that lives in these spaces 1+1=2.
+
+  Now it is a way to store the messages. So in theory you can use it.
+
+  The only question here is how the messages are saved? Ordered or
+  not?
+
+  Similar concepts to ServiceBus? Where are the differences?
+
+
+* On Azure Functions
+
+  Very nice way to integrate with the two services you want to use:
+
+  - Blob
+
+  - Service Bus
+
+  Check here the [[https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus][possible triggers]].
+
+  In such a way you do not have to go Premium on Event Grid and I
+  think that for the extent of our workloads it is more than enough to
+  work in such a way without going too big on services.
+
+  Start to test your workflow with Azure Functions Core Tools as soon
+  as you get the green light from IT to install it.
+
+
+* On issues when working in such a fragmented Networking driven space
+    
+*** Circuit Breaker
+
+    This is an important concept that you have to keep in mind when
+    you develop your distributed system solution. 
+
+    The idea is that as information is more distributed it might be
+    more difficult to revert a given app bit of logic in case of
+    errors.
+
+    So you have always to keep in mind how to break the circuit in
+    case of faults and how to revert every distributed component
+    affected.
+
+    You might as well think in terms of *compensating transaction*
+    patterns.
+
+    What is needed to track and trigger compensating transactions?
+
+    This is in fact probably the one and major issue of setting up
+    everything properly in a distributed system way. All the rest is a
+    gain in my humble opinion. Especially on the long run. 
+
+    Note that you can use DBs to manage state. You can think for
+    instance of the solution
+
+    Another possibility - and this a thing that in any case you will
+    have to dig more into it - is the one of using frameworks as
+    [[*Jaeger][Jaeger]].
+
+    This might help you not simply for circuit breakers but as well to
+    debug a distributed application and understand where issues and
+    triggers are. 
+
+
+*** Jaeger
+
+    Helps to set up proper circuit breakers.
+
+    The idea is that with Jaeger you can trace the calls back and
+    implement your circuit breaker on the top of it.
+
+    See the [[https://www.jaegertracing.io/][official documentation]]. Check as well other source as the [[https://reflectoring.io/spring-boot-tracing/][following]] for instance.
+
+    Sooner or later if you start to have serious work in distributed
+    environment that bit will come. 
+
+
