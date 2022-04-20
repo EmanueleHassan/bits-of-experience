@@ -1,0 +1,4279 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Spring | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/spring/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../java-testing/" title="Java Testing" type="text/html">
+<link rel="next" href="../switching-language/" title="On some side note about working with Emacs and understanding a different language" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Spring">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/spring/">
+<meta property="og:description" content="img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-02-02T16:46:56+01:00">
+<meta property="article:tag" content="java">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Spring</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2022-02-02T16:46:56+01:00" itemprop="datePublished" title="2022-02-02 16:46">2022-02-02 16:46</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/java/" rel="tag">java</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+<style>
+ {
+  box-sizing: border-box;
+  margin-top: 60px;
+  margin-bottom: 60px;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 0px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+</style>
+<p>
+So this is the next piece of the cake. As we transition to the cloud
+it makes sense to have the spring-framework in your skillset.
+</p>
+
+<p>
+The notes are based on Spring in Action - 5th edition.
+</p>
+
+<p>
+I must say that is not too far from the way I used to develop in
+Python. Of course you have some Java-based falvour here and
+there. Sometimes with pros sometimes with cons. There are things were
+I still believe that Python is clearly superior. So ultimately my goal
+is to go in a direction of microservices with reactive architectures
+mixing the best of breed.
+</p>
+
+<p>
+Anyways here and there I skipped some sections. Will go back to them
+later when the work will require it.
+</p>
+
+<p>
+Note that as per my usual way of working I read, make notes, such that
+when I work many things should be already familiar and you should have
+a high-level understanding of an application written through such
+framework.
+</p>
+
+<p>
+Then of course experience is the one where you fix/crystallize all of
+these concepts. That comes with time nothing to add.
+</p>
+
+<p>
+Creative will then make you deviate from the general structure you
+learned.
+</p>
+
+<p>
+You just have to be careful to document everything then as it should
+always be possible for an external to join and take over your work.
+</p>
+
+<p>
+This is the bit I learned from my current recent experience.
+</p>
+
+<!-- TEASER_END -->
+
+
+<div id="outline-container-org61efdd1" class="outline-2">
+<h2 id="org61efdd1">Creating and Using Beans</h2>
+<div class="outline-text-2" id="text-org61efdd1">
+<p>
+The concept of Beans is of paramount importance in the Java and
+Spring world. This section aims at presenting a basic understanding
+of it. It is based on <a href="https://docs.spring.io/spring-javaconfig/docs/1.0.0.m3/reference/html/creating-bean-definitions.html">this section</a>.
+</p>
+
+<p>
+So note that it is <i>common</i> for some application components within
+the Spring framework to have to depend on some object. Say for
+instance a <code>RestTemplate</code> in order to consume REST endpoints.
+</p>
+
+<p>
+Then as shown <a href="#org30d826d">here</a> there is an option of resolving this dependency
+by instatiating an object of that class and work through it, or
+there is the option of working through beans.
+</p>
+
+<p>
+Note that the most up to date reference documentation is <a href="https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-definition">the
+following</a>. I just put on my agenda to read the first chapter
+here. Will be necessary in order to properly manage this. 
+</p>
+</div>
+
+<div id="outline-container-orgad017ab" class="outline-3">
+<h3 id="orgad017ab">On the @Configuration</h3>
+<div class="outline-text-3" id="text-orgad017ab">
+<p>
+So basically the idea here is to have a class annotated in such a
+way. In this class you will define the relevant Beans that you will
+use and inject across the application.
+</p>
+
+<p>
+So @Configuration annotation indicates that the class will be
+used by JavaConfig as a source of bean definitions.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1">// note that it is possible to explicitly set defaults for all</span>
+   <span class="c1">// enclosed bean definitions. See the options in the parentheses.</span>
+   <span class="nd">@Configuration</span><span class="p">(</span><span class="n">defaultAutowire</span> <span class="o">=</span> <span class="n">Autowire</span><span class="p">.</span><span class="na">BY_TYPE</span><span class="p">,</span> <span class="n">defaultLazy</span> <span class="o">=</span> <span class="n">Lazy</span><span class="p">.</span><span class="na">FALSE</span><span class="p">)</span>
+   <span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataSourceConfiguration</span> <span class="p">{</span>
+       <span class="c1">// bean definitions follow</span>
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+Note now that beans declarated in such a way will be available in
+the <code>BeanFactory/ApplicationContext</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd5ccf21" class="outline-3">
+<h3 id="orgd5ccf21">Bean Visibility</h3>
+<div class="outline-text-3" id="text-orgd5ccf21">
+<p>
+Not making notes, this is the classical story.
+</p>
+
+<p>
+What should be visible where.
+</p>
+
+<p>
+You can check at the links above.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2deae4b" class="outline-3">
+<h3 id="org2deae4b">Lazy-initialized Beans</h3>
+<div class="outline-text-3" id="text-org2deae4b">
+<p>
+By default, ApplicationContext implementations eagerly create and
+configure <i>all singleton beans</i> as part of the initialization
+process.
+</p>
+
+<p>
+So what that basically means is that all of your beans in your
+configuration classes will be directly initialized at boot time.
+</p>
+
+<p>
+This is I guess what actually happens when you start a SpringBoot
+applicaiton. It starts your server etc, but it also instantiates
+all of the Beans. You see there that what is actually returned is
+an ApplicationContext and this will contain all of your Beans that
+you will use throughout the application. 
+</p>
+
+<p>
+Generally, this pre-instantiation is desirable, because errors in
+the configuration or surrounding environment are discovered
+immediately, as opposed to hours or even days later. When this
+behavior is not desirable, you can prevent pre-instantiation of a
+singleton bean by marking the bean definition as being
+lazy-initialized. A <i>lazy-initialized bean tells the IoC container
+to create a bean instance when it is first requested</i>, rather than
+at startup.
+</p>
+
+<p>
+Might be good for fast startup times etc.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9bb5e77" class="outline-3">
+<h3 id="org9bb5e77">@Autowired</h3>
+<div class="outline-text-3" id="text-org9bb5e77">
+<p>
+The Spring container can autowire relationships between
+collaborating beans.
+</p>
+
+<p>
+You can let Spring <b>resolve collaborators (other beans)
+automatically</b> for your bean by inspecting the contents of the
+ApplicationContext.
+</p>
+
+<p>
+This is also interesting:
+</p>
+
+<blockquote>
+<p>
+Autowiring can update a configuration as your objects evolve. For
+example, if you need to add a dependency to a class, that dependency
+can be satisfied automatically without you needing to modify the
+configuration. Thus autowiring can be especially useful during
+development, without negating the option of switching to explicit
+wiring when the code base becomes more stable.
+</p>
+</blockquote>
+
+<p>
+Note that you would wire then manually as you would eventually make
+everything more stable, i.e. less random as less automatic - where
+things can go wrong without you ever noticing it.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org4ad8740" class="outline-2">
+<h2 id="org4ad8740">General Idea - Container</h2>
+<div class="outline-text-2" id="text-org4ad8740">
+<p>
+At its core, Spring offers a container, often referred to as the
+Spring application context, that creates and manages application
+components.
+</p>
+
+<p>
+These components, or beans, are wired together inside the Spring
+application context to make a complete application, much like
+bricks, mortar, timber, nails, plumbing, and wiring are bound
+together to make a house.
+</p>
+
+<p>
+The act of wiring beans together is based on a pattern known as
+<i>dependency injection</i> (DI).
+</p>
+
+<p>
+Rather than have components create and maintain the lifecycle of
+other beans that they depend on, a <i>dependency-injected
+application</i> relies on a <b>separate entity (the container)</b> to
+create and maintain all components and inject those into the beans
+that need them. This is done typically through constructor
+arguments or property accessor methods.
+</p>
+
+<p>
+On top of its core container, Spring and a full portfolio of
+related libraries offer a web framework, a variety of data
+persistence options, a security framework, integration with other
+systems, runtime monitoring, microservice support, a reactive
+programming model, and many other features necessary for modern
+application development.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orge7d53a2" class="outline-2">
+<h2 id="orge7d53a2">Spring Project Structure</h2>
+<div class="outline-text-2" id="text-orge7d53a2">
+<p>
+This is based on the spring in action book. You understand well that
+it is just one among the many possibilities.
+</p>
+
+<p>
+There the structure was more less the following:
+</p>
+
+<ul class="org-ul">
+<li>
+<code>TacoCloudApplication.java</code> - This is the Spring Boot main class
+that bootstraps the project.</li>
+
+<li>
+<code>application.properties</code> - here you can specify the configuration
+properties.</li>
+
+<li>
+<code>static</code> - here you save your static files for your application.</li>
+
+<li>
+<code>templates</code> - here you have template files that will be used to
+render content to the browser.</li>
+
+<li>
+<code>TacoApplicationTests.java</code> - this is a simple test class that
+ensures that the Spring application context loads successfully.</li>
+</ul>
+<p>
+So you see that this is quite similar conceptually to your python
+project structure.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdaf2e65" class="outline-2">
+<h2 id="orgdaf2e65">Gradle Configuration</h2>
+<div class="outline-text-2" id="text-orgdaf2e65">
+<p>
+Note that one of the most important thing that you have in your
+build configuration is that you deploy to a <code>jar</code> not into a <code>war</code>.
+</p>
+
+<p>
+Whereas WAR files are perfectly suitable for deploying to a
+traditional Java application server, they’re not a natural fit for
+most cloud platforms.
+</p>
+
+<p>
+Although some cloud platforms (such as Cloud Foundry) are capable of
+deploying and running WAR files, <b>all Java cloud platforms are
+capable of running an executable JAR file</b>. Therefore, the Spring
+Initializer defaults to JAR packaging unless you tell it to do
+otherwise.
+</p>
+
+<p>
+Basically you can then set up your project with the required
+dependecies. In order to do that, always work through
+<a href="https://start.spring.io/">https://start.spring.io/</a>.
+</p>
+
+<p>
+This is useful as through it you can get your skeleton for working
+with Spring and through it you can quickly jump-start into your
+projects.
+</p>
+
+<p>
+Note that through <i>transitive dependencies</i> you will manage to keep
+your build tools lean. This in the sense that by simply specifying
+the follwoing dependecies:
+</p>
+
+<ul class="org-ul">
+<li>spring-boot-starter-thymeleaf</li>
+
+<li>spring-boot-starter-web</li>
+</ul>
+<p>
+You get out of the box dependencies that makes the following
+available:
+</p>
+
+<ul class="org-ul">
+<li>Spring’s MVC framework</li>
+
+<li>Embedded Tomcat</li>
+
+<li>Thymeleaf and the Thymeleaf layout dialect</li>
+</ul>
+<p>
+Moreover, you get autoconfiguration libraries that automatically:
+</p>
+
+<ul class="org-ul">
+<li>Configure the beans in the Spring application context to enable Spring MVC</li>
+
+<li>Configure the embedded Tomcat server in the Spring application context</li>
+
+<li>Configure a Thymeleaf view resolver for rendering Spring MVC
+views with Thymeleaf templates.</li>
+</ul>
+<p>
+Note that Thymeleaf is a framework to handle the views. This is
+front-end stuff. You did some stuff in there in Python but it is not
+your bread and butter and neither your main interest. You are rather
+interested in the Spring MVC for writing your endpoints and do the
+back-end work.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc99b9df" class="outline-2">
+<h2 id="orgc99b9df">Running the Spring web-application</h2>
+<div class="outline-text-2" id="text-orgc99b9df">
+<p>
+This is a 101 example. Do not waste too much time if you do not get
+these notes.
+</p>
+
+<p>
+Keep reading. But yeah take the idea if you want to start a 101
+spring app.
+</p>
+</div>
+
+
+<div id="outline-container-orgfc422c6" class="outline-3">
+<h3 id="orgfc422c6">Run App</h3>
+<div class="outline-text-3" id="text-orgfc422c6">
+<p>
+This is the equivalent to your <code>flask.run</code> command. 
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">package</span> <span class="nn">myCoolPackage</span><span class="p">;</span>
+
+   <span class="kn">import</span> <span class="nn">org.springframework.boot.SpringApplication</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.boot.autoconfigure.SpringBootApplication</span><span class="p">;</span>
+
+   <span class="nd">@SpringBootApplication</span> 
+   <span class="kd">public</span> <span class="kd">class</span> <span class="nc">TacoCloudApplication</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">SpringApplication</span><span class="p">.</span><span class="na">run</span><span class="p">(</span><span class="n">TacoCloudApplication</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">args</span><span class="p">);</span>  <span class="c1">// here you</span>
+							      <span class="c1">// run the</span>
+							      <span class="c1">// application. similar</span>
+							      <span class="c1">// to flask</span>
+							      <span class="c1">// run.</span>
+    <span class="p">}</span>
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+Through the Spring framework you know that this will be the entry
+point for your application and its <code>main</code>.
+</p>
+
+<p>
+You see that you call then the static <code>run</code> method. This does the
+actual bootstrapping of the application, creating the <b>application
+context</b> we mentioned before.
+</p>
+
+<p>
+Note that you pass to the <code>run</code> method:
+</p>
+
+<ul class="org-ul">
+<li>a <b>configuration class</b>
+</li>
+
+<li>the <b>command-line arguments</b>
+</li>
+</ul>
+<p>
+Note that in the example above the configuration class is the same
+as the <i>bootstrap class</i>. This does not have to be the case.
+</p>
+
+<p>
+We will see that in fact the larger the projects - the more you
+usually work with separate classes.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga593007" class="outline-3">
+<h3 id="orga593007">MVC - through it you write your back-end endpoints</h3>
+<div class="outline-text-3" id="text-orga593007">
+<p>
+This is a web-framework. Again check the more detail section <a href="#orgbafe01a">Web-applications with Spring</a>.
+</p>
+
+<p>
+At the center of it there is the concept of <i>controller</i>.
+</p>
+
+<p>
+This is a class that handles requests and responds with
+information. I.e. it is the class through which you classically
+implement your endpoints.
+</p>
+
+<p>
+So in order to implement the most basic endpoint you can work as
+follows:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">package</span> <span class="nn">myCoolPackage</span><span class="p">;</span>
+
+   <span class="kn">import</span> <span class="nn">org.springframework.stereotype.Controller</span><span class="p">;</span>
+
+   <span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.GetMapping</span><span class="p">;</span>
+
+   <span class="nd">@Controller</span> 
+   <span class="kd">public</span> <span class="kd">class</span> <span class="nc">HomeController</span> <span class="p">{</span>
+    <span class="nd">@GetMapping</span><span class="p">(</span><span class="s">"/"</span><span class="p">)</span> 
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">home</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s">"home"</span><span class="p">;</span> 
+    <span class="p">}</span>
+   <span class="p">}</span>
+</pre></div>
+
+
+<p>
+Note that the <code>@Controller</code> annotation doesn't do much. It is there
+to identify the class as a component. This will be useful as you
+will do some component-scanning in your Spring-application context
+then.
+</p>
+
+<p>
+I.e. through the annotation Spring’s component scanning
+automatically discovers it and creates an instance of
+Home-Controller as a bean in the Spring application context.
+</p>
+
+<p>
+The <code>@GetMapping</code> is there to note that the endpoint will work with
+GET requests. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd8a77e6" class="outline-3">
+<h3 id="orgd8a77e6">Endpoints Testing</h3>
+<div class="outline-text-3" id="text-orgd8a77e6">
+<p>
+You can check in the book. This will be a quite big waste of time
+nonetheless.
+</p>
+
+<p>
+Start first by deciding on which tests suite you want to use. All
+of these books explain you the stuff pretending there would be just
+a single way of doing it.
+</p>
+
+<p>
+This is not the case. So get the general structure and idea. But do
+not spend too much time on it now on doing documentation. You might
+use then a complete different testing-suite.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgb08fbfe" class="outline-2">
+<h2 id="orgb08fbfe">Important Spring Modules</h2>
+<div class="outline-text-2" id="text-orgb08fbfe">
+<p>
+Note that on that spring initialzer page you can see all of the
+dependencies nicely integrated with the spring framework.
+</p>
+
+<p>
+You can navigate it in detail in time.
+</p>
+
+<p>
+However, in general there are macroscopic classes, that you need to
+understand:
+</p>
+</div>
+
+
+<div id="outline-container-orgf42179b" class="outline-3">
+<h3 id="orgf42179b">Core Spring Framework</h3>
+<div class="outline-text-3" id="text-orgf42179b">
+<p>
+This is the fundation of everything in the spring universe.
+</p>
+
+<p>
+It provides the core container and dependencies injection
+framework.
+</p>
+
+<p>
+It also provides the following essential features:m
+</p>
+
+<ul class="org-ul">
+<li>Spring MVC</li>
+
+<li>Template based JDBC support</li>
+
+<li>Spring WebFlux (for <b>reactive</b> programming)</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orge5743d7" class="outline-3">
+<h3 id="orge5743d7">Spring Boot</h3>
+<div class="outline-text-3" id="text-orge5743d7">
+<p>
+This is what makes autoconfiguration and starter-depencies
+possible.
+</p>
+
+<p>
+Note that the starter-dependencies are exactly the thing we
+mentioned. I.e. you specified these very general
+<code>spring-boot-starter-xxx</code> dependencies and through it you get a ton
+of others transitive dependencies and autoconfigurations of them.
+</p>
+
+<p>
+Note that Spring Boot also allows the following:
+</p>
+
+<ul class="org-ul">
+<li>The <b>Actuator</b> provides runtime insight into the inner workings of
+an application, including metrics, thread dump information,
+application health, and environment properties available to the
+application.</li>
+
+<li>Flexible specification of environment properties.</li>
+
+<li>Additional testing support on top of the testing assistance found
+in the core framework.</li>
+</ul>
+<p>
+Spring Boot offers an alternative programming model based on Groovy
+scripts that’s called the Spring Boot CLI (command-line
+interface). With the Spring Boot CLI, you can write entire
+applications as a collection of Groovy scripts and run them from
+the command line.
+</p>
+
+<p>
+Not interesting to me. It is another layer of config. It seems that
+this Groovy is quite some config language in the Java world as it
+is used for both specifying things in Gradle as well as here in
+Spring at macro-level.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgefa3749" class="outline-3">
+<h3 id="orgefa3749">Spring Data</h3>
+<div class="outline-text-3" id="text-orgefa3749">
+<p>
+What’s more, Spring Data is capable of working with a <i>several
+different kinds of databases</i>, including relational (JPA), document
+(Mongo), graph (Neo4j), and others.
+</p>
+
+<p>
+So interesting altough as mentioned I do not like to work with such
+interfaces as then you stick too much into a single language.
+</p>
+
+<p>
+I prefer to work with the native declarative languages of each as
+these are quite stable and will provide the necessary portability
+across languages.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5e052ad" class="outline-3">
+<h3 id="org5e052ad">Spring Security</h3>
+<div class="outline-text-3" id="text-org5e052ad">
+<p>
+Through it you can manage a broad range of application security
+needs, including authentication, authorization, and API security.
+</p>
+
+<p>
+This is what you did in your last Flask project. So similar
+thing. Was never a fun of it. I hope I will not have to dig too
+much into it. However, with the Zero-trust Architecture paradigm I
+might have to do that at some point. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1025aeb" class="outline-3">
+<h3 id="org1025aeb">Spring Integration and Spring Batch</h3>
+<div class="outline-text-3" id="text-org1025aeb">
+<p>
+<b>Spring Integration</b>: addresses real-time integration where data is
+processed as it’s made available.
+</p>
+
+<p>
+<b>Spring Batch</b>: addresses batched integration where data is allowed
+to collect for a time until some trigger (perhaps a time trigger)
+signals that it’s time for the batch of data to be processed.
+</p>
+
+<p>
+So this will be important as with it you can push the boundaries
+of your market risk system and make a nice machine out of it. It
+will be very important in this sense to master functional
+programming and these frameworks in order to have a proper baby. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org881351a" class="outline-3">
+<h3 id="org881351a">Spring Cloud</h3>
+<div class="outline-text-3" id="text-org881351a">
+<p>
+Microservices are a hot topic, addressing several practical
+development and runtime concerns. In doing so, however, they bring
+to fore their own challenges. Those challenges are met head-on by
+Spring Cloud, a collection of projects for developing cloud-native
+applications with Spring.
+</p>
+
+<p>
+So that is interesting and what Sergio was mentioning. I am
+interested in looking into it as many things were provided by
+external dashboards on the cloud from my experience at IBM.
+</p>
+
+<p>
+I am interested in this sense to understand how that is working
+and how exactly is it monitoring things given that the things work
+in different runtimes.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgcb2e3a9" class="outline-2">
+<h2 id="orgcb2e3a9">Configuring Spring</h2>
+<div class="outline-text-2" id="text-orgcb2e3a9">
+<p>
+So basically Spring it is nice cause you have tons of beans in
+spring that will ultimately be injected in your context and you will
+have a well rounded Java development environment.
+</p>
+
+<p>
+So this is basically the idea. You differentiate two components in
+Java:
+</p>
+
+<ul class="org-ul">
+<li>
+<i>Bean wiring</i>: through this component you can define the beans
+that you will use in your spring application. I.e. the beans that
+will be discoverable from the spring context. Moreover, through
+<i>beans wiring</i> you specify how the different beans will be
+injected into each other.</li>
+
+<li>
+<i>Property injection</i>: this sets the values on the different beans
+in the Spring context of the application.</li>
+</ul>
+<p>
+We will see how to specify these two fundamental components through
+Spring boot. You will then be able to create your modularized
+application and work with it in a smooth and agile way.
+</p>
+</div>
+
+
+<div id="outline-container-orgbb3aab3" class="outline-3">
+<h3 id="orgbb3aab3">How the spring framework works</h3>
+<div class="outline-text-3" id="text-orgbb3aab3">
+<p>
+In order to properly understand how to do <i>beans wiring</i> and
+<i>property injection</i> you should first understand the following
+general flow spring boot follows.
+</p>
+
+<p>
+The following chart of the book gives a good overview:
+</p>
+
+<img src="../../images/Screenshot%202021-11-14%20182534.png" class="center"><p>
+I.e. what you do is to instantiate the spring application by
+setting all of the relevant parameters that will be used in order
+to instantiate the relevant beans with the relevant configurations.
+</p>
+
+<p>
+I.e. you specify the spring configuration you want by specifying
+the relevant paramters through cmd line, yaml configuration files
+etc.
+</p>
+
+<p>
+Spring boot will then refer to the relevant configuration available
+in the <i>spring environment</i> to initiate the relevant beans and make
+them accessible by the proper injection into the spring context.
+</p>
+
+<p>
+So given the general picture above understand the following
+components that are key to every proper Spring application and that
+you should accordingly set.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orga19d9c1" class="outline-3">
+<h3 id="orga19d9c1">Embedded Server</h3>
+<div class="outline-text-3" id="text-orga19d9c1">
+<p>
+Here you can decide where your embedded server will communicate.
+</p>
+
+<p>
+The default embedded server is Tomcat. You can change the option
+and work with different servers.
+</p>
+
+<p>
+In order to do so set the following in the the <code>src/main/resources/application.yml</code>
+</p>
+
+<div class="highlight"><pre><span></span>   server:
+    port: 0
+</pre></div>
+
+<p>
+Note that port <code>0</code> is a sensible choice as you will be able in such
+a way to do proper integration testing. You do not hard-wire a port
+but each time a different port is selected.
+</p>
+
+<p>
+You will therefore make sure that your tests do not simply pass
+because a port was hard-wired.
+</p>
+
+<p>
+Note that this is a good point but it can well be a moot
+point. Everything ultimately depends on the infrastructure
+initialization.
+</p>
+
+<p>
+Here you can also specify all of the options for ssl, your
+key-stores etc. I just note it here but again I do not think I will
+never need that stuff as we are in the era of the cloud and I think
+it is a sensible decision to leverage the abstraction layer in
+there.
+</p>
+
+<p>
+Note taht this is likely the way I will choose. Write tha
+<code>application.yml</code> with all of the desired properties you would like
+to set. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgc24644d" class="outline-3">
+<h3 id="orgc24644d">Data</h3>
+<div class="outline-text-3" id="text-orgc24644d">
+<p>
+Here you can specify the driver and the location of the DB you will
+interact with.
+</p>
+
+<p>
+You have to understand how this overlaps with Gradle. There you
+specify as well parts of this.
+</p>
+
+<p>
+So double check how these two fits together. I am quite sure that
+if you work with spring you do not specify the stuff in
+gradle. I.e. you just specify the spring dependencies in gradle.
+</p>
+
+<p>
+Then once this is specified it is all of a game within spring. This
+is the big difference. While when programming without Spring you
+have to pull the modules one-by-one into gradle and you compose
+everything yourself.
+</p>
+
+<p>
+Moreover as there is not a framework putting everything in an
+opinionated context you have to do the manual config yourself.
+</p>
+
+<p>
+I mean in the notes above I put a bit of notes that are nose-driven
+so I am not sure everything is correct at 100% but more or less it
+should be that.
+</p>
+
+<p>
+You can then see in the book how to properly instantiate your db
+with the different tables schema etc. I refer to the book in case
+you want to go down that road. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgc96a85f" class="outline-3">
+<h3 id="orgc96a85f">Logging</h3>
+<div class="outline-text-3" id="text-orgc96a85f">
+<p>
+This is nice, you can set there the standard output of your
+logger.
+</p>
+
+<p>
+Refer to the book. But basically there is an option to do that via
+a xml file.
+</p>
+
+<p>
+Moreover on the top of it once you defined the output of the logger
+you can define all of the different levels that should be printed
+by the logger.
+</p>
+
+<p>
+You can that through the standards yaml configuration files.
+</p>
+
+<p>
+So basically double check the book to see the way to configure your
+logging across your applications. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org5aa132e" class="outline-3">
+<h3 id="org5aa132e">Property injection via special property values</h3>
+<div class="outline-text-3" id="text-org5aa132e">
+<p>
+This is a nice way to make dynamic and intelligent properties
+injection into your spring environment - and consequently beans -.
+</p>
+
+<p>
+The standard format would be something like that:
+</p>
+
+<div class="highlight"><pre><span></span>   greeting:
+    welcome: You are using ${spring.application.name}
+</pre></div>
+
+<p>
+i.e. you map <code>greeting.welcome</code> to "You are using
+\({spring.application.name}", where =\){spring.application.name}=
+maps to the <code>spring.application.name</code> of the yaml.
+</p>
+
+<p>
+I think that essentially and ultimately it is simple yaml syntax.
+</p>
+
+<p>
+What is important to get is how this properties are injected into
+spring. This is a different story.
+</p>
+
+<p>
+This is what is actully handeled in the next section.   
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd39fbf5" class="outline-3">
+<h3 id="orgd39fbf5">Creating your own configuration properties</h3>
+<div class="outline-text-3" id="text-orgd39fbf5">
+<p>
+Configuration properties are nothing more than properties of beans
+that have been designated to accept configurations from Spring’s
+environment abstraction.
+</p>
+
+<p>
+So the above configurations are easy to integrate.
+</p>
+
+<p>
+This is the <b>important</b> section. We will see how the beans are
+actually designed to consume the configuration in the spring
+environment and how you can actually set up your configuration and
+inject it into the beans.
+</p>
+
+<p>
+In order to do that you have to understand a couple of flags as in
+the usual case of spring - i.e. these are actually the first class
+citizens of spring through which you can manage it all.
+</p>
+
+<p>
+In this sense, one of the most important annotation is the
+following:
+</p>
+
+<ul class="org-ul">
+<li>@ConfigurationProperties annotation. When placed on any Spring
+bean, it specifies that the properties of that bean can be
+injected from properties in the Spring environment.</li>
+</ul>
+<p>
+It is then immediate to understand the logic. You can check at it
+in the book and online but you get the essential idea of beans and
+property injection and how that works.
+</p>
+
+<p>
+So basically the idea is the following - take the example of
+setting the page-size in the front-end displaying a given number of
+taco orders - this is the example of the book of reference.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nd">@Controller</span> <span class="c1">// recall controller is the way you denote the class</span>
+	       <span class="c1">// answers requests etc.</span>
+   <span class="nd">@RequestMapping</span><span class="p">(</span><span class="s">"/orders"</span><span class="p">)</span>
+   <span class="nd">@SessionAttributes</span><span class="p">(</span><span class="s">"order"</span><span class="p">)</span>
+   <span class="nd">@ConfigurationProperties</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">"taco.orders"</span><span class="p">)</span> <span class="c1">// here you set your</span>
+						  <span class="c1">// configuration</span>
+						  <span class="c1">// property. Like this</span>
+						  <span class="c1">// it will be possible</span>
+						  <span class="c1">// to set the</span>
+						  <span class="c1">// properties in this</span>
+						  <span class="c1">// class with the</span>
+						  <span class="c1">// prefix mentioned</span>
+						  <span class="c1">// there.</span>
+   <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderController</span> <span class="p">{</span>
+
+       <span class="kd">private</span> <span class="kt">int</span> <span class="n">pageSize</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span> <span class="c1">// note that then you can set the</span>
+				  <span class="c1">// default variables encapsulated in</span>
+				  <span class="c1">// the objects of the class.</span>
+
+       <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPageSize</span><span class="p">(</span><span class="kt">int</span> <span class="n">pageSize</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// note the setter here.</span>
+	   <span class="k">this</span><span class="p">.</span><span class="na">pageSize</span> <span class="o">=</span> <span class="n">pageSize</span><span class="p">;</span>
+       <span class="p">}</span>
+
+       <span class="p">...</span>
+	   <span class="nd">@GetMapping</span>
+	   <span class="kd">public</span> <span class="n">String</span> <span class="nf">ordersForUser</span><span class="p">(</span>
+				       <span class="nd">@AuthenticationPrincipal</span> <span class="n">User</span> <span class="n">user</span><span class="p">,</span> <span class="n">Model</span> <span class="n">model</span><span class="p">)</span> <span class="p">{</span>
+	   <span class="n">Pageable</span> <span class="n">pageable</span> <span class="o">=</span> <span class="n">PageRequest</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pageSize</span><span class="p">);</span>
+	   <span class="n">model</span><span class="p">.</span><span class="na">addAttribute</span><span class="p">(</span><span class="s">"orders"</span><span class="p">,</span>
+			      <span class="n">orderRepo</span><span class="p">.</span><span class="na">findByUserOrderByPlacedAtDesc</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">pageable</span><span class="p">));</span>
+	   <span class="k">return</span> <span class="s">"orderList"</span><span class="p">;</span>
+       <span class="p">}</span>
+
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+In such a way you can then set the properties in your application
+<code>yaml</code> - for instance the default page size in your controller:
+</p>
+
+<div class="highlight"><pre><span></span>   taco:
+    orders:
+    pageSize: 10
+</pre></div>
+
+<p>
+Spring framework will then take care of property injection as
+described.
+</p>
+</div>
+
+<div id="outline-container-org9c2f6b5" class="outline-4">
+<h4 id="org9c2f6b5">
+<b>Important Design Point</b> - Note that usually you set configproperties to <b>component classes</b>
+</h4>
+<div class="outline-text-4" id="text-org9c2f6b5">
+<p>
+So basically recall that component is a first class citizen in the
+Spring framework and these can then be picked up by the Spring
+context and injected into other classes.
+</p>
+
+<p>
+So basically what you do in Spring is creating a couple of these
+<i>components</i> that will be holding some given properties that you
+can instantiate via your defined <code>@ConfigurationProperties</code>.
+</p>
+
+<p>
+You can then inject these components across the application into
+the different controllers etc.
+</p>
+
+<p>
+This will keep your application modular and will make it possible
+for you to have a solid design. You also understand that when
+refactoring you just change values at one spot and everything will
+adjust as it will be referencing that given component through
+property injection.
+</p>
+
+<p>
+I.e. the example above
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kn">package</span> <span class="nn">tacos.web</span><span class="p">;</span>
+
+    <span class="kn">import</span> <span class="nn">org.springframework.boot.context.properties.</span>
+	<span class="n">ConfigurationProperties</span><span class="p">;</span>
+    <span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="p">;</span>
+    <span class="kn">import</span> <span class="nn">lombok.Data</span><span class="p">;</span>
+
+    <span class="nd">@Component</span>
+    <span class="nd">@ConfigurationProperties</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">"taco.orders"</span><span class="p">)</span>
+    <span class="nd">@Data</span> <span class="c1">// lombok will implement getters and setters.</span>
+    <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderProps</span> <span class="p">{</span>
+	<span class="kd">private</span> <span class="kt">int</span> <span class="n">pageSize</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+    <span class="p">}</span>
+</pre></div>
+
+<p>
+Then you would inject that component in the controller - see the
+difference with the above - more ordered OrderController, more
+modular, reusable Component -.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="nd">@Controller</span>
+    <span class="nd">@RequestMapping</span><span class="p">(</span><span class="s">"/orders"</span><span class="p">)</span>
+    <span class="nd">@SessionAttributes</span><span class="p">(</span><span class="s">"order"</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderController</span> <span class="p">{</span>
+
+	<span class="kd">private</span> <span class="n">OrderRepository</span> <span class="n">orderRepo</span><span class="p">;</span>
+	<span class="kd">private</span> <span class="n">OrderProps</span> <span class="n">props</span><span class="p">;</span>              <span class="c1">// you will inject the component here.</span>
+
+	<span class="kd">public</span> <span class="nf">OrderController</span><span class="p">(</span><span class="n">OrderRepository</span> <span class="n">orderRepo</span><span class="p">,</span>
+			       <span class="n">OrderProps</span> <span class="n">props</span><span class="p">)</span> <span class="p">{</span>
+	    <span class="k">this</span><span class="p">.</span><span class="na">orderRepo</span> <span class="o">=</span> <span class="n">orderRepo</span><span class="p">;</span>
+	    <span class="k">this</span><span class="p">.</span><span class="na">props</span> <span class="o">=</span> <span class="n">props</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="p">...</span>
+
+	    <span class="nd">@GetMapping</span>
+	    <span class="kd">public</span> <span class="n">String</span> <span class="nf">ordersForUser</span><span class="p">(</span>
+					<span class="nd">@AuthenticationPrincipal</span> <span class="n">User</span> <span class="n">user</span><span class="p">,</span> <span class="n">Model</span> <span class="n">model</span><span class="p">)</span> <span class="p">{</span>
+	    <span class="n">Pageable</span> <span class="n">pageable</span> <span class="o">=</span> <span class="n">PageRequest</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">props</span><span class="p">.</span><span class="na">getPageSize</span><span class="p">());</span>
+	    <span class="n">model</span><span class="p">.</span><span class="na">addAttribute</span><span class="p">(</span><span class="s">"orders"</span><span class="p">,</span>
+			       <span class="n">orderRepo</span><span class="p">.</span><span class="na">findByUserOrderByPlacedAtDesc</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">pageable</span><span class="p">));</span>
+	    <span class="k">return</span> <span class="s">"orderList"</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="p">...</span>
+
+    <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0996b19" class="outline-3">
+<h3 id="org0996b19">Excurs - Validation</h3>
+<div class="outline-text-3" id="text-org0996b19">
+<p>
+Note that it makes sense to use <code>javax.validation.*</code> in combination
+with your spring application properties.
+</p>
+
+<p>
+With it you can double check some variables etc.
+</p>
+
+<p>
+This might be especially useful to apply to your <code>Components</code>. Then
+the idea is that you write your componnents, you instantiate them
+through config properties, you validate such config properties and
+you inject them in your application.
+</p>
+
+<p>
+A 101 example of validation is the following:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">package</span> <span class="nn">tacos.web</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">javax.validation.constraints.Max</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">javax.validation.constraints.Min</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.boot.context.properties.</span>
+       <span class="n">ConfigurationProperties</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.validation.annotation.Validated</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">lombok.Data</span><span class="p">;</span>
+   <span class="nd">@Component</span>
+   <span class="nd">@ConfigurationProperties</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">"taco.orders"</span><span class="p">)</span>
+   <span class="nd">@Data</span>
+   <span class="nd">@Validated</span>
+   <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderProps</span> <span class="p">{</span>
+       <span class="nd">@Min</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">"must be between 5 and 25"</span><span class="p">)</span>
+       <span class="nd">@Max</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">"must be between 5 and 25"</span><span class="p">)</span>
+       <span class="kd">private</span> <span class="kt">int</span> <span class="n">pageSize</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+   <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org7f039ee" class="outline-3">
+<h3 id="org7f039ee">Profiles</h3>
+<div class="outline-text-3" id="text-org7f039ee">
+<p>
+This is an important concept when configuring your spring
+application.
+</p>
+
+<p>
+Profiles allow you to create <b>conditional configuration</b>
+properties.
+</p>
+
+<p>
+I.e. framed as per the book:
+</p>
+
+<blockquote>
+<p>
+Profiles are a type of <i>conditional configuration</i> where different
+beans, configuration classes, and configuration properties are applied
+or ignored <i>based on what profiles are active</i> at runtime.
+</p>
+</blockquote>
+
+<p>
+So how do you use such conditional properties? The idea is to
+create multiple <code>yaml</code> files where you will store different bits of
+information.
+</p>
+
+<p>
+The name of the file <b>should follow this convention</b>:
+<code>application-{profile name}.yml</code> <b>or</b> <code>application-{profile
+   name}.properties</code>.
+</p>
+
+<p>
+The idea is then the following. You can activate profiles as
+described in <a href="#org67f926a">Activating Profiles</a>.
+</p>
+
+<p>
+Note that this is your choice of design. Note that there are as
+well other ways to configure profiles - i.e. you set everything in
+your <code>application.yml</code> file with the following syntax:
+</p>
+
+<div class="highlight"><pre><span></span>   logging:
+     level:
+       tacos: DEBUG
+
+   # note tree lines to separate profiles. all below belongs to the
+   # prod profile.
+   ---  
+
+   # specify name of the profile
+   spring:
+     profiles: prod  
+
+     datasource:
+       url: jdbc:mysql://localhost/tacocloud
+       username: tacouser
+       password: tacopassword
+       logging:
+
+     level:
+       tacos: WARN
+</pre></div>
+
+
+<p>
+The basic idea is the following - the first section is the default
+section. The properties of the second section are just active when
+the profile is active.
+</p>
+</div>
+
+<div id="outline-container-org67f926a" class="outline-4">
+<h4 id="org67f926a">Activating Profiles</h4>
+<div class="outline-text-4" id="text-org67f926a">
+<p>
+Now you understand how to set the properties for different
+profiles. The question is then how you active the different
+profiles.
+</p>
+
+<p>
+This is again done by configuring the <code>spring.profiles.active</code>
+property with the desired profiles to be activated when launching
+the applicaiton.
+</p>
+
+<p>
+As always you can set the property in the <code>application.yml</code> or by
+passing it via command line:
+</p>
+
+<div class="highlight"><pre><span></span>    export SPRING_PROFILES_ACTIVE=prod
+</pre></div>
+
+<p>
+Or the second option:
+</p>
+
+<div class="highlight"><pre><span></span>    spring:
+     profiles:
+       active:
+       - prod
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0ba7a8e" class="outline-3">
+<h3 id="org0ba7a8e">Profile-dependent Beans</h3>
+<div class="outline-text-3" id="text-org0ba7a8e">
+<p>
+Note now that it is as well possible to create beans that will just
+be active depending on the profile.
+</p>
+
+<p>
+You can well understand the usage of them.
+</p>
+
+<p>
+There are simple annotations for it.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nd">@Bean</span>
+   <span class="nd">@Profile</span><span class="p">({</span><span class="s">"dev"</span><span class="p">,</span> <span class="s">"qa"</span><span class="p">})</span> <span class="c1">// note that also the following works @Profile("dev") and @Profile("!dev")</span>
+   <span class="kd">public</span> <span class="n">CommandLineRunner</span> <span class="nf">dataLoader</span><span class="p">(</span><span class="n">IngredientRepository</span> <span class="n">repo</span><span class="p">,</span>
+				       <span class="n">UserRepository</span> <span class="n">userRepo</span><span class="p">,</span> <span class="n">PasswordEncoder</span> <span class="n">encoder</span><span class="p">)</span> <span class="p">{</span>
+       <span class="p">...</span>
+	   <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbafe01a" class="outline-2">
+<h2 id="orgbafe01a">Web-applications with Spring</h2>
+<div class="outline-text-2" id="text-orgbafe01a">
+<p>
+You can even read more into the detail about working with Spring at
+the following source <a href="https://docs.spring.io/spring-restdocs/docs/current/reference/html5/">here.</a>
+</p>
+
+<p>
+In order to properly develop solid endpoints you should read into
+<a href="https://martinfowler.com/articles/richardsonMaturityModel.html">this</a>. You will then see the three levels and you should aim to
+program at level 3 and not at level 0 like a moron.
+</p>
+</div>
+
+<div id="outline-container-org4ebce45" class="outline-3">
+<h3 id="org4ebce45">Synchronous REST</h3>
+<div class="outline-text-3" id="text-org4ebce45">
+</div>
+<div id="outline-container-org1cf805d" class="outline-4">
+<h4 id="org1cf805d">Spring MVC</h4>
+<div class="outline-text-4" id="text-org1cf805d">
+<p>
+With it you can both display information to the front-end in a
+dynamic way.
+</p>
+
+<p>
+Or, alternatively, it will be possible for you to develop REST
+endpoints with it.
+</p>
+
+<p>
+I will not make big notes of the first. It is not my bread and
+butter. In the sense that I am pushing for a clear front-end and
+back-end cut in our org. Our team should be responsible for the
+backend of the risk system, the more math intensive part of it but
+we should not be full-stack developers. That would not be
+beneficial to us or the team. 
+</p>
+
+<p>
+Note that it is pretty much what you saw at the times of
+your IBM projects when you worked with flask.
+</p>
+
+<p>
+I.e. you serve the static content via MVC, and you have different
+<code>views</code>, through which it is possible to embedd the application
+logic into the front-end.
+</p>
+
+<p>
+The book worked with Thymeleaf as a view framework in order to
+embedd the application logic into the front-end. We work with
+Mustache. Though, you can imagine that the two are quite similar -
+and again, from what you can read this is exactly what you could
+see when working on your flask-login module. 
+</p>
+
+<p>
+Note that in general you always talk with the controller when
+instatiating the HTTP request. Then you perform your application
+logic and pass on the relevant info to the views.
+</p>
+
+<p>
+Note that you set up all of this <code>MVC</code> architecture and framework
+through <code>@Controller</code>. This will handle requests and will trigger
+and respond with views etc. In any case it is the <i>controller</i>
+piece of the <code>MVC</code> architecture you can read about <a href="https://marcohassan.github.io/bits-of-experience/posts/on-classical-architectures/">classical
+architectures</a>.
+</p>
+</div>
+
+<ul class="org-ul">
+<li>
+<a id="org837056e"></a>CORS option<br><div class="outline-text-5" id="text-org837056e">
+<p>
+Check if interested.
+</p>
+
+<p>
+The idea is essentially the following:
+</p>
+
+<img src="../../images/cors_principle.png" class="center">
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org3cd373b" class="outline-4">
+<h4 id="org3cd373b">On important Annotations</h4>
+<div class="outline-text-4" id="text-org3cd373b">
+<p>
+So understand the following annotations in order to properly set up
+your application:
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+<code>@RestController</code>:
+</p>
+
+<p>
+Note that this is an annotation like @Controller and @Service
+that marks a class for discovery by component scanning.
+</p>
+
+<p>
+However, note the following <b>important difference</b> to the
+general <code>@Controller</code> which might return <i>a view</i> :
+</p>
+
+<blockquote>
+<p>
+In the <code>@RestController</code> all handler methods in the controller should
+have their return value written directly to the body of the response,
+rather than being carried in the model to a view for rendering. 
+</p>
+</blockquote>
+
+<p>
+Alternatively, you could have annotated DesignTacoController with
+@Controller, just like with any Spring MVC controller. But then
+you’d need to also annotate all of the handler methods with
+@ResponseBody to achieve the same result. So basic point: <i>see
+how IT architecture is modular</i>. You can compose it yourself or
+use abstraction. For me the choice is no matter of big questions.
+</p>
+
+<p>
+So the difference is that one specific controller for <code>REST</code>
+endpoints. Use that.
+</p>
+</li>
+
+<li>
+<p>
+<code>@RequestMapping</code>
+</p>
+
+<p>
+Use it as follows:
+</p>
+
+<div class="highlight"><pre><span></span>      <span class="nd">@RestController</span>
+      <span class="nd">@RequestMapping</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s">"/design"</span><span class="p">,</span> 
+       <span class="n">produces</span><span class="o">=</span><span class="s">"application/json"</span><span class="p">)</span> <span class="c1">// multiple formats are also possible: produces={"application/json", "text/xml"})</span>
+       <span class="kd">public</span> <span class="n">myClassHandlingEndpoints</span> <span class="p">{</span>
+	  <span class="p">...</span>
+	  <span class="p">}</span>
+</pre></div>
+
+<p>
+Then basically in this way you are saying that all of the
+handlers in the class will handle requests to endpoints with
+basis <code>/design</code>.
+</p>
+
+<p>
+Moreover you say that you will return <code>json</code> as it is often the
+norm.
+</p>
+</li>
+
+<li>
+<p>
+<code>@GetMapping</code>
+</p>
+
+<p>
+Note that this is the way you handle get requests in your
+<code>@RestController</code>.
+</p>
+
+<p>
+Note that the path you specify in such annotations augments the
+one from the base-mapping in the class-level <code>@RequestMapping</code>.
+</p>
+
+<p>
+Note that we make an example with a <i>placeholer</i>:
+</p>
+
+<div class="highlight"><pre><span></span>      <span class="nd">@GetMapping</span><span class="p">(</span><span class="s">"/{id}"</span><span class="p">)</span>
+      <span class="kd">public</span> <span class="n">Taco</span> <span class="nf">tacoById</span><span class="p">(</span><span class="nd">@PathVariable</span><span class="p">(</span><span class="s">"id"</span><span class="p">)</span> <span class="n">Long</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// see pathvariable here. this is the value in the request.</span>
+	  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Taco</span><span class="o">&gt;</span> <span class="n">optTaco</span> <span class="o">=</span> <span class="n">tacoRepo</span><span class="p">.</span><span class="na">findById</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+	  <span class="k">if</span> <span class="p">(</span><span class="n">optTaco</span><span class="p">.</span><span class="na">isPresent</span><span class="p">())</span> <span class="p">{</span>
+	      <span class="k">return</span> <span class="n">optTaco</span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
+	  <span class="p">}</span>
+	  <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="p">}</span>
+</pre></div>
+</li>
+
+<li>
+<p>
+<code>@ResponseStatus</code>
+</p>
+
+<p>
+That is nice cause with that tag you can specify what the
+endpoint will utlimately hand back as HTTP anser.
+</p>
+
+<p>
+<b>Default:</b> Under normal circumstances (when no exceptions are thrown), all
+responses will have an HTTP status code of 200 (OK).
+</p>
+
+<p>
+See for instance an application in hte next java chunck.
+</p>
+
+<p>
+Check online at all of the options you have in this sense.
+</p>
+</li>
+
+<li>
+<p>
+<code>@RequestBody</code>
+</p>
+
+<p>
+This is important when handling post requests.
+</p>
+
+<p>
+Simply put, the <code>@RequestBody</code> annotation maps the HttpRequest
+body to a transfer or domain object, enabling automatic
+<i>deserialization</i> of the inbound HttpRequest body onto a <i>Java
+object</i>. Spring automatically deserializes the JSON into a Java
+type, assuming an appropriate one is specified.
+</p>
+
+<p>
+Note that this is important to include in your post endpoints
+consuming json objects.
+</p>
+
+<p>
+The reason is the following:
+</p>
+
+<blockquote>
+<p>
+This annotation is important—without it, Spring MVC would assume that
+you want request parameters (either query parameters or form
+parameters) to be bound to the object of interest.
+</p>
+</blockquote>
+
+<div class="highlight"><pre><span></span>      <span class="nd">@PostMapping</span><span class="p">(</span><span class="n">consumes</span><span class="o">=</span><span class="s">"application/json"</span><span class="p">)</span>
+      <span class="nd">@ResponseStatus</span><span class="p">(</span><span class="n">HttpStatus</span><span class="p">.</span><span class="na">CREATED</span><span class="p">)</span> <span class="c1">// see how you can pass the</span>
+					  <span class="c1">// response status you can then</span>
+					  <span class="c1">// consume such status responses</span>
+					  <span class="c1">// via ResponseEntity objects.</span>
+      <span class="kd">public</span> <span class="n">Taco</span> <span class="nf">postTaco</span><span class="p">(</span><span class="nd">@RequestBody</span> <span class="n">Taco</span> <span class="n">taco</span><span class="p">)</span> <span class="p">{</span>
+       <span class="k">return</span> <span class="n">tacoRepo</span><span class="p">.</span><span class="na">save</span><span class="p">(</span><span class="n">taco</span><span class="p">);</span>
+      <span class="p">}</span>
+</pre></div>
+
+<p>
+See <a href="https://www.baeldung.com/spring-request-response-body">this</a> for more. So you see this is how you handle json
+requests in a straightforward way. Not even jacksonjson is
+needed.
+</p>
+</li>
+
+<li>
+<p>
+<code>@RequestParam</code>
+</p>
+
+<p>
+Similar as <code>@RequestBody</code>, specifying what you want from there.
+</p>
+
+<div class="highlight"><pre><span></span>      <span class="nd">@GetMapping</span><span class="p">(</span><span class="s">"/age"</span><span class="p">)</span>
+      <span class="n">ResponseEntity</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">age</span><span class="p">(</span>
+	<span class="nd">@RequestParam</span><span class="p">(</span><span class="s">"yearOfBirth"</span><span class="p">)</span> <span class="kt">int</span> <span class="n">yearOfBirth</span><span class="p">)</span> <span class="p">{</span>
+
+	  <span class="k">if</span> <span class="p">(</span><span class="n">isInFuture</span><span class="p">(</span><span class="n">yearOfBirth</span><span class="p">))</span> <span class="p">{</span>
+	      <span class="k">return</span> <span class="k">new</span> <span class="n">ResponseEntity</span><span class="o">&lt;&gt;</span><span class="p">(</span>
+		<span class="s">"Year of birth cannot be in the future"</span><span class="p">,</span> 
+		<span class="n">HttpStatus</span><span class="p">.</span><span class="na">BAD_REQUEST</span><span class="p">);</span>
+	  <span class="p">}</span>
+
+	  <span class="k">return</span> <span class="k">new</span> <span class="n">ResponseEntity</span><span class="o">&lt;&gt;</span><span class="p">(</span>
+	    <span class="s">"Your age is "</span> <span class="o">+</span> <span class="n">calculateAge</span><span class="p">(</span><span class="n">yearOfBirth</span><span class="p">),</span> 
+	    <span class="n">HttpStatus</span><span class="p">.</span><span class="na">OK</span><span class="p">);</span>
+      <span class="p">}</span>
+</pre></div>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org7f131cf" class="outline-4">
+<h4 id="org7f131cf">HATEOAS</h4>
+<div class="outline-text-4" id="text-org7f131cf">
+<p>
+Note that if you want you can work with <i>Hypermedia as the Engine
+of Application State</i> as a standard for setting up your REST
+endpoints.
+</p>
+
+<p>
+You can read the idea <a href="https://en.wikipedia.org/wiki/HATEOAS">here</a>.
+</p>
+
+<p>
+I think the idea is nice. The idea is that you can give back some
+endpoints in your responses such that you can then programatically
+trigger some endpoints in a programmatic way without hard-coding
+them.
+</p>
+
+<p>
+The entire application is then more bounded to the code itself and
+less on hard-coded strings.
+</p>
+
+<p>
+Set your mental framework correctly. Understand that each time you
+have two components:
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+<b>Producing</b>:
+</p>
+
+<p>
+Here the idea is to generate the message with the relevant
+endpoints information.
+</p>
+</li>
+
+<li>
+<p>
+<b>Consuming</b>:
+</p>
+
+<p>
+Here the idea is to actually read the information produced by
+the <code>producing</code> component and navigate everything
+programatically. The
+</p>
+
+<p>
+Note that while there is sdk to consume and create such in Java
+I could not find anything like this in flask. You will have some
+issues in this sense. 
+</p>
+</li>
+</ul>
+<p>
+Read again in the book if you want to go in that direction. Also
+<a href="https://docs.spring.io/spring-hateoas/docs/current/reference/html/#fundamentals.representation-models">this</a> is a good documentation.
+</p>
+
+<p>
+<b>Update 19/04:</b> started to read quite a bit in it and implement
+them. They are a little bit in the <a href="https://github.com/MarcoHassan/mySpringPlayground">spring Playground</a>.
+</p>
+
+<p>
+Uff… it is a steep learning to properly use this
+compoenent. There might be as well proxy issues. Check <a href="https://docs.spring.io/spring-hateoas/docs/current/reference/html/#server.link-builder.forwarded-headers">this in
+case</a>.    
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgca7ea94" class="outline-4">
+<h4 id="orgca7ea94">Spring Data REST</h4>
+<div class="outline-text-4" id="text-orgca7ea94">
+<p>
+Basically here the concept is the following.
+</p>
+
+<p>
+If you include the <code>spring-boot-starter-data-rest</code> dependency in
+your configuration and you work with Spring Data, then Spring will
+create out of the box endpoints for your Spring Data JPA
+repositories and will even expose endpoints following <code>HETOAS</code>
+convention as mentioned above.
+</p>
+
+<p>
+So note how you should work with JPA if you want to work with
+Spring Data REST.
+</p>
+
+<p>
+Otherwise if you want to work with pure SQL you will have to
+manually set up the endpoints yourself as discussed in the previous
+sections.
+</p>
+
+<p>
+So this is a design choice you will have to face soonish. The point
+remains open to this stage.
+</p>
+
+<p>
+I think the question is if you want to stay generally in the same
+environment or not.
+</p>
+</div>
+
+<ul class="org-ul">
+<li>
+<a id="orgf4cd73f"></a>Important Note<br><div class="outline-text-5" id="text-orgf4cd73f">
+<p>
+If you will ever decide to go down that road read chapter <i>6.3.1 -
+Adjusting resource paths and relation names</i> in the book.
+</p>
+
+<p>
+There is some tricky nounces with the endpoints that you will have
+to keep in mind and remember.    
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org585e6f9" class="outline-4">
+<h4 id="org585e6f9">Consuming REST services</h4>
+<div class="outline-text-4" id="text-org585e6f9">
+<p>
+There are essentially three ways of consuming a REST interface:
+</p>
+
+<ul class="org-ul">
+<li>
+<code>RestTemplate</code>: this is a synchronous REST client provided by the
+Spring Framework.</li>
+
+<li>
+<code>Traverson</code>: a hyperlink-aware synchronous REST client provided
+by Spring HATEOAS. See more on hyperlink <a href="#org7f131cf">here</a>.</li>
+
+<li>
+<code>WebClient</code>: a <b>reactive</b> asynchronous REST client - see <a href="#org3d695da">here</a>.</li>
+</ul>
+</div>
+
+<ul class="org-ul">
+<li>
+<a id="org30d826d"></a>RestTemplate<br><div class="outline-text-5" id="text-org30d826d">
+<p>
+basically RestTemplate provides 41 methods for interacting with
+REST resources.
+</p>
+
+<p>
+You can then surf around in the internet in order to see the
+different methods.
+</p>
+
+<p>
+What you should take away is the following basic structure:
+</p>
+
+<ul class="org-ul">
+<li>instantiate the RestTemplate</li>
+</ul>
+<p>
+You can do that either by instantiating an instance for it as
+usual or by creating a <code>Bean</code> and injecting it around the
+application.
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="c1">// creating an instance</span>
+     <span class="n">RestTemplate</span> <span class="n">rest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RestTemplate</span><span class="p">();</span> 
+
+     <span class="c1">// vs.</span>
+
+     <span class="nd">@Bean</span>
+     <span class="kd">public</span> <span class="n">RestTemplate</span> <span class="nf">restTemplate</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="n">RestTemplate</span><span class="p">();</span>
+     <span class="p">}</span>
+</pre></div>
+
+<p>
+undestand this difference as it is core to the Spring-native way
+of working.
+</p>
+
+<p>
+Then that is basically it. You have then your methods you work
+with:
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="c1">// just one short example, then the basic structure is equal</span>
+     <span class="kd">public</span> <span class="n">Ingredient</span> <span class="nf">getIngredientById</span><span class="p">(</span><span class="n">String</span> <span class="n">ingredientId</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="n">rest</span><span class="p">.</span><span class="na">getForObject</span><span class="p">(</span><span class="s">"http://localhost:8080/ingredients/{id}"</span><span class="p">,</span> <span class="c1">// endpoint to be consumed</span>
+      <span class="n">Ingredient</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">ingredientId</span><span class="p">);</span>  <span class="c1">// second argument object you want</span>
+					<span class="c1">// to get. Will deserialize the</span>
+					<span class="c1">// json object into such Object.</span>
+					<span class="c1">// third argument -&gt; paramter for the url.</span>
+
+     <span class="p">}</span>
+</pre></div>
+
+<p>
+Note that this is a bit the idea. There are better methods then.
+In this way it will be possible to work in a more structured
+way. Check at the method involving maps in this sense.
+</p>
+
+<p>
+The basic idea stays. You can consume your endpoints in such way,
+passing parameters and deserializing the response to Java native
+Objects.
+</p>
+</div>
+</li>
+
+<li>
+<a id="org18070f8"></a>Traverson<br><div class="outline-text-5" id="text-org18070f8">
+<p>
+Basically this is similar to the simple RestTemplate and it is the
+way to cconsume hypermedia APIs.
+</p>
+
+<p>
+I leave this section for now as I am still not sure I will work
+with HATEOAS.
+</p>
+
+<p>
+Recall in any case that once you have hypermedia APIs you consume
+API by traversing multiple API based on the response.
+</p>
+
+<p>
+So you should use this in order to properly consume HETEOAS
+endpoints.
+</p>
+
+<p>
+How you write them is something different though. Understand this point.
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-orga9a8d8b" class="outline-4">
+<h4 id="orga9a8d8b">Document Spring APIs via OpenApi standards</h4>
+<div class="outline-text-4" id="text-orga9a8d8b">
+<p>
+This is essentially what you were doing in your last projects at
+IBM.
+</p>
+
+<p>
+Check at this <a href="https://www.baeldung.com/spring-rest-openapi-documentation">website</a>. This is what you will start to do here as
+well.
+</p>
+
+<p>
+See then the subchapter 9. in order to see how that is done.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="nd">@Operation</span><span class="p">(</span><span class="n">summary</span> <span class="o">=</span> <span class="s">"Get a book by its id"</span><span class="p">)</span>
+    <span class="nd">@ApiResponses</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="p">{</span> 
+      <span class="nd">@ApiResponse</span><span class="p">(</span><span class="n">responseCode</span> <span class="o">=</span> <span class="s">"200"</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"Found the book"</span><span class="p">,</span> 
+	<span class="n">content</span> <span class="o">=</span> <span class="p">{</span> <span class="nd">@Content</span><span class="p">(</span><span class="n">mediaType</span> <span class="o">=</span> <span class="s">"application/json"</span><span class="p">,</span> 
+	  <span class="n">schema</span> <span class="o">=</span> <span class="nd">@Schema</span><span class="p">(</span><span class="n">implementation</span> <span class="o">=</span> <span class="n">Book</span><span class="p">.</span><span class="na">class</span><span class="p">))</span> <span class="p">}),</span>
+      <span class="nd">@ApiResponse</span><span class="p">(</span><span class="n">responseCode</span> <span class="o">=</span> <span class="s">"400"</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"Invalid id supplied"</span><span class="p">,</span> 
+	<span class="n">content</span> <span class="o">=</span> <span class="nd">@Content</span><span class="p">),</span> 
+      <span class="nd">@ApiResponse</span><span class="p">(</span><span class="n">responseCode</span> <span class="o">=</span> <span class="s">"404"</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"Book not found"</span><span class="p">,</span> 
+	<span class="n">content</span> <span class="o">=</span> <span class="nd">@Content</span><span class="p">)</span> <span class="p">})</span>
+    <span class="nd">@GetMapping</span><span class="p">(</span><span class="s">"/{id}"</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="n">Book</span> <span class="nf">findById</span><span class="p">(</span><span class="nd">@Parameter</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s">"id of book to be searched"</span><span class="p">)</span> 
+      <span class="nd">@PathVariable</span> <span class="kt">long</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">repository</span><span class="p">.</span><span class="na">findById</span><span class="p">(</span><span class="n">id</span><span class="p">).</span><span class="na">orElseThrow</span><span class="p">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">BookNotFoundException</span><span class="p">());</span>
+    <span class="p">}</span>
+</pre></div>
+
+<p>
+i.e. this is how you annotate the different things in your API.
+</p>
+
+<p>
+You can then properly expose them.
+</p>
+
+<p>
+Note that I am having some minor troubles to set it up properly.
+In order to do that, check at the following: <a href="https://blog.mestwin.net/openapi-3-documentation-for-your-spring-rest-api-with-springdoc-openapi/">link</a>.
+</p>
+
+<p>
+Ok - so the normal way where everything is integrated
+out-of-the-box should be done via the following plugin: <a href="https://github.com/springdoc/springdoc-openapi-gradle-plugin">here</a>. Note
+that apparently this is not on MavenCentral and you would have to
+install it manually. Follow the instructions on Github for it. 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org079aee9" class="outline-3">
+<h3 id="org079aee9">Asynchoronous Communication</h3>
+<div class="outline-text-3" id="text-org079aee9">
+<blockquote>
+<p>
+Asynchronous messaging is a way of indirectly sending messages from
+one application to another without waiting for a response. This
+indirection affords looser coupling and greater scalability between
+the communicating applications.
+</p>
+</blockquote>
+
+<p>
+So basically this you will use when you ship long-running jobs for
+which there is no chance to get an immediate response from the
+service.
+</p>
+
+<p>
+As you well know the most standard way to implement asynchoronous
+communication is via message brokers.
+</p>
+
+<p>
+We will see in this sense the possibilities that Spring offers to
+work through message brokers with the goal of setting up solid and
+reliable asynchronous communication.
+</p>
+
+<p>
+We will check in this sense:
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+<code>Java Message Service (JMS)</code> 
+</p>
+
+<p>
+JMS is a Java standard that defines a common API for working with
+message brokers.
+</p>
+
+<p>
+This is nice as independently of the message broker of choice you
+use the same. A bit like JDBC for relational DBs.
+</p>
+
+<p>
+Should be also easy to swap across message brokers for your
+Spring application.
+</p>
+
+<p>
+Spring supports JMS through a template-based abstraction known
+as JmsTemplate.  Using JmsTemplate, it’s easy to send messages
+across queues and topics from the producer side and to receive
+those messages on the consumer side.
+</p>
+
+<p>
+This is in fact what you already saw with the Azure Service
+Bus. There it was as well recommended to use the JMS API to
+interact with the broker.
+</p>
+
+<p>
+However, note that as you already stated in your notes everything
+is based on polled operations here.
+</p>
+
+<p>
+I will not go in depth again in the module. You get the thing at
+conceptual level and that is enough. If you decide to work in
+such a polled way then you can start to work with it. 
+</p>
+</li>
+
+<li>
+<p>
+<code>Advanced Message Queueing Protocol (AMQP)</code>
+</p>
+
+<p>
+Whereas JMS messages are addressed with the name of a destination
+from which the receiver will retrieve them, AMQP messages are
+addressed with the <b>name of an exchange and a routing key</b>, which
+are decoupled from the queue that the receiver is listening to.
+</p>
+
+<p>
+If you want to have the <b>easy message</b> to the point without too
+much boilerplate understand the following:
+</p>
+
+<blockquote>
+<p>
+The most important thing to understand is that messages are sent to
+exchanges with routing keys and they’re consumed from queues. How
+they get from an exchange to a queue depends on the binding
+definitions and what best suits your use cases.
+</p>
+</blockquote>
+
+<p>
+See more on RabbitMQ below.
+</p>
+</li>
+
+<li>
+<p>
+<code>RabbitMQ</code>
+</p>
+
+<p>
+This is one of the most prominent implementation of AMQP.
+</p>
+
+<p>
+See below the idea of exchanges.
+</p>
+</li>
+</ul>
+<img src="../../images/rabbitIdea.png" class="center"><blockquote>
+<p>
+When a message arrives at the RabbitMQ broker, it goes to the exchange
+for which it was addressed. The exchange is responsible for routing it
+to one or more queues, depending on the type of exchange, the binding
+between the exchange and queues, and the value of the message’s
+routing key.
+</p>
+</blockquote>
+
+<p>
+So you see that the architecture of such broker is slightly more
+complex in comparison of a simple queue with a fix address that
+you connect to with JMS.
+</p>
+
+<p>
+I think that this is a too complex architecture for what you want
+to accomplish at the moment. 
+</p>
+
+<p>
+In any case here an overview of the thingy:
+</p>
+
+<img src="../../images/Screenshot%202022-03-04%20101611.png" class="center"><p>
+In the sense that simple default and fanout routing should be
+sufficient to accomplish what you have in mind. 
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+<code>Apache Kafka</code>
+</p>
+
+<p>
+So essentially Kafka is a broker as others. I.e. the task it
+fulfills is the one of a message broker.
+</p>
+</li>
+</ul>
+<p>
+However, note that Kafka is not an exchange as a pure
+RabbitMQ. It simply offers the possibility of brokering messages
+via topics in order to accomplish pub-sub tasks.
+</p>
+
+<p>
+The big difference with other pub-sub solutions lies in resiliency.
+</p>
+
+<p>
+The big major difference between Kafka brokers and other brokers
+is that Kafka is designed to <b>run into a cluster</b>.
+</p>
+
+<p>
+Understand as well the following architectural design of Kafka:
+</p>
+
+<blockquote>
+<p>
+Kafka topics are replicated across all brokers in the cluster.
+</p>
+
+<p>
+Each node in the cluster acts as a leader for one or more topics,
+being responsible for that topic’s data and replicating it to the
+other nodes in the cluster.
+</p>
+
+<p>
+Going a step further, each topic can be split into multiple
+partitions. In that case, each node in the cluster is the leader for
+one or more partitions of a topic, but not for the entire
+topic. Responsibility for the topic is split across all nodes.
+</p>
+</blockquote>
+
+<p>
+So you see that resiliency is a first class citizen of Kafka.
+</p>
+
+<img src="../../images/Screenshot%202022-03-04%20110855.png" class="center"><p>
+So good to know what that is at high level.
+</p>
+
+<p>
+Clearly not interesting for you as it has nothing to do with the
+thing you want to achieve. 
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+<code>POJO</code>
+</p>
+
+<p>
+Well I must say that what is written in - Spring in Action 5th
+edition - is quite confusing. Not the best explanation that you
+can find out there according to me.
+</p>
+
+<p>
+In any case I think it is smth that goes in the direction of
+Hibernate, i.e. stay always in the OOP paradigma and treat
+everything as objects - i.e. your first class citizens in Java -
+and interact with your brokers directly through objects. 
+</p>
+
+<blockquote>
+<p>
+Spring also supports the notion of message-driven POJOs: simple Java
+objects that react to messages arriving on a queue or topic in an
+asynchronous fashion.
+</p>
+</blockquote>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org4f98da0" class="outline-2">
+<h2 id="org4f98da0">Spring Data</h2>
+<div class="outline-text-2" id="text-org4f98da0">
+<p>
+So we will treat here how to interact with JDBC and JPA in Spring.
+</p>
+
+<p>
+Note that the difference between the two is the level of
+abstraction. Through JDBC you communicate directly with the DB by
+passing SQL queries and interacting with the driver of the DB.
+</p>
+
+<p>
+JPA is the higher level of abstraction. There you can work with the
+first-class citzens of java: objects. Check your other post where
+you digged a little bit more deeper into them.
+</p>
+
+<p>
+Note that these notes are just approximate. You make sense of the
+java way of developing in here. Note that you should then just refer
+to these to get the gist of the idea when creating your first
+restful service with data persistence.
+</p>
+
+<p>
+You should then create the most logical and classical way for
+persistence using the following repository holding the code for the
+application in a unified way: <a href="https://github.com/habuma/spring-in-action-5-samples/tree/master/ch03/tacos-jdbc/src/main/java/tacos">here</a>.
+</p>
+</div>
+
+<div id="outline-container-org531b856" class="outline-3">
+<h3 id="org531b856">Spring JDBC</h3>
+<div class="outline-text-3" id="text-org531b856">
+<p>
+Spring JDBC support is rooted in the JdbcTemplate class.
+</p>
+
+<p>
+JdbcTemplate provides a means by which developers can perform SQL
+operations against a relational database without all the ceremony and
+boilerplate typically required when working with JDBC.
+</p>
+
+<p>
+So basically with jdbc you do not have to handle all of the
+connections and the error messages explicitely. So the module in Java
+helps you to work without all of the boilerplate.
+</p>
+
+<p>
+I like this code as it is more lean than without the templates. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org647f777" class="outline-3">
+<h3 id="org647f777">Reading from RDMS</h3>
+<div class="outline-text-3" id="text-org647f777">
+<p>
+You would do that in the follwoing way leveraging on the JDBC templates
+</p>
+
+<div class="highlight"><pre><span></span> <span class="c1">// Note how you focus on the query in here. No connection is handeled. </span>
+ <span class="nd">@Override</span>
+ <span class="kd">public</span> <span class="n">Ingredient</span> <span class="nf">findOne</span><span class="p">(</span><span class="n">String</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">jdbc</span><span class="p">.</span><span class="na">queryForObject</span><span class="p">(</span>
+  <span class="s">"select id, name, type from Ingredient where id=?"</span><span class="p">,</span>
+  <span class="k">this</span><span class="p">::</span><span class="n">mapRowToIngredient</span><span class="p">,</span> <span class="n">id</span><span class="p">);</span>  
+ <span class="p">}</span>
+
+ <span class="c1">// Your function for mapping queries to results.</span>
+ <span class="kd">private</span> <span class="n">Ingredient</span> <span class="nf">mapRowToIngredient</span><span class="p">(</span><span class="n">ResultSet</span> <span class="n">rs</span><span class="p">,</span> <span class="kt">int</span> <span class="n">rowNum</span><span class="p">)</span>
+  <span class="kd">throws</span> <span class="n">SQLException</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="n">Ingredient</span><span class="p">(</span>
+  <span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">"id"</span><span class="p">),</span>
+  <span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">"name"</span><span class="p">),</span>
+  <span class="n">Ingredient</span><span class="p">.</span><span class="na">Type</span><span class="p">.</span><span class="na">valueOf</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">"type"</span><span class="p">)));</span>
+ <span class="p">}</span>
+</pre></div>
+
+
+<p>
+Note that the <code>queryForObject</code> above maps the query to a single
+object.
+</p>
+
+<p>
+If you want to map each row of the query to an object which you then
+would save in a <b>Collection</b> you can use the <code>query</code> method. Check
+the below in this sense:
+</p>
+
+<div class="highlight"><pre><span></span> <span class="nd">@Override</span>
+ <span class="c1">// note the Collection result here.</span>
+ <span class="kd">public</span> <span class="n">Iterable</span><span class="o">&lt;</span><span class="n">Ingredient</span><span class="o">&gt;</span> <span class="nf">findAll</span><span class="p">()</span> <span class="p">{</span> 
+  <span class="k">return</span> <span class="n">jdbc</span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">"select id, name, type from Ingredient"</span><span class="p">,</span>
+  <span class="k">this</span><span class="p">::</span><span class="n">mapRowToIngredient</span><span class="p">);</span> <span class="c1">// not same mapRowToIngredient method</span>
+ <span class="p">}</span>
+</pre></div>
+
+<p>
+So basically that is how it works. you just have then to embedd such
+methods into a class that is initialized with jdbc template.
+</p>
+
+<p>
+You can do that as <a href="https://github.com/habuma/spring-in-action-5-samples/blob/master/ch03/tacos-jdbc/src/main/java/tacos/data/JdbcIngredientRepository.java">here</a>. Note as well the constructor with
+<code>@Autowired</code> there. This is a Spring specific annotation in order to
+get things in the context etc. Note as well the installation of
+<code>RowMapper</code>. Note that this necessary as the second argument of the
+<code>query</code> etc. is in fact a rowmapper and the referenced methods are
+interenally treated as such. You can find in the book an example on
+how to work explicitely with Rowmapper but this is not in my interest
+as it just clutters the code.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0beae6b" class="outline-3">
+<h3 id="org0beae6b">Writing to RDMS</h3>
+<div class="outline-text-3" id="text-org0beae6b">
+<p>
+To write into the RDMS using JDBC template you can use the
+<code>update</code> method.
+</p>
+
+<p>
+You can do that in the follwoing way
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nd">@Override</span>
+   <span class="kd">public</span> <span class="n">Ingredient</span> <span class="nf">save</span><span class="p">(</span><span class="n">Ingredient</span> <span class="n">ingredient</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">jdbc</span><span class="p">.</span><span class="na">update</span><span class="p">(</span>
+    <span class="s">"insert into Ingredient (id, name, type) values (?, ?, ?)"</span><span class="p">,</span>
+    <span class="n">ingredient</span><span class="p">.</span><span class="na">getId</span><span class="p">(),</span>
+    <span class="n">ingredient</span><span class="p">.</span><span class="na">getName</span><span class="p">(),</span>
+    <span class="n">ingredient</span><span class="p">.</span><span class="na">getType</span><span class="p">().</span><span class="na">toString</span><span class="p">());</span>
+    <span class="k">return</span> <span class="n">ingredient</span><span class="p">;</span>
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+Because it isn’t necessary to map ResultSet data to an object, the
+<code>update()</code> method is much simpler than <code>query()</code> or
+<code>queryForObject()</code>.
+</p>
+
+<p>
+There is then a messy section about writing the stuff in the DB
+when you have to make sure all of the keys relations are
+satisfied. I jumped it as it is not well written. In this book you
+do not have an overview of what piece of code is written were, so I
+thought I will understand at the time of getting my hands dirty
+with it. So wait for it and tackle this down at a later point.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2d14f9a" class="outline-3">
+<h3 id="org2d14f9a">Creating and Populating your Tables</h3>
+<div class="outline-text-3" id="text-org2d14f9a">
+<p>
+You can define the db schema in Java in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="n">create</span> <span class="n">table</span> <span class="k">if</span> <span class="n">not</span> <span class="n">exists</span> <span class="nf">Ingredient</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">name</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">type</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span>
+   <span class="p">);</span>
+
+   <span class="n">create</span> <span class="n">table</span> <span class="k">if</span> <span class="n">not</span> <span class="n">exists</span> <span class="nf">Taco</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="n">identity</span><span class="p">,</span>
+    <span class="n">name</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">createdAt</span> <span class="n">timestamp</span> <span class="n">not</span> <span class="kc">null</span>
+   <span class="p">);</span>
+
+   <span class="n">create</span> <span class="n">table</span> <span class="k">if</span> <span class="n">not</span> <span class="n">exists</span> <span class="nf">Taco_Ingredients</span> <span class="p">(</span>
+    <span class="n">taco</span> <span class="n">bigint</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">ingredient</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span>
+   <span class="p">);</span>
+
+   <span class="n">alter</span> <span class="n">table</span> <span class="n">Taco_Ingredients</span>
+    <span class="n">add</span> <span class="n">foreign</span> <span class="nf">key</span> <span class="p">(</span><span class="n">taco</span><span class="p">)</span> <span class="n">references</span> <span class="nf">Taco</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+
+   <span class="n">alter</span> <span class="n">table</span> <span class="n">Taco_Ingredients</span>
+    <span class="n">add</span> <span class="n">foreign</span> <span class="nf">key</span> <span class="p">(</span><span class="n">ingredient</span><span class="p">)</span> <span class="n">references</span> <span class="nf">Ingredient</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+
+   <span class="n">create</span> <span class="n">table</span> <span class="k">if</span> <span class="n">not</span> <span class="n">exists</span> <span class="nf">Taco_Order</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="n">identity</span><span class="p">,</span>
+    <span class="n">deliveryName</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">deliveryStreet</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">deliveryCity</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">deliveryState</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">deliveryZip</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">ccNumber</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">ccExpiration</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">ccCVV</span> <span class="nf">varchar</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">placedAt</span> <span class="n">timestamp</span> <span class="n">not</span> <span class="kc">null</span>
+   <span class="p">);</span>
+
+   <span class="n">create</span> <span class="n">table</span> <span class="k">if</span> <span class="n">not</span> <span class="n">exists</span> <span class="nf">Taco_Order_Tacos</span> <span class="p">(</span>
+    <span class="n">tacoOrder</span> <span class="n">bigint</span> <span class="n">not</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="n">taco</span> <span class="n">bigint</span> <span class="n">not</span> <span class="kc">null</span>
+   <span class="p">);</span>
+
+   <span class="n">alter</span> <span class="n">table</span> <span class="n">Taco_Order_Tacos</span>
+    <span class="n">add</span> <span class="n">foreign</span> <span class="nf">key</span> <span class="p">(</span><span class="n">tacoOrder</span><span class="p">)</span> <span class="n">references</span> <span class="nf">Taco_Order</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+
+   <span class="n">alter</span> <span class="n">table</span> <span class="n">Taco_Order_Tacos</span>
+    <span class="n">add</span> <span class="n">foreign</span> <span class="nf">key</span> <span class="p">(</span><span class="n">taco</span><span class="p">)</span> <span class="n">references</span> <span class="nf">Taco</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+</pre></div>
+
+
+<p>
+Now the question is if you want to do it like that in Java or not.
+</p>
+
+<p>
+I like the idea as this is plain SQL. So you can keep it in your
+project repo. You can moverover generate the schema for localhost
+embedded DB as H2 where you can test and work in dev mode.
+</p>
+
+<p>
+Moreover once everything defined you can run the same sql file to
+populate your DB of interest.
+</p>
+
+<p>
+If you take this approach you just have to make sure that the H2
+embedded DB has the same SQL dialect as the server you are using
+and make all of these kind of reasoning. 
+</p>
+
+<p>
+So the question is how do you execute the schema definition above?
+</p>
+
+<p>
+Again Spring comes at rescue. In the moment where you will save the
+stuff in the proper repo and adhere to some basic convention the
+file <b>will be executed</b> against the DB when the application
+starts.
+</p>
+
+<p>
+I.e. you should save the file as <code>schema.sql</code> in the
+<code>src/main/resources</code> repo.
+</p>
+
+<p>
+You can find the example fo the book <a href="https://github.com/habuma/spring-in-action-5-samples/tree/master/ch03/tacos-jdbc/src/main/resources">here</a>.
+</p>
+
+<p>
+You can as well pre-populate the DB with some records by writing
+some insert statements in a <code>data.sql</code> file also saved on the same
+repo.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgca097cd" class="outline-3">
+<h3 id="orgca097cd">Spring JPA</h3>
+<div class="outline-text-3" id="text-orgca097cd">
+<p>
+Ok - here there is a big discussion among the Java experts in my
+team and other people coming from other programming languages.
+</p>
+
+<p>
+I still have to understand it properly. Heavy Java users claim it
+is the way to work with data in Java. It will allow the developer
+to keep thinking and programming in terms of objects.
+</p>
+
+<p>
+On the other hand it is true that if you work through such layer
+you will create a strong dependency to Java. It will not be easy to
+migrate to other modern data-driven languages that direct SQL.
+</p>
+
+<p>
+Think for instance the SQL in the python environment where you can
+apply it directly to pandas, apache-spark-sql etc.
+</p>
+
+<p>
+I also have to understnad better the scope of Spring JPA - and the
+extent to which it differs from Hibernate JPA. I think in fact that
+Spring JPA leverages by default the Hibernate JPA but would have
+eventually to check it up once and if you decided to go through
+this JPA experience in the way you develop in Java.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org9497649" class="outline-2">
+<h2 id="org9497649">Spring Integration</h2>
+<div class="outline-text-2" id="text-org9497649">
+<p>
+That is also a nice feature.
+</p>
+
+<p>
+See the book:
+</p>
+
+<blockquote>
+<p>
+Sring Integration is a ready-to-use implementation of many of the
+integration patterns that are catalogued in Enterprise Integration
+Patterns by Gregor Hohpe and Bobby Woolf (Addison-Wesley, 2003).
+</p>
+
+<p>
+Each pattern is implemented as a component through which messages
+ferry data in a pipeline, you can assemble these components into a
+pipeline through which data flows. 
+</p>
+</blockquote>
+
+<p>
+This is something that you want to explore. It basically is an
+entire suit that will allow you to easily interface with external
+systems.
+</p>
+
+<p>
+In fact look at the perfect match in the various components of the
+integration chain described in spring and in the book as described
+on this <a href="https://www.enterpriseintegrationpatterns.com/patterns/messaging/">website</a>.
+</p>
+
+<p>
+So note that sooner or later you will have to master these different
+components. Recall that the idea is always the same. <a href="https://marcohassan.github.io/bits-of-experience/posts/on-a-brownfield-play/">Pattern Up or
+Surrender</a>. 
+</p>
+</div>
+
+<div id="outline-container-org7cf0cb2" class="outline-3">
+<h3 id="org7cf0cb2">FileSystem Integration</h3>
+<div class="outline-text-3" id="text-org7cf0cb2">
+<p>
+The file endpoint module offers the ability to ingest files from
+the filesystem into an integration flow and/or to write data from a
+flow to the filesystem.
+</p>
+
+<p>
+This is important and you can start to see how you can work with
+it. Think for instance to your feed application. This is what you
+will need. 
+</p>
+
+<p>
+Check for instance the following example
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">import</span> <span class="nn">org.springframework.integration.annotation.MessagingGateway</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.integration.file.FileHeaders</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.springframework.messaging.handler.annotation.Header</span><span class="p">;</span>
+
+   <span class="nd">@MessagingGateway</span><span class="p">(</span><span class="n">defaultRequestChannel</span><span class="o">=</span><span class="s">"textInChannel"</span><span class="p">)</span>  <span class="c1">// open text channel.</span>
+   <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">FileWriterGateway</span> <span class="p">{</span>
+       <span class="kt">void</span> <span class="nf">writeToFile</span><span class="p">(</span>
+			<span class="nd">@Header</span><span class="p">(</span><span class="n">FileHeaders</span><span class="p">.</span><span class="na">FILENAME</span><span class="p">)</span> <span class="n">String</span> <span class="n">filename</span><span class="p">,</span> <span class="c1">// here</span>
+								       <span class="c1">// you</span>
+								       <span class="c1">// pass</span>
+								       <span class="c1">// the</span>
+								       <span class="c1">// filename</span>
+								       <span class="c1">// you</span>
+								       <span class="c1">// want</span>
+								       <span class="c1">// to</span>
+								       <span class="c1">// write</span>
+								       <span class="c1">// to.</span>
+			<span class="n">String</span> <span class="n">data</span><span class="p">);</span> <span class="c1">// here is the stuff you write to the file.</span>
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+So you understand that this is much easier in comparison to
+starting open Inputstreams and parse line by line.
+</p>
+
+<p>
+Understand now the following:
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+<code>@MessagingGateway</code>:
+</p>
+
+<p>
+This annotation tells Spring Integration to generate an
+<b>implementation of this interface</b> at runtime.  The others part
+of the code will use then this interface when they need to write
+a file.
+</p>
+
+<p>
+Note now that any call to the implementation of the
+MessagingGateway, will be sent to the given message channel. In
+this case, you state that any messages that result from a call to
+writeToFile() should be sent to the channel whose name is
+textInChannel.
+</p>
+
+<p>
+So you understand a bit at high level how the Spring Integration
+framework works.
+</p>
+</li>
+</ul>
+<p>
+Note then that you can start to define how the write should be
+performed thorugh different configuration options - say:
+</p>
+
+<ol class="org-ol">
+<li>XML configuration</li>
+<li>Java configuration</li>
+<li>Java configuration with a DSL</li>
+</ol>
+<p>
+If you work with XML one of the typical examples could be the
+following:
+</p>
+
+<div class="highlight"><pre><span></span>   &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+   &lt;beans xmlns="http://www.springframework.org/schema/beans"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xmlns:int="http://www.springframework.org/schema/integration"
+	  xmlns:int-file="http://www.springframework.org/schema/integration/file"
+	  xsi:schemaLocation="http://www.springframework.org/schema/beans
+			      http://www.springframework.org/schema/beans/spring-beans.xsd
+			      http://www.springframework.org/schema/integration
+			      http://www.springframework.org/schema/integration/spring-integration.xsd
+			      http://www.springframework.org/schema/integration/file
+			      http://www.springframework.org/schema/integration/file/springintegration-file.xsd"&gt;
+     &lt;int:channel id="textInChannel" /&gt; 
+     &lt;int:transformer id="upperCase"
+		      input-channel="textInChannel"
+		      output-channel="fileWriterChannel"
+		      expression="payload.toUpperCase()" /&gt; &lt;!-- interesting - it seems that you can enter java here. --&gt;
+     &lt;int:channel id="fileWriterChannel" /&gt; 
+     &lt;int-file:outbound-channel-adapter id="writer"
+					channel="fileWriterChannel"
+					directory="/tmp/sia5/files"
+					mode="APPEND"
+					append-new-line="true" /&gt;    &lt;!-- see here you append and not do it. --&gt;
+   &lt;/beans&gt;
+</pre></div>
+
+<p>
+You can then continue reading in the book for the other two
+configuration possibilities.
+</p>
+</div>
+
+<div id="outline-container-orgee70155" class="outline-4">
+<h4 id="orgee70155">Integration Components</h4>
+<div class="outline-text-4" id="text-orgee70155">
+<p>
+Now note that in a similar way as you have created your file
+system integration and write into there, you can create similar
+integration patterns around your application.
+</p>
+
+<p>
+So that is basically it. Understand now that you have the
+following lego components through which you can set up your
+integration patterns. 
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+Channels:
+</p>
+
+<p>
+pass messages from one element to the other. See for instance
+the example above.
+</p>
+</li>
+
+<li>
+<p>
+Filters:
+</p>
+
+<p>
+contionally allow messages to pass through
+</p>
+</li>
+
+<li>
+<p>
+Transformers:
+</p>
+
+<p>
+change message values. See this is what you have used above in
+the xml config file to make everything uppercase.      
+</p>
+</li>
+
+<li>
+<p>
+Routers:
+</p>
+
+<p>
+direct messages to one of several channels.
+</p>
+</li>
+
+<li>
+<p>
+Splitters:
+</p>
+
+<p>
+Split incoming messages into two or more messages, each sent to
+<b>different channels</b>.
+</p>
+</li>
+
+<li>
+<p>
+Aggregators:
+</p>
+
+<p>
+The opposite of splitters, <b>combining multiple messages</b> coming in
+from separate channels into a single message. 
+</p>
+</li>
+
+<li>
+<p>
+Service Activators:
+</p>
+
+<p>
+Hand a message off to some Java method for processing, and then
+publish the return value on an output channel.
+</p>
+
+<p>
+<i>nice</i>.
+</p>
+</li>
+
+<li>
+<p>
+Channel Adapters:
+</p>
+
+<p>
+Connect a channel to some external system or transport. Can
+either accept input or write to the external system.
+</p>
+</li>
+
+<li>
+<p>
+Gateways:
+</p>
+
+<p>
+pass data to an integration flow via an interface.
+</p>
+</li>
+</ul>
+<p>
+Note that to properly manage Spring integration is a job on its
+own. Like all of the major components you came across that far.
+</p>
+
+<p>
+Leave it on hold for now but note that you have multiple channels,
+like:
+</p>
+
+<ul class="org-ul">
+<li><code>pubSubscribe</code></li>
+
+<li><code>queues</code></li>
+
+<li>etc.</li>
+</ul>
+<p>
+Just understand how you inject the stuff in your application here
+and there.
+</p>
+
+<p>
+Now your next task will be an integration task. So you will likely
+use this module extensively. Dig into it. 
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org2c92350" class="outline-2">
+<h2 id="org2c92350">Reactive Programming in Spring</h2>
+<div class="outline-text-2" id="text-org2c92350">
+<p>
+This is very cool and is the next gen. architecture mechanism. Very
+cool idea. You can read about it <a href="https://medium.com/@rarepopa_68087/reactive-programming-with-spring-boot-and-webflux-734086f8c8a5">here</a>. This should guide you
+throughout this section. 
+</p>
+
+<p>
+So basically Spring has embedded <i>Project Reactor</i> to reactively
+process streams of data.
+</p>
+
+<p>
+The concept is similar to Java Streams processing a collection with
+the difference that streams occur not on in-memory collections but
+are rather triggered in a reactive way over communication networks.
+</p>
+
+<p>
+You will see in fact that much of the API concepts are shared. So
+you start to see an entire pattern here. All of the reactive,
+parallel things share a lot of these APIs. Think of <i>spark, streams
+and reactors</i>. Lots of overlap.
+</p>
+
+<p>
+Or in words of <i>Spring in Action</i>:
+</p>
+
+<blockquote>
+<p>
+Project Reactor is an implementation of the Reactive Streams
+specification that provides a functional API for composing Reactive
+Streams.
+</p>
+</blockquote>
+</div>
+
+
+<div id="outline-container-org91af6dd" class="outline-3">
+<h3 id="org91af6dd">Mono vs. Flux</h3>
+<div class="outline-text-3" id="text-org91af6dd">
+<p>
+These are the two Reactor's core types.
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+<code>Mono</code>:
+</p>
+
+<blockquote>
+<p>
+Is a specialized reactive type that’s optimized for when the dataset
+is known to have no more than one data item.
+</p>
+</blockquote>
+</li>
+
+<li>
+<p>
+<code>Flux</code>:
+</p>
+
+<blockquote>
+<p>
+represents a pipeline of zero, one, or many (potentially
+infinite) data items.
+</p>
+</blockquote>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4016656" class="outline-3">
+<h3 id="org4016656">Basic APIs for working on Flux and Mono</h3>
+<div class="outline-text-3" id="text-org4016656">
+<p>
+So first of all we will see how to use <code>Flux</code> and <code>Mono</code> in basic
+settings without input from external runtimes.
+</p>
+
+<p>
+This in a sense very much close to the one of Java Streams. In a
+second round we will see how to work properly with input from
+external systems being reactively processed.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">import</span> <span class="nn">reactor.core.publisher.Flux</span><span class="p">;</span>
+
+   <span class="kd">class</span> <span class="nc">SpringReactor</span> <span class="p">{</span>
+
+       <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">createAFlux_just</span><span class="p">()</span> <span class="p">{</span>
+	   <span class="n">Flux</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">fruitFlux</span> <span class="o">=</span> <span class="n">Flux</span>
+	       <span class="p">.</span><span class="na">just</span><span class="p">(</span><span class="s">"Apple"</span><span class="p">,</span> <span class="s">"Orange"</span><span class="p">,</span> <span class="s">"Grape"</span><span class="p">,</span> <span class="s">"Banana"</span><span class="p">,</span> <span class="s">"Strawberry"</span><span class="p">);</span>
+
+	   <span class="n">fruitFlux</span><span class="p">.</span><span class="na">subscribe</span><span class="p">(</span>
+			       <span class="n">f</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Here's some fruit: "</span> <span class="o">+</span> <span class="n">f</span><span class="p">)</span>
+			       <span class="p">);</span>    
+
+       <span class="p">}</span>
+
+
+       <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[]</span><span class="p">)</span> <span class="p">{</span>
+
+	   <span class="n">createAFlux_just</span><span class="p">();</span>
+
+       <span class="p">}</span>
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+Note that above you created a <code>Flux</code> by passing objects of type
+<code>&lt;String&gt;</code>. This was achieved through the <code>just()</code> method.
+</p>
+
+<p>
+Note that in a similar way it is possible to create <code>Flux</code> and
+<code>Mono</code> out of <code>Iterable</code> objects and <code>Streams</code> with the following
+two methods: <code>Flux.fromIterable()</code>, <code>Flux.fromStream()</code>.
+</p>
+
+<p>
+Note now the following big chuncks of code. They will explain the
+functioning of the reactor APIs.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">import</span> <span class="nn">java.time.Duration</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">java.util.concurrent.TimeUnit</span><span class="p">;</span>
+
+   <span class="kn">import</span> <span class="nn">org.junit.jupiter.api.Disabled</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.junit.jupiter.api.Test</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">org.junit.jupiter.api.Timeout</span><span class="p">;</span>
+
+   <span class="kn">import</span> <span class="nn">reactor.core.publisher.Flux</span><span class="p">;</span>
+   <span class="kn">import</span> <span class="nn">reactor.test.StepVerifier</span><span class="p">;</span>
+
+   <span class="kd">public</span> <span class="kd">class</span> <span class="nc">SpringReactorTest</span> <span class="p">{</span>
+       <span class="nd">@Test</span>
+       <span class="kd">public</span> <span class="kt">void</span> <span class="nf">createAFlux_range</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// check at the range</span>
+					 <span class="c1">// function. similar to Python.</span>
+	   <span class="n">Flux</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">intervalFlux</span> <span class="o">=</span>
+	       <span class="n">Flux</span><span class="p">.</span><span class="na">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+	   <span class="n">StepVerifier</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">intervalFlux</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">verifyComplete</span><span class="p">();</span>
+       <span class="p">}</span>
+
+       <span class="nd">@Test</span>
+       <span class="nd">@Disabled</span><span class="p">(</span><span class="s">"For demonstration purposes - this test will fail."</span><span class="p">)</span>
+       <span class="nd">@Timeout</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="n">TimeUnit</span><span class="p">.</span><span class="na">SECONDS</span><span class="p">)</span> <span class="c1">// see how this is</span>
+						    <span class="c1">// failing. just</span>
+						    <span class="c1">// passing one thing</span>
+						    <span class="c1">// every second</span>
+       <span class="kd">public</span> <span class="kt">void</span> <span class="nf">createAFlux_interval</span><span class="p">()</span> <span class="p">{</span>
+	   <span class="n">Flux</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="n">intervalFlux</span> <span class="o">=</span>
+	       <span class="n">Flux</span><span class="p">.</span><span class="na">interval</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="c1">// every interval</span>
+						    <span class="c1">// increases a long</span>
+						    <span class="c1">// timer and streams</span>
+						    <span class="c1">// it</span>
+	       <span class="p">.</span><span class="na">take</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+	   <span class="n">StepVerifier</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">intervalFlux</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">0</span><span class="n">L</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">1L</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">2L</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">3L</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">4L</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">verifyComplete</span><span class="p">();</span>
+       <span class="p">}</span>
+
+       <span class="nd">@Test</span>
+       <span class="nd">@Timeout</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="n">TimeUnit</span><span class="p">.</span><span class="na">SECONDS</span><span class="p">)</span> <span class="c1">// see how this is</span>
+						     <span class="c1">// failing. just</span>
+						     <span class="c1">// passing one thing</span>
+						     <span class="c1">// every second</span>
+       <span class="kd">public</span> <span class="kt">void</span> <span class="nf">createAFlux_intervalHighTimeout</span><span class="p">()</span> <span class="p">{</span>
+	   <span class="n">Flux</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="n">intervalFlux</span> <span class="o">=</span>
+	       <span class="n">Flux</span><span class="p">.</span><span class="na">interval</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> 
+	       <span class="p">.</span><span class="na">take</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+	   <span class="n">StepVerifier</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">intervalFlux</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">0</span><span class="n">L</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">1L</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">2L</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">3L</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="mi">4L</span><span class="p">)</span>
+	       <span class="p">.</span><span class="na">verifyComplete</span><span class="p">();</span>
+       <span class="p">}</span>
+
+   <span class="p">}</span>
+</pre></div>
+
+<p>
+So the above is again quite some basics methods.
+</p>
+</div>
+
+<div id="outline-container-orga0eeddb" class="outline-4">
+<h4 id="orga0eeddb">Mergining different streams</h4>
+<div class="outline-text-4" id="text-orga0eeddb">
+<p>
+Two simple methods:
+</p>
+
+<ul class="org-ul">
+<li><code>mergewith</code></li>
+
+<li><code>zip</code></li>
+</ul>
+<p>
+Visual Comparison:
+</p>
+
+<div class="row">
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20091552.png">
+</div>
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20091629.png">
+</div>
+</div>
+
+<p>
+Code:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kn">import</span> <span class="nn">org.junit.jupiter.api.Test</span><span class="p">;</span>
+
+    <span class="kn">import</span> <span class="nn">reactor.core.publisher.Flux</span><span class="p">;</span>
+    <span class="kn">import</span> <span class="nn">reactor.test.StepVerifier</span><span class="p">;</span>
+    <span class="kn">import</span> <span class="nn">reactor.util.function.Tuple2</span><span class="p">;</span>
+
+    <span class="kd">public</span> <span class="kd">class</span> <span class="nc">SpringReactorTest</span> <span class="p">{</span>
+
+	<span class="c1">// Merging Flux</span>
+	<span class="nd">@Test</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">mergeFluxes</span><span class="p">()</span> <span class="p">{</span>
+
+	    <span class="n">Flux</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">characterFlux</span> <span class="o">=</span> <span class="n">Flux</span>
+		<span class="p">.</span><span class="na">just</span><span class="p">(</span><span class="s">"Garfield"</span><span class="p">,</span> <span class="s">"Kojak"</span><span class="p">,</span> <span class="s">"Barbossa"</span><span class="p">)</span>
+		<span class="p">.</span><span class="na">delayElements</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofMillis</span><span class="p">(</span><span class="mi">500</span><span class="p">));</span> <span class="c1">// delay streaming time of each element</span>
+
+	    <span class="n">Flux</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">foodFlux</span> <span class="o">=</span> <span class="n">Flux</span>
+		<span class="p">.</span><span class="na">just</span><span class="p">(</span><span class="s">"Lasagna"</span><span class="p">,</span> <span class="s">"Lollipops"</span><span class="p">,</span> <span class="s">"Apples"</span><span class="p">)</span>
+		<span class="p">.</span><span class="na">delaySubscription</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofMillis</span><span class="p">(</span><span class="mi">250</span><span class="p">))</span> <span class="c1">// i.e. 250</span>
+							   <span class="c1">// starts</span>
+							   <span class="c1">// sending</span>
+							   <span class="c1">// messages to</span>
+							   <span class="c1">// subscriber. you</span>
+							   <span class="c1">// see then</span>
+							   <span class="c1">// these</span>
+							   <span class="c1">// messages</span>
+							   <span class="c1">// within the</span>
+							   <span class="c1">// one above.</span>
+		<span class="p">.</span><span class="na">delayElements</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofMillis</span><span class="p">(</span><span class="mi">500</span><span class="p">));</span>
+
+	    <span class="n">Flux</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">mergedFlux</span> <span class="o">=</span> <span class="n">characterFlux</span><span class="p">.</span><span class="na">mergeWith</span><span class="p">(</span><span class="n">foodFlux</span><span class="p">);</span> <span class="c1">// merging the two fluxes </span>
+
+	    <span class="n">StepVerifier</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">mergedFlux</span><span class="p">)</span>
+		<span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="s">"Garfield"</span><span class="p">)</span>
+		<span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="s">"Lasagna"</span><span class="p">)</span>
+		<span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="s">"Kojak"</span><span class="p">)</span>
+		<span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="s">"Lollipops"</span><span class="p">)</span>
+		<span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="s">"Barbossa"</span><span class="p">)</span>
+		<span class="p">.</span><span class="na">expectNext</span><span class="p">(</span><span class="s">"Apples"</span><span class="p">)</span>
+		<span class="p">.</span><span class="na">verifyComplete</span><span class="p">();</span>
+	<span class="p">}</span> 
+
+
+	<span class="c1">// Note that mergewith cannot guarantee a perfect back and forth</span>
+	<span class="c1">// between its sources, you may want to consider the zip()</span>
+	<span class="c1">// operation instead.  When two Flux objects ar zipped together,</span>
+	<span class="c1">// it results in a new Flux that produces a tuple of items, where</span>
+	<span class="c1">// the tuple contains one item from each source Flux.  Note this</span>
+	<span class="c1">// is the exact same function you already encountered in Spark</span>
+
+	<span class="nd">@Test</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">zipFluxes</span><span class="p">()</span> <span class="p">{</span>
+	    <span class="n">Flux</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">characterFlux</span> <span class="o">=</span> <span class="n">Flux</span>
+		<span class="p">.</span><span class="na">just</span><span class="p">(</span><span class="s">"Garfield"</span><span class="p">,</span> <span class="s">"Kojak"</span><span class="p">,</span> <span class="s">"Barbossa"</span><span class="p">);</span>
+	    <span class="n">Flux</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">foodFlux</span> <span class="o">=</span> <span class="n">Flux</span>
+		<span class="p">.</span><span class="na">just</span><span class="p">(</span><span class="s">"Lasagna"</span><span class="p">,</span> <span class="s">"Lollipops"</span><span class="p">,</span> <span class="s">"Apples"</span><span class="p">);</span>
+	    <span class="n">Flux</span><span class="o">&lt;</span><span class="n">Tuple2</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">zippedFlux</span> <span class="o">=</span>
+		<span class="n">Flux</span><span class="p">.</span><span class="na">zip</span><span class="p">(</span><span class="n">characterFlux</span><span class="p">,</span> <span class="n">foodFlux</span><span class="p">);</span>
+	    <span class="n">StepVerifier</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">zippedFlux</span><span class="p">)</span>
+		<span class="p">.</span><span class="na">expectNextMatches</span><span class="p">(</span><span class="n">p</span> <span class="o">-&gt;</span>
+				   <span class="n">p</span><span class="p">.</span><span class="na">getT1</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">"Garfield"</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+				   <span class="n">p</span><span class="p">.</span><span class="na">getT2</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">"Lasagna"</span><span class="p">))</span>
+		<span class="p">.</span><span class="na">expectNextMatches</span><span class="p">(</span><span class="n">p</span> <span class="o">-&gt;</span>
+				   <span class="n">p</span><span class="p">.</span><span class="na">getT1</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">"Kojak"</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+				   <span class="n">p</span><span class="p">.</span><span class="na">getT2</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">"Lollipops"</span><span class="p">))</span>
+		<span class="p">.</span><span class="na">expectNextMatches</span><span class="p">(</span><span class="n">p</span> <span class="o">-&gt;</span>
+				   <span class="n">p</span><span class="p">.</span><span class="na">getT1</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">"Barbossa"</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+				   <span class="n">p</span><span class="p">.</span><span class="na">getT2</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">"Apples"</span><span class="p">))</span>
+		<span class="p">.</span><span class="na">verifyComplete</span><span class="p">();</span>
+	<span class="p">}</span>	 
+
+    <span class="p">}</span>
+</pre></div>
+
+<p>
+Note that the default of zipping things together is a <code>Tuple2</code>
+object, i.e. a container with two elements.
+</p>
+
+<p>
+If you want to zip together items into a single object of a
+different type you can pass a lambda expression as the second
+element to the zip function in order to get your object of
+choice.
+</p>
+
+<p>
+See for instance as per - Spring in Action
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">Flux</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">zippedFlux</span> <span class="o">=</span>
+     <span class="n">Flux</span><span class="p">.</span><span class="na">zip</span><span class="p">(</span><span class="n">characterFlux</span><span class="p">,</span> <span class="n">foodFlux</span><span class="p">,</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">c</span> <span class="o">+</span> <span class="s">" eats "</span> <span class="o">+</span> <span class="n">f</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org30921d9" class="outline-4">
+<h4 id="org30921d9">Many other APIs</h4>
+<div class="outline-text-4" id="text-org30921d9">
+<p>
+Ok so I do not want to waste any more time here testing the APIs
+of the book as - luckily for me - I already encountered them.
+</p>
+
+<p>
+They are in fact at logical 1:1 to correspondents of the Spark
+API methods.
+</p>
+
+<p>
+The difference is merely in the framework and how the two work.
+</p>
+
+<p>
+While Spark works on batch processing here the focus is much more
+on reacting/merging/filtering streams of data.
+</p>
+
+<p>
+You have then the option to skip, merge, take the first elements
+based as well on some queueing high level concept as well based on
+some timing concepts.
+</p>
+
+<p>
+I will just put here screenshots of the Marble diagrams of
+interest such that you can get a high level overview of them and
+select the correct one you have to use in the different cases.
+</p>
+
+
+<div class="row">
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20093930.png">
+</div>
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20094010.png">
+</div>
+</div>
+
+<div class="row">
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20094101.png">
+</div>
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20094148.png">
+</div>
+</div>
+
+<div class="row">
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20094213.png">
+</div>
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20094242.png">
+</div>
+</div>
+
+<div class="row">
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20094330.png">
+</div>
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20094429.png">
+</div>
+</div>
+
+<div class="row">
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20094454.png">
+</div>
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20094523.png">
+</div>
+</div>
+
+<div class="row">
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20094622.png">
+</div>
+  <div class="column">
+    <img style="width:70%" src="../../images/Screenshot%202022-03-07%20094644.png">
+</div>
+</div>
+
+<img src="../../images/Screenshot%202022-03-07%20094715.png" class="center"><p>
+That is most and basically it.
+</p>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgfd72d64" class="outline-3">
+<h3 id="orgfd72d64">WebFlux - Reactive Web Interface</h3>
+<div class="outline-text-3" id="text-orgfd72d64">
+<p>
+So here is the interesting bit.
+</p>
+
+<p>
+Here is where things start to get interesting. The idea is that in
+a way not too distant from Spring MVC you can start to set up your
+reactive architectures and start to set up web-interfaces consuming
+streams of data through the pub-subscribe model.
+</p>
+
+<p>
+The idea is the following - <b>core point</b> understand this -:
+</p>
+
+<blockquote>
+<p>
+Typical Servlet-based web frameworks, such as Spring MVC, are blocking
+and multithreaded in nature, using a single thread per connection.
+</p>
+
+<p>
+As requests are handled, a worker thread is pulled from a thread pool
+to process the request. Meanwhile, the request thread is blocked until
+it’s notified by the worker thread that it’s finished.
+</p>
+</blockquote>
+
+<p>
+So you see that multi-threading is core embedded into Spring
+MVC. But the issue is that <b>each incoming request blocks one
+thread</b>.
+</p>
+
+<p>
+Webflux and other asynchronous web-frameworks solve this issue
+through <code>Event Loops</code>:
+</p>
+
+<img src="../../images/Screenshot%202022-03-07%20122247.png" class="center"><p>
+The idea of <b>Event Loops</b> is essentially the following:
+</p>
+
+<blockquote>
+<p>
+When a costly operation is needed, the event loop registers a
+callback for that operation to be performed in parallel, while it
+moves on to handle other events.
+</p>
+</blockquote>
+
+<p>
+So the idea is then to possibly create fully end-to-end reactive
+architectures streaming data through the system.
+</p>
+
+<img src="../../images/Screenshot%202022-03-08%20103621.png" class="center">
+</div>
+
+
+<div id="outline-container-orga66d940" class="outline-4">
+<h4 id="orga66d940">Basics of Webflux</h4>
+<div class="outline-text-4" id="text-orga66d940">
+<p>
+In order to work with webflux you have to enter the correct
+dependency in your project.
+</p>
+
+<div class="highlight"><pre><span></span>    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+</pre></div>
+
+<p>
+This should replace the most classical <code>implementation
+    'org.springframework.boot:spring-boot-starter-web'</code> boot. 
+</p>
+
+<p>
+Finally one <b>last very important note</b> is the following:
+</p>
+
+<blockquote>
+<p>
+An interesting side-effect of using WebFlux instead of Spring MVC is
+that the <b>default embedded server for WebFlux is Netty</b> instead of
+Tomcat. Netty is one of a handful of asynchronous, event-driven
+servers and is a natural fit for a reactive web framework like Spring
+WebFlux.
+</p>
+</blockquote>
+
+<p>
+So in the case that you wish to continuously operate with Tomcat
+you would have to specify it accordingly. Check at your Spring
+config options above. However, note that generally there are good
+reasons to go for Netty. If you use Tomcat - you should rather go
+with Tomcat 3.1+. See the discussion <a href="https://stackoverflow.com/questions/56794263/spring-webflux-differrences-when-netty-vs-tomcat-is-used-under-the-hood">here</a>. So it is all stuff you
+would need to consider as you know where your team stays and how
+the argue on given topics. 
+</p>
+
+<p>
+Because Spring MVC and Spring WebFlux share the same annotations,
+Spring WebFlux is, in many ways, indistinguishable from Spring
+MVC.
+</p>
+
+<p>
+This means that the programming model for defining a reactive
+WebFlux controller is no different than for a non-reactive Spring
+MVC controller. Both are annotated with @RestController and a
+high-level @RequestMapping at the <code>class level</code>. And both have
+request-handling functions that are annotated with @GetMapping at
+the <code>method level</code>. It’s truly a matter of what type the handler
+methods return.
+</p>
+
+<p>
+However, note that there is a second way to define your web-flux
+interfaces that is based upon the idea of functional programming.
+Note that I will not go down that road as I am more used to work
+in that annotation alike experience. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0574f5f" class="outline-4">
+<h4 id="org0574f5f">Webflux and Reactor API</h4>
+<div class="outline-text-4" id="text-org0574f5f">
+<p>
+Essentially, the cool thing is that with webflux your Controllers
+are able to accept <code>Mono</code> and <code>Flux</code> from the Reactor project.
+</p>
+
+<p>
+Note that Spring MVC can also return <code>Mono</code> and <code>Flux</code>. However,
+the difference is the way you can make use of the objects with the
+two different libraries.
+</p>
+
+<blockquote>
+<p>
+The difference is in how those types are used. Whereas Spring WebFlux
+is a truly reactive web framework, allowing for <b>requests to be
+handled in an event loop</b>, Spring MVC is Servlet-based, relying on
+multithreading to handle multiple requests.
+</p>
+</blockquote>
+
+<p>
+So how do you create an Endpoint using Webflux staying within the
+first logic - the one of MVC?
+</p>
+
+<p>
+Check the following snippet
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="nd">@RestController</span>
+    <span class="nd">@RequestMapping</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s">"/design"</span><span class="p">,</span>
+		    <span class="n">produces</span><span class="o">=</span><span class="s">"application/json"</span><span class="p">)</span>
+		    <span class="kd">public</span> <span class="kd">class</span> <span class="nc">DesignTacoController</span> <span class="p">{</span>
+			<span class="p">...</span>
+			    <span class="nd">@GetMapping</span><span class="p">(</span><span class="s">"/recent"</span><span class="p">)</span>
+			    <span class="kd">public</span> <span class="n">Flux</span><span class="o">&lt;</span><span class="n">Taco</span><span class="o">&gt;</span> <span class="nf">recentTacos</span><span class="p">()</span> <span class="p">{</span>
+			    <span class="k">return</span> <span class="n">tacoRepo</span><span class="p">.</span><span class="na">findAll</span><span class="p">().</span><span class="na">take</span><span class="p">(</span><span class="mi">12</span><span class="p">);</span>
+			<span class="p">}</span>
+			<span class="p">...</span>
+		    <span class="p">}</span>
+</pre></div>
+
+<p>
+So note one last time that the tags are all equal. Note as well
+that you do not return a subscribe() method on your Flux.
+</p>
+
+<p>
+This is actually automatically invoked by the framework when
+calling the endpoint.
+</p>
+
+<p>
+Note as well then the following important characteristic of
+working with webflux - you return the object and open the
+subscribe channel even before you start streaming the data.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4067442" class="outline-4">
+<h4 id="org4067442">Testing WebFlux</h4>
+<div class="outline-text-4" id="text-org4067442">
+<p>
+I am skipping this section to this stage. I had some notes for it
+already when reading about mockito and co. So double check if you
+have notes for it in there.
+</p>
+
+<p>
+Otherwise double check the chapter 11.3. Would hold the notes for
+it with the testing notes. Easier then.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3d695da" class="outline-4">
+<h4 id="org3d695da">Consuming Webflux</h4>
+<div class="outline-text-4" id="text-org3d695da">
+<p>
+The <a href="#orga66d940">Basics of Webflux</a> and <a href="#org0574f5f">Webflux and Reactor API</a> briefly touched
+upon the idea of creating webflux reactive endpoints.
+</p>
+
+<p>
+The basic result was that the entire MVC set up is pretty
+consistent. So the only big differece is the concept of working
+with the <code>Reactor API objects</code> or alternatively with the <code>RXJAVA
+    Data Types</code>.
+</p>
+
+<p>
+The question is now on how to consume these.
+</p>
+
+<p>
+While in Spring <code>MVC</code> you have the concept of <code>RestTemplate</code>, this
+can just consume endpoints through <b>non-reactive domain types and
+collections</b>.
+</p>
+
+<p>
+So the alternative to this is - from Spring 5 onwards -
+<code>WebClient</code> as a reactive alternative to RestTemplate.
+</p>
+
+<p>
+You can as well read more about WebClient <a href="https://www.baeldung.com/spring-5-webclient">here</a>.
+</p>
+
+<p>
+WebClient lets you both send and receive reactive types when
+making requests to external APIs.
+</p>
+
+<p>
+Using WebClient is quite different from using RestTemplate. Rather
+than having several methods to handle different kinds of requests,
+WebClient has a fluent builder-style interface that lets you
+describe and send requests. The general usage pattern for working
+with WebClient is:
+</p>
+
+<ul class="org-ul">
+<li>Create an instance of WebClient (or inject a WebClient bean)</li>
+<li>Specify the HTTP method of the request to send</li>
+<li>Specify the URI and any headers that should be in the request</li>
+<li>Submit the request</li>
+<li>Consume the response</li>
+</ul>
+<p>
+There are esssentially two ways for consuming a request, which
+will be addressed next.
+</p>
+</div>
+
+<ul class="org-ul">
+<li>
+<a id="org328ec8a"></a>Retrieve Methods<br><div class="outline-text-5" id="text-org328ec8a">
+<p>
+These are used when you are simply interested in the body of the
+response. Headers etc. are simply ignored. 
+</p>
+
+<p>
+So an example for it is the following - <b>not recommended</b> see the
+next option -:
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="n">Mono</span><span class="o">&lt;</span><span class="n">Ingredient</span><span class="o">&gt;</span> <span class="n">ingredient</span> <span class="o">=</span> <span class="n">WebClient</span><span class="p">.</span><span class="na">create</span><span class="p">()</span>
+	 <span class="p">.</span><span class="na">get</span><span class="p">()</span>
+	 <span class="p">.</span><span class="na">uri</span><span class="p">(</span><span class="s">"http://localhost:8080/ingredients/{id}"</span><span class="p">,</span> <span class="n">ingredientId</span><span class="p">)</span>
+	 <span class="p">.</span><span class="na">retrieve</span><span class="p">()</span>
+	 <span class="p">.</span><span class="na">bodyToMono</span><span class="p">(</span><span class="n">Ingredient</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+
+     <span class="n">ingredient</span><span class="p">.</span><span class="na">subscribe</span><span class="p">(</span><span class="n">i</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="p">...</span> <span class="p">})</span> <span class="c1">// The idea is that above you just</span>
+					<span class="c1">// return a Mono.  You do not</span>
+					<span class="c1">// subscribe to it yet.  This</span>
+					<span class="c1">// allows the end user to further</span>
+					<span class="c1">// subscribe to the ingredient. In</span>
+					<span class="c1">// such a way it is even possible</span>
+					<span class="c1">// to perform some operations on</span>
+					<span class="c1">// the Mono when specifying the</span>
+					<span class="c1">// subscription.</span>
+</pre></div>
+
+<p>
+<b>Better Option:</b> Note that a better option in comparison to the
+above is to use the standard concept of <b>Beans</b> in Spring.
+</p>
+
+<p>
+I.e. you specify a <b>Bean</b> with the base URI and then you inject it
+into all of the different classes needing it.
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="c1">// declare your Bean somewhere</span>
+     <span class="nd">@Bean</span>
+     <span class="kd">public</span> <span class="n">WebClient</span> <span class="nf">webClient</span><span class="p">()</span> <span class="p">{</span>
+	 <span class="k">return</span> <span class="n">WebClient</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="s">"http://localhost:8080"</span><span class="p">);</span>
+     <span class="p">}</span>
+
+     <span class="c1">//  Inject it</span>
+     <span class="nd">@Autowired</span>
+     <span class="n">WebClient</span> <span class="n">webClient</span><span class="p">;</span>
+
+     <span class="c1">// Use the injected bean</span>
+     <span class="kd">public</span> <span class="n">Mono</span><span class="o">&lt;</span><span class="n">Ingredient</span><span class="o">&gt;</span> <span class="nf">getIngredientById</span><span class="p">(</span><span class="n">String</span> <span class="n">ingredientId</span><span class="p">)</span> <span class="p">{</span>
+	 <span class="n">Mono</span><span class="o">&lt;</span><span class="n">Ingredient</span><span class="o">&gt;</span> <span class="n">ingredient</span> <span class="o">=</span> <span class="n">webClient</span>
+	     <span class="p">.</span><span class="na">get</span><span class="p">()</span> 
+	     <span class="p">.</span><span class="na">uri</span><span class="p">(</span><span class="s">"/ingredients/{id}"</span><span class="p">,</span> <span class="n">ingredientId</span><span class="p">)</span> <span class="c1">// just use the relative path then. </span>
+	     <span class="p">.</span><span class="na">retrieve</span><span class="p">()</span>
+	     <span class="p">.</span><span class="na">bodyToMono</span><span class="p">(</span><span class="n">Ingredient</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+	 <span class="n">ingredient</span><span class="p">.</span><span class="na">subscribe</span><span class="p">(</span><span class="n">i</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="p">...</span> <span class="p">})</span>
+	     <span class="p">}</span>
+</pre></div>
+
+<p>
+Note that other CRUD operations are very similar in this
+dimension.
+</p>
+
+<p>
+Note that in case of errors 400 &amp; 500 the webclient above just
+logs the errors and goes on silently.
+</p>
+
+<p>
+If you need to handle the errors you can use the <code>onStatus()</code>
+method:
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="n">Mono</span><span class="o">&lt;</span><span class="n">Ingredient</span><span class="o">&gt;</span> <span class="n">ingredientMono</span> <span class="o">=</span> <span class="n">webClient</span>
+	 <span class="p">.</span><span class="na">get</span><span class="p">()</span>
+	 <span class="p">.</span><span class="na">uri</span><span class="p">(</span><span class="s">"http://localhost:8080/ingredients/{id}"</span><span class="p">,</span> <span class="n">ingredientId</span><span class="p">)</span>
+	 <span class="p">.</span><span class="na">retrieve</span><span class="p">()</span>
+	 <span class="p">.</span><span class="na">onStatus</span><span class="p">(</span><span class="n">HttpStatus</span><span class="p">::</span><span class="n">is4xxClientError</span><span class="p">,</span>
+		   <span class="n">response</span> <span class="o">-&gt;</span> <span class="n">Mono</span><span class="p">.</span><span class="na">just</span><span class="p">(</span><span class="k">new</span> <span class="n">UnknownIngredientException</span><span class="p">()))</span>
+	 <span class="p">.</span><span class="na">bodyToMono</span><span class="p">(</span><span class="n">Ingredient</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+</pre></div>
+
+<p>
+The first argument in the <code>onStatus()</code> call <i>is a predicate that’s
+given an HttpStatus</i> and returns true if the status code is one
+you want to handle.
+</p>
+
+<p>
+Note that <code>onStatus()</code> can be any of the <code>HttpStatus</code>
+methods. However, it can be as well any lambda function returning
+a <b>boolean</b>.
+</p>
+</div>
+</li>
+
+<li>
+<a id="org21ec368"></a>Exchange Methods<br><div class="outline-text-5" id="text-org21ec368">
+<p>
+In this case you actually parse the entire message.
+</p>
+
+<p>
+You can then access headers, read cookies etc. 
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+
+<div id="outline-container-orgeebbb91" class="outline-4">
+<h4 id="orgeebbb91">Timing out</h4>
+<div class="outline-text-4" id="text-orgeebbb91">
+<p>
+This is an important feature. Especially in our team where I
+understood we have often to deal with a client that is not as
+reliable.
+</p>
+
+<p>
+So the idea is to say, if I open a connection to consume something
+and client does not answer within a time-frame then trigger a
+timeout and stop that reactive endpoint consumption.
+</p>
+
+<p>
+You can do that in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">Flux</span><span class="o">&lt;</span><span class="n">Ingredient</span><span class="o">&gt;</span> <span class="n">ingredients</span> <span class="o">=</span> <span class="n">WebClient</span><span class="p">.</span><span class="na">create</span><span class="p">()</span>
+	<span class="p">.</span><span class="na">get</span><span class="p">()</span>
+	<span class="p">.</span><span class="na">uri</span><span class="p">(</span><span class="s">"http://localhost:8080/ingredients"</span><span class="p">)</span>
+	<span class="p">.</span><span class="na">retrieve</span><span class="p">()</span>
+	<span class="p">.</span><span class="na">bodyToFlux</span><span class="p">(</span><span class="n">Ingredient</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+
+    <span class="n">ingredients</span>
+	<span class="p">.</span><span class="na">timeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+	<span class="p">.</span><span class="na">subscribe</span><span class="p">(</span>
+		   <span class="n">i</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+		   <span class="n">e</span> <span class="o">-&gt;</span> <span class="p">{</span>
+		       <span class="c1">// handle timeout error</span>
+		   <span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org4376505" class="outline-3">
+<h3 id="org4376505">End-to-end reactive pipeline</h3>
+<div class="outline-text-3" id="text-org4376505">
+<p>
+So that is basically it. Check at the following picture again:
+</p>
+
+<img src="../../images/Screenshot%202022-03-08%20103621.png" class="center"><p>
+Now the issue is that with your current stack you have no chance to
+get to this stage.
+</p>
+
+<p>
+Well expected. Sad but expected.
+</p>
+
+<p>
+The situtation is the following:
+</p>
+
+<blockquote>
+<p>
+Unfortunately, there’s no support for reactive JPA.
+</p>
+
+<p>
+Although relational databases are certainly the most prolific
+databases in the industry, supporting a reactive programming model
+with Spring Data JPA would require that the databases and JDBC drivers
+involved also support non-blocking reactive models.
+</p>
+
+<p>
+It’s unfortunate that, at least for now, there’s no support for
+working with relational databases reactively. Hopefully, this
+situation will be resolved in the near future.
+</p>
+</blockquote>
+
+<p>
+So basically that is the end of my reading in this space.
+</p>
+
+<p>
+Or maybe not. In the sense that if you work with the following DBs
+you might start to do smth with it:
+</p>
+
+<blockquote>
+<p>
+This includes support for a reactive programming model when
+persisting data with Cassandra, MongoDB, Couchbase, or Redis
+</p>
+</blockquote>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0932c63" class="outline-2">
+<h2 id="org0932c63">
+<span class="todo TODO">TODO</span> Securing Spring</h2>
+<div class="outline-text-2" id="text-org0932c63">
+<p>
+There is even all of the layer about securing the spring application
+such that it properly communicate by encrypting data in transfer.
+</p>
+
+<p>
+You might need it for your next assignment.
+</p>
+
+<p>
+Keep it in the back of your mind and skip it for the moment and go
+back to it when the project will require it.
+</p>
+
+<p>
+So basically it is all about the key generation and exchange. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgfd1f4d8" class="outline-2">
+<h2 id="orgfd1f4d8">Application Restart - Spring DevTools</h2>
+<div class="outline-text-2" id="text-orgfd1f4d8">
+<p>
+This section talks about how to integrate <code>Spring DevTools</code> with
+your local Gradle build.
+</p>
+
+<p>
+In such a way it will be possible for you to make changes to your
+code, Spring Boot will then automatically detect the changes and
+restart a Spring Boot application such that you will have a live
+reload and you will increase your development speed.
+</p>
+
+<p>
+Note that the quintessential idea of setting up this application
+restart is the following:
+</p>
+
+<blockquote>
+<p>
+ More precisely, when DevTools is in play, the application is loaded
+ into two separate class loaders in the Java virtual machine
+(JVM).
+</p>
+
+<p>
+One class loader is loaded with your Java code, property files, and
+pretty much anything that’s in the src/main/ path of the
+project. These are items that are likely to change frequently.
+</p>
+
+<p>
+The other class loader is loaded with dependency libraries, which
+aren’t likely to change as often.
+</p>
+
+<p>
+When a change is detected, DevTools reloads only the <b>class loader</b>
+containing your project code and restarts the Spring application
+context, but leaves the other class loader and the JVM
+intact. Although subtle, this strategy affords a small reduction in
+the time it takes to start the application.
+</p>
+
+<p>
+The downside of this strategy is that changes <b>to dependencies</b>
+won’t be available in automatic restarts. That’s because the class
+loader containing dependency libraries isn’t automatically
+reloaded.
+</p>
+
+<p>
+This means that any time you add, change, or remove a dependency in
+your build specification, you’ll need to do a <b>hard restart</b> of the
+application for those changes to take effect.
+</p>
+</blockquote>
+
+<p>
+So the question is now:
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+How is it possible for DevTools to detect a change?
+</p>
+
+<p>
+In order to understand this - check essentially at <a href="https://stackoverflow.com/questions/58013241/how-can-work-devtools-in-kotlin-and-gradle-project-when-i-guess-i-tried-a-lot-of">this answer</a>:
+</p>
+
+<blockquote>
+<p>
+The devtools module will only reload classes on recompilation. So you
+could hit the "Build Project" button whenever you are ready for a
+reload to trigger a build with Gradle. But as this will also run unit
+tests and maybe even static code analysis (if you are using that), the
+turn-around time would still be rather high. You could manually run
+the classes task with Gradle to compile only classes, but doing this
+manually is annoying.
+</p>
+
+<p>
+Instead, to continuously compile your classes with Gradle, and only
+that, run this command in a terminal (assuming you use the wrapper):
+</p>
+
+<p>
+<code>gradlew -t classes</code>
+</p>
+
+<p>
+It will monitor the file system for changes and rerun the classes task
+on changes. So whenever you make a change to a source file and save
+it, Gradle will recompile it and the devtools module should pick up
+the change and reload it.
+</p>
+</blockquote>
+
+<p>
+So essentially this will be enough. Include <code>devtools</code> to your
+gradle dependencies and make sure that it is active.
+</p>
+
+<p>
+Then start your spring boot application in one shell and run
+<code>gradlew -t classes</code> into another shell. Everything will work
+properly then.
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org22dd0db" class="outline-2">
+<h2 id="org22dd0db">Deploying with Spring Boot</h2>
+<div class="outline-text-2" id="text-org22dd0db">
+<p>
+In order to deploy with Spring Boot you can use the shell command
+</p>
+
+<div class="highlight"><pre><span></span>  ./gradlew.bat bootRun
+</pre></div>
+</div>
+
+
+<div id="outline-container-org9a39efa" class="outline-3">
+<h3 id="org9a39efa">Under the Hood</h3>
+<div class="outline-text-3" id="text-org9a39efa">
+<p>
+So that is the easy version. You can work in such a way without
+understanding what happens under the hood.
+</p>
+
+<p>
+Under the hood a couple of interesting things happen.
+</p>
+
+<p>
+This should give you a rough understanding of what is going on and
+it is good in order to properly understand the frameworks out
+there as what they are essentially doing is packaging the entire
+complexity of the past and abstracting it away.
+</p>
+
+<p>
+In this sense you see that when you build your springboot
+application in gradle you will have a <code>.jar</code> file in the <code>./build</code>
+repository.
+</p>
+
+<p>
+This is a fat <code>.jar</code> containing nested <code>.jar</code> with all of the
+relevant dependencies.
+</p>
+
+<p>
+You can inspect such <code>jar</code> in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>   jar tvf ./spring-boot-0.0.1-SNAPSHOT.jar 
+</pre></div>
+
+<p>
+Then you see in there the structure of a spring-boot applicaiton.
+</p>
+
+<p>
+You have two essential repositories that is worth for you to
+understand:
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+The <code>META-INF</code> folder
+</p>
+
+<p>
+is the home for the MANIFEST.MF file. This file contains meta
+data about the contents of the JAR.
+</p>
+
+<p>
+For example, there is an entry called Main-Class that specifies
+the name of the Java class with the static main() for executable
+JAR files.
+</p>
+</li>
+
+<li>
+<p>
+<code>BOOT-INF</code>
+</p>
+
+<p>
+Spring Boot applications load from the BOOT-INF folder.
+</p>
+
+<p>
+Therefore the application classes must be placed in a nested
+BOOT-INF/classes directory. Dependencies should be placed in a
+nested BOOT-INF/lib directory.
+</p>
+
+<p>
+So this is the same structure of the <code>WEB-INF</code> directory for
+deploying your Java Servlets.
+</p>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org5ed7d2d" class="outline-4">
+<h4 id="org5ed7d2d">understand the following - where is web-inf?</h4>
+<div class="outline-text-4" id="text-org5ed7d2d">
+<p>
+in order to understand the question check at check the second
+answer <a href="https://stackoverflow.com/questions/19786142/what-is-web-inf-used-for-in-a-java-ee-web-application">here</a>.
+</p>
+
+<p>
+You will have more or less to understand that structure as many
+applications still work in such a way. 
+</p>
+
+<p>
+is the java Servlet API respected in spring boot? is there
+somewhere a web.xml file generation under the hood in Spring?
+</p>
+
+<p>
+Spring MVC still works with Servlets. So there must be some
+conversion under the hood. Do not know where but it is fine.
+</p>
+
+<p>
+Just take it as good and understand that - all of the low level
+stuff was abstracted away.
+</p>
+
+<p>
+In fact MVC is a more rigid architectural pattern than
+servlets. So basically Spring MVC must still base on servlets
+under the hood but lots of the dynamics are hidden.
+</p>
+
+<p>
+Spring is in fact that a very comprehensive framework covering
+lots of stuff and abstracting it away. 
+</p>
+
+<p>
+Yeah it was abstracted away. Do not know exactly how but it was
+simply extracted away - take it for good now. Do not have the time
+to go in the depth with it. Check <a href="https://stackify.com/spring-mvc/">here</a>.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org01a64ae" class="outline-3">
+<h3 id="org01a64ae">Debugging Spring App</h3>
+<div class="outline-text-3" id="text-org01a64ae">
+<p>
+Note that in order to debug a spring application on localhost you
+can do the following:
+</p>
+
+<div class="highlight"><pre><span></span>   ./gradlew.bat bootRun --debug-jvm
+</pre></div>
+
+<p>
+The application is then suspended until you connect your debugger
+to the port it is listening on (port 5005).
+</p>
+
+<p>
+So all good. You can then point your remote debugger on that port
+and once the connection will be established on that port the
+application will start.
+</p>
+
+<p>
+Note now that in the case you want to do more customization you can
+use <a href="https://stackoverflow.com/questions/24113939/how-to-debug-spring-boot-application-with-eclipse">the following</a>. Or obviously as always the official
+documentation. That might take a little bit longer though.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgc14d801" class="outline-3">
+<h3 id="orgc14d801">Generating a Docker Image out of your Spring Application</h3>
+<div class="outline-text-3" id="text-orgc14d801">
+<p>
+Note that this will be important and the way to go on the long run.
+</p>
+
+<p>
+Interesting to see that spring is all integrated in the new
+IT-ecosystem.
+</p>
+
+<p>
+In this sense it is possible to generate out of the box the
+necessary Docker image that you want to use.
+</p>
+
+<p>
+You can build a container image (if you have a docker daemon) using
+the Spring Boot build plugin:
+</p>
+
+<div class="highlight"><pre><span></span>   ./gradlew.bat spring-boot:build-image
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge54d2e9" class="outline-2">
+<h2 id="orge54d2e9">On local Variables and the issue of leaving the Spring Context</h2>
+<div class="outline-text-2" id="text-orge54d2e9">
+<p>
+So there are a few things that you better consider.
+</p>
+
+<p>
+Otherwise they will come to hunt you down in the future. That is
+actually quite fun cause you might loose then tons of time for silly
+design choices.
+</p>
+
+<p>
+The idea is that I used to work with <code>.env</code> files in my pyhton
+experience.
+</p>
+
+<p>
+Was looking for smth similar and found essentially a module that
+reads from such files as was your experience in python.
+</p>
+
+<p>
+That caused some troubles due to the inherit difference of the
+languages. At the core they are different.
+</p>
+
+<p>
+Meaning that when you develop in spring and then use the PaaS
+services what you would ultimately do is to package everything that
+is within the spring context into some jar, deploy it to the PaaS
+and then from there the service will take over.
+</p>
+
+<p>
+So note now that if you have an <code>.env</code> file into your local machine
+with the relevant variables, these will not be packaged into the
+<code>war</code> such that they will not be in your applicaiton on the cloud
+and you will start to have issues.
+</p>
+
+<p>
+So to this stage I created an enumerator class in java holding the
+relevant information.
+</p>
+
+<p>
+I guess that this is not the most clean solution. Now that I am
+writing the things down I am noticing that what the most clean
+solution likely is, is the one of writing the variables in the
+spring application settings or context.
+</p>
+
+<p>
+So check at the way to do it but I am quite sure this is the way to
+go.   
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../java-testing/" rel="prev" title="Java Testing">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../switching-language/" rel="next" title="On some side note about working with Emacs and understanding a different language">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
