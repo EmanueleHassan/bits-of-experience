@@ -1,0 +1,429 @@
+<p>
+So here are some notes about some useful commands in git.
+</p>
+
+<p>
+I might start to use it again from the command line as magit in my
+emacs is dead slow on Windows OS.
+</p>
+
+<p>
+I read online that there are some fundamental issues with it on
+Windows.
+</p>
+
+<p>
+This is not the only program where I am experiencing some performance
+hiccup on Windows systems.
+</p>
+
+<p>
+I will switch back to Mac soon as it seems that here in the company
+they started to offer the possibility to have one. Have to wait a
+couple of months for it still as I have to wait for the migration of
+the IT systems to the cloud to have proper access to everything
+without having to manually make new auth-modules. 
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org8101ce6" class="outline-3">
+<h3 id="org8101ce6">On the many files you touch that you do not want to touch</h3>
+<div class="outline-text-3" id="text-org8101ce6">
+<p>
+It is normal to make minor modifications to multiple files when you
+edit the files of a larger project.
+</p>
+
+<p>
+You enter here and there in a ton of files and especially if you use
+emacs it is easy to add a space or a new line because of the many
+shortcuts.
+</p>
+
+<p>
+So basically what you do then is just to stage the files you
+want. You then write your different commits for them.
+</p>
+
+<p>
+You then push to the origin.
+</p>
+
+<p>
+You then fetch from the origin and reset your local repo based on
+it.
+</p>
+
+<p>
+Like this you will have eliminated all of the minor modifications
+that were unintendended and you keep your commits clean.
+</p>
+
+<p>
+You can do that with the following command
+</p>
+
+<div class="highlight"><pre><span></span>   git fetch  <span class="c1"># will fetch the latest changes on the remote</span>
+   git reset --hard origin/master <span class="c1"># will set your local branch to match the representation of the remote just pulled down.</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org30a8d0d" class="outline-3">
+<h3 id="org30a8d0d">On the right way to work and commit on git</h3>
+<div class="outline-text-3" id="text-org30a8d0d">
+<p>
+I also took the habit of making multiple commits per different logic
+chuncks of the modifications or as well for individual files.
+</p>
+
+<p>
+In such a way it is easier to keep track of your changes. You will
+read the different logical portions of your code and it will be easy
+for you to switch back to them.
+</p>
+
+<p>
+This is ultimately the way of working and thinking in git. You
+understand it by the default way git is implemented.
+</p>
+
+<p>
+You see that then if you rebase you rebase to some particular very
+well defined logical unit - and you keep your other future changes.
+</p>
+
+<p>
+Check at the following entry from <a href="https://stackoverflow.com/questions/46275070/why-do-i-get-conflicts-when-i-do-git-revert">this post here</a>.
+</p>
+
+<hr />
+
+<p>
+That's actually not what revert does. Revert doesn't "take you back
+to" that commit and pretend that subsequent commits didn't
+happen. It applies a logical negation of a single commit - and that
+commit alone - leaving subsequent commits in place. 
+</p>
+
+<p>
+Let's say you have some initial commit of some file - let's call it commit #1 for simplicity - and the file looks like this:
+</p>
+
+<pre class="example" id="orgb037e0c">
+One
+Two
+Three
+Four
+</pre>
+
+<p>
+Now let's say you have a commit #2 that changes one line:
+</p>
+
+<pre class="example" id="org6db03a4">
+One
+2
+Three
+Four
+</pre>
+
+<p>
+And finally, commit #3 that changes a different line:
+</p>
+
+<pre class="example" id="orgf26623d">
+One
+2
+Three
+4
+</pre>
+
+<p>
+If you try to revert commit #2, it will undo only the line changed
+in that commit, and leave the changes introduced in commit #3, so
+the result will be: 
+</p>
+
+<pre class="example" id="orgd16686d">
+One
+Two
+Three
+4
+</pre>
+
+<p>
+Now, if there was a subsequent commit that had changed the same line
+as the commit that you're trying to revert, then you'll have a
+conflict. For example, let's say you have a commit #4 that also
+changed the second line: 
+</p>
+
+<pre class="example" id="org3943b0e">
+One
+TWO
+THREE
+4
+</pre>
+
+<p>
+Now if your HEAD is commit #4 and you try to revert commit #2, you
+will have a conflict. Revert expects to take second line back - to
+undo the changes made in commit #2. So it expects the second line to
+currently be 2, and it will then revert it to what it was in the
+previous commit, setting it to Two.
+</p>
+
+<p>
+However, that expectation was invalidated, since commit #4 had also
+changed it. So you have a conflict.
+</p>
+
+<p>
+If your goal isn't to revert at all, but to get back to commit #1
+and ignore all the changes that have gone on since then, then you
+want to reset instead of revert.
+</p>
+
+<pre class="example" id="org74eb083">
+git reset --hard 1 
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org43bd019" class="outline-3">
+<h3 id="org43bd019">On staging and committing different parts of different files separately</h3>
+<div class="outline-text-3" id="text-org43bd019">
+<p>
+This is an important concept that relates to the way git commits
+work as seen before.
+</p>
+
+<p>
+So far I was rather clumsy in my commits&#x2026; meaning that I was
+either committing entire file edits or nothing. This was fine as
+pure software development was not my primary task.
+</p>
+
+<p>
+Things are slowly changing such that it is important to adjust to
+the new conditions.
+</p>
+
+<p>
+Now, when working on projects and edits that last for multiple days
+you might have to add piece of code to try things out that is not
+really beneficial for the ultimate solution. The question is
+then&#x2026; can you commit that part of the code separately. In such a
+way it will be possible to split the commits and potentially revert
+to edits previously made without having to unwind all of the trial
+and error crap that you used in the code.
+</p>
+
+<p>
+In git you can do that as follows:
+</p>
+
+<div class="highlight"><pre><span></span>   git add --patch
+</pre></div>
+
+<p>
+Then git will start asking you interactively if you want to stage
+different edits within a file or not.
+</p>
+
+<p>
+This is not the most user friendly way to do that. Check out <a href="https://filip-prochazka.com/blog/git-commit-only-parts-of-a-file">this
+url</a> in this sense.
+</p>
+
+<p>
+Note that the point made in the comment is correct. Once you are set
+up with your CI pipeline things will not look that linear. But leave
+that reasoning and solution finding for a later timepoint.
+</p>
+
+<p>
+Note finally that magit - your emacs - tool is best suited for
+performing this task. You never noticed / never thought about
+it. But there basically the file is already split in the different
+hunks of edits. You can then stage the different as usual by going
+to the relevant hunk and pressing <code>s</code>, from there on is your very
+classical workflow so nothing new under the sun. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org32229ea" class="outline-3">
+<h3 id="org32229ea">On discarding all of the unstaged edits</h3>
+<div class="outline-text-3" id="text-org32229ea">
+<div class="highlight"><pre><span></span>   git checkout -- .
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org5632899" class="outline-2">
+<h2 id="org5632899">Magit component</h2>
+<div class="outline-text-2" id="text-org5632899">
+</div>
+<div id="outline-container-orgf28e1b5" class="outline-3">
+<h3 id="orgf28e1b5">On worktree</h3>
+<div class="outline-text-3" id="text-orgf28e1b5">
+<p>
+Ok so here some notes about magit itself.
+</p>
+
+<p>
+So one of the best things is for ediffing. I already talked about it
+in a different post. Go to check this out when you have time.
+</p>
+
+<p>
+So one of the features I particularly like is the one of showing the
+worktree. There you can view the history. You can open individual
+commits and see what you changed in each etc.
+</p>
+
+<p>
+Now say that you want to go back to a previous commit&#x2026; <b>exactly
+that one</b>.. you can reset based on that commit.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdf18780" class="outline-3">
+<h3 id="orgdf18780">Checking changes between two commits</h3>
+<div class="outline-text-3" id="text-orgdf18780">
+<p>
+Then you can change exactly what you changed on a given file between
+two commits.
+</p>
+
+<p>
+Then you can open the log worktree <code>l</code> in magit console, with
+<code>Ctrl-space</code> you select the range of commits. Then <code>E</code> for Ediff
+and finally <code>r</code> for range.
+</p>
+
+<p>
+This will open up your ediff buffer from which you can work as per
+your merging post etc.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org30d6257" class="outline-3">
+<h3 id="org30d6257">Magit reverting to a particular commit.</h3>
+<div class="outline-text-3" id="text-org30d6257">
+<p>
+Magit reversion is bounded to <code>V</code> in magit.
+</p>
+
+<p>
+What magit does is then to create a new commit with the specific
+reversion.
+</p>
+
+<p>
+There are two options that you can check in more depth for making
+that reversion. I understand that the difference between the two is
+minimal. I think it is something in the direction do you want to
+edit and insert the commit message yourself or not.
+</p>
+
+<p>
+In any case the only bit you should remember is the following.
+</p>
+
+<p>
+To decide which commits to revert you first enter your worktree <code>l
+   l</code> in the magit console.
+</p>
+
+<p>
+Then you select the commits of interest (recall with <code>SPC</code> bar) and
+just then, when the commits are selected you revert. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org89161f3" class="outline-3">
+<h3 id="org89161f3">Cherry Picking in Magit</h3>
+<div class="outline-text-3" id="text-org89161f3">
+<p>
+This is a very nice feature. The essential is to say don't merge
+everything from the other branch but just a specific commit.
+</p>
+
+<p>
+You can see how to do that in the plain way from the shell at the
+following <a href="https://mattstauffer.com/blog/how-to-merge-only-specific-commits-from-a-pull-request/">entry</a>.
+</p>
+
+<p>
+In magit - at least my version you do it in the following way.
+</p>
+
+<p>
+You open your graph with all of the commits. <b>You go on the branch
+where your commit sits</b> - the commit you want to pick and import
+into another branch.
+</p>
+
+<p>
+You open the commit tree there <code>l l</code>.
+</p>
+
+<p>
+Then you go on the commit you want to copy (or potentially you
+highlight a couple of commits C-Space and select the relevant).
+</p>
+
+<p>
+Then you go with <code>A A</code>. You will then select the branch you want
+to import the commit to and badaboom, you are done.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7c74afe" class="outline-3">
+<h3 id="org7c74afe">Gitignore in magit</h3>
+<div class="outline-text-3" id="text-org7c74afe">
+<p>
+So that was quite annoying as well.
+</p>
+
+<p>
+For some reason gitignore was not working.
+</p>
+
+<p>
+I.e. it was not read by magit.
+</p>
+
+<p>
+This even after removing all of the files from the
+cache. I.e. after <code>git rm -rf --cached .</code>
+</p>
+
+<p>
+So what I did then was invoking the <code>magit-ignore</code> command.
+</p>
+
+<p>
+There you specify one file you wish to ignore. A new .gitignore
+file was created and magit was then in sync with it.
+</p>
+
+<p>
+So do not understand exactly why that was the case but take it as
+good and create the gitignore in such a way. Then everything will
+work for your magit. 
+</p>
+</div>
+</div>
+</div>
