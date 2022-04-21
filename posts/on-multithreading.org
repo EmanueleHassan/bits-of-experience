@@ -2,7 +2,7 @@
 .. title: On Multithreading
 .. slug: on-multithreading
 .. date: 2022-04-13 16:47:16 UTC+02:00
-.. tags: 
+.. tags: threading, Python, java, software-engineering
 .. category: 
 .. link: 
 .. description: 
@@ -218,16 +218,105 @@ that you never forget to .join() the threads.
       forever.
 
 *** TODO Cap your thread amount
+
+*** On small experiments for using threading in rest-calls
+
+    So basically I did a lot of small experiments in order to properly
+    understand the solution along the lines mentioned at the
+    beginning.
+
+    That is a very good solution to solve the timeouts in http
+    communication.
     
-*** Multi-processing
+**** On the number of threads
+
+     In order to understand this component I did a little bit of
+     detective work along these lines.
+
+     I used the =threading.enumerate()= method to get an idea about
+     the different threads running. I inspected the names and which
+     where open at what time.
+
+     I basically came to the following conclusion - note that I did
+     this job with the Werkzeug server used in development mode - do
+     not know how the thing works with WSGI and would need to
+     investigate but I guess along the same lines.
+
+     Basically you have always two threads working:
+
+     - Mainthread
+     - Thread-1
+
+     Then for each new request if you work along the lines above you
+     would get two new threads.
+
+     One of the two threads would be very short-lived. You would close
+     it immediately after answering the incoming request.
+
+     The other one performing the slow job will exist until the
+     called function through which you opened the thread is
+     completed.
+
+     So basically that is good and the design is effective. 
+     
+**** On the type of job
+
+     The thing you should note than is that you cannot use this
+     multi-threading solution for intensive CPU bounded jobs.
+
+     The solution is then generally okey if you have I/O issues. You
+     have lots of threads orchestrating these I/O bounded jobs.
+
+     It is not that ideal in the case of CPU bounded jobs. 
+
+     In order to see this you can check what happens if you trigger
+     the following job from an endpoint.
+
+     Note that one version is CPU bounded and the other mimicks an I/O
+     bounded case
+
+     #+BEGIN_SRC python
+def process_data(message, Id = 0):
+    """This is the function to be called by the multiple threads.
+
+    As discussed it will be either this one or the Queue Solution.
+
+    """
+
+    print("starting to sleep for job: {}".format(Id))
+
+    # I/O bound case #
+    # time.sleep(30) 
+
+    # CPU bound case #
+    start = time.time()
+    countdown(50000000)
+    end = time.time()
+
+    ti = end - start
+
+    with total_time.get_lock():
+        total_time.value += ti
+        totT = total_time.value        
+
+    print("End time job {} : {}".format(Id, totT))
+     #+END_SRC
+
+     Note that the total_time is a ~multiprocessing.Value()~
+     object. This basically has the locking mechanism in order to
+     avoid the race conditions and set your total time properly. 
+     
+
+*** TODO Multi-processing
 
     This starts an entire new process with a new interpreter.
 
     You do not have the GIL problem in this case, and if your infra
     architecture allows it you can possibly address CPU-bound issues
     with it.
-    
 
-    
-   
+    ------------
 
+    You might want to check at this option in case you would have CPU
+    bounded long-running jobs that you would need to trigger from your
+    endpoints. 
