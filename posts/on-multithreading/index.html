@@ -30,6 +30,10 @@ with mulit-threading when complexity increases.
 Fo">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2022-04-13T16:47:16+02:00">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="software-engineering">
+<meta property="article:tag" content="threading">
 </head>
 <body>
     <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -63,6 +67,16 @@ Fo">
             
 
             
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/java/" rel="tag">java</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">Python</a></li>
+            <li><a class="tag p-category" href="../../categories/software-engineering/" rel="tag">software-engineering</a></li>
+            <li><a class="tag p-category" href="../../categories/threading/" rel="tag">threading</a></li>
+        </ul>
+</div>
 
         </div>
     </header><div class="e-content entry-content" itemprop="articleBody text">
@@ -120,10 +134,10 @@ inception.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org4faa782" class="outline-2">
-<h2 id="org4faa782">
+<div id="outline-container-orgaa9fea5" class="outline-2">
+<h2 id="orgaa9fea5">
 <span class="todo TODO">TODO</span> Java</h2>
-<div class="outline-text-2" id="text-org4faa782">
+<div class="outline-text-2" id="text-orgaa9fea5">
 <p>
 Will come at a later stage. Good is that the theoretical
 fundamental is the same. 
@@ -131,9 +145,9 @@ fundamental is the same.
 </div>
 </div>
 
-<div id="outline-container-org942ba75" class="outline-2">
-<h2 id="org942ba75">Python</h2>
-<div class="outline-text-2" id="text-org942ba75">
+<div id="outline-container-org2630ea0" class="outline-2">
+<h2 id="org2630ea0">Python</h2>
+<div class="outline-text-2" id="text-org2630ea0">
 <p>
 So as you know underneath Python there is a lot of C and the well
 known CPyhton which actually manages the implementation of Python
@@ -257,9 +271,9 @@ waiting for external events have in theory no advantage at all.
 </p>
 </div>
 
-<div id="outline-container-org99020dc" class="outline-3">
-<h3 id="org99020dc">Concepts of Python MultiThreading</h3>
-<div class="outline-text-3" id="text-org99020dc">
+<div id="outline-container-org11f6aa4" class="outline-3">
+<h3 id="org11f6aa4">Concepts of Python MultiThreading</h3>
+<div class="outline-text-3" id="text-org11f6aa4">
 <p>
 I remember that at some point I read an entire book about
 concurrent programming in C++. Many notions are already sitting
@@ -367,14 +381,144 @@ forever.
 </div>
 </div>
 
-<div id="outline-container-orge88a66e" class="outline-3">
-<h3 id="orge88a66e">
+<div id="outline-container-org9f18c37" class="outline-3">
+<h3 id="org9f18c37">
 <span class="todo TODO">TODO</span> Cap your thread amount</h3>
 </div>
 
-<div id="outline-container-orgec371a4" class="outline-3">
-<h3 id="orgec371a4">Multi-processing</h3>
-<div class="outline-text-3" id="text-orgec371a4">
+<div id="outline-container-org1cbb3f0" class="outline-3">
+<h3 id="org1cbb3f0">On small experiments for using threading in rest-calls</h3>
+<div class="outline-text-3" id="text-org1cbb3f0">
+<p>
+So basically I did a lot of small experiments in order to properly
+understand the solution along the lines mentioned at the
+beginning.
+</p>
+
+<p>
+That is a very good solution to solve the timeouts in http
+communication.
+</p>
+</div>
+
+<div id="outline-container-org5aac8c0" class="outline-4">
+<h4 id="org5aac8c0">On the number of threads</h4>
+<div class="outline-text-4" id="text-org5aac8c0">
+<p>
+In order to understand this component I did a little bit of
+detective work along these lines.
+</p>
+
+<p>
+I used the <code>threading.enumerate()</code> method to get an idea about
+the different threads running. I inspected the names and which
+where open at what time.
+</p>
+
+<p>
+I basically came to the following conclusion - note that I did
+this job with the Werkzeug server used in development mode - do
+not know how the thing works with WSGI and would need to
+investigate but I guess along the same lines.
+</p>
+
+<p>
+Basically you have always two threads working:
+</p>
+
+<ul class="org-ul">
+<li>Mainthread</li>
+<li>Thread-1</li>
+</ul>
+<p>
+Then for each new request if you work along the lines above you
+would get two new threads.
+</p>
+
+<p>
+One of the two threads would be very short-lived. You would close
+it immediately after answering the incoming request.
+</p>
+
+<p>
+The other one performing the slow job will exist until the
+called function through which you opened the thread is
+completed.
+</p>
+
+<p>
+So basically that is good and the design is effective. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org11cc308" class="outline-4">
+<h4 id="org11cc308">On the type of job</h4>
+<div class="outline-text-4" id="text-org11cc308">
+<p>
+The thing you should note than is that you cannot use this
+multi-threading solution for intensive CPU bounded jobs.
+</p>
+
+<p>
+The solution is then generally okey if you have I/O issues. You
+have lots of threads orchestrating these I/O bounded jobs.
+</p>
+
+<p>
+It is not that ideal in the case of CPU bounded jobs. 
+</p>
+
+<p>
+In order to see this you can check what happens if you trigger
+the following job from an endpoint.
+</p>
+
+<p>
+Note that one version is CPU bounded and the other mimicks an I/O
+bounded case
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="k">def</span> <span class="nf">process_data</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">Id</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+	 <span class="sd">"""This is the function to be called by the multiple threads.</span>
+
+<span class="sd">	 As discussed it will be either this one or the Queue Solution.</span>
+
+<span class="sd">	 """</span>
+
+	 <span class="nb">print</span><span class="p">(</span><span class="s2">"starting to sleep for job: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Id</span><span class="p">))</span>
+
+	 <span class="c1"># I/O bound case #</span>
+	 <span class="c1"># time.sleep(30) </span>
+
+	 <span class="c1"># CPU bound case #</span>
+	 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+	 <span class="n">countdown</span><span class="p">(</span><span class="mi">50000000</span><span class="p">)</span>
+	 <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+	 <span class="n">ti</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+
+	 <span class="k">with</span> <span class="n">total_time</span><span class="o">.</span><span class="n">get_lock</span><span class="p">():</span>
+	     <span class="n">total_time</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="n">ti</span>
+	     <span class="n">totT</span> <span class="o">=</span> <span class="n">total_time</span><span class="o">.</span><span class="n">value</span>        
+
+	 <span class="nb">print</span><span class="p">(</span><span class="s2">"End time job </span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Id</span><span class="p">,</span> <span class="n">totT</span><span class="p">))</span>
+</pre></div>
+
+<p>
+Note that the total<sub>time</sub> is a <code>multiprocessing.Value()</code>
+object. This basically has the locking mechanism in order to
+avoid the race conditions and set your total time properly. 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgecb434e" class="outline-3">
+<h3 id="orgecb434e">
+<span class="todo TODO">TODO</span> Multi-processing</h3>
+<div class="outline-text-3" id="text-orgecb434e">
 <p>
 This starts an entire new process with a new interpreter.
 </p>
@@ -383,6 +527,13 @@ This starts an entire new process with a new interpreter.
 You do not have the GIL problem in this case, and if your infra
 architecture allows it you can possibly address CPU-bound issues
 with it.
+</p>
+
+<hr>
+<p>
+You might want to check at this option in case you would have CPU
+bounded long-running jobs that you would need to trigger from your
+endpoints. 
 </p>
 </div>
 </div>
