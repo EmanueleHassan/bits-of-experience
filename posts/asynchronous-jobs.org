@@ -139,7 +139,6 @@ model and JDBC is not being rewritten in a reactive way yet.)
    I.e. in comparison to [[https://github.com/PheaSoy/spring-boot-async-callback][source 2]] you do not have the client to
    continuously ask for the feedback and check if execution completed.
     
-
 * General Architecture for creating a scalable integrated ETL service
   
 ** First Round of Thinking - refinements are coming
@@ -342,7 +341,8 @@ BusinessUser   -> marketRiskDB   : can withdraw the relevant inforamtion
      errors-bounded messages are being stored.
 
      There are multiple reasons that make messages qualify as
-     dead-latter messages.
+     dead-latter messages. There are in fact 5 different reasons for
+     it and you can find them [[https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues][here]].
 
      The most interesting one - among the many others - for your
      application logic is the following:
@@ -354,9 +354,11 @@ BusinessUser   -> marketRiskDB   : can withdraw the relevant inforamtion
 
        Then after a given amount of times that you tried to process
        the message without success... i.e. when the count value is
-       large enough - you start to push the message 
+       large enough - you start to push the message.
 
 **** Note that there are ways to inspect the size of your queue
+
+     You can do that programatically.
 
 **** Check-pointing for long running jobs
 
@@ -368,6 +370,7 @@ BusinessUser   -> marketRiskDB   : can withdraw the relevant inforamtion
      the relevant information about the processing status of a job.
 
      For more refer to the relevant section over [[https://docs.microsoft.com/en-us/azure/architecture/guide/technology-choices/messaging][here]].
+
 
 *** Putting it all together
 
@@ -507,7 +510,6 @@ EventGrid      -> BusinessUser : Informs (mail) subscribers of topic about succe
 
    Understand as well if that fits the asynchronous logic that should
    be there. 
-
 
 * On EventGrid
 
@@ -848,7 +850,12 @@ String jsonStringValue = eventGridEventData.toString();  // The data payload rep
    ----------------
 
 
-* On storage Queue                                                 :noexport:
+** TODO Note that I was able to send the messages with webhooks    :noexport:
+
+   The only thing is that you have to embedd the security as well.
+
+
+* On storage Queue                                                 
 
   Note that this is for sure available as we already have a storage
   account in the VNet and as that lives in these spaces 1+1=2.
@@ -859,6 +866,53 @@ String jsonStringValue = eventGridEventData.toString();  // The data payload rep
   not?
 
   Similar concepts to ServiceBus? Where are the differences?
+
+** Differences with ServiceBus
+
+   ServiceBus is a more thorough service.
+
+   You have log analytics that you can inspect.
+
+   You have guaranteed ordering. You have as well publish
+   possibilities.
+
+   Azure Storage Queue is a much more 101 queue system.
+
+   So you have all of the queues features:
+
+   - Writing, Peeking, Deleting Messages
+
+   But no ordering, no publishing events and you have to integrate all
+   of the analytics component on it by yourself.
+
+   On the top of it the secondary queue for dealing with corrputed
+   messages is much more weak.
+
+   Recall that in Service Bus [[*Dead Latter][Dead Latter]] you essentially have 5 types
+   of errors that will cause the messages to be written to your
+   dead-latter.
+
+   In /Azure Storage Queue/ you have a single possibility. This makes
+   your modeling possibilities of erroneous messages more limited.
+
+   Essentially, you simply have the =maxdeliverycountexceeded=
+   case. This is the one you already mentioned in your Dead Latter
+   notes above and the most important one.
+
+   This basically says after a given amount of trials to process
+   the messages failed, there is clearly something wrong with it. You
+   then pass the message to the sub-queue dealing with problematic
+   messages: the =poison-<queue>=.
+   
+** How to use it
+
+   Check at your Spring playground. You have it there.
+
+   Note that in order to operate the messages on the poison-queue you
+   basically work in the same way.
+
+   You just have to change the queue name you are acting on and that
+   you pass to your methods from =<queue>= to =poison-<queue>=.
 
 
 * On Azure Functions

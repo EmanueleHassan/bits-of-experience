@@ -69,6 +69,17 @@ instruments take the lion position.
 Hence, more specialized models are used in order to price the risk of
 such fixed-income instruments.
 
+/Update as of 26/04/2022/ The above argumentation is correct but I
+understand right now that the notes in this section are not based on
+a risk model internally developed within the insurance
+company. Rather, these are simple factor model representations of the
+fixed income space used by the risk provider the company buys most of
+the solution from.
+
+Considering the fact that most of the risk providers copy each other I
+suspect that these are in fact the very standard way of implementing
+these models.
+
 Here some notes to understand the things in this sense in a better
 way. The general idea is to use fixed-income attribution models as in
 the [[https://en.wikipedia.org/wiki/Fixed-income_attribution][following entry]].
@@ -145,6 +156,22 @@ the [[https://en.wikipedia.org/wiki/Fixed-income_attribution][following entry]].
    the best possible representation of the *current* yield curve
    (standard OLS / minimization exercise).
 
+   This is done in the following way:
+
+   Let's say that you want to estimate parametrically the yield curve
+   for a specific yield curve.
+
+   Then what you actually do is take the bonds for the given country -
+   the country of which you want to represent the yield to
+   maturity. Then you know that the price is a function of the yield
+   to maturity. And you know that the yield to maturity is a function
+   of your interest rate factor representation.
+
+   So basically you do your minimization exercise by fitting the
+   prices of the bonds. This should give you a large enough sample for
+   your estiamation. You will then end up with a factor representation
+   of the yield curve and therefore of the interest rate curve.
+
    Once you found your parameteric representation of the yield curve
    depending on that factors you can make your standard sensitivities
    analysis by standard math-analysis arguments.
@@ -168,15 +195,81 @@ the [[https://en.wikipedia.org/wiki/Fixed-income_attribution][following entry]].
 
    So this is a little bit the logic you reason with in the market
    risk model for capturing the interest rate risk.
-   
-  
+
+   ------------
+
+   *Important note:*
+
+   Note that the risk lies in the paramters/loadings of the shift,
+   twist and butterfly terms and not in the factor themself.
+
+   This is evident when looking at the model, the factors are fixed
+   and are terms expressing the time decay. The parameters are
+   estimated.
+
+   The essential idea is then
+
+   #+begin_quote
+This implies an alternative interpretation of the parameters, or more
+specifically the parameters (β0, β1, β2), as a set of stochastic risk
+factors whose variation from period to period (i.e., return) drives
+the evolution of the yield curve.
+   #+end_quote
+
+   Add on the top of it the assumption that the parameters over t →
+   t + 1 are distributed approximately symmetrically around zero and
+   you will have your interest rate risk model.  (I guess even
+   normally-distributed as what I could infer as per the discussions
+   with my peers here - this is not that important to this stage. You
+   will discover in time. Focus on the big picture in the meantime).
+
+   Note now that the factors - risk factors - driving the yields are
+   not the parameters themselves but the parameters change in time. 
+
+   This can be formally prove through Ito's lemma. You can show in a
+   more rigorous way that the change in the yield curve at any point
+   in time is driven by the change of the risk factors in calendar
+   time. So you see that the factors are ultimately the difference
+   among the paramters and these are risk and symmetrically
+   distributed. Check the papers you are reading in this sense.
+
+   Similar formal arguments can be applied to the bond prices such
+   that you would ultimately end up with a factor level representation
+   of the bond returns. And badaboom, you have your factor risk model
+   through which you can simulate the returns.
+
+   You can then see that the factors are estimated via least squares.
+
+   So note that the above is all correct but it is a bit confusing as
+   it does not draw the proper line between the two estimation
+   exercises you want to do:
+
+   1. Estimate the parameters modeling the yield curve
+
+   2. Estimate the factors (the delta of the parameters in time). This
+      are the ultimate factors relevant for the simulation of the bond
+      returns.
+
+   You can check the relevant document that you have if you want to
+   get the details.
+
+   This will be good nonetheless. It is mostly focused on the
+   understanding of the model in an unstructured way. By know you have
+   that understanding and this is what counts. 
+
 ** Credit Spread Risk
 
-   TODO: Understand the basic reasoning behind credit spread risk.n
+   TODO: Understand the basic reasoning behind credit spread risk.
+
+   
   
 ** Swap Spread Risk
 
-   TODO: Understand the basic reasoning behind swap spread risk.   
+   TODO: Understand the basic reasoning behind swap spread risk.
+
+   So understand the first fundamental concept. Swap rate = fix rate
+   that you get for entering a swap contract with a given maturity.
+   
    
   
 

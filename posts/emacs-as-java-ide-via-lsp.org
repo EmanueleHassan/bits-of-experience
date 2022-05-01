@@ -139,7 +139,6 @@ java-lsp.
 
   you search for implementations of classes and interfaces.
 
-
 * peek references
 
   basically the same as finding by reference. it will display more
@@ -191,10 +190,7 @@ java-lsp.
 
 * Flycheck
 
-  De-Activate it.
-
-
-  Then with =lsp-ui-flycheck-list= you will get a list with all of the
+  With =lsp-ui-flycheck-list= you will get a list with all of the
   errors and inconsistencies you have in your source files.
 
   that is good and it corresponds to your eclipse way of seeing your
@@ -206,17 +202,25 @@ java-lsp.
   See for instance the following on the 101 spring application I am
   working on:
 
-#+begin_export html
- <img src="../../images/Screenshot 2022-02-03 164053.png" class="center">
-#+end_export
-  
+  #+begin_export html
+   <img src="../../images/Screenshot 2022-02-03 164053.png" class="center">
+  #+end_export
 
-  Note that there are issues with the last stable release of Melpa. It
-  is still not working. This is emacs. Have to deal with the dirty
-  world of software development. Check at [[https://github.com/flycheck/flycheck/issues/1754][this thread]] and implement
-  that dirty workaround as it is more than 1 year that they are
-  promising a stable release but nothing is moving.
+  /Update 01/05/2022:/
 
+  Flycheck 32 was finally released. This solved the flycheck issues I
+  was experiencing with the lsp-java interaction.
+
+  Was good to subscribing to the issue where this was being
+  discussed. It kept me up to date for the release.
+
+  Now it is cool cause you can have a per buffer list of your
+  errors. You can also quickly navigate the errors with all of the
+  available flycheck commands.
+
+  Finally you will have the highlighted TODOs and errors.
+
+  So cool - you have a better set up than eclipse in this sense now.
 
 * lsp format buffer
 
@@ -230,13 +234,34 @@ java-lsp.
 
   usually it works better. 
 
-
 * Projectile
 
   this is strong as it gives you all of the options to navigate your
   project and code.
 
-  i.e. jump to the test files etc.
+  i.e. jump to the test files etc. I mean this is a non-specific lsp
+  thing, so you can understand it online and is out of scope for this
+  entry.
+
+** Building and Testing
+
+  Ok that is not properly lsp-related but let's put it in here. Maybe
+  I will then write some separate notes on projectile later.
+
+  You can run your projects from emacs with the =projectile
+  run-project= command.
+
+  Here you can then pass for instance your =gradlew.bat build=
+  command.
+
+  However, note that you might as well not work in such a way. This
+  for instance when you are working with your stack with Spring. 
+
+  You can even run the unit-root tests for your project by running
+  =projectile test-project=.
+
+  Working as a charm now. Just have to configure it with =gradle= for
+  your actual project but then you are good to go.
 
 
 * class hierarchy
@@ -244,10 +269,9 @@ java-lsp.
   you can visualize the class hierachy with =lsp-ui-imenu=
 
   this is essentially the same information as you can have with the
-  *lsp-header-breadcrumb* below.
+  [[*lsp-header-breadcrumb][lsp-header-breadcrumb]] below.
 
   so I would not recommend it too much.
-
 
 * lsp-header-breadcrumb
 
@@ -258,7 +282,6 @@ java-lsp.
 
   this will adapt as you cycle through your code and it should help
   you a bit to keep the visibility over your entire code. 
-
 
 * Project Root
 
@@ -297,7 +320,6 @@ java-lsp.
   infer all of your relations for your entire project and you can jump
   to *implementations* and *definitions* for all of your methods,
   classes and variables across your entire projects.
-  
 
 * On checking the hierarchy and dependencies
 
@@ -307,7 +329,6 @@ java-lsp.
   There you can quickly visualize the pacakges structures and
   visualize the classes available in a given file together with the
   methods of them.
-
 
 * treemacs
 
@@ -325,7 +346,24 @@ java-lsp.
   In such a way you will be able to visualize the anchestors of your
   file and explore what sits around that source file in the
   hierarchy. That is pretty much informative already and will help you
-  to quickly make sense of your code.
+  to quickly make sense of your code.  
+
+  -------
+
+  /Update 01/05/2022:/ For the point I set up dired-sidebar to
+  function in the same way.
+
+  Probably it is better to work with it. You have now shortcuts to
+  open and close it in a very fast way across your buffers.
+
+  In the sense that you save yourself the time to edit the treemacs
+  workspaces etc.
+
+  You will have to explore in time though. Might be that for
+  programming itself is better as it is more standard and better
+  integrated. 
+
+  -------
 
   Note that in a similar way to lsp there is quite annoying story with
   the set up. I.e. once you select a root/workspace every time you
@@ -336,32 +374,10 @@ java-lsp.
   [[https://github.com/Alexander-Miller/treemacs][online]]. You can basically call =treemacs-edit-workspaces= and edit
   there your workspaces.
 
-
 * Troubleshooting
 
   Look at this [[https://emacs-lsp.github.io/lsp-mode/page/troubleshooting/][troubleshooting]] url when you have issues and want to
   debug stuff.  
-
-
-* Building and Testing
-
-  Ok that is not properly lsp-related but let's put it in here. Maybe
-  I will then write some separate notes on projectile later.
-
-  You have your build and test configuration set-up by David.
-
-  You have to understand where the commands for such builds and push
-  are.
-
-  Then you can run your projects from emacs with the =projectile
-  run-project= command.
-
-  You can even run the unit-root tests for your project by running
-  =projectile test-project=.
-
-  Working as a charm now. Just have to configure it with =gradle= for
-  your actual project but then you are good to go.
-
 
 * Debugging
 
@@ -398,7 +414,6 @@ java-lsp.
   some keys that will be useful for debugging. You can then hide it or
   open it via =M-<f5>=.
 
-
 * Auto-completion
 
   Note that auto-completion is also working now. I think that before
@@ -413,7 +428,6 @@ java-lsp.
   Note that there is still a lot of confusion around that topic in
   lsp for emacs and the way that things are done there at UI level. In
   order to understand this, check [[https://github.com/emacs-lsp/lsp-java/issues/201][this]].
-
 
 * Lsp java deps list
 
@@ -450,7 +464,6 @@ java-lsp.
 
   In the meanwhile while this process is ongoing check at the
   following notes for using more classical IDEs.
-
   
 ** On branch
 
@@ -563,8 +576,6 @@ public void insert() {
    the other threads of the application normally continue to run.
 
    https://stackoverflow.com/questions/5375538/debugging-multiple-threads-in-eclipse/5375589
-
-
 
    -------
 
@@ -683,6 +694,11 @@ there are a few Eclipse-based tools that could be used to "go back" in
    are there. 
 
    You can now start to run your smaller projects in emacs and start
-   to get up and running with it. 
+   to get up and running with it.
+
+   ------------
+
+   Note that this is important to navigate as across project it will
+   be important to deal with it in the correct way.
 
 

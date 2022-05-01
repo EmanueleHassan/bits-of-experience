@@ -637,9 +637,43 @@ become nulls and/or fall back to the default values.
    I also heard talking about it in databricks sessions about a company
    working with them before switching to databricks.
 
+** Temp Tables
+
+   Check at it [[https://www.sqlshack.com/overview-and-performance-tips-of-temp-tables-in-sql-server/][here]].
+
+   This is as well an interesting concept that is at times used in the
+   team.
+
+   The essential idea is the following:
+
+   - You create a table that can perform CRUD operations as other
+     persistent DB tables. 
+
+   - Temporary tables are dropped when the connection that creates the
+     table has closed. Otherwise they can be explicitly dropped by
+     users.
+
+   Note that one temp table will be available throughout the
+   connection.
+
+   Note that two different connections will create different
+   temp-tables even if they are called in the same way.
+
+   See the following concept with postfix
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-04-29 095143.png" class="center">
+   #+end_export
+
+*** Global temp tables
+
+    Note that you can as well create global temp tables that are
+    accessed by all other connections. 
+
 
 * On Database Architecture   
   
+
 ** Datbase Partitioning
 
    This sections notes are based on: [[https://www.digitalocean.com/community/tutorials/understanding-database-sharding][this]].
@@ -713,7 +747,6 @@ become nulls and/or fall back to the default values.
     Note that the above is just one possibility among the many sharding
     possibilities.
    
-
 ** Linked Servers
 
    These enable you to implement distributed databases that can fetch
@@ -748,7 +781,7 @@ become nulls and/or fall back to the default values.
 
   This is fairly standard material. I just was not a too heavy user of
   SQL recently, which I have to become again.
-  
+
 ** Set Identity Key - On/Off
 
    Note that when this is off it basically means that you cannot set
@@ -789,8 +822,13 @@ VALUES (value1, value2, value3, ...);
 
    #+begin_src sql
    SELECT COALESCE(NULL, 1, 2, 'W3Schools.com'); -- returns 1
-   #+end_
+   #+end_src
 
+
+** iif
+
+   return =YES= if condition is =True= and =NO= otherwise.
+   
 
 ** On Column notation
 
@@ -835,6 +873,51 @@ SELECT ...
    #+end_src 
 
 
+** Merge
+
+   The MERGE statement is used to make changes in one table based on
+   values matched from another.
+
+   This essentially performs =insert=, =update=, =delete= into a
+   single statement.
+
+   You can work with a merge statement in the following way:
+
+   #+begin_src sql
+MERGE targetTable
+Using sourceTable
+ON mergeCondition
+WHEN MATCHED
+THEN updateStatement
+WHEN NOT MATCHED BY TARGET
+THEN insertStatement
+WHEN NOT MATCHED BY SOURCE
+THEN deleteStatement
+   #+end_src
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-04-28 174632.png" class="center">
+   #+end_export
+
+   So you understand that you apply different logic for different
+   matching statements.
+
+   Note that when you have a logical wrong condition, for instance
+   ~source 1=0~ then the condition is always fulfilled. This is
+   sometimes used in combination with merge in order to leverage the
+   output property. There are restrinctions for it with the insert
+   statement in this sense. 
+
+
+** Output
+
+   #+begin_quote
+   The OUTPUT clause returns the values of each row that was affected
+   by an INSERT, UPDATE or DELETE statements. It even supports with a
+   MERGE statement, which was introduced in SQL Server 2008 version.
+   #+end_quote
+   
+
 ** Alter Statement
 
    In such a way it is possible to add, delete or modify columns in an
@@ -845,7 +928,7 @@ ALTER TABLE table_name
 ADD column_name datatype;
    #+end_src
 
-   
+
 ** Create
 
    Here the syntax
@@ -911,7 +994,7 @@ CROSS APPLY sys.dm_exec_sql_text(der.sql_handle) dest
 CROSS APPLY sys.dm_exec_query_plan(der.plan_handle) deqp
 where des.session_id <> @@spid
    #+end_src
-   
+
 
 ** To see key relations for a column/table
 
@@ -1035,6 +1118,7 @@ RAISERROR (N'This is message %s %d.', -- Message text.
    That is important as it gives you an idea about who should be
    informed about what. 
    
+
 * Footnotes
 
 [fn:2] Note as well that here is the big difference with Views. In
