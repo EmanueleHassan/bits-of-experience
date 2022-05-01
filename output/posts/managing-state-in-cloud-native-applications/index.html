@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Managing State in Cloud Native Applications | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/managing-state-in-cloud-native-applications/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../database-concepts/" title="Database Concepts" type="text/html">
+<link rel="next" href="../asynchronous-jobs/" title="Integration and Asynchronous Jobs" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Managing State in Cloud Native Applications">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/managing-state-in-cloud-native-applications/">
+<meta property="og:description" content="So nice, there is a bit of a PoC now to break the monoliths apart and
+start to work more in a cloud native way.
+
+
+
+There are a couple of questions you will need to fix in order to
+create the general s">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-02-23T13:25:08+01:00">
+<meta property="article:tag" content="IT Architecture">
+<meta property="article:tag" content="software-engineering">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Managing State in Cloud Native Applications</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2022-02-23T13:25:08+01:00" itemprop="datePublished" title="2022-02-23 13:25">2022-02-23 13:25</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/it-architecture/" rel="tag">IT Architecture</a></li>
+            <li><a class="tag p-category" href="../../categories/software-engineering/" rel="tag">software-engineering</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+So nice, there is a bit of a PoC now to break the monoliths apart and
+start to work more in a cloud native way.
+</p>
+
+<p>
+There are a couple of questions you will need to fix in order to
+create the general structure of the PoC - the first one being how to
+treat asynchronity in your architecture. The second one being how to
+keep track of the state of the applicaiton.
+</p>
+
+<p>
+This is a <a href="https://thenewstack.io/the-state-of-state-in-cloud-native-applications/">major question</a> in the cloud-native app development
+paradigma. You can summarize the issue as following:
+</p>
+
+<ul class="org-ul">
+<li>you want your apps to be stateless such that it is easy to scale and
+heal (recover) them.</li>
+
+<li>you need to keep track of some states in your overall logic.</li>
+</ul>
+<p>
+Note now that you have to create a suitable architecture that makes
+the both objectives possible.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org649599e" class="outline-2">
+<h2 id="org649599e">Monolith way of doing the thing</h2>
+<div class="outline-text-2" id="text-org649599e">
+<p>
+Create a big fat DB holding the state.
+</p>
+
+<p>
+DBA resposible for it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2d99ec7" class="outline-2">
+<h2 id="org2d99ec7">Cloud Native Way of doing it</h2>
+<div class="outline-text-2" id="text-org2d99ec7">
+<p>
+You can still keep a DB with the state. But I would guess this is
+not the most clean way of working.
+</p>
+
+<p>
+I would rather go with some event-based state solution as mentioned
+<a href="https://www.lightbend.com/blog/design-techniques-stateful-cloud-native-applications-resilience-recoverability-scalability">here</a>.
+</p>
+
+<p>
+At the end the idea is the one of actors performing the tasks -
+state is managed by <a href="https://en.wikipedia.org/wiki/Actor_model">actors</a>. Each actor holds one state.
+</p>
+
+<p>
+You have event logs such that you can replay the history in case of
+failures. 
+</p>
+
+<p>
+So basically this is a formalization of what you already had in
+mind.
+</p>
+
+<p>
+It is actully fun how many of these patterns comes out of the box
+as possible solution.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5701627" class="outline-2">
+<h2 id="org5701627">Recall as well the issue of compensating transactions</h2>
+<div class="outline-text-2" id="text-org5701627">
+<p>
+Always keep <a href="https://docs.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction">this</a> in the back of your mind when developing in such a
+way.
+</p>
+
+<p>
+I.e. always ask yourself is a compensating-transaction needed?
+</p>
+
+<p>
+How to I keep track of the necessary compensating transactions. 
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../database-concepts/" rel="prev" title="Database Concepts">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../asynchronous-jobs/" rel="next" title="Integration and Asynchronous Jobs">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

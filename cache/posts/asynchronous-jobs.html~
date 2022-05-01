@@ -1,0 +1,651 @@
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+<p>
+So new post.
+</p>
+
+<p>
+This is mainly about some integration exercise. It is not simple to
+set up properly integration patterns. You can refer to <a href="https://www.enterpriseintegrationpatterns.com/index.html">the following</a>
+for a general overview.
+</p>
+
+<p>
+So let's start to explore.
+</p>
+
+<!-- TEASER_END -->
+
+<p>
+So the basic idea is to create an integration pattern via asynchronous API calls.
+</p>
+
+<p>
+So you will need to pieces:
+</p>
+
+<ol class="org-ol">
+<li>code implementation to work with that mental framework</li>
+
+<li>asynchronous API documentation</li>
+</ol>
+
+<p>
+The next two chapters deal with it.
+</p>
+
+<div id="outline-container-orgcbebdad" class="outline-2">
+<h2 id="orgcbebdad">Asynchronous API - Documentation</h2>
+<div class="outline-text-2" id="text-orgcbebdad">
+<p>
+Apparently there is an OpenAPI counterpart for async communication.
+</p>
+
+<p>
+I mean you could simply document your endpoints with OpenAPI and
+keep the structure of the async communication in some documentation
+somewhere else.
+</p>
+
+<p>
+I like in any case the idea of using a standard. Computer science is
+fun and you have to leverage on such big projects as then you can
+see that there are options to visulize this general asynch
+communication and more likely many other projects will start to
+emerge as this is just the beginning of the entire thingy. 
+</p>
+
+<p>
+Check <a href="https://www.asyncapi.com/docs/getting-started/hello-world">this</a>. You see that it is a quite intuitive scema.
+</p>
+
+<p>
+Read into it <a href="https://www.asyncapi.com/blog/asyncapi_codegen_scst">here</a> to get an idea of where the market is already
+moving.
+</p>
+
+<p>
+I think that this will come with time. Baby steps as always. Start
+easy - then expand on it. Sooner or later you will start in any case
+to work more with event-driven architectures. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgdbaf676" class="outline-2">
+<h2 id="orgdbaf676">Coding and Designing Asynchronous Communication</h2>
+<div class="outline-text-2" id="text-orgdbaf676">
+<p>
+So basically there are two options:
+</p>
+
+<ul class="org-ul">
+<li>polling</li>
+
+<li>callback</li>
+</ul>
+
+<p>
+You can briefly read about the two <a href="https://sanketdaru.com/blog/polling-model-async-rest-spring-boot/">here</a>. It is clear now that the
+most elegant option is the second one.
+</p>
+</div>
+
+<div id="outline-container-orge0524cf" class="outline-3">
+<h3 id="orge0524cf">Polling</h3>
+<div class="outline-text-3" id="text-orge0524cf">
+<p>
+W.r.t. polling you can see the following two sources:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://sanketdaru.com/blog/polling-model-async-rest-spring-boot/">source 1</a></li>
+
+<li><a href="https://github.com/PheaSoy/spring-boot-async-callback">source 2</a> - note that name is misleading it is still mostly a
+polling solution in my view.</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orga835415" class="outline-3">
+<h3 id="orga835415">Callback</h3>
+<div class="outline-text-3" id="text-orga835415">
+<p>
+You can easily create callbacks with a seris of endpoints and
+multi-threading on your machines.
+</p>
+
+<p>
+A more solid way is to work with queues. Then you do not have to go
+on multi-threading necessarily. This might simplify extensively the
+development task at the cost of some resources loss.
+</p>
+
+<p>
+You can then integrate queues with event-grids in order to create a
+fully reactive architecture for your application that is not
+polled operations dependent.
+</p>
+
+<p>
+I.e. in comparison to <a href="https://github.com/PheaSoy/spring-boot-async-callback">source 2</a> you do not have the client to
+continuously ask for the feedback and check if execution completed.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org72d89d0" class="outline-2">
+<h2 id="org72d89d0">General Architecture for creating a scalable integrated ETL service</h2>
+<div class="outline-text-2" id="text-org72d89d0">
+</div>
+<div id="outline-container-orgd9647c5" class="outline-3">
+<h3 id="orgd9647c5">First Round of Thinking - refinements are coming</h3>
+<div class="outline-text-3" id="text-orgd9647c5">
+<img src="../../images/callbackAsync.png" class="center">
+
+<p>
+I mean so you see that at conceptual level it is not that difficult
+to set up a solution performing your desired solutions.
+</p>
+
+<p>
+Have just to read a bit into it - but basically you are very much
+done.
+</p>
+
+<p>
+You can read over <a href="https://www.freecodecamp.org/news/how-to-scale-microservices-with-message-queues-spring-boot-and-kubernetes-f691b7ba3acf/">here</a> a basic example for such a similar solution
+going more in the technological component. Note that you will
+not be able to apply the exact same tech stack but the idea is
+there and it is quite similar to what you had in mind. 
+</p>
+
+<p>
+Another <a href="https://developer.ibm.com/tutorials/auto-scale-rabbitmq-consumers-by-queue-size-on-openshift/">source</a> for making that pattern.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org9674334" class="outline-3">
+<h3 id="org9674334">Second round of Thinking - gathering evidence</h3>
+<div class="outline-text-3" id="text-org9674334">
+<p>
+So the one above was a basic idea.
+</p>
+
+<p>
+I think you have the general structure in mind. Have to become more
+concrete now.
+</p>
+
+<p>
+Explore better the available services in Azure and start to create
+a solid architecture for it.
+</p>
+
+<p>
+I.e. slowly start as well talks with your peers to see what is
+doable and what is not.
+</p>
+
+<p>
+Basic architectural patterns that you should consider for your
+asynchronous messages are <a href="https://docs.microsoft.com/en-us/azure/architecture/guide/technology-choices/messaging">the following</a>.
+</p>
+</div>
+
+<div id="outline-container-orgbef5358" class="outline-4">
+<h4 id="orgbef5358">Request-Reply Pattern</h4>
+<div class="outline-text-4" id="text-orgbef5358">
+<p>
+Essentially what you aim to set up is an async request-reply
+integration pattern.
+</p>
+
+<p>
+You can read about it over <a href="https://docs.microsoft.com/en-us/azure/architecture/patterns/async-request-reply">here</a>. There in the context and problem
+you can see your exact situation and see how a queue is often the
+solution architecture of choice for this kind of situations.
+</p>
+
+<p>
+Note that the queue must be integrated with a status check.
+</p>
+
+<p>
+You can see the most basic architecture to set something like this
+up <a href="https://reflectoring.io/amqp-request-response/">here</a>. I think this is quite basic and I will try to construct a
+more solid architecture next. 
+</p>
+
+<p>
+This is what I will develop on in the next sections.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd98d3ff" class="outline-4">
+<h4 id="orgd98d3ff">Service Bus</h4>
+<div class="outline-text-4" id="text-orgd98d3ff">
+<p>
+This is a queue service in Azure. So it is a managed queue that it
+is easy to interact with.
+</p>
+
+<p>
+If you want to go fully open source check the resources
+above. Note as well that service bus is quite a simple message
+broker. I understand that it does not allow neither the
+flexibility of an exchange as RabbitMQ nor the resiliency of the
+cluster topology of Kafka. (See quick notes <a href="https://marcohassan.github.io/bits-of-experience/posts/spring/">here</a>). 
+</p>
+
+<p>
+Important points for it are mentioned next. 
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="org2aefcb4"></a>On operating the messages in a queue<br />
+<div class="outline-text-5" id="text-org2aefcb4">
+<p>
+So essentially understand the following basic operations you can
+do with it:
+</p>
+
+<ul class="org-ul">
+<li>get messages from queue</li>
+
+<li>delete messages from queue</li>
+
+<li>peek messages from queue</li>
+</ul>
+</div>
+</li>
+
+<li><a id="orgc376e0f"></a>Getting the Messages<br />
+<div class="outline-text-5" id="text-orgc376e0f">
+<p>
+Check at the following get operation for a message in the queue.
+</p>
+
+<blockquote>
+<p>
+When a message is retrieved from the queue, the response includes
+the message and a pop receipt value, which is required to delete the
+message (have an API call for it).
+</p>
+
+<p>
+The message is <b>not automatically deleted from the queue</b>, but after
+it has been retrieved, it is <b>not visible to other clients</b> for the time
+interval specified by the <b>visibilitytimeout parameter</b>.
+</p>
+</blockquote>
+
+<p>
+Note that upon getting a message from the queue the <code>delivery
+     count</code> is increased. This is of paramount importance to deal with
+faulty messages and a first class citizen for the concept of <a href="#orgf91ac8d">Dead
+Latter</a>. 
+</p>
+
+<p>
+So in this way you can keep track of what was processed and what
+still needs to be processed. You have a state machine as long as
+the queue is reliable. Have to discuss with V. in this sense to
+question how important is that 0.01% of non-availability. I guess
+that for us is not a major concern as worst you do the operation
+again. Have to have a logging mechanismus keeping track of
+everything nonetheless. 
+</p>
+
+<p>
+Now the only thing is that in such a way you need polling from
+the queue.
+</p>
+
+<p>
+The other possibility is to set an event-grid or an azure
+function trigger in between.
+</p>
+</div>
+</li>
+
+<li><a id="org8063299"></a>Peeking the Messages<br />
+<div class="outline-text-5" id="text-org8063299">
+<p>
+This function essentially works as the get orperator with the
+difference that <code>delivery count</code> is <b>not increased</b>:
+</p>
+
+<blockquote>
+<p>
+Service Bus allows a consumer to peek the queue and lock a message
+from other consumers.
+</p>
+
+<p>
+It's the responsibility of the consumer to <b>report the processing
+status</b> of the message.
+</p>
+
+<p>
+Only when the consumer marks the message as consumed, Service Bus
+removes the message from the queue.
+</p>
+
+<p>
+If a failure, timeout, or crash occurs, Service Bus unlocks the
+message so that other consumers can retrieve it. This way messages
+aren't lost in transfer.
+</p>
+</blockquote>
+</div>
+</li>
+
+<li><a id="org5585ce9"></a>Deleting the Messages<br />
+<div class="outline-text-5" id="text-org5585ce9">
+<p>
+As mentioned above in the two cases what you actually do in the
+above is reading messages out of the queue.
+</p>
+
+<p>
+You do not delete such from there. You just acquire a lock over
+them for a limited amount of time.
+</p>
+
+<p>
+Then you have to manually delete upon the successful processing
+of a message.
+</p>
+
+<p>
+You can well understand that this is very good as in such a case
+you have an actual state machine about the messages that are
+still to be completed.
+</p>
+
+<p>
+The question is rather how you log finished jobs. I guess that
+you are still interested in keeping track of that.
+</p>
+
+<p>
+Need to couple the thing with a store then.
+</p>
+</div>
+</li>
+
+<li><a id="orgf91ac8d"></a>Dead Latter<br />
+<div class="outline-text-5" id="text-orgf91ac8d">
+<p>
+See <a href="https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues">here</a>.
+</p>
+
+<p>
+This is essentially a queue within the queue where unprocessed or
+errors-bounded messages are being stored.
+</p>
+
+<p>
+There are multiple reasons that make messages qualify as
+dead-latter messages.
+</p>
+
+<p>
+The most interesting one - among the many others - for your
+application logic is the following:
+</p>
+
+<ul class="org-ul">
+<li><p>
+Maximum delivery count
+</p>
+
+<p>
+Recall that when you get the message out of the queue its count-value
+is incremented by one.
+</p>
+
+<p>
+Then after a given amount of times that you tried to process
+the message without success&#x2026; i.e. when the count value is
+large enough - you start to push the message 
+</p></li>
+</ul>
+</div>
+</li>
+
+<li><a id="orge2e0fcc"></a>Note that there are ways to inspect the size of your queue<br /></li>
+
+<li><a id="org4f5c23f"></a>Check-pointing for long running jobs<br />
+<div class="outline-text-5" id="text-org4f5c23f">
+<p>
+That is exactly the other bit that you need.
+</p>
+
+<p>
+You can set the state for a session and get the state.
+</p>
+
+<p>
+So with it you would already have a solution for the UI to get
+the relevant information about the processing status of a job.
+</p>
+
+<p>
+For more refer to the relevant section over <a href="https://docs.microsoft.com/en-us/azure/architecture/guide/technology-choices/messaging">here</a>.     
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org8294ae9" class="outline-3">
+<h3 id="org8294ae9">Putting it all together</h3>
+<div class="outline-text-3" id="text-org8294ae9">
+<img src="../../images/ETLstateMachine.png" class="center">
+
+
+<p>
+If you go for a push model you have to solve the following points:
+</p>
+
+<ul class="org-ul">
+<li>pushing out of the queue - how do you trigger the eventGrid
+event if the message in the queue was not processed?</li>
+
+<li>polling you can do it yourself by implementing ETL jobs pulling
+out from the queue. See the basic API of the bus.</li>
+
+<li><p>
+check as well the option to work with Azure functions. It
+probably makes most sense to work in such a way.
+</p>
+
+<p>
+Check <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-storage-blob-triggered-function">this documentation</a> in this sense. (actually the event Grid
+also mentioned <a href="https://stackoverflow.com/questions/47570207/message-from-azure-blob-storage-to-azure-service-bus">here</a>). So in any case you are on the right track
+to construct your solution architecture. Check at <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-storage-queue-triggered-function">this</a>
+documentation.
+</p></li>
+
+<li>you need to check at the costs. you need Premium Service Bus if
+you want to go down the full road. Check if this makes sense but
+yeah probably makes sense to work with functions.</li>
+</ul>
+</div>
+
+<ul class="org-ul">
+<li><a id="orgd50d45e"></a>on service bus - eventgrid integration<br />
+<div class="outline-text-5" id="text-orgd50d45e">
+<p>
+See the <a href="https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-to-event-grid-integration-concept?tabs=event-grid-event-schema">following page</a>.
+</p>
+</div>
+</li>
+
+<li><a id="orgd61cfd4"></a><span class="todo TODO">TODO</span> open questions - how to make the service resilient<br /></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org1beef99" class="outline-2">
+<h2 id="org1beef99">On Azure Functions</h2>
+<div class="outline-text-2" id="text-org1beef99">
+<p>
+Very nice way to integrate with the two services you want to use:
+</p>
+
+<ul class="org-ul">
+<li>Blob</li>
+
+<li>Service Bus</li>
+</ul>
+
+<p>
+Check here the <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus">possible triggers</a>.
+</p>
+
+<p>
+In such a way you do not have to go Premium on Event Grid and I
+think that for the extent of our workloads it is more than enough to
+work in such a way without going too big on services.
+</p>
+
+<p>
+Start to test your workflow with Azure Functions Core Tools as soon
+as you get the green light from IT to install it. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgf2e7106" class="outline-2">
+<h2 id="orgf2e7106">On issues when working in such a fragmented Networking driven space</h2>
+<div class="outline-text-2" id="text-orgf2e7106">
+</div>
+<div id="outline-container-org5679efc" class="outline-4">
+<h4 id="org5679efc">Circuit Breaker</h4>
+<div class="outline-text-4" id="text-org5679efc">
+<p>
+This is an important concept that you have to keep in mind when
+you develop your distributed system solution. 
+</p>
+
+<p>
+The idea is that as information is more distributed it might be
+more difficult to revert a given app bit of logic in case of
+errors.
+</p>
+
+<p>
+So you have always to keep in mind how to break the circuit in
+case of faults and how to revert every distributed component
+affected.
+</p>
+
+<p>
+You might as well think in terms of <b>compensating transaction</b>
+patterns.
+</p>
+
+<p>
+What is needed to track and trigger compensating transactions?
+</p>
+
+<p>
+This is in fact probably the one and major issue of setting up
+everything properly in a distributed system way. All the rest is a
+gain in my humble opinion. Especially on the long run. 
+</p>
+
+<p>
+Note that you can use DBs to manage state. You can think for
+instance of the solution
+</p>
+
+<p>
+Another possibility - and this a thing that in any case you will
+have to dig more into it - is the one of using frameworks as
+<a href="#orgfe074e9">Jaeger</a>.
+</p>
+
+<p>
+This might help you not simply for circuit breakers but as well to
+debug a distributed application and understand where issues and
+triggers are. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgfe074e9" class="outline-4">
+<h4 id="orgfe074e9">Jaeger</h4>
+<div class="outline-text-4" id="text-orgfe074e9">
+<p>
+Helps to set up proper circuit breakers.
+</p>
+
+<p>
+The idea is that with Jaeger you can trace the calls back and
+implement your circuit breaker on the top of it.
+</p>
+
+<p>
+See the <a href="https://www.jaegertracing.io/">official documentation</a>. Check as well other source as the <a href="https://reflectoring.io/spring-boot-tracing/">following</a> for instance.
+</p>
+
+<p>
+Sooner or later if you start to have serious work in distributed
+environment that bit will come. 
+</p>
+</div>
+</div>
+</div>
