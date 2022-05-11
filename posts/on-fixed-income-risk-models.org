@@ -2,7 +2,7 @@
 .. title: On Fixed-Income Risk Models
 .. slug: on-fixed-income-risk-models
 .. date: 2021-10-28 10:10:15 UTC+02:00
-.. tags: finance
+.. tags: finance, risk-models
 .. category: 
 .. link: 
 .. description: 
@@ -84,9 +84,87 @@ Here some notes to understand the things in this sense in a better
 way. The general idea is to use fixed-income attribution models as in
 the [[https://en.wikipedia.org/wiki/Fixed-income_attribution][following entry]].
 
+Note that I am moving quite fast. Cannot spend too much time in each
+and every detail as it is not the major component of my Job. I am just
+quickly getting the high level idea of the model to represent.
+
+These notes suffer in this sense from this time pressure. In time they
+will become more structured.
+
 {{{TEASER_END}}}
 
+* On drawing a conceptual line among all of the given risks
+  DEADLINE: <2022-05-23 Mo. 09:00>
 
+  So basically the basic concept is that the risk int he fixed income
+  space is split in three categories.
+
+  - Interest rate Risk
+
+  - Swap Spread Risk 
+
+  - Credit Spread Risk
+
+  This is of paramount importance to get before jumping into the math.
+
+  Forget the risk keyword in the above. Focus on understanding the
+  entire picture.
+
+  I.e. the three curves:
+
+  1. Interest Rate Curve
+
+  2. Swap Spread Curve
+
+  3. Creadit Spread Curve
+
+  It makes little sense to understand the math behind if you do not
+  understand the thing at conceptual level. This is what will make
+  the difference in the end in the long run. 
+
+  So basically the interest rate curve is the one you always have in
+  mind - the yield curve.
+
+  The other two are simply the spreads from the interest rate curves
+  of the respective curves.
+
+  So understand that the spread curve represents the spread rate payed
+  out at different maturity. I.e. the fixed leg that makes the NPV of
+  the swap contract 0.
+
+  Recall the exercise in finance then: in order to correctly interpret
+  the thing of interest is a simple exercise:
+
+  - Understand what the risk of entering the contract is.
+
+    Make simple models saying why you deserve a premium for it based
+    on the classical microeconomics reasonings. 
+
+  So little exercise in this case:
+
+  - Entering a swap means for the party paying the fix leg, buying in
+    on the risk that the rates will increase. In such a case the
+    present value of the underlying implied bond - as represented by
+    the cash flows will decrease and the party will loose money. 
+
+  Note now that the swap spread represents the following bit of
+  information:
+
+  - if it is positive it means that the market expects the rate to
+    decrease for the given maturity.
+
+  On the top of it there is a second important effect. It is the one
+  that the party paying the fix rate will not come clear and pay his
+  commitments.
+
+  Note that the other way around is less risky as you are basically
+  going with the market.
+
+  In this sense Swap spreads correlate closely with credit spreads as
+  they reflect the perceived risk that swap counterparties will fail
+  to make their payments.
+
+   
 * On fixed income attribution models
 
   So what these models do is to decompose the risk of fixed-income
@@ -255,22 +333,133 @@ the evolution of the yield curve.
 
    This will be good nonetheless. It is mostly focused on the
    understanding of the model in an unstructured way. By know you have
-   that understanding and this is what counts. 
+   that understanding and this is what counts.
+   
+*** TODO make possibly a more structured entry
+
+    Skippingi it for now as I want to move on with the stuff. You got
+    the idea.
+
+    Interesting is that you compute the variance-covariance matrix via
+    the fitted factors in time.
+
+    it seems that you work at the sub-class level and do not compute
+    a single huge matrix taking into account all of the different
+    effects.
+
+    Have to understand this component. 
+
+
+** Swap Spread Risk
+
+   So mathematically in the base market models I am working on and
+   seeing which are pretty much industry standards the swap spread
+   rate curve is expressed as follows:
+
+   - As a shift-twist-butterfly (STB) decomposition
+
+     (Note that it is written in the document that this is for the
+     spread actually - so a tiny bit different - continue reading and
+     you will see and adjust).
+
+   Note that then this model is very trivial. In the sense the factor
+   model derivation.
+
+   This is in fact the very same reasoning of the interest rate
+   model.
+
+   It is a 1:1 derivation. All of the concepts and the derivations are
+   the same.
+
+   The only thing that is different is the underlying curve that you
+   fit that will ultimately give you a diffeernt set of factor
+   loadings.
+
+   This curve you obtain by basics financial argumentations and basic
+   application of standard arbitrage reasonings. 
 
 ** Credit Spread Risk
 
-   TODO: Understand the basic reasoning behind credit spread risk.
+   Three types of credit spread factors are covered.
 
+   - Corporate credit spreads in developed markets.
    
-  
-** Swap Spread Risk
+   - Corporate credit spreads in emerging markets.
+   
+   - Sovereign credit spreads in emerging markets.
 
-   TODO: Understand the basic reasoning behind swap spread risk.
+   Note that this is interesting as you see how all of these different
+   risks are modeled.
 
-   So understand the first fundamental concept. Swap rate = fix rate
-   that you get for entering a swap contract with a given maturity.
-   
-   
+   I.e. you see where some parameters you store in the main database
+   of reference come into the picture.
+
+   These are in fact used to estimate some factors and hence have a
+   paramount importance on the entire chain of events.
+
+   Think for instance at the credit rating analysis team and how their
+   input influence the thing down the rode.
+
+   Note now that such different spreads are modeled by the different
+   interaction of country_factors * industry_factors (possibly
+   sub-industry) *ratingScore_factors.
+
+*** On the different risk parameterization for developed markets and emerging markets
+
+    So understand that how the external provider parameterize
+    everything is via different set of exposures.
+
+    For /developing markets/ the following is relevant for
+    calculating the corporate corporate credit spread:
+
+    - sector × credit rating × currency factors
+
+    For /emerging markets/ the following is relevant for calculating
+    the spreads:
+
+    - corporate factors * regional factors * country-specific factors
+
+    So you see that the decomposition is much more parameterically
+    intense and you basically try to capture the difficulty of the
+    exercise.
+
+    Note that actually for the emerging markets you have different
+    factors used depending on the depth of the market. Meaning that
+    you define at country level in fact what you would like to include
+    as parameterization. You can read more into your notes if interested.
+    
+**** Reasoning behind the different parametrization
+
+     The reason for the distinction between markets is related to the
+     different economic features of credit in developed and emerging
+     markets.
+
+     In developed markets the dominant source of risk, and hence the
+     relevant information for determining correlations, comes from
+     issuer-specific local-currency features such as sector and
+     rating, whereas in emerging markets much of the debt issued
+     (either by sovereigns or corporates) is denominated in currencies
+     of developed markets, and the dominant source of risk tends to
+     come from the creditworthiness of the issuer rather than from
+     local-currency features.
+
+*** Actual Derivation of the Factors
+
+    Note that like the interest rate and swap spread models, a linear
+    factor structure is used, however unlike these models /only a single
+    shift factor/ is used.
+
+* IN-PROGRESS Drivers of the derived mathematical formulas
+
+  Ok so you basically have written about the three main drivers of
+  fixed income risk. You have as well written about the low level
+  logic and derivation of your fixed income factor models.
+
+  Now take them as given and understand what are the ultimate drivers
+  of such factor models.
+
+  This will help you to understand what actually drives the risk.
+
   
 
   

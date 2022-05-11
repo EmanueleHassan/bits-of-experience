@@ -66,7 +66,6 @@ at a high level but he does it in a good way that I always enjoyed.
 
 {{{TEASER_END}}}
 
-
 * On the key refresher
 
   Recall the basics of relational databses. Nothing new but alternate
@@ -280,6 +279,7 @@ at a high level but he does it in a good way that I always enjoyed.
    See there the references to [[*Alternate Key / Secondary Keys][Alternate Key / Secondary Keys]] and
    Indices. 
 
+
 ** Relations
 
     Understand the following few concepts:
@@ -310,6 +310,7 @@ at a high level but he does it in a good way that I always enjoyed.
     However, note that [[https://support.quest.com/technical-documents/toad-data-modeler/6.4/user-guide/25#TOPIC-918537][the following]] holds in general terms. Check at
     it in order to properly define relations. 
 
+
 ** Reverse Engineer with Toad
 
    Check at [[https://blog.toadworld.com/toad-data-modeler-reverse-engineering-convert-model-wizards][this url]].
@@ -318,7 +319,61 @@ at a high level but he does it in a good way that I always enjoyed.
    proper schema was constructed in time.
 
    Then you can start organizing the schema.
-   
+
+   You will have to use it probably sooner or later. No doubt, so
+   check at it at some point.
+
+   Note that you have multiple options in here.
+
+*** TODO Completely Reverse Engineer the DB from an existing connection
+
+*** Reverse Engineer a DDL schema
+
+    This is interesting cause you might well start to check in DDL
+    into git.
+
+    Then you will solve this coordination issue.
+
+    You just have to check in the DDL script every time which is
+    painful.
+
+    On the top of it, you might not display the thing as nicely as in
+    your =*.txp= file.
+
+    In order to insert a DDL schema you work as follows:
+
+    - Open a new workspace. Otherwise it would overwrite your
+      exisiting solution.
+
+    - Select =Update Model from Database= option. See the highlighted
+      option on the top left of the following Screenshot. 
+      
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-05-09 085844.png" class="center">
+    #+end_export
+
+    - Select =DDL Script RE= (ddl script reverse engineer) as data
+      source.
+
+      You can then pass the relevant DDL script. It will generate the
+      relevant data model in the workspace.
+
+      You can then actually copy and paste such objects into your
+      workpace of choice. 
+
+
+** TODO Merge Models
+
+   This is potentially the solution if it performs a merge among two
+   different data models in a similar way that git merges conflicts. 
+
+   You should try this and check how it behaves.
+
+   Crashing - so not a useful solution.
+
+   -> Understand what is causing troubles here.
+
+
 ** Indexes and Constraints
 
    So the part of indexes you can well understand given your recent
@@ -361,7 +416,7 @@ at a high level but he does it in a good way that I always enjoyed.
     cause so far I did not connect it to any databse. so there must be
     an issue of a different kind. 
     
-
+    
 * Working with Relational Systems
 
   Views, stored procedures and indices.
@@ -477,7 +532,6 @@ become nulls and/or fall back to the default values.
 
     Note as well that recursion is not possible in updating a
     view. For instance a nested table in the =where= clause.
-
     
 *** Materialize Views
 
@@ -492,6 +546,7 @@ become nulls and/or fall back to the default values.
     The two will not be in sync if you do not refresh.
 
     You should therefore be particularly careful when working with this.
+
 
 ** Stored Procedures  
 
@@ -542,7 +597,12 @@ become nulls and/or fall back to the default values.
       running the application logic of interest.
 
       Moreover, this sounds like a little benefit to justify the usage
-      of such stored procedures. 
+      of such stored procedures.
+
+      ---
+
+      Even for compiled languages the above is crap. See for instance
+      devtools in Spring. 
 
    2. *Reduceded Network Traffic*: A major advantage of stored
       procedures is that they can run directly within the database
@@ -636,6 +696,23 @@ become nulls and/or fall back to the default values.
 
    I also heard talking about it in databricks sessions about a company
    working with them before switching to databricks.
+
+*** Update 02/05
+
+    After getting a little bit more on-hands with their system I think
+    that it is indeed suboptimal to work through such methods.
+
+    I am quite sure I will put such business logic into the
+    application.
+
+    Note that probably they worked as well through them in order to
+    guarantee ACID transactions.
+
+    You have as well methods in spring data that can guarantee you
+    this property.
+
+    So it really makes little sense to focus so much on this. 
+
 
 ** Temp Tables
 
@@ -770,12 +847,22 @@ become nulls and/or fall back to the default values.
 
    Basically the way you implment this architecture is then the
    following:
+  
+   #+begin_export html
+    <img src="../../images/linked_server.png" class="center">
+   #+end_export
 
-  
- #+begin_export html
-  <img src="../../images/linked_server.png" class="center">
- #+end_export
-  
+   So understand now that the set up we have at work is a bit
+   different.
+
+   It is not 100% the same. You can basically have server-to-server
+   links and you find these in your data studio under the following
+   path:
+
+   - Server Objects -> Linked Servers.
+
+   You can then select that object and a databse in it in order to
+   make these cross-server SQL statements.
 
 * Some SQL Notes - Language Itself
 
@@ -917,6 +1004,22 @@ THEN deleteStatement
    MERGE statement, which was introduced in SQL Server 2008 version.
    #+end_quote
    
+
+** Update Statement
+
+   This is the relevant syntax
+
+   #+begin_src sql
+UPDATE table_name
+SET column1 = value1, column2 = value2, ...
+WHERE condition;
+   #+end_src
+   
+** Delete Statement
+
+   #+begin_src sql
+DELETE FROM table_name WHERE condition;
+   #+end_src
 
 ** Alter Statement
 
@@ -1117,6 +1220,53 @@ RAISERROR (N'This is message %s %d.', -- Message text.
 
    That is important as it gives you an idea about who should be
    informed about what. 
+   
+
+** All of the different types of joins
+
+   Finally, decided to quickly write a note for it. The issue is the
+   following, you have the following visualization. You always forget
+   how to read it.
+
+   I periodically learn it and then after a while I do not recall it.
+
+   It is quite simple. Making an example here with left join such that
+   you will never waste any time with it anymore.
+
+   Basically the idea is the following:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-05-04 165746.png" class="center">
+   #+end_export
+
+   So basically the difference is the following:
+
+   left-join: you keep all of the data from the left-side - i.e. the
+   *table you are joining*. This independently if there is a match or
+   not.
+
+   All of the attributes of the table you are joining with are null,
+   just if there is a matching, then you will have an equality
+   relation and you will be able to access the values for the attributes. 
+
+   If there is no matching the selected fields of the other table are
+   set to null.
+
+   And in a similar way you interpret all of the other relations in
+   there.
+
+
+** How to copy a table from one database to another one
+
+   This is another very simple schema
+
+   #+begin_src sql
+Create schema HumanResources
+Go
+ 
+Select * into SQLShackDemo.HumanResources.Department from 
+AdventureWorks2018.HumanResources.Department 
+   #+end_src
    
 
 * Footnotes
