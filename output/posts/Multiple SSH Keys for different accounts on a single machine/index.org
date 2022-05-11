@@ -1,0 +1,73 @@
+#+BEGIN_COMMENT
+.. title: Github - Multiple SSH Keys for different accounts on a single machine
+.. slug: Multiple SSH Keys for different accounts on a single machine
+.. date: 2019-09-14 18:21:43 UTC+02:00
+.. tags: Github
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+Last week I set up my working laptop and the SSH key to access my
+private working github repository.
+
+A question arise: /How to add an additional SSH-key to modify the
+content on my public github registry?/
+
+{{{TEASER_END}}}
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+* Using different keys for different projects
+
+As usual a simple query to my favorite research engine solved the
+issue. I refer therefore to the following blog post well outlining the
+solution for the issue: [[https://code.tutsplus.com/tutorials/quick-tip-how-to-work-with-github-and-multiple-accounts--net-22574][multiple keys for different accounts]].
+
+The trick is rather simple. It basically consists of creating a
+separate pair of ssh-keys to the one in use for connecting to your
+working github account, register them on your github as in the
+standard case and finally to create a configuration file in your
+=.ssh= directory and specify two different Hosts associated with the
+two different ssh-keys pairs. 
+
+At this stage you are set and when dealing with github repositories
+you simply have to specify, which of the two Hosts keys you intend to
+use. (In case of using a default account you can even skip the
+specification if you aim to use that account.)
+
+An example might then adding a repository according to the host of choice:
+
+~git remote add origin git@<your chosen Host>:<your git file>~
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+* Using different keys for the same project
+
+It recently happened to me that I had to work on a project on a remote
+machine with multiple people.
+
+Of course I could create a gitlab repository and push the files from
+my computer to the gitlab branch. Then go on the remote machine for
+testing and pull the changes pushed there. 
+
+It is rather bumpy, so I preferred to code directly on the remote
+machine in =tramp mode= and test directly the stuff over there. The
+issue now was on how to have different users act remotely and have
+different ways to call different ssh keys when pushing so that we
+could differentiate who was editing and avoid the clutter of everyone
+pushing with the same ssh-keys.
+
+Turned out the solution was in [[https://noamlewis.wordpress.com/2013/01/24/git-admin-an-alias-for-running-git-commands-as-a-privileged-ssh-identity/][this post]]. Very well written and neat
+integration. No other words to be said.
