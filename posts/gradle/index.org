@@ -128,7 +128,6 @@ deployment.
 
    So basically once you have in mind your desired build workflow, you
    can specify it into a build-file. 
-
    
 ** Build Engine
 
@@ -154,87 +153,37 @@ deployment.
 
    Next we will explore some build-tools in more depth. 
    
+** Basics Concepts that must well sit in your mind
 
-* On Ant and Maven
+   So basically understand now that the engine compiles and packages
+   your code in the =./build= repository.
 
-   So I keep it short here but you can find in the book in the
-   introductory chapter some quick introduction to Ant and Maven. It
-   is well written and in a few pages you will get the overview of
-   it. 
+   By default all of the code is packaged into a single =.war/.jar=
+   visible in there.
 
-   So I was wondering why in Java you always work with very long
-   chains of empty repositories. The answer lies in such build tools.
+   This follows the convention properties that you set in the gradle
+   set up.
 
-   While the Ant built-tool provides you with the flexibility of your
-   choice when building your project, maven started to impose some
-   standards. I.e. if you structure your project in adherence with
-   these standards, your build-tool will know out of the box where to
-   find the relevant pieces of your projects.
+   I.e. the standard
 
-   So basically you can then have minimal configuration and
-   consistency across your enterprise on how such projects are
-   managed. Note that such standard is to have code in the
-   =src/main/java= repo.
+   #+begin_src json
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+   #+end_src
 
-   Moreover maven started to introduce a default build lifecyle that
-   would consist of the follwoing:
+   you specify in your gradle build file.
 
-   - Compiling source code
+   You can inspect such pacakged binary files with the usual:
 
-   - Running unit and integration tests
+   #+begin_src sh
+jar tvf <pacakged-binary>
+   #+end_src
 
-   - Assembling the artifact (for example, a JAR file)
-
-   - Deploying the artifact to a local repository 
-
-   - Releasing the artifact to a remote repository
-
-   so the workflow is now given.
-
-   Now you can call in maven the execution of a given =phase=
-   (i.e. step in the build lifecycle above) and all of the previous
-   steps will be performed.
-
-   Now this - obviously biased - book suggests the following
-   key-element to choose gradle over the other mentioned built-tools:
-
-   #+begin_quote
-Either you choose full flexibility and extensibility but get weak
-project standardization, tons of boiler-plate code, and no support for
-dependency management by picking Ant; or you go with Maven, which
-offers a convention over configuration approach and a seamlessly
-integrated dependency manager, but an overly restrictive mindset and
-cumbersome plugin system.
-
-Wouldn’t it be great if a build tool could cover a middle ground? Here are some
-features that an evolved build tool should provide:
-
-- Expressive, declarative, and maintainable build language.
-
-- Standardized project layout and lifecycle, but full flexibility and
-  the option to fully configure the defaults.
-
-- Easy-to-use and flexible ways to implement custom logic.
-
-- Support for project structures that consist of more than one project
-  to build deliverable.
-
-- Support for dependency management.
-
-- Good integration and migration of existing build infrastructure,
-  including the ability to import existing Ant build scripts and tools
-  to translate existing Ant/ Maven logic into its own rule set.
-
-- Emphasis on scalable and high-performance builds. This will matter
-  if you have long-running builds (for example, two hours or longer),
-  which is the case for some big enterprise projects.
-   #+end_quote
-
-   I will see in time if I agree or not with the above.
+   You will find there the usual structure of your packaged binary code.
    
 
 * Gradle Syntax and Specifics
-
 
   #+begin_quote
   Following a build-by-convention approach, Gradle allows for
@@ -260,7 +209,6 @@ features that an evolved build tool should provide:
   Note that the DSL is written in Groovy. Given that this is a flare
   of Java, you can even extend the DSL language in plain Java.
   
-
 ** Gradle Conventions
 
    Gradle’s conventions are similar to the ones provided by Maven, but
@@ -282,7 +230,7 @@ features that an evolved build tool should provide:
  <img src="../../images/Screenshot 2021-10-20 135837.png" class="center">
 #+end_export
 
-   
+
 ** On Scalable Builds - Incremental Builds
 
    For some companies, a large project with hundreds of modules is
@@ -310,7 +258,7 @@ features that an evolved build tool should provide:
 
    You will probably not need it in the near future but keep it in
    mind should it become necessary.
-   
+
 
 ** Continouos Delivery.
 
@@ -325,6 +273,7 @@ features that an evolved build tool should provide:
    We are half way there in our team. Go back to it at some point when
    you have time.
    
+
 ** Syntax
 
    #+begin_src java :results output raw 
@@ -499,12 +448,13 @@ groupTherapy
 ** Java Project - The Java Plug-ins
 
     A plugin extends your project by introducing domain-specific
-    conventions and tasks with sensible defaults. One of the plugins
-    that Gradle ships with is the Java plugin. The /Java plugin/ goes
-    far beyond the basic functionality of source code compilation and
-    packaging. It establishes a standard layout for your project and
-    makes sure that tasks are executed in the correct order so they
-    make sense in the context of a Java project.
+    conventions and tasks with sensible defaults.
+
+    One of the plugins that Gradle ships with is the Java plugin. The
+    /Java plugin/ goes far beyond the basic functionality of source
+    code compilation and packaging. It establishes a standard layout
+    for your project and makes sure that tasks are executed in the
+    correct order so they make sense in the context of a Java project.
 
     In order to leverage such a plug-in and start to interact with
     your java project you need to specify the plug-in in your
@@ -576,10 +526,14 @@ apply plugin: 'java'
 
     #+begin_src java :results output raw 
 version = 0.1 
-sourceCompatibility = 1.6 
+sourceCompatibility = 1.6 // that is as well nice in order to manage
+			  // your projects.
 jar {
  manifest { 
- attributes 'Main-Class': 'com.manning.gia.todo.ToDoApp'   // specify main class in header
+ attributes 'Main-Class': 'com.manning.gia.todo.ToDoApp'   // specify
+							   // main
+							   // class in
+							   // header
  }
 }
     #+end_src 
@@ -634,7 +588,7 @@ dependencies {
    application as a war file that you can then run on your
    web-application servers.
 
-   Note that by applying the plug-in you will have at your
+   Note that by applying the plug-in, you will have at your
    availability new dependency configuration groups.
 
    - =providedCompile=: here you specify the dependency you use for
@@ -648,7 +602,7 @@ dependencies {
    - =runtime=: this is the tag to reach exactly the opposite logic of
      the above. Runtime dependencies like the JSTL library aren’t
      needed for the compilation process, but are needed at
-     runtime. They’ll become part of the WAR file.
+     runtime. They’ll become part of the WAR file
 
      When you run ~gradle build~ you will have a packaged =.war=
      file. You can then run your webapplication with it.
@@ -656,21 +610,21 @@ dependencies {
 
 ** Running in an Embedded web-container
 
-  So basically the book is written with the example of the =Jetty=
-  webserver. I can imagine that the same holds for similar concepts
-  for =tomcat=.
+   So basically the book is written with the example of the =Jetty=
+   webserver. I can imagine that the same holds for similar concepts
+   for =tomcat=.
 
-  Basically the idea is that you apply the plug-in:
+   Basically the idea is that you apply the plug-in:
 
-  #+begin_src 
+   #+begin_src 
 apply plugin: 'jetty'
-  #+end_src
+   #+end_src
 
-  Then you can run the web-app server via:
+   Then you can run the web-app server via:
 
-  #+begin_example
+   #+begin_example
 gradle jettyRun
-  #+end_example
+   #+end_example
 
    Internally, the Jetty plugin does know all of the relevant
    dependencies and is able to find and execute the =war=. As the War
@@ -680,14 +634,14 @@ gradle jettyRun
    You can finally set some tasks and change the relevant deployment
    statndards by specifying the following:
    
-  #+begin_src java :results output raw 
+   #+begin_src java :results output raw 
 jettyRun { 
- httpPort = 9090
- contextPath = 'todo'
-}
-  #+end_src 
-
+    httpPort = 9090
+	contextPath = 'todo'
+	}
+   #+end_src
    
+
 ** Gradle Wrapper
 
    This is useful as it guarantees that you run your gradle build with
@@ -739,7 +693,9 @@ $ gradle wrapper
 
    Recall that the idea of configurations is to provide logical groups
    through which you can scope your dependencies.
-   
+
+   I.e. think for instance in terms of dependencies that you just need
+   when =testing=, =compile= time, =runtime=.
 
 *** On Configuration
 
@@ -783,7 +739,66 @@ configurations {
     There is then a section in the book that specfies how you can get
     all of the dependencies for a particular configuration. Package
     them into a =.war= get a specific container - say Tomcat-7x - and
-    run the =.war= into it. 
+    run the =.war= into it.
+    
+*** The basics java plug-in configurations
+
+    These you should learn and properly undestand cause when you set
+    up your projects in Gradle it is annoying that you are missing all
+    of that.
+
+    One of the major confusion when checking at the basics java
+    plug-in is the difference between =implementation= and =api=.
+
+    This should well sit in your understanding.
+
+    - The =api= configuration should be used to declare dependencies
+      which are exported by the library API
+
+    - The =implementation= configuration should be used to declare
+      dependencies which are internal to the component.
+
+    Dependencies appearing in the api configurations will be
+    /transitively exposed/ to consumers of the library, and as such
+    will appear on the compile classpath of consumers.
+
+    Dependencies found in the implementation configuration will, on
+    the other hand, not be exposed to consumers, and therefore not
+    leak into the consumers' compile classpath.
+
+    So understand that everything is basically around the concept of
+    *transitivity*. If you get that right you get everything right.
+
+    An example will make the point cristal clear and then your job
+    will simply be to memorize it. It is based on [[https://stackoverflow.com/questions/44493378/whats-the-difference-between-implementation-api-and-compile-in-gradle][this]].
+    
+    In order to understand that even better check at the following:
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-03-14 121016.png" class="center">
+    #+end_export
+
+    Then the basic idea is that depending on the configuration you
+    define different transitive rules will apply.
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-03-14 121551.png" class="center">
+    #+end_export
+
+    In the above MySecret is an object of the =myjavalibrary=
+    class. So with the =compile/api= option you are able to see it
+    with the =implementation= one (Option #1) not.
+
+    For the other compile options check at [[https://docs.gradle.org/current/userguide/java_library_plugin.html][the following]].
+
+    There is a nice table there with all of the different components.
+
+    However, note that apart from that tricky little bit the rest is
+    quite standard.
+
+    Just recall that for testing you specify the dependencies through
+    =testimplementation= and cousins. This is a bit different but
+    fine. 
 
 
 ** Gradle Dependencies Management
@@ -950,18 +965,22 @@ org.hibernate:hibernate-core:3.6.3-Final
     provided metadata and instate your own transitive dependency
     definition. This is most likely what Dave was talking about
     today.
+   
+*** Checking at the dependency tree for your project
 
+    That might be extremly useful.
 
+    With the following command you can inspect the entire depedency
+    tree in your projects
 
+    #+begin_src sh
+gradlew.bat -q dependencies 
+    #+end_src
+
+    In such a way you should as well be able to see if a given thing
+    is in the =classpath= or not.
     
 
-    
-
-        
-   
-
-
-   
 ** Testing
 
    Recall the three types of tests:
@@ -1395,5 +1414,11 @@ test {
   Java-LSP on emacs seriously over there.
 
   Start to write a parser application over there.
+
+  I have created a playground project as well. Have access to sandbox
+  in the cloud as well. You should be ready to get up and running in a
+  fast way now.
+
+  
 
     

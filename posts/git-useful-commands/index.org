@@ -29,34 +29,6 @@ without having to manually make new auth-modules.
 
 {{{TEASER_END}}}
 
-** On the many files you touch that you do not want to touch
-
-   It is normal to make minor modifications to multiple files when you
-   edit the files of a larger project.
-
-   You enter here and there in a ton of files and especially if you use
-   emacs it is easy to add a space or a new line because of the many
-   shortcuts.
-
-   So basically what you do then is just to stage the files you
-   want. You then write your different commits for them.
-
-   You then push to the origin.
-
-   You then fetch from the origin and reset your local repo based on
-   it.
-
-   Like this you will have eliminated all of the minor modifications
-   that were unintendended and you keep your commits clean.
-
-   You can do that with the following command
-
-   #+begin_src sh
-git fetch  # will fetch the latest changes on the remote
-git reset --hard origin/master # will set your local branch to match the representation of the remote just pulled down.
-   #+end_src
-
-
 ** On the right way to work and commit on git
   
    I also took the habit of making multiple commits per different logic
@@ -148,7 +120,6 @@ git reset --hard origin/master # will set your local branch to match the represe
   git reset --hard 1 
    #+end_example
 
-
 ** On staging and committing different parts of different files separately
 
    This is an important concept that relates to the way git commits
@@ -192,14 +163,66 @@ git reset --hard origin/master # will set your local branch to match the represe
    to the relevant hunk and pressing =s=, from there on is your very
    classical workflow so nothing new under the sun. 
 
+** On the many files you touch that you do not want to touch
+
+   It is normal to make minor modifications to multiple files when you
+   edit the files of a larger project.
+
+   You enter here and there in a ton of files and especially if you use
+   emacs it is easy to add a space or a new line because of the many
+   shortcuts.
+
+   So basically what you do then is just to stage the files you
+   want. You then write your different commits for them.
+
+   You then push to the origin.
+
+   You then fetch from the origin and reset your local repo based on
+   it.
+
+   Like this you will have eliminated all of the minor modifications
+   that were unintendended and you keep your commits clean.
+
+   You can do that with the following command
+
+   #+begin_src sh
+git fetch  # will fetch the latest changes on the remote
+git reset --hard origin/master # will set your local branch to match the representation of the remote just pulled down.
+   #+end_src
+
+   This is suboptimal - not using this anymore - you can rather use the
+   [[*Discarding directly through Magit][Discarding directly through Magit]] - more user-friendly way.
 
 ** On discarding all of the unstaged edits
 
    #+begin_src sh
 git checkout -- .
    #+end_src
-   
+
+   This is suboptimal - not using this anymore - you can rather use the
+   [[*Discarding directly through Magit][Discarding directly through Magit]] - more user-friendly way.
+
+
 * Magit component
+
+** Discarding directly through Magit
+
+   This is quite useful.
+
+   In the sense you might often introduce a space by error or other
+   minor changes that you are not really interested in.
+
+   You do not want to commit everything. This will over-water too much
+   your code such that you will not be able anymore to distinguish
+   important commits from trivial  things.
+
+   Think for instance the clutter in your magit-blame component.
+
+   Then how you simply do it is by going to a particular commitment
+   and use the =k= flag.
+
+   This will discard all of the relevant modifications for that
+   particular component/file.
 
 ** On worktree
   
@@ -339,6 +362,12 @@ git checkout 0d1d7fc32
 
    Again magit is integrated with it. In order to work with it I
    simply had to be in the file where the relevant bit of code sits
-   in, then you can simply type =magit-=.
+   in, then you can simply type =magit-blame-addition=.
+
+   Then you are basically in magit blame mode. You can then go the
+   file of a particular commit, open the specifications for the
+   changes relevant for the particular commit.
+
+   You can finally quit it with =q=.
 
    

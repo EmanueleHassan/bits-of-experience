@@ -104,53 +104,9 @@ without having to manually make new auth-modules.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-orgbc4f580" class="outline-3">
-<h3 id="orgbc4f580">On the many files you touch that you do not want to touch</h3>
-<div class="outline-text-3" id="text-orgbc4f580">
-<p>
-It is normal to make minor modifications to multiple files when you
-edit the files of a larger project.
-</p>
-
-<p>
-You enter here and there in a ton of files and especially if you use
-emacs it is easy to add a space or a new line because of the many
-shortcuts.
-</p>
-
-<p>
-So basically what you do then is just to stage the files you
-want. You then write your different commits for them.
-</p>
-
-<p>
-You then push to the origin.
-</p>
-
-<p>
-You then fetch from the origin and reset your local repo based on
-it.
-</p>
-
-<p>
-Like this you will have eliminated all of the minor modifications
-that were unintendended and you keep your commits clean.
-</p>
-
-<p>
-You can do that with the following command
-</p>
-
-<div class="highlight"><pre><span></span>   git fetch  <span class="c1"># will fetch the latest changes on the remote</span>
-   git reset --hard origin/master <span class="c1"># will set your local branch to match the representation of the remote just pulled down.</span>
-</pre></div>
-</div>
-</div>
-
-
-<div id="outline-container-orgd8d2d25" class="outline-3">
-<h3 id="orgd8d2d25">On the right way to work and commit on git</h3>
-<div class="outline-text-3" id="text-orgd8d2d25">
+<div id="outline-container-org6453f9d" class="outline-3">
+<h3 id="org6453f9d">On the right way to work and commit on git</h3>
+<div class="outline-text-3" id="text-org6453f9d">
 <p>
 I also took the habit of making multiple commits per different logic
 chuncks of the modifications or as well for individual files.
@@ -188,7 +144,7 @@ commit alone - leaving subsequent commits in place.
 Let's say you have some initial commit of some file - let's call it commit #1 for simplicity - and the file looks like this:
 </p>
 
-<pre class="example" id="orgc6e802e">
+<pre class="example" id="org2613bf1">
 One
 Two
 Three
@@ -199,7 +155,7 @@ Four
 Now let's say you have a commit #2 that changes one line:
 </p>
 
-<pre class="example" id="org184094b">
+<pre class="example" id="orgb633dab">
 One
 2
 Three
@@ -210,7 +166,7 @@ Four
 And finally, commit #3 that changes a different line:
 </p>
 
-<pre class="example" id="orgbc3b4ff">
+<pre class="example" id="orgb9b84e5">
 One
 2
 Three
@@ -223,7 +179,7 @@ in that commit, and leave the changes introduced in commit #3, so
 the result will be: 
 </p>
 
-<pre class="example" id="orgb5e4e28">
+<pre class="example" id="org28d584e">
 One
 Two
 Three
@@ -237,7 +193,7 @@ conflict. For example, let's say you have a commit #4 that also
 changed the second line: 
 </p>
 
-<pre class="example" id="orge834dbd">
+<pre class="example" id="orgd83fad0">
 One
 TWO
 THREE
@@ -263,16 +219,15 @@ and ignore all the changes that have gone on since then, then you
 want to reset instead of revert.
 </p>
 
-<pre class="example" id="orgac6e6ca">
+<pre class="example" id="org1369050">
 git reset --hard 1 
 </pre>
 </div>
 </div>
 
-
-<div id="outline-container-orgc15b24e" class="outline-3">
-<h3 id="orgc15b24e">On staging and committing different parts of different files separately</h3>
-<div class="outline-text-3" id="text-orgc15b24e">
+<div id="outline-container-orgd1b32b3" class="outline-3">
+<h3 id="orgd1b32b3">On staging and committing different parts of different files separately</h3>
+<div class="outline-text-3" id="text-orgd1b32b3">
 <p>
 This is an important concept that relates to the way git commits
 work as seen before.
@@ -333,22 +288,109 @@ classical workflow so nothing new under the sun.
 </div>
 </div>
 
+<div id="outline-container-org413eead" class="outline-3">
+<h3 id="org413eead">On the many files you touch that you do not want to touch</h3>
+<div class="outline-text-3" id="text-org413eead">
+<p>
+It is normal to make minor modifications to multiple files when you
+edit the files of a larger project.
+</p>
 
-<div id="outline-container-org1ba78e2" class="outline-3">
-<h3 id="org1ba78e2">On discarding all of the unstaged edits</h3>
-<div class="outline-text-3" id="text-org1ba78e2">
+<p>
+You enter here and there in a ton of files and especially if you use
+emacs it is easy to add a space or a new line because of the many
+shortcuts.
+</p>
+
+<p>
+So basically what you do then is just to stage the files you
+want. You then write your different commits for them.
+</p>
+
+<p>
+You then push to the origin.
+</p>
+
+<p>
+You then fetch from the origin and reset your local repo based on
+it.
+</p>
+
+<p>
+Like this you will have eliminated all of the minor modifications
+that were unintendended and you keep your commits clean.
+</p>
+
+<p>
+You can do that with the following command
+</p>
+
+<div class="highlight"><pre><span></span>   git fetch  <span class="c1"># will fetch the latest changes on the remote</span>
+   git reset --hard origin/master <span class="c1"># will set your local branch to match the representation of the remote just pulled down.</span>
+</pre></div>
+
+<p>
+This is suboptimal - not using this anymore - you can rather use the
+<a href="#org44bbcf9">Discarding directly through Magit</a> - more user-friendly way.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org151bf50" class="outline-3">
+<h3 id="org151bf50">On discarding all of the unstaged edits</h3>
+<div class="outline-text-3" id="text-org151bf50">
 <div class="highlight"><pre><span></span>   git checkout -- .
 </pre></div>
+
+<p>
+This is suboptimal - not using this anymore - you can rather use the
+<a href="#org44bbcf9">Discarding directly through Magit</a> - more user-friendly way.
+</p>
 </div>
 </div>
 
-<div id="outline-container-org22290dc" class="outline-2">
-<h2 id="org22290dc">Magit component</h2>
-<div class="outline-text-2" id="text-org22290dc">
+
+<div id="outline-container-org6a4065c" class="outline-2">
+<h2 id="org6a4065c">Magit component</h2>
+<div class="outline-text-2" id="text-org6a4065c">
 </div>
-<div id="outline-container-orga6de079" class="outline-3">
-<h3 id="orga6de079">On worktree</h3>
-<div class="outline-text-3" id="text-orga6de079">
+<div id="outline-container-org44bbcf9" class="outline-3">
+<h3 id="org44bbcf9">Discarding directly through Magit</h3>
+<div class="outline-text-3" id="text-org44bbcf9">
+<p>
+This is quite useful.
+</p>
+
+<p>
+In the sense you might often introduce a space by error or other
+minor changes that you are not really interested in.
+</p>
+
+<p>
+You do not want to commit everything. This will over-water too much
+your code such that you will not be able anymore to distinguish
+important commits from trivial  things.
+</p>
+
+<p>
+Think for instance the clutter in your magit-blame component.
+</p>
+
+<p>
+Then how you simply do it is by going to a particular commitment
+and use the <code>k</code> flag.
+</p>
+
+<p>
+This will discard all of the relevant modifications for that
+particular component/file.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf5aa191" class="outline-3">
+<h3 id="orgf5aa191">On worktree</h3>
+<div class="outline-text-3" id="text-orgf5aa191">
 <p>
 Ok so here some notes about magit itself.
 </p>
@@ -371,9 +413,9 @@ that one</b>.. you can reset based on that commit.
 </div>
 </div>
 
-<div id="outline-container-org6a9e1b1" class="outline-3">
-<h3 id="org6a9e1b1">Checking changes between two commits</h3>
-<div class="outline-text-3" id="text-org6a9e1b1">
+<div id="outline-container-orgf096e7c" class="outline-3">
+<h3 id="orgf096e7c">Checking changes between two commits</h3>
+<div class="outline-text-3" id="text-orgf096e7c">
 <p>
 Then you can change exactly what you changed on a given file between
 two commits.
@@ -392,9 +434,9 @@ your merging post etc.
 </div>
 </div>
 
-<div id="outline-container-org9d28d4a" class="outline-3">
-<h3 id="org9d28d4a">Magit reverting to a particular commit.</h3>
-<div class="outline-text-3" id="text-org9d28d4a">
+<div id="outline-container-org66acaff" class="outline-3">
+<h3 id="org66acaff">Magit reverting to a particular commit.</h3>
+<div class="outline-text-3" id="text-org66acaff">
 <p>
 Magit reversion is bounded to <code>V</code> in magit.
 </p>
@@ -427,9 +469,9 @@ just then, when the commits are selected you revert.
 </div>
 </div>
 
-<div id="outline-container-org54ada5d" class="outline-3">
-<h3 id="org54ada5d">Cherry Picking in Magit</h3>
-<div class="outline-text-3" id="text-org54ada5d">
+<div id="outline-container-orgf731562" class="outline-3">
+<h3 id="orgf731562">Cherry Picking in Magit</h3>
+<div class="outline-text-3" id="text-orgf731562">
 <p>
 This is a very nice feature. The essential is to say don't merge
 everything from the other branch but just a specific commit.
@@ -466,9 +508,9 @@ to import the commit to and badaboom, you are done.
 </div>
 </div>
 
-<div id="outline-container-orgf7d2314" class="outline-3">
-<h3 id="orgf7d2314">Gitignore in magit</h3>
-<div class="outline-text-3" id="text-orgf7d2314">
+<div id="outline-container-org1b0a288" class="outline-3">
+<h3 id="org1b0a288">Gitignore in magit</h3>
+<div class="outline-text-3" id="text-org1b0a288">
 <p>
 So that was quite annoying as well.
 </p>
@@ -503,9 +545,9 @@ work for your magit.
 </div>
 </div>
 
-<div id="outline-container-orga988035" class="outline-3">
-<h3 id="orga988035">HEAD</h3>
-<div class="outline-text-3" id="text-orga988035">
+<div id="outline-container-orgca98335" class="outline-3">
+<h3 id="orgca98335">HEAD</h3>
+<div class="outline-text-3" id="text-orgca98335">
 <p>
 Note that this is important for the reflog of your work.
 </p>
@@ -536,9 +578,9 @@ pointing at.
 </div>
 </div>
 
-<div id="outline-container-org2706308" class="outline-3">
-<h3 id="org2706308">Magit-blame</h3>
-<div class="outline-text-3" id="text-org2706308">
+<div id="outline-container-orgf3aad17" class="outline-3">
+<h3 id="orgf3aad17">Magit-blame</h3>
+<div class="outline-text-3" id="text-orgf3aad17">
 <p>
 This is a nice way to see the specific commit for a specific bit of
 code.
@@ -567,7 +609,17 @@ order to inspect this specific bit of information.
 <p>
 Again magit is integrated with it. In order to work with it I
 simply had to be in the file where the relevant bit of code sits
-in, then you can simply type <code>magit-</code>.
+in, then you can simply type <code>magit-blame-addition</code>.
+</p>
+
+<p>
+Then you are basically in magit blame mode. You can then go the
+file of a particular commit, open the specifications for the
+changes relevant for the particular commit.
+</p>
+
+<p>
+You can finally quit it with <code>q</code>.
 </p>
 </div>
 </div>

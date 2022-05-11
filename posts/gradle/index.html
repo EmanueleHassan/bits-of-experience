@@ -155,9 +155,9 @@ deployment.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org4f7c890" class="outline-2">
-<h2 id="org4f7c890">General Idea</h2>
-<div class="outline-text-2" id="text-org4f7c890">
+<div id="outline-container-org9f5233d" class="outline-2">
+<h2 id="org9f5233d">General Idea</h2>
+<div class="outline-text-2" id="text-org9f5233d">
 <p>
 So basically this is nothing else than a tool that is system and OS
 independent to create builds of your projects.
@@ -208,9 +208,9 @@ as follows:
 </div>
 
 
-<div id="outline-container-orgf777c00" class="outline-3">
-<h3 id="orgf777c00">Build File</h3>
-<div class="outline-text-3" id="text-orgf777c00">
+<div id="outline-container-orgda3230a" class="outline-3">
+<h3 id="orgda3230a">Build File</h3>
+<div class="outline-text-3" id="text-orgda3230a">
 <p>
 So basically once you have in mind your desired build workflow, you
 can specify it into a build-file. 
@@ -218,10 +218,9 @@ can specify it into a build-file.
 </div>
 </div>
 
-
-<div id="outline-container-org458fc21" class="outline-3">
-<h3 id="org458fc21">Build Engine</h3>
-<div class="outline-text-3" id="text-org458fc21">
+<div id="outline-container-orgdce8bd7" class="outline-3">
+<h3 id="orgdce8bd7">Build Engine</h3>
+<div class="outline-text-3" id="text-orgdce8bd7">
 <p>
 The build-engine is the engine that takes the declarations of the
 build-file and builds everything as specified in
@@ -251,118 +250,56 @@ Next we will explore some build-tools in more depth.
 </p>
 </div>
 </div>
+
+<div id="outline-container-org444c8c9" class="outline-3">
+<h3 id="org444c8c9">Basics Concepts that must well sit in your mind</h3>
+<div class="outline-text-3" id="text-org444c8c9">
+<p>
+So basically understand now that the engine compiles and packages
+your code in the <code>./build</code> repository.
+</p>
+
+<p>
+By default all of the code is packaged into a single <code>.war/.jar</code>
+visible in there.
+</p>
+
+<p>
+This follows the convention properties that you set in the gradle
+set up.
+</p>
+
+<p>
+I.e. the standard
+</p>
+
+<div class="highlight"><pre><span></span>   group = 'com.example'
+   version = '0.0.1-SNAPSHOT'
+   sourceCompatibility = '1.8'
+</pre></div>
+
+<p>
+you specify in your gradle build file.
+</p>
+
+<p>
+You can inspect such pacakged binary files with the usual:
+</p>
+
+<div class="highlight"><pre><span></span>   jar tvf &lt;pacakged-binary&gt;
+</pre></div>
+
+<p>
+You will find there the usual structure of your packaged binary code.
+</p>
 </div>
-
-
-<div id="outline-container-org4190f1e" class="outline-2">
-<h2 id="org4190f1e">On Ant and Maven</h2>
-<div class="outline-text-2" id="text-org4190f1e">
-<p>
-So I keep it short here but you can find in the book in the
-introductory chapter some quick introduction to Ant and Maven. It
-is well written and in a few pages you will get the overview of
-it. 
-</p>
-
-<p>
-So I was wondering why in Java you always work with very long
-chains of empty repositories. The answer lies in such build tools.
-</p>
-
-<p>
-While the Ant built-tool provides you with the flexibility of your
-choice when building your project, maven started to impose some
-standards. I.e. if you structure your project in adherence with
-these standards, your build-tool will know out of the box where to
-find the relevant pieces of your projects.
-</p>
-
-<p>
-So basically you can then have minimal configuration and
-consistency across your enterprise on how such projects are
-managed. Note that such standard is to have code in the
-<code>src/main/java</code> repo.
-</p>
-
-<p>
-Moreover maven started to introduce a default build lifecyle that
-would consist of the follwoing:
-</p>
-
-<ul class="org-ul">
-<li>Compiling source code</li>
-
-<li>Running unit and integration tests</li>
-
-<li>Assembling the artifact (for example, a JAR file)</li>
-
-<li>Deploying the artifact to a local repository</li>
-
-<li>Releasing the artifact to a remote repository</li>
-</ul>
-<p>
-so the workflow is now given.
-</p>
-
-<p>
-Now you can call in maven the execution of a given <code>phase</code>
-(i.e. step in the build lifecycle above) and all of the previous
-steps will be performed.
-</p>
-
-<p>
-Now this - obviously biased - book suggests the following
-key-element to choose gradle over the other mentioned built-tools:
-</p>
-
-<blockquote>
-<p>
-Either you choose full flexibility and extensibility but get weak
-project standardization, tons of boiler-plate code, and no support for
-dependency management by picking Ant; or you go with Maven, which
-offers a convention over configuration approach and a seamlessly
-integrated dependency manager, but an overly restrictive mindset and
-cumbersome plugin system.
-</p>
-
-<p>
-Wouldn’t it be great if a build tool could cover a middle ground? Here are some
-features that an evolved build tool should provide:
-</p>
-
-<ul class="org-ul">
-<li>Expressive, declarative, and maintainable build language.</li>
-
-<li>Standardized project layout and lifecycle, but full flexibility and
-the option to fully configure the defaults.</li>
-
-<li>Easy-to-use and flexible ways to implement custom logic.</li>
-
-<li>Support for project structures that consist of more than one project
-to build deliverable.</li>
-
-<li>Support for dependency management.</li>
-
-<li>Good integration and migration of existing build infrastructure,
-including the ability to import existing Ant build scripts and tools
-to translate existing Ant/ Maven logic into its own rule set.</li>
-
-<li>Emphasis on scalable and high-performance builds. This will matter
-if you have long-running builds (for example, two hours or longer),
-which is the case for some big enterprise projects.</li>
-</ul>
-</blockquote>
-
-<p>
-I will see in time if I agree or not with the above.
-</p>
 </div>
 </div>
 
 
-<div id="outline-container-org9644af0" class="outline-2">
-<h2 id="org9644af0">Gradle Syntax and Specifics</h2>
-<div class="outline-text-2" id="text-org9644af0">
+<div id="outline-container-orgc4a80ef" class="outline-2">
+<h2 id="orgc4a80ef">Gradle Syntax and Specifics</h2>
+<div class="outline-text-2" id="text-orgc4a80ef">
 <blockquote>
 <p>
 Following a build-by-convention approach, Gradle allows for
@@ -396,10 +333,9 @@ of Java, you can even extend the DSL language in plain Java.
 </p>
 </div>
 
-
-<div id="outline-container-orgaae177e" class="outline-3">
-<h3 id="orgaae177e">Gradle Conventions</h3>
-<div class="outline-text-3" id="text-orgaae177e">
+<div id="outline-container-org598dc9c" class="outline-3">
+<h3 id="org598dc9c">Gradle Conventions</h3>
+<div class="outline-text-3" id="text-org598dc9c">
 <p>
 Gradle’s conventions are similar to the ones provided by Maven, but
 they don’t leave you feeling boxed in. Maven is very opinionated;
@@ -426,9 +362,9 @@ alter:
 </div>
 
 
-<div id="outline-container-orgffc621b" class="outline-3">
-<h3 id="orgffc621b">On Scalable Builds - Incremental Builds</h3>
-<div class="outline-text-3" id="text-orgffc621b">
+<div id="outline-container-org67af0fe" class="outline-3">
+<h3 id="org67af0fe">On Scalable Builds - Incremental Builds</h3>
+<div class="outline-text-3" id="text-org67af0fe">
 <p>
 For some companies, a large project with hundreds of modules is
 reality. Building and testing minor code changes can consume a lot
@@ -454,9 +390,9 @@ term.
 </div>
 
 
-<div id="outline-container-org15c9b95" class="outline-3">
-<h3 id="org15c9b95">On Ant and Maven Integration</h3>
-<div class="outline-text-3" id="text-org15c9b95">
+<div id="outline-container-org5eb4524" class="outline-3">
+<h3 id="org5eb4524">On Ant and Maven Integration</h3>
+<div class="outline-text-3" id="text-org5eb4524">
 <p>
 Note that Gradle fully supports Ant integration. For maven you
 would still need to check in more detail as it is work in
@@ -471,9 +407,9 @@ mind should it become necessary.
 </div>
 
 
-<div id="outline-container-org8803027" class="outline-3">
-<h3 id="org8803027">Continouos Delivery.</h3>
-<div class="outline-text-3" id="text-org8803027">
+<div id="outline-container-orge1a0431" class="outline-3">
+<h3 id="orge1a0431">Continouos Delivery.</h3>
+<div class="outline-text-3" id="text-orge1a0431">
 <p>
 Read the book that you recently downloaded.
 </p>
@@ -489,9 +425,10 @@ you have time.
 </div>
 </div>
 
-<div id="outline-container-orgf7c4ed4" class="outline-3">
-<h3 id="orgf7c4ed4">Syntax</h3>
-<div class="outline-text-3" id="text-orgf7c4ed4">
+
+<div id="outline-container-orgc389803" class="outline-3">
+<h3 id="orgc389803">Syntax</h3>
+<div class="outline-text-3" id="text-orgc389803">
 <div class="highlight"><pre><span></span>   <span class="c1">// In the build.gradle file</span>
    <span class="n">task</span> <span class="n">helloWorld</span> <span class="p">{</span>
        <span class="n">doLast</span> <span class="p">{</span>
@@ -554,7 +491,7 @@ holds, when running the <code>groupTherapy</code>.
 <div class="highlight"><pre><span></span>   $ gradle groupTherapy
 </pre></div>
 
-<pre class="example" id="org33376f7">
+<pre class="example" id="org99f3015">
 :startSession
 [ant:echo] Repeat after me...
 :yayGradle0
@@ -582,7 +519,7 @@ through the <code>-x</code> flag.
 <div class="highlight"><pre><span></span>   <span class="n">$</span> <span class="n">gradle</span> <span class="n">groupTherapy</span> <span class="o">-</span><span class="n">x</span> <span class="n">yayGradle0</span>
 </pre></div>
 
-<pre class="example" id="org824cd55">
+<pre class="example" id="orgfcffa04">
 :yayGradle1
 Gradle rocks
 :yayGradle2
@@ -612,9 +549,9 @@ stack trace if an exception is thrown.</li>
 </div>
 
 
-<div id="outline-container-org8abb9e5" class="outline-3">
-<h3 id="org8abb9e5">Tasks overview (list them)</h3>
-<div class="outline-text-3" id="text-org8abb9e5">
+<div id="outline-container-org320fd86" class="outline-3">
+<h3 id="org320fd86">Tasks overview (list them)</h3>
+<div class="outline-text-3" id="text-org320fd86">
 <p>
 Note that you have gradle integrated in your eclipse IDE.
 </p>
@@ -634,7 +571,7 @@ triggering the relevant jobs.
 Your reply will be the following:
 </p>
 
-<pre class="example" id="orga786759">
+<pre class="example" id="org8a76acc">
 ------------------------------------------------------------
 All tasks runnable from root project
 ------------------------------------------------------------
@@ -683,9 +620,9 @@ one.
 </div>
 
 
-<div id="outline-container-org3ca0ea3" class="outline-3">
-<h3 id="org3ca0ea3">Explore other available parameters</h3>
-<div class="outline-text-3" id="text-org3ca0ea3">
+<div id="outline-container-orgebf3be1" class="outline-3">
+<h3 id="orgebf3be1">Explore other available parameters</h3>
+<div class="outline-text-3" id="text-orgebf3be1">
 <p>
 this can be done through the <code>-h</code> tag as always.
 </p>
@@ -693,17 +630,20 @@ this can be done through the <code>-h</code> tag as always.
 </div>
 
 
-<div id="outline-container-org42ff9cd" class="outline-3">
-<h3 id="org42ff9cd">Java Project - The Java Plug-ins</h3>
-<div class="outline-text-3" id="text-org42ff9cd">
+<div id="outline-container-org1bf65b2" class="outline-3">
+<h3 id="org1bf65b2">Java Project - The Java Plug-ins</h3>
+<div class="outline-text-3" id="text-org1bf65b2">
 <p>
 A plugin extends your project by introducing domain-specific
-conventions and tasks with sensible defaults. One of the plugins
-that Gradle ships with is the Java plugin. The <i>Java plugin</i> goes
-far beyond the basic functionality of source code compilation and
-packaging. It establishes a standard layout for your project and
-makes sure that tasks are executed in the correct order so they
-make sense in the context of a Java project.
+conventions and tasks with sensible defaults.
+</p>
+
+<p>
+One of the plugins that Gradle ships with is the Java plugin. The
+<i>Java plugin</i> goes far beyond the basic functionality of source
+code compilation and packaging. It establishes a standard layout
+for your project and makes sure that tasks are executed in the
+correct order so they make sense in the context of a Java project.
 </p>
 
 <p>
@@ -712,7 +652,7 @@ your java project you need to specify the plug-in in your
 <code>build.gradle</code> file.
 </p>
 
-<pre class="example" id="orgb403ad6">
+<pre class="example" id="orgd8a4ffb">
 apply plugin: 'java'
 </pre>
 
@@ -759,7 +699,7 @@ Note that after running the build command your application is
 packaged in the <code>build</code> repository. This will look as follows:
 </p>
 
-<pre class="example" id="orgb8b9477">
+<pre class="example" id="orgcbf62eb">
 .
 ├── build
 │ ├── classes                      ## here you have your application bytecode that can be run on the JVM
@@ -796,10 +736,14 @@ An example of the way you can do it in <code>Gradle</code> is the following:
 </p>
 
 <div class="highlight"><pre><span></span>    <span class="n">version</span> <span class="o">=</span> <span class="mf">0.1</span> 
-    <span class="n">sourceCompatibility</span> <span class="o">=</span> <span class="mf">1.6</span> 
+    <span class="n">sourceCompatibility</span> <span class="o">=</span> <span class="mf">1.6</span> <span class="c1">// that is as well nice in order to manage</span>
+			      <span class="c1">// your projects.</span>
     <span class="n">jar</span> <span class="p">{</span>
      <span class="n">manifest</span> <span class="p">{</span> 
-     <span class="n">attributes</span> <span class="err">'</span><span class="n">Main</span><span class="o">-</span><span class="n">Class</span><span class="err">'</span><span class="p">:</span> <span class="err">'</span><span class="n">com</span><span class="p">.</span><span class="na">manning</span><span class="p">.</span><span class="na">gia</span><span class="p">.</span><span class="na">todo</span><span class="p">.</span><span class="na">ToDoApp</span><span class="err">'</span>   <span class="c1">// specify main class in header</span>
+     <span class="n">attributes</span> <span class="err">'</span><span class="n">Main</span><span class="o">-</span><span class="n">Class</span><span class="err">'</span><span class="p">:</span> <span class="err">'</span><span class="n">com</span><span class="p">.</span><span class="na">manning</span><span class="p">.</span><span class="na">gia</span><span class="p">.</span><span class="na">todo</span><span class="p">.</span><span class="na">ToDoApp</span><span class="err">'</span>   <span class="c1">// specify</span>
+							       <span class="c1">// main</span>
+							       <span class="c1">// class in</span>
+							       <span class="c1">// header</span>
      <span class="p">}</span>
     <span class="p">}</span>
 </pre></div>
@@ -816,9 +760,9 @@ where the build goes etc. Google it in case of need.
 </div>
 
 
-<div id="outline-container-org54a4a40" class="outline-4">
-<h4 id="org54a4a40">Specify Source Repository from where you fetch your libraries</h4>
-<div class="outline-text-4" id="text-org54a4a40">
+<div id="outline-container-org63fd3ec" class="outline-4">
+<h4 id="org63fd3ec">Specify Source Repository from where you fetch your libraries</h4>
+<div class="outline-text-4" id="text-org63fd3ec">
 <p>
 This you can do with the following entry in your <code>build.gradle</code> file.
 </p>
@@ -849,9 +793,9 @@ that are needed at compile time.
 </div>
 
 
-<div id="outline-container-org43f5c80" class="outline-3">
-<h3 id="org43f5c80">War Plug-in</h3>
-<div class="outline-text-3" id="text-org43f5c80">
+<div id="outline-container-org8b02fcf" class="outline-3">
+<h3 id="org8b02fcf">War Plug-in</h3>
+<div class="outline-text-3" id="text-org8b02fcf">
 <p>
 This is the plug-in for running your java web-applications.
 </p>
@@ -866,7 +810,7 @@ anymore in your build script.
 You can specify it like this:
 </p>
 
-<pre class="example" id="org2a4af2e">
+<pre class="example" id="org3130949">
 apply plugin: 'war'
 </pre>
 
@@ -877,7 +821,7 @@ web-application servers.
 </p>
 
 <p>
-Note that by applying the plug-in you will have at your
+Note that by applying the plug-in, you will have at your
 availability new dependency configuration groups.
 </p>
 
@@ -901,7 +845,7 @@ means, those JAR will not be included in archive.
 <code>runtime</code>: this is the tag to reach exactly the opposite logic of
 the above. Runtime dependencies like the JSTL library aren’t
 needed for the compilation process, but are needed at
-runtime. They’ll become part of the WAR file.
+runtime. They’ll become part of the WAR file
 </p>
 
 <p>
@@ -914,9 +858,9 @@ file. You can then run your webapplication with it.
 </div>
 
 
-<div id="outline-container-orgf1d1052" class="outline-3">
-<h3 id="orgf1d1052">Running in an Embedded web-container</h3>
-<div class="outline-text-3" id="text-orgf1d1052">
+<div id="outline-container-orgd9afcec" class="outline-3">
+<h3 id="orgd9afcec">Running in an Embedded web-container</h3>
+<div class="outline-text-3" id="text-orgd9afcec">
 <p>
 So basically the book is written with the example of the <code>Jetty</code>
 webserver. I can imagine that the same holds for similar concepts
@@ -927,14 +871,14 @@ for <code>tomcat</code>.
 Basically the idea is that you apply the plug-in:
 </p>
 
-<div class="highlight"><pre><span></span>  apply plugin: 'jetty'
+<div class="highlight"><pre><span></span>   apply plugin: 'jetty'
 </pre></div>
 
 <p>
 Then you can run the web-app server via:
 </p>
 
-<pre class="example" id="orgbb81bc0">
+<pre class="example" id="org48ed368">
 gradle jettyRun
 </pre>
 
@@ -950,18 +894,18 @@ You can finally set some tasks and change the relevant deployment
 statndards by specifying the following:
 </p>
 
-<div class="highlight"><pre><span></span>  <span class="n">jettyRun</span> <span class="p">{</span> 
-   <span class="n">httpPort</span> <span class="o">=</span> <span class="mi">9090</span>
-   <span class="n">contextPath</span> <span class="o">=</span> <span class="err">'</span><span class="n">todo</span><span class="err">'</span>
-  <span class="p">}</span>
+<div class="highlight"><pre><span></span>   <span class="n">jettyRun</span> <span class="p">{</span> 
+       <span class="n">httpPort</span> <span class="o">=</span> <span class="mi">9090</span>
+	   <span class="n">contextPath</span> <span class="o">=</span> <span class="err">'</span><span class="n">todo</span><span class="err">'</span>
+	   <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 
 
-<div id="outline-container-org51e2f86" class="outline-3">
-<h3 id="org51e2f86">Gradle Wrapper</h3>
-<div class="outline-text-3" id="text-org51e2f86">
+<div id="outline-container-org554aa85" class="outline-3">
+<h3 id="org554aa85">Gradle Wrapper</h3>
+<div class="outline-text-3" id="text-org554aa85">
 <p>
 This is useful as it guarantees that you run your gradle build with
 the same version of the gradle software.
@@ -981,7 +925,7 @@ different software versions.
 Once you specified this task you can execute it
 </p>
 
-<pre class="example" id="org590a5ef">
+<pre class="example" id="orgf57ee57">
 $ gradle wrapper
 :wrapper
 </pre>
@@ -1012,9 +956,9 @@ zipped gradle files from a specific location.
 </div>
 
 
-<div id="outline-container-org7eb86fe" class="outline-3">
-<h3 id="org7eb86fe">Gradle Configurations</h3>
-<div class="outline-text-3" id="text-org7eb86fe">
+<div id="outline-container-org05300b3" class="outline-3">
+<h3 id="org05300b3">Gradle Configurations</h3>
+<div class="outline-text-3" id="text-org05300b3">
 <p>
 We already encountered configurations in the notes above.
 </p>
@@ -1027,12 +971,16 @@ We will deep dive into them now.
 Recall that the idea of configurations is to provide logical groups
 through which you can scope your dependencies.
 </p>
+
+<p>
+I.e. think for instance in terms of dependencies that you just need
+when <code>testing</code>, <code>compile</code> time, <code>runtime</code>.
+</p>
 </div>
 
-
-<div id="outline-container-org03e6402" class="outline-4">
-<h4 id="org03e6402">On Configuration</h4>
-<div class="outline-text-4" id="text-org03e6402">
+<div id="outline-container-org97646fe" class="outline-4">
+<h4 id="org97646fe">On Configuration</h4>
+<div class="outline-text-4" id="text-org97646fe">
 <p>
 Configuration are an important concept in Gradle. They allow to
 group a set of dependencies. So this is basically the most
@@ -1065,7 +1013,7 @@ previous notes.
 You can define a new configuration as follows:
 </p>
 
-<pre class="example" id="org5e4523c">
+<pre class="example" id="org9d8f78a">
 configurations {
  cargo { 
  description = 'Classpath for Cargo Ant tasks.' 
@@ -1083,16 +1031,99 @@ conscious choice in preparation for a multiproject setup.
 There is then a section in the book that specfies how you can get
 all of the dependencies for a particular configuration. Package
 them into a <code>.war</code> get a specific container - say Tomcat-7x - and
-run the <code>.war</code> into it. 
+run the <code>.war</code> into it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3a14399" class="outline-4">
+<h4 id="org3a14399">The basics java plug-in configurations</h4>
+<div class="outline-text-4" id="text-org3a14399">
+<p>
+These you should learn and properly undestand cause when you set
+up your projects in Gradle it is annoying that you are missing all
+of that.
+</p>
+
+<p>
+One of the major confusion when checking at the basics java
+plug-in is the difference between <code>implementation</code> and <code>api</code>.
+</p>
+
+<p>
+This should well sit in your understanding.
+</p>
+
+<ul class="org-ul">
+<li>The <code>api</code> configuration should be used to declare dependencies
+which are exported by the library API</li>
+
+<li>The <code>implementation</code> configuration should be used to declare
+dependencies which are internal to the component.</li>
+</ul>
+<p>
+Dependencies appearing in the api configurations will be
+<i>transitively exposed</i> to consumers of the library, and as such
+will appear on the compile classpath of consumers.
+</p>
+
+<p>
+Dependencies found in the implementation configuration will, on
+the other hand, not be exposed to consumers, and therefore not
+leak into the consumers' compile classpath.
+</p>
+
+<p>
+So understand that everything is basically around the concept of
+<b>transitivity</b>. If you get that right you get everything right.
+</p>
+
+<p>
+An example will make the point cristal clear and then your job
+will simply be to memorize it. It is based on <a href="https://stackoverflow.com/questions/44493378/whats-the-difference-between-implementation-api-and-compile-in-gradle">this</a>.
+</p>
+
+<p>
+In order to understand that even better check at the following:
+</p>
+
+<img src="../../images/Screenshot%202022-03-14%20121016.png" class="center"><p>
+Then the basic idea is that depending on the configuration you
+define different transitive rules will apply.
+</p>
+
+<img src="../../images/Screenshot%202022-03-14%20121551.png" class="center"><p>
+In the above MySecret is an object of the <code>myjavalibrary</code>
+class. So with the <code>compile/api</code> option you are able to see it
+with the <code>implementation</code> one (Option #1) not.
+</p>
+
+<p>
+For the other compile options check at <a href="https://docs.gradle.org/current/userguide/java_library_plugin.html">the following</a>.
+</p>
+
+<p>
+There is a nice table there with all of the different components.
+</p>
+
+<p>
+However, note that apart from that tricky little bit the rest is
+quite standard.
+</p>
+
+<p>
+Just recall that for testing you specify the dependencies through
+<code>testimplementation</code> and cousins. This is a bit different but
+fine. 
 </p>
 </div>
 </div>
 </div>
 
 
-<div id="outline-container-orgc8895ac" class="outline-3">
-<h3 id="orgc8895ac">Gradle Dependencies Management</h3>
-<div class="outline-text-3" id="text-orgc8895ac">
+<div id="outline-container-org5bec6fd" class="outline-3">
+<h3 id="org5bec6fd">Gradle Dependencies Management</h3>
+<div class="outline-text-3" id="text-org5bec6fd">
 <p>
 Note that when you set up a Gradle project there are multiple types
 of dependencies you might need to create.
@@ -1116,9 +1147,9 @@ of a dependency block.
 </div>
 
 
-<div id="outline-container-org2a21be1" class="outline-4">
-<h4 id="org2a21be1">1. External Module Dependency</h4>
-<div class="outline-text-4" id="text-org2a21be1">
+<div id="outline-container-orgd97e7e1" class="outline-4">
+<h4 id="orgd97e7e1">1. External Module Dependency</h4>
+<div class="outline-text-4" id="text-orgd97e7e1">
 <p>
 We start next with external module dependency, this represent a
 dependency to a library/module <b>outside of the project hierarchy</b>.
@@ -1169,9 +1200,9 @@ deployment.
 </div>
 </div>
 
-<div id="outline-container-org74ecb27" class="outline-4">
-<h4 id="org74ecb27">Dependency Attributes</h4>
-<div class="outline-text-4" id="text-org74ecb27">
+<div id="outline-container-org91f45af" class="outline-4">
+<h4 id="org91f45af">Dependency Attributes</h4>
+<div class="outline-text-4" id="text-org91f45af">
 <p>
 As mentioned it is common practice to properly track and
 parameterize a dependency. This will allow to work in an ordered
@@ -1219,15 +1250,15 @@ conceptual idea.</li>
 </div>
 </div>
 
-<div id="outline-container-orgd303e13" class="outline-4">
-<h4 id="orgd303e13">Dependency Notation</h4>
-<div class="outline-text-4" id="text-orgd303e13">
+<div id="outline-container-org140ee31" class="outline-4">
+<h4 id="org140ee31">Dependency Notation</h4>
+<div class="outline-text-4" id="text-org140ee31">
 <p>
 As already mentioned in the previous notes you can specify the
 dependencies in the following way:
 </p>
 
-<pre class="example" id="org3c06826">
+<pre class="example" id="org9fc0eb3">
 dependecies {
    configurationName depdencyNotation1, depdencyNotation2, ...
 }
@@ -1243,15 +1274,15 @@ Note how you specify the name of the configuration you want to
 The depedencyNotation is expressed as follows:
 </p>
 
-<pre class="example" id="org303259c">
+<pre class="example" id="org3a68ac4">
 org.hibernate:hibernate-core:3.6.3-Final
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org7d11101" class="outline-4">
-<h4 id="org7d11101">Repositories used</h4>
-<div class="outline-text-4" id="text-org7d11101">
+<div id="outline-container-orgb1c5603" class="outline-4">
+<h4 id="orgb1c5603">Repositories used</h4>
+<div class="outline-text-4" id="text-orgb1c5603">
 <p>
 It’s not uncommon for enterprise software to rely on open source
 libraries. Many of these projects publish their releases to a
@@ -1295,9 +1326,9 @@ know about such things in any case.
 </div>
 </div>
 
-<div id="outline-container-orgd959193" class="outline-4">
-<h4 id="orgd959193">On customization of the dependecy graph</h4>
-<div class="outline-text-4" id="text-orgd959193">
+<div id="outline-container-orga613b57" class="outline-4">
+<h4 id="orga613b57">On customization of the dependecy graph</h4>
+<div class="outline-text-4" id="text-orga613b57">
 <p>
 This is included at some point in the project.
 </p>
@@ -1327,22 +1358,34 @@ today.
 </p>
 </div>
 </div>
+
+<div id="outline-container-org0e238f5" class="outline-4">
+<h4 id="org0e238f5">Checking at the dependency tree for your project</h4>
+<div class="outline-text-4" id="text-org0e238f5">
+<p>
+That might be extremly useful.
+</p>
+
+<p>
+With the following command you can inspect the entire depedency
+tree in your projects
+</p>
+
+<div class="highlight"><pre><span></span>    gradlew.bat -q dependencies 
+</pre></div>
+
+<p>
+In such a way you should as well be able to see if a given thing
+is in the <code>classpath</code> or not.
+</p>
+</div>
+</div>
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-<div id="outline-container-org35e9caa" class="outline-3">
-<h3 id="org35e9caa">Testing</h3>
-<div class="outline-text-3" id="text-org35e9caa">
+<div id="outline-container-org1ae30bc" class="outline-3">
+<h3 id="org1ae30bc">Testing</h3>
+<div class="outline-text-3" id="text-org1ae30bc">
 <p>
 Recall the three types of tests:
 </p>
@@ -1416,9 +1459,9 @@ your production code as you are testing it. So that is it.
 </div>
 
 
-<div id="outline-container-org65dfce3" class="outline-4">
-<h4 id="org65dfce3">Automatic test detection</h4>
-<div class="outline-text-4" id="text-org65dfce3">
+<div id="outline-container-org40e0139" class="outline-4">
+<h4 id="org40e0139">Automatic test detection</h4>
+<div class="outline-text-4" id="text-org40e0139">
 <p>
 Note that gradle automatically detects the tests in your projects
 that sit in <code>build/classes/test</code> through the following:
@@ -1439,7 +1482,7 @@ you wrote your tests in there you can run the following in order
 to run your tests. 
 </p>
 
-<pre class="example" id="orga644ace">
+<pre class="example" id="org54e3d0a">
 gradle :repository:test
 </pre>
 
@@ -1464,9 +1507,9 @@ The thing would then look as following:
 </div>
 
 
-<div id="outline-container-org9580c65" class="outline-4">
-<h4 id="org9580c65">Multiple Testing Frameworks</h4>
-<div class="outline-text-4" id="text-org9580c65">
+<div id="outline-container-orgb34dabe" class="outline-4">
+<h4 id="orgb34dabe">Multiple Testing Frameworks</h4>
+<div class="outline-text-4" id="text-orgb34dabe">
 <p>
 For bigger projects it is well possible to start having multiple
 testing frameworks at work.
@@ -1482,7 +1525,7 @@ You can introduce the additional requirement by following the
 following naming convention  for test classes in your project:
 </p>
 
-<pre class="example" id="org72414c5">
+<pre class="example" id="org62cf34d">
 - JUnit: All tests class names end with *Test.java.
 - TestNG: All test class names end with *NGTest.java.
 - Spock: All test class names end with *Spec.groovy.
@@ -1499,7 +1542,7 @@ You can then achieve the testing using the three of them by using
 the following gradle config
 </p>
 
-<pre class="example" id="orga350f50">
+<pre class="example" id="orgbc39f0d">
 project(':repository') {
 
  apply plugin: 'groovy'
@@ -1540,9 +1583,9 @@ Visually you would have the follwoing:
 </div>
 
 
-<div id="outline-container-org6d3056a" class="outline-4">
-<h4 id="org6d3056a">On running a subclass of tests</h4>
-<div class="outline-text-4" id="text-org6d3056a">
+<div id="outline-container-org36881a3" class="outline-4">
+<h4 id="org36881a3">On running a subclass of tests</h4>
+<div class="outline-text-4" id="text-org36881a3">
 <p>
 Note that when your projects grows larger you do not want to
 execute then entire tests suites. You might want to run individual
@@ -1553,7 +1596,7 @@ tests or even just a couple of tests by pattern.
 In order to run tests by pattern you can use the following:
 </p>
 
-<pre class="example" id="org4904cf0">
+<pre class="example" id="org4552dd4">
 $ gradle -Dtest.single=**/*Spec :repository:test
 </pre>
 
@@ -1668,7 +1711,7 @@ to be able to read from the new repository.
 You can do that in the following way:
 </p>
 
-<pre class="example" id="org8f0cbc4">
+<pre class="example" id="org2c2d3b3">
 task integrationTest(type: Test) {
  testClassesDir = sourceSets.integrationTest.output.classesDir 
  classpath = sourceSets.integrationTest.runtimeClasspath 
@@ -1707,9 +1750,9 @@ For illustrative purposes:
 </div>
 
 
-<div id="outline-container-orge8c0b87" class="outline-4">
-<h4 id="orge8c0b87">On remote debugging</h4>
-<div class="outline-text-4" id="text-orge8c0b87">
+<div id="outline-container-orgba602e1" class="outline-4">
+<h4 id="orgba602e1">On remote debugging</h4>
+<div class="outline-text-4" id="text-orgba602e1">
 <p>
 <b>Important:</b> this is probably very important to you. As this is
 the way emacs operates most of the time. I can well imagine that
@@ -1730,16 +1773,16 @@ it with your IDE.
 I.e. you can for instance run
 </p>
 
-<pre class="example" id="orgbf2456d">
+<pre class="example" id="org6c8454d">
 $ gradle -Dtest.debug :repository:test
 </pre>
 </div>
 </div>
 
 
-<div id="outline-container-org83328c1" class="outline-4">
-<h4 id="org83328c1">Understanding the Test API representation</h4>
-<div class="outline-text-4" id="text-org83328c1">
+<div id="outline-container-org4597ba8" class="outline-4">
+<h4 id="org4597ba8">Understanding the Test API representation</h4>
+<div class="outline-text-4" id="text-org4597ba8">
 <p>
 This is important. As in such a way you can leave the command line
 and start working in a proper way via the API.
@@ -1762,7 +1805,7 @@ error</i> messages to the terminal.
 You can specify it in the following way:
 </p>
 
-<pre class="example" id="org730e470">
+<pre class="example" id="org43bef22">
 test {
  testLogging {
  showStandardStreams = true 
@@ -1805,9 +1848,9 @@ gist of the idea should you ever want to do something with it.
 </div>
 
 
-<div id="outline-container-org4218aa1" class="outline-4">
-<h4 id="org4218aa1">Parallel Execution</h4>
-<div class="outline-text-4" id="text-org4218aa1">
+<div id="outline-container-org918e899" class="outline-4">
+<h4 id="org918e899">Parallel Execution</h4>
+<div class="outline-text-4" id="text-org918e899">
 <p>
 This is as well an extension to the gradle test API. I write the
 notes for it in this separate section as it is one of particular
@@ -1831,7 +1874,7 @@ classes to execute per forked test process.
 The syntax is quite simple and intuitive:
 </p>
 
-<pre class="example" id="orgb7450fc">
+<pre class="example" id="org981a1bd">
 test {
  forkEvery = 5 
  maxParallelForks = Runtime.runtime.availableProcessors() / 2 
@@ -1853,9 +1896,9 @@ overview:
 
 
 
-<div id="outline-container-orga3d66e2" class="outline-2">
-<h2 id="orga3d66e2">Hands On</h2>
-<div class="outline-text-2" id="text-orga3d66e2">
+<div id="outline-container-org1418a22" class="outline-2">
+<h2 id="org1418a22">Hands On</h2>
+<div class="outline-text-2" id="text-org1418a22">
 <p>
 Ok so the above notes will help you to gain a high level overview of
 gradle.
@@ -1920,6 +1963,12 @@ Java-LSP on emacs seriously over there.
 
 <p>
 Start to write a parser application over there.
+</p>
+
+<p>
+I have created a playground project as well. Have access to sandbox
+in the cloud as well. You should be ready to get up and running in a
+fast way now.
 </p>
 </div>
 </div>

@@ -77,6 +77,18 @@ Schildt)" publicly available on the world wide web at [[https://gfgc.kar.nic.in/
 
   A nice website to navigate some Java is [[https://www.javabrahman.com/category/java-8/][this]]. 
 
+* Making it Real
+
+  So when reading about project Lombok I have seen that lots of =jugs=
+  groups are mentioned as contributors.
+
+  I started to search for it then. I discovered that these are
+  generally java user groups around the world. You can find many in
+  different countries.
+
+  For instance this is the webpage of the one of switerzland. You
+  might want to have a [[https://www.jug.ch/members.php][glimpse on it]] once in a while.
+  
 * History
 
   Java primary motivation was the need for a platform-independent
@@ -1763,6 +1775,7 @@ class Dispatch {
    methods of the subclasses are called when the reference variable
    refer to them.
 
+
 ** Annotations
 
    Index :
@@ -1782,6 +1795,7 @@ class Dispatch {
    explore next.
    
 *** Built-in Annotations
+
 **** @Override
 
      This is powerful notation construct. Note that it is not mandatory
@@ -1965,6 +1979,7 @@ value3 = "world";
 
      - A method or constructor reference
 
+
 ** Abstract Classes
 
    *Important* Concrete methods are still /allowed in abstract classes/.
@@ -2083,6 +2098,7 @@ class AbstractAreas {
    Area is 45.0
    Inside Area for Triangle.
    Area is 40.0
+
 
 ** Object Class
 
@@ -4375,7 +4391,6 @@ class EnumSet<E extends Enum<E>>
 #+begin_export html
  <img src="../../images/Screenshot 2021-10-25 105141.png" class="center">
 #+end_export    
- 
 
 ** Maps Frameworks
 
@@ -4815,6 +4830,7 @@ You can read more of the above cases [[https://www.baeldung.com/mustache][here]]
    java package called /java.lang/. This is implicitly imported by
    the compiler for all programs.
    
+
 ** Logger Package
 
    As you know, this is a quite fundamental component when writing
@@ -4891,30 +4907,402 @@ LOGGER.setLevel(Level.INFO);
    It is basically a way to short-circuit all of the getters, setters
    and equals stuff that you so often use in Java.
 
-   You can read about it online. Check how stable is the framework as
-   here you are dealing with code that has to survive over very long
-   periods of time.
+   This is a very solid piece of software.
 
-   I mean if it is stable it is quite handy as through it you will
-   manage Java-Beans quite easily and these will be very readable.
+   So start to use it slowly as it will help you quite much and you
+   will learn the important data structures through it - think for
+   instance at how you use the hashcode function in your data objects.
 
-   Nice as it also handles Logger and adds it to the class in case of
-   need.
+   This will be as well of paramount importance as in the moment you
+   start to be a solid Java programmer then you will be in the Object
+   world.
 
-*** TODO do documentation on lombok                                :noexport:
+   And you will have to define tausend of classes holding the logic
+   for your data etc.
 
-    I like this as it will reduce quite a bit of boilerplate code.
+   So this is the only logical solution. All of the other things would
+   ultimately be a killer to your performance.
+
+   This section continues as follows: first you will see how to
+   install it on your IDE. Then you have a list of intersting lombok annotations.
+
+*** Install it on IDE
 
     Note that you will have to configure your IDE to properly read
     Lombok. Otherwise you will have plenty of errors in your code as
     you will not easily find your =getters= and =setters= and all of
     the other stuff that you would ultimately implement through
-    annotators and less through the code itself. 
+    annotators and less through the code itself.
 
-    See in this sense [[https://www.baeldung.com/lombok-ide][this guide]].
+    Note that it is a trivial thing to install it. See in this sense
+    [[https://www.baeldung.com/lombok-ide][this guide]].
+
+*** Interesting Lombok Annotations
+
+    So note that it is worth to have a periodical look into it. As new
+    annoators will come or you might start to appreciate better lombok
+    components such as =val= or =var=. I do not like them as far as I
+    think that they are dangerous and might bring adverse
+    behaviour. Especially during the first periods where I cannot
+    surely call myself a Java expert yet.
+    
+    - @Data - that is cool and important. Here you have - getters,
+      setters, tostring and [[https://www.baeldung.com/java-hashcode][hashcode]].
+
+      Hashcode is important. Basically creating a hash of an
+      object. You can use it then to see if two are equal or not. 
+
+    - @NonNull - cool one
+
+      Basically adding a check to see if the object is null. If yes it
+      is raising a NullPointerException
+
+    - @Cleanup
+
+      Also a lovely one - check [[https://projectlombok.org/features/Cleanup][this]].
+
+    - @ToString
+
+      Cool for [[https://projectlombok.org/features/ToString][debugging]].
     
 
+** Jackson
+
+   This is an important library as through it you can properly manage
+   Json in Java.
+
+   This will be of paramount importance in the event-driven,
+   microservices based world.
+
+   So let's quickly explore the library. You can find the set of
+   tutorials for it [[https://github.com/FasterXML/jackson][here]].
+   
+*** Serialization
+
+    There are multiple ways to serialize Java Objects into Json.
+
+    This section explores the different possibilities of doing it.
+
+    This will be important as in such a way you will be able to
+    quickly create your Jsons and parse them accordingly.
+    
+**** Default / Without annotation
+
+     This is the default option.
+
+     All of the *public* fields of the object will be properly
+     serialized.
+    
+**** @JsonAnyGetter
+
+     With it you can serialize a Map.
+
+     #+BEGIN_SRC java :results output drawer :classname 
+public class ExtendableBean {
+    public String name;
+    private Map<String, String> properties;
+
+    @JsonAnyGetter
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+}
+     #+END_SRC
+
+     The result of serializing an instance of this class, would be
+     something as the following
+
+     #+begin_src json
+{
+    "name":"My bean",
+    "attr2":"val2",
+    "attr1":"val1"
+}
+     #+end_src
+
+     You see the default component name, public field is added by
+     default as well as your map.
+
+**** @JsonGetter("<field>")
+
+     #+BEGIN_SRC java :results output drawer :classname 
+public class MyBean {
+    public int id;
+    private String name;
+
+    @JsonGetter("name")
+    public String getTheName() {
+        return name;
+    }
+}
+     #+END_SRC
+
+     In such a way you can say - hey dude even if the thing is private
+     there is a getter for it and you should include the thing when serializing.
+     
+**** @JsonPropertyOrder
+
+     Through it you specify how the fields of your Objects will be
+     written into a json.
+
+     You can also work with general conditions such as
+     ~@JsonPropertyOrder(alphabetic=true)~.
+
+     #+BEGIN_SRC java :results output drawer :classname 
+@JsonPropertyOrder({ "name", "id" })
+public class MyBean {
+    public int id;
+    public String name;
+}
+     #+END_SRC
+
+     Example result
+
+     #+begin_src json
+{
+    "id":1,
+    "name":"My bean"
+}
+     #+end_src
+
+**** @JsonValue
+
+     Here the idea is to have a single method that is marked in such a
+     way in the Object you wish to serialize.
+
+     The value returned by such a method will then be used in order to
+     construct your thing.
+
+     It is the true thing returned not the standard ="<field>" :
+     "<value>"=.
+
+     So I guess you will not use this thing too much. You will see
+     with time.
+
+**** @JsonRootName
+
+     Here you serialize as well the object name within the thing.
+
+     You pass the field that should represent the as a value attribute
+
+     #+BEGIN_SRC java :results output drawer :classname 
+@JsonRootName(value = "user")
+public class UserWithRoot {
+    public int id;
+    public String name;
+}
+     #+END_SRC
+
+     Result of serialization
+
+     #+begin_src json
+{
+    "user":{
+        "id":1,
+        "name":"John"
+    }
+}
+     #+end_src
+
+     Note that the value field is a *required attribute* in the
+     annotation.
+     
+**** TODO check the custom serializer
+
+     This is also an option. 
+
+**** TODO note that the serialization is actually implemented via ObjectMapper
+
+     Have to properly understand this.
+
+
+*** Deserialization
+    
+**** Default / Without annotation
+
+     This is the default option.
+
+     The idea here is that as long as all of the fields in the json
+     are present in the Object as *public variables*, you can unmarshall
+     the json without configuring too much your target Objects with
+     the deserialization Jackson annotations.
+
+     Note that your Object can encapsulate other fields that are not
+     present in the json.
+
+     In such a case the fields will be set to =null= in your object.
+
+     We will see next more important ways on how you can customize the
+     entire deserialization thing in order to adapt the json to your
+     Object without having to have a perfect 100% match.
+
+**** @JsonCreator
+
+     So the idea is to use this to tune the factory used in the
+     deserialization.
+
+     I.e. say for instance that you are still working with an Object
+     of the following form
+
+     #+BEGIN_SRC java :results output drawer :classname 
+@AllArgsConstructor
+public class User {
+    public int id;
+    public String name;
+}
+
+     #+END_SRC
+
+     And say that you receive the following json
+
+     #+begin_src json
+{
+    "id":1,
+    "theName":"My bean"
+}
+     #+end_src
+
+     So you see that you have a mismatch name <=> theName.
+
+     You can then use =@JsonCreator= to solve this.
+
+     #+BEGIN_SRC java :results output drawer :classname 
+public class UserWithCreator {
+    public int id;
+    public String name;
+
+    @JsonCreator
+    public UserWithCreator(
+      @JsonProperty("id") int id, 
+      @JsonProperty("theName") String name) {
+        this.id = id;
+        this.name = name;
+    } 
+}
+     #+END_SRC
+
+     So you see htat you have a constructor with the =@JsonCreator=
+     annotation. There you can actually see how the json-properties
+     are mapped. 
+     
+**** @JacksonInject
+
+     You can use this tag in order to specify that a field of the
+     Object will not be provided through the json but would rather be
+     injected.
+
+     You can find an example [[https://www.baeldung.com/jackson-annotations][here]]. Have to better understand that but
+     it is quite intuitive. 
+     
+**** @JsonAnySetter
+
+     This is the same principle as [[*@JsonAnyGetter][@JsonAnyGetter]]. So here the idea is
+     to enter the json entries into a map rather than into individual
+     variables encapsulated in the obejct.
+
+     See for instance the following 101 example
+
+     #+BEGIN_SRC java :results output drawer :classname 
+public class ExtendableBean {
+    public String name;
+    private Map<String, String> properties;
+
+    @JsonAnySetter
+    public void add(String key, String value) {
+        properties.put(key, value);
+    }
+}
+     #+END_SRC
+
+     And the following passing test
+
+     #+BEGIN_SRC java :results output drawer :classname 
+@Test
+public void whenDeserializingUsingJsonAnySetter_thenCorrect()
+  throws IOException {
+    String json
+      = "{\"name\":\"My bean\",\"attr2\":\"val2\",\"attr1\":\"val1\"}";
+
+    ExtendableBean bean = new ObjectMapper()
+      .readerFor(ExtendableBean.class)
+      .readValue(json);
+    
+    assertEquals("My bean", bean.name);
+    assertEquals("val2", bean.getProperties().get("attr2"));
+}
+     #+END_SRC
+
+**** @JsonSetter
+
+     This is again the counterpart of [[*@JsonGetter("<field>")][@JsonGetter("<field>")]]. Use it
+     in the same way in order to deal with setters for private
+     fields. 
+     
+**** @JsonDeserialize
+
+     You this in order to work with custom deserializer.
+
+     Here is some more specific logic, for instance converting a date
+     string into a date object in the proper way, with the proper
+     format.
+
+     Most likely will have to use it at some point. 
+          
+**** @JsonAlias
+
+     This is also important. Basically it is similar to =@JsonCreator=
+     in the sense that you make non perfect naming matching possible
+     and you unmarshall the things correctly.
+
+     While =@JsonCreator= allows more flexibility in that it allows
+     you to specify a proper constructor for a field, this annotation
+     is more simple and it basically says:
+
+     #+begin_quote
+hey dude, watch out cause the field might also be received in the json
+under these other alias names. 
+     #+end_quote
+    
+
+*** Ignoring Properties
+
+    So there is an entire suite of annotations that allows you to
+    specify thing you should ignore when marshalling/unmarshalling.
+
+    You can read it online at the moment of need.
+
+    The most interesting in any case, and the one you will use the
+    most at development time, is the one of excluding null variables.x
+
+    See the following
+
+    #+BEGIN_SRC java :results output drawer :classname 
+@JsonInclude(Include.NON_NULL)
+public class MyBean {
+    public int id;
+    public String name;
+}
+    #+END_SRC
+    
+
+*** TODO other interesting stuff
+
+    There is as well other interesting stuff in there.
+
+    You will use it a lot so it makes sense to have it well in your
+    mind.
+
+    Keep moving for now but come back to it at some point.
+
+    Check the following [[https://www.baeldung.com/jackson-annotations][101 on annotations]] and continue as well with
+    some [[https://www.baeldung.com/jackson][other tutorials]].
+     
 ** JDBC
+
+   Note that this is just an investigation at very high level.
+
+   I am not exporing this to the bone as I decided in any case to go
+   in the Hibernate direction.
 
 *** What is it?
 
@@ -5115,8 +5503,6 @@ END //
 delimiter ;
     #+end_src
 
-*** TODO [#A] On batchadd - How that works
-*** TODO write about the logic of committing the results and executing them :noexport:
 *** Note that your libraries for working with JDBC are in the following repo
 
     =com.zurich.im.lib.basics.sql=
@@ -5124,22 +5510,90 @@ delimiter ;
     consult them at development time to find the method that best fits
     your use-case. 
 
+
 ** TODO Hiberante
 
-   Check at it. Everybody talks about it.
+   Do not actully open JDBC connections. Work with Hibernate and JPA
+   in general. 
 
    The idea is to stay in the OOP logic when working with data tables
    etc.
 
-   I must say that it is very funny to work with Java as it is not
-   simply another programming language. It is so far apart from Python
-   in the frameworks and ideas that it is a complete revolution in
-   terms of mental process.
+   So basically here the idea is to extract information and place it
+   directly into Objects.
+
+   So basically all of your stack will be based on Object manipulation
+   then. 
 
 
+** On Java Persistence API - JPA
 
+   [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][Read this]]. The following notes are a simple copy and paste of that
+   article.
+
+   ------------------
   
-** TODO check at guava
+*** JPA in the historic context
+
+    The core question here is about /persistence/, which loosely means any
+    mechanism by which Java objects outlive the application process that
+    created them.
+
+    The JPA specification lets you define which objects should be
+    persisted, and how those objects should be persisted in your Java
+    applications.
+
+    So this is more a styling-guide at the macro-level. You have then
+    all of the different frameworks through which you can implement such
+    theoretical construct.
+
+    So Java Persistence API is highly related with ORM. As this is the
+    old-school way of programming and was the norm the two developed
+    hand in hand. Today with the advent of NoSQL you have Java
+    Persistence API being developed and formed for the NoSQL databases. 
+
+    ORM - object-relational mapping. So through ORM you are able to work
+    through objects and stay within the first-class citizens of Java and
+    still, at the same time, interact with the relational tables of your
+    application.
+
+    Hibernate is the default ORM used across the industries as you
+    quickly learned after 2 months of exposure to the Java world.
+
+*** JPA in the application context
+
+    So this is how the JPA fits the application logic.
+   
+ #+begin_export html
+  <img src="../../images/Screenshot 2021-11-02 134907.png" class="center">
+ #+end_export
+
+    You can then quickly imagine how the picture would change to the
+    NoSQL space. Nothing big would change. Just the connector, the
+    general theoretical API specifications to interact with NoSQL etc.
+
+    But in general the high-level structure will persist.
+   
+*** On JPA Annotations
+
+    Note that here you specify as well all of the annotators to
+    properly interact with your relational model.
+
+    This is integral part of the JPA API. You can read more about it at
+    the same link in [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][here]].
+
+    Note that we do not work a lot through such JPA layer. We work
+    directly through SQL. I think this is not a bad idea as through it
+    you will be able to more quickly transition from one language to
+    the other in the future.
+
+    Moreover, I prefer SQL as being declarative it is much more
+    straightforward to understand what is needed.
+
+    So on this I prefer to keep one layer of abstraction and work in
+    the way the team is working. 
+
+** TODO Guava
 
    [[https://github.com/google/guava][url]]
 
@@ -5149,8 +5603,6 @@ delimiter ;
 
    Check at it in a more thorough way when you have time. 
       
-   
-
 
 * On The RandomAcess Interface
 
@@ -5453,7 +5905,14 @@ public int addNum(int numA, int numB) {
 
        this is another javadoc rendering thing. this is not that
        important to me at this stage. check at it later in case of
-       interest. 
+       interest.
+
+   20. *See <a
+       href="https://docs.spring.io/spring-hateoas/docs/current/reference/html/#server.affordances">Affordances</a>*
+
+       Example of embedding an external link into docu.
+
+       Note that this is very html alike. 
 
 
 ** Working standards
@@ -5539,73 +5998,6 @@ package java.lang.applet;
   go deep into [[https://www.oracle.com/java/technologies/javase/codeconventions-introduction.html][this topic]]. Did put it in your calendar though. Go back
   to it at some point when you have time. 
    
-  
-* On Java Persistence API - JPA
-
-  [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][Read this]]. The following notes are a simple copy and paste of that
-  article.
-
-  ------------------
-  
-** JPA in the historic context
-
-   The core question here is about /persistence/, which loosely means any
-   mechanism by which Java objects outlive the application process that
-   created them.
-
-   The JPA specification lets you define which objects should be
-   persisted, and how those objects should be persisted in your Java
-   applications.
-
-   So this is more a styling-guide at the macro-level. You have then
-   all of the different frameworks through which you can implement such
-   theoretical construct.
-
-   So Java Persistence API is highly related with ORM. As this is the
-   old-school way of programming and was the norm the two developed
-   hand in hand. Today with the advent of NoSQL you have Java
-   Persistence API being developed and formed for the NoSQL databases. 
-
-   ORM - object-relational mapping. So through ORM you are able to work
-   through objects and stay within the first-class citizens of Java and
-   still, at the same time, interact with the relational tables of your
-   application.
-
-   Hibernate is the default ORM used across the industries as you
-   quickly learned after 2 months of exposure to the Java world.
-
-** JPA in the application context
-
-   So this is how the JPA fits the application logic.
-   
-#+begin_export html
- <img src="../../images/Screenshot 2021-11-02 134907.png" class="center">
-#+end_export
-
-   You can then quickly imagine how the picture would change to the
-   NoSQL space. Nothing big would change. Just the connector, the
-   general theoretical API specifications to interact with NoSQL etc.
-
-   But in general the high-level structure will persist.
-   
-** On JPA Annotations
-
-   Note that here you specify as well all of the annotators to
-   properly interact with your relational model.
-
-   This is integral part of the JPA API. You can read more about it at
-   the same link in [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][here]].
-
-   Note that we do not work a lot through such JPA layer. We work
-   directly through SQL. I think this is not a bad idea as through it
-   you will be able to more quickly transition from one language to
-   the other in the future.
-
-   Moreover, I prefer SQL as being declarative it is much more
-   straightforward to understand what is needed.
-
-   So on this I prefer to keep one layer of abstraction and work in
-   the way the team is working. 
   
 
 
@@ -5858,7 +6250,6 @@ class TimeMe {
 
 * TODO Profiling
    
-
 * On the DataFrame issue
 
   Ok so this is a *huge huge* issue in Java.
@@ -5886,7 +6277,7 @@ class TimeMe {
     that - you continue to operate in your business. 
 
   so this is basically the logic of java but you see it is pretty
-  rough and not that nice. 
+  rough and not that nice.
 
 ** TODO data management libraries                                  :noexport:
 
