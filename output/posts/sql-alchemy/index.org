@@ -1,0 +1,409 @@
+#+BEGIN_COMMENT
+.. title: SQL Alchemy
+.. slug: sql-alchemy
+.. date: 2022-05-11 09:57:08 UTC+02:00
+.. tags: Python, sql, Databases
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+So basically I am starting to leverage the correct stack in this
+field.
+
+This will help me to properly and quickly navigate the data.
+
+{{{TEASER_END}}}
+
+I am sorry but based on my experience there is really no game in
+town.
+
+For ETL and data analytics python is superior to Java. Maybe there
+would be a discussion with Scala but to properly judge I would need to
+take some time to explore.
+
+This is left for a different moment.
+
+That said I will keep my structure as follows:
+
+- use java for orchestrating your applications
+
+- use python for the actual ETL jobs
+
+combine the two via APIs.
+
+So now everything is ready, just waiting for the security piece in the
+pipeline.
+
+Moreover after the integration specified in this post you will be able
+to move away from pure SQL. There are monster SQL that is developed in
+my team.
+
+There is little chance to explore these huge queries bit by bit..
+
+With this set-up you will be able to:
+
+- fetch data from DBs
+
+- use SQL and/or pandas native methods to transform your data
+
+  (just think about the apply methods and the rich ways to transform
+  your data in comparison to pure SQL)
+
+- explore the data programatically at development time in Python
+
+- insert the data into DBs
+
+No way this is not the correct stack. Everyone that tries to talk you
+out of it is clearly out of track. After all the /just do it/
+mentality of this team has some pros. Nobody will be able to stop you
+if you deliver.
+
+So this post briefly touches on how to properly set up the thing and
+the little things that is important to consider in order to keep
+everything under control in the long run.
+
+** SQL Alchemy
+
+   Note that this is important - with it you essentially have a
+   full-fledge toolkit to operate on SQL and have the possibility of
+   performing ORM mapping. Note that it is [[https://en.wikipedia.org/wiki/Data_mapper_pattern][similar in spirit]] to
+   Hibernate so you see that despite switching languages the concepts
+   are very much the same across.
+
+   For me the most interesting thing of it is however the integration
+   with pandas. This will be the killer for me and most likely the way
+   I will be working in.
+
+   This rather than via ORM. Maybe I will be switch idea in time as I
+   will have to go in this space with Hibernate and Java in either
+   case and then I will be able to understand the benefits and think
+   if it makes sense or rather stick to a pandas approach in the
+   python space.
+
+*** Connecting to DB - Microsoft SQL Set Up
+
+    In any case, that said, the first thing to understand in this
+    dimension is on how to create a SQL Alchemy engine in order to
+    work in such a way.
+
+    We are working with Microsoft SQL Servers. So here a snippet in
+    order to see how to work with it. In any case there are a tons of
+    dialects supported by sql-alchemy and should you ever work with
+    other relational DBs you should be able to smoothly and swiftly
+    change them.
+
+    Essentially I created a python snippet in order to generate
+    connection strings that will be passed to the =pyodbc= driver in
+    order to properly set up the connection.
+
+    You can see the snippet below
+ 
+    #+BEGIN_SRC python
+"""Return json with the arguments in order to open a DB connection."""
+
+import struct
+from azure.identity import DefaultAzureCredential
+
+
+def connectionString(driver: str, server: str,
+                     database: str, cloud: bool) -> dict:
+    """Return the necessary arguments in order to open a DB connection."""
+    json_dump = {}
+
+    if not cloud:
+
+        AUTHENTICATION = ";Trusted_Connection=yes" # using microsoft
+                                                   # integrated
+                                                   # identity
+
+        connstr = "{}{}{}{}".format(driver, "SERVER=" + server,
+                                    "DATABASE=" + database, AUTHENTICATION)
+
+        json_dump["connstr"] = connstr
+
+        return json_dump
+
+    default_credential = DefaultAzureCredential()            # using AAD
+    access_token = default_credential. \
+        get_token('https://database.windows.net/.default')
+
+    exptoken = b""
+
+    for i in str.encode(access_token[0]):
+        exptoken += bytes({i})
+        exptoken += bytes(1)
+        tokenstruct = struct.pack("=i", len(exptoken)) + exptoken
+
+    connstr = "{}{}{}".format(driver, "SERVER=" + server,
+                              "DATABASE=" + database)
+
+    json_dump["connstr"] = connstr
+    json_dump["tokenstruct"] = tokenstruct
+
+    return json_dump
+
+    #+END_SRC
+
+   Then this will be consumed by my applications as follows:
+
+   #+BEGIN_SRC python
+    # Insert
+    json_conn_info = connectionString(data["driver"],
+                                      conn_par["insert"]["server"],
+                                      conn_par["insert"]["database"],
+                                      conn_par["insert"]["is_cloud"])
+
+    # Work with SQL Alchemy
+    params = urllib.parse.quote_plus(json_conn_info["connstr"])
+
+    if conn_par["insert"]["is_cloud"]:
+
+        engine = create_engine("mssql+pyodbc:///?odbc_connect=%s" % params,
+                               connect_args={'attrs_before':
+                                             {1256:
+                                              json_conn_info["tokenstruct"]}})
+    else:
+
+        engine = create_engine("mssql+pyodbc:///?odbc_connect=%s" % params)
+
+   #+END_SRC
+
+   With it you will have your engines.
+
+   You can verify that the engine is properly set up by trying to open
+   a connection =engine.connect()=.
+   
+   You can read more about other options for setting it up [[https://docs.sqlalchemy.org/en/13/core/engines.html][here]]. There
+   are as well the other dialects listed etc.
+
+   I will skip now to the pools, the other important bit of
+   configuration when setting up an engine together with the dialect.
+
+**** Close connections
+
+     Note that despite of working with connection pools you should
+     still be careful in returning the connections to the pool.
+
+     Check this [[https://stackoverflow.com/questions/8645250/how-to-close-sqlalchemy-connection-in-mysql][in this sense]].
+
+     So basically this is why you should work in the following way
+     when writing your code:
+
+     #+BEGIN_SRC python
+with engine.connect() as connection:
+    df1.to_sql(name=conn_par["insert"]["name"], con=connection,
+	       schema=conn_par["insert"]["schema"],
+	       if_exists=conn_par["insert"]["if_exists"], index=False)
+     #+END_SRC    
+
+     Or alternatively by:
+
+     #+BEGIN_SRC python
+for i in range(1,2000):
+    conn = db.connect()
+    #some simple data operations
+    conn.close()
+     #+END_SRC
+
+     When you say =conn.close()=, the connection is returned to the
+     connection pool within the Engine, not actually closed.
+
+     If you do want the connection to be actually closed, that is, not
+     pooled, disable pooling via NullPool.
+
+**** Disconnect Handling
+
+     You can read about it [[https://docs.sqlalchemy.org/en/13/core/pooling.html#connection-pool-configuration][here]].
+
+     It is not very well stated. I get that the default is the
+     following if you do not specify anything:
+
+     #+begin_quote
+When pessimistic handling is not employed, as well as when the
+database is shutdown and/or restarted in the middle of a connection’s
+period of use within a transaction, the other approach to dealing with
+stale / closed connections is to let SQLAlchemy handle disconnects as
+they occur, at which point all connections in the pool are
+invalidated, meaning they are assumed to be stale and will be
+refreshed upon next checkout.
+     #+end_quote
+
+     Start with it, if you get issues at some point go back there and
+     explore.
+
+**** Multiprocessing
+
+     Note that if you will go on multiprocessing in python, you will
+     have to return [[https://docs.sqlalchemy.org/en/13/core/pooling.html#using-connection-pools-with-multiprocessing-or-os-fork][here]].
+
+     There is explained how to make the connection available across
+     processes. 
+
+*** ORM
+
+    So you can check better this component when you have time.
+
+    As mentioned this will not be of paramount importance to me to
+    this stage as I will go the pandas way.
+
+    Might be more interesting for the DDL component of the entire
+    thing.
+
+*** Logging
+
+    This is as well a thing that you will have to properly set up if
+    you want to create the thing in a proper way.
+
+    Check at the following:
+
+    #+begin_quote
+Python’s standard logging module is used to implement informational
+and debug log output with SQLAlchemy.
+
+This allows SQLAlchemy’s logging to integrate in a standard way with
+other applications and libraries.
+
+There are also two parameters create_engine.echo and
+create_engine.echo_pool present on create_engine() which allow
+immediate logging to sys.stdout for the purposes of local development;
+these parameters ultimately interact with the regular Python loggers
+described below.
+    #+end_quote
+
+
+
+** Pandas Interaction with SQL Alchemy
+
+   So basically that is it.
+
+   SQL Alchemy is the engine through which you would ultimately
+   mantain the connection to the database.
+
+   You can then leverage such engine in order to interact with the
+   data base in the various python modules.
+
+   Think for instance at the pandas module. This is where my interest
+   lies.
+
+   There you have the following methods that have to well sit into
+   your mind. 
+
+   1. =pd.read_sql_table=
+
+      #+BEGIN_SRC python
+      DataFrame.read_sql_table(table_name, con, schema=None,
+      index_col=None, coerce_float=True, parse_dates=None,
+      columns=None, chunksize=None)
+      #+END_SRC
+
+      the important parameter is the =con= parameter.
+
+      - =con=:
+
+	SQLAlchemy connectable or str. A database URI could be
+        provided as str.
+
+      So you see that you can provide an =engine.connection()= to it.
+
+      You then pass the table name you want to extract.
+
+      Important might also be the following:
+
+      - =parse_dates=:
+
+      List of column names to parse as dates.
+
+      Dict of ={column_name: format string}= where format string is
+      strftime compatible in case of parsing string times or is one of
+      (D, s, ns, ms, us) in case of parsing integer timestamps.
+
+      - =index_col=:
+
+	Column(s) to set as index
+
+      - =coerce_float=:
+
+	Attempts to convert values of non-string, non-numeric objects
+        (like decimal.Decimal) to floating point. Can result in loss
+        of Precision.
+
+   2. =df.read_sql_query=
+
+      #+BEGIN_SRC python
+DataFrame.read_sql_query(sql, con, index_col=None, coerce_float=True,
+                      params=None, parse_dates=None,
+                      chunksize=None, dtype=None)
+      #+END_SRC
+
+      Note that the arguments are pretty much the same as above.
+
+      Instead of passing a table and the corresponding schema you
+      actually pass a sql statement.
+
+      The other interesting argument is the following:
+
+      - =dtype=:
+
+	You pass the data type for data or columns. E.g. np.float64 or
+        {‘a’: np.float64, ‘b’: np.int32, ‘c’: ‘Int64’}.
+
+   3. =df.to_sql=
+
+      #+BEGIN_SRC python
+DataFrame.to_sql(name, con, schema=None, if_exists='fail', index=True,
+                 index_label=None, chunksize=None, dtype=None, method=None)
+      #+END_SRC
+
+      This is interesting as it inserts the table into a table of
+      interest.
+
+      You already started using this method so you know more less the
+      parameters.
+
+      You have to understand the following:
+
+      - =index=: set it to *false* generally. You do not want to write
+        the index of your pandas dataframes to the sql table generally.
+
+      - =dytpe=: same as in the above methods.
+
+      - =if_exists=: you can say - ~{raplace, fail, append}~. 
+   
+*** TODO open questions
+
+**** Update
+    
+     So note that the above is a bit sub-optimal in the case of
+     update statements.
+      
+     These are not provided for the data frames.
+
+     You would have to get the existing table from the db, update it
+     in the application logic and replace alltogether the existing
+     table.
+
+     You see that at performance level it is not that great.
+
+     -----
+
+     The alternative here is to use sql statements directly by using
+     the sql-alchemy engine without going through integration with
+     pandas.
+
+     You can still think in pandas terms and make your
+     transformation - in a functional way - there in order to get your
+     update statements.
+     
+**** Data types
+
+     You also have to check with the data types how the situation
+     really is. I.e. does it always infer the data types correctly?
+
+     Can you append without big issues?
+
+     -----
+
+     The solution will be a trial and error case. 

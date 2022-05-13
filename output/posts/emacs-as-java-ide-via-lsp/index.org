@@ -1,0 +1,789 @@
+#+BEGIN_COMMENT
+.. title: Emacs as Java IDE via LSP
+.. slug: emacs-as-java-ide-via-lsp
+.. date: 2021-09-29 18:03:15 UTC+02:00
+.. tags: java, emacs
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+#+end_export
+
+So I will work quite a lot with Java in the next couple of years. So I
+have to properly set up a strong IDE and workflow for working in it.
+
+I know that the majority of the people do not think much of emacs in
+terms of IDE but since the language-server-protocol integrations I
+believe they can be as strong as more mainstream IDEs such as Visual
+Code out there. t.
+
+I even think that they can be better once you get into it
+enough. After a bit of research I am quite sure about the fact.
+
+In fact this was my experience with Python and now the step is simply
+to get ot that level of costumization with emacs. So here some notes
+on my way of making emacs a top environment for java and improve my
+productivity with it in the long-term.
+
+{{{TEASER_END}}}
+
+* Resources
+
+Look at the following [[https://code.visualstudio.com/blogs/2018/08/07/debug-adapter-protocol-website][blog entry]] and [[https://microsoft.github.io/language-server-protocol/overviews/lsp/overview/][this entry]].
+
+There you will understand why emacs is nothing else than VS-code. So
+people that tell you that VS-code is a better IDE than emacs have
+obviously no idea how VS-code works in the background.
+
+Add to a perfect functioning IDE all of the major emacs mode that have
+little to no rival:
+
+- org-mode
+
+- magit
+
+- projectile
+
+- imenu
+
+- hs-minor-mode  
+
+etc. and you will soon get the reason why emacs is 10x better than any
+other workflow solution out there.
+
+Also note that you should not get confused. The underlying language
+servers that you install are running in localhost so that your code is
+never leaving your machine.
+
+You can in fact see in emacs the =pid= that they are running on as it
+is prompted in any source file where you are developing with the
+integration of the language server protocol.
+
+I tried then to find the process on my local laptop. On windows
+systems you can do that with the following command.
+
+#+BEGIN_SRC sh
+netstat -aon
+#+END_SRC
+
+Note that interestingly the process is listening on =0.0.0.0= for
+connections on =0.0.0.0= so actually anyone knowing the port and IP of
+my machine can connect to that language server. I was rather thinking
+more of a =127.0.0.1= solution as default to be honest.
+
+That said you can now explore the functionalities of the language
+server protocol and how the infor is displayed in the emacs UI.
+
+Check as well [[https://xpressrazor.wordpress.com/2020/11/04/java-programming-in-emacs/][this tutorial]] that shows some basics functioning of
+java-lsp. 
+
+* Find reference
+
+  =lsp-find-references=:  For an object visualize where it is used in
+  your project. I.e. it searches across all of your files in the
+  project. You can then navigate across them in the usual way.
+
+  Note that this si actually very similar to the ag-search you used to
+  do through projectile. No big difference in this sense.
+
+  you can either do it in this version or via
+  =peek-reference=. understand which one of the both you like the
+  most.
+
+  note that you have understand the difference among reference and
+  implementations when searching.
+
+  you search for references for objects or variables.
+
+  you search for implementations of classes and interfaces.
+
+* peek references
+
+  basically the same as finding by reference. it will display more
+  information in the same buffer though.
+
+  you will not just see the references such that you can hover there
+  and jump to the statement but rather you will have two frames side
+  by side where hovering over one statement it will already display
+  the code for that piece of information.
+
+  I might even like this better. it is not bad as you see on the code
+  and then if you select it you actually jump to that piece of code as
+  in the normal way.
+  
+* IN-PROGRESS Alternative to the Reference possibilities
+
+  Note that I am having currently some problems with the reference
+  methods above, apparentlz the project is too big and everzthing
+  eventually crashes.
+
+  I guess that the issue will eventually be fixed in future versions.
+
+  In the meanwhile I have a quite handy solution. This involves in
+  leveraging =ripgrep= in combination with projectile.
+
+  It is in this sense possible to search for keywords, text and
+  regular expressions across your project.
+
+  You will then see where the thing is used across the project.
+
+  This is pretty much the same functionality of the above. Peek
+  reference would be cooler if it would be properly working.
+
+  As you could see on the fly the different references and could make
+  sense of them on the fly. I guess that you will have to ask a lot to
+  your emacs for working in such a way. Especially in these larger
+  projects. 
+
+* Refactor
+  
+** general refactoring - naming etc
+
+   when you call the rename option through the =lsp= server you should
+   actually rename all of the variables across all of the source files
+   in the project. this is actually not happening in my case so there
+   must still be some minor error.
+
+** refactoring of parameters
+
+   note that in Java you can not assign default to parameters.
+
+   this is a big drawback to my mind.. it was pretty useful as a
+   feature.
+
+   now you have the option to implement the default parameters either
+   by overloading the stuff, or by encapsulating some information into
+   some object or finally by using the option of eclipse of
+   refactoring.
+
+   Depending on the circumstances one might be better than the
+   other. It is a question of experience and of checking how different
+   things work.
+
+   So the idea is that if you enter the refactoring view, you will
+   have the option of *changing method signature*.
+
+   This is a nice way to set a default. You can in fact add a
+   parameter and specify over there the default such that eclipse will
+   actually change all of the existing methods by adding the parameter
+   of choice with the *default* value of choice.
+
+* Flycheck
+
+  With =lsp-ui-flycheck-list= you will get a list with all of the
+  errors and inconsistencies you have in your source files.
+
+  that is good and it corresponds to your eclipse way of seeing your
+  errors etc.
+
+  Note that there you see as well the todos as in eclipse so there is
+  a 1:1 in this sense.
+
+  See for instance the following on the 101 spring application I am
+  working on:
+
+  #+begin_export html
+   <img src="../../images/Screenshot 2022-02-03 164053.png" class="center">
+  #+end_export
+
+  /Update 01/05/2022:/
+
+  Flycheck 32 was finally released. This solved the flycheck issues I
+  was experiencing with the lsp-java interaction.
+
+  Was good to subscribing to the issue where this was being
+  discussed. It kept me up to date for the release.
+
+  Now it is cool cause you can have a per buffer list of your
+  errors. You can also quickly navigate the errors with all of the
+  available flycheck commands.
+
+  Finally you will have the highlighted TODOs and errors.
+
+  So cool - you have a better set up than eclipse in this sense now.
+
+* lsp format buffer
+
+  reformat the buffer based on what the language server thinks it
+  makes sense.
+
+  =lsp-format-buffer=.
+
+  not that recommended. use different packages that are tailored to
+  the language for doing code-formatting.
+
+  usually it works better. 
+
+* Projectile
+
+  this is strong as it gives you all of the options to navigate your
+  project and code.
+
+  i.e. jump to the test files etc. I mean this is a non-specific lsp
+  thing, so you can understand it online and is out of scope for this
+  entry.
+
+  Here you have as well all of the functions that keep track how you
+  moved across buffers and files in your project and you can then move
+  back and forth in a fast way with all of the shortcuts that you have available.
+
+** Building and Testing
+
+  Ok that is not properly lsp-related but let's put it in here. Maybe
+  I will then write some separate notes on projectile later.
+
+  You can run your projects from emacs with the =projectile
+  run-project= command.
+
+  Here you can then pass for instance your =gradlew.bat build=
+  command.
+
+  However, note that you might as well not work in such a way. This
+  for instance when you are working with your stack with Spring. 
+
+  You can even run the unit-root tests for your project by running
+  =projectile test-project=.
+
+  Working as a charm now. Just have to configure it with =gradle= for
+  your actual project but then you are good to go.
+
+* class hierarchy
+
+  you can visualize the class hierachy with =lsp-ui-imenu=
+
+  this is essentially the same information as you can have with the
+  [[*lsp-header-breadcrumb][lsp-header-breadcrumb]] below.
+
+  so I would not recommend it too much.
+
+* lsp-header-breadcrumb
+
+  search it. will show you on the top of your buffer the hierarchy for
+  where you are at in your buffer.
+
+  i.e. what file, in which class etc.
+
+  this will adapt as you cycle through your code and it should help
+  you a bit to keep the visibility over your entire code. 
+
+* Project Root
+
+  That is important as from there the lsp starts and make all of the
+  connections.
+
+  This will allow you to jump to variables and declarations at a
+  project wide level.
+
+  I managed to adjust the project root by removing the existing
+  project root that I firstly selected in just a subspace of the
+  working directory where just an application among the many was
+  defined. This was not good as that application was using some gneral
+  classes that were designed to be used across all of the applications
+  and were therefore on a different path of the hierarchy that was not
+  available through my project root.
+
+  In this sense I had to adapt my project root. This was done in the
+  following way.
+
+  First you have to see and understand the location of your
+  configuration file of your lsp-sessions. For this you can call the
+  variable =lsp-session-file= by calling ~C-h v~.
+
+  Once you find such a location you can delete that file, close your
+  emacs, restart it, navigate a source file of your project.
+
+  You will be asked then to select the project root for your
+  lsp. There you should not select the proposed root that will be
+  inferred from the application specific =git= and =gradle= files but
+  you rather select the option to choose the root of the project
+  interactively. Then you can navigate to the real root of the project
+  that includes all of the submodules.
+
+  In such a way you should have a lsp server that is able to properly
+  infer all of your relations for your entire project and you can jump
+  to *implementations* and *definitions* for all of your methods,
+  classes and variables across your entire projects.
+
+* On checking the hierarchy and dependencies
+
+  For visualizing the dependencies and get a general overview of a
+  package I like to use the ~lsp-treemacs-java-deps-list~ function.
+
+  There you can quickly visualize the pacakges structures and
+  visualize the classes available in a given file together with the
+  methods of them.
+
+* treemacs
+
+  Note that this is a different module but I also like this a lot and
+  the integration with lsp mode.
+
+  It is nice cause you can see the hierarchy of the files that you are
+  calling and get a general overview of how your projects are
+  structured.
+
+  Moreover it is nice that treemacs will follow you when jumping from
+  one file to the next. Especially in very large projects with tons of
+  files and repositories it is convenient.
+
+  In such a way you will be able to visualize the anchestors of your
+  file and explore what sits around that source file in the
+  hierarchy. That is pretty much informative already and will help you
+  to quickly make sense of your code.  
+
+  -------
+
+  /Update 01/05/2022:/ For the point I set up dired-sidebar to
+  function in the same way.
+
+  Probably it is better to work with it. You have now shortcuts to
+  open and close it in a very fast way across your buffers.
+
+  In the sense that you save yourself the time to edit the treemacs
+  workspaces etc.
+
+  You will have to explore in time though. Might be that for
+  programming itself is better as it is more standard and better
+  integrated. 
+
+  -------
+
+  Note that in a similar way to lsp there is quite annoying story with
+  the set up. I.e. once you select a root/workspace every time you
+  open treemacs you will be prompted to that workspace no matter where
+  you are working on your file-system.
+
+  There are ways to deal with it. You can check your documentation
+  [[https://github.com/Alexander-Miller/treemacs][online]]. You can basically call =treemacs-edit-workspaces= and edit
+  there your workspaces.
+
+* Troubleshooting
+
+  Look at this [[https://emacs-lsp.github.io/lsp-mode/page/troubleshooting/][troubleshooting]] url when you have issues and want to
+  debug stuff.  
+
+* Debugging
+
+  Basically Debugging is based once more on a protocol that
+  communicates with a server. In order to understand this properly
+  check at [[https://code.visualstudio.com/blogs/2018/08/07/debug-adapter-protocol-website][this url]].
+
+  So basically once more you are working with the same debugging
+  features as in VS-code.
+
+  Note that you can specify different debugger types that you want to
+  work with. This in a similar way as in Eclipse.
+
+  For my projects I am working with a remote Java application. For
+  debugging that application I am launching it listening at port 8000
+  for debugging.
+
+  You can then specify then a dap-debugger that will try to
+  instantiate a connection at that port.
+
+  You can do that for instance by specifying the following template.
+
+  #+begin_src java :results output raw 
+(dap-register-debug-template
+ "localhost:8000"
+ (list :type "java"
+  :request "attach"
+  :hostName "localhost"
+  :port 8000))
+  #+end_src 
+
+  You can then enter the debugging modus via =dap-debug= and the hydra
+  pop-up will come out. That is particularly useful as it will lock
+  some keys that will be useful for debugging. You can then hide it or
+  open it via =M-<f5>=.
+  
+** Dap REPL
+
+   Note that this is important as this is the space where you would
+   ultimately run your code in order to understand properly what is
+   going on.
+
+   I.e. you can make all of your experiments and check at the
+   results.
+
+   It is much better done than the respective Eclipse counterpart (the
+   debug shell in there).
+
+   Resembles a bit the python console in this sense.
+
+   You can open it via =dap-ui-repl=
+
+* Auto-completion
+
+  Note that auto-completion is also working now. I think that before
+  something was broken at configuration level.
+
+  This is my experience with lsp. There are a lot of things going on
+  and sometimes things just break.
+
+  It is sensible once in a while to restart everything by deleting the
+  =workspace= and the =.lsp-session-v1= file once in a while.
+
+  Note that there is still a lot of confusion around that topic in
+  lsp for emacs and the way that things are done there at UI level. In
+  order to understand this, check [[https://github.com/emacs-lsp/lsp-java/issues/201][this]].
+  
+** TODO autocompleting as well with the return type
+
+   This is suboptimal as you have to cancel it then every time.
+
+   Fix it as it can be quite annoying. 
+
+* Lsp java deps list
+
+  In such a way it is possible to quickly navigate all of the
+  necessary dependencies for your projects in your workspace.
+
+  It opens kind of a treemacs thing where you would set the stuff.
+
+* Organize Imports
+
+  Use this. I.e. type =C-c l a-a= and organize imports.
+
+  It will clear all of the imports you do not have to use.
+
+  It will as well import all of the stuff you are using in the file.
+
+  So neat. You see that each day you are closing to working better
+  with it. 
+    
+* Some Eclipse Notes
+
+  This were a backlog as I could not immediately migrarte to my
+  project.
+
+  Plus, on the top of it much of the functionalities are shared across
+  the two ways of developing.
+
+  Such that understanding how the Eclipse IDE works will help you to
+  make the best out of the lsp experience as you know all of the
+  features that you could possilbly leverage.
+
+  /Update 02/05/2022:/ fully migrated into emacs - space of choice for
+  development purposes. 
+
+  This because emacs is not the most easy way you start from scratch
+  in a new environment. Especially for larger projects like this.
+
+  In order to switch I will have to properly understand how =gradle=
+  works at some point.
+
+  So understood it, to this stage and in fact I was able to migrate.
+
+  Moreover, I will have to understand all of the testing suites that
+  interface with Java and how to properly do the debugging in
+  emacs. Also understood.
+  
+  From what I could see it is nonetheless theoretically possible to
+  eventually reach a stage with a much stronger development setting in
+  emacs in comparison to standard IDEs. Reached that stage as well.
+
+  In the meanwhile while this process is ongoing check at the
+  following notes for using more classical IDEs.
+  
+** On branch
+
+   One thing that irritates me for instance in the Eclipse IDE is that
+   it does not automatically switch branch for my projects when I
+   change branch via my shell.
+
+   In order to change branch you need to right-click on the project
+   and referesh it. Then the change of branch will be performed. 
+
+** Debugging
+
+   For eclipse you can read [[https://www.vogella.com/tutorials/EclipseDebugging/article.html][this]] documentation.
+
+   Note that you can see the debugging options for which the
+   local-server is started in your =LOCAL-tomcat= command file. 
+
+** On problems of references in Eclipse
+
+   Eclipse does not manage to properly get all of the relations when
+   you git pull from the shell.
+
+   so be aware and on the lookout for that. in that case you =clean=
+   all of the workspace and start over from scratch.
+
+   In order to do that =Project= -> =Clean=. Then you follow the
+   instructions there and you can rebuild and it should work.
+
+** Note that in eclipse you have a way to write TODOs and search them then.
+
+   Looks like an interesting feature. Check at it later. 
+
+   Note that in many of my tasks are noted by the follwoing tags
+
+   #+begin_example
+   //TODO auto-generated method stub
+   #+end_example
+
+
+   as in the following example.
+
+
+   #+begin_src java :results output raw 
+@Override
+public void insert() {
+    // TODO Auto-generated method stub
+		
+}
+   #+end_src 
+
+   Note that such strings are auto-generated by the Eclipse IDE. It is
+   interesting the tag =TODO=. This is a keyword through which you can
+   manage your todos. It is interesting especially if you will have
+   some searching feature then to organize such todos. 
+
+   The =stub= keyword means that the method is void and has no
+   return. 
+   
+** Autogenerated doc-comment schema
+
+   This is useful as it will give you the skeleton of the doc-comment
+   and will save you quite some time.
+
+   You have to find a substitute in emacs once you will get back to
+   it. And yes it is a matter of time. It might take longer than
+   expected though.
+
+** Broken Eclipse - not understanding project correctly - restart
+
+   Especially now at the beginning, without having a proper
+   understanding of the entire thing, I am messing things up a bit.
+
+   It seems that I am particularly capable of breaking the loop eclipse
+   <-> gradle etc. In such a way your IDE will not be able to properly
+   read the stuff in the project. You will have lots of errors because
+   of missing dependecies etc.
+
+   Have to fix it at some point. In any case I still plan to eventually
+   migrate on my emacs for the development experience. Then I will be
+   properly free.
+
+   In any case for fixing these issues use the following procedere. 
+
+   Delete the following from each gradle project
+
+   - =.gradle= -- build stuff for each library
+   - =.settings= -- eclipse settings
+   - =.classpath= -- classpath info
+   - =.project= -- project info
+
+   on the top of the workspace =.metadata= (here eclipse saves workspace
+   config).
+
+   then basically you can close and reopen eclipse. 
+
+   Then change your gradle version to 7.1.1. and set the =java_home=
+   correctly. You can do this under project -> properties -> gradle.
+
+   Then basically you are good to go. You click on import -> import
+   existing gradle project -> you click on the repos.
+
+   You wait until the built is done. -> you build and deploy.
+   
+** Multi-Threading Debugging
+
+   this is not a trivial thing. you can read about it in the following
+   post.
+
+   the thing is that you might start to stop a single thread, while
+   the other threads of the application normally continue to run.
+
+   https://stackoverflow.com/questions/5375538/debugging-multiple-threads-in-eclipse/5375589
+
+   -------
+
+   note that I always have an issue of deployment. the jar goes in the
+   wrong folder. i.e. the things are packaged in the wrong directory.
+   
+** On the validation issue
+
+   So basically we work with the mustache framework for embedding some
+   logic in the html files.
+
+   Then basically your marks in eclipse complain about it tells you
+   that you have errors in your html etc.
+
+** On the Eclipse Debugger
+
+   Have to find the option to go back in time - i.e. of steps.
+
+   I know this is a feature many debuggers provide and I think that it
+   is quite handy.
+
+   I found [[https://stackoverflow.com/questions/4331336/how-to-step-back-in-eclipse-debugger][this entry]]...
+
+   #+begin_quote
+Beyond what's been mentioned in earlier answers - i.e. Eclipse's drop
+to frame feature in the debug view, which restarts debugging earlier
+in the stack frame (but does not revert global/static data) and
+Omniscient debugger, which is a bit raw and not so much evolving -
+there are a few Eclipse-based tools that could be used to "go back" in
+(run)time:
+
+- JIVE: Java Interactive Visualization Environment
+
+- Chronon: A “flight data recorder” for Java programs
+
+- Diver (discontinued): Dynamic Interactive Views For Reverse
+  Engineering
+
+- Halik: Only for IntelliJ for now, but porting to Eclipse is
+  mentioned on the roadmap.
+   #+end_quote
+
+   So search for this entry and explore better these options at some
+   point. 
+   
+** Remove all of the imports that are not used.
+
+   This is also quite handy as Eclipse automatically adds lots of
+   imports at development time.
+
+   You can then remove all of the ones you are not needing with
+   =CTRL-Shift-O=.
+   
+** How to kill all existing java related excutions
+
+   This works on windows. You might need it at some point.
+   
+   #+begin_quote
+   taskkill /F /IM java.exe
+   #+end_quote
+
+* ISSUES
+
+** DONE Issue 1 - LSP; Server not connecting when switching files
+   CLOSED: [2021-09-23 Do. 09:32]
+
+   i.e. if you reference from one file to the other it works but you
+   cannot change to a file with other methods such as projectile.
+
+   it will not integrate directly with the lsp server.
+
+   this is an error and issue that you need to fix if you want to work
+   with it in a solid way.
+
+   - all solved. this is simply a matter of setting your lsp-session
+     correctly. 
+
+*** Note that you manage all of the existing lsp-sessions
+
+    with the =workspace= keyword. check at the the functions involving
+    it in there.
+   
+*** Solution
+
+    At the time the workaround was removing the highlighting at global
+    level for lsp. Now it is starting to improve as an IDE.
+
+
+** DONE On Multi-project builds
+   CLOSED: [2022-05-02 Mo. 11:06]
+
+   See your note in your emacs configuration:
+
+   ------------------------
+   
+   Check at the [[https://issueexplorer.com/issue/emacs-lsp/lsp-java/320][following url]] to understand the issue.
+
+   #+BEGIN_SRC emacs-lisp
+(advice-add 'lsp :before (lambda (&rest _args) (eval '(setf (lsp-session-server-id->folders (lsp-session)) (ht)))))
+   #+END_SRC
+
+   #+RESULTS:
+
+   It is working now. Check also at the [[https://github.com/emacs-lsp/lsp-mode/discussions/3095][following discussion]] to
+   understand more.
+
+   Just the single project that you open is shown there in the erros
+   sections now in the =lsp-ui-flycheck-list=. If you add a second one
+   this is also added to the list in the sense that is managed by the
+   same server connection. The only issue is that if you close the
+   file it stays in the server connection. This is not ideal and would
+   have to sort it somehow. 
+
+   But basically now you have all of the features you desired. Just
+   have to check the last thing with the debugger but basically you
+   are there. 
+
+   You can now start to run your smaller projects in emacs and start
+   to get up and running with it.
+
+   ------------
+
+   Note that this is important to navigate as across project it will
+   be important to deal with it in the correct way.
+
+** DONE Lsp-treemacs error list
+   CLOSED: [2022-05-03 Di. 10:23]
+
+   That would be the final killer.
+
+   The issue is that it is not unfolding.
+
+   Again probably mostly a Windows OS issue.
+
+   Crazy how much this OS system is less supported by the emacs
+   community.
+
+   ----
+
+   Solved it check at your emacs config file.
+
+   That is indeed helping you a lot to keep everything properly in
+   order.
+
+   Note that after updating the package you will miss that bit of
+   code. You would have to refactor it into a more solid solution in
+   this sense.
+
+   

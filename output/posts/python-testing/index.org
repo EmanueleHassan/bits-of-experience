@@ -1,0 +1,282 @@
+#+BEGIN_COMMENT
+.. title: Python Testing
+.. slug: python-testing
+.. date: 2022-05-12 13:35:32 UTC+02:00
+.. tags: testing, software-engineering, Python
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+So you already worked with python testing frameworks.
+
+The set up was already in place back then.
+
+Now it is more than a year that I do not touch the thing and
+everything is solidly gone.
+
+Luckily I have a repo on my Github with some structure of it.
+
+Will leverage that now, plus I will start to write some notes, such
+that people that will have to collaborate with me can reference to
+it.
+
+On the top of it, it will be useful for the future as well.
+
+Plus finally it is always nice to see the things in multiple
+languages. It is always the same story. By adding pieces to the puzzle
+the picture becomes systematically clearer not the opposite. 
+
+{{{TEASER_END}}}
+
+* Pytest vs. Unittests
+
+  So basically these are the two big testing frameworks in the Python
+  space.
+
+  I had worked with both in the past. 
+
+  I will go with the first. This decision is not 100% thought through
+  decision but when you work you understand that sometimes you have to
+  cut corners and based on what I could quickly read online it is
+  sensible.
+
+  There is even the possibility of running =unittests= tests through
+  pytest so it makes sense to leverage on this. 
+
+* Writing tests
+
+  So a good start is the good-practices section of the [[https://docs.pytest.org/en/6.2.x/goodpractices.html][official
+  documentation]].
+
+  Read as well the following documentation:
+
+  - [[https://docs.pytest.org/en/6.2.x/reference.html][Reference API]]
+
+  - [[https://realpython.com/pytest-python-testing/][Python testing]] 
+  
+** Conventions for Python test discovery
+
+   So basically there are two options:
+
+   - Embedding the tests within a package - Tests inside of the
+     application code
+
+   - Tests outside of the application code
+
+   /Update:/ Go with the second version. It is the best. 
+
+*** Tests outside of the application
+
+    Note that basically you have a set of disadavantages if you work
+    in such a way.
+
+    Among the others:
+       
+    - there is no 1:1 mapping among python testing and packages
+      modules.
+
+    If you want to work this way you have to find a solution for it.
+    You can probably go into the direction with markers but I do
+    not know how much helpful this will be.
+
+    So basically the idea is to follow these conventions such that you
+    can properly map the modules to the tests.
+
+    That said, should you go this way you should work in the following
+    way, well noting the following points.
+
+    Note that in constrast to Java here the situation is much more
+    messy because of the python module imports and how everything
+    enters the =sys.path=. You can read more about it [[https://docs.pytest.org/en/6.2.x/pythonpath.html#import-modes][here]].
+
+    You can refer to that page in general, but use the following set up
+    in general as your north star:
+
+    #+begin_src 
+setup.py
+src/
+    mypkg/
+        __init__.py
+        app.py
+        view.py
+tests/
+    __init__.py
+    foo/
+        __init__.py
+        test_view.py
+    bar/
+        __init__.py
+        test_view.py
+    #+end_src
+
+    Note that you need to create testing packages as in the above
+    (=foo=, =bar=) if you have testing modules called in the same way.
+
+*** Tests inside of the application code
+
+    This is a cleaner solution in the sense that it is clear which
+    tests belong to which modules.
+
+    #+begin_src 
+setup.py
+mypkg/
+    __init__.py
+    app.py
+    view.py
+    test/
+        __init__.py
+        test_app.py
+        test_view.py
+    #+end_src
+
+    You can then quickly tests them by running:
+
+    #+begin_src sh
+    pytest --pyargs mypkg
+    #+end_src
+
+    
+
+** Personal Conventions
+
+*** Always use classes
+
+    Always run your tests within classes. This will be of paramount
+    importance.
+
+    I will usually run tests in the following way:
+
+    #+BEGIN_SRC python
+# content of test_moduleX.py
+class Test_ModuleX:
+    def test_one(self):
+        x = "this"
+        assert "h" in x
+
+    def test_two(self):
+        x = "hello"
+        assert hasattr(x, "check")
+    #+END_SRC
+
+    then you can run the tests for the single module as follows:
+
+    #+begin_src sh
+   $ pytest -q test_moduleX.py
+    #+end_src
+
+    On the top of it you can as well create complex logic by
+    inheritance etc.
+
+    Finally it is important to realize that despite the way you set up
+    your tests, the following benefits are there:
+
+    #+begin_quote
+    - Test organization
+
+    - Sharing fixtures for tests only in that particular class
+
+    - Applying marks at the class level and having them implicitly
+      apply to all tests
+    #+end_quote
+
+    You can as well use the flag =-k= to run tests by regular
+    expression.
+
+
+** Some Useful commands
+
+   Note that you have a couple of plug-ins in pytest, depending on
+   what you aim to do.
+
+   You can check them as follows:
+
+   #+begin_src sh
+   $ pip install pytest-html
+   #+end_src
+
+   Then you’re able to run tests with:
+
+   #+begin_src sh
+   $ pytest –-html=report.html
+   #+end_src
+   
+
+** Interpret Results
+   
+   You have to understand the following options:
+
+   #+begin_quote
+- f - failed
+
+- E - error
+
+- s - skipped
+
+- x - xfailed
+
+- X - xpassed
+
+- p - passed
+
+- P - passed with output
+   #+end_quote
+
+
+** TODO properly configure the logging for there as well
+
+* TODO Test Coverage
+
+  In order to generate your coverage reports you can use the
+  =coverage= library.
+
+  This is important as you can properly sleep at night, once your code
+  is properly covered.
+
+  This should also go into your [[https://www.scrum.org/resources/blog/done-understanding-definition-done?gclid=Cj0KCQjw4PKTBhD8ARIsAHChzRIlof8n0e1pwXTQ-QBKWB56BuHONmIqLLL99zyOrJBa57FCg3heLUUaAgkIEALw_wcB][definition of =DONE=]].
+
+  You will release your projects just when you will have covered a
+  decent coverage level.
+
+  Now you can explore the following modules in order to properly work
+  in here:
+
+  - [[https://pytest-cov.readthedocs.io/en/latest/][pytest-cov]]
+
+  - [[https://coverage.readthedocs.io/en/6.3.2/][coverage]]
+  
+* TODO Read into Tox
+
+  So basically this is your gradle/maven correspondent for Python.
+
+  So this is a nice automation tool. Should properly check into it and
+  make it run.
+
+  This is also necessary in order to have a proper environment for
+  testing out your code.
+
+  You can then integrate everything properly.
+
+  I.e. you can set up virtual enviornments, run your tests etc. in
+  there.
+
+  This is important set up everything correctly such that you can
+  properly introduce the python stack and triple down on everything.
+
+* TODO spline
+
+  This is the bonus section. Also go deeper into [[https://spline.readthedocs.io/en/latest/example.html][this]].
+
+  Just if you have time. 
+
+  I think this is an interesting project.
+
+  I would need more time to properly check into this.
+
+  Unfortunaltely in my current position I have no time to really go
+  out there and explore and push the boundaries.
+
+  It is already a miracle keeping the boat afloat and modernizing it
+  to the /current sate/ of the technologies. 

@@ -1,0 +1,239 @@
+<p>
+So now that I have both application languages covered by emacs and
+properly set up with lsp it is time to start working on the DB in my
+emacs.
+</p>
+
+<p>
+This will help me to work via literate programming and have a very
+well documented space where to work. On the top of it is nice cause
+you can checkout everything properly in git, leverage magit,
+projectile, org-mode etc&#x2026; The usual emacs power so to say. 
+</p>
+
+<p>
+In this sense I could already work through jupyter notebooks through
+emacs-ein.
+</p>
+
+<p>
+You have already set up your connection to the DBs in the language.
+</p>
+
+<p>
+You can start working in there in order to explore and combine the
+data etc. You can then leverage as well the pandas and other
+functionalities in there.
+</p>
+
+<p>
+Note that this is also interesting as a working solution. Have to
+double check that with Valerio but theoretically you can then generate
+ipython notebook out of it and make them run with ADF for the periodic jobs.
+</p>
+
+<p>
+Otherwise as mentioned above the other solution is to properly tangle
+everything and finally insert everything in scripts to run.
+</p>
+
+<p>
+It would essentially break
+</p>
+
+<p>
+The other option is to work via sql client. In any case continue for a
+bit to use Azure Management Studio, in such a way you will see what
+are the features you are interested in over there etc. and it will
+help you to properly set up a client interface with all of the
+features you need. 
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org40b05f6" class="outline-2">
+<h2 id="org40b05f6">EIN</h2>
+<div class="outline-text-2" id="text-org40b05f6">
+<p>
+This one you already know.
+</p>
+
+<p>
+You worked quite a bit with it at times at IBM. You just have to
+refresh a bit and test the set-up on this new computer.
+</p>
+
+<p>
+Ok as always with transitions there are issues - EIN is not running
+on not-WSL Windows machines. So you are basically out of it at the
+moment. A pity.
+</p>
+
+<p>
+So check on your old laptop. There you had a working ob-ipython set
+up.
+</p>
+</div>
+
+<div id="outline-container-orgcf32ed0" class="outline-3">
+<h3 id="orgcf32ed0">Use with plain python chuncks in the meantime</h3>
+<div class="outline-text-3" id="text-orgcf32ed0">
+<p>
+Simply leverage <code>org-babel</code> to this stage and work in such a way.
+</p>
+
+<p>
+Note that I had used as well a method in order to convert all of
+my python chuncks written into jupyter notebooks.
+</p>
+
+<p>
+This might be helpful in order for you to share such scripts and
+for your peers to work with them.
+</p>
+
+<p>
+Also nice was the option to tangle the results to specific files.
+</p>
+
+<p>
+Such that you can start to write proper SQL queries and tangle all
+of the results in specific files.
+</p>
+
+<p>
+So basically you would work as follows - first add to the system
+path used by your python runtime your specific modules where you
+abstract a bit of the logic for connecting to the DBs etc.
+</p>
+
+<p>
+Or in general use the packages that you are developing and expose
+them in order to properly work in your scripts
+</p>
+
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;c:/Dev/pythonWorkspace/relationaloperations/&#39;</span><span class="p">)</span>
+</pre></div>
+
+<p>
+Then you can actually work as follows:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kn">from</span> <span class="nn">src.connectionUtils</span> <span class="kn">import</span> <span class="n">connectionString</span>
+    <span class="kn">from</span> <span class="nn">src.connectionUtils</span> <span class="kn">import</span> <span class="n">create_mssql_engine</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span>    <span class="n">json_conn_info</span> <span class="o">=</span> <span class="n">connectionString</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;driver&quot;</span><span class="p">],</span>
+				      <span class="n">conn_par</span><span class="p">[</span><span class="s2">&quot;server&quot;</span><span class="p">],</span>
+				      <span class="n">conn_par</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">],</span>
+				      <span class="n">conn_par</span><span class="p">[</span><span class="s2">&quot;is_cloud&quot;</span><span class="p">])</span>
+</pre></div>
+
+<p>
+Then once you get your connection string together with your
+tokenstruct, you can instantiate sql-alchemy engines and work with
+them in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1"># Work with SQL Alchemy</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote_plus</span><span class="p">(</span><span class="n">json_conn_info</span><span class="p">[</span><span class="s2">&quot;connstr&quot;</span><span class="p">])</span>
+
+    <span class="n">engine_compare</span> <span class="o">=</span> <span class="n">create_mssql_engine</span><span class="p">(</span><span class="n">is_cloud</span><span class="o">=</span><span class="n">conn_par</span><span class="p">[</span><span class="s2">&quot;is_cloud&quot;</span><span class="p">],</span>
+					 <span class="n">param_url</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+					 <span class="n">tokenstruct</span><span class="o">=</span>
+					 <span class="n">json_conn_info</span><span class="p">[</span><span class="s2">&quot;tokenstruct&quot;</span><span class="p">])</span>
+</pre></div>
+
+<p>
+Then you are actually good to go - say for instance
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT TOP (3) * from map.EU&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</pre></div>
+
+<p>
+You can then read directly into pandas and do the relevant
+exploratory analysis over here.
+</p>
+
+<p>
+Or continue with SQL and perform all of the different operations
+in your literate programming way.
+</p>
+
+<p>
+In such a way it will as well be possible to properly version
+control everything.
+</p>
+
+<p>
+This was actually a pain point that I was noticing. Writing a ton
+of queries in mulitple tabs. Not really having the things well
+ordered or under control.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbeaa91f" class="outline-3">
+<h3 id="orgbeaa91f">Test connection across server DBs</h3>
+<div class="outline-text-3" id="text-orgbeaa91f">
+<p>
+<i>Bottom line:</i> it is working. Rewrite your methods in order to
+work in such a way.
+</p>
+
+<p>
+See the following 101 example that worked smoohtly.
+</p>
+
+<p>
+I mean ideally that would not be the case but with the given
+set-up it likely is.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">server</span> <span class="o">=</span> <span class="s2">&quot;MySecretOnPremServer&quot;</span>
+    <span class="n">driver</span> <span class="o">=</span> <span class="s2">&quot;DRIVER={ODBC Driver 17 for SQL Server};&quot;</span>
+    <span class="n">AUTHENTICATION</span> <span class="o">=</span> <span class="s2">&quot;Trusted_Connection=yes&quot;</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span>    <span class="n">connstr</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="s2">&quot;SERVER=&quot;</span> <span class="o">+</span> <span class="n">server</span><span class="p">,</span> <span class="n">AUTHENTICATION</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span>    <span class="n">params</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote_plus</span><span class="p">(</span><span class="n">connstr</span><span class="p">)</span>
+
+    <span class="n">engine_compare</span> <span class="o">=</span> <span class="n">create_mssql_engine</span><span class="p">(</span><span class="n">is_cloud</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+					 <span class="n">param_url</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+					 <span class="n">tokenstruct</span><span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span>    <span class="n">engine_compare</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT TOP (3) * from MRS_Feeds.logging.Load&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</pre></div>
+
+<p>
+Lovely works like a charm. 
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6ae783f" class="outline-2">
+<h2 id="org6ae783f">QUESTION SQL client</h2>
+<div class="outline-text-2" id="text-org6ae783f">
+<p>
+This would probably be the most clean solution. Skipped for
+now. Not so interested. 
+</p>
+
+<p>
+put it in my agenda. explore it during the week but in any case it
+is not prioritary.
+</p>
+
+<p>
+Can very well stay within the SQL-Alchemy and python and make this
+workflow the new client and way of working with it. 
+</p>
+</div>
+</div>
