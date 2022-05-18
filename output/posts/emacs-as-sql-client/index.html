@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Emacs as SQL Client | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/emacs-as-sql-client/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../sql-alchemy/" title="SQL Alchemy" type="text/html">
+<link rel="next" href="../python-testing/" title="Python Testing" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Emacs as SQL Client">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/emacs-as-sql-client/">
+<meta property="og:description" content="So now that I have both application languages covered by emacs and
+properly set up with lsp it is time to start working on the DB in my
+emacs.
+
+
+
+This will help me to work via literate programming and">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-05-11T16:56:33+02:00">
+<meta property="article:tag" content="emacs">
+<meta property="article:tag" content="software-engineering">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Emacs as SQL Client</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2022-05-11T16:56:33+02:00" itemprop="datePublished" title="2022-05-11 16:56">2022-05-11 16:56</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/emacs/" rel="tag">emacs</a></li>
+            <li><a class="tag p-category" href="../../categories/software-engineering/" rel="tag">software-engineering</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+So now that I have both application languages covered by emacs and
+properly set up with lsp it is time to start working on the DB in my
+emacs.
+</p>
+
+<p>
+This will help me to work via literate programming and have a very
+well documented space where to work. On the top of it is nice cause
+you can checkout everything properly in git, leverage magit,
+projectile, org-mode etc… The usual emacs power so to say. 
+</p>
+
+<p>
+In this sense I could already work through jupyter notebooks through
+emacs-ein.
+</p>
+
+<p>
+You have already set up your connection to the DBs in the language.
+</p>
+
+<p>
+You can start working in there in order to explore and combine the
+data etc. You can then leverage as well the pandas and other
+functionalities in there.
+</p>
+
+<p>
+Note that this is also interesting as a working solution. Have to
+double check that with Valerio but theoretically you can then generate
+ipython notebook out of it and make them run with ADF for the periodic jobs.
+</p>
+
+<p>
+Otherwise as mentioned above the other solution is to properly tangle
+everything and finally insert everything in scripts to run in your
+webapps or wherever you want. 
+</p>
+
+<p>
+It would essentially break
+</p>
+
+<p>
+The other option is to work via sql client. In any case continue for a
+bit to use Azure Management Studio, in such a way you will see what
+are the features you are interested in over there etc. and it will
+help you to properly set up a client interface with all of the
+features you need. 
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-orgf47e879" class="outline-2">
+<h2 id="orgf47e879">EIN</h2>
+<div class="outline-text-2" id="text-orgf47e879">
+<p>
+This one you already know.
+</p>
+
+<p>
+You worked quite a bit with it at times at IBM. You just have to
+refresh a bit and test the set-up on this new computer.
+</p>
+
+<p>
+Ok as always with transitions there are issues - EIN is not running
+on not-WSL Windows machines. So you are basically out of it at the
+moment. A pity.
+</p>
+
+<p>
+So check on your old laptop. There you had a working ob-ipython set
+up.
+</p>
+</div>
+
+<div id="outline-container-org5dbca81" class="outline-3">
+<h3 id="org5dbca81">Use with plain python chuncks in the meantime</h3>
+<div class="outline-text-3" id="text-org5dbca81">
+<p>
+Simply leverage <code>org-babel</code> to this stage and work in such a way.
+</p>
+
+<p>
+Note that I had used as well a method in order to convert all of
+my python chuncks written into jupyter notebooks.
+</p>
+
+<p>
+This might be helpful in order for you to share such scripts and
+for your peers to work with them.
+</p>
+
+<p>
+Also nice was the option to tangle the results to specific files.
+</p>
+
+<p>
+Such that you can start to write proper SQL queries and tangle all
+of the results in specific files.
+</p>
+
+<p>
+So basically you would work as follows - first add to the system
+path used by your python runtime your specific modules where you
+abstract a bit of the logic for connecting to the DBs etc.
+</p>
+
+<p>
+Or in general use the packages that you are developing and expose
+them in order to properly work in your scripts
+</p>
+
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">'c:/Dev/pythonWorkspace/relationaloperations/'</span><span class="p">)</span>
+</pre></div>
+
+<p>
+Then you can actually work as follows:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kn">from</span> <span class="nn">src.connectionUtils</span> <span class="kn">import</span> <span class="n">connectionString</span>
+    <span class="kn">from</span> <span class="nn">src.connectionUtils</span> <span class="kn">import</span> <span class="n">create_mssql_engine</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span>    <span class="n">json_conn_info</span> <span class="o">=</span> <span class="n">connectionString</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"driver"</span><span class="p">],</span>
+				      <span class="n">conn_par</span><span class="p">[</span><span class="s2">"server"</span><span class="p">],</span>
+				      <span class="n">conn_par</span><span class="p">[</span><span class="s2">"database"</span><span class="p">],</span>
+				      <span class="n">conn_par</span><span class="p">[</span><span class="s2">"is_cloud"</span><span class="p">])</span>
+</pre></div>
+
+<p>
+Then once you get your connection string together with your
+tokenstruct, you can instantiate sql-alchemy engines and work with
+them in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1"># Work with SQL Alchemy</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote_plus</span><span class="p">(</span><span class="n">json_conn_info</span><span class="p">[</span><span class="s2">"connstr"</span><span class="p">])</span>
+
+    <span class="n">engine_compare</span> <span class="o">=</span> <span class="n">create_mssql_engine</span><span class="p">(</span><span class="n">is_cloud</span><span class="o">=</span><span class="n">conn_par</span><span class="p">[</span><span class="s2">"is_cloud"</span><span class="p">],</span>
+					 <span class="n">param_url</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+					 <span class="n">tokenstruct</span><span class="o">=</span>
+					 <span class="n">json_conn_info</span><span class="p">[</span><span class="s2">"tokenstruct"</span><span class="p">])</span>
+</pre></div>
+
+<p>
+Then you are actually good to go - say for instance
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT TOP (3) * from map.EU"</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</pre></div>
+
+<p>
+You can then read directly into pandas and do the relevant
+exploratory analysis over here.
+</p>
+
+<p>
+Or continue with SQL and perform all of the different operations
+in your literate programming way.
+</p>
+
+<p>
+In such a way it will as well be possible to properly version
+control everything.
+</p>
+
+<p>
+This was actually a pain point that I was noticing. Writing a ton
+of queries in mulitple tabs. Not really having the things well
+ordered or under control.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6d1e278" class="outline-3">
+<h3 id="org6d1e278">Test connection across server DBs</h3>
+<div class="outline-text-3" id="text-org6d1e278">
+<p>
+<i>Bottom line:</i> it is working. Rewrite your methods in order to
+work in such a way.
+</p>
+
+<p>
+See the following 101 example that worked smoohtly.
+</p>
+
+<p>
+I mean ideally that would not be the case but with the given
+set-up it likely is.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">server</span> <span class="o">=</span> <span class="s2">"MySecretOnPremServer"</span>
+    <span class="n">driver</span> <span class="o">=</span> <span class="s2">"DRIVER={ODBC Driver 17 for SQL Server};"</span>
+    <span class="n">AUTHENTICATION</span> <span class="o">=</span> <span class="s2">"Trusted_Connection=yes"</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span>    <span class="n">connstr</span> <span class="o">=</span> <span class="s2">"</span><span class="si">{}{}{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="s2">"SERVER="</span> <span class="o">+</span> <span class="n">server</span><span class="p">,</span> <span class="n">AUTHENTICATION</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span>    <span class="n">params</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote_plus</span><span class="p">(</span><span class="n">connstr</span><span class="p">)</span>
+
+    <span class="n">engine_compare</span> <span class="o">=</span> <span class="n">create_mssql_engine</span><span class="p">(</span><span class="n">is_cloud</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+					 <span class="n">param_url</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+					 <span class="n">tokenstruct</span><span class="o">=</span> <span class="s1">''</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span>    <span class="n">engine_compare</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT TOP (3) * from MRS_Feeds.logging.Load"</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</pre></div>
+
+<p>
+Lovely works like a charm.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdc04e86" class="outline-3">
+<h3 id="orgdc04e86">Development time</h3>
+<div class="outline-text-3" id="text-orgdc04e86">
+<p>
+Ok, now note that you already installed sql-lite as well in the
+past. That is also very good and important to have. In such a way
+you can develop as well when you travel and are disconnected from
+the internet.
+</p>
+
+<p>
+This is good as with it you can get your third space and you can
+use it for making your experiments at development time.
+</p>
+
+<p>
+This is an in-memory database. You should really use it in order
+to test basics sql statements, testing some edits etc.
+</p>
+
+<p>
+It has quite some differences in terms of performance, network and
+hardware so it makes no sense to use this in this space.
+</p>
+
+<p>
+You can test it as follows - 101 example:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s1">'sqlite:///college.db'</span><span class="p">,</span> <span class="n">echo</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>   <span class="c1"># will create college.db in local repo</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
+
+    <span class="n">students</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+       <span class="s1">'students'</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> 
+       <span class="n">Column</span><span class="p">(</span><span class="s1">'id'</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="kc">True</span><span class="p">),</span> 
+       <span class="n">Column</span><span class="p">(</span><span class="s1">'name'</span><span class="p">,</span> <span class="n">String</span><span class="p">),</span> 
+       <span class="n">Column</span><span class="p">(</span><span class="s1">'lastname'</span><span class="p">,</span> <span class="n">String</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">meta</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+
+    <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"insert into students (id, name, lastname) values (1, 'Marco', 'Hassan')"</span><span class="p">)</span>
+</pre></div>
+
+<p>
+You can as well execute your DDL scripts directly via SQL. This is
+the choice and the difference of using an ORM language vs. plain
+vanilla SQL statements.
+</p>
+
+<p>
+Note as well that with the above and your scripts what you can
+basically do is, copy tables from your DB, insert the tables into
+your in-memory sql-lite DB and move on.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orga3862fa" class="outline-2">
+<h2 id="orga3862fa">QUESTION SQL client</h2>
+<div class="outline-text-2" id="text-orga3862fa">
+<p>
+This would probably be the most clean solution. Might be
+interesting as you need a better client in order to explore the
+structure etc. of your DB.
+</p>
+
+<p>
+Skipped for now. 
+</p>
+
+<p>
+Put it in my agenda. explore it during the week but in any case it
+is not prioritary.
+</p>
+
+<p>
+Can very well stay within the SQL-Alchemy and python and make this
+workflow the new client and way of working with it. At least for now.
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../sql-alchemy/" rel="prev" title="SQL Alchemy">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../python-testing/" rel="next" title="Python Testing">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

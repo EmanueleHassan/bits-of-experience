@@ -1,0 +1,417 @@
+<p>
+So you already worked with python testing frameworks.
+</p>
+
+<p>
+The set up was already in place back then.
+</p>
+
+<p>
+Now it is more than a year that I do not touch the thing and
+everything is solidly gone.
+</p>
+
+<p>
+Luckily I have a repo on my Github with some structure of it.
+</p>
+
+<p>
+Will leverage that now, plus I will start to write some notes, such
+that people that will have to collaborate with me can reference to
+it.
+</p>
+
+<p>
+On the top of it, it will be useful for the future as well.
+</p>
+
+<p>
+Plus finally it is always nice to see the things in multiple
+languages. It is always the same story. By adding pieces to the puzzle
+the picture becomes systematically clearer not the opposite. 
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org4f91701" class="outline-2">
+<h2 id="org4f91701">Pytest vs. Unittests</h2>
+<div class="outline-text-2" id="text-org4f91701">
+<p>
+So basically these are the two big testing frameworks in the Python
+space.
+</p>
+
+<p>
+I had worked with both in the past. 
+</p>
+
+<p>
+I will go with the first. This decision is not 100% thought through
+decision but when you work you understand that sometimes you have to
+cut corners and based on what I could quickly read online it is
+sensible.
+</p>
+
+<p>
+There is even the possibility of running <code>unittests</code> tests through
+pytest so it makes sense to leverage on this. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd3f1d2a" class="outline-2">
+<h2 id="orgd3f1d2a">Writing tests</h2>
+<div class="outline-text-2" id="text-orgd3f1d2a">
+<p>
+So a good start is the good-practices section of the <a href="https://docs.pytest.org/en/6.2.x/goodpractices.html">official
+documentation</a>.
+</p>
+
+<p>
+Read as well the following documentation:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://docs.pytest.org/en/6.2.x/reference.html">Reference API</a></li>
+
+<li><a href="https://realpython.com/pytest-python-testing/">Python testing</a></li>
+</ul>
+</div>
+
+<div id="outline-container-orgd196055" class="outline-3">
+<h3 id="orgd196055">Conventions for Python test discovery</h3>
+<div class="outline-text-3" id="text-orgd196055">
+<p>
+So basically there are two options:
+</p>
+
+<ul class="org-ul">
+<li>Embedding the tests within a package - Tests inside of the
+application code</li>
+
+<li>Tests outside of the application code</li>
+</ul>
+
+<p>
+<i>Update:</i> Go with the second version. It is the best. 
+</p>
+</div>
+
+<div id="outline-container-org29357d5" class="outline-4">
+<h4 id="org29357d5">Tests outside of the application</h4>
+<div class="outline-text-4" id="text-org29357d5">
+<p>
+Note that basically you have a set of disadavantages if you work
+in such a way.
+</p>
+
+<p>
+Among the others:
+</p>
+
+<ul class="org-ul">
+<li>there is no 1:1 mapping among python testing and packages
+modules.</li>
+</ul>
+
+<p>
+If you want to work this way you have to find a solution for it.
+You can probably go into the direction with markers but I do
+not know how much helpful this will be.
+</p>
+
+<p>
+So basically the idea is to follow these conventions such that you
+can properly map the modules to the tests.
+</p>
+
+<p>
+That said, should you go this way you should work in the following
+way, well noting the following points.
+</p>
+
+<p>
+Note that in constrast to Java here the situation is much more
+messy because of the python module imports and how everything
+enters the <code>sys.path</code>. You can read more about it <a href="https://docs.pytest.org/en/6.2.x/pythonpath.html#import-modes">here</a>.
+</p>
+
+<p>
+You can refer to that page in general, but use the following set up
+in general as your north star:
+</p>
+
+<div class="highlight"><pre><span></span>    setup.py
+    src/
+	mypkg/
+	    __init__.py
+	    app.py
+	    view.py
+    tests/
+	__init__.py
+	foo/
+	    __init__.py
+	    test_view.py
+	bar/
+	    __init__.py
+	    test_view.py
+</pre></div>
+
+<p>
+Note that you need to create testing packages as in the above
+(<code>foo</code>, <code>bar</code>) if you have testing modules called in the same way.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb64a09d" class="outline-4">
+<h4 id="orgb64a09d">Tests inside of the application code</h4>
+<div class="outline-text-4" id="text-orgb64a09d">
+<p>
+This is a cleaner solution in the sense that it is clear which
+tests belong to which modules.
+</p>
+
+<div class="highlight"><pre><span></span>    setup.py
+    mypkg/
+	__init__.py
+	app.py
+	view.py
+	test/
+	    __init__.py
+	    test_app.py
+	    test_view.py
+</pre></div>
+
+<p>
+You can then quickly tests them by running:
+</p>
+
+<div class="highlight"><pre><span></span>    pytest --pyargs mypkg
+</pre></div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org436d2b3" class="outline-3">
+<h3 id="org436d2b3">Personal Conventions</h3>
+<div class="outline-text-3" id="text-org436d2b3">
+</div>
+<div id="outline-container-org58cdc3c" class="outline-4">
+<h4 id="org58cdc3c">Always use classes</h4>
+<div class="outline-text-4" id="text-org58cdc3c">
+<p>
+Always run your tests within classes. This will be of paramount
+importance.
+</p>
+
+<p>
+I will usually run tests in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1"># content of test_moduleX.py</span>
+    <span class="k">class</span> <span class="nc">Test_ModuleX</span><span class="p">:</span>
+	<span class="k">def</span> <span class="nf">test_one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	    <span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;this&quot;</span>
+	    <span class="k">assert</span> <span class="s2">&quot;h&quot;</span> <span class="ow">in</span> <span class="n">x</span>
+
+	<span class="k">def</span> <span class="nf">test_two</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	    <span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;hello&quot;</span>
+	    <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;check&quot;</span><span class="p">)</span>
+</pre></div>
+
+<p>
+then you can run the tests for the single module as follows:
+</p>
+
+<div class="highlight"><pre><span></span>    $ pytest -q test_moduleX.py
+</pre></div>
+
+<p>
+On the top of it you can as well create complex logic by
+inheritance etc.
+</p>
+
+<p>
+Finally it is important to realize that despite the way you set up
+your tests, the following benefits are there:
+</p>
+
+<blockquote>
+<ul class="org-ul">
+<li>Test organization</li>
+
+<li>Sharing fixtures for tests only in that particular class</li>
+
+<li>Applying marks at the class level and having them implicitly
+apply to all tests</li>
+</ul>
+</blockquote>
+
+<p>
+You can as well use the flag <code>-k</code> to run tests by regular
+expression.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org5b288de" class="outline-3">
+<h3 id="org5b288de">Some Useful commands</h3>
+<div class="outline-text-3" id="text-org5b288de">
+<p>
+Note that you have a couple of plug-ins in pytest, depending on
+what you aim to do.
+</p>
+
+<p>
+You can check them as follows:
+</p>
+
+<div class="highlight"><pre><span></span>   $ pip install pytest-html
+</pre></div>
+
+<p>
+Then you’re able to run tests with:
+</p>
+
+<div class="highlight"><pre><span></span>   $ pytest  -html<span class="o">=</span>report.html
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgcae0a54" class="outline-3">
+<h3 id="orgcae0a54">Interpret Results</h3>
+<div class="outline-text-3" id="text-orgcae0a54">
+<p>
+You have to understand the following options:
+</p>
+
+<blockquote>
+<ul class="org-ul">
+<li>f - failed</li>
+
+<li>E - error</li>
+
+<li>s - skipped</li>
+
+<li>x - xfailed</li>
+
+<li>X - xpassed</li>
+
+<li>p - passed</li>
+
+<li>P - passed with output</li>
+</ul>
+</blockquote>
+</div>
+</div>
+
+
+<div id="outline-container-org9dd8e4b" class="outline-3">
+<h3 id="org9dd8e4b"><span class="todo TODO">TODO</span> properly configure the logging for there as well</h3>
+</div>
+</div>
+
+<div id="outline-container-orgf819510" class="outline-2">
+<h2 id="orgf819510"><span class="todo TODO">TODO</span> Test Coverage</h2>
+<div class="outline-text-2" id="text-orgf819510">
+<p>
+In order to generate your coverage reports you can use the
+<code>coverage</code> library.
+</p>
+
+<p>
+This is important as you can properly sleep at night, once your code
+is properly covered.
+</p>
+
+<p>
+This should also go into your <a href="https://www.scrum.org/resources/blog/done-understanding-definition-done?gclid=Cj0KCQjw4PKTBhD8ARIsAHChzRIlof8n0e1pwXTQ-QBKWB56BuHONmIqLLL99zyOrJBa57FCg3heLUUaAgkIEALw_wcB">definition of <code>DONE</code></a>.
+</p>
+
+<p>
+You will release your projects just when you will have covered a
+decent coverage level.
+</p>
+
+<p>
+Now you can explore the following modules in order to properly work
+in here:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://pytest-cov.readthedocs.io/en/latest/">pytest-cov</a></li>
+
+<li><a href="https://coverage.readthedocs.io/en/6.3.2/">coverage</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org2256fc0" class="outline-2">
+<h2 id="org2256fc0"><span class="todo TODO">TODO</span> Read into Tox</h2>
+<div class="outline-text-2" id="text-org2256fc0">
+<p>
+So basically this is your gradle/maven correspondent for Python.
+</p>
+
+<p>
+So this is a nice automation tool. Should properly check into it and
+make it run.
+</p>
+
+<p>
+This is also necessary in order to have a proper environment for
+testing out your code.
+</p>
+
+<p>
+You can then integrate everything properly.
+</p>
+
+<p>
+I.e. you can set up virtual enviornments, run your tests etc. in
+there.
+</p>
+
+<p>
+This is important set up everything correctly such that you can
+properly introduce the python stack and triple down on everything.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org34ecc88" class="outline-2">
+<h2 id="org34ecc88"><span class="todo TODO">TODO</span> spline</h2>
+<div class="outline-text-2" id="text-org34ecc88">
+<p>
+This is the bonus section. Also go deeper into <a href="https://spline.readthedocs.io/en/latest/example.html">this</a>.
+</p>
+
+<p>
+Just if you have time. 
+</p>
+
+<p>
+I think this is an interesting project.
+</p>
+
+<p>
+I would need more time to properly check into this.
+</p>
+
+<p>
+Unfortunaltely in my current position I have no time to really go
+out there and explore and push the boundaries.
+</p>
+
+<p>
+It is already a miracle keeping the boat afloat and modernizing it
+to the <i>current sate</i> of the technologies. 
+</p>
+</div>
+</div>

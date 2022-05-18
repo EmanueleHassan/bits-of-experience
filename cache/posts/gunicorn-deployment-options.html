@@ -1,0 +1,240 @@
+<style>
+
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+<p>
+So basically this is closing the circle. With this post you should
+gain the final understanding of the proper way of deploying a python
+application in production, meaning it should give you a flavour of how
+possible configurations settings that will affect the number of
+requests that your application can handle as well your hardware
+resources utilization.
+</p>
+
+<p>
+So basically this post touches upon the topic of workers, threads
+etc. and the way to configure everything. It is good to understand
+this in the context of <a href="https://marcohassan.github.io/bits-of-experience/posts/on-multithreading/">this post</a> as well.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org20115c2" class="outline-2">
+<h2 id="org20115c2">Excurs - On mulitiprocessor architecture</h2>
+<div class="outline-text-2" id="text-org20115c2">
+<p>
+So in order to properly understand what is going on you must have a
+basic understanding of the concept of multi core processors.
+</p>
+
+<p>
+Understand the following:
+</p>
+
+<blockquote>
+<p>
+A multicore processor is an integrated circuit that has two or more
+processor cores attached for enhanced performance and reduced power
+consumption.
+</p>
+
+<p>
+These processors also enable more efficient simultaneous processing of
+multiple tasks, such as with parallel processing and multithreading.
+</p>
+
+<p>
+A dual core setup is similar to having multiple, separate processors
+installed on a computer. However, because the two processors are
+plugged into the same socket, the connection between them is faster.
+</p>
+</blockquote>
+
+<p>
+In general the architecture is the following:
+</p>
+
+<img src="../../images/Screenshot 2022-04-25 130301.png" class="center">
+
+<p>
+Note that the grey boxes represent chip boundaries.
+</p>
+
+<p>
+The different chips are then connected via system bus and share the
+same memory.
+</p>
+
+<img src="../../images/Screenshot 2022-04-25 130544.png" class="center">
+
+<p>
+So basically the idea is that in environments where your
+infrastructure is of a multiprocessor type, you can run different
+processes at the same time.
+</p>
+
+<p>
+This in conrtrast to single-core architectures where you can run
+multiple processes only by scheduling means. This is for instace
+what happens in <a href="https://www.8bitavenue.com/difference-between-multiprogramming-multitasking-multithreading-and-multiprocessing/">multitasking</a> in modern architectures.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org62096e4" class="outline-2">
+<h2 id="org62096e4">VMs</h2>
+<div class="outline-text-2" id="text-org62096e4">
+<p>
+Note now the different well known virtualization techniques you
+learned of at IBM actually do exactly this.
+</p>
+
+<p>
+By creating sets of virtual resources they package different
+subsets of multiprocessors architectures into virtual resources
+that can then be isolated from one another.
+</p>
+
+<p>
+So you have to check at your VMs as well when you program as this
+will be the basis for your "infrastructure" when running your
+programs and different programs will require different infra based
+on the reasoning of the previous section and how you set them up.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcb3cd05" class="outline-2">
+<h2 id="orgcb3cd05">Workers</h2>
+<div class="outline-text-2" id="text-orgcb3cd05">
+<p>
+So with this basic content it will be possible to better understand
+the concept of workers in gunicorn servers and to set the amount
+correspondingly.
+</p>
+
+<p>
+In order to well understand it check at <a href="https://medium.com/building-the-system/gunicorn-3-means-of-concurrency-efbb547674b7">the following</a>.
+</p>
+
+<p>
+Basically what is important to get is the following:
+</p>
+
+<blockquote>
+<p>
+Each of the workers is a UNIX process that loads the Python
+application. There is no shared memory between the workers.
+</p>
+</blockquote>
+
+<p>
+So basically the question is how many processes should you start on
+your server?
+</p>
+
+<p>
+The solution is the following as per the official GUnicorn guide:
+</p>
+
+<blockquote>
+<p>
+Gunicorn relies on the operating system to provide all of the load
+balancing when handling requests. Generally we recommend (2 x
+$num<sub>cores</sub>) + 1 as the number of workers to start off with. While not
+overly scientific, the formula is based on the assumption that for a
+given core, one worker will be reading or writing from the socket
+while the other worker is processing a request.
+</p>
+</blockquote>
+
+<p>
+And then, as stated in the article above:
+</p>
+
+<blockquote>
+<p>
+From that point, it’s all trial and error with benchmarking.
+</p>
+
+<p>
+If the bottleneck is memory, start introducing threads.
+</p>
+
+<p>
+If the bottleneck is I/O, consider a different python programming
+paradigm.
+</p>
+
+<p>
+If the bottleneck is CPU, consider using more cores and adjusting the
+workers value.
+</p>
+</blockquote>
+
+<p>
+You can then use your test-load tools for that.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org396c9fd" class="outline-2">
+<h2 id="org396c9fd">How to magically autoset that magic formula for the workers</h2>
+<div class="outline-text-2" id="text-org396c9fd">
+<p>
+You can specify it programmatically in the <a href="https://docs.gunicorn.org/en/stable/settings.html#config-file">config file</a>. (See the
+link to see where to put in your source code).
+</p>
+
+<p>
+You can then specify something as this in there:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+   <span class="n">workers</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
+
+   <span class="c1">#... other interesting parameters</span>
+</pre></div>
+
+<p>
+That is all folks for the moment. This is what I wanted to cover
+   for this post.
+</p>
+</div>
+</div>
