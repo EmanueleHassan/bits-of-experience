@@ -125,12 +125,14 @@ pipeline.
 
 <p>
 Moreover after the integration specified in this post you will be able
-to move away from pure SQL. There are monster SQL that is developed in
+to move away from pure SQL. There is monster SQL that is developed in
 my team.
 </p>
 
 <p>
-There is little chance to explore these huge queries bit by bit..
+There is little chance to explore these huge queries bit by bit.. I
+mean too much manual copy and paste for my taste and too little slice
+and dice options.
 </p>
 
 <p>
@@ -168,9 +170,9 @@ the little things that is important to consider in order to keep
 everything under control in the long run.
 </p>
 
-<div id="outline-container-orge1ad649" class="outline-2">
-<h2 id="orge1ad649">SQL Alchemy</h2>
-<div class="outline-text-2" id="text-orge1ad649">
+<div id="outline-container-org776cd77" class="outline-2">
+<h2 id="org776cd77">SQL Alchemy</h2>
+<div class="outline-text-2" id="text-org776cd77">
 <p>
 Note that this is important - with it you essentially have a
 full-fledge toolkit to operate on SQL and have the possibility of
@@ -194,9 +196,9 @@ python space.
 </p>
 </div>
 
-<div id="outline-container-orga60b0b5" class="outline-3">
-<h3 id="orga60b0b5">Connecting to DB - Microsoft SQL Set Up</h3>
-<div class="outline-text-3" id="text-orga60b0b5">
+<div id="outline-container-org9f9fd47" class="outline-3">
+<h3 id="org9f9fd47">Connecting to DB - Microsoft SQL Set Up</h3>
+<div class="outline-text-3" id="text-org9f9fd47">
 <p>
 In any case, that said, the first thing to understand in this
 dimension is on how to create a SQL Alchemy engine in order to
@@ -309,9 +311,9 @@ configuration when setting up an engine together with the dialect.
 </p>
 </div>
 
-<div id="outline-container-org75cd8aa" class="outline-4">
-<h4 id="org75cd8aa">Close connections</h4>
-<div class="outline-text-4" id="text-org75cd8aa">
+<div id="outline-container-org85f0e7a" class="outline-4">
+<h4 id="org85f0e7a">Close connections</h4>
+<div class="outline-text-4" id="text-org85f0e7a">
 <p>
 Note that despite of working with connection pools you should
 still be careful in returning the connections to the pool.
@@ -354,9 +356,9 @@ pooled, disable pooling via NullPool.
 </div>
 </div>
 
-<div id="outline-container-orgf5e449b" class="outline-4">
-<h4 id="orgf5e449b">Disconnect Handling</h4>
-<div class="outline-text-4" id="text-orgf5e449b">
+<div id="outline-container-org0da09ab" class="outline-4">
+<h4 id="org0da09ab">Disconnect Handling</h4>
+<div class="outline-text-4" id="text-org0da09ab">
 <p>
 You can read about it <a href="https://docs.sqlalchemy.org/en/13/core/pooling.html#connection-pool-configuration">here</a>.
 </p>
@@ -385,9 +387,9 @@ explore.
 </div>
 </div>
 
-<div id="outline-container-org8189465" class="outline-4">
-<h4 id="org8189465">Multiprocessing</h4>
-<div class="outline-text-4" id="text-org8189465">
+<div id="outline-container-org12b18c7" class="outline-4">
+<h4 id="org12b18c7">Multiprocessing</h4>
+<div class="outline-text-4" id="text-org12b18c7">
 <p>
 Note that if you will go on multiprocessing in python, you will
 have to return <a href="https://docs.sqlalchemy.org/en/13/core/pooling.html#using-connection-pools-with-multiprocessing-or-os-fork">here</a>.
@@ -401,9 +403,9 @@ processes.
 </div>
 </div>
 
-<div id="outline-container-org906d571" class="outline-3">
-<h3 id="org906d571">ORM</h3>
-<div class="outline-text-3" id="text-org906d571">
+<div id="outline-container-org62ad847" class="outline-3">
+<h3 id="org62ad847">ORM</h3>
+<div class="outline-text-3" id="text-org62ad847">
 <p>
 So you can check better this component when you have time.
 </p>
@@ -420,9 +422,9 @@ thing.
 </div>
 </div>
 
-<div id="outline-container-org6a088e6" class="outline-3">
-<h3 id="org6a088e6">Logging</h3>
-<div class="outline-text-3" id="text-org6a088e6">
+<div id="outline-container-org6d46a8b" class="outline-3">
+<h3 id="org6d46a8b">Logging</h3>
+<div class="outline-text-3" id="text-org6d46a8b">
 <p>
 This is as well a thing that you will have to properly set up if
 you want to create the thing in a proper way.
@@ -453,13 +455,73 @@ described below.
 </blockquote>
 </div>
 </div>
+
+<div id="outline-container-org8e90818" class="outline-3">
+<h3 id="org8e90818">Inspect DB</h3>
+<div class="outline-text-3" id="text-org8e90818">
+<p>
+Here some snippets are saved that are handy in order to operate on
+the sql-alchemny engines.
+</p>
+</div>
+
+<div id="outline-container-orgdc7cb29" class="outline-4">
+<h4 id="orgdc7cb29">Check at the available tables</h4>
+<div class="outline-text-4" id="text-orgdc7cb29">
+<div class="highlight"><pre><span></span><span class="n">engine</span><span class="o">.</span><span class="n">table_names</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge286159" class="outline-3">
+<h3 id="orge286159">Update</h3>
+<div class="outline-text-3" id="text-orge286159">
+<p>
+Note that with sql-alchemy you can essentially execute all of the
+standard operations on your database.
+</p>
+
+<p>
+You can use the <code>engine.execute()</code> method for it. Then the engine
+will automatically ask for an available connection from the
+connection pool, perform the given action and return it to the
+connection pool.
+</p>
+
+<p>
+Note that unfortunately there is no update statement in pandas so
+that this bit is missing from the logic and the integration with
+SQL-Alchemy.
+</p>
+
+<p>
+So the workflow would resemble something to the following:
+</p>
+
+<p>
+Extract the existing table from the db, update it in the
+application logic and replace alltogether the existing table.
+</p>
+
+<p>
+You can still think in pandas terms and make your transformation -
+in a functional way - there in order to get your update
+statements.
+</p>
+
+<p>
+You can then use f-strings and similar in order to properly
+construct the relevant queries.
+</p>
+</div>
+</div>
 </div>
 
 
-
-<div id="outline-container-org9bbb1ef" class="outline-2">
-<h2 id="org9bbb1ef">Pandas Interaction with SQL Alchemy</h2>
-<div class="outline-text-2" id="text-org9bbb1ef">
+<div id="outline-container-orgf2d53da" class="outline-2">
+<h2 id="orgf2d53da">Pandas Interaction with SQL Alchemy</h2>
+<div class="outline-text-2" id="text-orgf2d53da">
 <p>
 So basically that is it.
 </p>
@@ -636,52 +698,127 @@ the index of your pandas dataframes to the sql table generally.</li>
 </li>
 </ol>
 </div>
-
-<div id="outline-container-orge2e40c9" class="outline-3">
-<h3 id="orge2e40c9">
-<span class="todo TODO">TODO</span> open questions</h3>
-<div class="outline-text-3" id="text-orge2e40c9">
-</div>
-<div id="outline-container-org7d17fbd" class="outline-4">
-<h4 id="org7d17fbd">Update</h4>
-<div class="outline-text-4" id="text-org7d17fbd">
-<p>
-So note that the above is a bit sub-optimal in the case of
-update statements.
-</p>
-
-<p>
-These are not provided for the data frames.
-</p>
-
-<p>
-You would have to get the existing table from the db, update it
-in the application logic and replace alltogether the existing
-table.
-</p>
-
-<p>
-You see that at performance level it is not that great.
-</p>
-
-<hr>
-<p>
-The alternative here is to use sql statements directly by using
-the sql-alchemy engine without going through integration with
-pandas.
-</p>
-
-<p>
-You can still think in pandas terms and make your
-transformation - in a functional way - there in order to get your
-update statements.
-</p>
-</div>
 </div>
 
-<div id="outline-container-orgb20dd84" class="outline-4">
-<h4 id="orgb20dd84">Data types</h4>
-<div class="outline-text-4" id="text-orgb20dd84">
+
+<div id="outline-container-orgb4bbd91" class="outline-2">
+<h2 id="orgb4bbd91">SQL Lite</h2>
+<div class="outline-text-2" id="text-orgb4bbd91">
+<p>
+So will work quite a bit with this in memory database.
+</p>
+
+<p>
+This will make it quite easy to develop and has couple of
+advantages that I really like.
+</p>
+
+<p>
+So here some notes to organize my thinking around it and start
+properly to work in this dimension.
+</p>
+
+<p>
+Might refactor then into a different separate post but for the
+moment I am keeping the notes over here.
+</p>
+
+<p>
+<i>Side note:</i>
+</p>
+
+<p>
+Do not go too low level in here.
+</p>
+
+<p>
+It is not the same database that you are actually using in your
+company. I.e. the <b>dialect will be different</b>.
+</p>
+
+<p>
+So in general keep it for now as a solution while they set up the
+entire Dev space. On the top of it search for an in-memory mssql
+instance.
+</p>
+
+<p>
+So ordered as well the SQL Microsoft Express DB. You can then use
+this locally once it is ready and you would have solved this big
+drawback.
+</p>
+
+<p>
+This is obviously a big drawback.
+</p>
+
+<p>
+But I think it should not be too much of a problem. I am not a DB
+person in any case and hope to cut curnors on the lower level
+details of the DB by keeping all of the logic at the application
+layer. The high level stuff, meaning <code>insert</code>, <code>update</code>, <code>alter</code>,
+<code>select</code> statements is the same everywhere.
+</p>
+
+<p>
+I mean I will quickly see in time if this is a bad idea an revert
+in case. It is worth to experiment at the beginning in any case in
+order to find the perfect set up. This will make the difference in
+the long run. 
+</p>
+</div>
+
+<div id="outline-container-org0ef9d62" class="outline-3">
+<h3 id="org0ef9d62">On the issue of the main database</h3>
+<div class="outline-text-3" id="text-org0ef9d62">
+<p>
+So basically everytime you connect to a database, its name is
+<code>main</code> regardless of the databse file name.
+</p>
+
+<p>
+You can see the attach database option in order to attach
+additional databases.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge19b583" class="outline-3">
+<h3 id="orge19b583">On the schema</h3>
+<div class="outline-text-3" id="text-orge19b583">
+<p>
+So it seems that sqllite has no schema.
+</p>
+
+<p>
+So basically you have to work without it. See <a href="https://www.sqlite.org/schematab.html">here</a>.
+</p>
+
+<p>
+You have just a single schema where everything goes.
+</p>
+
+<p>
+You can then check at the schema of all of your tables over there
+with the <code>.schema</code> option.
+</p>
+
+<p>
+This might be handy when copying the data over to your other DBs.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org85fa116" class="outline-2">
+<h2 id="org85fa116">
+<span class="todo TODO">TODO</span> open design questions</h2>
+<div class="outline-text-2" id="text-org85fa116">
+</div>
+<div id="outline-container-orge37ce3f" class="outline-3">
+<h3 id="orge37ce3f">For Pandas - Data types</h3>
+<div class="outline-text-3" id="text-orge37ce3f">
 <p>
 You also have to check with the data types how the situation
 really is. I.e. does it always infer the data types correctly?
@@ -693,9 +830,14 @@ Can you append without big issues?
 
 <hr>
 <p>
-The solution will be a trial and error case. 
+The solution will be a trial and error case.
 </p>
-</div>
+
+<hr>
+<p>
+Have to double check properly what data types are available in
+there and what you can start with it. 
+</p>
 </div>
 </div>
 </div>
