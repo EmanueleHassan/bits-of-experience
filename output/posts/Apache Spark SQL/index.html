@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Apache Spark SQL | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/Apache%20Spark%20SQL/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../Kubernetes/" title="Kubernetes" type="text/html">
+<link rel="next" href="../Prompt%20Costumization/" title="Prompt Costumization" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Apache Spark SQL">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/Apache%20Spark%20SQL/">
+<meta property="og:description" content="This posts makes the point for Apache Spark SQL. 
+
+
+
+Using RDDs API might be quite annoying, especially if you are used to
+the industry standard of RDMS and their SQL sytax.
+
+
+
+Here ApacheSparkSQL kic">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-09-06T18:21:43+02:00">
+<meta property="article:tag" content="Big Data">
+<meta property="article:tag" content="Spark">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="../Apache%20Spark%20SQL/" class="u-url">Apache Spark SQL</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="../Apache%20Spark%20SQL/" rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-09-06T18:21:43+02:00" itemprop="datePublished" title="2019-09-06 18:21">2019-09-06 18:21</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="../Apache%20Spark%20SQL/index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/big-data/" rel="tag">Big Data</a></li>
+            <li><a class="tag p-category" href="../../categories/spark/" rel="tag">Spark</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <br><br><p>
+This posts makes the point for Apache Spark SQL. 
+</p>
+
+<p>
+Using RDDs API might be quite annoying, especially if you are used to
+the industry standard of RDMS and their SQL sytax.
+</p>
+
+<p>
+Here ApacheSparkSQL kicks in, providing a SQL interface to your data.
+</p>
+
+<!-- TEASER_END -->
+
+<p>
+The RDD is still a first class citizen, so what ApacheSparkSQL
+basically does is wrapping the RDD with a DataFrame object actually
+abstracting the API to a relational one. So basically you can access
+your data but on top of the RDD you have a relational API. Internally
+ApacheSpark will execute exacly th same code using the RDD API.
+</p>
+
+<p>
+Independently, if you are using SQL or the DataFrame API, or both at
+the same time, internally Apache Spark creates a so-called abstract
+syntax tree out of this. 
+</p>
+
+<p>
+This tree can be rearranged and transformed to generate an execution
+plan which performs best. This is where a catalyst optimizer kicks
+in. The idea is that when using SQL syntax there are almost as much as
+40 years of research to optimize SQL query as it was the de facto only
+option until a few years ago. The Catalyst Optimizer, than basically
+takes the best of the research out there to optimize your queries.
+</p>
+
+<p>
+Having a schema allows the so called, catalyst optimizer to create a
+logical query execution plan (LEP) from your SQL abstract syntax
+tree. The LEP is then compiled into many physical execution plans, and
+based on cost based statistics on the size of different data sets
+involved, and optimal PEP is chosen.
+</p>
+
+<p>
+<img src="../../images/Bildschirmfoto%202020-05-03%20um%2009.01.23.png" alt="nil"></p>
+
+<p>
+Notice finally that a second layer project Tungsten offers
+additionally computational benefits when using ApacheSparkSQL. This
+together with the catalyst function suggest the usage of
+ApacheSparkSQL as a valid alternative to directly operating via RDDs
+APIs.
+</p>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../Kubernetes/" rel="prev" title="Kubernetes">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../Prompt%20Costumization/" rel="next" title="Prompt Costumization">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

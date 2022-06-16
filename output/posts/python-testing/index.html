@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Python Testing | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/python-testing/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../emacs-as-sql-client/" title="Emacs as SQL Client" type="text/html">
+<link rel="next" href="../what-to-migrate/" title="what to migrate" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Python Testing">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/python-testing/">
+<meta property="og:description" content="img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-05-12T13:35:32+02:00">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="software-engineering">
+<meta property="article:tag" content="testing">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Python Testing</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2022-05-12T13:35:32+02:00" itemprop="datePublished" title="2022-05-12 13:35">2022-05-12 13:35</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/python/" rel="tag">Python</a></li>
+            <li><a class="tag p-category" href="../../categories/software-engineering/" rel="tag">software-engineering</a></li>
+            <li><a class="tag p-category" href="../../categories/testing/" rel="tag">testing</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+<p>
+So you already worked with python testing frameworks.
+</p>
+
+<p>
+The set up was already in place back then.
+</p>
+
+<p>
+Now it is more than a year that I do not touch the thing and
+everything is solidly gone.
+</p>
+
+<p>
+Luckily I have a repo on my Github with some structure of it.
+</p>
+
+<p>
+Will leverage that now, plus I will start to write some notes, such
+that people that will have to collaborate with me can reference to
+it.
+</p>
+
+<p>
+On the top of it, it will be useful for the future as well.
+</p>
+
+<p>
+Plus finally it is always nice to see the things in multiple
+languages. It is always the same story. By adding pieces to the puzzle
+the picture becomes systematically clearer not the opposite. 
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org737cf29" class="outline-2">
+<h2 id="org737cf29">Pytest vs. Unittests</h2>
+<div class="outline-text-2" id="text-org737cf29">
+<p>
+So basically these are the two big testing frameworks in the Python
+space.
+</p>
+
+<p>
+I had worked with both in the past. 
+</p>
+
+<p>
+I will go with the first. This decision is not 100% thought through
+decision but when you work you understand that sometimes you have to
+cut corners and based on what I could quickly read online it is
+sensible.
+</p>
+
+<p>
+There is even the possibility of running <code>unittests</code> tests through
+pytest so it makes sense to leverage on this. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org09a6212" class="outline-2">
+<h2 id="org09a6212">Writing tests</h2>
+<div class="outline-text-2" id="text-org09a6212">
+<p>
+So a good start is the good-practices section of the <a href="https://docs.pytest.org/en/6.2.x/goodpractices.html">official
+documentation</a>.
+</p>
+
+<p>
+Read as well the following documentation:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://docs.pytest.org/en/6.2.x/reference.html">Reference API</a></li>
+
+<li><a href="https://realpython.com/pytest-python-testing/">Python testing</a></li>
+</ul>
+</div>
+
+<div id="outline-container-orgea5692b" class="outline-3">
+<h3 id="orgea5692b">Conventions for Python test discovery</h3>
+<div class="outline-text-3" id="text-orgea5692b">
+<p>
+So basically there are two options:
+</p>
+
+<ul class="org-ul">
+<li>Embedding the tests within a package - Tests inside of the
+application code</li>
+
+<li>Tests outside of the application code</li>
+</ul>
+<p>
+<i>Update:</i> Go with the second version. It is the best. 
+</p>
+</div>
+
+<div id="outline-container-orgd8aa017" class="outline-4">
+<h4 id="orgd8aa017">AVOID - Tests outside of the application</h4>
+<div class="outline-text-4" id="text-orgd8aa017">
+<p>
+Note that basically you have a set of disadavantages if you work
+in such a way.
+</p>
+
+<p>
+Among the others:
+</p>
+
+<ul class="org-ul">
+<li>there is no 1:1 mapping among python testing and packages
+modules.</li>
+</ul>
+<p>
+If you want to work this way you have to find a solution for it.
+You can probably go into the direction with markers but I do
+not know how much helpful this will be.
+</p>
+
+<p>
+So basically the idea is to follow these conventions such that you
+can properly map the modules to the tests.
+</p>
+
+<p>
+That said, should you go this way you should work in the following
+way, well noting the following points.
+</p>
+
+<p>
+Note that in constrast to Java here the situation is much more
+messy because of the python module imports and how everything
+enters the <code>sys.path</code>. You can read more about it <a href="https://docs.pytest.org/en/6.2.x/pythonpath.html#import-modes">here</a>.
+</p>
+
+<p>
+You can refer to that page in general, but use the following set up
+in general as your north star:
+</p>
+
+<div class="highlight"><pre><span></span>    setup.py
+    src/
+	mypkg/
+	    __init__.py
+	    app.py
+	    view.py
+    tests/
+	__init__.py
+	foo/
+	    __init__.py
+	    test_view.py
+	bar/
+	    __init__.py
+	    test_view.py
+</pre></div>
+
+<p>
+Note that you need to create testing packages as in the above
+(<code>foo</code>, <code>bar</code>) if you have testing modules called in the same way.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org94e4aa2" class="outline-4">
+<h4 id="org94e4aa2">USE THIS - Tests inside of the application code</h4>
+<div class="outline-text-4" id="text-org94e4aa2">
+<p>
+This is a cleaner solution in the sense that it is clear which
+tests belong to which modules.
+</p>
+
+<div class="highlight"><pre><span></span>    setup.py
+    mypkg/
+	__init__.py
+	app.py
+	view.py
+	test/
+	    test_app.py
+	    test_view.py
+</pre></div>
+
+<p>
+You can then quickly tests them by running:
+</p>
+
+<div class="highlight"><pre><span></span>    pytest --pyargs mypkg
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgdbbcd49" class="outline-3">
+<h3 id="orgdbbcd49">Personal Conventions</h3>
+<div class="outline-text-3" id="text-orgdbbcd49">
+</div>
+<div id="outline-container-org69b844a" class="outline-4">
+<h4 id="org69b844a">Always use classes</h4>
+<div class="outline-text-4" id="text-org69b844a">
+<p>
+Always run your tests within classes. This will be of paramount
+importance.
+</p>
+
+<p>
+I will usually run tests in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1"># content of test_moduleX.py</span>
+    <span class="k">class</span> <span class="nc">Test_ModuleX</span><span class="p">:</span>
+	<span class="k">def</span> <span class="nf">test_one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	    <span class="n">x</span> <span class="o">=</span> <span class="s2">"this"</span>
+	    <span class="k">assert</span> <span class="s2">"h"</span> <span class="ow">in</span> <span class="n">x</span>
+
+	<span class="k">def</span> <span class="nf">test_two</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	    <span class="n">x</span> <span class="o">=</span> <span class="s2">"hello"</span>
+	    <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"check"</span><span class="p">)</span>
+</pre></div>
+
+<p>
+then you can run the tests for the single module as follows:
+</p>
+
+<div class="highlight"><pre><span></span>    $ pytest -q test_moduleX.py
+</pre></div>
+
+<p>
+On the top of it you can as well create complex logic by
+inheritance etc.
+</p>
+
+<p>
+Finally it is important to realize that despite the way you set up
+your tests, the following benefits are there:
+</p>
+
+<blockquote>
+<ul class="org-ul">
+<li>Test organization</li>
+
+<li>Sharing fixtures for tests only in that particular class</li>
+
+<li>Applying marks at the class level and having them implicitly
+apply to all tests</li>
+</ul>
+</blockquote>
+
+<p>
+You can as well use the flag <code>-k</code> to run tests by regular
+expression.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgca6351a" class="outline-3">
+<h3 id="orgca6351a">Some Useful commands</h3>
+<div class="outline-text-3" id="text-orgca6351a">
+<p>
+Note that you have a couple of plug-ins in pytest, depending on
+what you aim to do.
+</p>
+
+<p>
+You can check them as follows:
+</p>
+
+<div class="highlight"><pre><span></span>   $ pip install pytest-html
+</pre></div>
+
+<p>
+Then you’re able to run tests with:
+</p>
+
+<div class="highlight"><pre><span></span>   $ pytest  -html<span class="o">=</span>report.html
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org0e58095" class="outline-3">
+<h3 id="org0e58095">Interpret Results</h3>
+<div class="outline-text-3" id="text-org0e58095">
+<p>
+You have to understand the following options:
+</p>
+
+<blockquote>
+<ul class="org-ul">
+<li>f - failed</li>
+
+<li>E - error</li>
+
+<li>s - skipped</li>
+
+<li>x - xfailed</li>
+
+<li>X - xpassed</li>
+
+<li>p - passed</li>
+
+<li>P - passed with output</li>
+</ul>
+</blockquote>
+</div>
+
+<div id="outline-container-orga19a15e" class="outline-4">
+<h4 id="orga19a15e">Logging</h4>
+<div class="outline-text-4" id="text-orga19a15e">
+<p>
+It is possible to set up logging options for the tests in order to
+redirect standard error and standard output to given sources as
+well all of the INFO, WARNING etc. messages you will need in your
+application.
+</p>
+
+<p>
+You can read how to do that for the pytest module <a href="https://docs.pytest.org/en/6.2.x/logging.html">here</a>.
+</p>
+
+<p>
+In order to keep consistency I think I will rather go with a
+general Logger object that I will use in my project and reference
+this.
+</p>
+
+<p>
+Will see in time if this strategy will be solid or not. 
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge72a5dd" class="outline-2">
+<h2 id="orge72a5dd">IN-PROGRESS Test Coverage</h2>
+<div class="outline-text-2" id="text-orge72a5dd">
+<p>
+In order to generate your coverage reports you can use the
+<code>coverage</code> library.
+</p>
+
+<p>
+This is important as you can properly sleep at night, once your code
+is properly covered. Meaning you have a good overview of the quality
+of your code etc.
+</p>
+
+<p>
+Note that this are the python native tools for making such quality
+checks. SonarQube is something similar that goes into the
+direction. Probably more sophisticated. Would have to check into
+it. In any case it is the program that Sergio mentioned to you in
+order to inspect your Java code. So might be interesting as well to
+explore such that you can have a unique consistent way for
+inspecting all of your code irrepsective of the language. Might be
+useful as well in this sense as it will reduce the burden of
+managing the entire thing. 
+</p>
+
+<p>
+This should also go into your <a href="https://www.scrum.org/resources/blog/done-understanding-definition-done?gclid=Cj0KCQjw4PKTBhD8ARIsAHChzRIlof8n0e1pwXTQ-QBKWB56BuHONmIqLLL99zyOrJBa57FCg3heLUUaAgkIEALw_wcB">definition of <code>DONE</code></a>, meaning you can
+consider a project done just if you reach a given threshold of test
+coverage. 
+</p>
+
+<p>
+You will release your projects just when you will have covered a
+decent coverage level.
+</p>
+
+<p>
+Now you can explore the following modules in order to properly work
+in here:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://pytest-cov.readthedocs.io/en/latest/">pytest-cov</a></li>
+
+<li><a href="https://coverage.readthedocs.io/en/6.3.2/">coverage</a></li>
+</ul>
+<p>
+So basically from my current understanding the second depends on the
+first, i.e. it leverages on it but has some additional
+functionalities such that it makes sense to go for this one. 
+</p>
+</div>
+
+<div id="outline-container-org4f39c43" class="outline-3">
+<h3 id="org4f39c43">Coverage</h3>
+<div class="outline-text-3" id="text-org4f39c43">
+<p>
+This is one of the most popular code coverage tools for Python.
+</p>
+
+<p>
+I will not go through it; as mentioned I rather go with the next
+library, which builds on the top of it. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5f689c3" class="outline-3">
+<h3 id="org5f689c3">Pytest-Cov</h3>
+<div class="outline-text-3" id="text-org5f689c3">
+<p>
+Pytest-cov is a Python plugin to generate coverage reports. So as
+the above.
+</p>
+
+<p>
+In addition to functionalities supported by coverage command, it
+also supports centralized and distributed testing. It also supports
+coverage of subprocesses.
+</p>
+</div>
+
+<div id="outline-container-org5823808" class="outline-4">
+<h4 id="org5823808">Usage</h4>
+<div class="outline-text-4" id="text-org5823808">
+<p>
+After you installed the <a href="https://pypi.org/project/pytest-cov/">relevant library</a>, you can install
+everything in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">pytest</span> <span class="o">--</span><span class="n">cov</span><span class="o">=&lt;</span><span class="n">myproject</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">cov</span><span class="o">-</span><span class="n">config</span><span class="o">=.</span><span class="n">coveragerc</span>
+</pre></div>
+
+<p>
+this, if you want to test a project with a structure as in <a href="#org94e4aa2">here</a>.
+</p>
+
+<p>
+Note that <code>.coveragerc</code> is a configuration file where you can
+specify the options for writing your tests. You might start by
+reading the <a href="https://pytest-cov.readthedocs.io/en/latest/config.html">official documentation</a> for it. Or <a href="https://breadcrumbscollector.tech/how-to-use-code-coverage-in-python-with-pytest/">this</a>.
+</p>
+
+<p>
+Recall that it is good practice to eliminate your tests files from
+the coverage reports. This way you are not interested in them,
+they are actually used for covering the standard source code not
+the opposite.
+</p>
+
+<p>
+You can do it as follows:
+</p>
+
+<div class="highlight"><pre><span></span>    [run]
+    omit = **/test/*
+</pre></div>
+
+<p>
+You can specify similar options over there.
+</p>
+
+<p>
+Another important flag for working with the coverage is the
+following: <code>--cov-fail-under=MIN</code>
+</p>
+
+<p>
+The idea is that your tests will fail if the coverage is less than
+MIN. This goes a bit into <a href="#org957b3d8">this</a> direction.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org395e438" class="outline-4">
+<h4 id="org395e438">
+<span class="todo TODO">TODO</span> distributed tests</h4>
+<div class="outline-text-4" id="text-org395e438">
+<p>
+this will become important when you will have a lot of tests
+covering your code.
+</p>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org0390bb0" class="outline-3">
+<h3 id="org0390bb0">On the coverage Metrics</h3>
+<div class="outline-text-3" id="text-org0390bb0">
+<p>
+Note that the above two basically report by the default the
+coverage of the <a href="https://en.wikipedia.org/wiki/Statement_(computer_science)">statements</a> in your program.
+</p>
+
+<p>
+While this is the standard it will require you to write tons and
+tons of tests. So either you will go with TDD or you will likely
+get poor coverage ratios such that it will be difficult to assess
+from there if you tested at least the basics of your programs.
+</p>
+
+<p>
+Another option is to use different metrics such as functions
+coverage. The idea here is simple. Instead of checking how many
+statements you did cover you can check at how many functions,
+methods etc. your code did cover.
+</p>
+
+<p>
+In order to go down that different road you could start to explore
+other plugins as <a href="https://pypi.org/project/pytest-func-cov/">this</a>. This is a simlar plug in to the pytest
+package as the coverage one.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org957b3d8" class="outline-3">
+<h3 id="org957b3d8">
+<span class="todo TODO">TODO</span> Set up your CI pipeline incorporating this bit</h3>
+<div class="outline-text-3" id="text-org957b3d8">
+<p>
+What is a good coverage ratio?
+</p>
+
+<p>
+Basically the idea is <a href="https://www.atlassian.com/continuous-delivery/software-testing/code-coverage#:~:text=With%20that%20being%20said%20it,fairly%20low%20percentage%20of%20coverage.">the following</a>.
+</p>
+
+<p>
+Given this you see that there are rough indications with respect to
+the coverage your applications should have.
+</p>
+
+<p>
+The idea is then to embedd this into the CI pipeline such that if
+the coverage is not reached the CI will fail.
+</p>
+
+<p>
+This will be hard to achieve for existing projects. It makes
+probably sense to aim for it for newly created projects.   
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org93909e1" class="outline-3">
+<h3 id="org93909e1">
+<span class="todo TODO">TODO</span> CI pipeline</h3>
+<div class="outline-text-3" id="text-org93909e1">
+<p>
+This does not quite much has to do with python testing etc. Will
+hold it here for now as it is in the CI space.
+</p>
+
+<p>
+I would eventually have to reorganize things a bit.
+</p>
+
+<p>
+In any case this is necessary as it gives you visibility. 
+</p>
+
+<hr>
+<p>
+The idea is of a remainder to put badges on your projects,
+i.e. with the coverage, if the thing is passing or not etc.
+</p>
+
+<p>
+This would help you to gain the necessary visibility etc.
+</p>
+
+<p>
+We are using bitbucket to this stage for version control.
+You can check into <a href="https://shay-palachy.medium.com/bitbucket-repositoty-status-badges-2271637635aa">this</a> in this sense.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgfc3dfda" class="outline-2">
+<h2 id="orgfc3dfda">Read into Tox</h2>
+<div class="outline-text-2" id="text-orgfc3dfda">
+<p>
+So basically this is your gradle/maven correspondent for Python.
+</p>
+
+<p>
+So this is a nice automation tool. Should properly check into it and
+make it run.
+</p>
+
+<p>
+Note that basically the way you do it currently is manually. There
+is no big difference. But might make sense to start using this in
+order to work more in a streamlined way. 
+</p>
+
+<p>
+I.e. you can set up virtual enviornments, package your code, run
+your tests etc.
+</p>
+
+<p>
+In such a way you can work in a structured way in this dimension as
+well following the best practices that these tools are imposing on
+you.
+</p>
+</div>
+
+<div id="outline-container-org440f75f" class="outline-3">
+<h3 id="org440f75f">Introduction</h3>
+<div class="outline-text-3" id="text-org440f75f">
+<p>
+The general idea of tox is to specify all of the relevant
+operations in order to standardize your workflow in a <code>tox.ini</code>
+file.
+</p>
+
+<p>
+Based on this, then the following workflow usually follows:
+</p>
+
+<img src="../../images/Screenshot%202022-05-30%20105049.png" class="center">
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgda50ed9" class="outline-2">
+<h2 id="orgda50ed9">
+<span class="todo TODO">TODO</span> read into devpi</h2>
+<div class="outline-text-2" id="text-orgda50ed9">
+<p>
+check at <a href="https://doc.devpi.net/">this</a>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org9a21696" class="outline-2">
+<h2 id="org9a21696">
+<span class="todo TODO">TODO</span> spline</h2>
+<div class="outline-text-2" id="text-org9a21696">
+<p>
+This is the bonus section. Also go deeper into <a href="https://spline.readthedocs.io/en/latest/example.html">this</a>.
+</p>
+
+<p>
+Just if you have time. 
+</p>
+
+<p>
+I think this is an interesting project.
+</p>
+
+<p>
+I would need more time to properly check into this.
+</p>
+
+<p>
+Unfortunaltely in my current position I have no time to really go
+out there and explore and push the boundaries.
+</p>
+
+<p>
+It is already a miracle keeping the boat afloat and modernizing it
+to the <i>current sate</i> of the technologies. 
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../emacs-as-sql-client/" rel="prev" title="Emacs as SQL Client">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../what-to-migrate/" rel="next" title="what to migrate">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
