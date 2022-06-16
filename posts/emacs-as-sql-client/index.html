@@ -108,7 +108,8 @@ ipython notebook out of it and make them run with ADF for the periodic jobs.
 
 <p>
 Otherwise as mentioned above the other solution is to properly tangle
-everything and finally insert everything in scripts to run.
+everything and finally insert everything in scripts to run in your
+webapps or wherever you want. 
 </p>
 
 <p>
@@ -125,9 +126,9 @@ features you need.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org40b05f6" class="outline-2">
-<h2 id="org40b05f6">EIN</h2>
-<div class="outline-text-2" id="text-org40b05f6">
+<div id="outline-container-org12c3f60" class="outline-2">
+<h2 id="org12c3f60">EIN</h2>
+<div class="outline-text-2" id="text-org12c3f60">
 <p>
 This one you already know.
 </p>
@@ -149,9 +150,9 @@ up.
 </p>
 </div>
 
-<div id="outline-container-orgcf32ed0" class="outline-3">
-<h3 id="orgcf32ed0">Use with plain python chuncks in the meantime</h3>
-<div class="outline-text-3" id="text-orgcf32ed0">
+<div id="outline-container-org6e68d5d" class="outline-3">
+<h3 id="org6e68d5d">Use with plain python chuncks in the meantime</h3>
+<div class="outline-text-3" id="text-org6e68d5d">
 <p>
 Simply leverage <code>org-babel</code> to this stage and work in such a way.
 </p>
@@ -250,9 +251,9 @@ ordered or under control.
 </div>
 </div>
 
-<div id="outline-container-orgbeaa91f" class="outline-3">
-<h3 id="orgbeaa91f">Test connection across server DBs</h3>
-<div class="outline-text-3" id="text-orgbeaa91f">
+<div id="outline-container-org324db02" class="outline-3">
+<h3 id="org324db02">Test connection across server DBs</h3>
+<div class="outline-text-3" id="text-org324db02">
 <p>
 <i>Bottom line:</i> it is working. Rewrite your methods in order to
 work in such a way.
@@ -286,28 +287,92 @@ set-up it likely is.
 </pre></div>
 
 <p>
-Lovely works like a charm. 
+Lovely works like a charm.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org68da029" class="outline-3">
+<h3 id="org68da029">Development time</h3>
+<div class="outline-text-3" id="text-org68da029">
+<p>
+Ok, now note that you already installed sql-lite as well in the
+past. That is also very good and important to have. In such a way
+you can develop as well when you travel and are disconnected from
+the internet.
+</p>
+
+<p>
+This is good as with it you can get your third space and you can
+use it for making your experiments at development time.
+</p>
+
+<p>
+This is an in-memory database. You should really use it in order
+to test basics sql statements, testing some edits etc.
+</p>
+
+<p>
+It has quite some differences in terms of performance, network and
+hardware so it makes no sense to use this in this space.
+</p>
+
+<p>
+You can test it as follows - 101 example:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s1">'sqlite:///college.db'</span><span class="p">,</span> <span class="n">echo</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>   <span class="c1"># will create college.db in local repo</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
+
+    <span class="n">students</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+       <span class="s1">'students'</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> 
+       <span class="n">Column</span><span class="p">(</span><span class="s1">'id'</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="kc">True</span><span class="p">),</span> 
+       <span class="n">Column</span><span class="p">(</span><span class="s1">'name'</span><span class="p">,</span> <span class="n">String</span><span class="p">),</span> 
+       <span class="n">Column</span><span class="p">(</span><span class="s1">'lastname'</span><span class="p">,</span> <span class="n">String</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">meta</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+
+    <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"insert into students (id, name, lastname) values (1, 'Marco', 'Hassan')"</span><span class="p">)</span>
+</pre></div>
+
+<p>
+You can as well execute your DDL scripts directly via SQL. This is
+the choice and the difference of using an ORM language vs. plain
+vanilla SQL statements.
+</p>
+
+<p>
+Note as well that with the above and your scripts what you can
+basically do is, copy tables from your DB, insert the tables into
+your in-memory sql-lite DB and move on.
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org6ae783f" class="outline-2">
-<h2 id="org6ae783f">QUESTION SQL client</h2>
-<div class="outline-text-2" id="text-org6ae783f">
+
+<div id="outline-container-orgd009b9a" class="outline-2">
+<h2 id="orgd009b9a">QUESTION SQL client</h2>
+<div class="outline-text-2" id="text-orgd009b9a">
 <p>
-This would probably be the most clean solution. Skipped for
-now. Not so interested. 
+This would probably be the most clean solution. Might be
+interesting as you need a better client in order to explore the
+structure etc. of your DB.
 </p>
 
 <p>
-put it in my agenda. explore it during the week but in any case it
+Skipped for now. 
+</p>
+
+<p>
+Put it in my agenda. explore it during the week but in any case it
 is not prioritary.
 </p>
 
 <p>
 Can very well stay within the SQL-Alchemy and python and make this
-workflow the new client and way of working with it. 
+workflow the new client and way of working with it. At least for now.
 </p>
 </div>
 </div>
