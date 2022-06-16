@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Integration and Asynchronous Jobs | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/asynchronous-jobs/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../managing-state-in-cloud-native-applications/" title="Managing State in Cloud Native Applications" type="text/html">
+<link rel="next" href="../macro-variables/" title="Macro Variables and Financial Variables" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Integration and Asynchronous Jobs">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/asynchronous-jobs/">
+<meta property="og:description" content="img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-02-24T15:43:59+01:00">
+<meta property="article:tag" content="Integration">
+<meta property="article:tag" content="IT Architecture">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="software-engineering">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Integration and Asynchronous Jobs</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2022-02-24T15:43:59+01:00" itemprop="datePublished" title="2022-02-24 15:43">2022-02-24 15:43</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/integration/" rel="tag">Integration</a></li>
+            <li><a class="tag p-category" href="../../categories/it-architecture/" rel="tag">IT Architecture</a></li>
+            <li><a class="tag p-category" href="../../categories/java/" rel="tag">java</a></li>
+            <li><a class="tag p-category" href="../../categories/software-engineering/" rel="tag">software-engineering</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+<p>
+So new post.
+</p>
+
+<p>
+This is mainly about some integration exercise. It is not simple to
+set up properly integration patterns. You can refer to <a href="https://www.enterpriseintegrationpatterns.com/index.html">the following</a>
+for a general overview.
+</p>
+
+<p>
+So let's start to explore.
+</p>
+
+<!-- TEASER_END -->
+
+<p>
+So the basic idea is to create an integration pattern via
+asynchronous API calls.
+</p>
+
+<p>
+So you will need to pieces:
+</p>
+
+<ol class="org-ol">
+<li>code implementation to work with that mental framework</li>
+
+<li>asynchronous API documentation</li>
+</ol>
+<p>
+The next two chapters deal with it.
+</p>
+
+<p>
+(Update as of 10-03 - actually the best way to work in such an
+asychronous way is through a ractive programming model. Check at your
+notes in <a href="https://marcohassan.github.io/bits-of-experience/posts/spring/">here</a> - chapter on reactive programming. Note however that
+you will not be able to write full reactive programs as the relational
+model and JDBC is not being rewritten in a reactive way yet.)
+</p>
+
+<div id="outline-container-org46ede63" class="outline-2">
+<h2 id="org46ede63">Asynchronous API - Documentation</h2>
+<div class="outline-text-2" id="text-org46ede63">
+<p>
+Apparently there is an OpenAPI counterpart for async communication.
+</p>
+
+<p>
+I mean you could simply document your endpoints with OpenAPI and
+keep the structure of the async communication in some documentation
+somewhere else.
+</p>
+
+<p>
+I like in any case the idea of using a standard. Computer science is
+fun and you have to leverage on such big projects as then you can
+see that there are options to visulize this general asynch
+communication and more likely many other projects will start to
+emerge as this is just the beginning of the entire thingy. 
+</p>
+
+<p>
+Check <a href="https://www.asyncapi.com/docs/getting-started/hello-world">this</a>. You see that it is a quite intuitive scema.
+</p>
+
+<p>
+Read into it <a href="https://www.asyncapi.com/blog/asyncapi_codegen_scst">here</a> to get an idea of where the market is already
+moving.
+</p>
+
+<p>
+I think that this will come with time. Baby steps as always. Start
+easy - then expand on it. Sooner or later you will start in any case
+to work more with event-driven architectures. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org1b7c236" class="outline-2">
+<h2 id="org1b7c236">Coding and Designing Asynchronous Communication</h2>
+<div class="outline-text-2" id="text-org1b7c236">
+<p>
+So basically there are two options:
+</p>
+
+<ul class="org-ul">
+<li>polling</li>
+
+<li>callback</li>
+</ul>
+<p>
+You can briefly read about the two <a href="https://sanketdaru.com/blog/polling-model-async-rest-spring-boot/">here</a>. It is clear now that the
+most elegant option is the second one.
+</p>
+</div>
+
+<div id="outline-container-org72b58b5" class="outline-3">
+<h3 id="org72b58b5">Polling</h3>
+<div class="outline-text-3" id="text-org72b58b5">
+<p>
+W.r.t. polling you can see the following two sources:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://sanketdaru.com/blog/polling-model-async-rest-spring-boot/">source 1</a></li>
+
+<li>
+<a href="https://github.com/PheaSoy/spring-boot-async-callback">source 2</a> - note that name is misleading it is still mostly a
+polling solution in my view.</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orga314b7a" class="outline-3">
+<h3 id="orga314b7a">Callback</h3>
+<div class="outline-text-3" id="text-orga314b7a">
+<p>
+You can easily create callbacks with a seris of endpoints and
+multi-threading on your machines.
+</p>
+
+<p>
+A more solid way is to work with queues. Then you do not have to go
+on multi-threading necessarily. This might simplify extensively the
+development task at the cost of some resources loss.
+</p>
+
+<p>
+You can then integrate queues with event-grids in order to create a
+fully reactive architecture for your application that is not
+polled operations dependent.
+</p>
+
+<p>
+I.e. in comparison to <a href="https://github.com/PheaSoy/spring-boot-async-callback">source 2</a> you do not have the client to
+continuously ask for the feedback and check if execution completed.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbb7633a" class="outline-2">
+<h2 id="orgbb7633a">General Architecture for creating a scalable integrated ETL service</h2>
+<div class="outline-text-2" id="text-orgbb7633a">
+</div>
+<div id="outline-container-org05459ab" class="outline-3">
+<h3 id="org05459ab">First Round of Thinking - refinements are coming</h3>
+<div class="outline-text-3" id="text-org05459ab">
+<img src="../../images/callbackAsync.png" class="center"><p>
+I mean so you see that at conceptual level it is not that difficult
+to set up a solution performing your desired solutions.
+</p>
+
+<p>
+Have just to read a bit into it - but basically you are very much
+done.
+</p>
+
+<p>
+You can read over <a href="https://www.freecodecamp.org/news/how-to-scale-microservices-with-message-queues-spring-boot-and-kubernetes-f691b7ba3acf/">here</a> a basic example for such a similar solution
+going more in the technological component. Note that you will
+not be able to apply the exact same tech stack but the idea is
+there and it is quite similar to what you had in mind. 
+</p>
+
+<p>
+Another <a href="https://developer.ibm.com/tutorials/auto-scale-rabbitmq-consumers-by-queue-size-on-openshift/">source</a> for making that pattern.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6766d04" class="outline-3">
+<h3 id="org6766d04">Second round of Thinking - gathering evidence</h3>
+<div class="outline-text-3" id="text-org6766d04">
+<p>
+So the one above was a basic idea.
+</p>
+
+<p>
+I think you have the general structure in mind. Have to become more
+concrete now.
+</p>
+
+<p>
+Explore better the available services in Azure and start to create
+a solid architecture for it.
+</p>
+
+<p>
+I.e. slowly start as well talks with your peers to see what is
+doable and what is not.
+</p>
+
+<p>
+Basic architectural patterns that you should consider for your
+asynchronous messages are <a href="https://docs.microsoft.com/en-us/azure/architecture/guide/technology-choices/messaging">the following</a>.
+</p>
+</div>
+
+<div id="outline-container-orgdc0cb9a" class="outline-4">
+<h4 id="orgdc0cb9a">Request-Reply Pattern</h4>
+<div class="outline-text-4" id="text-orgdc0cb9a">
+<p>
+Essentially what you aim to set up is an async request-reply
+integration pattern.
+</p>
+
+<p>
+You can read about it over <a href="https://docs.microsoft.com/en-us/azure/architecture/patterns/async-request-reply">here</a>. There in the context and problem
+you can see your exact situation and see how a queue is often the
+solution architecture of choice for this kind of situations.
+</p>
+
+<p>
+Note that the queue must be integrated with a status check.
+</p>
+
+<p>
+You can see the most basic architecture to set something like this
+up <a href="https://reflectoring.io/amqp-request-response/">here</a>. I think this is quite basic and I will try to construct a
+more solid architecture next. 
+</p>
+
+<p>
+This is what I will develop on in the next sections.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge3d74ba" class="outline-4">
+<h4 id="orge3d74ba">Service Bus</h4>
+<div class="outline-text-4" id="text-orge3d74ba">
+<p>
+This is a queue service in Azure. So it is a managed queue that it
+is easy to interact with.
+</p>
+
+<p>
+If you want to go fully open source check the resources
+above. Note as well that service bus is quite a simple message
+broker. I understand that it does not allow neither the
+flexibility of an exchange as RabbitMQ nor the resiliency of the
+cluster topology of Kafka. (See quick notes <a href="https://marcohassan.github.io/bits-of-experience/posts/spring/">here</a>). 
+</p>
+
+<p>
+Important points for it are mentioned next. 
+</p>
+</div>
+
+<ul class="org-ul">
+<li>
+<a id="org5afc1ac"></a>On operating the messages in a queue<br><div class="outline-text-5" id="text-org5afc1ac">
+<p>
+So essentially understand the following basic operations you can
+do with it:
+</p>
+
+<ul class="org-ul">
+<li>get messages from queue</li>
+
+<li>delete messages from queue</li>
+
+<li>peek messages from queue</li>
+</ul>
+</div>
+</li>
+
+<li>
+<a id="orga33ae6d"></a>Getting the Messages<br><div class="outline-text-5" id="text-orga33ae6d">
+<p>
+Check at the following get operation for a message in the queue.
+</p>
+
+<blockquote>
+<p>
+When a message is retrieved from the queue, the response includes
+the message and a pop receipt value, which is required to delete the
+message (have an API call for it).
+</p>
+
+<p>
+The message is <b>not automatically deleted from the queue</b>, but after
+it has been retrieved, it is <b>not visible to other clients</b> for the time
+interval specified by the <b>visibilitytimeout parameter</b>.
+</p>
+</blockquote>
+
+<p>
+Note that upon getting a message from the queue the <code>delivery
+     count</code> is increased. This is of paramount importance to deal with
+faulty messages and a first class citizen for the concept of <a href="#org61ae476">Dead
+Latter</a>. 
+</p>
+
+<p>
+So in this way you can keep track of what was processed and what
+still needs to be processed. You have a state machine as long as
+the queue is reliable. Have to discuss with V. in this sense to
+question how important is that 0.01% of non-availability. I guess
+that for us is not a major concern as worst you do the operation
+again. Have to have a logging mechanismus keeping track of
+everything nonetheless. 
+</p>
+
+<p>
+Now the only thing is that in such a way you need polling from
+the queue.
+</p>
+
+<p>
+The other possibility is to set an event-grid or an azure
+function trigger in between.
+</p>
+</div>
+</li>
+
+<li>
+<a id="org043ab0a"></a>Peeking the Messages<br><div class="outline-text-5" id="text-org043ab0a">
+<p>
+This function essentially works as the get orperator with the
+difference that <code>delivery count</code> is <b>not increased</b>:
+</p>
+
+<blockquote>
+<p>
+Service Bus allows a consumer to peek the queue and lock a message
+from other consumers.
+</p>
+
+<p>
+It's the responsibility of the consumer to <b>report the processing
+status</b> of the message.
+</p>
+
+<p>
+Only when the consumer marks the message as consumed, Service Bus
+removes the message from the queue.
+</p>
+
+<p>
+If a failure, timeout, or crash occurs, Service Bus unlocks the
+message so that other consumers can retrieve it. This way messages
+aren't lost in transfer.
+</p>
+</blockquote>
+</div>
+</li>
+
+<li>
+<a id="orgcaaa48f"></a>Deleting the Messages<br><div class="outline-text-5" id="text-orgcaaa48f">
+<p>
+As mentioned above in the two cases what you actually do in the
+above is reading messages out of the queue.
+</p>
+
+<p>
+You do not delete such from there. You just acquire a lock over
+them for a limited amount of time.
+</p>
+
+<p>
+Then you have to manually delete upon the successful processing
+of a message.
+</p>
+
+<p>
+You can well understand that this is very good as in such a case
+you have an actual state machine about the messages that are
+still to be completed.
+</p>
+
+<p>
+The question is rather how you log finished jobs. I guess that
+you are still interested in keeping track of that.
+</p>
+
+<p>
+Need to couple the thing with a store then.
+</p>
+</div>
+</li>
+
+<li>
+<a id="org61ae476"></a>Dead Latter<br><div class="outline-text-5" id="text-org61ae476">
+<p>
+See <a href="https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues">here</a>.
+</p>
+
+<p>
+This is essentially a queue within the queue where unprocessed or
+errors-bounded messages are being stored.
+</p>
+
+<p>
+There are multiple reasons that make messages qualify as
+dead-latter messages. There are in fact 5 different reasons for
+it and you can find them <a href="https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues">here</a>.
+</p>
+
+<p>
+The most interesting one - among the many others - for your
+application logic is the following:
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+Maximum delivery count
+</p>
+
+<p>
+Recall that when you get the message out of the queue its count-value
+is incremented by one.
+</p>
+
+<p>
+Then after a given amount of times that you tried to process
+the message without success… i.e. when the count value is
+large enough - you start to push the message.
+</p>
+</li>
+</ul>
+</div>
+</li>
+
+<li>
+<a id="org44287b0"></a>Note that there are ways to inspect the size of your queue<br><div class="outline-text-5" id="text-org44287b0">
+<p>
+You can do that programatically.
+</p>
+</div>
+</li>
+
+<li>
+<a id="org9d2b958"></a>Check-pointing for long running jobs<br><div class="outline-text-5" id="text-org9d2b958">
+<p>
+That is exactly the other bit that you need.
+</p>
+
+<p>
+You can set the state for a session and get the state.
+</p>
+
+<p>
+So with it you would already have a solution for the UI to get
+the relevant information about the processing status of a job.
+</p>
+
+<p>
+For more refer to the relevant section over <a href="https://docs.microsoft.com/en-us/azure/architecture/guide/technology-choices/messaging">here</a>.
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+
+<div id="outline-container-org867b7b5" class="outline-4">
+<h4 id="org867b7b5">Putting it all together</h4>
+<div class="outline-text-4" id="text-org867b7b5">
+<img src="../../images/ETLstateMachine.png" class="center"><p>
+If you go for a push model you have to solve the following points:
+</p>
+
+<ul class="org-ul">
+<li>pushing out of the queue - how do you trigger the eventGrid
+event if the message in the queue was not processed?</li>
+
+<li>polling you can do it yourself by implementing ETL jobs pulling
+out from the queue. See the basic API of the bus.</li>
+
+<li>
+<p>
+check as well the option to work with Azure functions. It
+probably makes most sense to work in such a way.
+</p>
+
+<p>
+Check <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-storage-blob-triggered-function">this documentation</a> in this sense. (actually the event Grid
+also mentioned <a href="https://stackoverflow.com/questions/47570207/message-from-azure-blob-storage-to-azure-service-bus">here</a>). So in any case you are on the right track
+to construct your solution architecture. Check at <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-storage-queue-triggered-function">this</a>
+documentation.
+</p>
+</li>
+
+<li>you need to check at the costs. you need Premium Service Bus if
+you want to go down the full road. Check if this makes sense but
+
+yeah probably makes sense to work with functions.</li>
+</ul>
+</div>
+
+<ul class="org-ul">
+<li>
+<a id="org7365499"></a>on service bus - eventgrid integration<br><div class="outline-text-6" id="text-org7365499">
+<p>
+See the <a href="https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-to-event-grid-integration-concept?tabs=event-grid-event-schema">following page</a>.
+</p>
+</div>
+</li>
+
+<li>
+<a id="org889a4a7"></a><span class="todo TODO">TODO</span> open questions - how to make the service resilient<br>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org627f27d" class="outline-3">
+<h3 id="org627f27d">Third Round of Thinking</h3>
+<div class="outline-text-3" id="text-org627f27d">
+<p>
+So going back to it now.
+</p>
+
+<p>
+The issue is that I was told that we have to make everything fit
+in our VNet for security reasons.
+</p>
+
+<p>
+Makes well sense to me. The only thing that is disturbing is that
+there is the general statement of staying within the existing stack
+and not using additional services.
+</p>
+
+<p>
+That of course makes little sense. If the cloud provides
+you 100. Use it. Plus services makes you very agile and take lots
+of pain from you away.
+</p>
+
+<p>
+Continue in this sense to explore them. Just check if they can be
+integrated in the VNet at a reasonable cost. If that is the case go
+for it cause as long as the explanation is the one above makes
+little sense not to move in that direction and move faster by doing
+so.
+</p>
+
+<p>
+Note now that the Service Bus might be a too costly service. We
+would need the premium thing in order to integrate it in the VNet
+and obviously it is not indispensable to this stage. So I will
+think about something different. Meaning for instance Azure
+Functions as said above. There I will as well to convince some
+people and make them see the point for it. Cause they argue too
+much on a lower level. I agree that on that level you do not really
+need it. Meaning you can make it work with a general application
+that is more portable across cloud.
+</p>
+
+<p>
+However, then in that case forget pure event-driven
+architectures. So it is a choice of design of a system. And it is
+clear that one is slow and cumbersome. The other is integrated and
+seamless and event-driven with more lock-in and more pain in a
+future migration.
+</p>
+
+<p>
+Trade-off in life.
+</p>
+
+<p>
+Now proceed as follows in the coming week.
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+You already talked and got the approval to use eventgrid.
+</p>
+
+<p>
+Use this. Just check quickly how to integrate it into the VNet
+and the cost. Just out of curiosity. 
+</p>
+</li>
+
+<li>
+<p>
+You already downloaded that Azure functions tool to develop these
+on your local machine.
+</p>
+
+<p>
+Try to explore this. Should you start to get issue in designing a
+pure event-grid architecture integrated with a webapp on the
+backend.
+</p>
+</li>
+</ul>
+<p>
+Understand as well if that fits the asynchronous logic that should
+be there. 
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3a211d4" class="outline-2">
+<h2 id="org3a211d4">On EventGrid</h2>
+<div class="outline-text-2" id="text-org3a211d4">
+<p>
+So this is becoming a message-driven post. Giving an overview of how
+to do it. But whatever… fine by me.
+</p>
+
+<p>
+So anyways the todos for the week are the following:
+</p>
+
+<ul class="org-ul">
+<li>integrate eventgrid with Blob. How to generate a message when a
+new file arrives over there.</li>
+
+<li>consume eventgrid event. Check at the Java SDK for interacting
+with EventGrid. Probably the info you are looking for is over
+there.</li>
+
+<li>
+<p>
+publish eventgrid event. Is it possible for an application to
+publish there?
+</p>
+
+<p>
+I can think of good use-cases in this sense. So start to explore
+it. 
+</p>
+
+<p>
+Check at the Java SDK for interacting with EventGrid. Probably the
+info you are looking for is over there.
+</p>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org0c969af" class="outline-3">
+<h3 id="org0c969af">EventGrid and VNets</h3>
+<div class="outline-text-3" id="text-org0c969af">
+<p>
+So in order to properly understand this, you have to understand
+where EventGrid live in terms of infrastructure.
+</p>
+
+<p>
+Cause if you want to mask them from the outside world they must
+live in some protected subnet.
+</p>
+
+<p>
+At least that is my initial guess. But let's see cause I am not
+that sure about it.
+</p>
+
+<hr>
+<p>
+So you see that in order to well understand the cloud you should
+think it in boxes. Or these lego component. As soon as you enter
+the security section of the service you are back to the <a href="https://docs.microsoft.com/en-us/azure/event-grid/network-security">security
+concepts</a> of Azure.
+</p>
+
+<p>
+I.e. for instance service tags, IP firewall options etc. So makes
+little sense probably to study it over there. Have to find the time
+at some to approach it as a unity.
+</p>
+
+<p>
+Just upon tackling the thing in such a way you might be able to
+come out of it successful. You will have a clear understanding of
+which box is what. And you will have the chance to work
+accordingly.
+</p>
+
+<p>
+So do not spend too much time with it right now. You will have to
+make Azure certifications in order to get the broad understanding
+at high level.
+</p>
+
+<p>
+Then you will be mentally ready to set everything in the right
+buckets. 
+</p>
+
+<hr>
+<p>
+That said it is obvious that the service will integrate with our
+existing architecture through the use of private endpoints.
+</p>
+
+<blockquote>
+<p>
+You can use private endpoints to allow ingress of events directly
+from your virtual network to your topics and domains securely over
+a private link without going through the public internet. A private
+endpoint is a special network interface for an Azure service in
+your VNet.
+</p>
+
+<p>
+When you create a private endpoint for your topic or domain, it
+provides secure connectivity between clients on your VNet and your
+Event Grid resource.
+</p>
+
+<p>
+The private endpoint is assigned an IP address from the IP address
+range of your VNet. The connection between the private endpoint and
+the Event Grid service uses a secure private link.
+</p>
+</blockquote>
+
+<p>
+So this is the idea I guess. Check at the following:
+</p>
+
+<img src="../../images/Screenshot%202022-03-29%20120745.png" class="center"><p>
+Then EventGrid does not live in your private Subnet.
+</p>
+
+<p>
+The concept is that as it is not a store even when cracked at any
+given point of time there will be nothing in there. It is a
+serverless service so there might even be no active runtime at a
+given moment.
+</p>
+
+<p>
+Then you generate messages but these are immediately transferred
+through your private link. I guess there should also be encryption
+at transfer on the top of it.
+</p>
+
+<p>
+So you see that generally it is quite a secure service even if
+living outside of your subnet.
+</p>
+
+<p>
+So now the question is generally on how to create that private
+endpoint through a webapp and how to connect it to EventGrid in
+order to consume and generate events.
+</p>
+
+<p>
+The idea at the end is essentially the same. Set up event-driven
+architectures.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org5091b16" class="outline-3">
+<h3 id="org5091b16">Concepts</h3>
+<div class="outline-text-3" id="text-org5091b16">
+<p>
+So it is important to master <a href="https://docs.microsoft.com/en-us/azure/event-grid/event-schema">this section</a>. Always start from here
+when exploring a new service. At the end the structure of Azure is
+this one. So exploit it. 
+</p>
+
+<p>
+Especially important will be concept of topics.
+</p>
+
+<p>
+You have to create a solid logic for all of the different topics.
+</p>
+
+<p>
+Just upon this it will be able for you to get the relevant
+information.
+</p>
+
+<p>
+Basically understand that there are essentially two types of
+topics, which we will explore next. There is then the concept of
+partner topic - this will not be that important to you.
+</p>
+</div>
+
+<div id="outline-container-orga7f898f" class="outline-4">
+<h4 id="orga7f898f">System Topics</h4>
+<div class="outline-text-4" id="text-orga7f898f">
+<p>
+These are built-in topics provided by Azure services such as Azure
+Storage, Azure Event Hubs, and Azure Service Bus. You can create
+system topics in your Azure subscription and subscribe to them.
+</p>
+
+<p>
+These will be of first order importance to you. Especially at the
+beginning. You want to create an event driven mechanism in order
+to process files on Blob.
+</p>
+
+<p>
+So that is basically it. You can then check at the different
+system topics on the official websites. See for instance Azure
+Blob store <a href="https://docs.microsoft.com/en-us/azure/event-grid/event-schema-blob-storage?tabs=event-grid-event-schema">here</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgff365ea" class="outline-4">
+<h4 id="orgff365ea">Custom Topics</h4>
+<div class="outline-text-4" id="text-orgff365ea">
+<p>
+Are application and third-party topics. When you create or are
+assigned access to a custom topic, you see that custom topic in
+your subscription.
+</p>
+
+<p>
+When designing your application, you have flexibility when
+deciding how many topics to create. For large solutions, create a
+custom topic for each category of related events.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfd9e140" class="outline-4">
+<h4 id="orgfd9e140">Partner Topics</h4>
+<div class="outline-text-4" id="text-orgfd9e140">
+<p>
+The Partner Events feature allows a third-party SaaS provider to
+publish events from its services to make them available to
+consumers who can subscribe to those events. The SaaS provider
+exposes a topic type, a partner topic, that subscribers use to
+consume events.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org725c5c1" class="outline-2">
+<h2 id="org725c5c1">On storage Queue</h2>
+<div class="outline-text-2" id="text-org725c5c1">
+<p>
+Note that this is for sure available as we already have a storage
+account in the VNet and as that lives in these spaces 1+1=2.
+</p>
+
+<p>
+Now it is a way to store the messages. So in theory you can use it.
+</p>
+
+<p>
+The only question here is how the messages are saved? Ordered or
+not?
+</p>
+
+<p>
+Similar concepts to ServiceBus? Where are the differences?
+</p>
+</div>
+
+<div id="outline-container-orgedab966" class="outline-3">
+<h3 id="orgedab966">Differences with ServiceBus</h3>
+<div class="outline-text-3" id="text-orgedab966">
+<p>
+ServiceBus is a more thorough service.
+</p>
+
+<p>
+You have log analytics that you can inspect.
+</p>
+
+<p>
+You have guaranteed ordering. You have as well publish
+possibilities.
+</p>
+
+<p>
+Azure Storage Queue is a much more 101 queue system.
+</p>
+
+<p>
+So you have all of the queues features:
+</p>
+
+<ul class="org-ul">
+<li>Writing, Peeking, Deleting Messages</li>
+</ul>
+<p>
+But no ordering, no publishing events and you have to integrate all
+of the analytics component on it by yourself.
+</p>
+
+<p>
+On the top of it the secondary queue for dealing with corrputed
+messages is much more weak.
+</p>
+
+<p>
+Recall that in Service Bus <a href="#org61ae476">Dead Latter</a> you essentially have 5 types
+of errors that will cause the messages to be written to your
+dead-latter.
+</p>
+
+<p>
+In <i>Azure Storage Queue</i> you have a single possibility. This makes
+your modeling possibilities of erroneous messages more limited.
+</p>
+
+<p>
+Essentially, you simply have the <code>maxdeliverycountexceeded</code>
+case. This is the one you already mentioned in your Dead Latter
+notes above and the most important one.
+</p>
+
+<p>
+This basically says after a given amount of trials to process
+the messages failed, there is clearly something wrong with it. You
+then pass the message to the sub-queue dealing with problematic
+messages: the <code>poison-&lt;queue&gt;</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2cc9d18" class="outline-3">
+<h3 id="org2cc9d18">How to use it</h3>
+<div class="outline-text-3" id="text-org2cc9d18">
+<p>
+Check at your Spring playground. You have it there.
+</p>
+
+<p>
+Note that in order to operate the messages on the poison-queue you
+basically work in the same way.
+</p>
+
+<p>
+You just have to change the queue name you are acting on and that
+you pass to your methods from <code>&lt;queue&gt;</code> to <code>poison-&lt;queue&gt;</code>.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgfa9ae9e" class="outline-2">
+<h2 id="orgfa9ae9e">On Azure Functions</h2>
+<div class="outline-text-2" id="text-orgfa9ae9e">
+<p>
+Very nice way to integrate with the two services you want to use:
+</p>
+
+<ul class="org-ul">
+<li>Blob</li>
+
+<li>Service Bus</li>
+</ul>
+<p>
+Check here the <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus">possible triggers</a>.
+</p>
+
+<p>
+In such a way you do not have to go Premium on Event Grid and I
+think that for the extent of our workloads it is more than enough to
+work in such a way without going too big on services.
+</p>
+
+<p>
+Start to test your workflow with Azure Functions Core Tools as soon
+as you get the green light from IT to install it.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgf863bd6" class="outline-2">
+<h2 id="orgf863bd6">On issues when working in such a fragmented Networking driven space</h2>
+<div class="outline-text-2" id="text-orgf863bd6">
+</div>
+<div id="outline-container-org6446c4e" class="outline-4">
+<h4 id="org6446c4e">Circuit Breaker</h4>
+<div class="outline-text-4" id="text-org6446c4e">
+<p>
+This is an important concept that you have to keep in mind when
+you develop your distributed system solution. 
+</p>
+
+<p>
+The idea is that as information is more distributed it might be
+more difficult to revert a given app bit of logic in case of
+errors.
+</p>
+
+<p>
+So you have always to keep in mind how to break the circuit in
+case of faults and how to revert every distributed component
+affected.
+</p>
+
+<p>
+You might as well think in terms of <b>compensating transaction</b>
+patterns.
+</p>
+
+<p>
+What is needed to track and trigger compensating transactions?
+</p>
+
+<p>
+This is in fact probably the one and major issue of setting up
+everything properly in a distributed system way. All the rest is a
+gain in my humble opinion. Especially on the long run. 
+</p>
+
+<p>
+Note that you can use DBs to manage state. You can think for
+instance of the solution
+</p>
+
+<p>
+Another possibility - and this a thing that in any case you will
+have to dig more into it - is the one of using frameworks as
+<a href="#org4c236fd">Jaeger</a>.
+</p>
+
+<p>
+This might help you not simply for circuit breakers but as well to
+debug a distributed application and understand where issues and
+triggers are. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org4c236fd" class="outline-4">
+<h4 id="org4c236fd">Jaeger</h4>
+<div class="outline-text-4" id="text-org4c236fd">
+<p>
+Helps to set up proper circuit breakers.
+</p>
+
+<p>
+The idea is that with Jaeger you can trace the calls back and
+implement your circuit breaker on the top of it.
+</p>
+
+<p>
+See the <a href="https://www.jaegertracing.io/">official documentation</a>. Check as well other source as the <a href="https://reflectoring.io/spring-boot-tracing/">following</a> for instance.
+</p>
+
+<p>
+Sooner or later if you start to have serious work in distributed
+environment that bit will come. 
+</p>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../managing-state-in-cloud-native-applications/" rel="prev" title="Managing State in Cloud Native Applications">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../macro-variables/" rel="next" title="Macro Variables and Financial Variables">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
