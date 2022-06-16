@@ -77,6 +77,7 @@ Schildt)" publicly available on the world wide web at [[https://gfgc.kar.nic.in/
 
   A nice website to navigate some Java is [[https://www.javabrahman.com/category/java-8/][this]]. 
 
+
 * Making it Real
 
   So when reading about project Lombok I have seen that lots of =jugs=
@@ -89,6 +90,7 @@ Schildt)" publicly available on the world wide web at [[https://gfgc.kar.nic.in/
   For instance this is the webpage of the one of switerzland. You
   might want to have a [[https://www.jug.ch/members.php][glimpse on it]] once in a while.
   
+
 * History
 
   Java primary motivation was the need for a platform-independent
@@ -4836,15 +4838,151 @@ You can read more of the above cases [[https://www.baeldung.com/mustache][here]]
    As you know, this is a quite fundamental component when writing
    your apps.
 
+   You can read quickly [[https://sematext.com/blog/java-logging-best-practices/][this]] in order to understand what you have to
+   keep in mind when developing the things.
+
+
+*** Choosing the logging library to use.
+
+    So this is the first choice.
+
+    This is a pretty easy one. Use an *abstraction layer*.
+
+    #+begin_quote
+    Abstraction layers such as SLF4J decouple the underlying logging
+    framework from your application, allowing you to change logging
+    frameworks on demand. The abstraction layer provides a generic API
+    and determines which logging framework to bind to at runtime based
+    on the frameworks available on the application's classpath. If a
+    framework is not available on the classpath, the abstraction layer
+    effectively disables log calls. Abstraction layers are useful for
+    when you plan on upgrading or switching frameworks down the road,
+    or if you are developing a library for use in other projects.
+    #+end_quote
+
+
+*** Configuration
+
+    Check at [[https://www.loggly.com/ultimate-guide/java-logging-basics/][this]].
+
+    It will give the right overview on the logging possibilities in the
+    Java world.
+
+    Basically, independently on the framework used you have three
+    different types of concepts:
+
+    - configuration: these you specify in sepearate properties files.
+
+    - appenders: here you specify where you write your logs to.
+
+      the concept is that you have a couple of appenders options:
+      files etc., but as well syslogs.
+
+      Syslog are services that runs on a device and collects logs from
+      the device’s operating system, processes, and services.
+
+    - layouts: these convert the contents of a log entry from one data
+      type into another. Logging frameworks provide Layouts for plain
+      text, HTML, syslog, XML, JSON, serialized, and other logs.
+
+      so that is good to knwo as you do not have to bother too much in
+      the format you specify all of your logs.
+
+      this is actually what you have to configure in order to have a
+      nicely readable logger. 
+
+    - markers: these are as well a very important concept.
+
+      The concept is the one of tag. You can then use this in order to
+      make queries and filter your logs.
+
+
+*** On the Abstraction Layer
+
+    So this section goes a bit into sl4j.
+
+    This is a useful tool as with it you can create an abstraction
+    layer such that you can just change the logging framework that is
+    behind keeping all of the rest.
+
+    The idea is the following:
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-06-01 132449.png" class="center">
+    #+end_export
+
+    Then you can simply choose the underlying framework by adding it
+    as a dependency to your project.
+
+    =Sl4j-api= will then know how to communicate with the respective
+    slf4j-framework interaction.
+
+    You can see examples of setting it up with the relevant frameworks
+    over [[https://examples.javacodegeeks.com/enterprise-java/slf4j/slf4j-configuration-file-example/][here]].
+    
+
+*** Properties
+
+    Here a brief snippet with the properties of the logger and how I
+    did set them up.
+
+    Note that I decided to go for log4j as it is quite a standard.
+
+    You should save it as follows:
+
+    #+begin_quote
+    The log4j.properties file is a log4j configuration file which
+    keeps properties in key-value pairs. By default, the LogManager
+    looks for a file named log4j.properties in the CLASSPATH.
+    #+end_quote
+
+    So basically you can put it into your resources folder which is in
+    your classpath after the gradle modification that you did before.
+
+    Check as well this one in order to see if you 
+    
+**** OUTDATED Levels
+
+     The module works the same way your logger in python used to
+     work. This means that you have multiple levels of logging.
+
+     - SEVERE (highest)
+     - WARNING
+     - INFO
+     - CONFIG
+     - FINE
+     - FINER
+     - FINEST
+     - OFF (turns the logger off)
+     - ALL (log everything)
+
+     You can choose the level of your log in the following way:
+
+     #+begin_src java :results output raw
+ // set logger at info level
+ LOGGER.setLevel(Level.INFO);
+     #+end_src 
+
+     In the case above log levels =INFO= and above will be automatically
+     written to the console. This in a very similar way to the logger in
+     python you have used multiple times.
+
+     Note that through the =LogManager= it is possible to set the
+     logging levels for a set of packages at once.
+
+     There is as well the configuration file. Check at it and set it up
+     properly.
+
+    
 *** Logger Object Configuration
 
-    In order to create a Logger object zou can use the following:
+    In order to create a Logger object you can use the following:
 
     #+begin_src java :results output raw 
-import java.util.logging.Logger;
+    import java.util.logging.Logger;
 
-// assumes the current class is called MyLogger
-private final static Logger LOGGER = Logger.getLogger(<ClassName>.class.getname());
+    // assumes the current class is called MyLogger
+    private final static Logger LOGGER = Logger.getLogger(<ClassName>.class.getname());
     #+end_src 
 
     What the above does is actually to implement a hierarchy of
@@ -4857,35 +4995,7 @@ private final static Logger LOGGER = Logger.getLogger(<ClassName>.class.getname(
     package, that logger would be a child of the =com= Logger, which
     is itself a child of the =String= Logger (default). 
    
-*** Levels
 
-    The module works the same way your logger in python used to
-    work. This means that you have multiple levels of logging.
-
-    - SEVERE (highest)
-    - WARNING
-    - INFO
-    - CONFIG
-    - FINE
-    - FINER
-    - FINEST
-    - OFF (turns the logger off)
-    - ALL (log everything)
-
-    You can choose the level of your log in the following way:
-
-    #+begin_src java :results output raw
-// set logger at info level
-LOGGER.setLevel(Level.INFO);
-    #+end_src 
-
-    In the case above log levels =INFO= and above will be automatically
-    written to the console. This in a very similar way to the logger in
-    python you have used multiple times.
-
-    Note that through the =LogManager= it is possible to set the
-    logging levels for a set of packages at once. 
-  
 *** Formatter
 
     Here again in a similar way than python you can specify the output
@@ -4897,7 +5007,69 @@ LOGGER.setLevel(Level.INFO);
     because this allows developers to fine-tune log settings for each
     class.
 
-    Make sure this is the case in your team.
+**** TODO [#A] So create a class for it with a proper formatter Logger and use it throughout your application
+
+     Do it next. Incredible that I have to do everything from
+     scratch. Omg. Anyways no time for complains.
+
+     Checked into the existing class. Better to forget about it. Again
+     a low level horror thing.
+
+
+*** How do you log errors
+
+    Here a few standards that I decided to use in my app development
+    experience.
+
+    The idea is the following:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+    try {
+	throw new IOException("This is an I/O error");
+    } catch (IOException ioe) {
+	LOGGER.error("I/O error occurred during request processing", ioe);
+	throw ioe;
+    }
+    #+END_SRC
+
+    Which will produce logs of the following format:
+
+    #+begin_quote
+    11:30:17.527 ERROR - Error while executing main thread
+    java.io.IOException: This is an I/O error
+    at com.sematext.blog.logging.Log4JException.main(Log4JException.java:13) [main/:?]
+    #+end_quote
+
+    In such a way you can easily check what is going on.
+
+    In any case never log anything to the console. This to keep
+    things consistent. You should just always have a single source
+    of truth otherwise complexity will explode.
+
+
+*** On an Azure Note
+
+    Recall that we work with Azure Webapps and the following bit of
+    information is an important thing to know.
+
+    Essentially, the idea is to log under the =/home= path.
+
+    This because the files in there are not actually not saved on the
+    instance itself but rather on some Blob store.
+
+    This is the ultimate reason why your logs do not disappear even
+    if your instance crashes and a new one is created out of it.
+
+
+*** Application Insights
+
+    So the above focused on how to write all of the different
+    logs. The other bit is about monitoring them. This is where
+    application insights and similar (say Splunk or LogDNA come into
+    play).
+
+    You should use it in order to properly increase the analytics on
+    your logs and really understand what it is going on.
 
 
 ** Project Lombok
@@ -5283,6 +5455,13 @@ public class MyBean {
     public String name;
 }
     #+END_SRC
+
+
+*** Reading and navigating the json tree
+
+    That is also quite handy should you want the textual information
+    from it without going through an Object. Note that this is not the
+    idea in Java: /always recall who is the first class citizen/.
     
 
 *** TODO other interesting stuff
@@ -5296,7 +5475,7 @@ public class MyBean {
 
     Check the following [[https://www.baeldung.com/jackson-annotations][101 on annotations]] and continue as well with
     some [[https://www.baeldung.com/jackson][other tutorials]].
-     
+
 
 ** JDBC
 
@@ -5593,6 +5772,7 @@ delimiter ;
 
     So on this I prefer to keep one layer of abstraction and work in
     the way the team is working. 
+
 
 
 ** TODO Guava
@@ -6262,6 +6442,7 @@ class TimeMe {
 
 * TODO Profiling
    
+
 * On the DataFrame issue
 
   Ok so this is a *huge huge* issue in Java.
