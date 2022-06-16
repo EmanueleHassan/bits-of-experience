@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Equity Factor Model | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/equity-factor-model/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Equity Factor Model">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/equity-factor-model/">
+<meta property="og:description" content="So this post starts to dig into equity factor models.
+
+
+
+Essentially you will understand how the factor models for your risk
+systems are derived.
+
+
+
+This basically goes in tandem with the fixed income">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-05-19T15:58:38+02:00">
+<meta property="article:tag" content="finance">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Equity Factor Model</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2022-05-19T15:58:38+02:00" itemprop="datePublished" title="2022-05-19 15:58">2022-05-19 15:58</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/finance/" rel="tag">finance</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+So this post starts to dig into equity factor models.
+</p>
+
+<p>
+Essentially you will understand how the factor models for your risk
+systems are derived.
+</p>
+
+<p>
+This basically goes in tandem with the fixed income risk factors
+models briefly touched in your other post.
+</p>
+
+<p>
+This is basically a very high level overview, on the intuition of the
+way the big risk system providers generate their risk factors.
+</p>
+
+<p>
+So the essential idea is always the same, get a linear approximations
+for the risk based on some factors of interest.
+</p>
+
+<!-- TEASER_END -->
+
+<p>
+Equity factor models are specified for single countries (of which
+there are 41 in total) plus the EMU - european monetary union - as a
+single country model. On the top of it for the EMU you as well add
+some specific country factors in order to make a differentiation
+across the various countries.
+</p>
+
+<p>
+Note that two classes of equity factors are used: <i>industry</i> and
+<i>style</i> factors.
+</p>
+
+<p>
+So basically the difference among the factors is roughly the
+following.
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+<i>industry factors:</i>
+</p>
+
+<p>
+these represent the industry of the equity - semiconductors, pharma,
+tobacco etc.
+</p>
+
+<p>
+this is for sure a strong driver for the returns.
+</p>
+</li>
+
+<li>
+<p>
+<i>style factors:</i>
+</p>
+
+<p>
+on the top of it you have the relevant style factors.
+</p>
+
+<p>
+these are the common factors used in the industry that checks more
+the common accounting and financial properties of the academic
+literature.
+</p>
+
+<p>
+Say for instace:
+</p>
+
+<ul class="org-ul">
+<li>beta</li>
+
+<li>yields</li>
+
+<li>growth</li>
+</ul>
+<p>
+etc. etc.
+</p>
+
+<p>
+With the two set of factors you do then the relevant regressions on the equity
+returns, in such a way you can estimate the relevant factors
+mentioned above. Note that the returns are trimmed - in the sense
+that they are capped in the case of too extreme returns.
+</p>
+
+<p>
+There are then some quirks on how to estimate everything but this
+is just computational issue that is solved by iterative methods
+trying to stabilize everything.
+</p>
+
+<p>
+Then apart from it everything is pretty standard and there is
+nothing fancy. Just a cross-sectional regression through which you
+get the factors in time and through which you can compute you
+covariance matrix and simulate everything.
+</p>
+
+<p>
+The only interesting bit is that you have factor loadings on that
+equity model, that are estimated in a first step. Then based on this
+you run your standard regression.
+</p>
+</li>
+</ul>
+<div id="outline-container-org18b4954" class="outline-2">
+<h2 id="org18b4954">Factor Loadings</h2>
+<div class="outline-text-2" id="text-org18b4954">
+</div>
+<div id="outline-container-org51f9dca" class="outline-3">
+<h3 id="org51f9dca">Industry factors loadings</h3>
+<div class="outline-text-3" id="text-org51f9dca">
+<p>
+So basically here you have already some loadings that already
+capture quite some fundamental information, in the economic sense.
+</p>
+
+<p>
+I.e. the loadings capture information about sales and assets in
+particular industries and their relation to the values of the
+companies.
+</p>
+
+<p>
+In particular they give the average value/sales and value/assets
+in an industry by regressing across all of the companies available.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org781e930" class="outline-3">
+<h3 id="org781e930"></h3>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

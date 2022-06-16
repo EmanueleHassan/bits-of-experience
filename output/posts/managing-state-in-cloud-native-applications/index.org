@@ -1,0 +1,67 @@
+#+BEGIN_COMMENT
+.. title: Managing State in Cloud Native Applications
+.. slug: managing-state-in-cloud-native-applications
+.. date: 2022-02-23 13:25:08 UTC+01:00
+.. tags: IT Architecture, software-engineering
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+So this post deals on how to keep the state of the applicaiton in the
+new microservices era.
+
+This is a [[https://thenewstack.io/the-state-of-state-in-cloud-native-applications/][major question]] in the cloud-native app development
+paradigma. You can summarize the issue as following:
+
+- you want your apps to be stateless such that it is easy to scale and
+  heal (recover) them.
+
+- you need to keep track of some states in your overall logic.
+
+Note now that you have to create a suitable architecture that makes
+the both objectives possible.
+
+{{{TEASER_END}}}
+
+** Monolith way of doing the thing
+
+   Create a big fat DB holding the state.
+
+** Cloud Native Way of doing it
+
+   You can still keep a DB with the state. But I would guess this is
+   not the most clean way of working.
+
+   However, this is still a rather open point in this era. 
+
+   I would rather go with some event-based state solution as mentioned
+   [[https://www.lightbend.com/blog/design-techniques-stateful-cloud-native-applications-resilience-recoverability-scalability][here]].
+
+   At the end the idea is the one of actors performing the tasks -
+   state is managed by [[https://en.wikipedia.org/wiki/Actor_model][actors]]. Each actor holds one state.
+
+   You have event logs such that you can replay the history in case of
+   failures. 
+
+   So basically this is a formalization of what you already had in
+   mind.
+
+   It is actully fun how many of these patterns comes out of the box
+   as possible solution.
+
+** Recall as well the issue of compensating transactions
+
+   Always keep [[https://docs.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction][this]] in the back of your mind when developing in such a
+   way.
+
+   I.e. always ask yourself is a compensating-transaction needed?
+
+   How to I keep track of the necessary compensating transactions. 
+
+   
+
+   
+
