@@ -10,6 +10,47 @@
 
 #+END_COMMENT
 
+
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+#+end_export
+
 So you already worked with python testing frameworks.
 
 The set up was already in place back then.
@@ -46,6 +87,7 @@ the picture becomes systematically clearer not the opposite.
   There is even the possibility of running =unittests= tests through
   pytest so it makes sense to leverage on this. 
 
+
 * Writing tests
 
   So a good start is the good-practices section of the [[https://docs.pytest.org/en/6.2.x/goodpractices.html][official
@@ -68,7 +110,7 @@ the picture becomes systematically clearer not the opposite.
 
    /Update:/ Go with the second version. It is the best. 
 
-*** Tests outside of the application
+*** AVOID - Tests outside of the application
 
     Note that basically you have a set of disadavantages if you work
     in such a way.
@@ -115,7 +157,7 @@ tests/
     Note that you need to create testing packages as in the above
     (=foo=, =bar=) if you have testing modules called in the same way.
 
-*** Tests inside of the application code
+*** USE THIS - Tests inside of the application code
 
     This is a cleaner solution in the sense that it is clear which
     tests belong to which modules.
@@ -127,7 +169,6 @@ mypkg/
     app.py
     view.py
     test/
-        __init__.py
         test_app.py
         test_view.py
     #+end_src
@@ -138,10 +179,9 @@ mypkg/
     pytest --pyargs mypkg
     #+end_src
 
-    
 
 ** Personal Conventions
-
+   
 *** Always use classes
 
     Always run your tests within classes. This will be of paramount
@@ -202,7 +242,7 @@ class Test_ModuleX:
    #+begin_src sh
    $ pytest –-html=report.html
    #+end_src
-   
+
 
 ** Interpret Results
    
@@ -224,18 +264,44 @@ class Test_ModuleX:
 - P - passed with output
    #+end_quote
 
+*** Logging
 
-** TODO properly configure the logging for there as well
+    It is possible to set up logging options for the tests in order to
+    redirect standard error and standard output to given sources as
+    well all of the INFO, WARNING etc. messages you will need in your
+    application.
 
-* TODO Test Coverage
+    You can read how to do that for the pytest module [[https://docs.pytest.org/en/6.2.x/logging.html][here]].
+
+    In order to keep consistency I think I will rather go with a
+    general Logger object that I will use in my project and reference
+    this.
+
+    Will see in time if this strategy will be solid or not. 
+
+   
+* IN-PROGRESS Test Coverage
 
   In order to generate your coverage reports you can use the
   =coverage= library.
 
   This is important as you can properly sleep at night, once your code
-  is properly covered.
+  is properly covered. Meaning you have a good overview of the quality
+  of your code etc.
 
-  This should also go into your [[https://www.scrum.org/resources/blog/done-understanding-definition-done?gclid=Cj0KCQjw4PKTBhD8ARIsAHChzRIlof8n0e1pwXTQ-QBKWB56BuHONmIqLLL99zyOrJBa57FCg3heLUUaAgkIEALw_wcB][definition of =DONE=]].
+  Note that this are the python native tools for making such quality
+  checks. SonarQube is something similar that goes into the
+  direction. Probably more sophisticated. Would have to check into
+  it. In any case it is the program that Sergio mentioned to you in
+  order to inspect your Java code. So might be interesting as well to
+  explore such that you can have a unique consistent way for
+  inspecting all of your code irrepsective of the language. Might be
+  useful as well in this sense as it will reduce the burden of
+  managing the entire thing. 
+
+  This should also go into your [[https://www.scrum.org/resources/blog/done-understanding-definition-done?gclid=Cj0KCQjw4PKTBhD8ARIsAHChzRIlof8n0e1pwXTQ-QBKWB56BuHONmIqLLL99zyOrJBa57FCg3heLUUaAgkIEALw_wcB][definition of =DONE=]], meaning you can
+  consider a project done just if you reach a given threshold of test
+  coverage. 
 
   You will release your projects just when you will have covered a
   decent coverage level.
@@ -246,24 +312,162 @@ class Test_ModuleX:
   - [[https://pytest-cov.readthedocs.io/en/latest/][pytest-cov]]
 
   - [[https://coverage.readthedocs.io/en/6.3.2/][coverage]]
+
+  So basically from my current understanding the second depends on the
+  first, i.e. it leverages on it but has some additional
+  functionalities such that it makes sense to go for this one. 
+
+** Coverage
+
+   This is one of the most popular code coverage tools for Python.
+
+   I will not go through it; as mentioned I rather go with the next
+   library, which builds on the top of it. 
+   
+** Pytest-Cov
+
+   Pytest-cov is a Python plugin to generate coverage reports. So as
+   the above.
+
+   In addition to functionalities supported by coverage command, it
+   also supports centralized and distributed testing. It also supports
+   coverage of subprocesses.
+
+*** Usage
+
+    After you installed the [[https://pypi.org/project/pytest-cov/][relevant library]], you can install
+    everything in the following way:
+
+    #+BEGIN_SRC python
+    pytest --cov=<myproject> --cov-config=.coveragerc
+    #+END_SRC
+
+    this, if you want to test a project with a structure as in [[*USE THIS - Tests inside of the application code][here]].
+
+    Note that =.coveragerc= is a configuration file where you can
+    specify the options for writing your tests. You might start by
+    reading the [[https://pytest-cov.readthedocs.io/en/latest/config.html][official documentation]] for it. Or [[https://breadcrumbscollector.tech/how-to-use-code-coverage-in-python-with-pytest/][this]].
+
+    Recall that it is good practice to eliminate your tests files from
+    the coverage reports. This way you are not interested in them,
+    they are actually used for covering the standard source code not
+    the opposite.
+
+    You can do it as follows:
+
+    #+begin_src
+[run]
+omit = **/test/*
+    #+end_src
+
+    You can specify similar options over there.
+
+    Another important flag for working with the coverage is the
+    following: =--cov-fail-under=MIN=
+
+    The idea is that your tests will fail if the coverage is less than
+    MIN. This goes a bit into [[*Set up your CI pipeline incorporating this bit][this]] direction.
+
+
+*** TODO distributed tests
+
+    this will become important when you will have a lot of tests
+    covering your code.
+    
+    
+   
+** On the coverage Metrics
+
+   Note that the above two basically report by the default the
+   coverage of the [[https://en.wikipedia.org/wiki/Statement_(computer_science)][statements]] in your program.
+
+   While this is the standard it will require you to write tons and
+   tons of tests. So either you will go with TDD or you will likely
+   get poor coverage ratios such that it will be difficult to assess
+   from there if you tested at least the basics of your programs.
+
+   Another option is to use different metrics such as functions
+   coverage. The idea here is simple. Instead of checking how many
+   statements you did cover you can check at how many functions,
+   methods etc. your code did cover.
+
+   In order to go down that different road you could start to explore
+   other plugins as [[https://pypi.org/project/pytest-func-cov/][this]]. This is a simlar plug in to the pytest
+   package as the coverage one.
+
+
+** TODO Set up your CI pipeline incorporating this bit
+
+   What is a good coverage ratio?
+
+   Basically the idea is [[https://www.atlassian.com/continuous-delivery/software-testing/code-coverage#:~:text=With%20that%20being%20said%20it,fairly%20low%20percentage%20of%20coverage.][the following]].
+
+   Given this you see that there are rough indications with respect to
+   the coverage your applications should have.
+
+   The idea is then to embedd this into the CI pipeline such that if
+   the coverage is not reached the CI will fail.
+
+   This will be hard to achieve for existing projects. It makes
+   probably sense to aim for it for newly created projects.   
+      
+
+** TODO CI pipeline
+
+   This does not quite much has to do with python testing etc. Will
+   hold it here for now as it is in the CI space.
+
+   I would eventually have to reorganize things a bit.
+
+   In any case this is necessary as it gives you visibility. 
+
+   -------
+
+   The idea is of a remainder to put badges on your projects,
+   i.e. with the coverage, if the thing is passing or not etc.
+
+   This would help you to gain the necessary visibility etc.
+
+   We are using bitbucket to this stage for version control.
+   You can check into [[https://shay-palachy.medium.com/bitbucket-repositoty-status-badges-2271637635aa][this]] in this sense.
   
-* TODO Read into Tox
+
+* Read into Tox
 
   So basically this is your gradle/maven correspondent for Python.
 
   So this is a nice automation tool. Should properly check into it and
   make it run.
 
-  This is also necessary in order to have a proper environment for
-  testing out your code.
+  Note that basically the way you do it currently is manually. There
+  is no big difference. But might make sense to start using this in
+  order to work more in a streamlined way. 
+  
+  I.e. you can set up virtual enviornments, package your code, run
+  your tests etc.
 
-  You can then integrate everything properly.
+  In such a way you can work in a structured way in this dimension as
+  well following the best practices that these tools are imposing on
+  you.
 
-  I.e. you can set up virtual enviornments, run your tests etc. in
-  there.
+** Introduction
 
-  This is important set up everything correctly such that you can
-  properly introduce the python stack and triple down on everything.
+   The general idea of tox is to specify all of the relevant
+   operations in order to standardize your workflow in a =tox.ini=
+   file.
+
+   Based on this, then the following workflow usually follows:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-05-30 105049.png" class="center">
+   #+end_export
+
+
+
+* TODO read into devpi
+
+  check at [[https://doc.devpi.net/][this]].
+
 
 * TODO spline
 

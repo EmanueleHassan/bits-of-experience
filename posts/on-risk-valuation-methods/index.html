@@ -13,6 +13,7 @@
 <link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/on-risk-valuation-methods/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
 <link rel="prev" href="../what-to-migrate/" title="what to migrate" type="text/html">
+<link rel="next" href="../riskmetrics/" title="RiskMetrics" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="On Risk Valuation Methods">
 <meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/on-risk-valuation-methods/">
@@ -123,15 +124,9 @@ and create a bit of order.
 
 <p>
 So basically the topic is around <i>full revaluation methods vs. factor
-based methods</i>. This was a bit the topic of the talk of the morning.
+based revaluation methods</i>. This was a bit the topic of the talk of the morning.
 </p>
 
-<p>
-<i>Update:</i> wow it works well the thing of checking where the pain
-points are and exploring. Many questions suddenly open up. Many things
-to verify and in general a better feeling of the thing. Time to take
-off now. It's Tel-aviv time tomorrow.
-</p>
 
 <!-- TEASER_END -->
 
@@ -143,9 +138,21 @@ risk. But got quite a sense into it by now in the sense that I can
 start to put things in perspective at high level.
 </p>
 
-<div id="outline-container-org23bff81" class="outline-2">
-<h2 id="org23bff81">Different Valuation Options</h2>
-<div class="outline-text-2" id="text-org23bff81">
+<p>
+<i>Update:</i> wow it works well the thing of checking where the pain
+points are and exploring. Many questions suddenly open up. Many things
+to verify and in general a better feeling of the thing. Time to take
+off now. It's Tel-aviv time tomorrow.
+</p>
+
+<p>
+Have a bit to reorganize everything as it was an exploration journey
+and it is still quite messy this post to this stage. 
+</p>
+
+<div id="outline-container-orgf33c180" class="outline-2">
+<h2 id="orgf33c180">Different Valuation Options</h2>
+<div class="outline-text-2" id="text-orgf33c180">
 <p>
 Some of this notes are still based on a bit of guessing. This is what
 you have to do when you work in this stand-alone way.
@@ -185,13 +192,14 @@ based on very simple instruments meaning very easy linear stuff.
 <p>
 So it makes little sense to model everything via
 full-revaluation. That is wasted computational energy for the world
-and wasted waiting time for the team in general.
+and wasted waiting time for the team in general. I mean will have
+to double check again in time but keep it as an open item and question.
 </p>
 </div>
 
-<div id="outline-container-org2f3a5fb" class="outline-3">
-<h3 id="org2f3a5fb">On the Delta-Factor Model VaR</h3>
-<div class="outline-text-3" id="text-org2f3a5fb">
+<div id="outline-container-orgc11b6fb" class="outline-3">
+<h3 id="orgc11b6fb">On the Delta-Factor Model VaR</h3>
+<div class="outline-text-3" id="text-orgc11b6fb">
 <p>
 Ok so that is actually as well interesting and develops a bit on
 the top of the above.
@@ -223,34 +231,38 @@ forced to.
 
 <p>
 In any case what you actually do over there is to find all of the
-different mathematical derivations in order to approximate to
-express the risks as functions of changes in the underlying
-factors, which are then often normal distributed such that you
-would actually ultimately be in the delta-normal risk factor world
-and such that you could actually compute the risk in a parametric
-way.
+different mathematical derivations in order to express the risks
+as functions of changes in the underlying factors, which are then
+often normal distributed such that you would actually ultimately
+be in the delta-normal risk factor world and such that you could
+actually compute the risk in a parametric way.
 </p>
 
 <p>
 So what you are actually reading there is nothing else than
-delta-normal VaR models with complex derivations of the
-delta-factors.
+delta-normal (or other taylor expansions) VaR models with complex
+derivations of the delta-factors.
 </p>
 
 <p>
 I mean still have to double check as I go along and get more of a
 full spectrum idea of what is going on there but at the moment
-what I read is like this.
+what I read is like this. Meaning that I just read some fragments
+of the entire risk system value prop.
 </p>
 
 <p>
-There is still as well a short circuit I have to surpass cause
-actually you set the option full-revaluation method or not before
-doing the post-processing simulation - the in house defined
-stuff. So basically this is likely dependent just on the
-portfolios you upload and here the choice should be in this regard
-and not across the entire risk generation value chain. So
-everything depends about how we pass these portfolios.
+There is still as well a mental short circuit I have to surpass
+cause actually you do set the option full-revaluation method or
+not before doing the post-processing simulation - the in house
+defined stuff.
+</p>
+
+<p>
+So basically this is likely dependent just on the portfolios you
+upload and here the choice should be in this regard and not across
+the entire risk generation value chain. So everything depends
+about what is actually in these portfolios.
 </p>
 
 <p>
@@ -260,9 +272,9 @@ is how I think it is, well then not sure full revaluation is needed.
 </div>
 </div>
 
-<div id="outline-container-org60563ba" class="outline-3">
-<h3 id="org60563ba">Actually pricing the changes</h3>
-<div class="outline-text-3" id="text-org60563ba">
+<div id="outline-container-org1752aa8" class="outline-3">
+<h3 id="org1752aa8">Actually pricing the changes</h3>
+<div class="outline-text-3" id="text-org1752aa8">
 <p>
 So basically given the above you understand that you could
 actually use the parametric model in order to compute your risk.
@@ -281,7 +293,7 @@ new portfolio value for each price path.
 <p>
 In contrast to it if you use delta-approximations the concept is
 that what you actually do is to leverage greek letters or in
-geneal taylor approximations in order to have your risk function.
+general taylor approximations in order to have your risk function.
 </p>
 
 <p>
@@ -290,52 +302,19 @@ in an easier way as that component would simply enter the relation
 in a linear way such that per risk factor change you would not
 have to reprice everything but you could enter the thing in the
 formula and get its contribution in a simple way as the relation
-is linear.
+is linear. Note that when working with such methods you obviously
+loose some precision as you are in fact working with approximations.
 </p>
 </div>
-</div>
-</div>
-
-<div id="outline-container-org1ecb1b3" class="outline-2">
-<h2 id="org1ecb1b3">
-<span class="todo TODO">TODO</span> OUTDATED - decide how you want to incorporate it properly</h2>
-<div class="outline-text-2" id="text-org1ecb1b3">
-</div>
-<div id="outline-container-orgc9ff36d" class="outline-3">
-<h3 id="orgc9ff36d">
-<span class="todo TODO">TODO</span> understand if riskmetrics = VaR or what</h3>
-<div class="outline-text-3" id="text-orgc9ff36d">
-<p>
-Not that clear the point above from the literature I could find to
-this stage. 
-</p>
-
-<p>
-Interesting is to read about the <a href="https://www.value-at-risk.net/riskmetrics/">RiskMetrics history</a> as well and
-how it came to be. Now you are in the industry. 40 years ahead more
-less. Sky is the limit - always - cause you point to 100 and you
-will get 30 if you know what I mean :). 
-</p>
-
-<p>
-So basically as mentioned a couple of time we go with the RiskMetrics
-JP Morgan model that the entire industry is using. When you have time
-it will be worth starting digging into <a href="https://www.msci.com/documents/10199/5915b101-4206-4ba0-aee2-3449d5c7e95a">this one as well</a> - this will
-give you a more solid understanding of it and you will be able to
-start drawing bechmarks to what you have in place here.
-</p>
-</div>
-</div>
-
-<div id="outline-container-orga03b3d5" class="outline-3">
-<h3 id="orga03b3d5">
-<span class="todo TODO">TODO</span> understand the story of the full revaluation method</h3>
 </div>
 </div>
     </div>
     <aside class="postpromonav"><nav><ul class="pager hidden-print">
 <li class="previous">
                 <a href="../what-to-migrate/" rel="prev" title="what to migrate">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../riskmetrics/" rel="next" title="RiskMetrics">Next post</a>
             </li>
         </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             

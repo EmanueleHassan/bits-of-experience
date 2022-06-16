@@ -450,6 +450,7 @@ at a high level but he does it in a good way that I always enjoyed.
 
    - and vice versa without index.
 
+
 ** Table Views
 
    This is a powerful concepts.
@@ -824,6 +825,7 @@ become nulls and/or fall back to the default values.
     Note that the above is just one possibility among the many sharding
     possibilities.
    
+
 ** Linked Servers
 
    These enable you to implement distributed databases that can fetch
@@ -1016,6 +1018,7 @@ SET column1 = value1, column2 = value2, ...
 WHERE condition;
    #+end_src
    
+
 ** Delete Statement
 
    #+begin_src sql
@@ -1024,23 +1027,59 @@ DELETE FROM table_name WHERE condition;
 
    Note that the delete keyword is used for deleting rows.
 
+   If you do not express any condition, then simply all of the rows
+   are dropped.
+
    In order to remove an entire column you rather use the =ALTER=
-   statement
+   statement:
 
    #+begin_src sql
 ALTER TABLE <TABLE_NAME>
 DROP COLUMN <COLUMN_NAME>;
    #+end_src
    
+
 ** Alter Statement
 
-   In such a way it is possible to add, delete or modify columns in an
-   existing table.
+*** Columns
+   
+    In such a way it is possible to add, delete or modify columns in an
+    existing table.
 
-   #+begin_src sql
-ALTER TABLE table_name
-ADD column_name datatype;
-   #+end_src
+    #+begin_src sql
+ ALTER TABLE table_name
+ ADD column_name datatype;
+    #+end_src
+
+*** Schema
+
+    The alter keyword is used as well for working with the schema of a
+    DB.
+
+    I.e. you can transfer tables across tables in such a way.
+
+    Check at the following example 101:
+
+    #+begin_src sql
+
+    /* 
+    First create the <SCHEMA> in your DB. 
+
+    I.e. it has to exists or you will get error messages. 
+    ,*/
+
+    IF (NOT EXISTS (SELECT * FROM sys.schemas WHERE name = '<SCHEMA>')) 
+    BEGIN
+	EXEC ('CREATE SCHEMA [<SCHEMA>] AUTHORIZATION [dbo]')
+    END
+
+    /* 
+    Then transfer tables to that <SCHEMA>
+    ,*/
+
+    ALTER SCHEMA NewSchema TRANSFER [OldSchema].[TableName]
+    #+end_src
+   
 
 ** Create
 
@@ -1128,7 +1167,24 @@ WHERE
 
   You can then check at all of the tables/columns affected by a given
   key constraint.
-   
+
+** Working with primary keys and their respective constrains
+
+   Example for creating a primary key spanning multiple columns
+
+   #+BEGIN_SRC sql
+   ALTER TABLE map.Factor_Schema
+   ADD CONSTRAINT PK_FactorSchema PRIMARY KEY (ru_code,barraid_factor_cs);
+   #+END_SRC
+
+   Example for removing a specific constraint from the DB. Does not
+   necessarily have to be a primary key constraint.
+
+   #+BEGIN_SRC sql
+   ALTER TABLE map.Factor_Schema
+   DROP CONSTRAINT PK_FactorSchema
+   #+END_SRC
+
 
 ** Some useful sql snippets
 
@@ -1284,7 +1340,9 @@ AdventureWorks2018.HumanResources.Department
    This is as well interesting.
 
    Check at the following: [[https://chartio.com/learn/databases/using-information-schema-views-to-check-to-see-if-table-exists-in-sql-server/][here]].   
-   
+
+
+
 
 * Footnotes
 

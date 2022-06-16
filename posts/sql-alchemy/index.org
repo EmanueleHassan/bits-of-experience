@@ -38,12 +38,10 @@ So now everything is ready, just waiting for the security piece in the
 pipeline.
 
 Moreover after the integration specified in this post you will be able
-to move away from pure SQL. There is monster SQL that is developed in
+to move away from pure SQL. There are monster SQL that is developed in
 my team.
 
-There is little chance to explore these huge queries bit by bit.. I
-mean too much manual copy and paste for my taste and too little slice
-and dice options.
+There is little chance to explore these huge queries bit by bit..
 
 With this set-up you will be able to:
 
@@ -275,43 +273,6 @@ these parameters ultimately interact with the regular Python loggers
 described below.
     #+end_quote
 
-*** Inspect DB
-
-    Here some snippets are saved that are handy in order to operate on
-    the sql-alchemny engines.
-
-**** Check at the available tables
-
-#+BEGIN_SRC python
-engine.table_names()
-#+END_SRC   
-
-*** Update
-    CLOSED: [2022-05-17 Di. 13:49]
-
-    Note that with sql-alchemy you can essentially execute all of the
-    standard operations on your database.
-
-    You can use the =engine.execute()= method for it. Then the engine
-    will automatically ask for an available connection from the
-    connection pool, perform the given action and return it to the
-    connection pool.
-    
-    Note that unfortunately there is no update statement in pandas so
-    that this bit is missing from the logic and the integration with
-    SQL-Alchemy.
-
-    So the workflow would resemble something to the following:
-
-    Extract the existing table from the db, update it in the
-    application logic and replace alltogether the existing table.
-
-    You can still think in pandas terms and make your transformation -
-    in a functional way - there in order to get your update
-    statements.
-
-    You can then use f-strings and similar in order to properly
-    construct the relevant queries.
 
 
 ** Pandas Interaction with SQL Alchemy
@@ -411,83 +372,38 @@ DataFrame.to_sql(name, con, schema=None, if_exists='fail', index=True,
 
       - =if_exists=: you can say - ~{raplace, fail, append}~. 
    
+*** TODO open questions
 
-** SQL Lite
-
-   So will work quite a bit with this in memory database.
-
-   This will make it quite easy to develop and has couple of
-   advantages that I really like.
-
-   So here some notes to organize my thinking around it and start
-   properly to work in this dimension.
-
-   Might refactor then into a different separate post but for the
-   moment I am keeping the notes over here.
-
-   /Side note:/
-
-   Do not go too low level in here.
-
-   It is not the same database that you are actually using in your
-   company. I.e. the *dialect will be different*.
-
-   So in general keep it for now as a solution while they set up the
-   entire Dev space. On the top of it search for an in-memory mssql
-   instance.
-
-   So ordered as well the SQL Microsoft Express DB. You can then use
-   this locally once it is ready and you would have solved this big
-   drawback.
-
-   This is obviously a big drawback.
-
-   But I think it should not be too much of a problem. I am not a DB
-   person in any case and hope to cut curnors on the lower level
-   details of the DB by keeping all of the logic at the application
-   layer. The high level stuff, meaning =insert=, =update=, =alter=,
-   =select= statements is the same everywhere.
-
-   I mean I will quickly see in time if this is a bad idea an revert
-   in case. It is worth to experiment at the beginning in any case in
-   order to find the perfect set up. This will make the difference in
-   the long run. 
-
-*** On the issue of the main database
-
-    So basically everytime you connect to a database, its name is
-    =main= regardless of the databse file name.
-
-    You can see the attach database option in order to attach
-    additional databases.
-
-*** On the schema
-
-    So it seems that sqllite has no schema.
-
-    So basically you have to work without it. See [[https://www.sqlite.org/schematab.html][here]].
-
-    You have just a single schema where everything goes.
-
-    You can then check at the schema of all of your tables over there
-    with the =.schema= option.
-
-    This might be handy when copying the data over to your other DBs.
+**** Update
     
+     So note that the above is a bit sub-optimal in the case of
+     update statements.
+      
+     These are not provided for the data frames.
 
-** TODO open design questions
-*** For Pandas - Data types
+     You would have to get the existing table from the db, update it
+     in the application logic and replace alltogether the existing
+     table.
 
-    You also have to check with the data types how the situation
-    really is. I.e. does it always infer the data types correctly?
+     You see that at performance level it is not that great.
 
-    Can you append without big issues?
+     -----
 
-    -----
+     The alternative here is to use sql statements directly by using
+     the sql-alchemy engine without going through integration with
+     pandas.
 
-    The solution will be a trial and error case.
+     You can still think in pandas terms and make your
+     transformation - in a functional way - there in order to get your
+     update statements.
+     
+**** Data types
 
-    -----
+     You also have to check with the data types how the situation
+     really is. I.e. does it always infer the data types correctly?
 
-    Have to double check properly what data types are available in
-    there and what you can start with it. 
+     Can you append without big issues?
+
+     -----
+
+     The solution will be a trial and error case. 
