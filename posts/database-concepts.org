@@ -132,9 +132,11 @@ at a high level but he does it in a good way that I always enjoyed.
    then column value B must exist.
 
    So say that you have a link between =table1.column_a= and
-   =table2.column_b=. Then if =table1.column_a= is a foreign key to
-   =table2.column_b=, you can just insert =table1.column_a= if an
-   existing entry to =table2.column_b= /already exists/.
+   =table2.column_b=.
+
+   Then if =table1.column_a= is a foreign key to =table2.column_b=,
+   you can just insert =table1.column_a= if an existing entry to
+   =table2.column_b= /already exists/.
 
    In this sense you have this referential integrity and the name
    /foreign key/ makes sense. It is a key to some foreign value such
@@ -409,13 +411,13 @@ at a high level but he does it in a good way that I always enjoyed.
    #+end_src
 
    As always you can enter such constraints in Toad and you will be
-   able to preview the relevant SQL query out of it.    
+   able to preview the relevant SQL query out of it.
    
 *** TODO understand that better. what sql server is the basis for it
 
     cause so far I did not connect it to any databse. so there must be
     an issue of a different kind. 
-    
+
     
 * Working with Relational Systems
 
@@ -450,6 +452,46 @@ at a high level but he does it in a good way that I always enjoyed.
 
    - and vice versa without index.
 
+*** Different Types of Indices
+
+**** Custered 
+
+     With a clustered index the rows are stored physically on the disk in
+     the same order as the index. Therefore, there can be only one
+     clustered index.
+
+     In clustered indexes basically you store all of the rows next to
+     each other based on that index. 
+
+     It is generally faster to read from a clustered index if you want
+     to get back all the columns. You do not have to go first to the
+     index and then to the table.
+
+     Writing to a table with a clustered index can be slower, if there
+     is a need to rearrange the data.
+
+     Note that when declaring a primary key, you are actually as well
+     creating a cluster index on that primary key.
+
+     So that is an interesting point. Given the fact that you can
+     simply have a single clustered index on a table, the thing
+     implies that in the moment that you have a primary key you cannot
+     specify any other clustered index on the table.
+
+     
+
+**** Non-Custered     
+
+     With a non clustered index there is a second list that has
+     pointers to the physical rows. You can have many non clustered
+     indices, although each new index will increase the time it takes
+     to write new records.
+     
+     With a non-clustered index the rows are stored physically on the disk in
+     the same order as the index. Therefore, there can be only one
+     clustered index.
+
+     
 
 ** Table Views
 
@@ -1081,6 +1123,25 @@ DROP COLUMN <COLUMN_NAME>;
     #+end_src
    
 
+** Rename Table
+
+   An example for renaming a table in transact SQL is the following
+
+   #+begin_src sql
+   USE B1;  
+   GO  
+   EXEC sp_rename 'topside.Factor_Schema', 'Factor_Schema_DEPRECATED';  
+   GO
+
+   /* You see the following schema used
+    ,* USE <DATABASE_NAME>;
+    ,* GO
+    ,* EXEC sp_rename '<SCHEMA>.<OLD_TABLE_NAME>', '<NEW_TABLE_NAME>';
+    ,* GO
+    ,*/
+   
+   #+end_src
+    
 ** Create
 
    Here the syntax
@@ -1167,6 +1228,7 @@ WHERE
 
   You can then check at all of the tables/columns affected by a given
   key constraint.
+
 
 ** Working with primary keys and their respective constrains
 

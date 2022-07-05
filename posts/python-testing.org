@@ -280,7 +280,7 @@ class Test_ModuleX:
     Will see in time if this strategy will be solid or not. 
 
    
-* IN-PROGRESS Test Coverage
+* Test Coverage
 
   In order to generate your coverage reports you can use the
   =coverage= library.
@@ -368,14 +368,114 @@ omit = **/test/*
     The idea is that your tests will fail if the coverage is less than
     MIN. This goes a bit into [[*Set up your CI pipeline incorporating this bit][this]] direction.
 
+    All good in such a way you can create solid CI pipelines and
+    create a good definition of DONE.
+
+*** Practical Example for the above:
+
+    You can see a practical example for the above in the following:
+
+    #+begin_src sh
+
+    cd c:/Dev/pythonWorkspace/relationaloperations/
+
+    # recall to activate the virtualenv with the relavant packages for the
+    # below.
+
+    pytest --pyargs src # normal pytest for the src project
+
+    pytest --cov=src --cov-config=.coveragerc # pytest-cov 
+
+    #+end_src
+
+    There you see for instance the test_Testing.py module and
+    similar.
+
+    I will introduce here some toy examples of different ways of
+    testing cases.
+
+    This is a bit different in comparison to Java. There you have more
+    methods that already cover most of the assertion cases you might
+    be interested in. Say for instance assertThrows etc.
+
+    In =pytest= you simply work with ~assert~ statements and you twist
+    everything according to different flavours. Check in this sense
+    [[https://mvolkmann.github.io/blog/python/python-testing/#skipping-tests][this source]].
+    
+
+**** How to test that a method returns an Error
+
+     In order to check at this you can use the following schema:
+
+     #+BEGIN_SRC python
+     import pytest
+
+     def test_Raise_Error(self):
+
+        with pytest.raises(SyntaxError):
+            connectionString('DRIVER={ODBC Driver 17 for SQL Server};',
+                             'hello;', True)
+
+
+     # The above is the general Syntax. So you see you make sure that the
+     # value of the context is an error of the type you are expecting.
+
+     #+END_SRC
+     
+     You can see then how to test that a method returns a user-defined
+     error message as in the URL above.
+
+     
+**** Skip and skipif
+
+     These are two very useful methods in order to skip tests or skip
+     them by condition. This is quite handy. Think for instance of
+     skipping tests if they are below a certain version etc.
+
+     
+**** Xfail
+
+     This is also practical. You mark such tests in such a way when
+     you know that they are supposed to fail.
+
+     Think for instance of having bugs in your code such that you
+     expect them to fail.
+
+     Then if such tests pass you will have them marked in your
+     reports. In such a way you know that something went wrong and you
+     did not obtain the expected behaviour. 
+     
+
+**** Setup and Teardown
+
+     Similar to java you can as well have modules that contain source
+     code to be run before or after the tests.
+
+     You can use the following in this sense:
+
+     - setup_module - run once before all the test functions
+     - setup_function - run once before each test function
+     - teardown_function - run once after each test function
+     - teardown_module - run once after all the test functions
+
+
+**** Fixtures
+
+     Basically in such a way you can pass data to your tests. So I
+     think it goes into the direction of Mocks in order to write
+     tests.
+
+     You can find the way of writing such tests [[https://docs.pytest.org/en/latest/how-to/fixtures.html][here]].
+
 
 *** TODO distributed tests
 
     this will become important when you will have a lot of tests
     covering your code.
     
-    
+    Not so important to this stage.
    
+
 ** On the coverage Metrics
 
    Note that the above two basically report by the default the
@@ -450,6 +550,7 @@ omit = **/test/*
   well following the best practices that these tools are imposing on
   you.
 
+
 ** Introduction
 
    The general idea of tox is to specify all of the relevant
@@ -462,7 +563,98 @@ omit = **/test/*
     <img src="../../images/Screenshot 2022-05-30 105049.png" class="center">
    #+end_export
 
+   
+** General Key Strengths of tox
 
+   With it you can test your code against multiple versions of
+   python...
+
+   So that is quite handy. You see nonetheless that you do not come
+   out with a clean docker image you can run and properly
+   orchestrate.
+
+   
+** General Issue to keep in mind
+
+   This is quite an annoying one. You should not underestimate it.
+
+   #+begin_quote
+There is a danger of using a stale tox venv. One of tox’s weaknesses
+is its inability to track changes in the dependencies in the setup.py
+and/or requirements.txt files. This is something to keep in mind.
+
+When you have made such a change, always be sure to pass the tox -r
+(recreate) flag so that the environments are…you guessed it,
+recreated.
+   #+end_quote
+
+
+** General Utilization
+
+   The thing is that you know about docker and the way of creating
+   docker images.
+
+   Well now the point is that you can package your applications as
+   docker images and this solves quite much of the packaging issues
+   you were leveraging tox for.
+
+   You can as well integrate it apparently. Not that clear what can
+   happen.
+
+   The question is then about how to run all of the necessary tests
+   before packaging your images.
+
+   For this you usually go with a solid CI pipeline. Or as a second
+   possibility you can investigate into [[https://blog.chmouel.com/2014/09/08/dox-a-tool-that-run-python-or-others-tests-in-a-docker-container/][these topics]]. 
+
+   So use it now as your team is not on the docker road. But make sure
+   that if you end up in that space you adapt.
+
+   Meaning it is a good substitute in the meanwhile to move in that
+   space. I found this [[https://christophergs.com/python/2020/04/12/python-tox-why-use-it-and-tutorial/][good series]] explaining tox in the
+   meantime. Here the [[https://github.com/ChristopherGS/tox_examples][101 repo]] for it.
+   
+   With it you should good to go to start leveraging the tool.
+
+   Especially important are the following things that you should well
+   understand:
+
+   #+begin_quote
+As per the tox docs: “At the moment tox supports three configuration
+locations prioritized in the following order:
+
+- pyproject.toml
+
+- tox.ini
+
+- setup.cfg
+   #+end_quote
+
+   I am going for the =tox.ini= one.
+
+   And the second important thing you should note is that:
+
+   #+begin_quote
+skipsdist which we need to set when we are not testing a Python
+package (e.g. for a service or simple set of scripts).
+
+Anytime tox doesn’t find a setup.py file this flag will need to be
+set.
+   #+end_quote
+
+
+** Packaging
+
+   This is nice. You should start to learn how to do it properly.
+
+   You can start by checking at the 101 example in the repo mentioned
+   above.
+
+   This will be important as in such a way you can create that full
+   pipeline necessary to have your stack well set up.
+
+   Everything is properly set up with versions etc.       
+   
 
 * TODO read into devpi
 
