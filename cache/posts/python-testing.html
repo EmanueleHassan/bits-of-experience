@@ -1,0 +1,1012 @@
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+<p>
+So you already worked with python testing frameworks.
+</p>
+
+<p>
+The set up was already in place back then.
+</p>
+
+<p>
+Now it is more than a year that I do not touch the thing and
+everything is solidly gone.
+</p>
+
+<p>
+Luckily I have a repo on my Github with some structure of it.
+</p>
+
+<p>
+Will leverage that now, plus I will start to write some notes, such
+that people that will have to collaborate with me can reference to
+it.
+</p>
+
+<p>
+On the top of it, it will be useful for the future as well.
+</p>
+
+<p>
+Plus finally it is always nice to see the things in multiple
+languages. It is always the same story. By adding pieces to the puzzle
+the picture becomes systematically clearer not the opposite. 
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-orge56f90d" class="outline-2">
+<h2 id="orge56f90d">Pytest vs. Unittests</h2>
+<div class="outline-text-2" id="text-orge56f90d">
+<p>
+So basically these are the two big testing frameworks in the Python
+space.
+</p>
+
+<p>
+I had worked with both in the past. 
+</p>
+
+<p>
+I will go with the first. This decision is not 100% thought through
+decision but when you work you understand that sometimes you have to
+cut corners and based on what I could quickly read online it is
+sensible.
+</p>
+
+<p>
+There is even the possibility of running <code>unittests</code> tests through
+pytest so it makes sense to leverage on this. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgaf3f3f4" class="outline-2">
+<h2 id="orgaf3f3f4">Writing tests</h2>
+<div class="outline-text-2" id="text-orgaf3f3f4">
+<p>
+So a good start is the good-practices section of the <a href="https://docs.pytest.org/en/6.2.x/goodpractices.html">official
+documentation</a>.
+</p>
+
+<p>
+Read as well the following documentation:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://docs.pytest.org/en/6.2.x/reference.html">Reference API</a></li>
+
+<li><a href="https://realpython.com/pytest-python-testing/">Python testing</a></li>
+</ul>
+</div>
+
+<div id="outline-container-orgd36b39e" class="outline-3">
+<h3 id="orgd36b39e">Conventions for Python test discovery</h3>
+<div class="outline-text-3" id="text-orgd36b39e">
+<p>
+So basically there are two options:
+</p>
+
+<ul class="org-ul">
+<li>Embedding the tests within a package - Tests inside of the
+application code</li>
+
+<li>Tests outside of the application code</li>
+</ul>
+
+<p>
+<i>Update:</i> Go with the second version. It is the best. 
+</p>
+</div>
+
+<div id="outline-container-org78d86f2" class="outline-4">
+<h4 id="org78d86f2">AVOID - Tests outside of the application</h4>
+<div class="outline-text-4" id="text-org78d86f2">
+<p>
+Note that basically you have a set of disadavantages if you work
+in such a way.
+</p>
+
+<p>
+Among the others:
+</p>
+
+<ul class="org-ul">
+<li>there is no 1:1 mapping among python testing and packages
+modules.</li>
+</ul>
+
+<p>
+If you want to work this way you have to find a solution for it.
+You can probably go into the direction with markers but I do
+not know how much helpful this will be.
+</p>
+
+<p>
+So basically the idea is to follow these conventions such that you
+can properly map the modules to the tests.
+</p>
+
+<p>
+That said, should you go this way you should work in the following
+way, well noting the following points.
+</p>
+
+<p>
+Note that in constrast to Java here the situation is much more
+messy because of the python module imports and how everything
+enters the <code>sys.path</code>. You can read more about it <a href="https://docs.pytest.org/en/6.2.x/pythonpath.html#import-modes">here</a>.
+</p>
+
+<p>
+You can refer to that page in general, but use the following set up
+in general as your north star:
+</p>
+
+<div class="highlight"><pre><span></span>    setup.py
+    src/
+	mypkg/
+	    __init__.py
+	    app.py
+	    view.py
+    tests/
+	__init__.py
+	foo/
+	    __init__.py
+	    test_view.py
+	bar/
+	    __init__.py
+	    test_view.py
+</pre></div>
+
+<p>
+Note that you need to create testing packages as in the above
+(<code>foo</code>, <code>bar</code>) if you have testing modules called in the same way.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org298bd0c" class="outline-4">
+<h4 id="org298bd0c">USE THIS - Tests inside of the application code</h4>
+<div class="outline-text-4" id="text-org298bd0c">
+<p>
+This is a cleaner solution in the sense that it is clear which
+tests belong to which modules.
+</p>
+
+<div class="highlight"><pre><span></span>    setup.py
+    mypkg/
+	__init__.py
+	app.py
+	view.py
+	test/
+	    test_app.py
+	    test_view.py
+</pre></div>
+
+<p>
+You can then quickly tests them by running:
+</p>
+
+<div class="highlight"><pre><span></span>    pytest --pyargs mypkg
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org16dc295" class="outline-3">
+<h3 id="org16dc295">Personal Conventions</h3>
+<div class="outline-text-3" id="text-org16dc295">
+</div>
+<div id="outline-container-org17960dd" class="outline-4">
+<h4 id="org17960dd">Always use classes</h4>
+<div class="outline-text-4" id="text-org17960dd">
+<p>
+Always run your tests within classes. This will be of paramount
+importance.
+</p>
+
+<p>
+I will usually run tests in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1"># content of test_moduleX.py</span>
+    <span class="k">class</span> <span class="nc">Test_ModuleX</span><span class="p">:</span>
+	<span class="k">def</span> <span class="nf">test_one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	    <span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;this&quot;</span>
+	    <span class="k">assert</span> <span class="s2">&quot;h&quot;</span> <span class="ow">in</span> <span class="n">x</span>
+
+	<span class="k">def</span> <span class="nf">test_two</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	    <span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;hello&quot;</span>
+	    <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;check&quot;</span><span class="p">)</span>
+</pre></div>
+
+<p>
+then you can run the tests for the single module as follows:
+</p>
+
+<div class="highlight"><pre><span></span>    $ pytest -q test_moduleX.py
+</pre></div>
+
+<p>
+On the top of it you can as well create complex logic by
+inheritance etc.
+</p>
+
+<p>
+Finally it is important to realize that despite the way you set up
+your tests, the following benefits are there:
+</p>
+
+<blockquote>
+<ul class="org-ul">
+<li>Test organization</li>
+
+<li>Sharing fixtures for tests only in that particular class</li>
+
+<li>Applying marks at the class level and having them implicitly
+apply to all tests</li>
+</ul>
+</blockquote>
+
+<p>
+You can as well use the flag <code>-k</code> to run tests by regular
+expression.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org345de52" class="outline-3">
+<h3 id="org345de52">Some Useful commands</h3>
+<div class="outline-text-3" id="text-org345de52">
+<p>
+Note that you have a couple of plug-ins in pytest, depending on
+what you aim to do.
+</p>
+
+<p>
+You can check them as follows:
+</p>
+
+<div class="highlight"><pre><span></span>   $ pip install pytest-html
+</pre></div>
+
+<p>
+Then you’re able to run tests with:
+</p>
+
+<div class="highlight"><pre><span></span>   $ pytest  -html<span class="o">=</span>report.html
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org3d43b0d" class="outline-3">
+<h3 id="org3d43b0d">Interpret Results</h3>
+<div class="outline-text-3" id="text-org3d43b0d">
+<p>
+You have to understand the following options:
+</p>
+
+<blockquote>
+<ul class="org-ul">
+<li>f - failed</li>
+
+<li>E - error</li>
+
+<li>s - skipped</li>
+
+<li>x - xfailed</li>
+
+<li>X - xpassed</li>
+
+<li>p - passed</li>
+
+<li>P - passed with output</li>
+</ul>
+</blockquote>
+</div>
+
+<div id="outline-container-org33cf4a3" class="outline-4">
+<h4 id="org33cf4a3">Logging</h4>
+<div class="outline-text-4" id="text-org33cf4a3">
+<p>
+It is possible to set up logging options for the tests in order to
+redirect standard error and standard output to given sources as
+well all of the INFO, WARNING etc. messages you will need in your
+application.
+</p>
+
+<p>
+You can read how to do that for the pytest module <a href="https://docs.pytest.org/en/6.2.x/logging.html">here</a>.
+</p>
+
+<p>
+In order to keep consistency I think I will rather go with a
+general Logger object that I will use in my project and reference
+this.
+</p>
+
+<p>
+Will see in time if this strategy will be solid or not. 
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7d4f9ad" class="outline-2">
+<h2 id="org7d4f9ad">Test Coverage</h2>
+<div class="outline-text-2" id="text-org7d4f9ad">
+<p>
+In order to generate your coverage reports you can use the
+<code>coverage</code> library.
+</p>
+
+<p>
+This is important as you can properly sleep at night, once your code
+is properly covered. Meaning you have a good overview of the quality
+of your code etc.
+</p>
+
+<p>
+Note that this are the python native tools for making such quality
+checks. SonarQube is something similar that goes into the
+direction. Probably more sophisticated. Would have to check into
+it. In any case it is the program that Sergio mentioned to you in
+order to inspect your Java code. So might be interesting as well to
+explore such that you can have a unique consistent way for
+inspecting all of your code irrepsective of the language. Might be
+useful as well in this sense as it will reduce the burden of
+managing the entire thing. 
+</p>
+
+<p>
+This should also go into your <a href="https://www.scrum.org/resources/blog/done-understanding-definition-done?gclid=Cj0KCQjw4PKTBhD8ARIsAHChzRIlof8n0e1pwXTQ-QBKWB56BuHONmIqLLL99zyOrJBa57FCg3heLUUaAgkIEALw_wcB">definition of <code>DONE</code></a>, meaning you can
+consider a project done just if you reach a given threshold of test
+coverage. 
+</p>
+
+<p>
+You will release your projects just when you will have covered a
+decent coverage level.
+</p>
+
+<p>
+Now you can explore the following modules in order to properly work
+in here:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://pytest-cov.readthedocs.io/en/latest/">pytest-cov</a></li>
+
+<li><a href="https://coverage.readthedocs.io/en/6.3.2/">coverage</a></li>
+</ul>
+
+<p>
+So basically from my current understanding the second depends on the
+first, i.e. it leverages on it but has some additional
+functionalities such that it makes sense to go for this one. 
+</p>
+</div>
+
+<div id="outline-container-org153cf1a" class="outline-3">
+<h3 id="org153cf1a">Coverage</h3>
+<div class="outline-text-3" id="text-org153cf1a">
+<p>
+This is one of the most popular code coverage tools for Python.
+</p>
+
+<p>
+I will not go through it; as mentioned I rather go with the next
+library, which builds on the top of it. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf33ac39" class="outline-3">
+<h3 id="orgf33ac39">Pytest-Cov</h3>
+<div class="outline-text-3" id="text-orgf33ac39">
+<p>
+Pytest-cov is a Python plugin to generate coverage reports. So as
+the above.
+</p>
+
+<p>
+In addition to functionalities supported by coverage command, it
+also supports centralized and distributed testing. It also supports
+coverage of subprocesses.
+</p>
+</div>
+
+<div id="outline-container-orgbd53598" class="outline-4">
+<h4 id="orgbd53598">Usage</h4>
+<div class="outline-text-4" id="text-orgbd53598">
+<p>
+After you installed the <a href="https://pypi.org/project/pytest-cov/">relevant library</a>, you can install
+everything in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">pytest</span> <span class="o">--</span><span class="n">cov</span><span class="o">=&lt;</span><span class="n">myproject</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">cov</span><span class="o">-</span><span class="n">config</span><span class="o">=.</span><span class="n">coveragerc</span>
+</pre></div>
+
+<p>
+this, if you want to test a project with a structure as in <a href="#org298bd0c">here</a>.
+</p>
+
+<p>
+Note that <code>.coveragerc</code> is a configuration file where you can
+specify the options for writing your tests. You might start by
+reading the <a href="https://pytest-cov.readthedocs.io/en/latest/config.html">official documentation</a> for it. Or <a href="https://breadcrumbscollector.tech/how-to-use-code-coverage-in-python-with-pytest/">this</a>.
+</p>
+
+<p>
+Recall that it is good practice to eliminate your tests files from
+the coverage reports. This way you are not interested in them,
+they are actually used for covering the standard source code not
+the opposite.
+</p>
+
+<p>
+You can do it as follows:
+</p>
+
+<div class="highlight"><pre><span></span>    [run]
+    omit = **/test/*
+</pre></div>
+
+<p>
+You can specify similar options over there.
+</p>
+
+<p>
+Another important flag for working with the coverage is the
+following: <code>--cov-fail-under=MIN</code>
+</p>
+
+<p>
+The idea is that your tests will fail if the coverage is less than
+MIN. This goes a bit into <a href="#org8303c6f">this</a> direction.
+</p>
+
+<p>
+All good in such a way you can create solid CI pipelines and
+create a good definition of DONE.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9a5fa69" class="outline-4">
+<h4 id="org9a5fa69">Practical Example for the above:</h4>
+<div class="outline-text-4" id="text-org9a5fa69">
+<p>
+You can see a practical example for the above in the following:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="nb">cd</span> c:/Dev/pythonWorkspace/relationaloperations/
+
+    <span class="c1"># recall to activate the virtualenv with the relavant packages for the</span>
+    <span class="c1"># below.</span>
+
+    pytest --pyargs src <span class="c1"># normal pytest for the src project</span>
+
+    pytest --cov<span class="o">=</span>src --cov-config<span class="o">=</span>.coveragerc <span class="c1"># pytest-cov </span>
+</pre></div>
+
+<p>
+There you see for instance the test<sub>Testing.py</sub> module and
+similar.
+</p>
+
+<p>
+I will introduce here some toy examples of different ways of
+testing cases.
+</p>
+
+<p>
+This is a bit different in comparison to Java. There you have more
+methods that already cover most of the assertion cases you might
+be interested in. Say for instance assertThrows etc.
+</p>
+
+<p>
+In <code>pytest</code> you simply work with <code>assert</code> statements and you twist
+everything according to different flavours. Check in this sense
+<a href="https://mvolkmann.github.io/blog/python/python-testing/#skipping-tests">this source</a>.
+</p>
+</div>
+
+
+<ul class="org-ul">
+<li><a id="org91604af"></a>How to test that a method returns an Error<br />
+<div class="outline-text-5" id="text-org91604af">
+<p>
+In order to check at this you can use the following schema:
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="kn">import</span> <span class="nn">pytest</span>
+
+     <span class="k">def</span> <span class="nf">test_Raise_Error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+	<span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">SyntaxError</span><span class="p">):</span>
+	    <span class="n">connectionString</span><span class="p">(</span><span class="s1">&#39;DRIVER={ODBC Driver 17 for SQL Server};&#39;</span><span class="p">,</span>
+			     <span class="s1">&#39;hello;&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+
+     <span class="c1"># The above is the general Syntax. So you see you make sure that the</span>
+     <span class="c1"># value of the context is an error of the type you are expecting.</span>
+</pre></div>
+
+<p>
+You can see then how to test that a method returns a user-defined
+error message as in the URL above.
+</p>
+</div>
+</li>
+
+
+<li><a id="org5f5c190"></a>Skip and skipif<br />
+<div class="outline-text-5" id="text-org5f5c190">
+<p>
+These are two very useful methods in order to skip tests or skip
+them by condition. This is quite handy. Think for instance of
+skipping tests if they are below a certain version etc.
+</p>
+</div>
+</li>
+
+
+<li><a id="orgd33faf9"></a>Xfail<br />
+<div class="outline-text-5" id="text-orgd33faf9">
+<p>
+This is also practical. You mark such tests in such a way when
+you know that they are supposed to fail.
+</p>
+
+<p>
+Think for instance of having bugs in your code such that you
+expect them to fail.
+</p>
+
+<p>
+Then if such tests pass you will have them marked in your
+reports. In such a way you know that something went wrong and you
+did not obtain the expected behaviour. 
+</p>
+</div>
+</li>
+
+
+<li><a id="org136fab5"></a>Setup and Teardown<br />
+<div class="outline-text-5" id="text-org136fab5">
+<p>
+Similar to java you can as well have modules that contain source
+code to be run before or after the tests.
+</p>
+
+<p>
+You can use the following in this sense:
+</p>
+
+<ul class="org-ul">
+<li>setup<sub>module</sub> - run once before all the test functions</li>
+<li>setup<sub>function</sub> - run once before each test function</li>
+<li>teardown<sub>function</sub> - run once after each test function</li>
+<li>teardown<sub>module</sub> - run once after all the test functions</li>
+</ul>
+</div>
+</li>
+
+
+<li><a id="orgb7fda63"></a>Fixtures<br />
+<div class="outline-text-5" id="text-orgb7fda63">
+<p>
+Basically in such a way you can pass data to your tests. So I
+think it goes into the direction of Mocks in order to write
+tests.
+</p>
+
+<p>
+You can find the way of writing such tests <a href="https://docs.pytest.org/en/latest/how-to/fixtures.html">here</a>.
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+
+<div id="outline-container-org93df6dd" class="outline-4">
+<h4 id="org93df6dd"><span class="todo TODO">TODO</span> distributed tests</h4>
+<div class="outline-text-4" id="text-org93df6dd">
+<p>
+this will become important when you will have a lot of tests
+covering your code.
+</p>
+
+<p>
+Not so important to this stage.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org3509e6c" class="outline-3">
+<h3 id="org3509e6c">On the coverage Metrics</h3>
+<div class="outline-text-3" id="text-org3509e6c">
+<p>
+Note that the above two basically report by the default the
+coverage of the <a href="https://en.wikipedia.org/wiki/Statement_(computer_science)">statements</a> in your program.
+</p>
+
+<p>
+While this is the standard it will require you to write tons and
+tons of tests. So either you will go with TDD or you will likely
+get poor coverage ratios such that it will be difficult to assess
+from there if you tested at least the basics of your programs.
+</p>
+
+<p>
+Another option is to use different metrics such as functions
+coverage. The idea here is simple. Instead of checking how many
+statements you did cover you can check at how many functions,
+methods etc. your code did cover.
+</p>
+
+<p>
+In order to go down that different road you could start to explore
+other plugins as <a href="https://pypi.org/project/pytest-func-cov/">this</a>. This is a simlar plug in to the pytest
+package as the coverage one.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org8303c6f" class="outline-3">
+<h3 id="org8303c6f"><span class="todo TODO">TODO</span> Set up your CI pipeline incorporating this bit</h3>
+<div class="outline-text-3" id="text-org8303c6f">
+<p>
+What is a good coverage ratio?
+</p>
+
+<p>
+Basically the idea is <a href="https://www.atlassian.com/continuous-delivery/software-testing/code-coverage#:~:text=With%20that%20being%20said%20it,fairly%20low%20percentage%20of%20coverage.">the following</a>.
+</p>
+
+<p>
+Given this you see that there are rough indications with respect to
+the coverage your applications should have.
+</p>
+
+<p>
+The idea is then to embedd this into the CI pipeline such that if
+the coverage is not reached the CI will fail.
+</p>
+
+<p>
+This will be hard to achieve for existing projects. It makes
+probably sense to aim for it for newly created projects.   
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org1750e83" class="outline-3">
+<h3 id="org1750e83"><span class="todo TODO">TODO</span> CI pipeline</h3>
+<div class="outline-text-3" id="text-org1750e83">
+<p>
+This does not quite much has to do with python testing etc. Will
+hold it here for now as it is in the CI space.
+</p>
+
+<p>
+I would eventually have to reorganize things a bit.
+</p>
+
+<p>
+In any case this is necessary as it gives you visibility. 
+</p>
+
+<hr />
+
+<p>
+The idea is of a remainder to put badges on your projects,
+i.e. with the coverage, if the thing is passing or not etc.
+</p>
+
+<p>
+This would help you to gain the necessary visibility etc.
+</p>
+
+<p>
+We are using bitbucket to this stage for version control.
+You can check into <a href="https://shay-palachy.medium.com/bitbucket-repositoty-status-badges-2271637635aa">this</a> in this sense.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf587d80" class="outline-2">
+<h2 id="orgf587d80">Read into Tox</h2>
+<div class="outline-text-2" id="text-orgf587d80">
+<p>
+So basically this is your gradle/maven correspondent for Python.
+</p>
+
+<p>
+So this is a nice automation tool. Should properly check into it and
+make it run.
+</p>
+
+<p>
+Note that basically the way you do it currently is manually. There
+is no big difference. But might make sense to start using this in
+order to work more in a streamlined way. 
+</p>
+
+<p>
+I.e. you can set up virtual enviornments, package your code, run
+your tests etc.
+</p>
+
+<p>
+In such a way you can work in a structured way in this dimension as
+well following the best practices that these tools are imposing on
+you.
+</p>
+</div>
+
+
+<div id="outline-container-orgd463925" class="outline-3">
+<h3 id="orgd463925">Introduction</h3>
+<div class="outline-text-3" id="text-orgd463925">
+<p>
+The general idea of tox is to specify all of the relevant
+operations in order to standardize your workflow in a <code>tox.ini</code>
+file.
+</p>
+
+<p>
+Based on this, then the following workflow usually follows:
+</p>
+
+<img src="../../images/Screenshot 2022-05-30 105049.png" class="center">
+</div>
+</div>
+
+
+<div id="outline-container-orgaa254b7" class="outline-3">
+<h3 id="orgaa254b7">General Key Strengths of tox</h3>
+<div class="outline-text-3" id="text-orgaa254b7">
+<p>
+With it you can test your code against multiple versions of
+python&#x2026;
+</p>
+
+<p>
+So that is quite handy. You see nonetheless that you do not come
+out with a clean docker image you can run and properly
+orchestrate.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org3a13e55" class="outline-3">
+<h3 id="org3a13e55">General Issue to keep in mind</h3>
+<div class="outline-text-3" id="text-org3a13e55">
+<p>
+This is quite an annoying one. You should not underestimate it.
+</p>
+
+<blockquote>
+<p>
+There is a danger of using a stale tox venv. One of tox’s weaknesses
+is its inability to track changes in the dependencies in the setup.py
+and/or requirements.txt files. This is something to keep in mind.
+</p>
+
+<p>
+When you have made such a change, always be sure to pass the tox -r
+(recreate) flag so that the environments are…you guessed it,
+recreated.
+</p>
+</blockquote>
+</div>
+</div>
+
+
+<div id="outline-container-org8a8b177" class="outline-3">
+<h3 id="org8a8b177">General Utilization</h3>
+<div class="outline-text-3" id="text-org8a8b177">
+<p>
+The thing is that you know about docker and the way of creating
+docker images.
+</p>
+
+<p>
+Well now the point is that you can package your applications as
+docker images and this solves quite much of the packaging issues
+you were leveraging tox for.
+</p>
+
+<p>
+You can as well integrate it apparently. Not that clear what can
+happen.
+</p>
+
+<p>
+The question is then about how to run all of the necessary tests
+before packaging your images.
+</p>
+
+<p>
+For this you usually go with a solid CI pipeline. Or as a second
+possibility you can investigate into <a href="https://blog.chmouel.com/2014/09/08/dox-a-tool-that-run-python-or-others-tests-in-a-docker-container/">these topics</a>. 
+</p>
+
+<p>
+So use it now as your team is not on the docker road. But make sure
+that if you end up in that space you adapt.
+</p>
+
+<p>
+Meaning it is a good substitute in the meanwhile to move in that
+space. I found this <a href="https://christophergs.com/python/2020/04/12/python-tox-why-use-it-and-tutorial/">good series</a> explaining tox in the
+meantime. Here the <a href="https://github.com/ChristopherGS/tox_examples">101 repo</a> for it.
+</p>
+
+<p>
+With it you should good to go to start leveraging the tool.
+</p>
+
+<p>
+Especially important are the following things that you should well
+understand:
+</p>
+
+<blockquote>
+<p>
+As per the tox docs: “At the moment tox supports three configuration
+locations prioritized in the following order:
+</p>
+
+<ul class="org-ul">
+<li>pyproject.toml</li>
+
+<li>tox.ini</li>
+
+<li>setup.cfg</li>
+</ul>
+</blockquote>
+
+<p>
+I am going for the <code>tox.ini</code> one.
+</p>
+
+<p>
+And the second important thing you should note is that:
+</p>
+
+<blockquote>
+<p>
+skipsdist which we need to set when we are not testing a Python
+package (e.g. for a service or simple set of scripts).
+</p>
+
+<p>
+Anytime tox doesn’t find a setup.py file this flag will need to be
+set.
+</p>
+</blockquote>
+</div>
+</div>
+
+
+<div id="outline-container-orge7aed6f" class="outline-3">
+<h3 id="orge7aed6f">Packaging</h3>
+<div class="outline-text-3" id="text-orge7aed6f">
+<p>
+This is nice. You should start to learn how to do it properly.
+</p>
+
+<p>
+You can start by checking at the 101 example in the repo mentioned
+above.
+</p>
+
+<p>
+This will be important as in such a way you can create that full
+pipeline necessary to have your stack well set up.
+</p>
+
+<p>
+Everything is properly set up with versions etc.       
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org99f0c09" class="outline-2">
+<h2 id="org99f0c09"><span class="todo TODO">TODO</span> read into devpi</h2>
+<div class="outline-text-2" id="text-org99f0c09">
+<p>
+check at <a href="https://doc.devpi.net/">this</a>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org3f7dfb7" class="outline-2">
+<h2 id="org3f7dfb7"><span class="todo TODO">TODO</span> spline</h2>
+<div class="outline-text-2" id="text-org3f7dfb7">
+<p>
+This is the bonus section. Also go deeper into <a href="https://spline.readthedocs.io/en/latest/example.html">this</a>.
+</p>
+
+<p>
+Just if you have time. 
+</p>
+
+<p>
+I think this is an interesting project.
+</p>
+
+<p>
+I would need more time to properly check into this.
+</p>
+
+<p>
+Unfortunaltely in my current position I have no time to really go
+out there and explore and push the boundaries.
+</p>
+
+<p>
+It is already a miracle keeping the boat afloat and modernizing it
+to the <i>current sate</i> of the technologies. 
+</p>
+</div>
+</div>

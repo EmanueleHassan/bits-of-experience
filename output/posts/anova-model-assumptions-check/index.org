@@ -1,0 +1,136 @@
+#+BEGIN_COMMENT
+.. title: Anova - Model Assumptions Check
+.. slug: anova-model-assumptions-check
+.. date: 2019-10-09 16:53:11 UTC+02:00
+.. tags: ANOVA, 
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+.. status: private
+#+END_COMMENT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+begin_comment
+Wait for the other part of applied regression and combine the two into
+a single post. The other was better done. So there is more meat on the
+fire and interesting results from there also apply here.
+
+Then change the post to public.
+#+end_comment
+
+This third post of the /ANOVA/ series explores the different
+assumptions that are required in order for the asymptotic inference on the
+significance of group means to be true.
+
+In the specific the model assumptions for which the group specific
+means are properly estimated and the ratio of the mean squared errors
+converges to the F-distribution depends on the following assumptions:
+
+- /errors are independent/
+
+- /errors are normally distributed/
+
+- /homoscedasticity of the variance/
+
+- /zero mean error expectation/
+
+I will next explore and test the four based on a toy dataset.
+
+{{{TEASER_END}}}
+
+*** QQ-Plot
+#+begin_comment
+ :Properties:
+ :header-args:R: :session anova2 :results output drawer :exports both
+ :end:
+#+end_comment
+
+
+This compares the empirical quantiles to the theoretical quantiles of
+a normal. If the empirical quantiles of the error term are in line
+with the normality assumption we should observe the data points to lie
+on the 45 degree line.
+
+#+begin_src R
+library(datasets)
+data (PlantGrowth)
+str (PlantGrowth)
+fit <- aov (weight ~ group, data = PlantGrowth)
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+
+'data.frame':	30 obs. of  2 variables:
+ $ weight: num  4.17 5.58 5.18 6.11 4.5 4.61 5.17 4.53 5.33 5.14 ...
+ $ group : Factor w/ 3 levels "ctrl","trt1",..: 1 1 1 1 1 1 1 1 1 1 ...
+:END:
+
+#+begin_src R 
+# Open a svg file
+png("../images/qqplot.png") 
+
+# 2. Create a plot
+plot (fit, which = 2)
+
+# Close the pdf file
+dev.off()  
+#+end_src
+
+[[img-url:/images/qqplot.png]] 
+
+
+Notice that you can address the issue of the normality distribution by
+transforming your variables; moreover a failure of normality is will
+imply that the OLS estimation will not be BLUE, however the majority
+of the results will still hold for the estimation.
+
+*** Tukey-Anscombe Plot
+#+begin_comment
+ :Properties:
+ :header-args:R: :session anova2 :results output drawer :exports both
+ :end:
+#+end_comment
+
+This plots the residuals \eplison{ij} vs. the fitted values
+\hat{\mu + \alpha_i}. The idea is to check if there is any systematic
+relation among the fitted values and the residuals. If this is the
+case the independence of the errors is not given. 
+
+Moreover the plot might help to assess, whether we observe
+homoscedasticity of the errors or rather if heteroscedasticity is
+present.
+
+#+begin_src R 
+# Open a svg file
+png("../images/tukey.png") 
+
+# 2. Create a plot
+plot (fit, which = 1)
+
+# Close the pdf file
+dev.off()  
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+
+null device 
+          1
+:END:
+
+[[img-url:/images/tukey.png]]
+
+Notice that the red line represents the LOESS estimator. It is hence a
+smoother and a local parametric fit.
+
+*** Literature
+
+[[https://stat.ethz.ch/lectures/as19/anova.php#course_materials][Applied Anaysis of Variance - ETH Lecture Notes - Autumn 2019]]
+
+

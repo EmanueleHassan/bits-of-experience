@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Java 8 - Functional Programming | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/java-8-functional-programming/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../microservices-java/" title="Microservices &amp; Java" type="text/html">
+<link rel="next" href="../new-york-general-org-notes/" title="On an Ant in New York" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Java 8 - Functional Programming">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/java-8-functional-programming/">
+<meta property="og:description" content="img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-12-24T19:36:32+01:00">
+<meta property="article:tag" content="functional-programming">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="parallelization">
+<meta property="article:tag" content="streaming">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Java 8 - Functional Programming</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2021-12-24T19:36:32+01:00" itemprop="datePublished" title="2021-12-24 19:36">2021-12-24 19:36</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/functional-programming/" rel="tag">functional-programming</a></li>
+            <li><a class="tag p-category" href="../../categories/java/" rel="tag">java</a></li>
+            <li><a class="tag p-category" href="../../categories/parallelization/" rel="tag">parallelization</a></li>
+            <li><a class="tag p-category" href="../../categories/streaming/" rel="tag">streaming</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+<p>
+I used to keep these notes together with the general notes on the Java
+language.
+</p>
+
+<p>
+As that file was growing too big and as functional programming is such
+a neat and revolutionizing feature introduced with Java 8, I have
+decided to separate the notes in this separate blog entry.
+</p>
+
+<!-- TEASER_END -->
+
+
+<div id="outline-container-org33b8570" class="outline-2">
+<h2 id="org33b8570">On Functional Programming - Available since Java 8</h2>
+<div class="outline-text-2" id="text-org33b8570">
+<p>
+You can check <a href="https://java-8-tips.readthedocs.io/en/stable/streamsapi.html">at these notes</a>. They are not just about functional
+programming. But generally on Java 8. I like this cause it is short
+and compact and you can quickly get up and running with it.
+</p>
+
+<p>
+Sinced Java 8 there are some new possibilities of programming in a
+functional programming way.
+</p>
+
+<p>
+Basically here is where your pythonic way of working comes into
+play. At least a bit of it.. got more experience with it and I
+would not set them at the very same level but there is at least
+some overlap.
+</p>
+
+<p>
+There you basically iterate across some iterable object with a new
+kind of iterator and apply calssical <code>maps</code> and <code>reduce</code>
+functions - among the others - through the use of lambda functions
+as you already encountered them in the past.
+</p>
+
+<p>
+Note that programming in such a way will bring to you several
+advantages:
+</p>
+
+<ul class="org-ul">
+<li>Nicely composed, not cluttered</li>
+
+<li>Free of low-level operations</li>
+
+<li>Easier to enhance or change the logic</li>
+
+<li>Iteration controlled by a library of methods</li>
+
+<li>Efficient; lazy evaluation of loops. I.e. it can decide to
+perform them lazily, in any order, and exploit parallelism as it
+sees fit - <b>so start to see some overlap with Spark in here</b>.</li>
+
+<li>Easier to parallelize where desired</li>
+</ul>
+<p>
+It is also pretty quick then to understand the benefit of it.
+</p>
+
+<p>
+I like this concept:
+</p>
+
+<blockquote>
+<p>
+Functional-style code has a <b>higher signal-to-noise ratio</b>; we write fewer lines
+of code, but each line or expression achieves more.
+</p>
+</blockquote>
+
+<p>
+Note as well the following fundamental reasonings:
+</p>
+
+<blockquote>
+<p>
+The functional version can easily be parallelized.
+</p>
+
+<p>
+If the computation was time consuming, we can easily run it
+concurrently for each element in the list.
+</p>
+
+<p>
+If we parallelized the imperative version, we’d have to worry about
+concurrent modification of the underlying variable. In
+the functional version we gain access to the variable only after it’s
+fully baked, which removes the thread-safety concerns
+</p>
+</blockquote>
+
+<p>
+That is most likely the root from which the map-reduce and Hadoop
+frameworks developed and how it is implemented in Java. Java-8 must
+have been a huge revolution in this sense.
+</p>
+
+<p>
+The functional style is not counter to object-oriented programming
+(OOP). The real paradigm shift is from the imperative to the
+declarative style of programming.
+</p>
+
+<p>
+With Java 8, we can now intermix functional and OO styles of
+programming quite effectively. We can continue to use the OOP style
+to model domain entities, their states, and their relationships. In
+addition, we can model the behavior or state transformations,
+business workflows, and data processing as a series of functions to
+form a function composition.
+</p>
+
+<p>
+So basically that is the ultimate way you program in Java and where
+its benefit is unleashed.
+</p>
+
+<p>
+I must say that coming from the Python world I still see it as
+inferior to Python for the data processing, but with that it solves
+quite some fundamental constrains. This especially due to the
+native concept of dataframes in there. I.e. there is no modular
+abstraction of the concept.
+</p>
+
+<p>
+On the other hand the fact that you have no native data-frame
+concept forces you to go over <b>each and every</b> single value in
+your code and thereby you make that implicit type check that would
+not be there in Python. 
+</p>
+</div>
+
+<div id="outline-container-org9225762" class="outline-3">
+<h3 id="org9225762">
+<span class="todo TODO">TODO</span> functional programming - fluent functions etc.</h3>
+<div class="outline-text-3" id="text-org9225762">
+<p>
+Note as well that there are difference among the <code>forEach</code> and the
+<code>map</code> and other <i>fluent functions</i>.
+</p>
+
+<p>
+This is a non-trivial difference that you need to understand
+better if you truly want to understand functional programming in a
+serious way at some point.
+</p>
+
+<p>
+You can start reading into it in <a href="https://stackoverflow.com/questions/28319064/java-8-best-way-to-transform-a-list-map-or-foreach">here</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4490fcb" class="outline-3">
+<h3 id="org4490fcb">Syntax</h3>
+<div class="outline-text-3" id="text-org4490fcb">
+<p>
+The syntax is very close to the one you know yourself.
+</p>
+
+<p>
+Consider the following    
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">friends</span><span class="p">.</span><span class="na">forEach</span><span class="p">((</span><span class="kd">final</span> <span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">name</span><span class="p">));</span>
+</pre></div>
+
+<p>
+The forEach() is a higher-order function that <i>accepts a lambda
+expression</i> or block of code to execute in the context of each
+element in the list.
+</p>
+
+<p>
+The variable <code>name</code> is bound to each element of the collection
+during the call. So that is the <code>lambda x</code> of your python
+code. There you specify what your lambda parameters are. Here you
+specify them within the <code>()</code> before the arrow <code>-&gt;</code>. So that is
+basically the syntax and you already know and love that way of
+programming.
+</p>
+
+<p>
+<b>Note</b>: the above is not the only way to implement lambda
+functions in Java. It is nonetheless the most type safe ways of
+doing it.
+</p>
+
+<p>
+Other possible ways involve the following:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">friends</span><span class="p">.</span><span class="na">forEach</span><span class="p">((</span><span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">name</span><span class="p">));</span>
+</pre></div>
+
+<p>
+here you do not specify a type for the name. This is automatically
+inferred by looking at the signature of the called method.
+</p>
+
+<p>
+<b>Important Note:</b> We can also use type inference if a lambda
+expression takes multiple parameters, but in that case we must
+leave out the type information for all the parameters; we have to
+<b>specify the type for none or for all of the parameters</b> in a lambda
+expression.
+</p>
+
+<p>
+The last way to specify the lambda function is the following:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">friends</span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">name</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">name</span><span class="p">));</span>
+</pre></div>
+
+<p>
+Note that here you have no <code>()</code>. This is a corner case.
+</p>
+
+<p>
+The Java compiler treats single-parameter lambda expressions as
+special: we can leave off the parentheses around the parameter if
+the parameter’s type is inferred. Keep this in mind, cause some of
+your colleagues are using this way of coding.
+</p>
+
+<p>
+<b>Design choice:</b> Keep unity in your code and forget about
+it. Always work with =()=e for consistency reasons.
+</p>
+
+<p>
+Note as well the following point in the syntax and the way you
+work with functional programming - i.e. you have to respect the
+logic of the methods. Depeding whether they are static or not you
+pass the lambda argument in different positions. If it is static
+within the class you give it as argument. Otherwise if it is an
+instance method you call the method from it.
+</p>
+
+<p>
+Check at the following simple example with <code>String</code> in order to
+properly understand this.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
+    <span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="p">;</span>
+
+    <span class="kd">class</span> <span class="nc">StaticVsInstance_Method</span> <span class="p">{</span>
+
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span> <span class="p">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[]</span><span class="p">){</span>
+
+	    <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">myList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="p">();</span>
+
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="s">"romeo"</span><span class="p">);</span>
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="s">"gatto colosseo"</span><span class="p">);</span>	
+
+	    <span class="c1">// so note fairly standard the point. respect the logical</span>
+	    <span class="c1">// construct of the language</span>
+	    <span class="n">myList</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+		  <span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="na">substring</span><span class="p">(</span><span class="mi">2</span><span class="p">)));</span>
+
+	    <span class="n">myList</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+		  <span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">"Hello %s"</span><span class="p">,</span> <span class="n">x</span><span class="p">)));</span>
+
+	<span class="p">}</span>
+
+    <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org1d44a38" class="outline-3">
+<h3 id="org1d44a38">Important Note on Syntax and Conceptual Understanding</h3>
+<div class="outline-text-3" id="text-org1d44a38">
+<p>
+Note that this is a very standard way of working in the Java
+Language. Even if you are not used to think in these terms, you
+better fix it in your DNA.
+</p>
+
+<p>
+This is in fact one of the <a href="https://www.geeksforgeeks.org/method-within-method-in-java/">three ways</a> of specifying a nested
+method within another one.  
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgd9102ed" class="outline-3">
+<h3 id="orgd9102ed">On Design Choices</h3>
+<div class="outline-text-3" id="text-orgd9102ed">
+<p>
+<b>Keep this section in your mind. It will be of paramount
+importance in order to write clean code</b>.
+</p>
+
+<p>
+The idea is that you should follow the DRY principle. I.e. you
+should not repeat your code whenever possible as otherwise the
+dimension will explode and it will not be easy to treat and
+refactor.
+</p>
+
+<p>
+Example write the following lambda expression that you can pass to
+your fluent functions.
+</p>
+
+<p>
+In such a way you will never replicate that <code>name -&gt;
+    name.startsWith(letter);</code> bit of code.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Predicate</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">checkIfStartsWith</span><span class="p">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">letter</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">name</span> <span class="o">-&gt;</span> <span class="n">name</span><span class="p">.</span><span class="na">startsWith</span><span class="p">(</span><span class="n">letter</span><span class="p">);</span>
+    <span class="p">}</span>
+</pre></div>
+
+<p>
+Note that in the above you do return a <b>function</b> as an
+expression.
+</p>
+
+<p>
+Note the following:
+</p>
+
+<blockquote>
+<p>
+From within a lambda expression we can only access local variables
+that are final or effectively final in the enclosing scope.
+</p>
+
+<p>
+A lambda expression may be invoked right away, or it may be
+invoked lazily or from multiple threads.
+To <b>avoid race conditions</b>, the local variables we access in the
+enclosing scope are not allowed to change once initialized. Any
+attempt to change them will result in a compilation error.
+</p>
+</blockquote>
+</div>
+
+<div id="outline-container-orge9feae6" class="outline-4">
+<h4 id="orge9feae6">Don't use Consumer or Predicates - wrap things into Functions</h4>
+<div class="outline-text-4" id="text-orge9feae6">
+<p>
+Note that the one above is a <b>bad example and not the way to
+write clean code</b>.
+</p>
+
+<p>
+I.e. you do not want to clutter your memory with static objects
+that you refer to throughout your code.
+</p>
+
+<p>
+So what you do in order to write clean code is the following -
+you wrap the above lambda expressions into lambda functions.
+</p>
+
+<p>
+Check the difference
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="kn">import</span> <span class="nn">java.util.function.Predicate</span><span class="p">;</span>
+     <span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
+     <span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="p">;</span>
+
+     <span class="kd">class</span> <span class="nc">CleanCodeFunctional</span> <span class="p">{</span>
+
+	 <span class="kd">public</span> <span class="kd">static</span> <span class="n">Predicate</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">checkIfStartsWith</span><span class="p">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">letter</span><span class="p">)</span> <span class="p">{</span>
+	     <span class="k">return</span> <span class="n">name</span> <span class="o">-&gt;</span> <span class="n">name</span><span class="p">.</span><span class="na">startsWith</span><span class="p">(</span><span class="n">letter</span><span class="p">);</span>
+	 <span class="p">}</span>
+
+	 <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">arg</span><span class="o">[]</span><span class="p">)</span> <span class="p">{</span>
+
+	     <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">friends</span> <span class="o">=</span>
+		 <span class="n">Arrays</span><span class="p">.</span><span class="na">asList</span><span class="p">(</span><span class="s">"Brian"</span><span class="p">,</span> <span class="s">"Nate"</span><span class="p">,</span> <span class="s">"Neal"</span><span class="p">,</span> <span class="s">"Raju"</span><span class="p">,</span> <span class="s">"Sara"</span><span class="p">,</span> <span class="s">"Scott"</span><span class="p">);</span>
+	     <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">editors</span> <span class="o">=</span>
+		 <span class="n">Arrays</span><span class="p">.</span><span class="na">asList</span><span class="p">(</span><span class="s">"Brian"</span><span class="p">,</span> <span class="s">"Jackie"</span><span class="p">,</span> <span class="s">"John"</span><span class="p">,</span> <span class="s">"Mike"</span><span class="p">);</span>
+	     <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">comrades</span> <span class="o">=</span>
+		 <span class="n">Arrays</span><span class="p">.</span><span class="na">asList</span><span class="p">(</span><span class="s">"Kate"</span><span class="p">,</span> <span class="s">"Ken"</span><span class="p">,</span> <span class="s">"Nick"</span><span class="p">,</span> <span class="s">"Paula"</span><span class="p">,</span> <span class="s">"Zach"</span><span class="p">);</span>
+
+	     <span class="kd">final</span> <span class="kt">long</span> <span class="n">countFriendsStartN</span> <span class="o">=</span>
+		 <span class="n">friends</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+		 <span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">checkIfStartsWith</span><span class="p">(</span><span class="s">"N"</span><span class="p">)).</span><span class="na">count</span><span class="p">();</span>
+
+	     <span class="kd">final</span> <span class="kt">long</span> <span class="n">countFriendsStartB</span> <span class="o">=</span>
+		 <span class="n">friends</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+		 <span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">checkIfStartsWith</span><span class="p">(</span><span class="s">"B"</span><span class="p">)).</span><span class="na">count</span><span class="p">();</span>
+
+	     <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">"Number starting with N: %d"</span><span class="p">,</span> <span class="n">countFriendsStartN</span><span class="p">));</span>
+	     <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">"Number starting with B: %d"</span><span class="p">,</span> <span class="n">countFriendsStartB</span><span class="p">));</span>	
+	 <span class="p">}</span>
+     <span class="p">}</span>
+</pre></div>
+<p>
+Number starting with N: 2
+Number starting with B: 1
+Number starting with N: 2
+Number starting with B: 1
+Number starting with N: 2
+Number starting with B: 1
+Number starting with N: 2
+Number starting with B: 1
+</p>
+
+<p>
+Much better and cleaner code is to write the following - function
+wrapper
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="n">Function</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">Predicate</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">StartsWithLetter</span>  <span class="o">=</span>
+
+	 <span class="p">(</span><span class="n">String</span> <span class="n">Letter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">{</span>
+
+	 <span class="n">Predicate</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">checkIfStartsWith</span> <span class="o">=</span> <span class="p">(</span><span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">{</span>
+	     <span class="k">return</span> <span class="n">name</span> <span class="o">-&gt;</span> <span class="n">name</span><span class="p">.</span><span class="na">startsWith</span><span class="p">(</span><span class="n">Letter</span><span class="p">);</span>
+	 <span class="p">}</span>
+
+	 <span class="k">return</span> <span class="n">checkIfStartsWith</span>
+	 <span class="p">}</span>
+</pre></div>
+
+<p>
+This can even be written in a more compact way as follows
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="n">Function</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">Predicate</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">StartsWithLetter</span> <span class="o">=</span>
+	 <span class="p">(</span><span class="n">String</span> <span class="n">letter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">name</span><span class="p">.</span><span class="na">startsWith</span><span class="p">(</span><span class="n">letter</span><span class="p">);</span>
+</pre></div>
+
+<p>
+Note that the above is quite compact notation but it works as the
+compiler will do the necessary job for you in the background.
+</p>
+
+<p>
+This ultimately means that you can write the following
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="kn">import</span> <span class="nn">java.util.function.Function</span><span class="p">;</span>
+     <span class="kn">import</span> <span class="nn">java.util.function.Predicate</span><span class="p">;</span>
+     <span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
+     <span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="p">;</span>
+
+     <span class="kd">class</span> <span class="nc">CleanCodeFunctional2</span> <span class="p">{</span>
+
+	 <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">arg</span><span class="o">[]</span><span class="p">)</span> <span class="p">{</span>
+
+	     <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">friends</span> <span class="o">=</span>
+		 <span class="n">Arrays</span><span class="p">.</span><span class="na">asList</span><span class="p">(</span><span class="s">"Brian"</span><span class="p">,</span> <span class="s">"Nate"</span><span class="p">,</span> <span class="s">"Neal"</span><span class="p">,</span> <span class="s">"Raju"</span><span class="p">,</span> <span class="s">"Sara"</span><span class="p">,</span> <span class="s">"Scott"</span><span class="p">);</span>
+	     <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">editors</span> <span class="o">=</span>
+		 <span class="n">Arrays</span><span class="p">.</span><span class="na">asList</span><span class="p">(</span><span class="s">"Brian"</span><span class="p">,</span> <span class="s">"Jackie"</span><span class="p">,</span> <span class="s">"John"</span><span class="p">,</span> <span class="s">"Mike"</span><span class="p">);</span>
+	     <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">comrades</span> <span class="o">=</span>
+		 <span class="n">Arrays</span><span class="p">.</span><span class="na">asList</span><span class="p">(</span><span class="s">"Kate"</span><span class="p">,</span> <span class="s">"Ken"</span><span class="p">,</span> <span class="s">"Nick"</span><span class="p">,</span> <span class="s">"Paula"</span><span class="p">,</span> <span class="s">"Zach"</span><span class="p">);</span>
+
+	     <span class="kd">final</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">Predicate</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">checkIfStartsWith</span> <span class="o">=</span>
+		 <span class="p">(</span><span class="n">String</span> <span class="n">letter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">name</span><span class="p">.</span><span class="na">startsWith</span><span class="p">(</span><span class="n">letter</span><span class="p">);</span>	
+
+	     <span class="kd">final</span> <span class="kt">long</span> <span class="n">countFriendsStartN</span> <span class="o">=</span>
+		 <span class="n">friends</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+		 <span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">checkIfStartsWith</span><span class="p">.</span><span class="na">apply</span><span class="p">(</span><span class="s">"N"</span><span class="p">)).</span><span class="na">count</span><span class="p">();</span>
+
+	     <span class="kd">final</span> <span class="kt">long</span> <span class="n">countFriendsStartB</span> <span class="o">=</span>
+		 <span class="n">friends</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+		 <span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">checkIfStartsWith</span><span class="p">.</span><span class="na">apply</span><span class="p">(</span><span class="s">"B"</span><span class="p">)).</span><span class="na">count</span><span class="p">();</span>
+
+	     <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">"Number starting with N: %d"</span><span class="p">,</span> <span class="n">countFriendsStartN</span><span class="p">));</span>
+	     <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">"Number starting with B: %d"</span><span class="p">,</span> <span class="n">countFriendsStartB</span><span class="p">));</span>	
+	 <span class="p">}</span>
+     <span class="p">}</span>
+</pre></div>
+<p>
+Number starting with N: 2
+Number starting with B: 1
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5219ee1" class="outline-4">
+<h4 id="org5219ee1">Important thing to consider - you use a method that throws an exception of some kind</h4>
+<div class="outline-text-4" id="text-org5219ee1">
+<p>
+Then your method has to deal with that exception.
+</p>
+
+<p>
+The question is then how you can do that, i.e. your lambda
+function has to deal with that.
+</p>
+
+<p>
+The solution is one of the following: check <a href="https://stackoverflow.com/questions/18198176/java-8-lambda-function-that-throws-exception">this url</a>.
+</p>
+
+<p>
+I like the wrapper solution. This might not be easy to follow for
+future colleagues that do not know your code. Especially if the
+wrapper is hidden somewhere.
+</p>
+
+<p>
+So keep for the moment as design choice: try-catch sandwich
+around the piece that you have to deal with.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1199bd8" class="outline-4">
+<h4 id="org1199bd8">On Combining functional interafces</h4>
+<div class="outline-text-4" id="text-org1199bd8">
+<p>
+Note the following - try to keep code clean by writing lambda
+functions and passing them as arguments.
+</p>
+
+<p>
+See how clean the entire code then looks. I.e. do not clutter you
+stream/ methods.
+</p>
+
+<p>
+See the following example:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="cm">/** Lovely to see such stream of tests. Very nice way to program in a way </span>
+<span class="cm">     *  where it is easy to keep the overview. Nice.</span>
+<span class="cm">     */</span>
+    <span class="nd">@TestFactory</span>
+    <span class="n">Stream</span><span class="o">&lt;</span><span class="n">DynamicTest</span><span class="o">&gt;</span> <span class="nf">dynamicTestsFromStreamFactoryMethod</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c1">// Stream of palindromes to check</span>
+	<span class="n">Stream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">inputStream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">"racecar"</span><span class="p">,</span> <span class="s">"radar"</span><span class="p">,</span> <span class="s">"mom"</span><span class="p">,</span> <span class="s">"dad"</span><span class="p">);</span>
+
+	<span class="c1">// Generates display names like: racecar is a palindrome</span>
+	<span class="n">Function</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">displayNameGenerator</span> <span class="o">=</span> <span class="n">text</span> <span class="o">-&gt;</span> <span class="n">text</span> <span class="o">+</span> <span class="s">" is a palindrome"</span><span class="p">;</span>
+
+	<span class="c1">// Executes tests based on the current input value.</span>
+	<span class="n">ThrowingConsumer</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">testExecutor</span> <span class="o">=</span> <span class="n">text</span> <span class="o">-&gt;</span> <span class="n">assertTrue</span><span class="p">(</span><span class="n">isPalindrome</span><span class="p">(</span><span class="n">text</span><span class="p">));</span>
+
+	<span class="c1">// Returns a stream of dynamic tests.</span>
+	<span class="k">return</span> <span class="n">DynamicTest</span><span class="p">.</span><span class="na">stream</span><span class="p">(</span><span class="n">inputStream</span><span class="p">,</span> <span class="n">displayNameGenerator</span><span class="p">,</span> <span class="n">testExecutor</span><span class="p">);</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgdf40eb5" class="outline-3">
+<h3 id="orgdf40eb5">On functional Interfaces</h3>
+<div class="outline-text-3" id="text-orgdf40eb5">
+<p>
+You can use the annotation <code>@FunctionalInterface</code> to specify that
+an interface fulfills the properties of the functional interface.
+</p>
+
+<p>
+Note that these are important, as these are the basical logical
+construct for <b>functional programming in Java</b>.
+</p>
+
+<p>
+Functional interfaces are now simply defined as any interface
+with a sinlge abstract method.
+</p>
+
+<p>
+Note that this is the basis of functional programming as the
+implementation of the single abstract method is then the lambda
+expression you can use in your lambda function.      
+</p>
+
+<p>
+If a method takes a functional interface as a parameter - note
+that this is the case of functional programming -, then we can
+pass the following:
+</p>
+
+<ul class="org-ul">
+<li>An anonymous inner class, the old-fashioned way - meaning not
+functional - (but why would we?). This is for instance the
+example you have in these document in the <code>forEach</code> loop.</li>
+
+<li>A lambda expression, like the map() method</li>
+
+<li>A method or constructor reference</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org386f321" class="outline-3">
+<h3 id="org386f321">Nice benefit of working in a functional way</h3>
+<div class="outline-text-3" id="text-org386f321">
+<p>
+Note the following benefit of lambda expressions. You never
+thought in these terms and it is clear that there are high
+benefits in working in such a way.
+</p>
+
+<p>
+Consider the following - old fashioned way of working with java
+and code. 
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">Transaction</span> <span class="n">transaction</span> <span class="o">=</span> <span class="n">getFromTransactionFactory</span><span class="p">();</span>
+
+    <span class="c1">//... operation to run within the transaction ...</span>
+
+    <span class="n">checkProgressAndCommitOrRollbackTransaction</span><span class="p">();</span>
+    <span class="n">UpdateAuditTrail</span><span class="p">();</span>
+</pre></div>
+
+<p>
+Then the issue is that multiple errors could occur in the
+following part:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1">//... operation to run within the transaction ...</span>
+</pre></div>
+
+<p>
+such that you might not get to the roll-back code part.
+</p>
+
+<p>
+This causes issues. A way to fix this is via the classical
+<code>try-catch</code> methods.
+</p>
+
+<p>
+Another way of doing this is via functional programming. Think of
+the following:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">runWithinTransaction</span><span class="p">((</span><span class="n">Transaction</span> <span class="n">transaction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">{</span>
+    <span class="c1">//... operation to run within the transaction ...</span>
+    <span class="p">})</span>
+</pre></div>
+
+<p>
+In such a way you encapsulate everything.
+</p>
+
+<p>
+The policy to check the status and update the audit trails is
+abstracted and encapsulated within the <code>runWithinTransaction()</code>
+method. To this method we send a piece of code that needs to run
+in the context of a transaction. We no longer have to worry about
+forgetting to perform the steps or about the exceptions being
+handled well.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgfa4f3bf" class="outline-3">
+<h3 id="orgfa4f3bf">On the forEach method</h3>
+<div class="outline-text-3" id="text-orgfa4f3bf">
+<p>
+This was introduced in Java 8 and I think it is one interesting
+big point for working with collections. Moreover, it makes the
+point for functional programming without going in the arrow
+notation above.
+</p>
+
+<p>
+You can understand by looking at the following:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kt">void</span> <span class="nf">forEach</span><span class="p">(</span><span class="n">Consumer</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">action</span><span class="p">)</span>
+</pre></div>
+
+<p>
+so the syntax is the above, and as simply stated in Javadoc:
+Performs the given action for each element of the Iterable until
+all elements have been processed or the action throws an
+exception.
+</p>
+
+<p>
+So one example is the following, you have an <b>Iterable</b> object -
+say a list of friends and you apply the action in the following
+syntax.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">friends</span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="k">new</span> <span class="n">Consumer</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">()</span> <span class="p">{</span>
+	    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">accept</span><span class="p">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+	    <span class="p">}</span>
+	<span class="p">});</span>
+</pre></div>
+
+<p>
+Note: the code above is cluttered. It was the old way of doing
+things with the all-too-familiar <b>anonymous inner class syntax</b>.
+I.e. the consumer understand that the inner class is the function
+it has to perform.
+</p>
+
+<p>
+Simplify it. No need to explicitely write the consumer. This is
+part of the <code>java.util.function</code>. You can pass directly a lambda
+function. Then being Consumer a functionalInterface it will
+automatically fit the lambda function as consumer.
+</p>
+
+<p>
+Note just that being a consumer the lambda function does not have
+to produce a result.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org415bb48" class="outline-3">
+<h3 id="org415bb48">Stream</h3>
+<div class="outline-text-3" id="text-org415bb48">
+<p>
+The method <code>stream()</code> is available on all collections in JDK 8 and
+it wraps the collection into an instance of Stream.
+</p>
+
+<p>
+A Stream is much like an iterator on a collection of objects and
+provides some nice <i>fluent functions</i>. Using the methods of this
+interface, we can compose a sequence of calls so that the code
+reads and flows in the same way we’d state problems, making it
+easier to read.
+</p>
+
+<p>
+Among the classical fluent functions there are the classical <i>map</i>
+and <i>reduce</i> functions.
+</p>
+
+<p>
+In general it looks as if all of the methods you were using in
+pyhtona in the lambda expression are the same as the ones
+available here under this paradigm. So double check and make sense
+of all of this.
+</p>
+</div>
+
+<div id="outline-container-orgebb9a6a" class="outline-4">
+<h4 id="orgebb9a6a">findfirst</h4>
+<div class="outline-text-4" id="text-orgebb9a6a">
+<p>
+Then the <code>findFirst()</code> method of the Stream class helped pick the
+first value from that collection.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgda428d6" class="outline-3">
+<h3 id="orgda428d6">Method Reference</h3>
+<div class="outline-text-3" id="text-orgda428d6">
+<p>
+As mentioned in the notes regarding the @FunctionalInterface, what
+is important for the functional paradigma is that a
+@FunctionalInterface is implemented.
+</p>
+
+<p>
+So in order to do that you can either use a <code>lambda</code> function
+which obviously uses such interface, or you can as well pass a
+<i>reference to a method where an implementation of a functional
+interface</i> is expected.
+</p>
+
+<p>
+Think for instance of <code>String::toUpperCase</code>, there a consumer
+method is implicitely implemented, such that the following two
+work in the same way:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1">// v1</span>
+    <span class="n">friends</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+    <span class="p">.</span><span class="na">map</span><span class="p">(</span><span class="n">name</span> <span class="o">-&gt;</span> <span class="n">name</span><span class="p">.</span><span class="na">toUpperCase</span><span class="p">())</span>
+    <span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">count</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">print</span><span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="s">" "</span><span class="p">));</span>
+
+    <span class="c1">// v2</span>
+    <span class="n">friends</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+    <span class="p">.</span><span class="na">map</span><span class="p">(</span><span class="n">String</span><span class="p">::</span><span class="n">toUpperCase</span><span class="p">)</span>
+    <span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">count</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">print</span><span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="s">" "</span><span class="p">));</span>
+</pre></div>
+
+<p>
+Finally, note that method reference is possible, as the target
+object and parameters are derived from the parameters passed to
+the synthesized method. This makes the code with method references
+much more concise than the code with lambda expressions.
+</p>
+
+<p>
+<b>Important:</b> So note that if lambda functions simply pass the
+parameters through to the method we can replace them always with
+reference methods. If you do some transformation then of course
+that is not possible/ you would have to create a new method for it
+but then it is opinable if that makes sense - i.e. depends on the
+amount of transformation involved.
+</p>
+
+<p>
+This is a nice feature in Java.
+</p>
+
+<p>
+You can find two others examples below.
+</p>
+
+<p>
+You can pass functions to the lambda expressions in the following
+way:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
+    <span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="p">;</span>
+
+    <span class="kd">class</span> <span class="nc">PassFunction</span> <span class="p">{</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">arg</span><span class="o">[]</span><span class="p">)</span> <span class="p">{</span>
+	    <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">myList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="p">();</span>
+
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+
+	    <span class="n">myList</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+		<span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">::</span><span class="n">println</span><span class="p">);</span>
+	<span class="p">}</span>
+    <span class="p">}</span>		  
+</pre></div>
+
+<p>
+So you see you can pass your functions to the forEach.
+</p>
+
+<p>
+You can even pass your self defined function as paramter
+</p>
+
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="p">;</span>
+
+<span class="kd">class</span> <span class="nc">ParamBeh</span> <span class="p">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">arg</span><span class="o">[]</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">myList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+	<span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+	<span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+	<span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+	<span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+	<span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+	<span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+
+	<span class="n">myList</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+	      <span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="n">sum</span> <span class="o">=</span> <span class="n">mySum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sum</span><span class="p">);});</span> <span class="c1">// note the nice forEach function.</span>
+
+	<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"final sum is: "</span> <span class="o">+</span> <span class="n">sum</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Integer</span> <span class="nf">mySum</span><span class="p">(</span><span class="n">Integer</span> <span class="n">x</span><span class="p">,</span> <span class="n">Integer</span> <span class="n">sum</span><span class="p">){</span>
+	<span class="n">sum</span> <span class="o">+=</span> <span class="n">x</span><span class="p">;</span>
+
+	<span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
+
+
+    <span class="p">}</span>    
+
+<span class="p">}</span>		  
+</pre></div>
+
+<p>
+You can then pass any function of choice as parameter to your
+lambda functions.
+</p>
+</div>
+
+<div id="outline-container-orgf56e855" class="outline-4">
+<h4 id="orgf56e855">Behaviour Parameterization with Nested Functions</h4>
+<div class="outline-text-4" id="text-orgf56e855">
+<p>
+Note that since java 8 there is the <code>java.util.function</code>
+package.
+</p>
+
+<p>
+Note that in that package just <b>interfaces</b> are defined. This is
+important. Such interfaces implements then the 
+</p>
+
+<p>
+Through it, it is possible to write your lambda functions within
+a method that you will then ultimately pass in the method.
+</p>
+
+<p>
+So the question is then if to work in such a way or not and
+rather work with separated methods implemented as above.
+</p>
+
+<p>
+Note that when specifying such functions you should choose from
+one of the interfaces under <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html">this url</a>.
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
+     <span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="p">;</span>
+
+     <span class="kd">class</span> <span class="nc">MyTest</span> <span class="p">{</span>
+
+	 <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+	 <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">arg</span><span class="o">[]</span><span class="p">)</span> <span class="p">{</span>
+
+
+	     <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">myList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+	     <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+	     <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+	     <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+	     <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+	     <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+	     <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+
+	     <span class="n">java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">function</span><span class="p">.</span><span class="na">Function</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">MySum</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">{</span>
+		 <span class="n">sum</span> <span class="o">+=</span> <span class="n">i</span><span class="p">;</span>
+		 <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
+	     <span class="p">};</span>
+
+	     <span class="n">myList</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+		   <span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="n">sum</span> <span class="o">=</span> <span class="n">MySum</span><span class="p">.</span><span class="na">apply</span><span class="p">((</span><span class="n">Integer</span><span class="p">)</span> <span class="n">x</span><span class="p">);});</span> <span class="c1">// note the nice forEach function.</span>
+
+	     <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"final sum is: "</span> <span class="o">+</span> <span class="n">sum</span><span class="p">);</span>
+	 <span class="p">}</span>
+     <span class="p">}</span>
+</pre></div>
+<p>
+final sum is: 12
+</p>
+
+
+<p>
+Note that you can refer to the list
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org66b90bc" class="outline-3">
+<h3 id="org66b90bc">Filter clause</h3>
+<div class="outline-text-3" id="text-org66b90bc">
+<div class="highlight"><pre><span></span>    <span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
+    <span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="p">;</span>
+
+    <span class="kd">class</span> <span class="nc">FilterFunction</span> <span class="p">{</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">arg</span><span class="o">[]</span><span class="p">)</span> <span class="p">{</span>
+	    <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">myList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="p">();</span>
+
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+	    <span class="n">myList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+
+	    <span class="n">myList</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+		<span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">rs</span> <span class="o">-&gt;</span> <span class="n">rs</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="c1">// so very simple bool condition</span>
+		<span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">::</span><span class="n">println</span><span class="p">);</span>
+	<span class="p">}</span>
+    <span class="p">}</span>		  
+</pre></div>
+<p>
+3
+3
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org07f77de" class="outline-3">
+<h3 id="org07f77de">IfPresent and ifPresentOrElse</h3>
+<div class="outline-text-3" id="text-org07f77de">
+<p>
+The two are interesting methods to deal in a fucntional way with
+<code>Optional</code> objects. See your notes above.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="n">opt</span><span class="p">.</span><span class="na">ifPresentOrElse</span><span class="p">(</span>
+       <span class="n">value</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Found: "</span> <span class="o">+</span> <span class="n">value</span><span class="p">),</span>
+       <span class="p">()</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Not found"</span><span class="p">)</span>
+    <span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org18cf204" class="outline-3">
+<h3 id="org18cf204">Nested lambda functions</h3>
+<div class="outline-text-3" id="text-org18cf204">
+<p>
+This is a nice way of working that you will need to master at some
+point.
+</p>
+
+<p>
+Once you start to properly work via functional programming this
+will come natural.
+</p>
+
+<p>
+Here an example that iterates across all of the hashtables of the
+hashtables and performs operations on them.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
+    <span class="kn">import</span> <span class="nn">java.util.Map</span><span class="p">;</span>
+    <span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="p">;</span>
+    <span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="p">;</span>    
+
+    <span class="kd">class</span> <span class="nc">NestedLambda</span> <span class="p">{</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[]</span><span class="p">)</span> <span class="p">{</span>
+	    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+	    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">map2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+	    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">map3</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>	
+
+	    <span class="n">map2</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"a"</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span> <span class="c1">// add the desired value</span>
+	    <span class="n">map2</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"b"</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span> <span class="c1">// add the desired value</span>
+	    <span class="n">map2</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"c"</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span> <span class="c1">// add the desired value</span>
+	    <span class="n">map2</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"d"</span><span class="p">,</span><span class="mi">4</span><span class="p">);</span> <span class="c1">// add the desired value</span>
+
+
+	    <span class="n">map3</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"e"</span><span class="p">,</span><span class="mi">5</span><span class="p">);</span> <span class="c1">// add the desired value</span>
+	    <span class="n">map3</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"f"</span><span class="p">,</span><span class="mi">6</span><span class="p">);</span> <span class="c1">// add the desired value</span>
+	    <span class="n">map3</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"g"</span><span class="p">,</span><span class="mi">7</span><span class="p">);</span> <span class="c1">// add the desired value</span>
+	    <span class="n">map3</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"h"</span><span class="p">,</span><span class="mi">8</span><span class="p">);</span> <span class="c1">// add the desired value	</span>
+
+	    <span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"hello"</span><span class="p">,</span> <span class="n">map2</span><span class="p">);</span>
+	    <span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"balloon"</span><span class="p">,</span> <span class="n">map3</span><span class="p">);</span>
+
+	    <span class="n">map</span><span class="p">.</span><span class="na">values</span><span class="p">().</span><span class="na">stream</span><span class="p">()</span>
+		<span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">d</span> <span class="o">-&gt;</span> <span class="n">d</span><span class="p">.</span><span class="na">entrySet</span><span class="p">().</span><span class="na">stream</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">m</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="na">getValue</span><span class="p">())));</span>
+
+	    <span class="c1">// note d is easily accessible in the second stream</span>
+	    <span class="n">map</span><span class="p">.</span><span class="na">values</span><span class="p">().</span><span class="na">stream</span><span class="p">()</span>
+		<span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">d</span> <span class="o">-&gt;</span> <span class="n">d</span><span class="p">.</span><span class="na">entrySet</span><span class="p">().</span><span class="na">stream</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">m</span> <span class="o">-&gt;</span> <span class="n">d</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="na">getKey</span><span class="p">(),</span> <span class="mi">0</span> <span class="p">)));</span>	
+
+	    <span class="n">map</span><span class="p">.</span><span class="na">values</span><span class="p">().</span><span class="na">stream</span><span class="p">()</span>
+		<span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">d</span> <span class="o">-&gt;</span> <span class="n">d</span><span class="p">.</span><span class="na">entrySet</span><span class="p">().</span><span class="na">stream</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">m</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="na">getValue</span><span class="p">())));</span>
+	<span class="p">}</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orga1335f4" class="outline-3">
+<h3 id="orga1335f4">Callback Interface - Fusion with Functional Interface</h3>
+<div class="outline-text-3" id="text-orga1335f4">
+</div>
+<div id="outline-container-orgce91fd0" class="outline-4">
+<h4 id="orgce91fd0">Idea of coupling a callback Interface with Functional Programming</h4>
+<div class="outline-text-4" id="text-orgce91fd0">
+<div class="highlight"><pre><span></span>     <span class="kd">class</span> <span class="nc">MyTestFunctional</span> <span class="p">{</span>
+
+	 <span class="c1">// public interface</span>
+	 <span class="nd">@FunctionalInterface</span>
+	 <span class="kd">public</span> <span class="kd">static</span> <span class="kd">interface</span> <span class="nc">ICallback</span> <span class="p">{</span>
+	     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">hello</span><span class="p">();</span>
+
+	     <span class="k">default</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">world</span><span class="p">(){</span>
+		 <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"hello world"</span><span class="p">);</span>
+	     <span class="p">};</span>
+
+	 <span class="p">};</span>
+
+	 <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">myGenericMethod</span><span class="p">(</span><span class="n">ICallback</span> <span class="n">callback</span><span class="p">,</span> <span class="n">Integer</span> <span class="n">i</span><span class="p">){</span>
+	     <span class="c1">//consider checking if runnable != null to avoid NPE</span>
+
+	     <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> 
+		 <span class="n">callback</span><span class="p">.</span><span class="na">hello</span><span class="p">();</span>
+	     <span class="k">else</span>
+		 <span class="n">callback</span><span class="p">.</span><span class="na">world</span><span class="p">();</span>
+
+	 <span class="p">}</span>      
+
+	 <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">arg</span><span class="o">[]</span><span class="p">)</span> <span class="p">{</span>
+
+	     <span class="n">Integer</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+	     <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">){</span>
+
+		 <span class="n">myGenericMethod</span><span class="p">(()</span> <span class="o">-&gt;</span> <span class="p">{</span>
+			 <span class="c1">//do something fancy</span>
+			 <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"baubab"</span><span class="p">);</span> <span class="c1">// implements the functional interface</span>
+		     <span class="p">},</span> <span class="n">i</span><span class="p">);</span>
+
+		 <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+	     <span class="p">}</span> 
+	 <span class="p">}</span>
+     <span class="p">}</span>
+</pre></div>
+<p>
+baubab
+hello world
+baubab
+hello world
+baubab
+</p>
+
+<p>
+Note now that if you are to add a third method in the callback
+above it would not be a functional interface anymore, and you
+could not apply the lambda function logic as here.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8fba786" class="outline-4">
+<h4 id="org8fba786">Test 2 - Note the parameter passing syntax. Were tricked by it once</h4>
+<div class="outline-text-4" id="text-org8fba786">
+<div class="highlight"><pre><span></span>     <span class="kd">class</span> <span class="nc">MySumTest</span> <span class="p">{</span>
+
+	 <span class="c1">// public interface</span>
+	 <span class="nd">@FunctionalInterface</span>
+	 <span class="kd">public</span> <span class="kd">static</span> <span class="kd">interface</span> <span class="nc">ICallback</span> <span class="p">{</span>
+	     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sum</span><span class="p">(</span><span class="n">Integer</span> <span class="n">i</span><span class="p">);</span>
+
+	     <span class="k">default</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">world</span><span class="p">(){</span>
+		 <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"hello world"</span><span class="p">);</span>
+	     <span class="p">};</span>
+
+	 <span class="p">};</span>
+
+	 <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">myGenericMethod</span><span class="p">(</span><span class="n">ICallback</span> <span class="n">callback</span><span class="p">,</span> <span class="n">Integer</span> <span class="n">i</span><span class="p">,</span> <span class="n">Integer</span> <span class="n">y</span><span class="p">){</span>
+
+	     <span class="c1">//consider checking if runnable != null to avoid NPE</span>
+	     <span class="k">if</span> <span class="p">(</span><span class="n">y</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+		 <span class="n">callback</span><span class="p">.</span><span class="na">sum</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+	     <span class="p">}</span>
+	     <span class="k">else</span><span class="p">{</span>
+		 <span class="n">callback</span><span class="p">.</span><span class="na">world</span><span class="p">();</span>
+		     <span class="p">}</span>
+	 <span class="p">}</span>      
+
+	 <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">arg</span><span class="o">[]</span><span class="p">)</span> <span class="p">{</span>
+
+	     <span class="n">Integer</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+	     <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+		 <span class="n">myGenericMethod</span><span class="p">((</span><span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">{</span>
+			 <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">);</span> <span class="c1">// implements the functional interface</span>
+		     <span class="p">},</span> <span class="mi">2</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+
+		 <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+
+	     <span class="p">}</span>
+	 <span class="p">}</span>
+     <span class="p">}</span>
+</pre></div>
+<p>
+4
+hello world
+4
+hello world
+4
+</p>
+
+<p>
+So you understand now how to couple them with arguments.
+</p>
+
+<p>
+You pass to your functionalInterface a lambda function. Then you pass
+the other parameters in the standard way.
+</p>
+
+<p>
+So note that the above myGenericMethod is nothing else than a
+normal fucntion. It has nothing to do with a stream etc. You just
+pass to the callback interface a lambda funciton.
+</p>
+</div>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../microservices-java/" rel="prev" title="Microservices &amp; Java">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../new-york-general-org-notes/" rel="next" title="On an Ant in New York">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
