@@ -1,0 +1,168 @@
+<p>
+A quick intro to Istio and what that is.
+</p>
+
+<p>
+Expand in the future in case of need.
+</p>
+
+<!-- TEASER_END -->
+
+
+<div id="outline-container-org8fa8975" class="outline-2">
+<h2 id="org8fa8975">Service Mesh</h2>
+<div class="outline-text-2" id="text-org8fa8975">
+<p>
+A service mesh can help you solve the issues that arise when you’re
+implementing a microservices app.
+</p>
+
+<p>
+A service mesh comprehends the following components
+</p>
+
+<ul class="org-ul">
+<li>A service registry
+
+<ul class="org-ul">
+<li>is used to keep track of the location and health of services, so a
+requesting service can be directed to a provider service in a
+reliable way.</li>
+
+<li>is a simple key-value pair data store, maintaining a current list
+of all working service instances and their locations. As each
+service instance starts, it will register itself with the service
+registry, either through its own client code or through a
+third-party registrar function.</li>
+
+<li>the service registry will use a heartbeat mechanism, either
+in-bound or out-bound, to keep its list of instances current.</li>
+
+<li>because of its centrality this needs to be made highly available
+in some way.</li>
+</ul></li>
+</ul>
+
+
+<ul class="org-ul">
+<li>service discovery
+
+<ul class="org-ul">
+<li>depending on the overall design of the app, each service instance
+can be either a service client, requesting data or functions from
+other services, a service provider, providing data or functions to
+service clients, or both. Whenever a service needs another
+service, it uses the service discovery function to find an
+instance of that service.</li>
+
+<li>uses the service registry’s list of available services and
+instances of those services, and it directs requests to the
+appropriate instance based on pure load balancing or any other
+rule that has been configured.</li>
+
+<li>The first type of service discovery is <b>client-side
+discovery</b>. Using this method, the requesting service, or service
+client, works directly with the service registry to determine all
+the available instances of the service it needs and is also
+responsible for deciding which of those service instances it will
+use for its request (no load balancing here).</li>
+
+<li><p>
+The second type of service discovery is called <b>server-side
+discovery</b>. This method introduces another component, the
+service-proxy in microservices language - a loadbalancer in
+practice -.
+</p>
+
+<p>
+The task of querying the service registry and directing a request
+to the appropriate service instance is delegated to the load
+balancer. In some implementations, such as Istio, the load
+balancer can be programmed with specific rules to govern its
+choice of service instance, beyond just using round-robin load
+balancing.
+</p></li>
+</ul></li>
+</ul>
+
+
+<ul class="org-ul">
+<li>testing facilities
+
+<ul class="org-ul">
+<li>This gives you the ability to simulate the failure or temporary
+unavailability of one or more services in your app, and to make
+sure the resiliency features that you designed will work to keep
+the app functional.</li>
+
+<li>microservices should be designed to run unreliable systems. You
+should expect components to fail and build resiliency into your
+apps such that they can withstand those failures. One of the basic
+design points of this strategy is to always have <i>more than one
+instance of any given service</i> so that your app can survive the
+failure of a given instance and continue to function while that
+instance is restarted.</li>
+</ul></li>
+</ul>
+
+
+<ul class="org-ul">
+<li>circuit breakers and bulkheads:
+
+<ul class="org-ul">
+<li>Two functions that can help to provide resiliency to the
+application.</li>
+
+<li>Circuit breakers work to prevent response delays from a given
+service dependency caused by failure or latency, so that delays
+don’t cause broader latencies and failures throughout the app. The
+breaker allows you to set timeout thresholds and failure
+thresholds that allow you to <b>fail fast</b> from such situations with
+the expectation of building an alternative plan into your app.</li>
+
+<li>The Bulkhead pattern is another tool included with Netflix Hystrix
+that prevents response delays from a given service call from
+causing wider problems throughout the app. This behavior is
+accomplished by using separate thread pools for connection
+attempts to other systems so that delays called by latency or
+failure of a given service are isolated to that service and do not
+use all the threads for the app as more requests are made.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org23429e7" class="outline-2">
+<h2 id="org23429e7">Istio</h2>
+<div class="outline-text-2" id="text-org23429e7">
+<p>
+Istio is an open platform service mesh implementation for connecting,
+managing, and securing microservices.
+</p>
+
+<p>
+You add Istio support to services by deploying a special sidecar proxy
+throughout your environment that intercepts all network communication
+among microservices, which is configured and managed using Istio’s
+control plane functionality.
+</p>
+
+<p>
+The idea of Istio is to allow a service mesh without requiring any
+changes in service code.
+</p>
+
+<p>
+Istio provides a complete solution to satisfy the diverse requirements
+of microservice applications by providing behavioral insights and
+operational control over the service mesh as a whole.
+</p>
+
+<p>
+I.e. it addresses discovery, load balancing, failure recovery,
+metrics, and monitoring, and often more complex operational
+requirements such as A/B testing, canary releases, rate limiting,
+access control, and end-to-end authentication.
+</p>
+</div>
+</div>

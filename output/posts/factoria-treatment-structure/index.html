@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Factorial Treatment Structure | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/factoria-treatment-structure/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../monitor-driver-thinkpad-dock-usb-30/" title="Monitor Driver ThinkPad Dock-USB 3.0" type="text/html">
+<link rel="next" href="../Gibbs-Sampler/" title="Gibbs Sampler" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Factorial Treatment Structure">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/factoria-treatment-structure/">
+<meta property="og:description" content="So far in the ANOVA series no special structure was assumed for the
+treatments but rather that each treatment corresponded to a single
+factor. This post starts to expand and relax the above assumption">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-10-19T15:00:53+02:00">
+<meta property="article:tag" content="ANOVA">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Factorial Treatment Structure</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-10-19T15:00:53+02:00" itemprop="datePublished" title="2019-10-19 15:00">2019-10-19 15:00</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/anova/" rel="tag">ANOVA</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <br><br><p>
+So far in the ANOVA series no special structure was assumed for the
+treatments but rather that each treatment corresponded to a single
+factor. This post starts to expand and relax the above assumption
+looking at the relation when a treatment is the result of various
+combination of individual factors. Think for instance of a plant being
+influenced both by <i>light exposure</i> and <i>fertilizer</i>.
+</p>
+
+<p>
+In case of the above structure we talk about a <i>factorial treatment
+structure</i> and this one will be explored next.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-orgd18eed2" class="outline-2">
+<h2 id="orgd18eed2">Example and Terminology</h2>
+<div class="outline-text-2" id="text-orgd18eed2">
+<p>
+If we see all possible combinations of the levels of two (or more)
+factors, we call them <i>crossed</i>. 
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## create dataset</span>
+<span class="n">acids</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">1.697</span><span class="p">,</span> <span class="m">1.601</span><span class="p">,</span> <span class="m">1.830</span><span class="p">,</span>
+	   <span class="m">2.032</span><span class="p">,</span> <span class="m">2.017</span><span class="p">,</span> <span class="m">2.409</span><span class="p">,</span>
+	   <span class="m">2.211</span><span class="p">,</span> <span class="m">1.673</span><span class="p">,</span> <span class="m">1.973</span><span class="p">,</span> 
+	   <span class="m">2.091</span><span class="p">,</span> <span class="m">2.255</span><span class="p">,</span> <span class="m">2.987</span><span class="p">)</span>
+<span class="n">R50</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">"no"</span><span class="p">,</span> <span class="s">"yes"</span><span class="p">,</span> <span class="s">"no"</span><span class="p">,</span> <span class="s">"yes"</span><span class="p">),</span> <span class="n">each</span> <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+<span class="n">R21</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">"no"</span><span class="p">,</span> <span class="s">"no"</span><span class="p">,</span> <span class="s">"yes"</span><span class="p">,</span> <span class="s">"yes"</span><span class="p">),</span> <span class="n">each</span> <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+<span class="n">cheddar</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">R50</span><span class="p">,</span> <span class="n">R21</span><span class="p">,</span> <span class="n">acids</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="c1">## In order to explore the strucutre and the combination of factors for each observation </span>
+<span class="c1">## you can leverage the xtabs () function in R</span>
+
+<span class="nf">xtabs </span><span class="p">(</span><span class="o">~</span> <span class="n">R50</span> <span class="o">+</span> <span class="n">R21</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">cheddar</span><span class="p">)</span>
+</pre></div>
+
+<p>
+Given the factorial structure questions arise of the individual effect
+of the single factor variables as well as the influence of the
+interplay.
+</p>
+
+<p>
+An exploratory solution in lower dimension to answer the above
+questions might be to look a the interaction plot. This gives a visual
+idea of the interplay and effect of single variables.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">with</span><span class="p">(</span><span class="n">cheddar</span><span class="p">,</span> <span class="nf">interaction.plot</span><span class="p">(</span><span class="n">x.factor</span> <span class="o">=</span> <span class="n">R50</span><span class="p">,</span> <span class="n">trace.factor</span> <span class="o">=</span> <span class="n">R21</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="n">acids</span><span class="p">))</span>
+<span class="c1">## standard way: interaction.plot(x.factor = cheddar$R50, trace.factor = cheddar$R21,</span>
+<span class="c1">##                                response = cheddar$acids)</span>
+
+<span class="c1">## Notice that the x-factor is the one being plotted on the x-axis</span>
+<span class="c1">## while the trace factor acts as a dummy.</span>
+</pre></div>
+
+<p>
+<img src="../../images/interactionCheddar.svg" alt="nil"></p>
+
+<p>
+As the line are parallel you can infer that the the effect of R50 is
+independent of R21.
+</p>
+
+<p>
+In order to display the single observations and look at the underlying
+noise and not simply drawing conclusion on averages you can leverage
+the ggplot2 package.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">library </span><span class="p">(</span><span class="n">gglot2</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">cheddar</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">R50</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">acids</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">R21</span><span class="p">))</span> <span class="o">+</span> <span class="nf">geom_point</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">stat_summary</span><span class="p">(</span><span class="n">fun.y</span> <span class="o">=</span> <span class="n">mean</span><span class="p">,</span> <span class="n">geom</span> <span class="o">=</span> <span class="s">"line"</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">group</span> <span class="o">=</span> <span class="n">R21</span><span class="p">),</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">()</span>
+</pre></div>
+
+<p>
+<img src="../../images/interactionCheddarSingle.svg" alt="nil"></p>
+
+
+<p>
+When data are to dense it might make sense to look at an aggregated
+picture such as a boxplot for the different underlying groups.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">cheddar</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">R50</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">acids</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">R21</span><span class="p">))</span> <span class="o">+</span> <span class="nf">geom_boxplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">stat_summary</span><span class="p">(</span><span class="n">fun.y</span> <span class="o">=</span> <span class="n">mean</span><span class="p">,</span> <span class="n">geom</span> <span class="o">=</span> <span class="s">"line"</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">group</span> <span class="o">=</span> <span class="n">R21</span><span class="p">),</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">()</span>
+</pre></div>
+
+<p>
+<img src="../../images/interactionCheddarBox.svg" alt="nil"></p>
+</div>
+</div>
+
+<div id="outline-container-org6c17784" class="outline-2">
+<h2 id="org6c17784">Two-way ANOVA Model</h2>
+<div class="outline-text-2" id="text-org6c17784">
+<p>
+Consider a set-up with two factors A and B, with respectively <i>a</i> and
+<i>b</i> number of levels. Assume a <i>balanced</i> dataset with the same number <i>n</i>
+of data for every combination \(a_i b_j \ \forall i = 1,...., a; j =
+1,..., b\). Then you will have overall <i>N = a * b * n</i> of observations.
+</p>
+
+<p>
+The two-way anova with interaction is then specified by:
+</p>
+
+<p>
+where
+</p>
+
+<ul class="org-ul">
+<li>α<sub>i</sub> = main effect of factor A at level i</li>
+<li>β<sub>j</sub> = main effect of factor B at level j</li>
+<li>α β<sub>ij</sub> = interaction effect.</li>
+<li>ε<sub>ijk</sub> = i.i.d. N (0, σ<sup>2</sup>) errors</li>
+</ul>
+<p>
+Typically for the same arguments outlined in the previous post we have
+to choose side-constraints in order to pose restrictions for the added
+variables.
+</p>
+
+<p>
+A typical choice consists in:
+</p>
+
+\begin{align*} 
+  \sum^a_{i=1} alpha_i &amp;=  0\\
+
+  \sum^b_{j=1} \beta_j &amp;=  0\\
+
+  \sum^a_{i=1} \alpha \beta_{ij} &amp;=  0\\
+
+  \sum^b_{j=1} \alpha \beta_{ij} &amp;=  0\\
+\end{align*}
+
+<p>
+It follows, that the main effects have <i>α -1</i>, <i>β - 1</i> and
+(<i>α -1</i>) * (<i>β - 1</i>). Important is especially to understand
+the latter term. This is because each constraint of a variable is
+associated with the full spectrum of the other factor constraints.
+</p>
+
+<p>
+Notice that as always the exact interpretation of the two-way anova
+with interaction terms depends on the choice of the applied
+constraints. 
+</p>
+
+<p>
+Given the above general framework it is possible to compare the
+effects of the factors and compare it to the model overall stochastic
+error to see if that is significant.
+</p>
+
+<p>
+The average expected value from the two-way anova is:
+</p>
+
+<p>
+\[ \bar{y}_{ij} = \hat{\mu} + \hat{\alpha_i} + \hat{\beta_j} + \hat{\alpha\beta_{ij}} \]
+</p>
+
+<p>
+As in the case of the one-way ANOVA one can decompose the sum of
+squared errors as:
+</p>
+
+<p>
+where,
+</p>
+
+<ul class="org-ul">
+<li>\(SS_A = \sum^{a}_{i=1} bn (\hat{a_i})^2\) and \(\hat{a_i} =
+  \frac{1}{a}\sum^{b}_{j=1}\sum^{n}_{k=1} y_{ijk} -
+  \frac{1}{nab}\sum^{n}_{k=1}\sum^{a}_{i=1}\sum^{b}_{j=1}y_{ijk}\)</li>
+<li>\(SS_B = \sum^{b}_{j=1} an (\hat{\beta_j})^2\) and \(\hat{\beta_i} =
+  \frac{1}{b}\sum^{a}_{i=1}\sum^{n}_{k=1} y_{ijk} -
+  \frac{1}{nab}\sum^{n}_{k=1}\sum^{a}_{i=1}\sum^{b}_{j=1}y_{ijk}\)</li>
+<li>\(SS_{AB} = \sum^{a}_{i=1}\sum^{b}_{j=1}n\hat{a_{ij}}^2\) and
+\(\hat{a_{ij}}^2 = (\frac{1}{ab}\sum^{b}_{j=1}\sum^{a}_{i=1} y_{ijk} + \frac{1}{nab}\sum^{n}_{k=1}\sum^{a}_{i=1}\sum^{b}_{j=1}y_{ijk} - \frac{1}{a}\sum^{b}_{j=1}\sum^{n}_{k=1} y_{ijk} - \frac{1}{b}\sum^{a}_{i=1}\sum^{n}_{k=1} y_{ijk})^2\)</li>
+<li>\(SS_E = (\sum^{n}_{k=1}\sum^{a}_{i=1}\sum^{b}_{j=1}y_{ijk} -
+  \frac{1}{ab}\sum^{b}_{j=1}\sum^{a}_{i=1} y_{ijk})^2\)</li>
+<li>\(SS_T = (\sum^{n}_{k=1}\sum^{a}_{i=1}\sum^{b}_{j=1}y_{ijk} -
+  \frac{1}{nab}\sum^{n}_{k=1}\sum^{a}_{i=1}\sum^{b}_{j=1}y_{ijk})^2\)</li>
+</ul>
+<blockquote>
+<p>
+Notice that the above is the exact reason why the exam might be
+annoying. You have to train the decomposition of the variance with all
+of the indices and get familiar with a fast exposition of the latter.
+</p>
+</blockquote>
+
+<p>
+From here on you can create the classical anova table. Being aware of
+the degrees of freedom.
+</p>
+
+<p>
+Especially it holds:
+</p>
+
+<ul class="org-ul">
+<li>df factor A = (a -1)</li>
+<li>df factor B = (b -1)</li>
+<li>df interaction AB = (a -1) (b-1)</li>
+<li>df error = (nab - (a-1) [A factor] - (b-1) [B factor] - (a-1) (b-1) [interaction] - 1 [overall mean]) = ab (n-1)</li>
+</ul>
+<p>
+Given the ANOVA table and the computed mean squared errors based on
+the sum of squares and degrees of freedom above it is possible to
+compare the single influence of each factor and the interaction term
+with the underlying stochastic noise.
+</p>
+
+<p>
+The following tests result:
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+H<sub>0</sub>: \(\hat{a\beta_{ij}} = 0 \ \forall i,j\) vs. H<sub>A</sub>: \(\hat{a_{ij}} \neq
+  0\) for at least one <i>i,j</i>. 
+</p>
+
+<p>
+Under the Null:
+</p>
+
+<p>
+\[ \frac{MS_{AB}}{MS_E} \mathtt{\sim} F_{(a-1) (b-1), ab (n-1)} \]
+</p>
+</li>
+
+<li>
+<p>
+H<sub>0</sub>: \(\hat{a_{i}} = 0pp \ \forall  i\) vs. H<sub>A</sub>: \(\hat{a_{i}} \neq
+  0\) for at least one <i>i</i>. 
+</p>
+
+<p>
+Under the Null:
+</p>
+
+<p>
+\[ \frac{MS_{A}}{MS_E} \mathtt{\sim} F_{(a-1), ab (n-1)} \]
+</p>
+</li>
+
+<li>
+<p>
+H<sub>0</sub>: \(\hat{\beta_{j}} = 0 \ \forall j\) vs. H<sub>A</sub>: \(\hat{\beta_{j}} \neq
+  0\) for at least one <i>j</i>. 
+</p>
+
+<p>
+Under the Null:
+</p>
+
+<p>
+\[ \frac{MS_{B}}{MS_E} \mathtt{\sim} F_{(b-1), ab (n-1)} \]
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgfa48613" class="outline-2">
+<h2 id="orgfa48613">Single Replicates</h2>
+<div class="outline-text-2" id="text-orgfa48613">
+<p>
+Notice that if you have a <i>single</i> observation for each level
+combination then, it is not possible anymore to make statistical
+inference with a model including an interaction term. The reason for
+that is being unable to disentangle the interaction term component
+from the stochastic error component ε<sub>ijk</sub>.
+</p>
+
+<p>
+While, it is theoretically possible to fit a <i>main effect model</i> and
+estimate this accordingly, when the underlying data generating
+mechanism actually contains an interaction, we are fitting a <i>wrong</i>
+model. The consequence is that the <i>corresponding tests will be too conservative as attributing a higher standard error, and therefore p-values will be too large.</i> 
+As the Type I error will therefore be under control you can choose
+such an approach at the expense of a low power and an increased Type
+II error.
+</p>
+
+<p>
+Quite often however, it is possible to apply transformations to the
+independent variables. This will transform the multiplicative nature
+of the interaction term to an additive scheme on the log-scale, which
+can then be accordingly estimated.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org813cedb" class="outline-2">
+<h2 id="org813cedb">Unbalanced Data</h2>
+<div class="outline-text-2" id="text-org813cedb">
+<p>
+So far, when looking at the two-way ANOVA model we have made the
+restrictive assumption of a <i>balanced</i> data design. Each level
+combination displayed the same amount of observation. This led to the
+beneficial conclusion that when changing the level of a single factor,
+the resulting change in the response variable was affected directly by
+the factor level change. In regression terminology this is called an
+<i>orthogonal design</i>.
+</p>
+
+<p>
+Relaxing the assumption of a <i>balanced</i> dataset the analysis of
+variance becomes more complex. A shift in factor level does not
+influence the response variable just directly but rather also
+indirectly due to the inherit dataset imbalances.
+</p>
+
+<p>
+Think about the following case for instance
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">running</span> <span class="o">&lt;-</span> <span class="nf">read.table</span><span class="p">(</span><span class="s">"http://stat.ethz.ch/~meier/teaching/data/running.dat"</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+<span class="nf">str</span><span class="p">(</span><span class="n">running</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="nf">xtabs </span><span class="p">(</span><span class="o">~</span> <span class="n">gender</span> <span class="o">+</span> <span class="n">drink</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">running</span><span class="p">)</span>
+</pre></div>
+
+
+<p>
+The data reports a sports experiment using a factorial design with
+factor gender and factor energy drink (having two levels). Response
+was running time in seconds for a specific track. 
+</p>
+
+<p>
+As it is possible to see above the data is <i>unbalanced</i> containing 50
+female and 20 male participants. 
+</p>
+
+<p>
+It follows that when changing the level of the drink factor for
+analyzing the effect of the drink component you automatically change
+the underlying structure of factor <i>gender</i> due to the unbalanced
+dataset.
+</p>
+
+<p>
+The result is a intricate relation among the different factors and the
+end result that a decomposition of the sum of squared errors in the
+single components as in the previous section is not possible.
+</p>
+
+<p>
+In order to approach an unbalanced data scheme an alternative model
+comparison design is needed. In this sense the concept of <i>reduction
+of residual sum of squares</i> is introduced.
+</p>
+
+<p>
+The <i>reduction of residuals sum of squares</i> states how much the
+introduction of the factor reduces the sum of squares in comparison to
+a smaller restricted model.
+</p>
+
+<p>
+In order to see that consider again a one-way ANOVA model with
+</p>
+
+<p>
+\[ SS_T = SS_Trt + SS_E \]
+</p>
+
+<p>
+where 
+</p>
+
+\begin{align*} 
+  SS_T   &amp;=  \sum^{m}_{i=1} \sum^{n_i}_{j=1} (y_{ij} - \frac{1}{N}\sum^{m}_{i=1} \sum^{n_i}_{j=1} y_{ij})^2 \\
+
+  SS_Trt &amp;= \sum^{m}_{i=1} \sum^{n_i}_{j=1} (\frac{1}{n_i} \sum^{n_i}_{j=1} y_{ij} -  \frac{1}{N}\sum^{m}_{i=1} \sum^{n_i}_{j=1} y_{ij} )  \\
+
+  SS_E   &amp;= \sum^{m}_{i=1} \sum^{n_i}_{j=1} (y_{ij} - \frac{1}{n_i} \sum{n_i}_{j=1} y_{ij}) \\
+\end{align*}
+
+<p>
+There the SS<sub>Trt</sub> represented the reduction of the sum of squares
+(i.e. the error amount captured by the treatment specific mean
+effects) in comparison to the overall mean model. A similar
+interpretation is possible for the <i>reduction of residual sum of
+squares</i> for the unbalanced case.
+</p>
+
+
+<p>
+It follows then that in an unbalanced test setting with multiple
+factors you can answer questions as: "Do we need factor <code>B</code> in the
+model if we already have factor <code>B</code>?"
+</p>
+
+<p>
+By sequentially building up a model and looking at the corresponding
+<i>reduction of residuals sum of squares</i>.
+</p>
+
+<br><blockquote>
+<p>
+Notation:
+</p>
+
+<p>
+We denote the residual sum of squares for factor B given factor A and
+an overall constant μ as:
+</p>
+
+<p>
+<code>SS (B | 1, A)</code>. 
+</p>
+
+<p>
+This consists therefore in the reduction in the sum of squares between 
+</p>
+
+<p>
+<code>y ~ A + B</code> and <code>y ~ A</code>. 
+</p>
+
+<p>
+The sequential nature follows automatically from the definition above
+as we need the restricted model to compute the reduction in the
+squared errors. 
+</p>
+</blockquote>
+
+<br><p>
+There are now different ways to or <i>types</i> of model comparison
+approaches yielding different results. The choice of the model is
+highly debated in the academic literature and is still an open issue.
+</p>
+
+<ul class="org-ul">
+<li>Model Comparison I: Sequentially building up a model by computing</li>
+</ul>
+<div class="org-center">
+<p>
+<code>SS (A|1)</code> <br><code>SS (B|1, A)</code> <br><code>SS (AB|1, A, B)</code>
+</p>
+</div>
+
+<ul class="org-ul">
+<li>Model Comparison III: Control for <i>all</i> other terms</li>
+</ul>
+<div class="org-center">
+<p>
+<code>SS (A|1, B, AB)</code> <br><code>SS (B|1, A, AB)</code> <br><code>SS (AB|1, A, B)</code>
+</p>
+</div>
+
+<ul class="org-ul">
+<li>Model Comparison II: Control the influence of the largest
+<i>hierarchical</i> model <b>not including the term of interest</b>. This
+consists essentially in model III dropping the terms that are
+<i>hierarchically</i> lower than the factor for which the reduction in
+residual sum of squares is being computed.</li>
+</ul>
+<div class="org-center">
+<p>
+<code>SS (A|1, B)</code> <br><code>SS (B|1, A)</code> <br><code>SS (AB|1, A, B)</code>
+</p>
+</div>
+
+<p>
+<i>Some technical details are omitted here at the bottom. Very
+generically stated both in the script and in the slides and it is not worth the effort of mentioning them here</i>.  
+Have a look at them when preparing for the exam.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgd1e7ad7" class="outline-2">
+<h2 id="orgd1e7ad7">Literature</h2>
+<div class="outline-text-2" id="text-orgd1e7ad7">
+<p>
+<a href="https://stat.ethz.ch/lectures/as19/anova.php#course_materials">Applied Anaysis of Variance - ETH Lecture Notes - Autumn 2019</a>
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../monitor-driver-thinkpad-dock-usb-30/" rel="prev" title="Monitor Driver ThinkPad Dock-USB 3.0">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../Gibbs-Sampler/" rel="next" title="Gibbs Sampler">Next post</a>
+            </li>
+        </ul></nav></aside><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
