@@ -105,9 +105,9 @@ The first important difference you have to understand is the one among
 properly you will be able to well structure projects.
 </p>
 
-<div id="outline-container-org163ca6d" class="outline-2">
-<h2 id="org163ca6d">Script vs. Module vs. Package</h2>
-<div class="outline-text-2" id="text-org163ca6d">
+<div id="outline-container-org2589ebc" class="outline-2">
+<h2 id="org2589ebc">Script vs. Module vs. Package</h2>
+<div class="outline-text-2" id="text-org2589ebc">
 <p>
 So notice that there is an inherit difference among the three. The
 first one; the <code>script</code> is the ultimate file you pass to your
@@ -162,7 +162,7 @@ In order to understand this, note again the words of the official
 documentation:
 </p>
 
-<pre class="example" id="org2409deb">
+<pre class="example" id="org2efdaf2">
 Each module has its own *private symbol table*, which is used as the
 global symbol table by all functions defined in the module. Thus,
 the *author* of a module can use global variables in the module
@@ -200,7 +200,7 @@ organize modules.
 In official docu terms:
 </p>
 
-<pre class="example" id="org794182f">
+<pre class="example" id="orge297e3f">
 Just like the use of modules saves the authors of different modules
 from having to worry about each other’s global variable names, the use
 of dotted module names saves the authors of multi-module packages like
@@ -241,9 +241,9 @@ will work well.
 </div>
 </div>
 
-<div id="outline-container-org15ac5bc" class="outline-2">
-<h2 id="org15ac5bc">On that many .pyc modules</h2>
-<div class="outline-text-2" id="text-org15ac5bc">
+<div id="outline-container-org50bd349" class="outline-2">
+<h2 id="org50bd349">On that many .pyc modules</h2>
+<div class="outline-text-2" id="text-org50bd349">
 <p>
 To speed up loading modules, Python caches the compiled version of
 each module in the <span class="underline"><span class="underline">pycache</span></span> directory under the name
@@ -268,9 +268,9 @@ be shared among systems with different architectures.
 </div>
 </div>
 
-<div id="outline-container-org86acc33" class="outline-2">
-<h2 id="org86acc33">On relative paths</h2>
-<div class="outline-text-2" id="text-org86acc33">
+<div id="outline-container-orgaf09b40" class="outline-2">
+<h2 id="orgaf09b40">On relative paths</h2>
+<div class="outline-text-2" id="text-orgaf09b40">
 <p>
 Here you should specify the path relative to the package you are
 currently working (i.e. relative to the package where your module
@@ -357,9 +357,9 @@ would be in relation to the module you are running your tests for.
 </div>
 </div>
 
-<div id="outline-container-org5f56f19" class="outline-2">
-<h2 id="org5f56f19">Adding the root directory from which the imports are specified</h2>
-<div class="outline-text-2" id="text-org5f56f19">
+<div id="outline-container-orgc745cfe" class="outline-2">
+<h2 id="orgc745cfe">Adding the root directory from which the imports are specified</h2>
+<div class="outline-text-2" id="text-orgc745cfe">
 <p>
 So the one strategy you can use to circumvent this would be to set
 the root where your normal <code>__main__.py</code> <i>script</i> is. Then you do
@@ -386,9 +386,9 @@ You can do that in the following way:
 </div>
 </div>
 
-<div id="outline-container-orgf52992f" class="outline-2">
-<h2 id="orgf52992f">On Naming Conventions According to PEP8</h2>
-<div class="outline-text-2" id="text-orgf52992f">
+<div id="outline-container-org94b8f01" class="outline-2">
+<h2 id="org94b8f01">On Naming Conventions According to PEP8</h2>
+<div class="outline-text-2" id="text-org94b8f01">
 <p>
 <code>Modules</code> should have short, all-lowercase names. Underscores can
 be used in the module name if it improves readability. Python
@@ -411,6 +411,57 @@ they execute the <code>__main__.py</code>.
 It is up to you if you want to follow that structure or not. You
 can make some research on the best practice in the following
 depending on the time.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org77de25c" class="outline-2">
+<h2 id="org77de25c">Putting module level information</h2>
+<div class="outline-text-2" id="text-org77de25c">
+<p>
+Module level “dunders” (i.e. names with two leading and two
+trailing underscores) such as <span class="underline"><span class="underline">all</span></span>, <span class="underline"><span class="underline">author</span></span>, <span class="underline"><span class="underline">version</span></span>,
+etc. should be placed after the module docstring but before any
+import statements except from <span class="underline"><span class="underline">future</span></span> imports.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="sd">"""This is the example module.</span>
+
+<span class="sd">   This module does stuff.</span>
+<span class="sd">   """</span>
+
+   <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">barry_as_FLUFL</span>  
+
+   <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'a'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="s1">'c'</span><span class="p">]</span>
+   <span class="n">__version__</span> <span class="o">=</span> <span class="s1">'0.1'</span>
+   <span class="n">__author__</span> <span class="o">=</span> <span class="s1">'Cardinal Biggles'</span>
+   <span class="n">__email__</span> <span class="o">=</span> <span class="s2">"rob@spot.colorado.edu"</span>
+   <span class="n">__status__</span> <span class="o">=</span> <span class="s2">"Production"</span>
+   <span class="n">__license__</span> <span class="o">=</span> <span class="s2">"GPL"</span>
+
+   <span class="kn">import</span> <span class="nn">os</span>
+   <span class="kn">import</span> <span class="nn">sys</span>
+</pre></div>
+</div>
+
+<div id="outline-container-org01aa980" class="outline-3">
+<h3 id="org01aa980">
+<span class="todo TODO">TODO</span> What are <span class="underline"><span class="underline">future</span></span> imports ?</h3>
+</div>
+</div>
+
+<div id="outline-container-org7da7588" class="outline-2">
+<h2 id="org7da7588">On the setup.py</h2>
+<div class="outline-text-2" id="text-org7da7588">
+<p>
+So you still specify such file but you do not run it anymore in
+order to build and distribute your packages. See <a href="https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html">the following</a>.
+</p>
+
+<p>
+If you are interested in packaging and distributing python pacakges
+you should rather read <a href="https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/">the following</a>.
 </p>
 </div>
 </div>
