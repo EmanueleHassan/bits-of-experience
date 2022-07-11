@@ -10,6 +10,49 @@
 
 #+END_COMMENT
 
+
+#+begin_export html
+<style>
+
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+ #+end_export
+
+
 So basically the idea of object relational mapping is the one of
 mapping relational tables to objects.
 
@@ -30,7 +73,7 @@ especially with the document store and the json communication format
 for API.. the underlying driver must is the same.... avoid all of that
 annoying conversions from one paradigm to the other.
 
-So you see it always think in terms of concepts... you will anticipate
+So you see; always think in terms of drivers... you will anticipate
 the future once you focus on the underlying driver and force instead
 of on the concept itself.
 
@@ -80,8 +123,113 @@ the object-oriented model, effectively flattening it.
 
 **** TODO the book claims for a solution to the above problem - find it and integrate it here then.
    
+
 *** The problem of Subtypes
 
-*** 
+    Essentially this is the problem of inheritance and polymorphism
+    and the fact that there is no way to really express this into a
+    relational database.
 
-*** 
+    This makes everything quite tricky.
+
+    Essentially it is the following:
+
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-07-05 180342.png" class="center">
+    #+end_export
+
+    
+*** The problem of Identity
+
+    That is also quite an interesting one.
+
+    The idea is of a radical difference among the identity principles
+    in Java and the application side and on the relational DBs.
+
+    The concept is that in Java you have two different concepts of
+    identity:
+
+    - == -> checking by reference 
+
+    - .equals () -> checking by value
+
+    While on the DB side you have the idea of checking by primary
+    key for checking the uniqueness of a record.
+
+    In this sense, understand as well the following concept that is
+    related to the concept of identity:
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-07-06 090604.png" class="center">
+    #+end_export
+
+    Note that this is very likely related to the idea of not setting
+    any =setters= for the primary key columns in Hibernate. This is
+    the same underlying idea.
+
+    This is also why you also have an ID for the different tables and
+    use ultimately that one. It is the way to implement that concept
+    of /surrogate key/ and this is why Sergio was so focused on it in
+    his introduction. I did not really get it properly to that stage. 
+    
+
+*** The problem of association
+
+    Object-oriented languages represent associations using object
+    references; but in the relational world, a /foreign key/ –constrained
+    column represents an association, with copies of key values.
+
+    The constraint is a rule that guarantees integrity of the
+    association.  There are /substantial differences/ between the two
+    mechanisms.
+
+    Object references are /directional/. Navigation in a particular
+    direction has no meaning for a relational data model because you
+    can create arbitrary data associations with join and projection
+    operators.
+
+    The important thing is *the following* then:
+        
+    #+begin_quote
+The challenge is to map a completely open data model, which is
+independent of the application that works with the data, to an
+application-dependent navigational model.
+    #+end_quote
+
+    
+*** The problem of data navigation
+
+    So basically when working with ORM it is important to keep the
+    thing under control by not overloading the system with very
+    expensive queries fetching all of the possible data relations
+    across the object network in the mapped DB world.
+
+    The idea is the one of leveraging /lazy loading/ as a solution as
+    discussed a couple of times:
+
+    #+begin_quote
+    Any object persistence solution worth its salt provides
+    functionality for fetching the data of associated instances only
+    when the association is first accessed in Java code.  This is
+    known as lazy loading: retrieving data on demand only.
+    #+end_quote
+
+    Note that this is not a trivial problem. Cause on the other side
+    you have the following problem:
+
+    #+begin_quote
+This piecemeal style of data access is fundamentally inefficient [the
+one of lazy loading] in the context of an SQL database, because it
+requires executing one statement for each node or collection of the
+object network that is accessed. This is the dreaded n+1 selects
+problem - i.e. you actually perform too many queries killing the DB.
+    #+end_quote
+
+    So essentially you have the difficult problem:
+
+    - avoid the *cartesian product* vs.  avoid *n+1 select* problem.
+    
+    Not trivial to solve and decide at development time. 
+
+
