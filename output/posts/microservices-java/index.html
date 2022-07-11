@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Microservices &amp; Java | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/microservices-java/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../java-debugging/" title="Java Debugging" type="text/html">
+<link rel="next" href="../java-8-functional-programming/" title="Java 8 - Functional Programming" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Microservices &amp; Java">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/microservices-java/">
+<meta property="og:description" content="img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-12-20T20:09:40+01:00">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="quarkus">
+<meta property="article:tag" content="software-engineering">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Microservices &amp; Java</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2021-12-20T20:09:40+01:00" itemprop="datePublished" title="2021-12-20 20:09">2021-12-20 20:09</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/java/" rel="tag">java</a></li>
+            <li><a class="tag p-category" href="../../categories/kubernetes/" rel="tag">kubernetes</a></li>
+            <li><a class="tag p-category" href="../../categories/quarkus/" rel="tag">quarkus</a></li>
+            <li><a class="tag p-category" href="../../categories/software-engineering/" rel="tag">software-engineering</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+<p>
+Notes based on <a href="https://developers.redhat.com/media-download-confirmation?tcDownloadFileName=Kubernetes-native-microservices-ebook-v3.pdf&amp;tcRedirect=5000&amp;tcSrcLink=https%3A%2F%2Fdevelopers.redhat.com%2Fcontent-gateway%2Fdevelopers%2FKubernetes-native-microservices-ebook-v3.pdf&amp;p=Media%3A+Kubernetes+Native+Microservices+Ebook&amp;pv=v3&amp;tcDownloadURL=https%3A%2F%2Faccess.cdn.redhat.com%2Fdevelopers%2FKubernetes-native-microservices-ebook-v3.pdf%3F_auth_%3D1639834492_4a7529fa776a83612c3fae41e4b878b8">kubernetes native development with quarkus and
+microprofile</a>. This is one of the books available on the red-hat
+developer website. From my personal experience these are good and
+red-hat is in fact a strong company - great products are coming out of
+it and they seem to deliver quality products throughout time.
+</p>
+
+<p>
+They know that space and it is a very interesting to my mind so I am
+taking a bit to make some notes and organize thoughts around it.
+</p>
+
+<p>
+Note as well <a href="https://github.com/wso2/reference-architecture/blob/master/api-driven-microservice-architecture.md">this resource</a> and <a href="https://microservices.io/index.html">as well this</a> (read there every now and
+then).
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org79bf904" class="outline-2">
+<h2 id="org79bf904">Definition</h2>
+<div class="outline-text-2" id="text-org79bf904">
+<blockquote>
+<p>
+a microservice consists of a single deployment executing within a
+single process, isolated from other deployments and processes, that
+supports the fulfillment of a specific piece of business
+functionality.
+</p>
+</blockquote>
+
+<p>
+First, a microservice implements a specific piece of business
+functionality. This is known as a a bounded context , which is a
+logical separation of multiple business problem domains within an
+enterprise. By <i>logically breaking down a business domain into
+multiple bounded contexts</i>, each bounded context <i>more accurately
+represents its specific view</i> of the business domain and becomes
+easier to model.
+</p>
+
+<p>
+Multiple bounded contexts within in a single monolith can result in
+"spaghetti code" as a result of <i>unnecessary inter-dependencies and
+unplanned intermixing of contexts</i>. In a microservices architecture,
+each of these capabilities is modeled individually as a bounded
+context and implemented as a microservice that addresses each
+specific bounded context.
+</p>
+
+<p>
+Note that the industry believes now in the following concept <i>a
+single application</i> for microservices.
+</p>
+
+<p>
+This began nearly a decade ago by deploying a single microservice
+per application server, and shortly thereafter evolved into
+specialized microservice runtimes like Dropwizard, <i>Spring Boot</i>,
+and more recently <i>Quarkus</i> to improve the developer and
+administrator experience.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org04c5217" class="outline-2">
+<h2 id="org04c5217">Learn in fast iterative steps</h2>
+<div class="outline-text-2" id="text-org04c5217">
+<p>
+When it’s the first time a team is developing microservice
+architectures, it’s even more critical to not create a <b>big picture</b>
+up front.
+</p>
+
+<p>
+Taking the time to create that big picture without previous
+experience of microservices architecture design will expend time
+when it’s likely the final architecture will actually be very
+different.
+</p>
+
+<p>
+During the process of gaining experience with microservices, the
+architecture will shift over time towards a more appropriate
+one.<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup></p>
+</div>
+</div>
+
+<div id="outline-container-org6622825" class="outline-2">
+<h2 id="org6622825">On the transition period that is occuring</h2>
+<div class="outline-text-2" id="text-org6622825">
+<p>
+Java EE has been the standard-bearer for enterprise Java
+specifications for roughly 20 years.
+</p>
+
+<p>
+However, Java EE has been traditionally focused on 3-tier monolithic
+architecture with a steady, measured evolution and a strong focus on
+backward compatibility. Java EE stopped evolving between 2014 and
+2017 just as the industry began to heavily adopt microservices
+</p>
+
+<p>
+During that pause, the Java EE community <b>began to experiment and
+deliver early microservices APIs</b>. There was an increasing risk of
+API fragmentation across Java runtimes that had been known for
+application portability.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgbbd0e17" class="outline-2">
+<h2 id="orgbbd0e17">Microprofile</h2>
+<div class="outline-text-2" id="text-orgbbd0e17">
+<p>
+MicroProfile extends that foundation through the creation and
+evolution of Java API specifications for well-understood
+microservices patterns and cloud-related standards.
+</p>
+
+<p>
+Today, twelve sepcificications have been developed by the
+MicroProfile community:
+</p>
+
+<img src="../../images/Screenshot%202021-12-21%20142211.png" class="center"><p>
+So note for instance the open API specification. This is must be
+similar to the RESTful swagger package you used to work with in
+python. With it will be possible for you to easily specify the API
+and document your RESTful endpoints. Note that you actually have
+packages as that one <a href="https://swagger.io/tools/open-source/open-source-integrations/">for java as well</a>.
+</p>
+
+<p>
+Back to Microprofile, the idea is essentially this, create a narrow
+set of Java APIs for working in a more agile, microservices way.
+</p>
+
+<p>
+As per Dec 2016 it was incorporated into the Eclipse Foundation.
+This practically means that now the project is under the mantra:
+open source, vendor neutrality, and community engagement and
+collaboration.
+</p>
+
+<p>
+On the top of it the Microprofile Working Group charter extends
+those with additional standards. Pretty general and non-interesting
+stuff but for this:
+</p>
+
+<ul class="org-ul">
+<li>
+<b>no backward compatibility guarantee</b> I mean: awkshj?!?!?!?!??</li>
+</ul>
+<p>
+That is interesting and if you will ever work with it you will have
+well to bear it in mind. They justify it as follows:
+</p>
+
+<blockquote>
+<p>
+MicroProfile considers itself an agile project and is willing to
+break backward compatibility. This willingness results from a
+rapid-moving specification project, and any breaking changes are well
+thought out with strong justification and as narrow a scope as
+possible.
+</p>
+</blockquote>
+
+<p>
+bah… not too convincing… will cause troubles..
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org9c81dfe" class="outline-2">
+<h2 id="org9c81dfe">Quarkus</h2>
+<div class="outline-text-2" id="text-org9c81dfe">
+<p>
+This is a Java microservices runtime.
+</p>
+
+<p>
+Note that although you might think that there is no need for a new
+microservice runtime, consider the following:
+</p>
+
+<p>
+Another pain point is that <i>developer productivity</i> often suffers with
+Java microservice runtimes.  Every time a developer makes a change
+they have to save the file, <i>rebuild</i> the application, <i>restart</i> the
+application, and <i>refresh</i> the browser. This can take 10s of seconds,
+significantly impacting the productivity of a developer.
+</p>
+
+<p>
+Developers and DevOps teams began to feel the pain of developing and
+deploying Java microservices, and have been increasingly considering
+alternatives like Node.js and Golang due to their reduced RAM
+requirements and fast startup time. These alternatives can also
+achieve a 5x to 10x deployment density on the same hardware,
+significantly reducing cost.
+</p>
+
+<p>
+So you understand that for these reasons it is convenient to have a
+very well functioning microservices runtime.
+</p>
+
+<p>
+Note as well that there is an interesting point for the case of
+<b>dynamic language runtimes</b> - a thing that Quarkus is working in order
+to deliver. I come from dynamic language runtimes languages and I
+must say this is in fact a feature I like that allowed me to develop
+at twice the speed and introducing less bugs as I had the
+opportunity to double check on the fly and make some tests about the
+current status of the application instead of having to compile,
+start the application and enter in debug modus. 
+</p>
+
+<p>
+Developers are rightfully enamored with the productivity of dynamic
+language runtimes like Node.js, and Quarkus is driving to deliver
+that experience even though Java is a "static" (pre-compiled)
+language
+</p>
+
+<p>
+Note now the functioning with Quarkus:
+</p>
+
+<blockquote>
+<p>
+The top developer joy feature is live coding, where code changes are
+detected, recompiled, and reloaded without having to restart the
+JVM. Live coding is enabled when Quarkus is started in developer mode
+using mvn quarkus:dev. Specifically, Quarkus checks for code changes
+when it receives external events like HTTP requests or Kafka
+messages. The developer simply makes code changes, saves the file, and
+refreshes the browser for near-instant updates. Live coding even works
+with pom.xml changes. The Quarkus maven plugin will detect pom.xml
+changes and restart the JVM. It is not uncommon for Quarkus developers
+to start Quarkus in developer mode, and then minimize the terminal
+window, never having to restart the JVM during a coding session.
+</p>
+</blockquote>
+
+<p>
+That is neat and not just an ancillary benefit.
+</p>
+
+<p>
+Check at the following statistics:
+</p>
+
+<img src="../../images/Screenshot%202021-12-21%20164848.png" class="center">
+</div>
+</div>
+
+
+<div id="outline-container-orgdf54f66" class="outline-2">
+<h2 id="orgdf54f66">On Working in tandem Quarkus + MicroProfile</h2>
+<div class="outline-text-2" id="text-orgdf54f66">
+<p>
+Basically if you want to go down the microservices road in a serious
+way you will have to start to think in these terms:
+</p>
+
+<ul class="org-ul">
+<li>Quarkus as first class citizen for microservices running on
+Kubernetes</li>
+
+<li>MicroProfile - use this specifications to facilitate microservices
+development.</li>
+</ul>
+<p>
+So you understand that ideally you would use the two in tandem.
+</p>
+
+<p>
+Now on the concrete side of the coin, you know that to have a proper
+kubernetes development experience in your team is almost
+impossible. It is too small and to this stage I do not really see it
+as a viable road. I will reconsider later in time when I will see
+how much the reality barrier will drag me down and how much it is
+really possible to develop in the given time with the given
+resources.
+</p>
+
+<p>
+So maybe start to dig a little bit more down the road of
+MicroProfile at first and leave Quarkus then for a later moment when
+you will have the first things more under control.
+</p>
+
+<p>
+I am especially interested to understand how the MicroProfile component
+interfaces with the Spring framework. As far as I understood this is
+the go-to framework in the industry to develop microservices in
+Java. However, this changes a bit the perspectives.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org9f0c27c" class="outline-2">
+<h2 id="org9f0c27c">
+<span class="todo TODO">TODO</span> I think there is still a bit of confusion in these dimensions - clear that out</h2>
+<div class="outline-text-2" id="text-org9f0c27c">
+</div>
+<div id="outline-container-org5b9842a" class="outline-3">
+<h3 id="org5b9842a">Spring Boot vs. Quarkus</h3>
+<div class="outline-text-3" id="text-org5b9842a">
+<ul class="org-ul">
+<li>
+<p>
+spring boot vs. quarkus - so the basic difference at high level is
+that spring boot is more mature as a project, it is better
+integrated with the entire Java Ecosystem.
+</p>
+
+<p>
+On the other hand Quarkus aims to develop in that dimension while
+being more suited as architecture for the container world. The
+start up time is much faster and you can construct with it more
+robust reactive architectures.
+</p>
+
+<p>
+You can read more for the difference among the two - at high
+level - at the <a href="https://www.baeldung.com/spring-boot-vs-quarkus">following url</a>.
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org0ef10e2" class="outline-3">
+<h3 id="org0ef10e2">Spring Boot/Quarkus vs Spring/Quarkus Native</h3>
+<div class="outline-text-3" id="text-org0ef10e2">
+<p>
+This is also a thing that you will better have to understand.
+</p>
+
+<p>
+Take time at some point to go over it.
+</p>
+
+<p>
+But basically you have Spring and Quarkus Native that are in fact
+the real way of doing containerized workloads and reactive
+architectures in the cloud.
+</p>
+
+<p>
+You can start reading about it <a href="https://dev.to/antmordel/spring-native-spring-boot-but-faster-4o5h">here</a>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org5f5290d" class="outline-3">
+<h3 id="org5f5290d">Tomcat</h3>
+<div class="outline-text-3" id="text-org5f5290d">
+<p>
+As ngnix was still underlying the entire concept of docker. So will
+tomcat, Jboss or whatever still underpin the concept here.
+</p>
+
+<p>
+Have to understand better how that concept works. Also with respect
+to quarkus and spring boot.
+</p>
+
+<p>
+I know that tomcat underpins spring boot. Does it also underpins
+quarkus? How is the fast start-up etc. ensured?
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org149cd9b" class="outline-3">
+<h3 id="org149cd9b">Note that spring as a framework is still used by Quarkus</h3>
+<div class="outline-text-3" id="text-org149cd9b">
+<p>
+I.e. you have under this project all of the necessary dependencies
+with Spring etc.
+</p>
+
+<p>
+Recall that Spring is a broader framework containing mulitple
+functionalities in the Java world. Such as JPA etc. 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbae3286" class="outline-2">
+<h2 id="orgbae3286">
+<span class="todo TODO">TODO</span> read the chapter - reactive in an imperative world</h2>
+<div class="outline-text-2" id="text-orgbae3286">
+<p>
+must be quite interesting.
+</p>
+
+<p>
+and I am also sure these are the architectures where you should go.
+</p>
+
+<p>
+like this you will start to do interesting thing on the scale out
+side of the world and you can bring quite some operational
+excellence in this sense. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org978b2e6" class="outline-2">
+<h2 id="org978b2e6">On a side Note - on cloud-native java vs. Golang</h2>
+<div class="outline-text-2" id="text-org978b2e6">
+<p>
+One of the things that I was continuously reading was the emergence
+of Golang. 
+</p>
+
+<p>
+Now that I understand better the Java ecosystem and that I am
+experiencing its transition and I understand better key benefits and
+drawbacks I understand why such language is emerging. 
+</p>
+
+<p>
+It is not simply a thing of the language itself. People are saying
+that is very easy to pick up etc. and is a very powerful language
+etc.
+</p>
+
+<p>
+Now that I am starting to understand better the IT landscape I am
+starting to understand that this is the sauce around the meat, not
+the meat itself. 
+</p>
+
+<p>
+Ecosystems develop. That is the important thing. And the ecosystem
+game is the one that signals if a language will win over the other
+or not. 
+</p>
+
+<p>
+And that is what is happening right now. The java ecosystem is
+moving as you can read above. And I guess it will not go away
+overnight as I see it in my working experience. It is much easier to
+modernize staying in the same language as completely switching. 
+</p>
+
+<p>
+That will be the most painful thing bounding an extreme amount of
+resource. No way to go.
+</p>
+
+<p>
+That said here <a href="https://medium.com/swlh/cloud-native-java-vs-golang-2a72c0531b05#:~:text=Both%2520the%2520golang%2520and%2520cloud,and%2520very%2520rarely%2520within%25207s.">an article</a> that goes a bit in that direction. You can
+read about it more when you have time. To make a precise idea about
+it will take lots of time though…
+</p>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef">
+<sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup><div class="footpara"><p class="footpara">
+I guess this will always change no matter if it is the first
+time you do a long transition from a monolith to microservices or
+not. 
+</p></div>
+</div>
+
+
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../java-debugging/" rel="prev" title="Java Debugging">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../java-8-functional-programming/" rel="next" title="Java 8 - Functional Programming">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

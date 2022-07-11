@@ -1,0 +1,450 @@
+<p>
+So apparently this is a thing that I will have to master sooner or
+later.
+</p>
+
+<p>
+I am not a fun of it as I know it gets tricky to write solid programs
+with mulit-threading when complexity increases.
+</p>
+
+<p>
+For a solution that I am trying to construct I will need that bit.
+</p>
+
+<p>
+This for two reasons:
+</p>
+
+<ol class="org-ol">
+<li>the existing solution uses it; meaning that it is beneficial for
+you to read and understand it in order for understand the current
+design and borrow from it.</li>
+
+<li><p>
+your new solution would either have flavours of it or use queues. I
+am rather inclined for the second but I promised to provide a
+solution for both and this is what I am currently working for.
+</p>
+
+<p>
+<i>Update:</i> after one day I could set up a working solution with
+multithreading. Was not too difficult. But it is just at conceptual
+level. The gist of it is more less along <a href="https://alyssaq.github.io/2014/how-do-I-return-a-http-response-to-caller-and-continue-processing/">these</a> lines.
+</p></li>
+</ol>
+
+<p>
+I am not an extremely low level programmer due to my background. At
+least not so far. So this is the reason I do not conceptually like the
+thing and would prefer to go with a much more simple queueing
+solution.
+</p>
+
+<p>
+I learned in life that you should not stop in front of your conceptual
+barriers. You should be aware of your gaps and taking extra care when
+making a step in that direction so that you do not hurt yourself, but
+by baby steps everything is possible. This is how we learn since
+inception.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-orga128813" class="outline-2">
+<h2 id="orga128813"><span class="todo TODO">TODO</span> Java</h2>
+<div class="outline-text-2" id="text-orga128813">
+<p>
+Will come at a later stage. Good is that the theoretical
+fundamental is the same. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7af19cc" class="outline-2">
+<h2 id="org7af19cc">Python</h2>
+<div class="outline-text-2" id="text-org7af19cc">
+<p>
+So as you know underneath Python there is a lot of C and the well
+known CPyhton which actually manages the implementation of Python
+and the C stuff.
+</p>
+
+<p>
+Yuo can understand this by the following wiki entry:
+</p>
+
+<blockquote>
+<p>
+CPython can be defined as both an interpreter and a compiler as it
+compiles Python code into bytecode before interpreting it. It has a
+foreign function interface with several languages, including C.
+</p>
+</blockquote>
+
+<p>
+Because of the way CPython implementation of Python works,
+threading may not speed up all tasks. This is due to interactions
+with the GIL that essentially limit one Python thread to run at a
+time.
+</p>
+
+<p>
+In more technical terms:
+</p>
+
+<blockquote>
+<p>
+The Python Global Interpreter Lock or GIL, in simple words, is a mutex
+(or a lock) that allows only one thread to hold the control of the
+Python interpreter.
+</p>
+
+<p>
+Since the GIL allows only one thread to execute at a time even in a
+multi-threaded architecture with more than one CPU core, the GIL has
+gained a reputation as an “infamous” feature of Python.
+</p>
+</blockquote>
+
+<p>
+So basically this is why people often say that you cannot really
+multithread in Python. You can read more about <a href="https://realpython.com/python-gil/">it here</a> - this is a
+very nice article.
+</p>
+
+<p>
+So now understand the following two general sources of bottlenecks
+as mentioned in the article above.
+</p>
+
+<blockquote>
+<p>
+<code>CPU-bound</code> programs are those that are pushing the CPU to its
+limit. This includes programs that do mathematical computations like
+matrix multiplications, searching, image processing, etc.
+</p>
+
+<p>
+<code>I/O-bound</code> programs are the ones that spend time waiting for
+Input/Output which can come from a user, file, database, network,
+etc. I/O-bound programs sometimes have to wait for a significant
+amount of time till they get what they need from the source due to the
+fact that the source may need to do its own processing before the
+input/output is ready, for example, a user thinking about what to
+enter into an input prompt or a database query running in its own
+process.
+</p>
+</blockquote>
+
+<p>
+<code>I/O-bound</code> tasks that spend much of their time waiting for
+external events are generally good candidates for threading in
+python. Cause you understand that in such a way you might progress
+with your application through threads as you are breaking that
+bound.
+</p>
+
+<p>
+When you have mulitple threads performing multiple jobs you have
+then the chance to switch between the threads such that you can
+release the I/O bottleneck and potentially continue with the work.
+</p>
+
+<p>
+You can run the following snippet to check what is going on:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1"># multi_threaded.py</span>
+   <span class="kn">import</span> <span class="nn">time</span>
+   <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+
+   <span class="n">COUNT</span> <span class="o">=</span> <span class="mi">50000000</span>
+
+   <span class="k">def</span> <span class="nf">countdown</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">thread</span><span class="p">):</span>
+       <span class="k">while</span> <span class="n">n</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+	   <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
+
+	   <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">24000000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+	       <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;processing thread </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">thread</span><span class="p">))</span>
+
+   <span class="n">t1</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">countdown</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">COUNT</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,))</span>
+   <span class="n">t2</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">countdown</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">COUNT</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,))</span>
+
+   <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+   <span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+   <span class="n">t2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+   <span class="n">t1</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+   <span class="n">t2</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+   <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+   <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Time taken in seconds -&#39;</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+</pre></div>
+
+<p>
+Problems that require heavy CPU computation and spend little time
+waiting for external events have in theory no advantage at all.
+</p>
+</div>
+
+<div id="outline-container-org428bd83" class="outline-3">
+<h3 id="org428bd83">Concepts of Python MultiThreading</h3>
+<div class="outline-text-3" id="text-org428bd83">
+<p>
+I remember that at some point I read an entire book about
+concurrent programming in C++. Many notions are already sitting
+somewhere in my mind.
+</p>
+
+<p>
+It is ok, not even that difficult as a concept and can well do
+it.
+</p>
+
+<p>
+Just understand the following in Python:
+</p>
+
+<ul class="org-ul">
+<li><p>
+Threads can run in <code>deamon mode</code> or not.
+</p>
+
+<div class="highlight"><pre><span></span>      <span class="n">x</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">thread_function</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+      <span class="c1"># vs.</span>
+
+      <span class="n">x</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">thread_function</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,))</span>
+</pre></div>
+
+<p>
+If a thread is run in deamon mode it runs in the background,
+meaning that your main program does not carry too much about
+it. Once the main thread is over, the program will end and the
+deamon threads will be killed no matter if they finished their
+computations or not.
+</p>
+
+<p>
+This is likely not the way you want to work.
+</p>
+
+<p>
+So one way of fixing this is to explicitely use the
+<code>&lt;thread&gt;.join ()</code> method that will require the main thread to
+wait for the <code>&lt;thread&gt;</code> to finish its operations before going
+on.
+</p>
+
+<p>
+The other one is the idea of starting a thread without hte
+deamon mode. There before finishing the main thread does
+actually call <code>&lt;thread&gt;.join</code> on all of the existing
+<code>&lt;thread&gt;</code>. 
+</p></li>
+
+<li><p>
+You can start multiple threads as follows:
+</p>
+
+<div class="highlight"><pre><span></span>      <span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+	  <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">thread_function</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+
+<blockquote>
+<p>
+The end of the with block causes the ThreadPoolExecutor to do a
+<b>.join() on each of the threads in the pool</b>. It is strongly recommended
+that you use ThreadPoolExecutor as a context manager when you can so
+that you never forget to .join() the threads.
+</p>
+</blockquote></li>
+
+<li><p>
+Locking
+</p>
+
+<p>
+So this is to avoid race conditions. You can read about the
+example <a href="https://realpython.com/intro-to-python-threading/#producer-consumer-threading">here</a>. I mean you have a good understanding of it from
+the time you were reading that book.
+</p>
+
+<p>
+The idea is then that you can process the thing if you have
+acquired the lock - think again of the seashell of the <i><a href="https://en.wikipedia.org/wiki/Lord_of_the_Flies">Lord of
+the Flies</a></i>.
+</p>
+
+<p>
+Recall as well the potential danger of running into deadlocks
+when you start working in such a way.
+</p>
+
+<p>
+The typical example, I have a lock on an object and you other
+thread on another. We both need to acquire a lock on the thing
+you have to finish our operations. We both will be stuck
+forever.
+</p></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgbfd1511" class="outline-3">
+<h3 id="orgbfd1511"><span class="todo TODO">TODO</span> Cap your thread amount</h3>
+</div>
+
+<div id="outline-container-org458bfbc" class="outline-3">
+<h3 id="org458bfbc">On small experiments for using threading in rest-calls</h3>
+<div class="outline-text-3" id="text-org458bfbc">
+<p>
+So basically I did a lot of small experiments in order to properly
+understand the solution along the lines mentioned at the
+beginning.
+</p>
+
+<p>
+That is a very good solution to solve the timeouts in http
+communication.
+</p>
+</div>
+
+<div id="outline-container-org9b106b5" class="outline-4">
+<h4 id="org9b106b5">On the number of threads</h4>
+<div class="outline-text-4" id="text-org9b106b5">
+<p>
+In order to understand this component I did a little bit of
+detective work along these lines.
+</p>
+
+<p>
+I used the <code>threading.enumerate()</code> method to get an idea about
+the different threads running. I inspected the names and which
+where open at what time.
+</p>
+
+<p>
+I basically came to the following conclusion - note that I did
+this job with the Werkzeug server used in development mode - do
+not know how the thing works with WSGI and would need to
+investigate but I guess along the same lines.
+</p>
+
+<p>
+Basically you have always two threads working:
+</p>
+
+<ul class="org-ul">
+<li>Mainthread</li>
+<li>Thread-1</li>
+</ul>
+
+<p>
+Then for each new request if you work along the lines above you
+would get two new threads.
+</p>
+
+<p>
+One of the two threads would be very short-lived. You would close
+it immediately after answering the incoming request.
+</p>
+
+<p>
+The other one performing the slow job will exist until the
+called function through which you opened the thread is
+completed.
+</p>
+
+<p>
+So basically that is good and the design is effective. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd9690e9" class="outline-4">
+<h4 id="orgd9690e9">On the type of job</h4>
+<div class="outline-text-4" id="text-orgd9690e9">
+<p>
+The thing you should note than is that you cannot use this
+multi-threading solution for intensive CPU bounded jobs.
+</p>
+
+<p>
+The solution is then generally okey if you have I/O issues. You
+have lots of threads orchestrating these I/O bounded jobs.
+</p>
+
+<p>
+It is not that ideal in the case of CPU bounded jobs. 
+</p>
+
+<p>
+In order to see this you can check what happens if you trigger
+the following job from an endpoint.
+</p>
+
+<p>
+Note that one version is CPU bounded and the other mimicks an I/O
+bounded case
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="k">def</span> <span class="nf">process_data</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">Id</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+	 <span class="sd">&quot;&quot;&quot;This is the function to be called by the multiple threads.</span>
+
+<span class="sd">	 As discussed it will be either this one or the Queue Solution.</span>
+
+<span class="sd">	 &quot;&quot;&quot;</span>
+
+	 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;starting to sleep for job: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Id</span><span class="p">))</span>
+
+	 <span class="c1"># I/O bound case #</span>
+	 <span class="c1"># time.sleep(30) </span>
+
+	 <span class="c1"># CPU bound case #</span>
+	 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+	 <span class="n">countdown</span><span class="p">(</span><span class="mi">50000000</span><span class="p">)</span>
+	 <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+	 <span class="n">ti</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+
+	 <span class="k">with</span> <span class="n">total_time</span><span class="o">.</span><span class="n">get_lock</span><span class="p">():</span>
+	     <span class="n">total_time</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="n">ti</span>
+	     <span class="n">totT</span> <span class="o">=</span> <span class="n">total_time</span><span class="o">.</span><span class="n">value</span>        
+
+	 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;End time job </span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Id</span><span class="p">,</span> <span class="n">totT</span><span class="p">))</span>
+</pre></div>
+
+<p>
+Note that the total<sub>time</sub> is a <code>multiprocessing.Value()</code>
+object. This basically has the locking mechanism in order to
+avoid the race conditions and set your total time properly. 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7c47559" class="outline-3">
+<h3 id="org7c47559"><span class="todo TODO">TODO</span> Multi-processing</h3>
+<div class="outline-text-3" id="text-org7c47559">
+<p>
+This starts an entire new process with a new interpreter.
+</p>
+
+<p>
+You do not have the GIL problem in this case, and if your infra
+architecture allows it you can possibly address CPU-bound issues
+with it.
+</p>
+
+<hr />
+
+<p>
+You might want to check at this option in case you would have CPU
+bounded long-running jobs that you would need to trigger from your
+endpoints. 
+</p>
+</div>
+</div>
+</div>

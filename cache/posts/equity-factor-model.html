@@ -1,0 +1,373 @@
+<p>
+So this post starts to dig into equity factor models.
+</p>
+
+<p>
+Essentially you will understand how the factor models for your risk
+systems are derived.
+</p>
+
+<p>
+This basically goes in tandem with the fixed income risk factors
+models briefly touched in your other post.
+</p>
+
+<p>
+This is basically a very high level overview, on the intuition of the
+way the big risk system providers generate their risk factors.
+</p>
+
+<p>
+So the essential idea is always the same, get a linear approximations
+for the risk based on some factors of interest.
+</p>
+
+<!-- TEASER_END -->
+
+<p>
+Equity factor models are specified for single countries (of which
+there are 41 in total) plus the EMU - european monetary union - as a
+single country model. On the top of it for the EMU you as well add
+some specific country factors in order to make a differentiation
+across the various countries.
+</p>
+
+<p>
+Note that two classes of equity factors are used: <i>industry</i> and
+<i>style</i> factors.
+</p>
+
+<p>
+So basically the difference among the factors is roughly the
+following.
+</p>
+
+<ul class="org-ul">
+<li><p>
+<i>industry factors:</i>
+</p>
+
+<p>
+these represent the industry of the equity - semiconductors, pharma,
+tobacco etc.
+</p>
+
+<p>
+this is for sure a strong driver for the returns.
+</p></li>
+
+<li><p>
+<i>style factors:</i>
+</p>
+
+<p>
+on the top of it you have the relevant style factors.
+</p>
+
+<p>
+these are the common factors used in the financial space that checks more
+the common accounting and financial properties of the academic
+literature.
+</p>
+
+<p>
+Say for instace:
+</p>
+
+<ul class="org-ul">
+<li>beta</li>
+
+<li>yields</li>
+
+<li>growth</li>
+</ul>
+
+<p>
+etc. etc.
+</p>
+
+<p>
+With the two set of factors you do then the relevant regressions on the equity
+returns, in such a way you can estimate the relevant factors
+mentioned above. Note that the returns are trimmed - in the sense
+that they are capped in the case of too extreme returns.
+</p>
+
+<p>
+There are then some quirks on how to estimate everything but this
+is just computational issue that is solved by iterative methods
+trying to stabilize everything.
+</p>
+
+<p>
+Then apart from it everything is pretty standard and there is
+nothing fancy. Just a cross-sectional regression through which you
+get the factors in time and through which you can compute you
+covariance matrix and simulate everything.
+</p>
+
+<p>
+The only interesting bit is that you have factor loadings on that
+equity model, that are estimated in a first step. Then based on this
+you run your standard regression.
+</p></li>
+</ul>
+
+
+<div id="outline-container-org62719ec" class="outline-2">
+<h2 id="org62719ec">Factor Loadings</h2>
+<div class="outline-text-2" id="text-org62719ec">
+</div>
+<div id="outline-container-org8872a6f" class="outline-3">
+<h3 id="org8872a6f">Industry factors loadings</h3>
+<div class="outline-text-3" id="text-org8872a6f">
+<p>
+So basically here you have already some loadings that already
+capture quite some fundamental information, in the economic sense.
+</p>
+
+<p>
+I.e. the loadings capture information about sales and assets in
+particular industries and their relation to the values of the
+companies.
+</p>
+
+<p>
+In particular they give the average value/sales and value/assets
+in an industry by regressing across all of the companies available.
+</p>
+
+<p>
+So you see that these information is actually ultimately used when
+processing your model.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4293367" class="outline-3">
+<h3 id="org4293367">Style factors loadings</h3>
+<div class="outline-text-3" id="text-org4293367">
+<p>
+As mentioned these are factors that are relevant in the financial
+space coming out of the financial theories.
+</p>
+
+<p>
+I check next how these different things are expressed.
+</p>
+</div>
+
+
+<div id="outline-container-orgf974b45" class="outline-4">
+<h4 id="orgf974b45">Beta Factor Loading</h4>
+<div class="outline-text-4" id="text-orgf974b45">
+<p>
+Nothing new. 101 of finance.
+</p>
+
+<p>
+You basically estimate the coefficients for each security across
+time using a weighted regression.
+</p>
+
+<p>
+Then you have your alpha and beta coefficients.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb95ce54" class="outline-4">
+<h4 id="orgb95ce54">Momentum Factor Loading</h4>
+<div class="outline-text-4" id="text-orgb95ce54">
+<p>
+This is constructed based on two main components:
+</p>
+
+<ol class="org-ol">
+<li><p>
+historical alpha:
+</p>
+
+<p>
+this are the alpha in time for a given security coming out
+from the CAPM.
+</p></li>
+
+<li><p>
+relative strength:
+</p>
+
+<p>
+this is basically a proper momentum measuring the returns in
+the previous tradings days.     
+</p></li>
+</ol>
+
+<p>
+How the two are mixed up is then based on some optimization
+exercise maximizing the explanatory power. This is however based
+on a grid search optimization and the way the grid is initialised
+is based on qualitative elements.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org9252be9" class="outline-4">
+<h4 id="org9252be9">Earnings Yield Factor Loading</h4>
+<div class="outline-text-4" id="text-org9252be9">
+<p>
+This loading is basically the product of thee different
+statistics:
+</p>
+
+<ul class="org-ul">
+<li><b>predicted</b> earnings-to-price ratio</li>
+
+<li><b>cash</b> earnings-to-price ratio</li>
+
+<li><b>trailing</b> earnings-to-price</li>
+</ul>
+
+<p>
+All of them are given different weights when constructing such
+measure. I guess that such parameters are determined in a similar
+way as described in the previous sub-chapter.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgd066296" class="outline-4">
+<h4 id="orgd066296">Growth Factor Loading</h4>
+<div class="outline-text-4" id="text-orgd066296">
+<p>
+Again a mix of different statistics. Have to understand where all
+of these parameters are entered into the system.
+</p>
+
+<ul class="org-ul">
+<li>weighted average of long-term <i>predicted earnings growth</i></li>
+
+<li>five-year trailing <i>earnings growth</i></li>
+
+<li>five-year trailing <i>sales growth</i></li>
+</ul>
+
+<p>
+I wonder how they compute such predictions.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org6cfa6a8" class="outline-4">
+<h4 id="org6cfa6a8">Dividend-to-price Factor Loading</h4>
+<div class="outline-text-4" id="text-org6cfa6a8">
+<p>
+Trailing 12 month dividend yield.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8ff15b5" class="outline-4">
+<h4 id="org8ff15b5">Book-to-price Factor Loading</h4>
+<div class="outline-text-4" id="text-org8ff15b5">
+<p>
+Last reported book value divided by market capitalization in
+period <i>t</i>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9cfdaf4" class="outline-4">
+<h4 id="org9cfdaf4">Leverage Factor Loading</h4>
+<div class="outline-text-4" id="text-org9cfdaf4">
+<p>
+Mix of three different statistics:
+</p>
+
+<ul class="org-ul">
+<li>weighted average of market leverage (MLEV)</li>
+
+<li>debt-to-assets ratio (DTOA)</li>
+
+<li>book leverage (BLEV)</li>
+</ul>
+
+<p>
+So you see here the classical value investment metrics a la
+Graham.
+</p>
+
+<p>
+You can see then in the document if you are interested how all of
+these are exactly constructed. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2677afc" class="outline-4">
+<h4 id="org2677afc">Liquidity Factor Loading</h4>
+<div class="outline-text-4" id="text-org2677afc">
+<p>
+Again through classical value investing statistics.
+</p>
+
+<p>
+Skipping everything for now as I do not want to get into it.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org8472c85" class="outline-4">
+<h4 id="org8472c85">Size Factor Loading</h4>
+<div class="outline-text-4" id="text-org8472c85">
+<p>
+Some reasonings around the market cap of the company.
+</p>
+
+<p>
+So this measures the influence of the size of a company and
+having worked for quite big companies as of now I can well
+imagine why it enters as a factor.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org862f4af" class="outline-4">
+<h4 id="org862f4af">Residual Volatilty Factor Loading</h4>
+<div class="outline-text-4" id="text-org862f4af">
+<p>
+Again average of statistics reporting some volatitlity
+statistics.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgff3a557" class="outline-2">
+<h2 id="orgff3a557">Implied Volatility Factor Models</h2>
+<div class="outline-text-2" id="text-orgff3a557">
+<p>
+So these are used for the exotic instruments, i.e. the different
+options and the mortgage backed securities.
+</p>
+
+<p>
+Here basically is the usual story of using a pricing function,
+invert it and get the volatility based on the observed price.
+</p>
+
+<p>
+In BarraOne the dependence on <code>K_i</code> is suppressed (only
+“at-the-money” implied volatilities are modelled) in which case the
+problem reduces to describing the evolution of the volatility term
+structure <code>σ_i (t, T_i)</code>.
+</p>
+</div>
+</div>
