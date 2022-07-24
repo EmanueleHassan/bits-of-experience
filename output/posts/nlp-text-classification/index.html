@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>NLP text classification | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/nlp-text-classification/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../slovak-learning/" title="Slovak Learning" type="text/html">
+<link rel="next" href="../yarn/" title="YARN" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="NLP text classification">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/nlp-text-classification/">
+<meta property="og:description" content="img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+
+
+
+This post briefly introduce two key concepts for representing NLP
+text data. The first is simply based on some frequency metr">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-05-20T22:22:37+02:00">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">NLP text classification</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2020-05-20T22:22:37+02:00" itemprop="datePublished" title="2020-05-20 22:22">2020-05-20 22:22</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <style>
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+<br><br><p>
+This post briefly introduce two key concepts for representing NLP
+text data. The first is simply based on some frequency metric given a
+text corpus, the second <code>word2vec</code> tries a more elegant and elaborate
+approach by trying to extract the semantical representation of words
+in a low dimensional space.
+</p>
+
+<p>
+Both will be briefly explained. 
+</p>
+
+<!-- TEASER_END -->
+
+<br><div id="outline-container-org3841b7a" class="outline-2">
+<h2 id="org3841b7a">Approach 1: On a Frequency Representation</h2>
+<div class="outline-text-2" id="text-org3841b7a">
+<p>
+The first approach consists in directly leveraging the vocabulary
+associated with the category that you aim to categorize.
+</p>
+
+<p>
+This is then essentially the idea of the algorithm that you have
+created manually for the SRZ project. The idea is simply to use a
+more standard ML model for classification such as logistic
+regression, SVM or Naive Bayes.
+</p>
+
+<p>
+The concept is however always the same. Get all the words related to
+one category and assign the new text to a category based on a metric
+using such bag of words. If a new corpus of words arrives that has no
+relation to the one observed in the training dataset, then
+well… your algorithm will completely fail the classification task.
+</p>
+
+<p>
+More explicitly, The bag of words associated with a specific category
+gives rise to the features matrix. This is a vector representation of
+the words. A straight representation could be for instance a
+one-hot-encoding of the words available for each class. But more
+advanced vector representations involving the term frequency might be
+used.
+</p>
+
+<p>
+Some quick introduction to the idea behind some standard
+representations belonging to this category might be found under the
+<a href="https://machinelearningmastery.com/prepare-text-data-machine-learning-scikit-learn/">following link</a>.
+</p>
+
+<p>
+You can then apply standard classification algorithms to such vector
+representation of your text corpus.
+</p>
+
+
+<br>
+</div>
+</div>
+
+
+<div id="outline-container-orgd778ab2" class="outline-2">
+<h2 id="orgd778ab2">Approach 2: On a Semantic Representation</h2>
+<div class="outline-text-2" id="text-orgd778ab2">
+<p>
+A second technique that is more involving but conceptually cleaner is
+the one of using Word2Vec embeddings. This consists in extracting the
+semantic meaning of a word by looking in which context it
+appears. I.e. it inspects the "friends" of the word to understand the
+word itself. This is a nice <a href="https://en.wikipedia.org/wiki/Anthropomorphism#In_film,_television,_and_video_games">anthropomorphic</a> way to think about the
+approach I recently read on a blog, which I particularly enjoyed.
+</p>
+
+<p>
+You can get the gist of the idea behind word2vec <a href="https://towardsdatascience.com/word-to-vectors-natural-language-processing-b253dd0b0817">here</a>.
+</p>
+
+<p>
+The mathematical idea is essentially to extract a vector
+representation for each word based on a 1-layered neural network
+trained on your corpus of contex-related data.
+</p>
+
+<p>
+More concretely you can think about it in the following simplified
+way: given a N-bag of N-related words around a center word <b>V<sub>C</sub></b>
+represented by a vector, think of a hidden layer of N-nodes (neurons)
+assigning weights to each of the input N-words such that the
+probability of observing the N-bag of words given the central word is
+maximized. Such weights would represent then the vector
+representation of each word.
+</p>
+
+<br><br><img width="70%" height="100%" src="../../images/Bildschirmfoto_2020-05-20_um_21.24.25.png" class="center"><br><br><p>
+The probability is then represented in the most simple case by the
+softmax funtion of the doct-products of the N-bag of words vectors
+and the centroid vector.
+</p>
+
+<br><br><img width="60%" height="60%" src="../../images/Bildschirmfoto_2020-05-20_um_20.11.40.png" class="center"><br><br><p>
+The weights are obtained by standard backpropagation with a loss
+function representing the cross entropy between the truth vector and
+the softmax "probability" vector. 
+</p>
+
+<p>
+The final architecture is well summarized on the below picture.
+</p>
+
+<br><br><img width="80%" height="80%" src="../../images/Bildschirmfoto_2020-05-20_um_22.13.03.png" class="center"><br><br><p>
+For a more in depth analysis of the key mathematical ideas of
+word2vec the following video is advised:
+</p>
+
+<br><br><style>
+.container {
+  position: relative;
+  left: 15%;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+<div class="container"> 
+  <iframe class="responsive-iframe" src="https://www.youtube.com/embed/ERibwqs9p38" frameborder="0" allowfullscreen> </iframe>
+</div>
+
+<br><br><p>
+Interesting is then the choice on how you define the bag of N-words
+used by the algorithm. A quick introduction to the topic might be
+found <a href="https://kavita-ganesan.com/comparison-between-cbow-skipgram-subword/">here</a>.
+</p>
+
+<p>
+Notice, that the approach not only has the benefit of being
+theoretically more sound but it also gives the advantage that if the
+semantic embeddings of your text corpus have been properly inferred
+via ML algorithms and can be represented in low dimensional space you
+might start classifying your text corpus based on the geometrical
+representation of your classes and the text you aim to classify. The
+idea is that if the text and the class share the same semantical
+meaning they should lie in some close geometrical subspace. Using
+some unsupervised algorithm to define such geometrical subspace (or
+even using some simple metrics) you can then properly classify.
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../slovak-learning/" rel="prev" title="Slovak Learning">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../yarn/" rel="next" title="YARN">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
