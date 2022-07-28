@@ -167,6 +167,42 @@ at a high level but he does it in a good way that I always enjoyed.
    than one table which occurs in tables with an *identifying
    relationship*[fn:1].
 
+** Surrogate Key
+
+   Check the following from Java Persistence with Hiberate - it gives
+   you quite an idea:
+
+   #+begin_quote
+Let’s use an example to discuss another problem related to database
+identity. In the table definition for USERS, USERNAME is the primary
+key.
+
+Unfortunately, this decision makes it difficult to change a user’s
+name; you need to update not only the row in USERS, but also the
+foreign key values in (many) rows of BILLINGDETAILS.
+
+To solve this problem, later in this book we recommend that you use
+surrogate keys whenever you can’t find a good natural key. We also
+discuss what makes a good primary key.
+
+A surrogate key column is a primary key column with no meaning to the
+application user—in other words, a key that isn’t presented to the
+application user. Its only purpose is identifying data inside the
+application
+   #+end_quote
+
+   Note that usually you always have IDs in tables as surrogate keys.
+
+   Once you will use such surrogate keys you will ultimately have no
+   need for the =ON UPDATE CASCADE= statements. See in this sense [[https://stackoverflow.com/questions/1481476/when-to-use-on-update-cascade][the
+   following post]] where people had exactly this confusion cause they
+   are working correctly with surrogate keys.
+
+   
+
+   
+
+   
 
 * Database Design Theory
 
@@ -960,7 +996,6 @@ VALUES (value1, value2, value3, ...);
 ** iif
 
    return =YES= if condition is =True= and =NO= otherwise.
-   
 
 ** On Column notation
 
@@ -1142,6 +1177,7 @@ DROP COLUMN <COLUMN_NAME>;
    
    #+end_src
     
+
 ** Create
 
    Here the syntax
@@ -1155,6 +1191,15 @@ DROP COLUMN <COLUMN_NAME>;
    #+end_src
    
 
+** Partition By
+
+   So this is quite handy. Never encountered it so far.
+
+   So the idea is to make =group by= style operations while preserving
+   the individual records.
+
+   You can find an example over [[https://www.sqlshack.com/sql-partition-by-clause-overview/][here]].
+   
 ** Some lower level stuff - check at what is running in the DB
 
    It will be important at some point to check what is going on with
@@ -1209,27 +1254,6 @@ where des.session_id <> @@spid
    #+end_src
 
 
-** To see key relations for a column/table
-
-   #+BEGIN_SRC sql
-SELECT
-    TABLE_NAME,
-    COLUMN_NAME,
-    CONSTRAINT_NAME
-FROM
-    INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-WHERE
-    TABLE_NAME = 'result' AND
-    COLUMN_NAME = 'extract'
-   #+END_SRC
-
-  Then you will have a table with all of the relations for that given
-  table/column.
-
-  You can then check at all of the tables/columns affected by a given
-  key constraint.
-
-
 ** Working with primary keys and their respective constrains
 
    Example for creating a primary key spanning multiple columns
@@ -1247,52 +1271,7 @@ WHERE
    DROP CONSTRAINT PK_FactorSchema
    #+END_SRC
 
-
-** Some useful sql snippets
-
-   These will pose some very basic queries and concepts that you will
-   have to use continuously... I do not like to continuously do the
-   double of the effort.
-
-   So will store here the basic stuff and just perform a copy and
-   paste exercise when necessary.
-   
-*** Check that two tables are equal
-
-    Starting to get back the sql skills.
-
-    Check for instance at the following.
-
-    You can use the following as a snippet to check that two tables are
-    no different from each other. 
-
-    #+begin_src sql
-select mark.*  -- select the different one.
-                -- the general idea is the following:
-		--   1. get all of rows where you have a match for the specified columns (see join)
-                --   2. make a full outer join on the results of 1. and check which record are null
-                --      meaning there was not a match. 
-		
-from (select *
-      from B1_M21.mac.barra_factors
-      where version = 92)  as mark
-full outer join (
-    -- here you check that you have a match for the columns of interest
-    -- in the two tables marco and mark.
-    select *
-    from B1_M21.result.Factor_Loading 
-    where as_of_version = 11
-    )  on    m.barra_security   = a.security
-	     and   m.factor          = a.credit_factor
-	     and   m.value           = a.coefficient
-    where (mark.credit_factor is null
-           or marco.factor is null) -- note that not even this is perfect.
-                                    -- just checking if there was not a match on these.
-				    -- so would have to check also at the other ones..
-				    -- double check next time you will properly use it.
-    #+end_src
-
-
+    
 ** Bit
 
    Note that this is a very particular data type.
@@ -1397,15 +1376,108 @@ AdventureWorks2018.HumanResources.Department
    #+end_src
    
 
-** INFORMATION_SCHEMA
+** Some useful sql snippets
+
+   These will pose some very basic queries and concepts that you will
+   have to use continuously... I do not like to continuously do the
+   double of the effort.
+
+   So will store here the basic stuff and just perform a copy and
+   paste exercise when necessary.
+   
+*** Check that two tables are equal
+
+    Starting to get back the sql skills.
+
+    Check for instance at the following.
+
+    You can use the following as a snippet to check that two tables are
+    no different from each other. 
+
+    #+begin_src sql
+select mark.*  -- select the different one.
+                -- the general idea is the following:
+		--   1. get all of rows where you have a match for the specified columns (see join)
+                --   2. make a full outer join on the results of 1. and check which record are null
+                --      meaning there was not a match. 
+		
+from (select *
+      from B1_M21.mac.barra_factors
+      where version = 92)  as mark
+full outer join (
+    -- here you check that you have a match for the columns of interest
+    -- in the two tables marco and mark.
+    select *
+    from B1_M21.result.Factor_Loading 
+    where as_of_version = 11
+    )  on    m.barra_security   = a.security
+	     and   m.factor          = a.credit_factor
+	     and   m.value           = a.coefficient
+    where (mark.credit_factor is null
+           or marco.factor is null) -- note that not even this is perfect.
+                                    -- just checking if there was not a match on these.
+				    -- so would have to check also at the other ones..
+				    -- double check next time you will properly use it.
+    #+end_src
+
+
+*** Find all of the relevant columns across all of the tables with the relevant name
+
+    In order to achieve this you essentially have to connect to the
+    correct database with your client. Otherwise the information_schema
+    read will not be the correct one.
+
+    You would then have to do the following:
+
+    #+begin_src sql
+ SELECT      c.name  AS 'ColumnName'
+             ,t.name AS 'TableName'
+ FROM        sys.columns c
+ JOIN        sys.tables  t   ON c.object_id = t.object_id
+ WHERE       c.name LIKE '%ruc_code_name%'
+ ORDER BY    TableName
+             ,ColumnName;
+    #+end_src
+
+    Or alternatively with more granular information you can use the
+    following:
+
+    #+begin_src sql
+ select * from INFORMATION_SCHEMA.COLUMNS
+ where COLUMN_NAME like '%ruc_code_name%'
+ order by TABLE_NAME
+    #+end_src
+
+
+*** Developing on the top of the previous section note that INFORMATION_SCHEMA is generally handy
 
    This is as well interesting.
 
    Check at the following: [[https://chartio.com/learn/databases/using-information-schema-views-to-check-to-see-if-table-exists-in-sql-server/][here]].   
 
+    
+*** Find key relations for a column/table
+
+    #+BEGIN_SRC sql
+ SELECT
+     TABLE_NAME,
+     COLUMN_NAME,
+     CONSTRAINT_NAME
+ FROM
+     INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+ WHERE
+     TABLE_NAME = 'result' AND
+     COLUMN_NAME = 'extract'
+    #+END_SRC
+
+   Then you will have a table with all of the relations for that given
+   table/column.
+
+   You can then check at all of the tables/columns affected by a given
+   key constraint.
 
 
-
+   
 * Footnotes
 
 [fn:2] Note as well that here is the big difference with Views. In
