@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Java Application Deployment - Some Vocabulary and high Level Understanding | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/java-application-deployment-some-vocabulary-and-high-level-understanding/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../python-virtual-env-etc-set-up/" title="Python Virtual-Env Etc. Set Up" type="text/html">
+<link rel="next" href="../object-oriented-programming-some-notes/" title="Object Oriented Programming - Some Notes" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Java Application Deployment - Some Vocabulary and high Level Understan">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/java-application-deployment-some-vocabulary-and-high-level-understanding/">
+<meta property="og:description" content="Through this post you will gain a bit of vocabulary in the Java
+world.
+
+
+
+This in the sense that you will understand better the deployment of
+application. Server side operations etc. for the Java worl">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-11-14T20:25:11+01:00">
+<meta property="article:tag" content="java">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Java Application Deployment - Some Vocabulary and high Level Understanding</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2021-11-14T20:25:11+01:00" itemprop="datePublished" title="2021-11-14 20:25">2021-11-14 20:25</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/java/" rel="tag">java</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+Through this post you will gain a bit of vocabulary in the Java
+world.
+</p>
+
+<p>
+This in the sense that you will understand better the deployment of
+application. Server side operations etc. for the Java world. 
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org39ab033" class="outline-2">
+<h2 id="org39ab033">Java Application</h2>
+<div class="outline-text-2" id="text-org39ab033">
+<p>
+This section answers the question: how are the bytecode, the relevant
+static front-end files etc. bundled?
+</p>
+</div>
+
+<div id="outline-container-org9880795" class="outline-3">
+<h3 id="org9880795">On WAR</h3>
+<div class="outline-text-3" id="text-org9880795">
+<p>
+A WAR (web application archive) file is used to bundle web
+components, compiled classes, and other resource files like
+deployment descriptors, HTML, JavaScript, and CSS files. Together
+they form a web application.
+</p>
+
+<p>
+To run a Java web application, the WAR file needs to be deployed to
+<b>the server environment</b>, a web container.
+</p>
+
+<p>
+The web-app server can be any of Tomcat or Jetty or a Java EE
+server such as JBoss or Glassfish. - in order to understand the
+differences among the many <a href="https://marcohassan.github.io/bits-of-experience/posts/wsgi-apache-and-nginx/">check at this</a>.
+</p>
+
+<p>
+Note that in simple words you can say the following:
+</p>
+
+<blockquote>
+<p>
+A war file is a special jar file that is used to package a web
+application to make it easy to deploy it on an application
+server. The content of the war file must follow a defined
+structure.
+</p>
+</blockquote>
+
+<p>
+Recall the following strucutre. <code>.jar</code> is just part of the entire
+system. Can be a package dependency, a bytecode app etc. <code>war</code> is
+the entire bundle.
+</p>
+
+<br><br><img src="../../images/strucutre.png" class="center"><br><br><p>
+So your app is deployed as <code>.war</code> and underneath you might refer to
+<code>.jar</code> that package your libraries.
+</p>
+
+<p>
+It is important always to understand where your packaged libraries
+are stored on your file system. In such a way it will be possible
+for you to understnad the dependency structure and see if your
+build and deployment well functioned.
+</p>
+
+<p>
+In this sense refer to your notes about gradle, as like this is
+possible to start to connect the dots.
+</p>
+</div>
+
+<div id="outline-container-org3272601" class="outline-4">
+<h4 id="org3272601">More thorough notes on .war structure</h4>
+<div class="outline-text-4" id="text-org3272601">
+<p>
+<i>Update 21/03/22:</i>
+</p>
+
+<p>
+So I am starting to connecting the dots. I had a very good session
+with Sergio where we could understand a little bit better the
+current set up. Check at the end of this section. You will start
+to understand a couple of things. 
+</p>
+
+<p>
+I had to spend a little bit more time on the understanding of the
+general java deployment set up. That is important as if you miss
+that one you will never be able to call yourself a java developer.
+</p>
+
+<p>
+So basically the idea is to <a href="https://www.oreilly.com/library/view/learning-java-4th/9781449372477/ch15s03.html">look at the following</a>. Below just a
+couple of notes based on it. You might refer to the url directly. 
+</p>
+
+<p>
+Understand that one of the most important bit of the packaged java
+applications is the <code>web.xml</code> file. This tells the server what to
+run and how to run it.
+</p>
+
+<p>
+You can inspect the structure of a <code>.war</code> through the <code>jar</code> tool.
+</p>
+
+<div class="highlight"><pre><span></span>    jar tvf shoppingcart.war
+</pre></div>
+
+<p>
+When you build in gradle this should create one of such war
+files. When deployed the <i>name of the war</i> becomes the <i>root path</i> of
+the web-applicaiton.
+</p>
+
+<blockquote>
+<p>
+The WEB-INF directory (all caps, hyphenated) is a special
+directory that contains all deployment information and application
+code. This directory is protected by the web server, and its
+contents are not visible to outside users of the application, even
+if you add WEB-INF to the base URL.
+</p>
+
+<p>
+The WEB-INF directory also contains the <code>web.xml</code> file.
+</p>
+</blockquote>
+
+<p>
+The WEB-INF/classes and WEB-INF/lib directories contain Java class
+files and JAR libraries, respectively.
+</p>
+
+<p>
+The <code>WEB-INF/classes</code> directory is automatically added to the
+classpath of the web application, so any class files placed here
+(using the normal Java package conventions) are available to the
+application.
+</p>
+
+<p>
+After that, any JAR files located in <code>WEB-INF/lib</code> are appended to
+the web app’s classpath (the order in which they are appended is,
+unfortunately, not specified). You can place your classes in
+either location.
+</p>
+
+<p>
+Nonetheless what is standard is that your source code goes into
+<code>WEB-INF/classes</code>, while the libraries you work with will be
+packaged into <code>WEB-INF/lib</code>.
+</p>
+
+<p>
+Note now the following bit:
+</p>
+
+<blockquote>
+<p>
+It’s also possible to install JAR files directly in the servlet
+container to make them available to all web apps running on that
+server. This is often done for common libraries that will be used by
+many web apps. It’s also possible to install JAR files directly in the
+servlet container to make them available to all web apps running on
+that server. This is often done for common libraries that will be used
+by many web apps.
+</p>
+</blockquote>
+
+<p>
+The above is important in order to understand what is happening in
+our case. Cause that is the current situation. A big, fat
+web-server with a big chunck of libraries that are installed there
+in the <code>lib/xtra</code> etc. that are used across application.
+</p>
+
+<p>
+This has as well the following issue:
+</p>
+
+<blockquote>
+<p>
+The location for placing the libraries, however, is not standard and
+any classes that are deployed in this way cannot be automatically
+reloaded if changed—a feature of WAR files that we’ll discuss later.
+</p>
+</blockquote>
+
+<p>
+Which is the thing that is disturbing the developer team quite
+much.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0c426f9" class="outline-4">
+<h4 id="org0c426f9">web.xml working</h4>
+<div class="outline-text-4" id="text-org0c426f9">
+<p>
+The web.xml file is an XML configuration file that <i>lists servlets
+and related entities to be deployed</i>, the relative names (URL
+paths) under which to deploy them, their initialization
+parameters, and their deployment details, including security and
+authorization.
+</p>
+
+<p>
+For most of the history of Java web applications, this was the
+only deployment configuration mechanism.
+</p>
+
+<p>
+However, as of the Servlet 3.0 API, there are additional
+options. Most configuration can now be done using Java
+annotations. - This is how you are used to work with.
+</p>
+
+<p>
+So check online at the url described above if you want to go in
+the details. You might have to at some point as you are working
+with legacy code. Would not surprise me if the entire structure of
+the endpoints would be actually defined over there.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6ed5165" class="outline-4">
+<h4 id="org6ed5165">On reloading web apps</h4>
+<div class="outline-text-4" id="text-org6ed5165">
+<blockquote>
+<p>
+All servlet containers are supposed to provide a facility for
+reloading WAR files; many support reloading of individual servlet
+classes after they have been modified.
+</p>
+
+<p>
+Reloading WARs is part of the servlet specification and is
+especially useful during development. Support for reloading web
+apps varies from server to server.
+</p>
+
+<p>
+Normally, all that you have to do is drop a new WAR in place of
+the old one in the proper location (e.g., the webapps directory
+for Tomcat) and the container shuts down the old application and
+deploys the new version.
+</p>
+</blockquote>
+
+<p>
+So this is generally what happens when you build your webapp
+through gradle and the ultimate way why you do not have to stop
+the web container and start it again.
+</p>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div id="outline-container-orgb278d40" class="outline-4">
+<h4 id="orgb278d40">So understand that unorthodoxy with the packaged libraries</h4>
+<div class="outline-text-4" id="text-orgb278d40">
+<p>
+They are in the webapps directory in tomcat.
+</p>
+
+<p>
+So either then the libraries there are added to the classpath
+manually or by default tomcat inspects all of the files in the
+<code>webapps</code>.
+</p>
+
+<p>
+This is an open question I will not dig further for now. I will
+ask for more info at the right moment.     
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1a40262" class="outline-3">
+<h3 id="org1a40262">Jakarta Servlet</h3>
+<div class="outline-text-3" id="text-org1a40262">
+<p>
+A java servlet simply stores a class in Jakarta EE that is conform
+to the specifications of the servlet API. This is simply a standard
+for responding to requests.
+</p>
+
+<p>
+That is basically it. Nothing fancy.
+</p>
+
+<p>
+Thus, a software developer may use a servlet to add dynamic content
+to a web server using the Java platform. The generated content is
+commonly HTML, but may be other data such as XML and more commonly,
+JSON. Servlets can maintain state in session variables across many
+server transactions by using HTTP cookies, or URL mapping. (wiki)
+</p>
+
+<p>
+So again it is a very standard thing. Nothing new under the
+sun. Don't just be scared of the names.
+</p>
+
+<p>
+The only thing is that is the general concept. And that general
+concept must be embedded into the entire ecosystem with the
+different web-containers etc.
+</p>
+
+<p>
+Interesting would then be to understand how frameworks fit in this
+picture. Do they implement the Servlet <i>under the hood</i>?
+</p>
+
+<p>
+Note as well that now the historic Servlet API has been replaced by
+two different technologies - I guess two different set of specific
+API albeit wiki does not specify - :
+</p>
+
+<ul class="org-ul">
+<li>Jakarta RESTful Web Services (JAX-RS 2.0) useful for AJAX, JSON
+and REST services</li>
+
+<li>Jakarta XML Web Services (JAX-WS) useful for SOAP Web Services</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org034973b" class="outline-3">
+<h3 id="org034973b">On web-container and Java</h3>
+<div class="outline-text-3" id="text-org034973b">
+<p>
+A web-container - also called web-servlet - is the component of a
+web-server that interacts with Jakarta Servlets. (wiki)
+</p>
+
+<p>
+It is essentially the <b>component (!)</b> of a <b>web server</b> that interacts with
+the servlets. The web container is responsible for managing the
+lifecycle of servlets, mapping a URL to a particular servlet and
+ensuring that the URL requester has the correct access rights.
+</p>
+
+<p>
+Now again nothing new under the sun, Tomcat is the cousin of wsgi
+or something very close to it. The idea of it in the python world
+was discussed <a href="https://marcohassan.github.io/bits-of-experience/posts/wsgi-apache-and-nginx/">here</a>. You can read about the top 5 open source
+web-servers <a href="https://opensource.com/business/16/8/top-5-open-source-web-servers">here</a>.
+</p>
+
+<p>
+So do not be confused, it is the servlet component, not the whole
+webserver in itself. I have to well understand in this sense if it
+is still used in combination with a more robust server such apache
+or ngnix or what. 
+</p>
+
+<p>
+In any case the post above mentions that you can use the coyote
+extension for Tomcat and serve the role of a web-server, i.e. you
+would have Tomcat not simply handling <b>Java applications</b> but as
+well serve static content etc..
+</p>
+
+<p>
+In any case you got the basic idea. With the servlet bit you
+execute the server side java classes answering the requests
+according to the well defined API. Note as well that this goes hand
+in hand in the java world with the JSP Pages, which is basically
+the MVC framework etc. and the way you create dynamic content.
+</p>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../python-virtual-env-etc-set-up/" rel="prev" title="Python Virtual-Env Etc. Set Up">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../object-oriented-programming-some-notes/" rel="next" title="Object Oriented Programming - Some Notes">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

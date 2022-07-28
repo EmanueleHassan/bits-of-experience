@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Neo4j | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/neo4j/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../javascript-notes/" title="JavaScript Notes" type="text/html">
+<link rel="next" href="../a-nice-reminder-the-gamification-on-yourself/" title="A nice Reminder - The Gamification of Yourself" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Neo4j">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/neo4j/">
+<meta property="og:description" content="So new project new life. The one before did not take off due to
+bureaucratic issues - a pity.
+
+
+
+Good is that on the new one I will work with Graph Databases. I love
+graph structures and I deeply beli">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-03-17T15:27:09+01:00">
+<meta property="article:tag" content="Data">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Neo4j</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2021-03-17T15:27:09+01:00" itemprop="datePublished" title="2021-03-17 15:27">2021-03-17 15:27</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/data/" rel="tag">Data</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+So new project new life. The one before did not take off due to
+bureaucratic issues - a pity.
+</p>
+
+<p>
+Good is that on the new one I will work with Graph Databases. I love
+graph structures and I deeply believe in them so I am very happy to
+start this project.
+</p>
+
+<p>
+This posts summarizes my learning encounters when working with graph
+databases and sets some mental structure for working with them.
+</p>
+
+<p>
+The notes are based on <a href="https://neo4j.com/books/neo4j-in-action-book/">Neo4j in action</a> and the <a href="https://neo4j.com/docs/cypher-manual/current/clauses/match/">Official Documentation</a>.
+</p>
+
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+<!-- TEASER_END --><div id="outline-container-org06f97be" class="outline-2">
+<h2 id="org06f97be">On the benefit of Graph Structure</h2>
+<div class="outline-text-2" id="text-org06f97be">
+<p>
+This section makes clear why for some structures it makes sense to
+use graph databases instead of going with relational databases.
+</p>
+
+<p>
+Consider for instance a friendship database. This has the following
+shape:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-18_um_10.17.51.png" class="center"><p>
+As you can see above in the <code>T_USER</code> table you assign a primary key
+to each person. Then on the <code>T_USER_FRIEND</code> table you have a primary
+key <code>id</code> representing the friendship relation id and a friendship
+relation represented by two foreign keys referencing the <code>T_USER</code>
+primary key.
+</p>
+
+<p>
+It follows immediately that if you want to get the number of friends
+of a single person this can be easily done by:
+</p>
+
+<div class="highlight"><pre><span></span>  <span class="k">select</span> <span class="k">count</span><span class="p">(</span><span class="k">distinct</span> <span class="n">uf</span><span class="p">.</span><span class="o">*</span><span class="p">)</span> <span class="k">from</span> <span class="n">t_user_friend</span> <span class="n">uf</span> <span class="k">where</span> <span class="n">uf</span><span class="p">.</span><span class="n">user_1</span> <span class="o">=</span> <span class="o">?</span>
+</pre></div>
+
+<p>
+What about finding the number of friends of a all of my friends?
+</p>
+
+<p>
+Then you would need to do a join operation in a relational database
+</p>
+
+<div class="highlight"><pre><span></span>  <span class="k">select</span> <span class="k">count</span><span class="p">(</span><span class="k">distinct</span> <span class="n">uf2</span><span class="p">.</span><span class="o">*</span><span class="p">)</span> <span class="k">from</span> <span class="n">t_user_friend</span> <span class="n">uf1</span>
+    <span class="k">inner</span> <span class="k">join</span> <span class="n">t_user_friend</span> <span class="n">uf2</span> <span class="k">on</span> <span class="n">uf1</span><span class="p">.</span><span class="n">user_1</span> <span class="o">=</span> <span class="n">uf2</span><span class="p">.</span><span class="n">user_2</span>
+    <span class="k">where</span> <span class="n">uf1</span><span class="p">.</span><span class="n">user_1</span> <span class="o">=</span> <span class="o">?</span>
+</pre></div>
+
+<p>
+I.e. you would first select all of my friends friends by doing the
+join operation. And then simply count the number of distinct
+entries.
+</p>
+
+<p>
+You understand now that if you want to find the friends of the
+friends of my friends you would do 3 join operations etc.
+</p>
+
+<p>
+Note that, although you’re only interested in friends of friends of
+a single user, you have to perform a <b>join of all data</b> in the
+t<sub>user</sub><sub>friend</sub> table, and then discard all rows that you’re not
+interested in.
+</p>
+
+<p>
+It is obvious that as each join computes a cartesian product down
+the hood such operations become quickly extremely computational
+intense. Even with smaller databases the size of the joins increase
+exponentially in the depth of the friendships relations.
+</p>
+
+<p>
+It is so straightforward to see that in such cases relational
+databases are not the best way of representing the data for making
+such queries.
+</p>
+
+<p>
+Graph databases were developed to deal exactly with such type of
+queries and data models. Here the idea is to use graph theory to
+answer such queries in a more efficient way using the concept of
+<i>traversal</i>, i.e. by <i>visiting nodes in the graph by moving between
+nodes connected with relationships</i>.
+</p>
+
+<p>
+The key concept of traversals is that they’re <b>localized—querying</b>
+the data using a traversal only takes into account the data that’s
+required, without needing to perform expensive grouping operations
+on the entire data set, like you do with join operations on
+relational data.
+</p>
+
+<p>
+Note moreover that as long as you perform queries that leverage some
+graph distance concept - such as the friends of friends - the
+performance of queries is optimized and scale well with the size of
+the database. I.e. while making a query at depth 5 (i.e. friends of
+friends of friends etc.) on a table with million entries will
+quickly break down your hardware resources - due to the <b>global
+structure of the query</b> - a graph database will continue to perform
+the local operations from the node of interest visiting by
+traversal. I.e. it will continue to do <b>local-queries</b> that will not
+be much affected of the overall size of the database and can
+therefore quickly scale.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org4ebc576" class="outline-2">
+<h2 id="org4ebc576">Label-property based vs. RDF graphs</h2>
+<div class="outline-text-2" id="text-org4ebc576">
+<p>
+These are very different and this should be your first call when
+working with graph databases.
+</p>
+
+<p>
+Essentially if you primarily need to walk, query and analyse paths
+through your graph, then Labelled-Property graphs are probably the
+way to go. If you are more interested in the nature of the
+relationships between things, and creating rich semantic
+representations of things, then RDF graphs hit the spot. (<a href="https://datalanguage.com/blog/graphql-and-graph-databases">source</a>)
+</p>
+
+<p>
+This should give you some more intuition into the topic
+</p>
+
+<div class="container"> 
+  <iframe class="responsive-iframe" src="https://www.youtube.com/embed/t1Mn178sEYg" frameborder="0" allowfullscreen> </iframe>
+</div>
+
+<p>
+So go over it at some point and understand the difference in depth
+and do some longer post. <a href="https://neo4j.com/blog/rdf-triple-store-vs-labeled-property-graph-difference/">This</a> is a good reference in this sense.
+</p>
+
+<p>
+Also <a href="https://medium.com/@atakanguney94/a-comparison-of-label-property-graph-and-the-rdf-cd94d2943d53#:~:text=There%20are%20certain%20advantages%20of,may%20simplify%20the%20modeling%20process.">this post</a> gives a quick dirty intro.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3aa8606" class="outline-2">
+<h2 id="org3aa8606">Data Modeling in Neo4j</h2>
+<div class="outline-text-2" id="text-org3aa8606">
+<p>
+Interestingly Neo4j is <i>schemaless</i>, so unlike classical databases
+you do not have to specify the schema and relationships before
+starting to write the data into it.
+</p>
+
+<p>
+This means that the data model for a Neo4j database is <i>implicit</i> in
+the data it contains, <i>rather than explicitly</i> defined as part of the
+database itself. In this sense the data model is a <b>description</b> of
+the data it contains rather than being a <b>prescription</b> of what it
+should contain. So that we can say overall that the data model is
+<b>descriptive</b>.
+</p>
+
+<p>
+In this sense the query language works in <i>pattern defined way</i>
+instead of a rigid relation based way as the one you are used to
+work in RDMS. The Neo4j query language, <b>Cypher</b>, works by <i>matching
+patterns</i> in the data, so one way to see your data model is as an
+inventory of basic patterns.
+</p>
+
+<p>
+In this sense, to structure your queries in a meaningful way what
+you usually do is to draw diagrams for portion of the
+graph. Understand the common patterns and reason about meaningful
+queries to do according to that.
+</p>
+
+<p>
+Note that in Neo4j the first class citizens as in any graph are
+nodes and edges. However, despite of this, not everything must be
+modeled as a node or an edge. <b>Nodes and Edges</b> can have
+<b>properties</b>. These are attributes of the node that can be accessed
+with the standard <code>node.property</code> syntax. Properties are saved as
+<code>key-value</code> pairs.  
+</p>
+</div>
+
+<div id="outline-container-org6d48f54" class="outline-3">
+<h3 id="org6d48f54">Domain Modeling</h3>
+<div class="outline-text-3" id="text-org6d48f54">
+<p>
+This has important consequences for the domain modeling - consider
+the following example:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-17_um_16.39.08.png" class="center"><p>
+Then you should be careful when checking if the above is the most
+meaningful model. It might well be that some of these nodes might be
+well be modeled as properties. Hence in general when you have
+<code>has_property</code> relations consider well if what you need is indeed a
+node or whether you can model via properties.
+</p>
+
+<p>
+In fact unless, for some reason, you wanted to link users together
+based on their favorite colors, there’s probably no need for
+<i>FavoriteColor</i> to be modeled as a node; it could be an property on
+the <i>User</i> node.
+</p>
+
+<p>
+Hence leveraging the property function you would come up with
+something as that in the end:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-17_um_16.44.12.png" class="center" style="width: 30% !important;"><p>
+Now suppose you want to distinguish between a user’s current and
+previous addresses. One way to do this would be to attach an
+<code>is_current</code> flag to the address node as an property. But if two
+users had lived at the same address, and one was the current and the
+other a previous occupant, then whatever value this flag had would
+be false for one of them. Being a user’s current address is <b>not a
+property of the address itself, or of the user</b>, but of the
+<b>relationship</b> between them—a relationship that may change over time,
+as users move from one address to another.
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-17_um_16.47.46.png" class="center"><p>
+Note now that a further way to refine the above is to set the
+<code>is_current</code> tag as a <b>property</b> of the relation itself.
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-17_um_16.53.14.png" class="center"><p>
+So in general when modeling with graph databases you should make
+yourself clear what you want to model as <b>entities</b> (which will be
+nodes), what you want to model as <b>relations</b> (which will be edges)
+and finally the properties that the above should have.
+</p>
+
+<p>
+An important thing to consider when making such choice is as well
+to consider the speed at which you can <b>traverse</b> the graph. It is
+clear that depending on how you model the entities you will have a
+better or worse performance.
+</p>
+
+<p>
+For instance you should not create new nodes/entities which main
+purpose is to store <i>additional</i> properties for some entity. To do
+that a new possibility is incorporated into the <code>Neo4j</code> API as of
+version 2.0, i.e. the possibility of assigning <b>labels</b> to
+nodes. Think of labels as <i>collection IDs</i> through which as
+mentioned you can assign nodes to given <b>collections</b>. Note that
+single nodes might be assigned to multiple IDs.
+</p>
+
+<p>
+Note then that on the one hand by using <b>labels</b> properly you can
+reduce the overall number of nodes so that you have a more compact
+graph that is easier to traverse.
+</p>
+
+<p>
+On the top of it, you can as well build queries based on the
+labels. Like this your query in itself does not have to deal with
+missing data as you can base based on the labels just the nodes
+that have the additional properties you are interested in.
+</p>
+
+<p>
+Note that matching a label at query time is done in the following
+way <code>(u:User)</code>. Here you are actually selecting all of the nodes
+with the <code>label: User</code>.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8e89ad5" class="outline-2">
+<h2 id="org8e89ad5">Neo4j in Production</h2>
+<div class="outline-text-2" id="text-org8e89ad5">
+<p>
+As the project is starting pretty quickly I will explore the depths
+of the query syntax and traversals later. I will now go straight to
+this chapter as pretty soon in the project together with the data
+model we will have to make this call.
+</p>
+
+<p>
+There are essentially two ways to deploy Neo4j, one is <code>embedded</code> mode the other
+being <code>server</code> mode. We will see how this decision will influence
+how you will work with it.
+</p>
+</div>
+
+
+<div id="outline-container-orgfd02665" class="outline-3">
+<h3 id="orgfd02665">Embedded vs. Server Mode</h3>
+<div class="outline-text-3" id="text-orgfd02665">
+<p>
+At the beginning Neo4j was Java centered. Within the <code>embedded
+   mode</code> setup, your Java application and new shiny Neo4j database
+were happily <i>bundled together</i> as a single deployable entity, and
+together they went forth to conquer the brave new world of
+interesting graph-based problems.
+</p>
+
+<p>
+Neo4j, although written in Java, is inherently just a JVM-based
+product. This means that, theoretically, any JVM-based language
+(provided the appropriate libraries or bindings can be found or
+written) can also make use of the Neo4j database. Thus, Neo4j’s
+reach naturally began to extend to other JVM-based languages.
+</p>
+
+<p>
+But it was the need to operate in more network-friendly
+architectures and to support other non-JVM clients that were the
+primary drivers behind the introduction of the <code>server mode</code>.
+</p>
+
+<p>
+<b>With <code>server mode</code>, the Neo4j database runs in its own process, with
+clients talking to it via its dedicated HTTP-based REST API.</b> So if
+you want to go Pythonic go with server mode.
+</p>
+
+<p>
+Such that in general the ecosystem of <code>Neo4j</code> would look as
+follows:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-18_um_11.38.14.png" class="center"><p>
+Note that as usual, with the inherent network latency introduced in
+the server mode, performance is naturally not going to be as good
+as accessing the database using native code directly. To add more
+flexibility to the server offering, server plugins and unmanaged
+extensions. At the moment I do not think that performance is key
+plus to get up and running with Java is not a question to this
+stage and will skip it for now and stay in my Pythonic world.       
+</p>
+</div>
+</div>
+
+<div id="outline-container-org53800f4" class="outline-3">
+<h3 id="org53800f4">Server Mode</h3>
+<div class="outline-text-3" id="text-org53800f4">
+<p>
+Unlike embedded mode, running Neo4j in server mode involves having
+all the classes and logic to access and process interactions with
+the Neo4j database contained within its own dedicated process,
+<i>completely separate from any clients wishing to use it</i>.
+</p>
+
+<p>
+In order to interact with the server process there is a well-defined, yet extensible,
+HTTP-based REST API.
+</p>
+
+<p>
+The general structure of running Neo4j in server mode is the
+following:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-18_um_15.38.56.png" class="center"><p>
+Given the basic structure now the standard question of <code>REST</code>
+vs. <code>graphQL</code> vs. other architectures come up.
+</p>
+
+<p>
+Let me briefly make the excursus on this to this stage.
+</p>
+</div>
+
+<div id="outline-container-orgb7ca7c3" class="outline-4">
+<h4 id="orgb7ca7c3">GRAPHQL vs REST</h4>
+<div class="outline-text-4" id="text-orgb7ca7c3">
+<p>
+GraphQL has nothing to do with graph databases. It is much more a
+new kind of API originally developed by Facebook that is rapidly
+expanding.
+</p>
+
+<p>
+In simple terms:
+</p>
+
+<blockquote>
+<p>
+GraphQL is a REST API alternative with a structured query language
+combined with a runtime for query processing and serving data to
+GraphQL clients (and it is almost always implemented with JSON in
+mind).
+</p>
+
+<p>
+GraphQL isn't tied to any specific database or storage engine and is
+instead backed by your existing code and data.
+</p>
+</blockquote>
+
+<p>
+While RESTful API have in fact many benefits, such as the caching
+structures, the general architecture etc. they have a drawback
+that has led to the development and a general interest on
+GraphQL. The major drawback being the fact that sometimes RESTful
+API are too rigid. I.e. this is their power but also their
+drawback.
+</p>
+
+<p>
+Sometimes maybe you are not interested in the entire information
+you would obtain from the API. Sometimes to get your information
+of need you have to do very complex and chatty API call.  Think of
+an API where we first have to GET <i>user first and then fetch each
+friend individually via GET /user</i>:id/friend/:id endpoint, this
+can result in N+1 queries and is a will known performance issue in
+API and database queries. This was in fact the behavior you
+observed on your last project API.
+</p>
+
+
+<p>
+In other words, RESTful API calls are chained on the client before
+the final representation can be formed for display. GraphQL can
+reduce this by enabling the server to aggregate the data for the
+client in a single query. In fact, GraphQL comes handy as it
+creates an API that allows for arbitrary requests that are
+complaint with the GraphQL runtime and protocol.
+</p>
+
+<p>
+This has pro and cons as especially in the case of open API great
+care have to be taken to ensure GraphQL queries don’t result in
+expensive join queries that can bring down server performance or
+even DDoS the server.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org3299fb7" class="outline-4">
+<h4 id="org3299fb7">Back to Server Neo4j</h4>
+<div class="outline-text-4" id="text-org3299fb7">
+<p>
+So back to the Neo4j server. Given that you are interested in
+navigating your graph database it might make little sense to use a
+RESTful approach as for instance to navigate such graph you would
+have to make multiple iterative calls. Think for instance about
+this first call:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-18_um_16.21.38.png" class="center"><p>
+You can then start from there and navigate your database.
+</p>
+
+<p>
+However, this is very much impractical.
+</p>
+
+<p>
+In this sense I read online that it is common practice for some
+use cases to leverage GraphQL in such cases. This is in fact a
+good example of a possible use case for such technology. In fact
+there are built-in GraphQL implementations in Neo4j. On the other
+hand I also read online that some complain about it saying that if
+you stop by leveraging the GraphQL queries then you probably did
+not need a graph database in the first place and a document store
+might have been enough. Whatever it is. I guess both have their
+point and you will not get completely the point of the discussion
+until you make yourself your hands dirty.
+</p>
+
+<p>
+In any case what is good in Neo4j is that luckily they have
+implemented a REST API where you can leverage the Cypher query
+language such that you can leverage the standard traversal
+properties and get to your data of interest quickly without having
+to do all of that manual work iterating over different APIs calls
+repeatedly.
+</p>
+
+<p>
+In fact using the Cypher API, you would make <code>POST</code> of the
+following form:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-18_um_16.41.56.png" class="center">
+</div>
+</div>
+
+<div id="outline-container-org46d9c52" class="outline-4">
+<h4 id="org46d9c52">On Remote Client Libraries</h4>
+<div class="outline-text-4" id="text-org46d9c52">
+<p>
+Although it is possible for you to directly talk with the 
+RESTful Server directly and get your information via raw API as
+done above many suggest to use client libraries to talk with
+Neo4j. There again much of the complexity of the raw API is
+abstracted away such that you can easily communicate in an
+intuitive way.
+</p>
+
+<p>
+What usually happens is that a runtime is added between your
+client and the server. In the runtime running on a standard
+framework the complexity is masked and you would use the new
+library functions and go through it in the following way:
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-03-18_um_16.47.40.png" class="center"><p>
+This seems to me quite an overhead also because you would then
+have to make sure that everything scales well. So try to
+understand better the implications of taking such an approach
+should this project become very large at some point.
+</p>
+
+<p>
+You can find a list of different runtime specific drivers
+(i.e. read more as remote REST wrappers) <a href="https://neo4j.com/developer/language-guides/">here</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org208d5ac" class="outline-4">
+<h4 id="org208d5ac">On server Plug-ins</h4>
+<div class="outline-text-4" id="text-org208d5ac">
+<p>
+This is a nice feature of the Server Mode. The idea is that as
+mentioned sometimes you might get back too much information via
+API calls. Instead of processing the response on the client when
+you get it, what you can do is to write <code>server Plug-ins</code>.
+</p>
+
+<p>
+<code>Server plug-ins</code> provide a mechanism for offloading some of the
+processing-intensive logic to the server rather than having to
+perform it all on the client, with multiple requests having to
+flow backward and forward to accomplish the same thing. Server
+plugins are sometimes compared to stored procedures in the
+relational database world.
+</p>
+
+<p>
+Server plugins have specifically been designed to extend the
+existing REST API options returned for a node, relationship, or
+the global graph database. Recall that when you make a request for
+the detail of a particular node, you get a lot of options back,
+including an <b>extensions key</b>. This will specify the server 
+extensions specified for your server.
+</p>
+
+<pre class="example" id="orgbe1754f">
+{ ...
+  "extensions" : { . . .},
+  "property" : "http://localhost:7474/db/data/node/0/properties/{key}",
+  "self" : "http://localhost:7474/db/data/node/0",
+  "data" : { "name" : "Adam"  }
+  ... }
+</pre>
+
+<p>
+To write a <code>server plug-in</code> you can extend a <code>ServerPlugin</code> class
+that should be contained in your driver.  You should then be sure
+that the name of your class extending and inheriting from
+<code>ServerPlugin</code> is contained in
+<code>org.neo4j.server.plugins.ServerPlugin</code>.
+</p>
+
+<p>
+If that is the case you should then see it in the extensions in
+the <code>json</code> received from the REST endpoint. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgf9fa70e" class="outline-4">
+<h4 id="orgf9fa70e">Unmanaged Extensions</h4>
+<div class="outline-text-4" id="text-orgf9fa70e">
+<p>
+If you require complete control over your server-side code, then
+unmanaged extensions may be what you’re looking for. Unlike
+<code>server plugins</code>, which merely allow you to <i>augment the existing
+REST API</i> at specific points, <code>unmanaged extensions</code> essentially
+allow you to <i>define your own domain-specific REST API</i>.
+</p>
+
+<p>
+This means that instead of dealing with general nodes and
+relationships, you can now with a specific set of nodes - say
+Users and Movies. This was not an option for <code>server
+    Plugins</code>. There you could just specify a plugin at a node level
+that would be available across all nodes.
+</p>
+
+<p>
+Broadly speaking, you define a class, which, through a set of
+annotations, binds the class to a particular URL pattern and mount
+point within the Neo4j server. When this mount point is invoked,
+control is transferred to this class, which can have full access
+to the Neo4j graph database, allowing the class to perform
+whatever actions or functionality is required, returning the data
+in whatever format is desired.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+<div id="outline-container-orge66a0ba" class="outline-2">
+<h2 id="orge66a0ba">Neo4j for Ontologies</h2>
+<div class="outline-text-2" id="text-orge66a0ba">
+<p>
+This is a good example of making more value out of Neo4j. At the end
+of the presentation he rushed a bit too much so it was not easy for
+an intro person like me. What I am still missing is why you need to
+go through RDF structures. Probably because the imported Ontology is
+defined in that terms. Would definitely need to make more research
+in any case.
+</p>
+
+<p>
+As for inference.. I think that to name inference the thing in the
+video is a little bit too much and misleading. Maybe I am missing a
+point. 
+</p>
+
+<p>
+From what I can get the "inference" goes as follows.
+</p>
+
+<p>
+You have a graph database containing some entities. You import an
+ontology that specifies the relation among entities - even inserting
+new entities and mapping subcategories etc.
+</p>
+
+<p>
+You can now search and filter based on the new entities relations
+defined in the ontology. So you can "infer" (or let's say read) from
+the ontology some new knowledge on the relations.
+</p>
+
+<div class="container"> 
+  <iframe class="responsive-iframe" src="https://www.youtube.com/embed/5wluUfomasg" frameborder="0" allowfullscreen> </iframe>
+</div>
+
+<p>
+So nice but that can be used in a straightforward for my project. If
+there is an ontology for the case at issue it might be very
+useful. What you have however to consider is on how to make your
+semantics sharable. In fact this is a question you should ask when
+creating your data model.
+</p>
+
+<p>
+Do I want to create an ontology on top of data objects to map the
+model domain? Should I do it in RDF form and feed it into the graph
+database as described in the video?
+</p>
+
+<p>
+Should I work just mapping relations among the data objects
+themselves without creating a separate ontology on top of it?
+</p>
+
+<p>
+These are all questions you should address with the domain experts
+of your problem.  Consider such things in the introductory talk for
+the project.
+</p>
+
+<p>
+Ok lucky me - there seem to be an ontology available for the use
+case. So it is always worthy to check at the material around.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org138a6a5" class="outline-2">
+<h2 id="org138a6a5">Experiment with Neo4j on Local Machine</h2>
+<div class="outline-text-2" id="text-org138a6a5">
+<p>
+Install it with brew
+</p>
+
+<div class="highlight"><pre><span></span>  brew install neo4j
+</pre></div>
+
+<p>
+Then you can start the server with
+</p>
+
+<div class="highlight"><pre><span></span>  neo4j start
+</pre></div>
+
+<p>
+And stop it with
+</p>
+
+<div class="highlight"><pre><span></span>  neo4j stop
+</pre></div>
+
+<p>
+Interestingly at the beginning you will be asked for a login. The
+default user and password are <code>neo4j</code>. After that you can set a new
+password.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org4964e99" class="outline-2">
+<h2 id="org4964e99">Experiment with Neo4j Desktop</h2>
+<div class="outline-text-2" id="text-org4964e99">
+<p>
+This has all of the licensed tools built in and it is quick and easy
+to get up and running with it. For instance also the implementation
+of managed extensions is straightforward.
+</p>
+
+<p>
+I will experiment a bit here for now. That makes it easier.
+</p>
+
+<p>
+The installation via brew on MACOSX is also straightforward:
+</p>
+
+<div class="highlight"><pre><span></span>  brew install --cask neo4j
+</pre></div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orga27a6b2" class="outline-2">
+<h2 id="orga27a6b2">Neo4j Bloom</h2>
+<div class="outline-text-2" id="text-orga27a6b2">
+<p>
+I think we should use this for visualization. It has all the
+features we need. It is good for the 3 months PoC and we would not
+waste too much time for getting up and running with everything.
+</p>
+
+<p>
+The issue is that I am noting now that is not
+open-sourced. I.e. there are licensing costs. So it's probably out.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org33847c9" class="outline-2">
+<h2 id="org33847c9">Alternative to Bloom</h2>
+<div class="outline-text-2" id="text-org33847c9">
+<p>
+I will work with open source tools instead of Bloom due to the
+license issues.
+</p>
+
+<p>
+An IBM group did some project with it and connected the Discovery
+services with Neo4j. They implemented a microservices structure with
+a Flask backend that is orchestrating the entire thing.
+</p>
+
+<p>
+The solution with Discovery is ingenious. A bit an overkill in my
+opinion and I doubt it will run smoothly without a lot of fine
+tuning. For the PoC I will just borrow from that code to connect to
+Neo4j and use an Angular app for the visualization.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org974bc31" class="outline-2">
+<h2 id="org974bc31">Neo4j Install on Kuberenetes</h2>
+<div class="outline-text-2" id="text-org974bc31">
+<p>
+So for the project we will work with a kubernetes cluster. So the
+next steps will be to install the Neo4j Community Edition on our
+cluster.
+</p>
+
+<p>
+While it is out of the box and straightforward to install Neo4j
+Enterprise Edition on it the community edition process seems to be
+more convoluted.
+</p>
+
+<p>
+Let's try to see by trial and error how long it will take to me.
+</p>
+
+<p>
+I also question if it makes sense to work with a helm chart
+directly as I will not be able to scale in either case with the
+community edition and you will generally probably not be able to use
+the benefit of kubernetes. Anyways let's leave the point open and
+let's try to install it. If it is quick it's fine. Then you are
+already on the platform so that post-PoC you will be able to
+quickly expand. Moreover like this you will be able to expand and
+refresh your skills on k8s. 
+</p>
+
+<p>
+So apparently it is possible to use the enterprise edition neo4j
+helm chart and change some parameters. Check <a href="https://community.neo4j.com/t/neo4j-community-edition-on-kubernetes/4955/4">this link</a> in this
+sense.
+</p>
+
+<p>
+Note that the above is fine in the general sense i.e. some of these
+parameters I guess still hold and probably you can change the
+structure and achieve the same as mentioned there. The helm chart
+mentioned there is outdated in any case.
+</p>
+
+<p>
+The new chart is <a href="https://github.com/neo4j-contrib/neo4j-helm/">this</a>.
+</p>
+
+<p>
+So try to install it:
+</p>
+
+<div class="highlight"><pre><span></span>  helm install neo-helm https://github.com/neo4j-contrib/neo4j-helm/releases/download/4.2.2-1/neo4j-4.2.2-1.tgz --set core.standalone<span class="o">=</span><span class="nb">true</span> --set <span class="nv">acceptLicenseAgreement</span><span class="o">=</span>yes --set <span class="nv">neo4jPassword</span><span class="o">=</span><span class="s2">"MYPASSWORD"</span> --namespace usz-sarcoma
+</pre></div>
+
+<p>
+Good, now you have <code>services</code> and <code>persitant volume</code> associated with
+it. Note that I installed the core.standalone mode where
+Replicasets are ignored and it acts as the community
+edition. I.e. it does not scale etc. Try to understand if with this
+you are fine or not.
+</p>
+
+<p>
+Ok so after installation I can see the various services running
+</p>
+
+<div class="highlight"><pre><span></span>  kubectl get services --namespace usz-sarcoma
+</pre></div>
+<p>
+NAME                         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                               AGE
+discovery-neo-helm-neo4j-0   ClusterIP   None         &lt;none&gt;        5000/TCP,6000/TCP,7000/TCP,3637/TCP   3h40m
+discovery-neo-helm-neo4j-1   ClusterIP   None         &lt;none&gt;        5000/TCP,6000/TCP,7000/TCP,3637/TCP   3h40m
+discovery-neo-helm-neo4j-2   ClusterIP   None         &lt;none&gt;        5000/TCP,6000/TCP,7000/TCP,3637/TCP   3h40m
+discovery-neo-helm-neo4j-3   ClusterIP   None         &lt;none&gt;        5000/TCP,6000/TCP,7000/TCP,3637/TCP   3h40m
+discovery-neo-helm-neo4j-4   ClusterIP   None         &lt;none&gt;        5000/TCP,6000/TCP,7000/TCP,3637/TCP   3h40m
+discovery-neo-helm-neo4j-5   ClusterIP   None         &lt;none&gt;        5000/TCP,6000/TCP,7000/TCP,3637/TCP   3h40m
+neo-helm-neo4j               ClusterIP   None         &lt;none&gt;        7474/TCP,7687/TCP,7473/TCP,6362/TCP   3h40m
+</p>
+
+<p>
+And you will have your persitant storage associated with the service
+as well
+</p>
+
+<div class="highlight"><pre><span></span>  kubectl get pvc
+</pre></div>
+<p>
+NAME                            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      AGE
+datadir-neo-helm-neo4j-core-0   Bound    pvc-88a62e20-4905-4d51-bda4-f5b4e126e84a   20Gi       RWO            ibmc-block-gold   3h41m
+</p>
+
+<p>
+Good. Now you can also see your running pod that is running the
+services
+</p>
+
+<div class="highlight"><pre><span></span>  kubectl get pods
+</pre></div>
+<p>
+NAME                    READY   STATUS    RESTARTS   AGE
+neo-helm-neo4j-core-0   1/1     Running   0          3h42m
+</p>
+
+<p>
+Well done. You must now expose the services to the outside world. I
+will start easily by testing it locally doing a port forward.
+</p>
+
+<div class="highlight"><pre><span></span>  kctl port-forward neo-helm-neo4j-core-0 <span class="m">7474</span>:7474 <span class="m">7687</span>:7687 <span class="m">7473</span>:7473 --namespace usz-sarcoma
+</pre></div>
+
+<p>
+Good. You can now access the neo4j webapp at <code>localhost:7474</code> and
+access the database from there via <code>localhost:7687</code>.
+</p>
+
+<p>
+You can start playing with it. Understand the visualization and the
+application schema through which you will communicate with the
+database. Then come back to expose the service to the outside world.
+</p>
+</div>
+
+<div id="outline-container-orgbe8cc78" class="outline-3">
+<h3 id="orgbe8cc78">External Service Exposure</h3>
+<div class="outline-text-3" id="text-orgbe8cc78">
+<p>
+Ok… pretty annoying. You cannot expose the image via the standard
+</p>
+
+<div class="highlight"><pre><span></span>   kubctl expose pod neo-helm-neo4j-core-0 --type<span class="o">=</span><span class="s2">"NodePort"</span>
+</pre></div>
+
+<p>
+The reason why is explained <a href="https://neo4j.com/labs/neo4j-helm/1.0.0/externalexposure/">here</a>. So day of trouble at the
+horizon. Follow the instructions there and configure the IP through
+the static one.
+</p>
+
+<p>
+It will be a looong afternoon.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org49362bd" class="outline-2">
+<h2 id="org49362bd">Cypher Language</h2>
+<div class="outline-text-2" id="text-org49362bd">
+<p>
+I like to work in a clean way. So the first thing I will do is
+create my specific database.
+</p>
+
+<pre class="example" id="org8928782">
+$ create database &lt;dbName&gt;
+</pre>
+
+<p>
+Next you will fill it up with food…
+</p>
+</div>
+
+<div id="outline-container-orge7f6609" class="outline-3">
+<h3 id="orge7f6609">On directional Nodes</h3>
+<div class="outline-text-3" id="text-orge7f6609">
+<p>
+Neo4j’s graphs are directed, which means that each relationship must
+have well-defined start and end nodes. Bidirectional relationships
+in Neo4j can be modeled with two separate relationships, one in each
+direction.
+</p>
+
+<p>
+Note that even in the case of a directed relationship you might be
+able to infer relationships at query time in any of the two
+directions. I.e. you can go against the current so to say and infer
+relationship against current as well.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org9a2d013" class="outline-3">
+<h3 id="org9a2d013">Cypher Syntax</h3>
+<div class="outline-text-3" id="text-org9a2d013">
+<p>
+There are 4 most important components in cypher.
+</p>
+
+<ol class="org-ol">
+<li>
+<b>Create</b> - this is used for creating nodes and relations.</li>
+
+<li>
+<b>Match</b> - this is used for matching patterns, allowing you to
+locate the subgraphs of interesting data.</li>
+
+<li>
+<b>Where</b> - this is the standard filtering clause.</li>
+
+<li>
+<b>Return</b> — this returns the results you’re interested in.</li>
+</ol>
+</div>
+
+<div id="outline-container-orgf7d3dae" class="outline-4">
+<h4 id="orgf7d3dae">On the Big AND clause</h4>
+<div class="outline-text-4" id="text-orgf7d3dae">
+<p>
+Before going into the syntax of cypher it is important to
+understand that when you do specify more than 1 argument you are
+in fact using an <code>AND</code> clause.
+</p>
+
+<p>
+That means that if you, for instance, use two <code>MATCH</code> clause next
+to each other you will ultimately use both of the filters so that
+you ultimately can interpret that syntax as a big <code>AND</code>
+statement.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org11143ae" class="outline-4">
+<h4 id="org11143ae">Creation of Nodes and Relations</h4>
+<div class="outline-text-4" id="text-org11143ae">
+</div>
+<ul class="org-ul">
+<li>
+<a id="org8d65fab"></a>Create Node with properties.<br><div class="outline-text-5" id="text-org8d65fab">
+<pre class="example" id="org8ade18d">
+"""
+CREATE (p1:Person{name: "YourSecretPerson"})
+"""
+</pre>
+</div>
+</li>
+
+<li>
+<a id="orga865c66"></a>Create Nodes and add Relation - 1 Shot<br><div class="outline-text-5" id="text-orga865c66">
+<pre class="example" id="org5e07a69">
+"""
+CREATE (p1:Person{person: $person1}) 
+CREATE (p2:Person{person: $person2}) 
+CREATE (p1)-[r:IS_FRIEND_OF]-&gt; (p2) 
+"""
+</pre>
+</div>
+</li>
+
+<li>
+<a id="org392fd85"></a>Create Relation from Existing Nodes<br><div class="outline-text-5" id="text-org392fd85">
+<p>
+Clear to see from the below, you match the two nodes that you are
+interested in first and then add the relationship there.
+</p>
+
+<pre class="example" id="org42a98c3">
+"""
+MATCH
+(a:Person),
+(b:Person)
+WHERE a.person = $person1 AND b.person = $person2
+CREATE (a)-[r:IS_FRIEND_OF]-&gt;(b)
+"""
+</pre>
+</div>
+</li>
+
+<li>
+<a id="org1d10b3c"></a>Set Properties to Relation<br><div class="outline-text-5" id="text-org1d10b3c">
+<p>
+This works again the same way. With that <code>json-sh</code> syntax there.
+</p>
+
+<p>
+Using the example above it is clear that it becomes:
+</p>
+
+<pre class="example" id="orgd0a2ae9">
+"""
+CREATE (p1:Person{person: $person1}) 
+CREATE (p2:Person{person: $person2}) 
+CREATE (p1)-[r:IS_FRIEND_OF {name: a.name + '&lt;-&gt;' + b.name}]-&gt; (p2) 
+"""
+</pre>
+</div>
+</li>
+
+<li>
+<a id="orga7d6d47"></a>Important on Pattern Creation<br><div class="outline-text-5" id="text-orga7d6d47">
+<p>
+Note that in the above you do not have to create everything
+yourself.
+</p>
+
+<p>
+I.e. if you specify a pattern and some of the pieces of it are
+missing from your network, these are automatically created.
+</p>
+
+<pre class="example" id="org1d931cc">
+"""
+MATCH (a:Person)
+WHERE a.person = 'Marco'
+CREATE p = (Person {person:'Roberto'})-[:IS_FRIEND_OF]-&gt;(a)&lt;-[:IS_FRIEND_OF]-(PERSON {person: 'Bagutti'})
+"""
+</pre>
+
+<p>
+Interesting. For some reason if you do not set a tag to the Person
+<code>nodes</code> above, the database does not recognize these properly and
+does not set the attribute of them in the correct way.
+</p>
+
+<p>
+Ok, so the explanation of the above comes directly in the next
+section. The idea is simply that you have plain <code>nodes</code> and
+<code>relations</code> if you do not specify any <code>TAGS</code> for them.
+</p>
+
+<p>
+These are two different exercises. with the <code>:mytag</code> part you
+specify labels to the nodes, relations so that you can then
+filter based on them at query time. This was briefly touched
+upon above in the introduction.
+</p>
+</div>
+</li>
+
+<li>
+<a id="orgebc17f0"></a>How to work directly with Json<br><div class="outline-text-5" id="text-orgebc17f0">
+<p>
+That is mostly it. You can then check at the following <a href="https://neo4j.com/docs/cypher-manual/current/clauses/create/">link</a>, the
+option to automatically create nodes out of <code>json</code> files. This
+might be useful then when you set up everything properly to talk
+with the front-end.  
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+
+<div id="outline-container-orga858837" class="outline-4">
+<h4 id="orga858837">Extracting Relevant Information</h4>
+<div class="outline-text-4" id="text-orga858837">
+</div>
+<ul class="org-ul">
+<li>
+<a id="org15fd722"></a>Get all of the nodes and the entire graph<br><div class="outline-text-5" id="text-org15fd722">
+<p>
+By just specifying a pattern with a single node and no labels,
+all nodes in the graph will be returned.
+</p>
+
+<pre class="example" id="org50e2a1f">
+"""
+MATCH (n)
+RETURN n
+"""
+</pre>
+
+<p>
+Note that your statements cannot just end with a <code>MATCH</code>
+clause. The <code>MATCH</code> part is how you get the information, then you
+have to process and do something with that information.     
+</p>
+</div>
+</li>
+
+<li>
+<a id="orgda7b829"></a>Get Nodes by ID<br><div class="outline-text-5" id="text-orgda7b829">
+<p>
+This is especially handy. Every time you create a node - a node
+id is automatically created and associated with it.
+</p>
+
+<pre class="example" id="orgd3dc8e7">
+"""
+MATCH (n)
+WHERE id(n) = 0
+RETURN n
+"""
+</pre>
+
+<p>
+You can then sort based on the index.
+</p>
+
+<p>
+With this you can easily see that you can get all of the
+relations for a given ID.
+</p>
+
+<p>
+You can also filter based on multiple IDs at once. See for
+instance the following:
+</p>
+
+<pre class="example" id="org74e33fd">
+"""
+MATCH (n)
+WHERE id(n) in [1,2,3]
+RETURN n
+"""
+</pre>
+</div>
+</li>
+
+<li>
+<a id="orgc6ea0c1"></a>Getting all Nodes Matching a Pattern<br><div class="outline-text-5" id="text-orgc6ea0c1">
+<p>
+This is important - recall the importance of specifying <code>labels</code>
+mentioned above.
+</p>
+
+<p>
+It is of paramount importance to have such labels in your
+graph. This will allow you to make sense of the entire structure
+of your network as well to filter out just <code>nodes</code>, <code>relations</code>
+belonging to a specific label category.
+</p>
+
+<p>
+For instance to get all of the names of the people in your
+network you can use the following
+</p>
+
+<pre class="example" id="orgb36d61a">
+"""
+MATCH (p:Person)
+RETURN p.name
+"""
+</pre>
+</div>
+</li>
+
+
+<li>
+<a id="orgf15ff56"></a>Directed vs Undirected queries<br><div class="outline-text-5" id="text-orgf15ff56">
+<p>
+Nothing special here. Just notice that you have to make the
+distinction about how you the relation goes.
+</p>
+
+<p>
+If you do not care the side of the connection just use the <code>--</code>
+syntax.
+</p>
+
+<p>
+For instance the following works
+</p>
+
+<pre class="example" id="orgcfa8f7d">
+"""
+MATCH (director {name: 'Oliver Stone'})--(movie)
+RETURN movie.title
+"""
+</pre>
+
+<p>
+<code>--</code> means related to, without regard to type or direction of the
+relationship.
+</p>
+
+<p>
+If you want to specify the relation direction you can use an
+ASCII style arrow.
+</p>
+
+<p>
+Always test in your Neo4j local console this will allow you to
+make sense of all of that before going into production.
+</p>
+
+<p>
+Good so that is pretty much very straightforward syntax.
+</p>
+</div>
+</li>
+
+<li>
+<a id="orgf1c1db6"></a>Others<br><div class="outline-text-5" id="text-orgf1c1db6">
+<p>
+Ok this gave you a basis now. All of the rest I will keep as a
+<code>stack-overflow</code> job. With that you should be good to go to make
+sense of the logic for the coming weeks.
+</p>
+
+<p>
+One example could be for instance queries on multiple labels via
+an or syntax <code>(node1)-[:label1|label2]-(node2)</code>.
+</p>
+
+<p>
+Moreover other options consists in:
+</p>
+
+<ul class="org-ul">
+<li>specify maximum number of hops distance in the graph  (can be
+used in conjunction to the multiple labels case above)</li>
+
+<li>can use properties filter for relationship queries matches</li>
+
+<li>finding shortest path; there is a command exactly for doing
+that</li>
+
+<li>Optional matches - If a relationship is optional, use the
+<code>OPTIONAL MATCH</code> clause. This is similar to how a SQL outer join
+works. If the relationship is there, it is returned. If it’s
+not, <code>null</code> is returned in its place.</li>
+
+<li>
+<code>WITH</code>; with this you can organize the output and decide on
+it.</li>
+
+<li>
+<code>FOREACH</code>, apply any of the <code>SET</code>, <code>REMOVE</code>, <code>CREATE</code>, <code>MERGE</code>,
+<code>DELETE</code> operations. you apply it to a set of matched results.</li>
+</ul>
+<p>
+Generally look check at the <a href="https://neo4j.com/docs/cypher-manual/current/clauses/merge/">official documentation</a> when you need
+to make sense and build up your queries.
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+
+<div id="outline-container-orgc5660a9" class="outline-4">
+<h4 id="orgc5660a9">Updating Graph via Cypher</h4>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org706cc10" class="outline-2">
+<h2 id="org706cc10">Python Driver</h2>
+<div class="outline-text-2" id="text-org706cc10">
+<p>
+This is mostly straightforward. There is an important difference
+between <code>transactions</code> and <code>session</code> that you should get.
+</p>
+
+<p>
+Check at it here as the answer of a stack overflow post:
+</p>
+
+<blockquote>
+<p>
+Session.run() will actually create a transaction, execute the
+statement, and commit the transaction. Transaction.run() will leave
+the transaction open until you commit it, but the statement will still
+be sent and interpreted and executed, and results will be
+returned. However, any changes won't actually be persisted into the
+datastore, and won't be visible to queries outside of the
+transaction. You have to mark the transaction as successful and commit
+it or it will be rolled back.
+</p>
+
+<p>
+You should try not to use transactions; open transactions prevent
+changes to indexes and constraints and increase memory usage. The only
+reason to use transactions is for the rollback potential; if you want
+to see what the results of the query are, and maybe undo it depending
+on those results, then use a transaction. Otherwise use a session.
+</p>
+</blockquote>
+
+<p>
+<b>Important</b> to understand for the python driver is that when you
+return nodes these are of a particular class <code>neo4j.graph.Node</code>.
+</p>
+
+<p>
+You can then check here such a data type and how you work with it
+<a href="https://neo4j.com/docs/api/python-driver/current/api.html#graph-data-types">https://neo4j.com/docs/api/python-driver/current/api.html#graph-data-types</a>
+</p>
+
+<p>
+The basic functioning I saw in some apps built with the driver is to
+use a serializer function.
+</p>
+
+<p>
+This could for instance look as follows:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">serialize_node</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+	<span class="s1">'title'</span><span class="p">:</span> <span class="n">node</span><span class="p">[</span><span class="s1">'title'</span><span class="p">],</span>
+	<span class="s1">'layer'</span><span class="p">:</span> <span class="n">node</span><span class="p">[</span><span class="s1">'layer'</span><span class="p">],</span>
+	<span class="s1">'message'</span><span class="p">:</span> <span class="n">node</span><span class="p">[</span><span class="s1">'message'</span><span class="p">],</span>
+	<span class="s1">'selected'</span><span class="p">:</span> <span class="n">node</span><span class="p">[</span><span class="s1">'selected'</span><span class="p">],</span>
+    <span class="p">}</span>
+</pre></div>
+
+<p>
+You can then pass this function on a <code>neo4j.graph.Node</code> and save
+them in a json affine way.
+</p>
+
+<p>
+From there it will be usual work.
+</p>
+
+<p>
+Finally, notice that to get the id, this from <code>__init__</code> in the
+python class so that you will work with it by calling it via
+<code>node.id</code>.
+</p>
+
+<p>
+Notice that if you return entire <code>paths</code> you will need a different
+processing.
+</p>
+
+<div class="highlight"><pre><span></span>  <span class="k">def</span> <span class="nf">update_and_withdraw</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">json</span><span class="p">):</span>
+      <span class="sd">"""update the selected status of a node</span>
+<span class="sd">      """</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">		      MATCH (n)</span>
+<span class="s2">		      WHERE id(n) = $ID</span>
+<span class="s2">		      SET n.selected = $selected</span>
+<span class="s2">		      RETURN (n) -[:triggers]-&gt; () as data</span>
+<span class="s2">		      """</span><span class="p">,</span> <span class="n">ID</span> <span class="o">=</span> <span class="n">json</span><span class="p">[</span><span class="s1">'id'</span><span class="p">],</span> <span class="n">selected</span> <span class="o">=</span> <span class="n">json</span><span class="p">[</span><span class="s1">'selected'</span><span class="p">])</span> 
+		      <span class="c1"># ID, selected</span>
+      <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+	  <span class="n">values</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">data</span><span class="p">()[</span><span class="s1">'data'</span><span class="p">]])</span> <span class="c1">## so notice that the index here is of the triples that come back. </span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf0038e7" class="outline-2">
+<h2 id="orgf0038e7">NeoSemantics</h2>
+<div class="outline-text-2" id="text-orgf0038e7">
+<p>
+This is the way you would deal with RDF schema and there are scripts
+that parse such into neo4j syntax as import and exports.
+</p>
+
+<p>
+There are also scripts that deal with ontologies imports. Have to
+test these out.
+</p>
+</div>
+
+
+<div id="outline-container-orga2cc0f2" class="outline-3">
+<h3 id="orga2cc0f2">Install</h3>
+<div class="outline-text-3" id="text-orga2cc0f2">
+<p>
+In order to have such toolkit you need to install the extension to
+your neo4j database.
+</p>
+
+<p>
+I will try to do this next in my database running in the oc cluster.
+</p>
+
+<p>
+First of all ssh into your cluster such that you can have a bash
+session over there.
+</p>
+
+<div class="highlight"><pre><span></span>   $ kubectl <span class="nb">exec</span> -ti <span class="nv">$POD_NAME</span> bash
+</pre></div>
+
+
+<p>
+Then change your directory to the <code>$NEO4J_HOME</code> directory.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nb">cd</span> <span class="nv">$NEO4J_HOME</span>
+</pre></div>
+
+<p>
+You can then go to the <code>plugin</code> repo in there
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nb">cd</span> plugins
+</pre></div>
+
+<p>
+Then you can get the release you want from <a href="https://github.com/neo4j-labs/neosemantics/releases">here</a> and copy the link of
+the jar file of interest.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1"># in my case</span>
+   $ wget https://github.com/neo4j-labs/neosemantics/releases/download/4.2.0.0/neosemantics-4.2.0.0.jar
+</pre></div>
+
+<p>
+Then I made the following change:
+</p>
+
+<div class="highlight"><pre><span></span>   $ <span class="nb">echo</span> <span class="s2">"dbms.unmanaged_extension_classes=n10s.endpoint=/rdf"</span> &gt;&gt; &lt;NEO_HOME&gt;/conf/neo4j.conf
+</pre></div>
+
+<p>
+Then you should restart the server. I think this is where it is not
+working correctly. Cause when I did <code>$NEO4J_HOME/bin/neo4j restart</code>
+it said that there was no instance of neo4j running. 
+</p>
+
+<p>
+Then it started one. But then I could not find a working mounted
+extension as when calling the endpoint I got a 404 error
+</p>
+
+<div class="highlight"><pre><span></span>   :GET http://localhost:7474/rdf/ping
+</pre></div>
+
+<p>
+this from the web-browser with port forward. That is weird. Even if
+it is pod as long as you do not kill and restart that pod it should
+work as a normal neo4j instance. So theoretically the above should
+have worked.
+</p>
+
+<p>
+I will now work with the Desktop version as time is limited. I will
+then figure out what is not working in the above. And possibly use a
+docker image.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org0022f08" class="outline-3">
+<h3 id="org0022f08">Semantics</h3>
+<div class="outline-text-3" id="text-org0022f08">
+<p>
+Basically you have options to specify how URI objects are
+translated into your label-property graph.
+</p>
+
+<p>
+There are default settings on how you treat general structures; you
+can check at them by calling <code>n10s.graphconfig.init()</code>.
+</p>
+
+<p>
+After an initial Graph Config has been created and before the data
+is imported, the method <code>n10s.graphconfig.set</code> will let you update
+individual configuration items. Here’s an example:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nx">call</span> <span class="nx">n10s</span><span class="p">.</span><span class="nx">graphconfig</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
+
+   <span class="nx">call</span> <span class="nx">n10s</span><span class="p">.</span><span class="nx">graphconfig</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span> <span class="p">{</span> <span class="nx">keepLangTag</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">handleRDFTypes</span><span class="o">:</span> <span class="s2">"LABELS_AND_NODES"</span> <span class="p">});</span>
+</pre></div>
+
+<p>
+Once you specify this general configuration option you can start
+importing your RDF data. This can be done via the
+<code>n10s.rdf.import.fetch</code> function. From there you can specify a
+<code>URL</code> or a local resource to import.
+</p>
+
+<p>
+For instance, consider the following turtle file.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="err">@</span><span class="nx">prefix</span> <span class="nx">neo4voc</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">http</span><span class="o">:</span><span class="c1">//neo4j.org/vocab/sw#&gt; .</span>
+   <span class="err">@</span><span class="nx">prefix</span> <span class="nx">neo4ind</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">http</span><span class="o">:</span><span class="c1">//neo4j.org/ind#&gt; .</span>
+
+   <span class="nx">neo4ind</span><span class="o">:</span><span class="nx">nsmntx3502</span> <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">name</span> <span class="s2">"NSMNTX"</span> <span class="p">;</span>
+	    <span class="nx">a</span> <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">Neo4jPlugin</span> <span class="p">;</span>
+	    <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">version</span> <span class="s2">"3.5.0.2"</span> <span class="p">;</span>
+	    <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">releaseDate</span> <span class="s2">"03-06-2019"</span> <span class="p">;</span>
+	    <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">runsOn</span> <span class="nx">neo4ind</span><span class="o">:</span><span class="nx">neo4j355</span> <span class="p">.</span>
+
+   <span class="nx">neo4ind</span><span class="o">:</span><span class="nx">apoc3502</span> <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">name</span> <span class="s2">"APOC"</span> <span class="p">;</span>
+	    <span class="nx">a</span> <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">Neo4jPlugin</span> <span class="p">;</span>
+	    <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">version</span> <span class="s2">"3.5.0.4"</span> <span class="p">;</span>
+	    <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">releaseDate</span> <span class="s2">"05-31-2019"</span> <span class="p">;</span>
+	    <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">runsOn</span> <span class="nx">neo4ind</span><span class="o">:</span><span class="nx">neo4j355</span> <span class="p">.</span>
+
+   <span class="nx">neo4ind</span><span class="o">:</span><span class="nx">graphql3502</span> <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">name</span> <span class="s2">"Neo4j-GraphQL"</span> <span class="p">;</span>
+	    <span class="nx">a</span> <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">Neo4jPlugin</span> <span class="p">;</span>
+	    <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">version</span> <span class="s2">"3.5.0.3"</span> <span class="p">;</span>
+	    <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">releaseDate</span> <span class="s2">"05-05-2019"</span> <span class="p">;</span>
+	    <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">runsOn</span> <span class="nx">neo4ind</span><span class="o">:</span><span class="nx">neo4j355</span> <span class="p">.</span>
+
+   <span class="nx">neo4ind</span><span class="o">:</span><span class="nx">neo4j355</span> <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">name</span> <span class="s2">"neo4j"</span> <span class="p">;</span>
+	    <span class="nx">a</span> <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">GraphPlatform</span> <span class="p">,</span> <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">AwesomePlatform</span> <span class="p">;</span>
+	    <span class="nx">neo4voc</span><span class="o">:</span><span class="nx">version</span> <span class="s2">"3.5.5"</span> <span class="p">.</span>
+</pre></div>
+
+<p>
+You can then import such a turtle file with the following command -
+note that the resource above is saved at this URL below.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nx">CALL</span> <span class="nx">n10s</span><span class="p">.</span><span class="nx">rdf</span><span class="p">.</span><span class="k">import</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(</span><span class="s2">"https://github.com/neo4j-labs/neosemantics/raw/3.5/docs/rdf/nsmntx.ttl"</span><span class="p">,</span><span class="s2">"Turtle"</span><span class="p">);</span>
+</pre></div>
+
+<p>
+ok - so pretty straightforward. after calling such function you
+will find the converted RDF in your neo4j database.
+</p>
+
+<p>
+There are a few conversion default you need to understand. Consider
+the RDF above. This is converted along the following lines. 
+</p>
+
+<img src="../../images/Bildschirmfoto_2021-04-06_um_10.16.27.png" class="center"><p>
+What you can see from the above - and your take away should be the
+following:
+</p>
+
+<ul class="org-ul">
+<li>
+<code>dataType</code> properties, i.e. relating individuals to literal data
+(strings, numbers, datetime etc.), in your RDF have been
+converted into node properties</li>
+
+<li>
+<code>object properties</code>, i.e. relate individuals to other
+individuals, are now relationships connecting nodes.</li>
+
+<li>Every node represents a resource and has a property with its
+<code>URI</code>.</li>
+
+<li>
+<code>rdf:type</code> statements are transformed into node
+labels. I.e. recall that you can think of labels as classID
+through which you can filter and sort out your data at query
+time.</li>
+
+<li>The URIs identifying the elments in the RDF data (resources,
+properties, etc) have their <b>namespace part shortened</b> to make
+them more human readable and easier to query with Cypher. See for
+instance above how <code>http://neo4j.org/vocab/sw#name</code> turns into
+<code>ns0__name</code>. Prefixes for custom namespaces are assigned
+dynamically in sequence (<code>ns0</code>, <code>ns1</code>, etc) as they appear in the
+imported RDF. There are also options that you can specify in your
+general configuration to specify how you should deal with such
+prefixes. Check more <a href="https://neo4j.com/docs/labs/nsmntx/current/import/">this</a> if interested.</li>
+</ul>
+<p>
+That is pretty much it. If you want to explore this further, check
+<a href="https://jbarrasa.com/2016/06/07/importing-rdf-data-into-neo4j/">here</a>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org0734b2c" class="outline-3">
+<h3 id="org0734b2c">Filtering triples</h3>
+<div class="outline-text-3" id="text-org0734b2c">
+<p>
+This section outlines the possibility to <b>exclude certain triples</b>
+when importing RDFs.
+</p>
+
+<p>
+This can be done in a straightforward way using the
+<code>predicateExclusionList</code> where you provide a list of URIs of the
+predicates you want excluded.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nx">CALL</span> <span class="nx">n10s</span><span class="p">.</span><span class="nx">rdf</span><span class="p">.</span><span class="k">import</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(</span><span class="s2">"https://github.com/neo4j-labs/neosemantics/raw/3.5/docs/rdf/nsmntx.ttl"</span><span class="p">,</span> <span class="s2">"Turtle"</span><span class="p">,</span> <span class="p">{</span>
+     <span class="nx">predicateExclusionList</span> <span class="o">:</span> <span class="p">[</span> <span class="s2">"http://neo4j.org/vocab/sw#version"</span><span class="p">,</span> <span class="s2">"http://neo4j.org/vocab/sw#releaseDate"</span> <span class="p">]</span>
+   <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org74a2569" class="outline-3">
+<h3 id="org74a2569">Handling multi valued properties</h3>
+<div class="outline-text-3" id="text-org74a2569">
+<p>
+Consider the following RDF. 
+</p>
+
+<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="nx">neo4j</span><span class="o">:</span><span class="c1">//individual/JB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://neo4j.org/voc#Person&gt; .</span>
+<span class="o">&lt;</span><span class="nx">neo4j</span><span class="o">:</span><span class="c1">//individual/JB&gt; &lt;http://neo4j.org/voc#name&gt; "J. Barrasa" .</span>
+<span class="o">&lt;</span><span class="nx">neo4j</span><span class="o">:</span><span class="c1">//individual/JB&gt; &lt;http://neo4j.org/voc#altName&gt; "JB" .</span>
+<span class="o">&lt;</span><span class="nx">neo4j</span><span class="o">:</span><span class="c1">//individual/JB&gt; &lt;http://neo4j.org/voc#altName&gt; "JesÃºs" .</span>
+<span class="o">&lt;</span><span class="nx">neo4j</span><span class="o">:</span><span class="c1">//individual/JB&gt; &lt;http://neo4j.org/voc#altName&gt; "Dr J" .</span>
+</pre></div>
+
+<p>
+In an RDF graph you would have multiple triples for handling the
+above.
+</p>
+
+<p>
+Label-property graph overwrite the above as they allow a single
+<code>dataType</code> property entry per field. So it will just keep the last
+read of the above.
+</p>
+
+<p>
+If you want to keep all of the entries you have to modify the
+default configuration settings. 
+</p>
+
+<div class="highlight"><pre><span></span><span class="nx">CALL</span> <span class="nx">n10s</span><span class="p">.</span><span class="nx">graphconfig</span><span class="p">.</span><span class="nx">set</span><span class="p">({</span> <span class="nx">handleMultival</span><span class="o">:</span> <span class="s1">'ARRAY'</span> <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org3f26d4f" class="outline-3">
+<h3 id="org3f26d4f">Handling Custom Data Types</h3>
+<div class="outline-text-3" id="text-org3f26d4f">
+<p>
+This is not so well supported into Neo4j. You can read more <a href="https://neo4j.com/docs/labs/nsmntx/current/import/">here</a> in
+section 4.7. Check there if interested.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd99d117" class="outline-3">
+<h3 id="orgd99d117">Change rdf:type from label to Nodes</h3>
+<div class="outline-text-3" id="text-orgd99d117">
+<p>
+This is important as you might link them to ontologies
+</p>
+
+<blockquote>
+<p>
+The rdf:type statements in RDF (triples) are transformed into
+labels by default when we import them into Neo4j. While this is a
+reasonable approach it may not be your preferred option, especially
+if you want to load an ontology too and link it to your instance
+data. In that case you’ll probably want to represent the types as
+nodes and have 'the magic' of uris have them linked.
+</p>
+</blockquote>
+
+<p>
+Check at the example in there with an ontology import. Very easy
+and neat to do.
+</p>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../javascript-notes/" rel="prev" title="JavaScript Notes">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../a-nice-reminder-the-gamification-on-yourself/" rel="next" title="A nice Reminder - The Gamification of Yourself">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
