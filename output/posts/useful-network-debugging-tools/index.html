@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Useful Network debugging Tools | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/useful-network-debugging-tools/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../shell-scripts-and-interactive-shell/" title="Shell Scripts and Interactive Shell" type="text/html">
+<link rel="next" href="../python-eda/" title="Python EDA" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Useful Network debugging Tools">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/useful-network-debugging-tools/">
+<meta property="og:description" content="There are many handy tools you can leverage when debugging your
+network. This is a brief list with possible commands to keep the
+performance of your network under track and to identify the piece of
+th">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-03-15T08:33:59+01:00">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Useful Network debugging Tools</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2020-03-15T08:33:59+01:00" itemprop="datePublished" title="2020-03-15 08:33">2020-03-15 08:33</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <br><br><p>
+There are many handy tools you can leverage when debugging your
+network. This is a brief list with possible commands to keep the
+performance of your network under track and to identify the piece of
+the network it is failing; i.e. whether it is a DNS, WebServer, DHCP
+error or whatever. 
+</p>
+
+<p>
+It moreover illustrates handy tools through which you can gain a
+better understanding of internet protocols as you are able to open
+individuals packages and frames at the different layers and observe
+their payloads and headers.
+</p>
+
+<!-- TEASER_END -->
+
+
+<br><div id="outline-container-orgbde9d6c" class="outline-2">
+<h2 id="orgbde9d6c">Ping</h2>
+<div class="outline-text-2" id="text-orgbde9d6c">
+<p>
+This is a UNIX command that checks whether a destination is reachable.
+</p>
+
+<p>
+As stated on Wikipedia:
+</p>
+
+<blockquote>
+<p>
+Ping operates by sending Internet Control Message Protocol echo
+request packets to the target host and waiting for an ICMP echo
+reply. The program reports errors, packet loss, and a statistical
+summary of the results, typically including the minimum, maximum, the
+mean round-trip times, and standard deviation of the mean. 
+</p>
+</blockquote>
+
+
+<p>
+Interesting is moreover the option to customize the ping command with
+the size of the payload, count of tests, the limit for the number of
+network hops (TTL) that probes traverse, interval between the requests
+and time to wait for a response.
+</p>
+
+<p>
+Many systems provide a companion utility ping6, for testing on
+Internet Protocol version 6 (IPv6) networks, which implement ICMPv6.
+</p>
+
+
+<div class="highlight"><pre><span></span>ping google.com
+</pre></div>
+
+<pre class="example" id="org7d16dc7">
+PING google.com (216.58.206.46): 56 data bytes
+64 bytes from 216.58.206.46: icmp_seq=0 ttl=53 time=11.902 ms
+64 bytes from 216.58.206.46: icmp_seq=1 ttl=53 time=2.523 ms
+64 bytes from 216.58.206.46: icmp_seq=2 ttl=53 time=4.955 ms
+64 bytes from 216.58.206.46: icmp_seq=3 ttl=53 time=8.905 ms
+64 bytes from 216.58.206.46: icmp_seq=4 ttl=53 time=29.452 msping google.com
+</pre>
+
+
+<p>
+Setting the maximum amount of hops with the <code>-m</code> flag you can see for
+instance what happens when the maximum amount specified is exceeded.
+</p>
+
+<div class="highlight"><pre><span></span>ping google.com -m <span class="m">10</span>
+</pre></div>
+
+<pre class="example" id="org5eb1b86">
+PING google.com (172.217.21.78): 56 data bytes
+76 bytes from 62-101-124-125.fastres.net (62.101.124.125): Time to live exceeded
+Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst
+ 4  5  00 5400 c17a   0 0000  01  01 7406 192.168.1.89  172.217.21.78 
+
+Request timeout for icmp_seq 0
+76 bytes from 62-101-124-125.fastres.net (62.101.124.125): Time to live exceeded
+Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst
+ 4  5  00 5400 d583   0 0000  01  01 5ffd 192.168.1.89  172.217.21.78 
+</pre>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org84913f6" class="outline-2">
+<h2 id="org84913f6">Traceroute</h2>
+<div class="outline-text-2" id="text-org84913f6">
+<p>
+This is a computer network diagnostic commands for displaying the
+route (path) and measuring transit delays of packets across an
+Internet Protocol (IP) network
+</p>
+
+<p>
+The idea is the following: traceroute sends multiple, special packets
+toward that destinationn. As these packets work their way toward the
+destination, they pass through routers.
+When a router receives one of these packets, it sends back to the
+source a short message that contains the name annd address of the
+router. <i>(Computer Networking - A Top-Down Approach 7th Edition)</i>
+</p>
+
+
+<p>
+The source host sending the traceroute request records the time that
+elapses between when it sends a packet and when it receives the return
+message as well as the name and address of the router. In this way it
+is possible to record the route taken by the packet.
+<i>(Computer Networking - A Top-Down Approach 7th Edition)</i>
+</p>
+
+
+<div class="highlight"><pre><span></span>traceroute www.google.it
+</pre></div>
+
+<pre class="example" id="orgae24bec">
+traceroute to www.google.it (172.217.21.67), 64 hops max, 52 byte packets
+ 1  dsldevice (192.168.1.254)  8.053 ms  1.609 ms  1.519 ms
+ 2  10.57.27.195 (10.57.27.195)  3.188 ms  2.529 ms  22.082 ms
+ 3  10.251.82.9 (10.251.82.9)  80.064 ms  22.095 ms  2.679 ms
+ 4  10.251.78.24 (10.251.78.24)  5.763 ms  2.692 ms  3.290 ms
+ 5  10.251.79.1 (10.251.79.1)  2.375 ms  2.978 ms  3.021 ms
+ 6  10.0.8.170 (10.0.8.170)  4.442 ms  8.238 ms  6.462 ms
+ 7  10.0.8.145 (10.0.8.145)  3.215 ms  3.198 ms  3.022 ms
+ 8  10.0.7.177 (10.0.7.177)  5.495 ms  3.516 ms  3.461 ms
+ 9  10.254.2.157 (10.254.2.157)  3.223 ms  3.205 ms  3.513 ms
+10  62-101-124-94.fastres.net (62.101.124.94)  3.582 ms
+    62-101-124-98.fastres.net (62.101.124.98)  3.368 ms  3.190 ms
+11  62-101-124-9.fastres.net (62.101.124.9)  5.604 ms  4.959 ms
+    62-101-124-13.fastres.net (62.101.124.13)  3.706 ms
+12  93.62.86.153 (93.62.86.153)  3.373 ms  3.450 ms  3.383 ms
+13  * * *
+14  74.125.245.241 (74.125.245.241)  11.068 ms  8.961 ms
+    216.239.48.230 (216.239.48.230)  6.834 ms
+15  172.253.69.253 (172.253.69.253)  3.686 ms
+    74.125.245.227 (74.125.245.227)  11.406 ms
+    mil04s40-in-f3.1e100.net (172.217.21.67)  7.376 ms
+</pre>
+
+<p>
+In the example above you can see that my house is served by a
+DSL. I am currently in Italy due to the extraordinary Coronavirus
+situation. Interesting is that my dad claims we have a <code>fiber-optic</code>
+internet connection contract. Would be fun to explore this further at
+some point as in fact the connection here is quite poor. 
+</p>
+
+<p>
+Notice that the index above states the router number the packet goes
+through.
+It is also important to notice that the traceroute does three trials,
+i.e. it sends three different packets at equal intervals and measures
+the round-trip for each. This can differ significantly. For instance
+for the third router the first packet took nearly 4 times as the
+second and 40 times as the third to complete the round-trip. This is
+due to the <b>varying queuing delay</b> in time a router experience.
+</p>
+
+<p>
+Finally, the asterisks at router 13vindicate that the target server
+did not respond as traceroute expected before a timeout occurred -
+this does not always indicate packet loss. If you suspect packet loss
+because of asterisks in the output you can attempt to ping the
+server. Probably on such networks there are Firewall settings that
+prevent it from being tracerouted in the specific case.
+</p>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org36d3992" class="outline-2">
+<h2 id="org36d3992">Ifconfig</h2>
+<div class="outline-text-2" id="text-org36d3992">
+<p>
+This is a UNIX basic command to check all of the interfaces on your
+device.
+</p>
+
+<div class="highlight"><pre><span></span>ifconfig
+</pre></div>
+
+<p>
+It output a long table where you can check all the configurations of
+multiple networks. For instance the <code>en0</code> is the wireless interface
+and you can read there the configuration settings of it.
+</p>
+
+<p>
+It is important moreover to understand that you can modify the
+interface settings by issuing the proper networking commands. This
+goes beyond the scope of the post and it is omitted here.
+</p>
+
+<p>
+<code>utun</code> are interfaces created for communicating via VPN. I have
+multiple of such interfaces as I configured multiple VPN: work, uni
+etc. 
+</p>
+
+<p>
+A particularly interesting statistics from the command are the various
+<code>RX</code> entries. The explanation of each can be found in the following
+<a href="https://goinbigdata.com/demystifying-ifconfig-and-network-interfaces-in-linux/">link</a>. These provide in general statistics about packets collisions,
+packets errors, packets dropped etc.
+</p>
+
+<p>
+A useful way to check at all of the interfaces on your device and to
+understand the hardware port nature of them run
+</p>
+
+<div class="highlight"><pre><span></span>networksetup -listallhardwareports
+</pre></div>
+
+<pre class="example" id="org1834898">
+| Hardware            | Port:          | Wi-Fi             |        |
+| Device:             | en0            |                   |        |
+| Hardware            | Port:          | Bluetooth         |    PAN |
+| Device:             | en6            |                   |        |
+| Hardware            | Port:          | Thunderbolt       |      1 |
+| Device:             | en1            |                   |        |
+| Hardware            | Port:          | Thunderbolt       |      2 |
+| Device:             | en2            |                   |        |
+| Hardware            | Port:          | Thunderbolt       |      3 |
+| Device:             | en3            |                   |        |
+| Hardware            | Port:          | Thunderbolt       |      4 |
+| Device:             | en4            |                   |        |
+| Hardware            | Port:          | Thunderbolt       | Bridge |
+| Device:             | bridge0        |                   |        |
+| VLAN                | Configurations |                   |        |
+| =================== |                |                   |        |
+</pre>
+
+<p>
+Thunderbolt are  hardware interfaces that allows the connection of
+external peripherals to a computer on MAC. This are therefore the
+interfaces used for connecting to Monitors etc.
+</p>
+
+<p>
+The Thunderbolt bridge in contrast lets two Macs talk to one another
+through the Thunderbolt port. This is probably used when activating
+AirDrop; would have to verify this though.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org47183f3" class="outline-2">
+<h2 id="org47183f3">Wireshark</h2>
+<div class="outline-text-2" id="text-org47183f3">
+<p>
+Wireshark intercepts traffic and converts that binary traffic into
+human-readable format. This makes it easy to identify what traffic is
+crossing your network, how much of it, how frequently, how much
+latency there is between certain hops, and so forth. This is for
+instance useful when learning the Networking protocols and the packets
+they exchage. For instance in the Dynamic Host Configuration Protocol
+for requesting an IP address.
+</p>
+
+<p>
+Another interesting use case is to observe the behavior of some
+proprietary protocols. Do they issue broadcast messages? How to they
+address hosts etc.
+</p>
+
+<p>
+You can download wireshark at <a href="https://www.wireshark.org/">this link</a>. You can find an extensive
+guide to wireshark with hands-on exercises to understand better the
+internet networking under <a href="https://gaia.cs.umass.edu/kurose_ross/wireshark.htm">this webpage</a>.
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../shell-scripts-and-interactive-shell/" rel="prev" title="Shell Scripts and Interactive Shell">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../python-eda/" rel="next" title="Python EDA">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

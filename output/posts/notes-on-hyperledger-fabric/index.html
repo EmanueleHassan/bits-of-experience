@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Notes on HyperLedger Fabric | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/notes-on-hyperledger-fabric/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../tramp-mode/" title="Tramp Mode" type="text/html">
+<link rel="next" href="../ibm-cloud-commands/" title="IBM Cloud Commands" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Notes on HyperLedger Fabric">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/notes-on-hyperledger-fabric/">
+<meta property="og:description" content="This are my personal notes w.r.t. Hyperledger Fabric technology. The
+document basically consists of a structured collage from the
+freely available resources concerning Hyperledger Fabric.
+
+
+
+The conte">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-02-03T14:47:32+01:00">
+<meta property="article:tag" content="BlockChain">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Notes on HyperLedger Fabric</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2020-02-03T14:47:32+01:00" itemprop="datePublished" title="2020-02-03 14:47">2020-02-03 14:47</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/blockchain/" rel="tag">BlockChain</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <br><br><p>
+This are my personal notes w.r.t. Hyperledger Fabric technology. The
+document basically consists of a structured <i>collage</i> from the
+freely available resources concerning Hyperledger Fabric.
+</p>
+
+<p>
+The content for such document is not to subscribe to myself. The
+structure is and corresponds to the structure that naturally arose when
+getting to know the content. All the content stems from the
+sources mentioned at the bottom in the <i>Resources</i> section. You can
+refer to this is you are searching for a more thorough explanation of
+the technology. 
+</p>
+
+<!-- TEASER_END -->
+
+<br><div id="outline-container-orgc0a1b30" class="outline-2">
+<h2 id="orgc0a1b30">Difference with permission-less Blockchain in a Nutshell</h2>
+<div class="outline-text-2" id="text-orgc0a1b30">
+<p>
+Hyperledger Fabric registers the identity of the different entities
+operating on the network through their digital certificates. This is a
+key difference with permission-less blockchains where anonymization of
+the stakeholder is guaranteed. 
+</p>
+
+<p>
+On the top of it, policies are one of the things that make Hyperledger
+Fabric different from other blockchains like Ethereum or Bitcoin. In
+the latter systems, transactions can be generated and validated by any node
+in the network. In contrast, Fabric is a permissioned blockchain where
+the users have the ability to decide on the governance of the network, and
+change the governance of a running network. 
+</p>
+
+<p>
+Finally, the transactions are not visible to anyone but just to the people
+that should see it for security reasons. Moreover, to verify the
+transaction on the blockchain a small group of participants have to
+endorse it (such as the parties involved in the transactions and maybe
+a third party). This stays in contrast to the proof of work based
+blockchain such as the bitcoin, which just requires the majority of
+the network to endorse the transaction.
+</p>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org57242a9" class="outline-2">
+<h2 id="org57242a9">Hyperledger Fabric</h2>
+<div class="outline-text-2" id="text-org57242a9">
+<p>
+This is the backbone of IBM blockchain. A solution that can run both
+on the cloud, as well as on-prem as well as in multi-cloud.
+</p>
+
+<p>
+The difference with Ethereum or such other platform is that they run
+on very generic protocols and you are therefore limited in your
+blockchain implementation to such platform and protocols. Hyperledger
+fabric is the building block that comes before, that allows you to
+customize your solution and get to the best blockchain solution
+according to your needs.
+</p>
+
+<p>
+The idea of Hyperledger Fabric is that the completely public
+blockchains that requires each and every peer to publish and validate
+on it take a huge blow when it comes to scalability. Moreover
+confidential data cannot be upload on the blockchain due to its public
+transparent nature.
+</p>
+
+<br>
+</div>
+
+<div id="outline-container-orga71662f" class="outline-3">
+<h3 id="orga71662f">The basic idea</h3>
+<div class="outline-text-3" id="text-orga71662f">
+<p>
+The basic idea of the ledger is that you can have contracts between
+two parties that are visible just between the two of them. This is possible due
+to the modular structure of Hyperledger Fabric, which allows to create
+multiple isolated channels on a single network governed by <b>distinct</b>
+configuration settings. Such settings will ultimately govern the
+access rights to the channel by checking the digital identity of
+organizations participating in the network. 
+</p>
+
+<p>
+Furthermore, the configuration of the channels sets out the rules by
+which a transaction is considered as valid and consequently appended
+to the Blockchain in the usual irreversible way. Here the endorsement
+policy, necessary for a transaction to fulfill the criteria to be
+accepted on the blockchain, can be a channel specific and does not
+have to conform to a single general protocol as in the more known
+permission-less Blockchains.
+</p>
+
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org38e92eb" class="outline-3">
+<h3 id="org38e92eb">Basic Components of Hyperledger Fabric</h3>
+<div class="outline-text-3" id="text-org38e92eb">
+<br>
+</div>
+
+<div id="outline-container-orgcb9a0ac" class="outline-4">
+<h4 id="orgcb9a0ac">Assets</h4>
+<div class="outline-text-4" id="text-orgcb9a0ac">
+<p>
+Assets defined in Hyperledger Fabric are represented as a collection of
+key-value pairs, with state changes recorded as transactions on a
+Channel ledger. Assets can be represented in binary and/or JSON form. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6677a6a" class="outline-4">
+<h4 id="org6677a6a">Distributed Ledger</h4>
+<div class="outline-text-4" id="text-org6677a6a">
+<p>
+Each peers has a copy of the ledger of every Hyperledger Fabric
+channel they belong to. 
+</p>
+
+<p>
+The <i>world state</i> component describes <b>the state of the ledger at a given
+point in time</b>. It’s the database of the ledger. 
+</p>
+
+<p>
+The <i>transaction log</i> component records all transactions which have
+resulted in the current value of the world state; it’s the update
+history for the world state. 
+</p>
+
+<p>
+The <i>ledger</i>, then, is a combination of the world state database and
+the transaction log history.  
+</p>
+
+<p>
+Ledger Features — The immutable, shared ledger encodes the entire
+transaction history for each channel, and includes SQL-like query
+capability for efficient auditing and dispute resolution. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6ebfac4" class="outline-4">
+<h4 id="org6ebfac4">Signing of Transactions</h4>
+<div class="outline-text-4" id="text-org6ebfac4">
+<p>
+This is possibly the centerpiece of Hyperledger, allowing your
+network to be come a network of identifiable organizations and
+rendering such network permissioned.
+</p>
+
+<p>
+Different components of the blockchain network use
+<i>certificates to identify themselves</i> to each other as being from a
+particular organization. 
+</p>
+
+<p>
+That’s why there is usually more than one CA supporting a
+blockchain network – different organizations often use different
+CAs. Indeed, CAs are so important that Hyperledger Fabric provides
+you with a <b>built-in one</b> (called Fabric-CA) to help you get
+going. Though in practice, organizations will choose to use their
+own CA.  
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge863007" class="outline-4">
+<h4 id="orge863007">Channels and Privacy</h4>
+<div class="outline-text-4" id="text-orge863007">
+<p>
+Each channel has its ledger. You can say that given a channel the
+principle is the same as the one of the more well known
+permission-less blockchains. <b>Channels provide privacy from other
+channels, and from the network</b>.  
+</p>
+
+<p>
+A channel’s ledger contains a configuration block defining
+policies, access control lists, and other pertinent
+information. Peers dispose of an identity in the way that they are
+linked to the organization they belong via certificates issued by
+trusted CAs. These identities really matter because they
+<i>determine the exact permissions</i> over resources and access to
+information that actors have in a blockchain network.
+</p>
+
+<p>
+A ledger exists in the scope of a channel — it can be shared across
+the entire network (assuming every participant is operating on one
+common channel) — or it can be privatized to include only a specific
+set of participants. In this latter scenario, these participants would create a separate
+channel and thereby isolate/segregate their transactions and
+ledger. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org17ce9b5" class="outline-4">
+<h4 id="org17ce9b5">On the possibility to go the half-way</h4>
+<div class="outline-text-4" id="text-org17ce9b5">
+<p>
+In order to solve scenarios that want to bridge the gap
+between total transparency and privacy, <i>chaincode (smart contracts) can be installed only on peers that need to access the
+asset states to perform reads and writes</i> (in other words, if a chaincode is not installed on a peer,
+it will not be able to properly interface with the ledger). 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org904074b" class="outline-4">
+<h4 id="org904074b">On the possibility to keep an Organization specific database</h4>
+<div class="outline-text-4" id="text-org904074b">
+<p>
+When a subset of organizations on that channel need to keep their
+transaction data confidential, a private data collection
+is used to segregate this data in a private database, logically
+separated from the channel ledger, accessible only to the authorized
+subset of organizations. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org069ca26" class="outline-4">
+<h4 id="org069ca26">On the possibility to encrypt smart contract entries and store the encrypted value on the Blockchain</h4>
+<div class="outline-text-4" id="text-org069ca26">
+<p>
+To further obfuscate the data, values within chaincode can be
+<b>encrypted</b>. Once encrypted data has been written to the ledger, it
+can be decrypted only by a user in possession of the corresponding key
+that was used to generate the cipher text. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgef7a89e" class="outline-4">
+<h4 id="orgef7a89e">ChainCode/Smart Contracts</h4>
+<div class="outline-text-4" id="text-orgef7a89e">
+<p>
+These are written in Golang or JavaScript. You can imagine the
+substantial benefit in comparison to writing down contracts in
+Solidity with all the further complexity layer consisting in
+mitigating the costs of the proof-of-work and the consistent
+design of <i>gas limits</i> for limiting the loss in case of errors
+embedded in the contracts.
+</p>
+
+<p>
+State transitions are a result of chaincode invocations
+(‘transactions’) submitted by participating parties. Each transaction
+results in a set of asset key-value pairs that are committed to the
+ledger as creates, updates, or deletes.  
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgf994cee" class="outline-4">
+<h4 id="orgf994cee">Consensus Mechanism</h4>
+<div class="outline-text-4" id="text-orgf994cee">
+<p>
+Hyperledger Fabric has been designed to allow network starters to
+choose a consensus mechanism that best represents the relationships
+that exist between participants. As with privacy, there is a spectrum
+of needs; from networks that are highly structured in their
+relationships to those that are more peer-to-peer. Peers validate
+transactions against endorsement policies and enforce the policies.
+</p>
+
+<p>
+<i>Consensus is achieved ultimately when the order and results of a block’s transactions have met the explicit policy criteria checks</i>.  
+These checks and balances take place during the lifecycle of a
+transaction, and include the usage of endorsement policies to dictate
+which specific members must endorse a certain transaction class, as
+well as system chaincodes to ensure that these policies are enforced
+and upheld. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcdd2825" class="outline-4">
+<h4 id="orgcdd2825">Ordering Services</h4>
+<div class="outline-text-4" id="text-orgcdd2825">
+<p>
+Many distributed blockchains, such as Ethereum and Bitcoin, are not
+permissioned, which means that any node can participate in the
+consensus process, wherein transactions are ordered and bundled into
+blocks. 
+</p>
+
+<p>
+Because of this fact, these systems rely on probabilistic
+consensus algorithms which eventually guarantee ledger consistency to
+a high degree of probability, but which are still vulnerable to
+divergent ledgers (also known as a ledger “fork”), where different
+participants in the network have a different view of the accepted
+order of transactions. 
+</p>
+
+<p>
+Hyperledger Fabric works differently. It features nodes called
+orderers (it’s also known as an “ordering node”) that <b>do this
+transaction ordering</b>. 
+</p>
+
+<p>
+Because Fabric’s design relies on deterministic
+consensus algorithms, any block validated by the peer is guaranteed
+to be final and correct. Ledgers cannot fork the way they do in
+many other distributed and permissionless blockchain networks. 
+In addition to their ordering role, orderers also maintain the list
+of organizations that are allowed to create channels. 
+</p>
+
+<p>
+It’s therefore helpful to think of the ordering service as the initial
+administration point for the network. A configuration file acts on top
+of such ordering service containing the policies that describe the
+starting set of administrative capabilities for the network. 
+</p>
+
+<p>
+Ordering services are usually multi-node, and can be configured to
+have different nodes in different organizations.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3cda35e" class="outline-4">
+<h4 id="org3cda35e">Multi-node ordering service.</h4>
+<div class="outline-text-4" id="text-org3cda35e">
+<p>
+As the ordering service stays at the heart of the hyperledger
+fabric networks and it is used to create the network initially and
+connects to all channels in the network. This raises issues in a
+decentralized world and it is therefore necessary to de-centralize
+the ordering service by letting it being comprised of many
+individual nodes owned by different organizations.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge92a41b" class="outline-4">
+<h4 id="orge92a41b">Ordering and Consensus. The Mechanism.</h4>
+<div class="outline-text-4" id="text-orge92a41b">
+<p>
+The architecture of Hyperledger Fabric factors out consensus into
+its own component — the orderer service. This is an unusual
+feature because it means Fabric can support different consensus
+algorithms by just switching out the orderer implementation. 
+</p>
+
+<p>
+One of the desirable property is Byzantine fault tolerance (BFT),
+which says the orderer can do its job even in the presence of
+malicious actors. 
+</p>
+
+<p>
+This is apparently, still not given on Hyperledger Fabric
+although much work is going into it. This is mitigated by the
+fact that acting on a permissioned network you have the chance of
+filtering out malicious actors from the network.
+</p>
+
+<p>
+I recommend <a href="https://developer.ibm.com/technologies/blockchain/articles/blockchain-hyperledger-fabric-ordering-decentralization/">this</a> blogpost to put things in perspective. 
+</p>
+
+
+<br>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge42bca0" class="outline-3">
+<h3 id="orge42bca0">Transaction flow</h3>
+<div class="outline-text-3" id="text-orge42bca0">
+<p>
+In Hyperledger Fabric the transaction flow is separated into three
+steps, which may be run on different entities in the system: 
+</p>
+
+<p>
+(1) executing a transaction and checking its correctness, thereby
+endorsing it (corresponding to “transaction validation” in other
+blockchains);
+</p>
+
+<p>
+Once the transaction have been endorsed by checking at the
+endorsing policy, the endorsing peers take the transaction proposal
+inputs as arguments to the invoked chaincode’s function. The
+chaincode is then executed against the current state database to
+produce transaction results including a response value, read set,
+and write set (i.e. key/value pairs representing an asset to create
+or update). <i>No updates are made to the ledger at this point</i>.
+</p>
+
+<p>
+(2) ordering through a consensus protocol, irrespective of transaction
+semantics;
+</p>
+
+<p>
+Here, the application “broadcasts” the transaction proposal and response
+within a “transaction message” to the ordering service. The
+transaction will contain the read/write sets, the endorsing peers
+signatures and the Channel ID. The ordering service does not need
+to inspect the entire content of a transaction in order to perform
+its operation, it simply receives transactions from all channels in
+the network, orders them chronologically by channel, and creates
+blocks of transactions per channel. 
+</p>
+
+<p>
+(3) transaction validation per application specific trust assumptions,
+which also prevents race conditions due to concurrency.
+</p>
+
+<p>
+The transactions within the block are validated to ensure
+endorsement policy is fulfilled and to ensure that there have been
+no changes to ledger state for read set variables since the read
+set was generated by the transaction execution. 
+Each peer appends the block to the channel’s chain, and for each
+valid transaction the write sets are committed to current state
+database. An event is emitted by each peer to notify the client
+application that the transaction (invocation) has been immutably
+appended to the chain.
+</p>
+
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-orgbc45a85" class="outline-3">
+<h3 id="orgbc45a85">Physical Layer</h3>
+<div class="outline-text-3" id="text-orgbc45a85">
+<p>
+The above defined is the Logical Layer of the Blockchain Network. Once
+this is defined with all of the necessary configurations, the ledger
+within a channel is effectively distributed and <i>hosted</i> among peers
+as in the permission-less blockchain networks.
+</p>
+
+<p>
+Given the physical layer it is then possible to integrate applications
+to your channel where the interaction of these and the peers is
+managed by chaincode (i.e. smart contracts). In order to render this
+possible a <b>chaincode package must be installed</b> on at least one peer
+from the organization governing this. In such a way this will then be
+able to implement the logic of the smart contract and distribute it
+across the network.
+</p>
+</div>
+
+<div id="outline-container-org97e9f09" class="outline-4">
+<h4 id="org97e9f09">Consensus, Transaction distribution at the Physical Layer</h4>
+<div class="outline-text-4" id="text-org97e9f09">
+<p>
+An organization must approve a chaincode definition in order to use
+the installed smart contract to query the ledger and endorse
+transactions. 
+</p>
+
+<p>
+A sufficient number of organizations need to approve a chaincode
+definition (A majority, by default) before the chaincode definition
+can be committed to the channel and used to interact with the
+channel ledger. Once the definition has been committed, the smart
+contract can be invoked by client application - now and only now -.
+</p>
+
+<p>
+Note that although every component on the channel can now access
+the smart contract, they are not able to see its program
+logic. This remains private to those nodes who have installed the
+smart contract. Conceptually this means that it’s the smart
+contract interface that is defined and committed to a channel, in
+contrast to the smart contract implementation that is installed.
+</p>
+
+<p>
+To reinforce this idea; installing a smart contract shows how we
+think of it being <b>physically</b> hosted on a peer, whereas a smart
+contract that has been defined on a channel shows how we consider
+it <b>logically</b> hosted by the channel.
+</p>
+
+<p>
+You should not think of peer nodes which do not have smart
+contracts installed as being somehow inferior. It’s more the case
+that peer nodes with smart contracts have a special power – to
+help generate transactions. Note that all peer nodes can validate
+and subsequently accept or reject transactions onto their copy of
+the ledger. 
+</p>
+
+<p>
+However, only peer nodes with a smart contract installed can take
+part in the process of transaction endorsement which is central to
+the generation of valid transactions.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org19033a9" class="outline-4">
+<h4 id="org19033a9">How to create a Channel</h4>
+<div class="outline-text-4" id="text-org19033a9">
+<p>
+In order to create a channel you have first to create a <i>consortium</i>. 
+</p>
+
+<p>
+Why are consortia important? We can see that a consortium defines the
+set of organizations in the network who share a need to transact with
+one another.  
+</p>
+
+<p>
+A channel is now the primary communications mechanism by which
+the members of a consortium can communicate with each other.  
+</p>
+
+<p>
+When creating a channel you have first to link it to an ordering
+service. In the next stage of network development, you are going to connect
+components such as client applications and peer nodes. 
+</p>
+
+<p>
+<b>Important</b> is that when creating a channel you have to create a new,
+completely separate configuration for it. This will govern the extent
+of the transactions within the channel.
+</p>
+
+<p>
+Once a channel has been created, it is in a very real sense “free from
+the network”. It is only organizations that are explicitly specified
+in a channel configuration that have any control over it, from this
+time forward into the future. Likewise, any updates to <i>base</i> network
+configuration from this time onwards will have no direct effect on
+channel configuration.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org9fe9b42" class="outline-2">
+<h2 id="org9fe9b42">References</h2>
+<div class="outline-text-2" id="text-org9fe9b42">
+<p>
+<a href="https://hyperledger-fabric.readthedocs.io/en/latest/blockchain.html">Hyperledger Documentation</a>.
+</p>
+
+<p>
+Blockchain Essentials Badge - IBM Educ.
+</p>
+
+<p>
+<a href="https://developer.ibm.com/technologies/blockchain/articles/blockchain-hyperledger-fabric-ordering-decentralization/">On the decentralization of Hyperledger Fabric</a> 
+</p>
+
+<p>
+<a href="https://medium.com/kokster/understanding-hyperledger-fabric-byzantine-fault-tolerance-cf106146ef43">Understanding Hyperledger Fabric — Byzantine Fault Tolerance</a>
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../tramp-mode/" rel="prev" title="Tramp Mode">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../ibm-cloud-commands/" rel="next" title="IBM Cloud Commands">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

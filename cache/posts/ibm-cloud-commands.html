@@ -1,0 +1,250 @@
+<br>
+<br>
+
+<p>
+This post contains the major IBM cloud CLI commands to operate with
+some of the data services in the cloud. 
+</p>
+
+<p>
+It especially focus around DaaS and MLaaS. 
+</p>
+
+<!-- TEASER_END -->
+
+<br>
+
+<div id="outline-container-orgf6de5f0" class="outline-2">
+<h2 id="orgf6de5f0">Look at the ibmcloud connection set-ups</h2>
+<div class="outline-text-2" id="text-orgf6de5f0">
+<div class="highlight"><pre><span></span><span class="c1">## to check at general access configuration on IBM cloud</span>
+bx target
+
+<span class="c1">## to look at general macro characteristics of your account</span>
+ibmcloud account show
+</pre></div>
+
+<p>
+Important is that you might have different resources bounded to
+different data centers in different regions.
+</p>
+
+<p>
+When using a service from the <code>ibmcloud CLI</code> it is important that you
+make sure you are in the region where the resources and services are
+deployed.
+</p>
+
+<p>
+To change region you can make use of the following command
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">#ibmcloud target -r &lt;region-name&gt;</span>
+ibmcloud target -r eu-de
+</pre></div>
+
+<p>
+Important is that if you need to change target account you can do so
+by adding the <code>-c</code> flag and pointing to your account.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## ibmcloud login --sso -c #accountID 0xxxxxx...</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgcb2259f" class="outline-2">
+<h2 id="orgcb2259f">Cloud Foundry</h2>
+<div class="outline-text-2" id="text-orgcb2259f">
+<p>
+This allows to easily create and deploy cloud-native apps. 
+</p>
+
+<p>
+The first step in order to interact with your Cloud Foundry App and to
+deploy your local code on the cloud is to configure your <code>ibm CLI</code> to
+operate directly on the chosen CloudFoundry Organization where your
+team will deploy the app.
+</p>
+
+<p>
+In order to do that once you are in the proper region where your Cloud
+Foundry Organization is configured you can specify the Cloud Foundry
+organization you aim to interact with by running
+</p>
+
+<div class="highlight"><pre><span></span>ibmcloud target --cf
+</pre></div>
+
+<p>
+This will give you the possibility to interactively choose your
+CloudFoundry organization and space.
+</p>
+
+<p>
+An alternative is to set them separately by running
+</p>
+
+<div class="highlight"><pre><span></span>ibmcloud target -o myOrganization
+ibmcloud target -s myspace
+</pre></div>
+
+<p>
+Once the IBM cloud is properly connected with your CloudFoundry
+Organization it is possible to push your application via the following
+commands.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">#ibmcloud cf push &lt;app-name specified in the manifest file&gt;</span>
+ibmcloud cf push myapp
+</pre></div>
+
+<p>
+If successful you should be able then to see the running application
+by running.
+</p>
+
+<div class="highlight"><pre><span></span>ibmcloud cf apps 
+</pre></div>
+
+<br>
+
+<pre class="example" id="org512b89f">
+| Invoking | 'cf       | apps'... |           |           |      |       |         |    |                         |
+|          |           |          |           |           |      |       |         |    |                         |
+| Getting  | apps      | in       | org       | myFirsOrg | /    | space | develop | as | marco.hassan@ibm.com... |
+| OK       |           |          |           |           |      |       |         |    |                         |
+|          |           |          |           |           |      |       |         |    |                         |
+| name     | requested | state    | instances | memory    | disk | urls  |         |    |                         |
+| minimal  | started   | 1/1      | 64M       | 1G        | xxx  |       |         |    |                         |
+| nluApp   | stopped   | 0/1      | 256M      | 1G        | xxx  |       |         |    |                         |
+
+</pre>
+
+<br>
+
+<p>
+Above you can see I have a minimal python application running as well
+as a stopped NLU application.
+</p>
+
+<p>
+You can find the specifics of how to set up a python application by
+reading <a href="https://docs.cloudfoundry.org/buildpacks/python/index.html">this</a> cloud foundry official documentation. A thing that caused
+my some trouble the first time when deploying is that your Flask
+application should be set to listen on <code>PORT=8080</code>. This is because
+the Python buildpacks expects your Python Application to listen to
+this port.
+</p>
+
+<p>
+Important is moreover to specify all the necessary libraries your
+application will need in order to run in a <code>requirement.txt</code> file as
+well as the command that needs to be run in a <code>PROCFILE</code>. Finally you
+can specify the runtime version in the <code>runtime.txt</code> file. A manifest
+file should finally specify the memory and application name as well as
+the route and further parameters.
+</p>
+
+<p>
+Notice that a handy way to enter the required packages is to make use
+of the <code>pip3 freeze</code> command. This will return the installed packages
+on your virtual environment and you can copy these in your
+<code>requirement.txt</code>. 
+</p>
+
+<p>
+Finally you can find a good overview with all the possible parameters to specify
+when setting up your CloudFoundry app at the <a href="https://v3-apidocs.cloudfoundry.org/version/3.78.0/index.html#the-app-manifest-specification">following link</a>.
+</p>
+
+<p>
+Finally it is possible to ssh into the server hosting your application
+with the following command
+</p>
+
+<div class="highlight"><pre><span></span>ibmcloud cf ssh &lt;app-name&gt;
+ibmcloud cf ssh myapp
+</pre></div>
+
+<p>
+This is particularly useful for inspecting logs and debugging.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8412332" class="outline-2">
+<h2 id="org8412332">Interact with Watson ML</h2>
+<div class="outline-text-2" id="text-org8412332">
+<p>
+You can change your IBM cloud region by setting
+</p>
+
+<div class="highlight"><pre><span></span>ibmcloud target -r us-south
+
+<span class="c1">## notice that depending on the region you might have different deployments. </span>
+<span class="c1">## deployments live in ibm datacenters and are hence bounded regionally.</span>
+
+<span class="c1">## you can list your IBM Machine Learning Deployments using:</span>
+
+bx ml list instances
+
+<span class="c1">## In general bx ml is associated with CLI interaction with Watson</span>
+<span class="c1">## Machine learning services.</span>
+
+<span class="c1">## use the --help option whenever you are lost in the CLI </span>
+</pre></div>
+
+<p>
+Notice that just because you have an existing instance ID it does not
+mean that it is already set on your ibmcloud CLI. In order to set it
+accordingly you have to specify it accordingly 
+</p>
+
+<div class="highlight"><pre><span></span>bx ml <span class="nb">set</span> instance &lt;instance-id&gt;
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org64cc25f" class="outline-2">
+<h2 id="org64cc25f">Object Storage</h2>
+<div class="outline-text-2" id="text-org64cc25f">
+<p>
+To interact with object storage instances via CLI you must be sure the
+plug-in is installed.
+</p>
+
+<div class="highlight"><pre><span></span>ibmcloud plugin install cloud-object-storage
+</pre></div>
+
+<p>
+Once it is downloaded you will have to specify the way you want to interact with your Object Storage.
+</p>
+
+<p>
+One way to do that is to specify your HMAC credentials to your Object Storage instance
+</p>
+
+<div class="highlight"><pre><span></span>ibmcloud cos config hmac
+</pre></div>
+
+<p>
+Once entered the necessary <i>aki key</i> and <i>secret access key</i> you will
+be able to access all of yours different buckets.
+</p>
+
+<div class="highlight"><pre><span></span>ibmcloud cos list-buckets
+</pre></div>
+
+<p>
+For using the IAM authentification it is moreover possible to specify the
+</p>
+
+<div class="highlight"><pre><span></span>ibmcloud cos config crn
+</pre></div>
+
+<p>
+And enter the <i>resource<sub>instance</sub><sub>id</sub></i> of the cloud object storage instance available in the cloud credentials. 
+</p>
+</div>
+</div>
