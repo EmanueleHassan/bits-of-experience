@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Object Relational Mapping | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/object-relational-mapping/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../on-the-right-level-of-abstraction-to-think-the-system-at-high-level/" title="On the right level of abstraction to think the system at high level" type="text/html">
+<link rel="next" href="../on-festina-lente/" title="On Festina Lente" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Object Relational Mapping">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/object-relational-mapping/">
+<meta property="og:description" content="img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-07-05T13:54:32+02:00">
+<meta property="article:tag" content="Databases">
+<meta property="article:tag" content="dev">
+<meta property="article:tag" content="oop">
+<meta property="article:tag" content="software-engineering">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Object Relational Mapping</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2022-07-05T13:54:32+02:00" itemprop="datePublished" title="2022-07-05 13:54">2022-07-05 13:54</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/databases/" rel="tag">Databases</a></li>
+            <li><a class="tag p-category" href="../../categories/dev/" rel="tag">dev</a></li>
+            <li><a class="tag p-category" href="../../categories/oop/" rel="tag">oop</a></li>
+            <li><a class="tag p-category" href="../../categories/software-engineering/" rel="tag">software-engineering</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <style>
+
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+<p>
+So basically the idea of object relational mapping is the one of
+mapping relational tables to objects.
+</p>
+
+<p>
+The idea is that a lot of times the application logic is in objects
+while the persistency layer is in the relational schema.
+</p>
+
+<p>
+That translation is annoying and time consuming. Plus it requires a
+mind switch to think at the two different levels.
+</p>
+
+<p>
+The idea of this technology was essentially to develop a framework to
+map the relational persistency layer to the ORM paradigm. In such a
+way it is possible for the developer to wire his mind into a single
+setting - the one of the objects and to properly develop in a pure
+object oriented mind.
+</p>
+
+<p>
+In this sense this is a lot what is happening in the NoSQL space,
+especially with the document store and the json communication format
+for API.. the underlying driver must is the same…. avoid all of that
+annoying conversions from one paradigm to the other.
+</p>
+
+<p>
+So you see; always think in terms of drivers… you will anticipate
+the future once you focus on the underlying driver and force instead
+of on the concept itself.
+</p>
+
+<p>
+In general much of these notes refer to the <a href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwjbwuWh_eH4AhVDwQIHHW0vC9sQFnoECA8QAQ&amp;url=https%3A%2F%2Fhoclaptrinhdanang.com%2Fdownloads%2Fpdf%2Fspring%2FJava%2520Persistence%2520with%2520Hibernate.pdf&amp;usg=AOvVaw0524Xl7sPIrS85z5EARMyP">following book</a>.
+</p>
+
+<!-- TEASER_END -->
+
+
+<div id="outline-container-org518549e" class="outline-2">
+<h2 id="org518549e">Important Concepts leading to ORM</h2>
+<div class="outline-text-2" id="text-org518549e">
+<p>
+So this is very important.
+</p>
+
+<p>
+It must sit in a very important way in your brain.
+</p>
+
+<p>
+Cause this topic is very hot in the team and it is at least good
+that you have an understanding of going into one direction or the
+other.
+</p>
+
+<p>
+So interesting to see is that much of the topics discussed that
+follow come from thinking in terms of objects and the respective
+shortcoming when going 
+</p>
+</div>
+
+
+<div id="outline-container-org82d35f0" class="outline-3">
+<h3 id="org82d35f0">Problem of Granularity</h3>
+<div class="outline-text-3" id="text-org82d35f0">
+<p>
+The idea is that in the OOP world you have lots of level of
+granularity through which you can create and shape your objects.
+</p>
+
+<p>
+These are very important as through them you can create very
+sophisticated business logic.
+</p>
+
+<p>
+Now when working with SQL the point is essentially that such
+<i>level of granularity is lost</i>.
+</p>
+
+<p>
+It is generally not a big practice to work with <code>user-defined data
+    types</code> in SQL relational DBs. You generally work at two level of
+granularity - tables and columns with the SQL standard data
+types. 
+</p>
+
+<p>
+The key now is essentially the following:
+</p>
+
+<blockquote>
+<p>
+Many simple persistence mechanisms fail to recognize this mismatch and
+so end up forcing the less flexible representation of SQL products on
+the object-oriented model, effectively flattening it.
+</p>
+</blockquote>
+</div>
+
+<div id="outline-container-org620feed" class="outline-4">
+<h4 id="org620feed">
+<span class="todo TODO">TODO</span> the book claims for a solution to the above problem - find it and integrate it here then.</h4>
+</div>
+</div>
+
+
+<div id="outline-container-orgcaccea4" class="outline-3">
+<h3 id="orgcaccea4">The problem of Subtypes</h3>
+<div class="outline-text-3" id="text-orgcaccea4">
+<p>
+Essentially this is the problem of inheritance and polymorphism
+and the fact that there is no way to really express this into a
+relational database.
+</p>
+
+<p>
+This makes everything quite tricky.
+</p>
+
+<p>
+Essentially it is the following:
+</p>
+
+
+<img src="../../images/Screenshot%202022-07-05%20180342.png" class="center">
+</div>
+</div>
+
+
+<div id="outline-container-org0666402" class="outline-3">
+<h3 id="org0666402">The problem of Identity</h3>
+<div class="outline-text-3" id="text-org0666402">
+<p>
+That is also quite an interesting one.
+</p>
+
+<p>
+The idea is of a radical difference among the identity principles
+in Java and the application side and on the relational DBs.
+</p>
+
+<p>
+The concept is that in Java you have two different concepts of
+identity:
+</p>
+
+<ul class="org-ul">
+<li>== -&gt; checking by reference</li>
+
+<li>.equals () -&gt; checking by value</li>
+</ul>
+<p>
+While on the DB side you have the idea of checking by primary
+key for checking the uniqueness of a record.
+</p>
+
+<p>
+In this sense, understand as well the following concept that is
+related to the concept of identity:
+</p>
+
+<img src="../../images/Screenshot%202022-07-06%20090604.png" class="center"><p>
+Note that this is very likely related to the idea of not setting
+any <code>setters</code> for the primary key columns in Hibernate. This is
+the same underlying idea.
+</p>
+
+<p>
+This is also why you also have an ID for the different tables and
+use ultimately that one. It is the way to implement that concept
+of <i>surrogate key</i> and this is why Sergio was so focused on it in
+his introduction. I did not really get it properly to that stage. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org1a143d1" class="outline-3">
+<h3 id="org1a143d1">The problem of association</h3>
+<div class="outline-text-3" id="text-org1a143d1">
+<p>
+Object-oriented languages represent associations using object
+references; but in the relational world, a <i>foreign key</i> –constrained
+column represents an association, with copies of key values.
+</p>
+
+<p>
+The constraint is a rule that guarantees integrity of the
+association.  There are <i>substantial differences</i> between the two
+mechanisms.
+</p>
+
+<p>
+Object references are <i>directional</i>. Navigation in a particular
+direction has no meaning for a relational data model because you
+can create arbitrary data associations with join and projection
+operators.
+</p>
+
+<p>
+The important thing is <b>the following</b> then:
+</p>
+
+<blockquote>
+<p>
+The challenge is to map a completely open data model, which is
+independent of the application that works with the data, to an
+application-dependent navigational model.
+</p>
+</blockquote>
+</div>
+</div>
+
+
+<div id="outline-container-org95a3e7d" class="outline-3">
+<h3 id="org95a3e7d">The problem of data navigation</h3>
+<div class="outline-text-3" id="text-org95a3e7d">
+<p>
+So basically when working with ORM it is important to keep the
+thing under control by not overloading the system with very
+expensive queries fetching all of the possible data relations
+across the object network in the mapped DB world.
+</p>
+
+<p>
+The idea is the one of leveraging <i>lazy loading</i> as a solution as
+discussed a couple of times:
+</p>
+
+<blockquote>
+<p>
+Any object persistence solution worth its salt provides
+functionality for fetching the data of associated instances only
+when the association is first accessed in Java code.  This is
+known as lazy loading: retrieving data on demand only.
+</p>
+</blockquote>
+
+<p>
+Note that this is not a trivial problem. Cause on the other side
+you have the following problem:
+</p>
+
+<blockquote>
+<p>
+This piecemeal style of data access is fundamentally inefficient [the
+one of lazy loading] in the context of an SQL database, because it
+requires executing one statement for each node or collection of the
+object network that is accessed. This is the dreaded n+1 selects
+problem - i.e. you actually perform too many queries killing the DB.
+</p>
+</blockquote>
+
+<p>
+So essentially you have the difficult problem:
+</p>
+
+<ul class="org-ul">
+<li>avoid the <b>cartesian product</b> vs.  avoid <b>n+1 select</b> problem.</li>
+</ul>
+<p>
+Not trivial to solve and decide at development time. 
+</p>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../on-the-right-level-of-abstraction-to-think-the-system-at-high-level/" rel="prev" title="On the right level of abstraction to think the system at high level">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../on-festina-lente/" rel="next" title="On Festina Lente">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
