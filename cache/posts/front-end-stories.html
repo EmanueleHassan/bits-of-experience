@@ -1,0 +1,577 @@
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+
+<style>
+ {
+  box-sizing: border-box;
+  margin-top: 60px;
+  margin-bottom: 60px;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 0px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+</style>
+
+<p>
+So again front-end is not my stuff and will never be.
+</p>
+
+<p>
+I need to develop a basic understanding of front-end in order to not
+depend on other people as sometimes in the app I will have to
+understand some front-end, back-end interactions without always being
+shielded by some kind of REST-API.
+</p>
+
+<p>
+So this work contains some research/on the job discoveries / debugging
+stuff related to the the front-end.
+</p>
+
+<p>
+Logically it will be very basic content that is not as interesting for
+the expert in the field. It is much more my search and rescue
+repository as I am often constructing.
+</p>
+
+<p>
+This is important as I am noting that often things are recurrent.
+</p>
+
+<p>
+In general if you ever will want to dig more into a more narrow
+topic check at <a href="https://frontendmasters.com/guides/front-end-handbook/2019/#4.10">the following</a>.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-orga9998e2" class="outline-2">
+<h2 id="orga9998e2">On the javascript interaction with html and CSS stuff</h2>
+<div class="outline-text-2" id="text-orga9998e2">
+<p>
+So basically you are not alone in this universe. There are plenty
+of people that are just looking for a basics understanding of it as
+you are.
+</p>
+
+<p>
+Check <a href="https://stackoverflow.com/questions/38834375/relationship-between-html-and-javascript-the-basics-of-frontend-development">this url</a> containing exactly the same understanding that you
+want to fix in your mind. (basically it follows the reply of the
+most voted answer next)
+</p>
+
+<p>
+So basically that is the idea:
+</p>
+
+<ul class="org-ul">
+<li>your browser request a front-end page from the back-end server.</li>
+
+<li>the server sends an HTML page which usually includes:
+
+<ul class="org-ul">
+<li>DOM, CSS and Javascript as tags.</li>
+</ul></li>
+</ul>
+
+<p>
+Note now that the DOM - is is a language-independent model made up
+of objects representing the structure of a document. You can then
+modify the structure of  the dome using that model. HMTL is just
+one among the many languages that the model can operate on.
+</p>
+
+<p>
+So understand that the HTML page contains all of the page, then by
+using javascript you can actually manipulate the DOM and embedd
+some dynamic logic such that you might display or not some
+elements. So basically that is a little bit the idea.
+</p>
+
+<p>
+You have then a lot of javascript methods to fetch the different
+Nodes of the DOM and retrieve, modify, cancel or add to them. Check
+<a href="https://developer.mozilla.org/en-US/docs/Web">this webpage</a> in order to get your head around it.
+</p>
+
+<p>
+More into the detail it works like this:
+</p>
+
+<img src="../../images/Screenshot 2022-01-24 133817.png" class="center">
+
+<ol class="org-ol">
+<li>Browser starts by reading the HTML to create what is known as a content tree.</li>
+
+<li>Then it "looks" at the CSS and "applies" the CSS to the content
+tree and creates what is called a render tree. This has the
+styling information added.</li>
+
+<li>Finally it goes though layout process, where each of the HTML
+elements are assigned exact physical window coordinates to
+display at.</li>
+
+<li>Finally everything is "painted" and you see the stylized HTML
+page.</li>
+
+<li><p>
+JavaScript is parsed by the browser seprately as it is
+encountered in <code>&lt;script&gt;</code> tag. JavaScript can add/delete/modify
+existing components of the dom and change how CSS applies to
+them. It can also make new network calls. (that is basically the
+key point that you have to understand, as all of the other is
+pretty straightforward and just a bit of static content that is
+fetched via network - i.e. shipped by the server together with
+the different html pages you ship)
+</p>
+
+<p>
+Note that via the aforementioned calls you can as well make API
+calls to fetch information from the backend or trigger from
+there the relevant logic. 
+</p></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org6905e1c" class="outline-2">
+<h2 id="org6905e1c">Understanding front-end applications</h2>
+<div class="outline-text-2" id="text-org6905e1c">
+<p>
+Note now that this is the basics, so that now you can basically
+understand basics issues with the front-end compoents.
+</p>
+
+<p>
+I.e when you try to understand front-end applications and need to
+debug them, first start by looking at the html 
+</p>
+
+<ol class="org-ol">
+<li><p>
+from there you should see the entire DOM. Everything that
+could eventually appear should be visible in there.
+</p>
+
+<p>
+(The only think that I can think of is if you get some other
+html pages via javascript and ship and transform them in
+such a way.
+</p>
+
+<p>
+No idea how much that is a use case in front-end
+development. Can imagine that this might eventually be an
+option if you do not want to display much to the browser
+user&#x2026;)
+</p>
+
+<p>
+Note as well that there is extensive usage of Mustache in
+our front-end. So you have as well to understand a bit that
+templating solution if you will have to develop extensively
+with it.
+</p></li>
+
+<li><p>
+then check for what you are looking for there. if you do not
+find it, then you have to strart dig into the dynamic
+components and check at the javascript scripts.
+</p>
+
+<p>
+There will be either plain javascript in your html file or
+you will have special scripts that you will fetch from the
+server - such that you can search them in your workspace in
+there.
+</p>
+
+<p>
+Note that you might especially call some <code>show</code> or <code>hide</code>
+methods to implement the logic etc.
+</p></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orgfb6239a" class="outline-2">
+<h2 id="orgfb6239a">On Single Page vs. Multi-Page</h2>
+<div class="outline-text-2" id="text-orgfb6239a">
+<p>
+Make a note as well on this common difference.
+</p>
+
+<p>
+The concept is that in a single page you always remain on the same
+webpage. The content is dynamically updated by modifying the DOM
+via a set of relevant javascript logic.
+</p>
+
+<p>
+In multipage you actually redirect the user to different pages that
+are fetched via the server.
+</p>
+
+<p>
+This is a bit the difference between the two and it will have
+implications for the user experience, as most likely to other
+front-end related stuff such as sessions, cookies etc. etc. I mean
+I do not really have a guess but should be fine to this stage.
+</p>
+
+<p>
+I think that if you really go deep into the topic there might be as
+well issues relating to traffic etc. etc. This is obviously not a
+topic for the applications I need to work on.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgea98e14" class="outline-2">
+<h2 id="orgea98e14">Bootstrap - HTML/CSS Framework, minor Javascript stuff (Generally used for creating nice UI quickly)</h2>
+<div class="outline-text-2" id="text-orgea98e14">
+<p>
+As mentioned on the wiki page:
+</p>
+
+<blockquote>
+<p>
+Bootstrap is a free and open-source CSS framework directed at
+responsive, mobile-first front-end web development. It contains HTML,
+CSS and (optionally) JavaScript-based design templates for typography,
+forms, buttons, navigation, and other interface components.
+</p>
+</blockquote>
+
+<p>
+So essentially once you have this framework you can go on the
+bootstrap webpage, and for instance under components you can see
+how to implement all of these elements mentioned above.
+</p>
+
+<p>
+You can then copy such snippets and you will have nicely formatted
+stuff and like this you will be able to quickly create your
+front-ends. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8e02a5e" class="outline-2">
+<h2 id="org8e02a5e">Common Javascript Frameworks (More used for handling your middle layer between HTMLs and Server Calls.)</h2>
+<div class="outline-text-2" id="text-org8e02a5e">
+<p>
+So I never worked so far with the two.
+</p>
+
+<p>
+From my understanding these are two frameworks that are used for
+quickly and elegantly write your javascript code and in general the
+components of the front-end that sits between your server calls and
+the html page.
+</p>
+
+<p>
+So note that it is smth different in comparison to the Bootstrap
+framework. Do not confuse the two.
+</p>
+</div>
+
+<div id="outline-container-orgb791fa3" class="outline-3">
+<h3 id="orgb791fa3">On the virtual DOMs</h3>
+<div class="outline-text-3" id="text-orgb791fa3">
+<p>
+I have to double check this, either with someone or online. I
+understood in any case that most of the modern frameworks create
+the entire DOM via javascript objects and then render the DOM from
+these.
+</p>
+
+<p>
+From here the idea of <i><a href="https://mfrachet.github.io/create-frontend-framework/vdom/intro.html">virtual DOM</a></i><sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup>. The concept is that it
+is easier to modify in memory javascript objects and just
+re-trigger a DOM tree modification upon given events.
+</p>
+
+<p>
+This makes the experience much smoother.
+</p>
+
+<p>
+In general another thing that I guess you have to keep into memory
+is what information you want to show and what not. Experienced
+users might get access to information quite easily if you do not
+think about the things properly.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgca8532a" class="outline-3">
+<h3 id="orgca8532a">On Fetch vs. Ajax</h3>
+<div class="outline-text-3" id="text-orgca8532a">
+<p>
+Here as well a minor note. Nothing big but Ajax is something that
+you see every now and then so it makes sense as well to put that
+in a mental box.
+</p>
+
+<p>
+Basically, once more the idea is that, the javascript runtime in
+the browser allows you to create less static logic.
+</p>
+
+<p>
+You can trigger the relevant calls to the backend servers and
+fetch data from it.
+</p>
+
+<p>
+However important is to make this in an asynchronous way in order
+not to freeze your browser. Check at the vido in <a href="https://marcohassan.github.io/bits-of-experience/posts/asynchronous-schema-in-python/">this post</a> to make
+the point concrete.
+</p>
+
+<p>
+Now note that different browsers and browser versions expose a
+different set of technologies and expose different APIs.
+</p>
+
+<p>
+So Ajax is actually the old school way of doing such calls. In any
+case it is the most widely accepted; meaning it works both on
+newer browser and older.
+</p>
+
+<p>
+The general concept was the following and still applies in modern
+APIs as well.
+</p>
+
+<img src="../../images/Screenshot 2022-08-17 095424.png" class="center">
+
+<p>
+Fetch and other more modern APIs are the new way of doing the
+asynchronous calls to fetch information from the backend server
+and apply the desired logic then to the front-end. 
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd2ef665" class="outline-2">
+<h2 id="orgd2ef665">On Templates</h2>
+<div class="outline-text-2" id="text-orgd2ef665">
+<p>
+Templates are a way to display information on the user's
+browser. It aims to describe what we want to show.
+</p>
+
+<p>
+With them it is easy to generate html code based on variables.
+</p>
+
+<p>
+In this sense, it is a way to make html webpages less static.
+</p>
+
+<p>
+It is your way of emebedding the information from the <b>model</b> into
+the <b>view</b> that will be then displayed to the user in the classical
+<a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">MVC architecture</a>.
+</p>
+
+<p>
+Note now that the applications we use do not make use of any
+javascript frameworks, but make extensive use of Mustache as a
+template engine.
+</p>
+
+<p>
+Therefore, you better learn it a little bit as if you will need to
+play with the front-end it will make the task less tedious and you
+will gain quite some speed. 
+</p>
+</div>
+
+<div id="outline-container-org704b62e" class="outline-3">
+<h3 id="org704b62e">Mustache</h3>
+<div class="outline-text-3" id="text-org704b62e">
+<p>
+Mustache is a web framework  that is <b>logicless</b>.
+</p>
+
+<p>
+That is important. It means that there are no if-else statements
+nor for loops.
+</p>
+
+<p>
+Note that how the framework actually works is then in the following
+way:
+</p>
+
+<ul class="org-ul">
+<li>you define a template with your <code>{{}}</code> - i.e. the mustaches
+containing your variables that you will pass to the template
+dynamically.</li>
+
+<li>you compile the framework.</li>
+</ul>
+
+<p>
+Note then the following schema for using the framework.
+</p>
+
+<img src="../../images/mustache.png" class="center">
+
+<p>
+Note that this is just the basics but it is sufficient to get an
+idea for the moment.
+</p>
+
+<p>
+What you are missing then is the following:
+</p>
+
+<ul class="org-ul">
+<li><p>
+passing a list of objects. then if setting properly tags you will
+generate a template containing all of the entries for the objects in
+the list.
+</p>
+
+<p>
+I guess it is therefore the way to do dynamic allocation etc. 
+</p></li>
+
+<li><p>
+tags that are triggered just when you pass an empty list, a
+non-existing key of a map, a false or null.
+</p>
+
+<p>
+i.e. you trigger this generally to display info for the case of
+abnormal events.
+</p></li>
+
+<li>tags processing lambda function. I.e you can for instance use a
+<code>Function&lt;Object, Object&gt;</code> and the result from it will be passed to
+to the appropriate tag.</li>
+</ul>
+
+<p>
+You can read more of the above cases <a href="https://www.baeldung.com/mustache">here</a>. Just go there when you need.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2d91a67" class="outline-2">
+<h2 id="org2d91a67">JQuery</h2>
+<div class="outline-text-2" id="text-org2d91a67">
+<p>
+As per the official webpage:
+</p>
+
+<blockquote>
+<p>
+jQuery is a fast, small, and feature-rich JavaScript library. It
+makes things like HTML document traversal and manipulation, event
+handling, animation, and Ajax much simpler with an easy-to-use API
+that works across a multitude of browsers. With a combination of
+versatility and extensibility, jQuery has changed the way that
+millions of people write JavaScript.
+</p>
+</blockquote>
+</div>
+</div>
+
+<div id="outline-container-orgf202753" class="outline-2">
+<h2 id="orgf202753">Tricks when using DevTools on your Browser</h2>
+<div class="outline-text-2" id="text-orgf202753">
+<p>
+So essentially it is important that you do not have to redeploy
+your application all of the time. You can make modifications to
+your DOM directly in the DevTools console in your browser.
+</p>
+
+<p>
+This will increase the development speed.
+</p>
+
+<p>
+On the top of it leverage the following thing:
+</p>
+
+<img src="../../images/Screenshot 2022-08-16 173327.png" class="center">
+
+<p>
+Like this hover over the relevant pieces that your are interested
+in your front-end and you will find the relevant html section
+corresponding to it.
+</p>
+
+<p>
+With it it will be easier to navigate the DOM, test and apply the
+relevant javascript snippets that you are interested in.
+</p>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> <div class="footpara"><p class="footpara">
+This website is interesting in general for exploring front-end
+web frameworks.
+</p></div></div>
+
+
+</div>
+</div>
