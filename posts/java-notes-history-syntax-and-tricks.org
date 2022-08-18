@@ -4767,78 +4767,6 @@ public class Reminder {
     looked up in the recent past. You can check at that video in your
     Javascripts notes as it was explaining asynchronous programming in
     a very neat way and the ultimate concept is the same here.
-
-** Mustache                                                        :noexport:
-
-   Mustache is a web framework  that is *logicless*.
-
-   That is important. It means that there are no if-else statements
-   nor for loops.
-
-   Note that how the framework actually works is then in the following
-   way:
-
-   - you define a template with your ={{}}= - i.e. the mustaches
-     containing your variables that you will pass to the template
-     dynamically. 
-
-   - you compile the framework.
-
-   Note then the following schema for using the framework.
-
-   #+begin_src plantuml :file ../../images/mustache.png :exports none :results drawer
-@startuml
-(*) -right-> "Create template in the form <b>MYNAME.mustache</b>"
-
- -right->"Create a <b>MYNAME</b> class where you save the parameters 
-     you pass to the template.
-
-     The fields must be equivalent to the ones in the mustaches."
-
- -right-> "Compile the mustache template"
-
- -down-> "Execute the compiled mustache template passing it 
-           the necessary object containing the parameterized fields.
-
-	   Flush the results to a stringwriter.   
-	  "
-
-  --> (*)
-@enduml
-#+end_src
-
-#+RESULTS:
-:results:
-[[file:../../images/mustache.png]]
-:end:
-
-
-#+begin_export html
- <img src="../../images/mustache.png" class="center">
-#+end_export
-
-Note that this is just the basics but it is sufficient to get an
-idea for the moment.
-
-What you are missing then is the following:
-
-- passing a list of objects. then if setting properly tags you will
-  generate a template containing all of the entries for the objects in
-  the list.
-
-  I guess it is therefore the way to do dynamic allocation etc. 
-
-- tags that are triggered just when you pass an empty list, a
-  non-existing key of a map, a false or null.
-
-  i.e. you trigger this generally to display info for the case of
-  abnormal events.
-
-- tags processing lambda function. I.e you can for instance use a
-  =Function<Object, Object>= and the result from it will be passed to
-  to the appropriate tag.
-
-You can read more of the above cases [[https://www.baeldung.com/mustache][here]]. Let's leave it for now. 
    
 
 * Important Libraries
@@ -5723,8 +5651,12 @@ delimiter ;
    directly into Objects.
 
    So basically all of your stack will be based on Object manipulation
-   then. 
+   then.
 
+   Note that you have a different blog entry for this. You should
+   [[https://marcohassan.github.io/bits-of-experience/posts/object-relational-mapping/][check at it]].
+
+   This goes a little bit hand in hand with what follows on JPA.  
 
 ** On Java Persistence API - JPA
 
@@ -6463,9 +6395,8 @@ class TimeMe {
 * TODO Profiling
    
 
-* On the DataFrame issue
 
-  Ok so this is a *huge huge* issue in Java.
+* On the DataFrame issue
 
   It is quite a funny thing that nobody managed to solve the issue so
   far.
@@ -6491,6 +6422,15 @@ class TimeMe {
 
   so this is basically the logic of java but you see it is pretty
   rough and not that nice.
+
+  ---------------
+
+  Actually the idea of it is to work with OOP. So you should stop
+  thinking alltogether in terms of Data Frames in this language and
+  start thinking in terms of objects.
+
+  You should always map everything to Objects as per the ORM
+  frameworks and then just work with this first class citizen.
 
 ** TODO data management libraries                                  :noexport:
 

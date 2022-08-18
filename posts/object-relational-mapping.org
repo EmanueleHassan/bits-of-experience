@@ -79,6 +79,11 @@ of on the concept itself.
 
 In general much of these notes refer to the [[https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjbwuWh_eH4AhVDwQIHHW0vC9sQFnoECA8QAQ&url=https%3A%2F%2Fhoclaptrinhdanang.com%2Fdownloads%2Fpdf%2Fspring%2FJava%2520Persistence%2520with%2520Hibernate.pdf&usg=AOvVaw0524Xl7sPIrS85z5EARMyP][following book]].
 
+Note as well that as always you can debate about everything and you
+shuold think when ORM and Hibernate - in the specific case - is a good
+candidate and when not. See [[https://www.eversql.com/i-followed-hibernate-orm-to-hell-and-came-back-alive-to-tell-about-it/][this dude]] post in general - also check the
+last section. There is interesting referenced material.
+
 {{{TEASER_END}}}
 
 
@@ -232,4 +237,1127 @@ problem - i.e. you actually perform too many queries killing the DB.
     
     Not trivial to solve and decide at development time. 
 
+
+** On Mapping Strategies
+
+*** On Entity and Value Types
+    
+    So one of the most important factors, is the difference between
+    *entities and value types*. You have to understand when to map
+    objects in the first and second way. This is of paramount
+    importance. 
+
+**** On Entity Types
+
+     You have to make this difference explicit when you work in the ORM
+     fashion. The main idea is the following:
+
+     In the =entity type= all of the objects of interest reference a
+     third *common* object: the =entity type=, i.e. an object that is
+     equal in ==== java terms.
+   
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-08-09 152726.png" class="center">
+     #+end_export
+
+     So here the key element that is important to understand is that the
+     relation in the case of the =entity type=, i.e. a pointer in the
+     JVM, is persisted as a reference in the DB, meaning a foreign
+     key-constrained value.
+
+     In this sense when the object is of =entity type= it is not
+     deleted when one of the object pointing to it is. This is because
+     of the idea that different object might use it and the idea that
+     in DB schema behind there are two tables and there is a foreign
+     key constraint. 
+
+
+**** On Value Types
+     
+     Here the idea is that, there are object that do not have to be
+     persisted as entity instance types as [[*On Entity Types][On Entity Types]], but rather
+     *belong* to an entity type. 
+
+     In this sense a =value type= has no persistent identifier
+     property it is rather bounded to the entity type object it
+     belongs to. When this is gone, the =value type= object is deleted
+     as well.
+     
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-08-09 160450.png" class="center">
+     #+end_export
+
+     
+*** Mapping entities with identities
+
+    We start now with modeling the =entities=, in later chapters we go
+    then to the =value types=.
+
+    The idea is that as soon as you have an =entity type= object you
+    need an identifier for it.
+
+    This because such entity types objects will actually form the
+    basis for the tables to be persisted and they will need to contain
+    the relevant primary keys.
+
+    Hibernate as a framework also forces you behind the hood to work
+    with surrogate keys as discussed. These should stay as such and
+    should not turn into /natural keys/. This is important as
+    experience showed that natural keys cause problems in the long run.
+
+    In this sense when you create an =entity type=, you usually
+    specify an =Id= property with a corresponding rule for setting
+    it, say increase it etc. etc.
+
+    Then once this is set you will never update it, so there will be
+    *no setter*, rather just *getter* on it in order to get the
+    desired value. 
+
+    An example for it is the following:
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-08-10 094104.png" class="center">
+    #+end_export
+    
+    Note now that the following general rules:
+
+    #+begin_quote
+if @Id is on a field, the JPA provider will access fields of the class
+directly and consider all fields part of the persistent state by
+default.
+    #+end_quote
+
+    #+begin_quote
+Hibernate *doesn’t support updating primary key* values with an API; if
+you try to work around this requirement, you’ll run into problems with
+Hibernate’s caching and dirty-checking engine. If your database schema
+relies on updatable primary keys (and maybe uses ON UPDATE CASCADE
+foreign key constraints), you must change the schema before it will
+work with Hibernate.
+    #+end_quote
+
+    Finally recall that it is important to get this right, as the
+    general rule is:
+
+    #+begin_quote
+Expect your database schema to survive decades, even if your
+application won’t.
+    #+end_quote
+
+**** How to generate surrogate keys effectively
+
+     The starting point is the following:
+
+     #+begin_quote
+The @Id annotation is required to mark the identifier property of an
+entity class. Without the @GeneratedValue next to it, the JPA
+provider assumes that you’ll take care of creating and assigning an
+identifier value before you save an instance.
+
+JPA standardizes several value-generation strategies with the
+javax.persistence.GenerationType enum, which you select with
+@GeneratedValue(strategy = ...):
+     #+end_quote
+
+     Among the options are:
+
+     - =GenerationType.AUTO=:
+
+       Hibernate picks an appropriate strategy, asking the SQL dialect
+       of your configured database what is best.
+       
+     - =GenerationType.SEQUENCE=:
+
+       Sequential numeric values.
+
+       Note the difference with the next one. I think the difference
+       lies in the /sequence/. A sequence can be quite general and
+       does not have to be the +1 sequence. In fact there are lower
+       level stuff happening depending on the SQL dialect you are
+       working with. 
+       
+     - =GenerationType.IDENTITY=:
+
+       special auto-incremented primary key column that automatically
+       generates a numeric value on INSERT.
+       
+     - =GenerationType.TABLE=:
+
+       Here you will have an extra table in your DB schema that holds
+       the numeric primary key value, one row for each entity
+       class. This table will be read and updated accordingly, before
+       INSERTs. The default table name is HIBERNATE_SEQUENCES with
+       columns SEQUENCE_NAME and SEQUENCE_NEXT_HI_VALUE. 
+
+       
+
+
+
+**** How to name your tables
+
+     #+begin_src java
+@Entity 
+@Table(name = "USERS") 
+public class User implements Serializable { 
+ // ...
+}
+     #+end_src
+
+     Note that by default if you do not specify a name the name is
+     specified according to the Object the Entity annotation is
+     bounded to.
+
+     Note now that the above is a good example, as the User entity
+     would map to the USER table; this is a reserved keyword in most
+     SQL DBMSs. You can’t have a table with that name, so you instead
+     map it to USERS.
+
+     There are then tricks in order to generally deal with reserved
+     keywords. Skip it for now. There are as well ways to enforce
+     naming convetions across your tables names. 
+     
+
+**** Naming Entities for Querying
+
+     The idea is that:
+
+     #+begin_quote
+all entity names are automatically imported into the namespace of the
+query engine.
+
+In other words, you can use short class names *without a package prefix*
+in JPA query strings.
+     #+end_quote
+
+     Note now that if you have two entity classes named in the *same
+     way* in *two different packages* then you need to rename one of
+     them for JPA - through the name property as above - if you want
+     to continue using the short form queries, such as:
+
+     #+begin_src java
+     List result = em.createQuery("select i from Item i")
+      .getResultList();
+     // where Item is the shortname and is an Entity in Hibernate
+     #+end_src
+
+     
+**** Dynamic SQL generation
+
+     Here the idea is
+
+     #+begin_quote
+     By default, Hibernate creates SQL statements for each persistent
+     class when the persistence unit is created, on startup. These
+     statements are simple create, read, update, and delete (CRUD)
+     operations for reading a single row, deleting a row, and so on.
+     #+end_quote
+
+     So the idea is that such statements are stored in memory instead
+     of being generated on the fly. This is computationally cheaper.
+
+     The tricky bit comes with the =UPDATE= statements.
+
+     #+begin_quote
+     After all, the columns to be updated aren’t known at this time. The
+     answer is that the generated SQL statement updates all columns, and if
+     the value of a particular column isn’t modified, the statement sets it
+     to its old value.  In some situations, such as a legacy table with
+     hundreds of columns where the SQL statements will be large for even
+     the simplest operations (say, only one column needs updating), you
+     should disable this startup SQL generation and switch to dynamic
+     statements generated at runtime.
+
+     An *extremely large number of entities* can also impact startup
+     time, because Hibernate has to generate all SQL statements for
+     CRUD up front.  Memory consumption for this query statement cache
+     will also be high if a dozen statements must be cached for
+     thousands of entities. This can be an issue in virtual
+     environments with memory limitations, or on low-power devices.
+     #+end_quote 
+
+     So keep these points in the back of the mind when creating your
+     Hibernate instances.
+     
+     In order to disable such default behaviour you can use the
+     following:
+
+     #+begin_src java
+@Entity 
+@org.hibernate.annotations.DynamicInsert
+@org.hibernate.annotations.DynamicUpdate
+public class Item {
+ // ... 
+}
+     #+end_src
+
+     
+**** Immutable types
+
+     There might be objects which logic is *immutable*.
+
+     Think for instance a Bid in an auction. Once it is there, it is
+     there, you cannot modify it.
+
+     You can specify this immutable property as follows:
+
+     #+begin_src java
+@Entity
+@org.hibernate.annotations.Immutable
+public class Bid {
+ // ...
+}
+     #+end_src
+
+     Then you will never be able to execute =UPDATE= statements on
+     such table.
+     
+
+*** Mapping Value Types Objects
+
+    Let's start again with the key point; this is fundamental as if
+    you fail here, you will fail in your DB design.
+
+    This is the following:
+
+    #+begin_quote
+- Entities are the coarser-grained classes of your system. Their
+  instances have an independent life cycle and their own identity, and
+  many other instances can reference them.
+
+- Value types, on the other hand, are dependent on a particular entity
+  class. A value type instance is bound to its owning entity instance,
+  and only one entity instance can reference it; it has no individual
+  identity
+    #+end_quote
+
+    So that is the big difference that you have to make when working
+    with objects. Objects that are a property of an entity type,
+    belong to =value types=.
+
+    So, far when talking about =value types= we made the explicit
+    connection to embedded objects as discussed above.
+
+    Note that it is not important if the Object is programmer-defined
+    or coming from some standard library. Everything embedded within
+    an Entity Object is a =value type= Object.
+
+    So basically, the book starts with the /Numeric Objects/ in the
+    Java language and other very common data Objects through which you
+    implement the basics of any program. It shows how these are
+    converted to SQL data types. You can read this online when needed.
+
+    More interesting are the following concepts:
+
+**** =transient= keyword
+
+     this is used to mark properties of the Object of interest that
+     should be discarded; meaning not persisted.
+
+     This will allow you to implement some cool application logic.
+
+     #+begin_src java
+     class Ob {
+	 // ...
+
+	 @javax.persistence.Transient
+	     Integer myTransientInteger;
+	
+	 // ...
+     }
+
+     #+end_src
+
+**** non-optional
+
+     When you mark a property with this tag it will be marked as =NOT
+     NULL= in the DB schema.
+
+     #+begin_src java
+     class Ob {
+	 // ...
+
+     @Basic(optional = false)
+     BigDecimal initialPrice;
+    
+	 // ...
+     }
+
+
+     #+end_src
+
+     Another option in this sense is to include this in the =@Column=
+     property.
+
+     #+begin_src java
+     class Ob {
+	 // ...
+
+	 @Column(nullable = false, name = "BlaBla") // so you see. You can as well name the column.
+	 BigDecimal initialPrice;
+
+	 // Note that Column has as well parameters for controlling the schema and catalog properties.
+
+	 // ...
+     }
+     #+end_src
+     
+     Finally there is the way of working with =@NotNull=, this will
+     make the thing not-nullable through Bean Validation. I.e. at
+     runtime you will get errors.
+
+     You will not have the not-null property in your DB schema. So it
+     depends what you want to do. However, in general it is not
+     recommended to do any of this.
+     
+**** On @Embedded classes
+
+     Basically recall that depending on where you set the =@Id=
+     property:
+
+     - either on a field
+
+     - or on a getter
+
+     then this will be the strategy for reading and writing from the
+     DB.
+
+     Now =@Embedded= classes are the actual =value types= objects you
+     write.
+
+     That said, they will inherit the mapping strategy for reading and
+     writing of the =entity types= objects they are bounded to.
+
+     In case you want to override such a strategy you can use the
+     =@Access= annotation. This can be both at class level or at
+     property level within the embedded class.
+
+     Note that when you embedd a class you are actually augmenting the
+     relevant table with all of the relevant fields.
+
+     Note that you might want to override the =equals= and =hashCode=
+     cause you have to start comparing by values and not by reference.
+
+     An important thing to remember when working in such a way is the
+     one of overriding embedded attributes. This is important as you
+     might have for instance two addresses and if you do not override
+     the respective names you would have conflicts and you could not
+     work in the same table. 
+
+     #+begin_src java
+      @Entity
+      @Table(name = "USERS")
+      public class User implements Serializable {
+
+	  @Embedded
+	  @AttributeOverrides({
+		  @AttributeOverride(name = "street",
+				     column = @Column(name = "BILLING_STREET")),
+		      @AttributeOverride(name = "zipcode",
+					 column = @Column(name = "BILLING_ZIPCODE", length = 5)),
+		      @AttributeOverride(name = "city",
+					 column = @Column(name = "BILLING_CITY"))
+		      })
+
+		      protected Address billingAddress; 
+
+     // ...
+
+     }
+     #+end_src
+
+     You can then check at the book. You can as well have nested relations.
+     
+**** Derived properties
+
+      So basically in this way you can apply transformations *when
+      fetching* the object from the database.
+
+      #+begin_src java
+@org.hibernate.annotations.Formula(
+ "substr(DESCRIPTION, 1, 12) || '...'"
+)
+protected String shortDescription;
+@org.hibernate.annotations.Formula(
+ "(select avg(b.AMOUNT) from BID b where b.ITEM_ID = ID)"
+)
+protected BigDecimal averageBidAmount;
+      #+end_src
+
+      Note that this is just for reading. =ColumnTransformer=
+      described in the next section is both for reading and writing. 
+      
+**** Transforming column values
+
+      You can apply transformations for reading and writing from/in
+      the database as follows:
+
+      #+begin_src java
+@Column(name = "IMPERIALWEIGHT")
+@org.hibernate.annotations.ColumnTransformer(
+ read = "IMPERIALWEIGHT / 2.20462",
+ write = "? * 2.20462"
+)
+protected double metricWeight;
+      #+end_src
+
+      Note that such transformations are as well applied in DB
+      queries restrictions.
+
+      Think for instance at the following:
+
+      #+begin_src  java
+      List<Item> result =
+       em.createQuery("select i from Item i where i.metricWeight = :w")
+       .setParameter("w", 2.0)
+       .getResultList();
+
+      // The actual SQL executed by Hibernate for this query contains the
+      // following restriction in the WHERE clause: ...
+      where
+       i.IMPERIALWEIGHT / 2.20462=?
+      #+end_src
+
+      Note that you will not be able to use *indices* on such queries
+      restrictions. This because all of the values will have to be
+      calculated. This will cause in fact a /full table scan/, because
+      the values have to be calculated for all rows before evaluating
+      the restriction.
+
+      So you see you have pro and cons when working with
+      Hibernate. There are things you should consider as well. 
+
+      
+***** TODO understand if you can implement this as well with a setter and reader
+
+      theoretically you can as well make the transformation there.
+
+      double check but I think that it is possible and like this you
+      will decrease the amount of tools that you are actually using. 
+    
+
+    
+
+**** Generating Values
+
+     With this tag you can Hibernate can automatically generate the
+     values for the fields when interacting with the Database.
+
+     #+begin_src java
+     @Temporal(TemporalType.TIMESTAMP)
+     @Column(insertable = false, updatable = false) // note both false, meaning just the DB can generate them. User cannot.
+     @org.hibernate.annotations.Generated(
+					  org.hibernate.annotations.GenerationTime.ALWAYS
+					  )
+	 protected Date lastModified;
+     @Column(insertable = false)
+     @org.hibernate.annotations.ColumnDefault("1.00")
+	 @org.hibernate.annotations.Generated(
+					      org.hibernate.annotations.GenerationTime.INSERT
+					      )
+	 protected BigDecimal initialPrice;
+     #+end_src
+
+     This is convenient for instance for generating timestamps for the
+     insertion into the DB.
+
+     Note the following:
+
+     #+begin_quote
+      With ALWAYS, Hibernate refreshes the entity instance after every
+      SQL UPDATE or INSERT
+     #+end_quote
+
+**** Enumerator
+
+     Note that this is important when working with Enumerators
+     Objects.
+
+     If you wod not work with this property then you will save the
+     ordinal position of the value of within the enumerator.
+
+     In order to perform transactions with the enumerator label you
+     should use the =EnumType.STRING= option.
+
+     #+begin_src java
+     @NotNull
+     @Enumerated(EnumType.STRING)
+     protected AuctionType auctionType = AuctionType.HIGHEST_BID;
+     #+end_src
+     
+**** String
+
+     Note that Strings are mapped ot VARCHAR(255) by default. If you
+     do not want this default but rather a different value you have to
+     set it in the =length= paramter.
+
+
+*** Mapping Inheritance
+
+    This is an important concept as here is where things get
+    tricky.
+
+    The tricky business is always the same, you start to have OOP
+    concepts such as polymorphism and the way you map such OOP
+    characterstics into your relational tables is a non-trivial task
+    that requires a bit of thinking.
+
+    Essentially you have 4 possibilties, depending on the structure of
+    your application logic you might want to go for the one or the
+    other.
+
+    We will explore them further next, before let's quickly dive in
+    the concepts of =polymorphic associations= and =polymorphic
+    queries=. These are essential cause you have to think what you get
+    from working in one way or the other.
+    
+**** Polymorphic Associations
+
+     So here the idea is the following:
+
+     #+begin_quote
+A polymorphic association consists on two (or more) associations
+happening with the same foreign key.
+     #+end_quote
+
+     Such that if =polymorphic_association = true= you essentially
+     have repsected the superclass-subclass relations in your DB.
+
+     You would essentially have a table mapping to the superclass and
+     then it is clear that if you have different tables for your
+     subclasses that will reference the superclass via the foreign key
+     you would have a polymorphic association and with the key of the
+     superclass you will be able to fetch all of the relevant
+     associations in the subclasses.
+
+     You will see that depending on the mapping strategy this is not
+     always achieved and you should consider if it is fine to you or
+     not. 
+
+
+**** Polymorphic Queries
+
+     Think again in terms of OOP.
+
+     The idea when working with ORM is the concept of working always
+     with Objects when working in the relational space.
+
+     In JPA you have as well ways to query your data and fetch the
+     relevant information through APIs built around Objects mapped to
+     the relational space.
+
+     The idea of polymorphic queries is the following then:
+
+     #+begin_quote
+The *from* clause of a query includes not only instances of the
+specific entity class to which it refers, but all subclasses of that
+class as well. The instances returned by a query include instances of
+the subclasses that satisfy the query conditions.
+     #+end_quote
+     
+
+**** General set up for the following exercise
+
+     Note that in the following we will discuss mapping strategies for
+     the BillingDetails and its subclasses.
+
+     The general set up for it is the following:
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-08-17 113654.png" class="center">
+     #+end_export
+
+
+**** One table per concrete class with implicit polymorphism
+
+     So this is the first possibility.
+
+     Note that the name given in the book is not that intuitive for
+     the concept behind it.
+
+     What you are actually doing here according to my opinion is
+     ultimately /breaking the polymorphism/. You actually see it by
+     the fact that in this mapping strategy you actually do not have
+     /polymorphic associations/ and the possibility of performing
+     /polymorphic queries/.
+
+     The conceptual idea in this kind of mapping is the following:
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-08-17 112758.png" class="center">
+     #+end_export
+
+     So you see that there is no table for the superclass but rather
+     its properties are persisted within the respective two tables
+     mapping to the subclasses.
+
+     You actually implement the above in the following way:
+
+     #+begin_src java
+     @MappedSuperclass // IMPORTANT; include this in the superclass
+		       // otherwise the properties of the superclass will
+		       // not be PERSISTED to the subclasses-entity models
+     public abstract class BillingDetails {
+	 @NotNull
+	 protected String owner;
+	 // ...
+     }
+
+     // Subclass table, extending superclass and being mapped through the
+     // Entity tag.
+     @Entity
+     @AttributeOverride(name = "owner",  // need to change name otherwise
+					 // possible conflicts when
+					 // evolving your schema
+			column = @Column(name = "CC_OWNER",nullable = false))
+     public class CreditCard extends BillingDetails {
+	 @Id
+	 @GeneratedValue(generator = Constants.ID_GENERATOR)
+	 protected Long id;
+	 @NotNull
+	 protected String cardNumber;
+	 @NotNull
+	 protected String expMonth;
+	 @NotNull
+	 protected String expYear;
+	 // ...
+     }
+     #+end_src
+
+
+     Let's reason now around:
+
+     - polymorphic associations:
+
+       So it is clear that here there is no polymorphic
+       association. All subclasses are mapped to different tables such
+       that there might not be an association to their superclass that
+       can be represented by a single foreign key relation.
+
+     - polymorphic queries:
+
+       note that this is also not possible.
+
+       If you want to query upon the field of the superclass, here the
+       owner property you should make *multiple* queries - one for
+       each concrete subclass.
+
+
+**** One table per concrete class with unions
+
+     So here the essential idea is to have at the relational level the
+     same schema as above.
+
+     The difference lies in the fact that in order to apply your
+     polymorphic operations at the superclass level you do not have to
+     make separate queries, fetch the results and merge them at
+     runtime in your java application as in the previous case.
+
+     You can rather apply directly *ploymorphic queries* and let your
+     database optimizer actually find the best execution plan.
+
+     In order to work in such a way you can use the following:
+
+     #+begin_src java
+     // Note here the entity tag and the inheritancetype TABLE_PER_CLASS.
+     // Note as well that actually no table for the superclass is
+     // created. As mentioned the schema is the same as in the previous
+     // section.
+     @Entity
+     @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+     public abstract class BillingDetails {
+
+	 @Id
+	 @GeneratedValue(generator = Constants.ID_GENERATOR)
+	 protected Long id;
+	 @NotNull
+
+	 protected String owner;
+	 // ...
+
+     }
+     #+end_src
+
+
+     The subclasses would then look as usual. Simply extending the
+     superclass above.
+
+     As mentioned this would allow polymorphic queries; such that
+     writing queries as:
+
+     #+begin_src sql
+     select bd from BillingDetails bd
+
+     ---- would be translated by the Hibernate engine behind the scenes into:
+
+     select
+     ID, OWNER, EXPMONTH, EXPYEAR, CARDNUMBER,
+     ACCOUNT, BANKNAME, SWIFT, CLAZZ_
+     from
+     ( select
+     ID, OWNER, EXPMONTH, EXPYEAR, CARDNUMBER,
+     null as ACCOUNT,
+     null as BANKNAME,
+     null as SWIFT,
+     1 as CLAZZ_           -- note this that classifies which table the results come from
+     from
+     CREDITCARD
+     union all
+     select
+     id, OWNER,
+     null as EXPMONTH,
+     null as EXPYEAR,
+     null as CARDNUMBER,
+     ACCOUNT, BANKNAME, SWIFT,
+     2 as CLAZZ_           -- note this that classifies which table the results come from
+     from
+     BANKACCOUNT
+     ) as BILLINGDETAILS
+     #+end_src
+     
+
+**** One table per class hierarchy
+
+     Here the mapping strategy would result in the following:
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-08-17 143159.png" class="center">
+     #+end_export
+
+     So essentially here the idea is the following:
+
+     #+begin_quote
+You can map an entire class hierarchy /to a single table/. This table
+includes columns for all properties of all classes in the
+hierarchy.
+
+The value of an extra type *discriminator column* or formula identifies
+the concrete subclass represented.
+     #+end_quote
+
+     Understand now the merits and drawbacks:
+
+     - On the good side.
+
+       #+begin_quote
+This mapping strategy is a winner in terms of both performance and
+simplicity.
+
+It’s the best-performing way to represent polymorphism—both
+polymorphic and non-polymorphic queries perform well—and it’s even
+easy to write queries by hand.
+
+Ad hoc reporting is possible without complex joins or unions. Schema
+evolution is straightforward.
+       #+end_quote
+
+       Note that polymorphic queries are straightforward as in the
+       specific case the =owner= is just a field. It is
+       straightforward to apply =selection= and get all of the desired
+       results of, among the others, the subclasses.
+
+     - Issues:
+
+       #+begin_quote
+       There is *first major issue*: data integrity.
+
+       You must declare columns for properties declared by subclasses
+       to be nullable. If your subclasses each define several
+       non-nullable properties, the loss of NOT NULL constraints may
+       be a serious problem from the point of view of data
+       correctness.
+
+       Imagine that an expiration date for credit cards is required,
+       but your database schema can’t enforce this rule because all
+       columns of the table can be NULL. A simple application
+       programming error can lead to invalid data.
+
+       There is *second major issue*: normalization.
+
+       You’ve created *functional dependencies* between non-key
+       columns, *violating the third normal form*.
+
+       As always, denormalization for performance reasons can be
+       misleading, because it sacrifices *long-term stability*,
+       *maintainability*, and the *integrity of data*.
+
+       This is important as well. Before starting to design your DB
+       you should properly think about what normal form you want to
+       reach such that you will make sure that in the long run
+       maintainability will not be a major concern.
+
+       #+end_quote
+
+       Should you want to go for this mapping strategy you can
+       implement it in Hibernate as follows:
+
+       #+begin_src java
+       @Entity
+       @Inheritance(strategy = InheritanceType.SINGLE_TABLE) // on the root class.
+       @DiscriminatorColumn(name = "BD_TYPE")                // this is a
+       // discriminator
+       // column
+       // distinguishing
+       // among the
+       // subclasses
+       public abstract class BillingDetails {
+
+	   @Id
+	   @GeneratedValue(generator = Constants.ID_GENERATOR)
+	   protected Long id;
+
+	   @NotNull
+	   @Column(nullable = false)
+	   protected String owner;
+	   // ...
+       }
+
+       // Example of subclass - see the discriminator value that you set
+       // here.
+       @Entity
+       @DiscriminatorValue("CC") 
+       public class CreditCard extends BillingDetails {
+
+	   @NotNull                        // Hibernate ignores the @NotNull
+					   // for schema DDL generation, but
+					   // it observes it at runtime
+	   protected String cardNumber;
+
+	   @NotNull
+	   protected String expMonth;
+
+	   @NotNull
+	   protected String expYear;
+
+	   // ...
+
+       }
+       #+end_src
+
+       A final point that is worth to mention is the following:
+
+       #+begin_quote
+       Sometimes, especially in legacy schemas, you don’t have the freedom to
+       include an extra discriminator column in your entity tables. In this
+       case, you can apply an expression *to calculate* a discriminator value
+       for each row.
+       #+end_quote
+
+       You can do that in the following way:
+
+       #+begin_src java
+       // on the superclass
+       @Entity
+       @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+       @org.hibernate.annotations.DiscriminatorFormula(
+						       "case when CARDNUMBER is not null then 'CC' else 'BA' end"
+						       )
+
+	   public abstract class BillingDetails {
+
+	       // ...
+
+	   }
+       #+end_src
+
+
+**** One table per subclass
+
+     This is actually the most straightforward way.
+
+     The concept is that you keep all the OOP hierarchy as is and you
+     leverage foreign keys constraints in your relational schema that
+     would ultimately enforce the OOP hierachy logic.
+     
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-08-17 160331.png" class="center">
+     #+end_export
+
+     If you persist on a subclass object, Hibernate inserts two
+     rows. The values of properties declared by the superclass are
+     stored in a new row of the /BILLINGDETAILS/ table. Only the
+     values of properties declared by the subclass are stored in a new
+     row of the /CREDITCARD/ table.
+
+     The primary advantage of this strategy is that it *normalizes* the
+     SQL schema.  Schema evolution and integrity-constraint
+     definition are straightforward.
+
+     Note that performace can become slow with this relational schema
+     design. This due to the multiple join across many tables. 
+
+     This is good as with it you can reach the normal form you desire
+     and this should guarantee the needed consistency in the long
+     run. 
+
+     In order to implement this mapping strategy in Hibernate you
+     should work as follows:
+
+     #+begin_src java
+     @Entity
+     @Inheritance(strategy = InheritanceType.JOINED)
+     public abstract class BillingDetails {
+
+	 @Id
+	 @GeneratedValue(generator = Constants.ID_GENERATOR)
+	 protected Long id;
+
+	 @NotNull
+	 protected String owner;
+
+	 // ...
+
+     }
+
+     // Subclass
+     @Entity
+     @PrimaryKeyJoinColumn(name = "CREDITCARD_ID") // specify PFK to join
+						   // on. If you do not
+						   // specify anything it
+						   // will be called ID.
+     public class CreditCard extends BillingDetails {
+
+	 @NotNull
+	 protected String cardNumber;
+
+	 @NotNull
+	 protected String expMonth;
+
+	 @NotNull
+	 protected String expYear;
+
+	 // ...
+
+     }
+
+
+     #+end_src
+
+     A *polymorphic query* would then be implemented via an outer
+     join.
+
+     If you see the joins - think about the situation in the
+     applications you are working on, then you see that this mapping
+     strategy is more difficult to implement by hand — even ad hoc
+     reporting is more complex. This is an important consideration if
+     you plan to mix Hibernate code with /handwritten SQL/ - which
+     will for sure be the case in the case of legacy applications as
+     ours.
+
+     
+**** On mixing mapping strategies
+
+     It is possible to mix among the mapping strategies discussed
+     above.
+
+     This for instance to get around some downsides of a mapping
+     strategy; say for instance go from a table per subclass - with
+     union - to a normalized table-per-subclass strategy. 
+
+     Or for instance, you could have a single table with a particular
+     subclass in a separate table with a foreign key relation - such
+     that the /not null/ restriction of the single table does not have
+     to be. For instance:
+     
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-08-18 085954.png" class="center">
+     #+end_export
+
+     You can achieve the above by:
+
+     - using the =InheritanceType.SINGLE_TABLE= in the superclass
+
+     - use the following annotation in the relevant subclass that you
+       do not want to include in the single table
+
+     #+begin_src java
+     @Entity
+     @DiscriminatorValue("CC")  // as in single table strategy
+     @SecondaryTable(           // here you specify a secondary table where
+				// this object should be persisted
+		     name = "CREDITCARD",
+		     pkJoinColumns = @PrimaryKeyJoinColumn(name = "CREDITCARD_ID") // PFK
+		     )
+
+     public class CreditCard extends BillingDetails {
+
+	 @NotNull
+	 @Column(table = "CREDITCARD", nullable = false) // here you
+							 // specify the
+							 // table where to
+							 // persiste the
+							 // property
+	 protected String cardNumber;
+
+	 @Column(table = "CREDITCARD", nullable = false)
+	  protected String expMonth;
+
+	 @Column(table = "CREDITCARD", nullable = false)
+	 protected String expYear;
+	 // ...
+     }
+     #+end_src
+    
+
+**** Choosing a Mapping strategy
+
+     Here are some general guidelines from the book - quite intuitive
+     if you know the couple of principles behind it:
+
+     - If you don’t require polymorphic associations or queries, lean
+       toward table-per-concrete class.
+
+       Here always go with the explicit UNION-based mapping with
+       =InheritanceType.TABLE_PER_CLASS= should be preferred, because
+       (optimized) polymorphic queries and associations will then be
+       possible later.
+
+       Probably this will never be the case, otherwise you will not
+       use such OOP structure in the first place.
+
+     - If you do require polymorphic associations or queries, and
+       subclasses declare relatively few properties lean toward
+       =InheritanceType.SINGLE_TABLE=.
+
+       This especially so if the main difference among subclasses is
+       their behaviour rather than their fields.
+
+       Here the main point is to convince yourself that *denormalized
+       schema* will not create any issues in the long run.
+
+     - If you do require polymorphic associations or queries, and
+       subclasses declare many *(non-optional)* properties lean toward
+       =InheritanceType.JOINED=. 
+
+
+**** On the order in which to think the ORM
+
+     Another open point that I am noting while writing is the
+     following: so far it is not clear if you should first think your
+     application in terms of Objects and then decide how to map it
+     into the DB or vice versa.
+
+     You will see this with the experice. It looks to me as if the
+     whole point of using such framework is as well a little bit to
+     think first in terms of objects, then decide for a proper mapping
+     strategy but then once this is done, you can as well forget the
+     DB and work again at application layer.
+
+
+**** TODO possibly add section on polymorphic associations
+
+     not so well explained in the book. I think it is not conceptually
+     strucutred in the correct way. This section in the book is a bit
+     out of scope. 
+
+     Continue reading and then make sense of how to structure your
+     notes in this dimension. 
+
+
+*** TODO Start mapping exercise - the longrunning component
+
+    check at it once Johannes is back.
+
+    You can start to work in ORM way in this component. 
+
+    
 
