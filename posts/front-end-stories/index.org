@@ -112,7 +112,6 @@ topic check at [[https://frontendmasters.com/guides/front-end-handbook/2019/#4.1
 
      - DOM, CSS and Javascript as tags.
 
-
    Note now that the DOM - is is a language-independent model made up
    of objects representing the structure of a document. You can then
    modify the structure of  the dome using that model. HMTL is just
@@ -122,6 +121,10 @@ topic check at [[https://frontendmasters.com/guides/front-end-handbook/2019/#4.1
    using javascript you can actually manipulate the DOM and embedd
    some dynamic logic such that you might display or not some
    elements. So basically that is a little bit the idea.
+
+   You have then a lot of javascript methods to fetch the different
+   Nodes of the DOM and retrieve, modify, cancel or add to them. Check
+   [[https://developer.mozilla.org/en-US/docs/Web][this webpage]] in order to get your head around it.
 
    More into the detail it works like this:
 
@@ -151,6 +154,10 @@ topic check at [[https://frontendmasters.com/guides/front-end-handbook/2019/#4.1
       fetched via network - i.e. shipped by the server together with
       the different html pages you ship)
 
+      Note that via the aforementioned calls you can as well make API
+      calls to fetch information from the backend or trigger from
+      there the relevant logic. 
+
 ** Understanding front-end applications
 
    Note now that this is the basics, so that now you can basically
@@ -164,10 +171,17 @@ topic check at [[https://frontendmasters.com/guides/front-end-handbook/2019/#4.1
 
 	  (The only think that I can think of is if you get some other
           html pages via javascript and ship and transform them in
-          such a way. No idea how much that is a use case in front-end
+          such a way.
+
+	  No idea how much that is a use case in front-end
           development. Can imagine that this might eventually be an
           option if you do not want to display much to the browser
           user...)
+
+	  Note as well that there is extensive usage of Mustache in
+          our front-end. So you have as well to understand a bit that
+          templating solution if you will have to develop extensively
+          with it.
 
        2. then check for what you are looking for there. if you do not
           find it, then you have to strart dig into the dynamic
@@ -179,18 +193,239 @@ topic check at [[https://frontendmasters.com/guides/front-end-handbook/2019/#4.1
           there.
 
           Note that you might especially call some =show= or =hide=
-          methods to implement the logic etc. 
+          methods to implement the logic etc.
 
-    /Side note/ for my project. Note that you do not have many html
-    files in your workspace. I.e. you might not see the specific html
-    that you are seeing your browser in your workspace. I think that
-    this is because of the mustache way of constructing them
-    dynamically.
+** On Single Page vs. Multi-Page
 
-    Now that adds a little bit a layer of complexity as you need to
-    understand how you compile files into html files with mustache
-    etc. but that will come with time. Step by step - had already
-    started to dig into this sense when making notes on the one
-    project. Give it time but each time you write a post as this you
-    are one step closer to a general understanding of the situation.
+   Make a note as well on this common difference.
 
+   The concept is that in a single page you always remain on the same
+   webpage. The content is dynamically updated by modifying the DOM
+   via a set of relevant javascript logic.
+
+   In multipage you actually redirect the user to different pages that
+   are fetched via the server.
+
+   This is a bit the difference between the two and it will have
+   implications for the user experience, as most likely to other
+   front-end related stuff such as sessions, cookies etc. etc. I mean
+   I do not really have a guess but should be fine to this stage.
+
+   I think that if you really go deep into the topic there might be as
+   well issues relating to traffic etc. etc. This is obviously not a
+   topic for the applications I need to work on.
+
+** Bootstrap - HTML/CSS Framework, minor Javascript stuff (Generally used for creating nice UI quickly)
+
+   As mentioned on the wiki page:
+
+   #+begin_quote
+Bootstrap is a free and open-source CSS framework directed at
+responsive, mobile-first front-end web development. It contains HTML,
+CSS and (optionally) JavaScript-based design templates for typography,
+forms, buttons, navigation, and other interface components.
+   #+end_quote
+
+   So essentially once you have this framework you can go on the
+   bootstrap webpage, and for instance under components you can see
+   how to implement all of these elements mentioned above.
+
+   You can then copy such snippets and you will have nicely formatted
+   stuff and like this you will be able to quickly create your
+   front-ends. 
+   
+** Common Javascript Frameworks (More used for handling your middle layer between HTMLs and Server Calls.)
+
+   So I never worked so far with the two.
+
+   From my understanding these are two frameworks that are used for
+   quickly and elegantly write your javascript code and in general the
+   components of the front-end that sits between your server calls and
+   the html page.
+
+   So note that it is smth different in comparison to the Bootstrap
+   framework. Do not confuse the two.
+   
+*** On the virtual DOMs
+
+    I have to double check this, either with someone or online. I
+    understood in any case that most of the modern frameworks create
+    the entire DOM via javascript objects and then render the DOM from
+    these.
+
+    From here the idea of /[[https://mfrachet.github.io/create-frontend-framework/vdom/intro.html][virtual DOM]]/[fn:1]. The concept is that it
+    is easier to modify in memory javascript objects and just
+    re-trigger a DOM tree modification upon given events.
+
+    This makes the experience much smoother.
+
+    In general another thing that I guess you have to keep into memory
+    is what information you want to show and what not. Experienced
+    users might get access to information quite easily if you do not
+    think about the things properly.
+
+*** On Fetch vs. Ajax
+
+    Here as well a minor note. Nothing big but Ajax is something that
+    you see every now and then so it makes sense as well to put that
+    in a mental box.
+
+    Basically, once more the idea is that, the javascript runtime in
+    the browser allows you to create less static logic.
+
+    You can trigger the relevant calls to the backend servers and
+    fetch data from it.
+
+    However important is to make this in an asynchronous way in order
+    not to freeze your browser. Check at the vido in [[https://marcohassan.github.io/bits-of-experience/posts/asynchronous-schema-in-python/][this post]] to make
+    the point concrete.
+
+    Now note that different browsers and browser versions expose a
+    different set of technologies and expose different APIs.
+
+    So Ajax is actually the old school way of doing such calls. In any
+    case it is the most widely accepted; meaning it works both on
+    newer browser and older.
+
+    The general concept was the following and still applies in modern
+    APIs as well.
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-08-17 095424.png" class="center">
+    #+end_export
+
+    Fetch and other more modern APIs are the new way of doing the
+    asynchronous calls to fetch information from the backend server
+    and apply the desired logic then to the front-end. 
+    
+** On Templates
+
+   Templates are a way to display information on the user's
+   browser. It aims to describe what we want to show.
+
+   With them it is easy to generate html code based on variables.
+
+   In this sense, it is a way to make html webpages less static.
+
+   It is your way of emebedding the information from the *model* into
+   the *view* that will be then displayed to the user in the classical
+   [[https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller][MVC architecture]].
+
+   Note now that the applications we use do not make use of any
+   javascript frameworks, but make extensive use of Mustache as a
+   template engine.
+
+   Therefore, you better learn it a little bit as if you will need to
+   play with the front-end it will make the task less tedious and you
+   will gain quite some speed. 
+   
+*** Mustache
+
+    Mustache is a web framework  that is *logicless*.
+
+    That is important. It means that there are no if-else statements
+    nor for loops.
+
+    Note that how the framework actually works is then in the following
+    way:
+
+    - you define a template with your ={{}}= - i.e. the mustaches
+      containing your variables that you will pass to the template
+      dynamically. 
+
+    - you compile the framework.
+
+    Note then the following schema for using the framework.
+
+    #+begin_src plantuml :file ../../images/mustache.png :exports none :results drawer
+@startuml
+(*) -right-> "Create template in the form <b>MYNAME.mustache</b>"
+
+ -right->"Create a <b>MYNAME</b> class where you save the parameters 
+     you pass to the template.
+
+     The fields must be equivalent to the ones in the mustaches."
+
+ -right-> "Compile the mustache template"
+
+ -down-> "Execute the compiled mustache template passing it 
+           the necessary object containing the parameterized fields.
+
+	   Flush the results to a stringwriter.   
+	  "
+
+  --> (*)
+@enduml
+    #+end_src
+
+    #+RESULTS:
+    :results:
+    [[file:../../images/mustache.png]]
+    :end:
+
+    #+begin_export html
+     <img src="../../images/mustache.png" class="center">
+    #+end_export
+
+    Note that this is just the basics but it is sufficient to get an
+    idea for the moment.
+
+    What you are missing then is the following:
+
+    - passing a list of objects. then if setting properly tags you will
+      generate a template containing all of the entries for the objects in
+      the list.
+
+      I guess it is therefore the way to do dynamic allocation etc. 
+
+    - tags that are triggered just when you pass an empty list, a
+      non-existing key of a map, a false or null.
+
+      i.e. you trigger this generally to display info for the case of
+      abnormal events.
+
+    - tags processing lambda function. I.e you can for instance use a
+      =Function<Object, Object>= and the result from it will be passed to
+      to the appropriate tag.
+
+    You can read more of the above cases [[https://www.baeldung.com/mustache][here]]. Just go there when you need.
+    
+** JQuery
+
+   As per the official webpage:
+
+   #+begin_quote
+   jQuery is a fast, small, and feature-rich JavaScript library. It
+   makes things like HTML document traversal and manipulation, event
+   handling, animation, and Ajax much simpler with an easy-to-use API
+   that works across a multitude of browsers. With a combination of
+   versatility and extensibility, jQuery has changed the way that
+   millions of people write JavaScript.
+   #+end_quote
+   
+** Tricks when using DevTools on your Browser
+
+   So essentially it is important that you do not have to redeploy
+   your application all of the time. You can make modifications to
+   your DOM directly in the DevTools console in your browser.
+
+   This will increase the development speed.
+
+   On the top of it leverage the following thing:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-16 173327.png" class="center">
+   #+end_export
+
+   Like this hover over the relevant pieces that your are interested
+   in your front-end and you will find the relevant html section
+   corresponding to it.
+
+   With it it will be easier to navigate the DOM, test and apply the
+   relevant javascript snippets that you are interested in.
+
+
+* Footnotes
+
+[fn:1] This website is interesting in general for exploring front-end
+web frameworks.
