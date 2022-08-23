@@ -1,0 +1,1062 @@
+#+BEGIN_COMMENT
+.. title: Java 8 - Functional Programming
+.. slug: java-8-functional-programming
+.. date: 2021-12-24 19:36:32 UTC+01:00
+.. tags: java, functional-programming, streaming, parallelization
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+#+end_export
+
+I used to keep these notes together with the general notes on the Java
+language.
+
+As that file was growing too big and as functional programming is such
+a neat and revolutionizing feature introduced with Java 8, I have
+decided to separate the notes in this separate blog entry.
+
+{{{TEASER_END}}}
+
+
+** On Functional Programming - Available since Java 8
+   
+   You can check [[https://java-8-tips.readthedocs.io/en/stable/streamsapi.html][at these notes]]. They are not just about functional
+   programming. But generally on Java 8. I like this cause it is short
+   and compact and you can quickly get up and running with it.
+
+   Sinced Java 8 there are some new possibilities of programming in a
+   functional programming way.
+
+   Basically here is where your pythonic way of working comes into
+   play. At least a bit of it.. got more experience with it and I
+   would not set them at the very same level but there is at least
+   some overlap.
+
+   There you basically iterate across some iterable object with a new
+   kind of iterator and apply calssical =maps= and =reduce=
+   functions - among the others - through the use of lambda functions
+   as you already encountered them in the past.
+
+   Note that programming in such a way will bring to you several
+   advantages:
+
+   - Nicely composed, not cluttered
+
+   - Free of low-level operations
+
+   - Easier to enhance or change the logic
+
+   - Iteration controlled by a library of methods
+
+   - Efficient; lazy evaluation of loops. I.e. it can decide to
+     perform them lazily, in any order, and exploit parallelism as it
+     sees fit - *so start to see some overlap with Spark in here*.
+
+   - Easier to parallelize where desired
+
+   It is also pretty quick then to understand the benefit of it.
+
+   I like this concept:
+
+   #+begin_quote
+Functional-style code has a *higher signal-to-noise ratio*; we write fewer lines
+of code, but each line or expression achieves more.
+   #+end_quote
+
+   Note as well the following fundamental reasonings:
+
+   #+begin_quote
+The functional version can easily be parallelized.
+
+If the computation was time consuming, we can easily run it
+concurrently for each element in the list.
+
+If we parallelized the imperative version, we’d have to worry about
+concurrent modification of the underlying variable. In
+the functional version we gain access to the variable only after it’s
+fully baked, which removes the thread-safety concerns
+   #+end_quote
+
+   That is most likely the root from which the map-reduce and Hadoop
+   frameworks developed and how it is implemented in Java. Java-8 must
+   have been a huge revolution in this sense.
+
+   The functional style is not counter to object-oriented programming
+   (OOP). The real paradigm shift is from the imperative to the
+   declarative style of programming.
+
+   With Java 8, we can now intermix functional and OO styles of
+   programming quite effectively. We can continue to use the OOP style
+   to model domain entities, their states, and their relationships. In
+   addition, we can model the behavior or state transformations,
+   business workflows, and data processing as a series of functions to
+   form a function composition.
+
+   So basically that is the ultimate way you program in Java and where
+   its benefit is unleashed.
+
+   I must say that coming from the Python world I still see it as
+   inferior to Python for the data processing, but with that it solves
+   quite some fundamental constrains. This especially due to the
+   native concept of dataframes in there. I.e. there is no modular
+   abstraction of the concept.
+
+   On the other hand the fact that you have no native data-frame
+   concept forces you to go over *each and every* single value in
+   your code and thereby you make that implicit type check that would
+   not be there in Python. 
+    
+*** TODO have to draw lines among the different components         :noexport:
+
+    i.e. streams and functional interfaces through which you define
+    the functions to use on your streams.
+
+    that is correct. note that the streams and the maps etc are the
+    general way you work with functional programming and lambda
+    functions.
+
+    this is however not the only one. i.e. these are the typical
+    consumer functions of the many =java.util.function= calls etc.
+    
+*** TODO start by work through patterns                            :noexport:
+
+    i.e. for instance always decide to express the functional
+    interfaces you are working with.
+
+    it will help you quite much in keeping up and running the system
+    and split a little bit the logic across the different components
+    as mentioned in the previous point.  
+
+*** TODO functional programming - fluent functions etc.
+    
+    Note as well that there are difference among the ~forEach~ and the
+    ~map~ and other /fluent functions/.
+
+    This is a non-trivial difference that you need to understand
+    better if you truly want to understand functional programming in a
+    serious way at some point.
+
+    You can start reading into it in [[https://stackoverflow.com/questions/28319064/java-8-best-way-to-transform-a-list-map-or-foreach][here]].
+
+*** Syntax
+
+    The syntax is very close to the one you know yourself.
+
+    Consider the following    
+    
+    #+begin_src java :results output raw 
+friends.forEach((final String name) -> System.out.println(name));
+    #+end_src 
+
+    The forEach() is a higher-order function that /accepts a lambda
+    expression/ or block of code to execute in the context of each
+    element in the list.
+
+    The variable =name= is bound to each element of the collection
+    during the call. So that is the =lambda x= of your python
+    code. There you specify what your lambda parameters are. Here you
+    specify them within the =()= before the arrow =->=. So that is
+    basically the syntax and you already know and love that way of
+    programming.
+
+    *Note*: the above is not the only way to implement lambda
+    functions in Java. It is nonetheless the most type safe ways of
+    doing it.
+
+    Other possible ways involve the following:
+
+    #+begin_src java :results output raw 
+friends.forEach((name) -> System.out.println(name));
+    #+end_src 
+
+    here you do not specify a type for the name. This is automatically
+    inferred by looking at the signature of the called method.
+
+    *Important Note:* We can also use type inference if a lambda
+    expression takes multiple parameters, but in that case we must
+    leave out the type information for all the parameters; we have to
+    *specify the type for none or for all of the parameters* in a lambda
+    expression.
+
+    The last way to specify the lambda function is the following:
+
+    #+begin_src java :results output raw 
+friends.forEach(name -> System.out.println(name));
+    #+end_src
+
+    Note that here you have no =()=. This is a corner case.
+
+    The Java compiler treats single-parameter lambda expressions as
+    special: we can leave off the parentheses around the parameter if
+    the parameter’s type is inferred. Keep this in mind, cause some of
+    your colleagues are using this way of coding.
+
+    *Design choice:* Keep unity in your code and forget about
+    it. Always work with =()=e for consistency reasons.
+
+    Note as well the following point in the syntax and the way you
+    work with functional programming - i.e. you have to respect the
+    logic of the methods. Depeding whether they are static or not you
+    pass the lambda argument in different positions. If it is static
+    within the class you give it as argument. Otherwise if it is an
+    instance method you call the method from it.
+
+    Check at the following simple example with =String= in order to
+    properly understand this.
+
+    #+BEGIN_SRC java :results output drawer :classname StaticVsInstance_Method
+import java.util.List;
+import java.util.ArrayList;
+
+class StaticVsInstance_Method {
+    
+    public static void main (String args[]){
+
+	List<String> myList = new ArrayList();
+
+	myList.add("romeo");
+	myList.add("gatto colosseo");	
+
+	// so note fairly standard the point. respect the logical
+	// construct of the language
+	myList.stream()
+	      .forEach(x -> System.out.println(x.substring(2)));
+
+	myList.stream()
+	      .forEach(x -> System.out.println(String.format("Hello %s", x)));
+
+    }
+
+}
+    #+END_SRC
+
+    #+RESULTS:
+    :results:
+    meo
+    tto colosseo
+    Hello romeo
+    Hello gatto colosseo
+    :end:
+    
+
+*** Important Note on Syntax and Conceptual Understanding
+
+    Note that this is a very standard way of working in the Java
+    Language. Even if you are not used to think in these terms, you
+    better fix it in your DNA.
+
+    This is in fact one of the [[https://www.geeksforgeeks.org/method-within-method-in-java/][three ways]] of specifying a nested
+    method within another one.  
+    
+    
+*** On Design Choices
+
+    *Keep this section in your mind. It will be of paramount
+    importance in order to write clean code*.
+    
+    The idea is that you should follow the DRY principle. I.e. you
+    should not repeat your code whenever possible as otherwise the
+    dimension will explode and it will not be easy to treat and
+    refactor.
+
+    Example write the following lambda expression that you can pass to
+    your fluent functions.
+
+    In such a way you will never replicate that ~name ->
+    name.startsWith(letter);~ bit of code.
+
+    #+begin_src java :results output raw 
+public static Predicate<String> checkIfStartsWith(final String letter) {
+return name -> name.startsWith(letter);
+}
+    #+end_src 
+
+    Note that in the above you do return a *function* as an
+    expression.
+
+    Note the following:
+
+    #+begin_quote
+    From within a lambda expression we can only access local variables
+    that are final or effectively final in the enclosing scope.
+
+    A lambda expression may be invoked right away, or it may be
+    invoked lazily or from multiple threads.
+    To *avoid race conditions*, the local variables we access in the
+    enclosing scope are not allowed to change once initialized. Any
+    attempt to change them will result in a compilation error.
+    #+end_quote
+
+**** Don't use Consumer or Predicates - wrap things into Functions
+
+     Note that the one above is a *bad example and not the way to
+     write clean code*.
+
+     I.e. you do not want to clutter your memory with static objects
+     that you refer to throughout your code.
+
+     So what you do in order to write clean code is the following -
+     you wrap the above lambda expressions into lambda functions.
+
+     Check the difference
+
+     #+begin_src java :results output raw :classname CleanCodeFunctional
+import java.util.function.Predicate;
+import java.util.List;
+import java.util.Arrays;
+
+class CleanCodeFunctional {
+
+    public static Predicate<String> checkIfStartsWith(final String letter) {
+	return name -> name.startsWith(letter);
+    }
+
+    public static void main(String arg[]) {
+    
+	final List<String> friends =
+	    Arrays.asList("Brian", "Nate", "Neal", "Raju", "Sara", "Scott");
+	final List<String> editors =
+	    Arrays.asList("Brian", "Jackie", "John", "Mike");
+	final List<String> comrades =
+	    Arrays.asList("Kate", "Ken", "Nick", "Paula", "Zach");
+
+	final long countFriendsStartN =
+	    friends.stream()
+	    .filter(checkIfStartsWith("N")).count();
+
+	final long countFriendsStartB =
+	    friends.stream()
+	    .filter(checkIfStartsWith("B")).count();
+
+	System.out.println(String.format("Number starting with N: %d", countFriendsStartN));
+	System.out.println(String.format("Number starting with B: %d", countFriendsStartB));	
+    }
+}
+     #+end_src 
+
+     #+RESULTS:
+     Number starting with N: 2
+     Number starting with B: 1
+     Number starting with N: 2
+     Number starting with B: 1
+     Number starting with N: 2
+     Number starting with B: 1
+     Number starting with N: 2
+     Number starting with B: 1
+
+     Much better and cleaner code is to write the following - function
+     wrapper
+
+     #+begin_src java :results output raw 
+Function<String, Predicate<String>> StartsWithLetter  =
+
+    (String Letter) -> {
+
+    Predicate<String> checkIfStartsWith = (String name) -> {
+	return name -> name.startsWith(Letter);
+    }
+
+    return checkIfStartsWith
+    }
+     #+end_src 
+
+     This can even be written in a more compact way as follows
+
+     #+begin_src java :results output raw 
+Function<String, Predicate<String>> StartsWithLetter =
+    (String letter) -> (String name) -> name.startsWith(letter);
+     #+end_src 
+
+     Note that the above is quite compact notation but it works as the
+     compiler will do the necessary job for you in the background.
+
+     This ultimately means that you can write the following
+     
+     #+begin_src java :results output raw :classname CleanCodeFunctional2
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.List;
+import java.util.Arrays;
+
+class CleanCodeFunctional2 {
+
+    public static void main(String arg[]) {
+    
+	final List<String> friends =
+	    Arrays.asList("Brian", "Nate", "Neal", "Raju", "Sara", "Scott");
+	final List<String> editors =
+	    Arrays.asList("Brian", "Jackie", "John", "Mike");
+	final List<String> comrades =
+	    Arrays.asList("Kate", "Ken", "Nick", "Paula", "Zach");
+
+	final Function<String, Predicate<String>> checkIfStartsWith =
+	    (String letter) -> (String name) -> name.startsWith(letter);	
+
+	final long countFriendsStartN =
+	    friends.stream()
+	    .filter(checkIfStartsWith.apply("N")).count();
+
+	final long countFriendsStartB =
+	    friends.stream()
+	    .filter(checkIfStartsWith.apply("B")).count();
+
+	System.out.println(String.format("Number starting with N: %d", countFriendsStartN));
+	System.out.println(String.format("Number starting with B: %d", countFriendsStartB));	
+    }
+}
+
+     #+end_src 
+
+     #+RESULTS:
+     Number starting with N: 2
+     Number starting with B: 1
+
+**** Important thing to consider - you use a method that throws an exception of some kind
+
+     Then your method has to deal with that exception.
+
+     The question is then how you can do that, i.e. your lambda
+     function has to deal with that.
+
+     The solution is one of the following: check [[https://stackoverflow.com/questions/18198176/java-8-lambda-function-that-throws-exception][this url]].
+
+     I like the wrapper solution. This might not be easy to follow for
+     future colleagues that do not know your code. Especially if the
+     wrapper is hidden somewhere.
+
+     So keep for the moment as design choice: try-catch sandwich
+     around the piece that you have to deal with.
+
+**** On Combining functional interafces
+
+
+    Note the following - try to keep code clean by writing lambda
+    functions and passing them as arguments.
+
+    See how clean the entire code then looks. I.e. do not clutter you
+    stream/ methods.
+
+    See the following example:
+    
+    #+BEGIN_SRC java :results output drawer :classname
+/** Lovely to see such stream of tests. Very nice way to program in a way 
+ ,*  where it is easy to keep the overview. Nice.
+ ,*/
+@TestFactory
+Stream<DynamicTest> dynamicTestsFromStreamFactoryMethod() {
+    // Stream of palindromes to check
+    Stream<String> inputStream = Stream.of("racecar", "radar", "mom", "dad");
+
+    // Generates display names like: racecar is a palindrome
+    Function<String, String> displayNameGenerator = text -> text + " is a palindrome";
+
+    // Executes tests based on the current input value.
+    ThrowingConsumer<String> testExecutor = text -> assertTrue(isPalindrome(text));
+
+    // Returns a stream of dynamic tests.
+    return DynamicTest.stream(inputStream, displayNameGenerator, testExecutor);
+}
+    #+END_SRC     
+     
+
+*** On functional Interfaces
+
+    You can use the annotation =@FunctionalInterface= to specify that
+    an interface fulfills the properties of the functional interface.
+     
+    Note that these are important, as these are the basical logical
+    construct for *functional programming in Java*.
+
+    Functional interfaces are now simply defined as any interface
+    with a sinlge abstract method.
+
+    Note that this is the basis of functional programming as the
+    implementation of the single abstract method is then the lambda
+    expression you can use in your lambda function.      
+
+    If a method takes a functional interface as a parameter - note
+    that this is the case of functional programming -, then we can
+    pass the following:
+
+    - An anonymous inner class, the old-fashioned way - meaning not
+      functional - (but why would we?). This is for instance the
+      example you have in these document in the =forEach= loop. 
+
+    - A lambda expression, like the map() method
+
+    - A method or constructor reference
+
+
+*** Nice benefit of working in a functional way
+
+    Note the following benefit of lambda expressions. You never
+    thought in these terms and it is clear that there are high
+    benefits in working in such a way.
+
+    Consider the following - old fashioned way of working with java
+    and code. 
+
+    #+begin_src java :results output raw 
+Transaction transaction = getFromTransactionFactory();
+
+//... operation to run within the transaction ...
+
+checkProgressAndCommitOrRollbackTransaction();
+UpdateAuditTrail();
+    #+end_src 
+
+    Then the issue is that multiple errors could occur in the
+    following part:
+
+    #+begin_src java :results output raw 
+//... operation to run within the transaction ...
+    #+end_src
+
+    such that you might not get to the roll-back code part.
+
+    This causes issues. A way to fix this is via the classical
+    =try-catch= methods.
+
+    Another way of doing this is via functional programming. Think of
+    the following:
+
+    #+begin_src java :results output raw 
+runWithinTransaction((Transaction transaction) -> {
+//... operation to run within the transaction ...
+})
+    #+end_src 
+
+    In such a way you encapsulate everything.
+
+    The policy to check the status and update the audit trails is
+    abstracted and encapsulated within the ~runWithinTransaction()~
+    method. To this method we send a piece of code that needs to run
+    in the context of a transaction. We no longer have to worry about
+    forgetting to perform the steps or about the exceptions being
+    handled well.
+
+    
+*** On the forEach method
+
+    This was introduced in Java 8 and I think it is one interesting
+    big point for working with collections. Moreover, it makes the
+    point for functional programming without going in the arrow
+    notation above.
+
+    You can understand by looking at the following:
+
+    #+begin_src java :results output raw 
+void forEach(Consumer<? super T> action)
+    #+end_src 
+
+    so the syntax is the above, and as simply stated in Javadoc:
+    Performs the given action for each element of the Iterable until
+    all elements have been processed or the action throws an
+    exception.
+
+    So one example is the following, you have an *Iterable* object -
+    say a list of friends and you apply the action in the following
+    syntax.
+        
+    #+begin_src java :results output raw 
+friends.forEach(new Consumer<String>() {
+	public void accept(final String name) {
+	    System.out.println(name);
+	}
+    });
+    #+end_src 
+
+    Note: the code above is cluttered. It was the old way of doing
+    things with the all-too-familiar *anonymous inner class syntax*.
+    I.e. the consumer understand that the inner class is the function
+    it has to perform.
+    
+    Simplify it. No need to explicitely write the consumer. This is
+    part of the =java.util.function=. You can pass directly a lambda
+    function. Then being Consumer a functionalInterface it will
+    automatically fit the lambda function as consumer.
+
+    Note just that being a consumer the lambda function does not have
+    to produce a result.
+
+
+
+*** Stream
+
+    The method =stream()= is available on all collections in JDK 8 and
+    it wraps the collection into an instance of Stream.
+
+    A Stream is much like an iterator on a collection of objects and
+    provides some nice /fluent functions/. Using the methods of this
+    interface, we can compose a sequence of calls so that the code
+    reads and flows in the same way we’d state problems, making it
+    easier to read.
+
+    Among the classical fluent functions there are the classical /map/
+    and /reduce/ functions.
+
+    In general it looks as if all of the methods you were using in
+    pyhtona in the lambda expression are the same as the ones
+    available here under this paradigm. So double check and make sense
+    of all of this.
+    
+**** findfirst
+
+     Then the ~findFirst()~ method of the Stream class helped pick the
+     first value from that collection.
+
+
+*** Method Reference
+
+    As mentioned in the notes regarding the @FunctionalInterface, what
+    is important for the functional paradigma is that a
+    @FunctionalInterface is implemented.
+
+    So in order to do that you can either use a =lambda= function
+    which obviously uses such interface, or you can as well pass a
+    /reference to a method where an implementation of a functional
+    interface/ is expected.
+
+    Think for instance of =String::toUpperCase=, there a consumer
+    method is implicitely implemented, such that the following two
+    work in the same way:
+
+    #+begin_src java :results output raw 
+// v1
+friends.stream()
+.map(name -> name.toUpperCase())
+.forEach(count -> System.out.print(count + " "));
+
+// v2
+friends.stream()
+.map(String::toUpperCase)
+.forEach(count -> System.out.print(count + " "));
+    #+end_src
+
+    Finally, note that method reference is possible, as the target
+    object and parameters are derived from the parameters passed to
+    the synthesized method. This makes the code with method references
+    much more concise than the code with lambda expressions.
+    
+    *Important:* So note that if lambda functions simply pass the
+    parameters through to the method we can replace them always with
+    reference methods. If you do some transformation then of course
+    that is not possible/ you would have to create a new method for it
+    but then it is opinable if that makes sense - i.e. depends on the
+    amount of transformation involved.
+
+    This is a nice feature in Java.
+
+    You can find two others examples below.
+
+    You can pass functions to the lambda expressions in the following
+    way:
+
+    #+begin_src java :results output raw :classname PassFunction :results drawer
+import java.util.List;
+import java.util.ArrayList;
+
+class PassFunction {
+    public static void main(String arg[]) {
+	List<Integer> myList = new ArrayList();
+
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+
+	myList.stream()
+	    .forEach(System.out::println);
+    }
+}		  
+    #+end_src 
+
+    #+RESULTS:
+
+    So you see you can pass your functions to the forEach.
+
+    You can even pass your self defined function as paramter
+
+#+begin_src java :results output raw :classname ParamBeh :results drawer
+import java.util.List;
+import java.util.ArrayList;
+
+class ParamBeh {
+
+    private static int sum = 0;
+
+    public static void main(String arg[]) {
+
+	List<Integer> myList = new ArrayList<>();
+
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+
+	myList.stream()
+	      .forEach(x -> {sum = mySum(x, sum);}); // note the nice forEach function.
+
+	System.out.println("final sum is: " + sum);
+    }
+
+    private static Integer mySum(Integer x, Integer sum){
+	sum += x;
+
+	return sum;
+
+
+    }    
+
+}		  
+#+end_src 
+
+#+RESULTS:
+:results:
+final sum is: 12
+:end:
+
+   You can then pass any function of choice as parameter to your
+   lambda functions.
+
+**** Behaviour Parameterization with Nested Functions
+
+     Note that since java 8 there is the =java.util.function=
+     package.
+
+     Note that in that package just *interfaces* are defined. This is
+     important. Such interfaces implements then the 
+    
+     Through it, it is possible to write your lambda functions within
+     a method that you will then ultimately pass in the method.
+
+     So the question is then if to work in such a way or not and
+     rather work with separated methods implemented as above.
+
+     Note that when specifying such functions you should choose from
+     one of the interfaces under [[https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html][this url]].
+
+     #+begin_src java :results output raw :classname MyTest
+import java.util.List;
+import java.util.ArrayList;
+
+class MyTest {
+
+    private static int sum = 0;
+    
+    public static void main(String arg[]) {
+
+
+	List<Integer> myList = new ArrayList<>();
+
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+
+	java.util.function.Function<Integer,Integer> MySum = (i) -> {
+	    sum += i;
+	    return sum;
+	};
+
+	myList.stream()
+	      .forEach(x -> {sum = MySum.apply((Integer) x);}); // note the nice forEach function.
+
+	System.out.println("final sum is: " + sum);
+    }
+}
+     #+end_src 
+
+     #+RESULTS:
+     final sum is: 12
+
+
+     Note that you can refer to the list
+     
+
+*** Filter clause
+
+    #+begin_src java :results output raw :classname FilterFunction
+import java.util.List;
+import java.util.ArrayList;
+
+class FilterFunction {
+    public static void main(String arg[]) {
+	List<Integer> myList = new ArrayList();
+
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+	myList.add(1);
+	myList.add(2);
+	myList.add(3);
+
+	myList.stream()
+	    .filter(rs -> rs == 3) // so very simple bool condition
+	    .forEach(System.out::println);
+    }
+}		  
+
+    #+end_src 
+
+    #+RESULTS:
+    3
+    3
+
+
+*** IfPresent and ifPresentOrElse
+
+    The two are interesting methods to deal in a fucntional way with
+    =Optional= objects. See your notes above.
+
+    #+begin_src java :results output raw 
+opt.ifPresentOrElse(
+   value -> System.out.println("Found: " + value),
+   () -> System.out.println("Not found")
+);
+    #+end_src 
+    
+
+*** TODO Collect                                                   :noexport:    
+
+    put here the various collectors... like toList etc...
+
+*** Nested lambda functions
+
+    This is a nice way of working that you will need to master at some
+    point.
+
+    Once you start to properly work via functional programming this
+    will come natural.
+
+    Here an example that iterates across all of the hashtables of the
+    hashtables and performs operations on them.
+
+    #+begin_src java :results output raw :classname NestedLambda :results drawer
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;    
+
+class NestedLambda {
+    public static void main(String args[]) {
+        Map<String, Map<String, Integer>> map = new HashMap<>();
+
+	Map<String, Integer> map2 = new HashMap<>();
+
+	Map<String, Integer> map3 = new HashMap<>();	
+
+	map2.put("a",1); // add the desired value
+	map2.put("b",2); // add the desired value
+	map2.put("c",3); // add the desired value
+	map2.put("d",4); // add the desired value
+
+
+	map3.put("e",5); // add the desired value
+	map3.put("f",6); // add the desired value
+	map3.put("g",7); // add the desired value
+	map3.put("h",8); // add the desired value	
+
+	map.put("hello", map2);
+	map.put("balloon", map3);
+
+ 	map.values().stream()
+	    .forEach(d -> d.entrySet().stream().forEach(m -> System.out.println(m.getValue())));
+
+	// note d is easily accessible in the second stream
+ 	map.values().stream()
+	    .forEach(d -> d.entrySet().stream().forEach(m -> d.put(m.getKey(), 0 )));	
+
+ 	map.values().stream()
+	    .forEach(d -> d.entrySet().stream().forEach(m -> System.out.println(m.getValue())));
+    }
+}
+    #+end_src 
+
+    #+RESULTS:
+    :results:
+    e
+    f
+    g
+    h
+    a
+    b
+    c
+    d
+    0
+    0
+    0
+    0
+    0
+    0
+    0
+    0
+    :end:
+
+
+*** Callback Interface - Fusion with Functional Interface
+
+**** Idea of coupling a callback Interface with Functional Programming
+
+     #+begin_src java :results output raw :classname MyTestFunctional
+class MyTestFunctional {
+
+    // public interface
+    @FunctionalInterface
+    public static interface ICallback {
+	public void hello();
+
+	default public void world(){
+	    System.out.println("hello world");
+	};
+
+    };
+
+    private static void myGenericMethod(ICallback callback, Integer i){
+	//consider checking if runnable != null to avoid NPE
+
+	if (i % 2 == 0) 
+	    callback.hello();
+	else
+	    callback.world();
+	
+    }      
+    
+    public static void main(String arg[]) {
+
+	Integer i = 0;
+
+	while (i < 5){
+	    
+	    myGenericMethod(() -> {
+		    //do something fancy
+		    System.out.println("baubab"); // implements the functional interface
+		}, i);
+
+	    i++;
+	} 
+    }
+}
+
+     #+end_src 
+
+     #+RESULTS:
+     baubab
+     hello world
+     baubab
+     hello world
+     baubab
+
+     Note now that if you are to add a third method in the callback
+     above it would not be a functional interface anymore, and you
+     could not apply the lambda function logic as here.
+
+**** Test 2 - Note the parameter passing syntax. Were tricked by it once
+
+     #+begin_src java :results results raw  :classname MySumTest
+class MySumTest {
+
+    // public interface
+    @FunctionalInterface
+    public static interface ICallback {
+	public void sum(Integer i);
+
+	default public void world(){
+	    System.out.println("hello world");
+	};
+
+    };
+
+    private static void myGenericMethod(ICallback callback, Integer i, Integer y){
+
+	//consider checking if runnable != null to avoid NPE
+	if (y % 2 == 0){
+	    callback.sum(i);
+	}
+	else{
+	    callback.world();
+		}
+    }      
+    
+    public static void main(String arg[]) {
+
+	Integer i = 0;
+
+	while (i < 5) {
+	    myGenericMethod((x) -> {
+		    System.out.println(x * x); // implements the functional interface
+		}, 2, i);
+
+	    i++;
+	    
+	}
+    }
+}
+
+     #+end_src 
+
+     #+RESULTS:
+     4
+     hello world
+     4
+     hello world
+     4
+
+     So you understand now how to couple them with arguments.
+
+     You pass to your functionalInterface a lambda function. Then you pass
+     the other parameters in the standard way.
+
+     So note that the above myGenericMethod is nothing else than a
+     normal fucntion. It has nothing to do with a stream etc. You just
+     pass to the callback interface a lambda funciton.
+
+
