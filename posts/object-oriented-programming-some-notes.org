@@ -10,6 +10,48 @@
 .. status: 
 #+END_COMMENT
 
+
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+#+end_export
+
+
 So here are some notes on concepts you have to use when working in a
 proper OOP way.
 
@@ -25,6 +67,13 @@ the following sources
 
 - [[http://www.javier8a.com/itc/bd1/articulo.pdf][desing patterns]] - apparently /THE BOOK/ in order to write proper
   software .
+
+So when you read the book it is immediate that the design patterns
+ultimately depend on the OOP concepts, such as composition,
+inheritance, delegation etc. So basically these are the atoms of OOP
+and patterns are based on such atoms. So in the book you start from
+the atoms. Otherwise it makes sense to read a separate book completely
+dedicated to it, such as: /Object-Oriented Thought Process/. 
 
 {{{TEASER_END}}}
 
@@ -45,12 +94,80 @@ the following sources
   - =Behavioral patterns=: take care of effective communication and
     the assignment of responsibilities between objects.
 
-
   At the end you will see that many things you already started to use
   out of the box after a couple of month working more in an OOP way.
 
+** Map of Design Patterns
+  
+   Generally keep in mind the following overview:
+  
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-25 085656.png" class="center">
+   #+end_export
 
+   Note that above *object patterns* refer to object relationships that
+   can be changed at *run-time*. In contrast *classes patterns* refer
+   to reletionships among classes, meaning these are static and fixed
+   at *compile time*.
+
+** Relation Among the Patterns
+   
+   Important is as well to understand that there is a relation among
+   patterns. I.e. it is quite common to combine them in order to
+   perform the necessary logic of your programs.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-25 090514.png" class="center">
+   #+end_export
+
+   Note that some patterns are as well subsititute; think for instance
+   of /prototype/ and /abstract factory/.
+
+** TODO Intent classification for the different Patterns
+
+
+** Aspect that can vary per design pattern
+
+   This is as well useful; in the sense that you can refer to the
+   following to understand what you would like to keep flexible in
+   your system and what not.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-25 164022.png" class="center">
+   #+end_export
+
+   
+
+* Logic of OOP that makes some patterns possible
+
+  So one of the mayor concept in OOP is the one of *dynamic
+  binding*. This allows patterns such as the abstract factory.
+
+  The essential idea is that when you trigger a method (a request),
+  the behaviour is not simply defined by the method itself but it is
+  rather a combination of *object* and *method*, this actually
+  specifies the operation.
+
+  #+begin_quote
+The run-time association of a request to an object and one of its
+operations (methods) is known as *dynamic binding*.
+  #+end_quote 
+
+  /Side note - the concept is clear. There is just a bit of new
+  terminology. Do not get confused as everything boils down to:/
+
+  #+begin_quote
+Dynamic binding means that issuing a request doesn't commit you to a
+particular implementation until run-time.
+  #+end_quote
+  
+  
+  
 * Creational Patterns
+
+  Creational class patterns defer some part of object creation to
+  subclasses, while Creational object patterns defer it to another
+  object.
 
 ** Factory Methods
 
@@ -134,6 +251,7 @@ the following sources
 
      You will notice that factory structure by debugging the thing. 
      
+
 ** Abstract Factory
 
    This is also trivial.
@@ -145,10 +263,73 @@ the following sources
    interface and gurantee consistency.
 
    
- 
+
+** TODO Builder
+
+** TODO Prototype
+
+** TODO Singleton
+   
+
 * Structural Patterns
+
+  The Structural class patterns use inheritance to compose classes,
+  while the Structural object patterns describe ways to *assemble
+  objects*. 
+
+
+* Behavioural Patterns
+
+  The Behavioral class patterns use inheritance to describe
+  /algorithms and flow of control/, whereas the Behavioral object
+  patterns describe how a group of objects /cooperate/ to perform a
+  task that no single object can carry out alone.
+
   
+
 * Some core OOP principles you just have to keep on your mind
+
+** Polymorphism
+
+   Overridden methods are another way that Java implements the “one
+   interface, multiple methods” aspect of polymorphism.
+
+   Part of the key to successfully applying polymorphism is understanding
+   that the superclasses and subclasses form a hierarchy which moves from
+   lesser to greater specialization.  Used correctly, the superclass
+   provides all elements that a subclass can use directly. It also
+   defines those methods that the derived class must implement on its
+   own. This allows the subclass the flexibility to define its own
+   methods, yet still enforces a consistent interface.
+
+** Encapsulation
+
+   The idea of OOP is the one of keeping data and methods operating on
+   them together.
+
+   In such a way you can keep the internal state of the object hidden
+   from the outside world.
+
+   
+  
+
+** Key Concept - Favour Prgramming by Interface over Implementation
+
+   The idea is that in OOP you can work through the reference
+   variables mechanism. You can refresh them: [[file:java-notes-history-syntax-and-tricks.org::*Superclass reference Subclass][Superclass reference
+   Subclass]], [[file:java-notes-history-syntax-and-tricks.org::*On reference variables using interafaces][On reference variables using interafaces]] (note set the
+   index for emacs locally on www site it will not work).
+
+   This is in fact many the idea behind creational patterns as you
+   already got when learning about the concept. 
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-26 093006.png" class="center">
+   #+end_export
+
+** TODO Key Concept - Favour Object Composition over Inheritance
+
+   
 
 ** Callback Methods
 
@@ -233,7 +414,6 @@ class TAX {
 
    I.e. your callback interface is implemented directly via functional
    programming and it is never explicitely written anywehere.
-
 ** Anonymous Inner Classes
 
    This is something quite interesting.
@@ -321,18 +501,4 @@ class TestAnnonymousInner{
    inner class/ patterns as well for interfaces. You can use this as
    well there.
 
-** Polymorphism
-
-   Overridden methods are another way that Java implements the “one
-   interface, multiple methods” aspect of polymorphism.
-
-   Part of the key to successfully applying polymorphism is understanding
-   that the superclasses and subclasses form a hierarchy which moves from
-   lesser to greater specialization.  Used correctly, the superclass
-   provides all elements that a subclass can use directly. It also
-   defines those methods that the derived class must implement on its
-   own. This allows the subclass the flexibility to define its own
-   methods, yet still enforces a consistent interface.
-
-
-  
+   
