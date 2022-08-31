@@ -1,0 +1,201 @@
+#+BEGIN_COMMENT
+.. title: HDFS
+.. slug: hdfs
+.. date: 2020-05-24 17:01:55 UTC+02:00
+.. tags: Big Data
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+After having discussed Object Storage, this posts continues to dig
+into the storage layer by briefly introducing HDFS. It will briefly
+make the point for the difference between Object Storage and HDFS as a
+distributed storage option.
+
+Moreover, it tries to draw a line between Block Storage via Storage
+Area Network (SAN), HDFS block storage and the local file system (LFS)
+block storage, three topics that highly confused me at first when
+writing this posts series.
+
+{{{TEASER_END}}}
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+* HDFS vs. Object Storage
+
+Important to keep in mind is that in the space of Big Data there are
+different kinds of big data all belonging to the same =Big Data=
+world.
+
+While on the one hand you might have *billions of up to TB files* on
+the other hand we might have *millions of PB files*. Object Storage
+fits well for the first case but it has no chance when dealing with
+the second case without a horrible manual operation from the side of
+one engineer. On the other hand HDFS works by leveraging a file system
+structure, keeping therefore a hierarchy of the files and has no
+chance to deal with billions of different files. 
+
+Moreover HDFS works with a block storage component and is therefore
+more suited for very write intensive application as it is to store
+edits in memory and periodically write them down into bigger
+Hfiles. This is not possible with big unique objects also because of
+th Object Storage Architecture that rather runs via HTTP servers and
+there is no big virtualized container structure where intermediary
+results / write intensive operations can be stored.
+ 
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+* HDFS the Physical layer
+
+At the physical layer HDFS is nothing more than a file system where
+each file is splitted in several different blocks that are distributed
+among machines.
+
+The important aspect is to understand that the HDFS is not a physical
+file system but rather a virtual, *logical* file system acting on top
+of the distributed machines local file system.
+
+As mentioned above, in the typical HDFS application, files are
+huge. They are therefore splitted into different blocks and saved
+across different machines.
+
+Such blocks live then on commodity hardware machines and are saved on
+a typical local file system that also uses block storage. Each block
+that is assigned to a physical machine is therefore further split into
+blocks. Important is however to understand that we still talk of HDFS
+blocks in the sense that given a HDFS block ID for a local machine to
+compose the HDFS through the local file system is very immediate.
+
+The difference between the HDFS and the local file system blocks lies
+then simply in the block size difference, where each block size is
+chose in order to get the better time performance as the sum of
+*latency* and *throughput*.
+
+In Hadoop the usual size is around 64MB and 128MB. The point is
+that this is a good compromise among /latency/ and
+/throughput/. If the block was too small then the cost of
+accessing a file on a remote machine and prepare it would be too
+big as the latency is higher compared to local systems. This means
+that the file must be large enough to leverage the I/O
+capabilities of the machines and the high throughput.
+
+It should however not be too big as the key of Hadoop is the
+/distributed/ nature of the file system. The size should render
+the /distribution/ manageable.
+
+Further important advantages on relying on larger blocks are: 
+
+ 1. it *minimizes the cost of seeks*. If the block is large enough,
+    the time it takes to transfer the data from the disk can be
+    significantly longer than the time to seek to the start of the
+    block. Thus, transferring a large file made of multiple blocks
+    operates at the disk transfer rate.
+
+ 2. it *reduces clients' need to interact with the master* because
+    reads and writes on the same chunk require only one initial
+    request to the master for chunk location information. The
+    reduction is especially significant for our workloads because
+    applications mostly read and write large files sequentially.
+
+ 3. since on a large chunk, a client is more likely to perform many
+    operations on a given chunk, it can *reduce network overhead by
+    keeping a persistent TCP connection* to the chunkserver over an
+    extended period of time.
+
+ 4. it *reduces the size of the metadata stored on the master*. This
+    allows us to keep the metadata in memory.
+
+In the same spirit the local file system uses blocks of 4kB - 32kB.
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+* HDFS Architecture
+
+HDFS is a master-slave architecture. The master, the =Namenode= is
+responsible for connecting with the client users. It is moreover
+responsible for:
+
+- keeping an up to date version of the HDFS file system and access
+  control overview across the cluster.
+
+- keeping a map from the Hfiles to the file blocks
+
+- keeping the record of each Hfile block location on the different
+  slave nodes
+
+- informing the client of the slave node location and block id such
+  that the client can directly connect the slave node to get the data
+  offloading the tasks the Namenode has to perform
+
+- responsible for asynchronous replication
+
+On the other hand the slave node, the =DataNodes= are responsible for
+the following:
+
+- keeping a state-ful connection with the =Namenode= and sending a
+  heartbit message to the it so that the =Namenode= is informed that
+  the node is still alive.  
+
+- transferring the desired blocks to clients connecting
+
+- sending a BlockReport with the blocks stored every 6h (default;
+  option configurable)
+
+- replication by pipelining the data to other =DataNodes=. Important
+  is here that the pipeline is sent by the client.
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+* Replica default Settings
+
+
+
+* HDFS and SAN
+
+Interesting is the case of cloud block storage via Storage
+Area Network. 
+
+There are essentially two different possible architectures for
+HDFS. The first and traditional one is to work with *direct attached
+storage (DAS)* as presented above. This is an architecture where you
+essentially have each =DataNode= server attached to a local storage
+solution so that each server responsible for the data directly
+connected to it.
+
+The second is indeed to work with *SAN* and make a clear separation as
+regarding the storage and the all of the other operations of slave
+nodes servers. You have a SAN between the storage layer and the slave
+nodes servers and it is therefore possible to leverage different
+benefits in terms of caching etc. However, important is to understand
+that much of the content introduced before is gone. Replication is not
+task of the slave nodes anymore. This rather focus on the computation
+layer which is introduced then with Spark and MapReduce and the YARN.
+
+A good overview for the interested reader is at [[https://www.snia.org/sites/default/education/tutorials/2013/spring/big/SamFineberg_Big_Data_Hadoop_Storage_Options_3v9.pdf][HDFS storage Options]].
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+
+* Literature
+
+[[https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material][Big Data for Engineers - ETH course]]
+
+[[https://stackoverflow.com/questions/16811959/hdfs-vs-lfs-how-hadoop-dist-file-system-is-built-over-local-file-system][StackOverflow - HDFS vs LFS]]
