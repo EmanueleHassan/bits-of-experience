@@ -541,7 +541,7 @@ omit = **/test/*
 
   Note that basically the way you do it currently is manually. There
   is no big difference. But might make sense to start using this in
-  order to work more in a streamlined way. 
+  order to work more in a streamlined way. 
   
   I.e. you can set up virtual enviornments, package your code, run
   your tests etc.
@@ -659,9 +659,27 @@ set.
    You can start by checking at the 101 example in the repo mentioned
    above.
 
+   In general you first build with:
+
+   #+begin_src 
+python -m build --wheel .
+   #+end_src
+
+   Then you upload with:
+
+   #+begin_src 
+twine upload -r <Feed Specified in $HOME/pypirc> dist/*
+   #+end_src
+   
    This will be important as in such a way you can create that full
    pipeline necessary to have your stack well set up.
 
-   Everything is properly set up with versions etc.       
-   
+   Everything is properly set up with versions etc.
 
+   Note that you cannot upload two times the same version.
+
+   So this is ok but it means that you have just to trigger the twine
+   upload from the main branch. From all of the other branches you
+   would simply have to test and deploy. 
+
+   Have still to figure out the correct set up.
