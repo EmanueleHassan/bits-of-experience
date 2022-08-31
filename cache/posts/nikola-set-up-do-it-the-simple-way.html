@@ -1,0 +1,394 @@
+<p>
+Nikola is a python package to automatically generate static
+webpages. This is more secure than operating through dynamic websites
+for non-expert users. Moreover the integration with org will allow you
+to easily generate blogs based on your org documents and this will
+prove to be especially useful given that you can work following your
+literate programming workflow without bothering too much on the
+format.
+</p>
+
+<p>
+You can finally generate and publish interesting discoveries in an
+instantaneous way.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-orgb73bf03" class="outline-2">
+<h2 id="orgb73bf03">Nikola Set Up</h2>
+<div class="outline-text-2" id="text-orgb73bf03">
+</div>
+<div id="outline-container-org604913d" class="outline-3">
+<h3 id="org604913d">Virtual Environment</h3>
+<div class="outline-text-3" id="text-org604913d">
+<p>
+Given that nikola is a python package you can easily install it
+through pip package manager. 
+</p>
+
+<p>
+It is therefore advisable to set up a virtual environment for it and
+install nikola and other useful packages for your blogging trial.
+</p>
+
+<p>
+I created my venv <code>nikola</code> in my virtual environment folder.  There I
+installed the following packages:
+</p>
+
+<div class="highlight"><pre><span></span>   $ pip3 install requests
+   $ pip3 install livereload
+   $ pip3 install &#39;Nikola[extras]&#39;
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org8c43898" class="outline-3">
+<h3 id="org8c43898">Customize</h3>
+<div class="outline-text-3" id="text-org8c43898">
+<p>
+I was not able to implement "c'est la z" theme yet. That is quite nice
+and is theoretically available under the src branch of the forked
+directory.
+</p>
+
+<p>
+Till now use another more user-friendly theme. I like the <code>bnw</code>
+theme. The blog type is well described at the following link
+<a href="https://themes.getnikola.com/v8/bnw/">nikola<sub>bnw</sub></a>.
+</p>
+
+<p>
+The installation is straightforward and can be followed using the
+steps on the site. This is summarized below just to keep consistency.
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="orge6f02a6"></a>Load the theme plugin<br />
+<div class="outline-text-6" id="text-orge6f02a6">
+<div class="highlight"><pre><span></span>      <span class="nv">nikola</span><span class="o">.</span><span class="nv">exe</span> <span class="nv">theme</span> <span class="nv">-i</span> <span class="nv">zen</span>
+</pre></div>
+</div>
+</li>
+
+<li><a id="org3037ee5"></a>Set the theme<br />
+<div class="outline-text-6" id="text-org3037ee5">
+<p>
+In <code>config.py</code> change the THEME to <code>THEME = "zen"</code>.
+</p>
+
+<p>
+Finally enable bundles. <code>USE_BUNDLES = "true"</code>.
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org7de4119" class="outline-3">
+<h3 id="org7de4119">Add Org Mode</h3>
+<div class="outline-text-3" id="text-org7de4119">
+<p>
+In order for nikola to render pages written in org mode it is necessary to add the file extension to the compiler options.
+This can be easily done by following the guidelines available under the following webpage: <a href="https://streakycobra.github.io/posts/blogging-in-org-mode-with-nikola">posting in org mode with nikola</a>.
+</p>
+
+<p>
+This basically consists of adding the following lines to your <code>conf.py</code> script.
+</p>
+
+<div class="highlight"><pre><span></span>   # Add the orgmode compiler to your COMPILERS dict.
+   COMPILERS[&quot;orgmode&quot;] = (&#39;.org&#39;,)
+
+   # Add org files to your POSTS, PAGES
+   POSTS = POSTS + ((&quot;posts/*.org&quot;, &quot;posts&quot;, &quot;post.tmpl&quot;),)
+   PAGES = PAGES + ((&quot;stories/*.org&quot;, &quot;stories&quot;, &quot;story.tmpl&quot;),)
+</pre></div>
+
+<p>
+Moreover you will have to set the default editor if you have never done so on your machine.
+This consists of adding the following line to the <code>/etc/environment</code> unix file
+</p>
+
+<div class="highlight"><pre><span></span>   EDITOR = &quot;/usr/bin/emacs25&quot; # or whatever version or editor.
+</pre></div>
+
+<p>
+Once that is set it is needed to reboot and check the correct execution via
+</p>
+
+<div class="highlight"><pre><span></span>   $ echo $EDITOR
+</pre></div>
+
+<p>
+Finally it is  necessary to add the orgmode plugin to nikola via
+</p>
+<div class="highlight"><pre><span></span>   $ nikola plugin -i orgmode
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org3639c5a" class="outline-3">
+<h3 id="org3639c5a">Write your first post</h3>
+<div class="outline-text-3" id="text-org3639c5a">
+<p>
+You are set up. It is possible at this stage to start writing posts by simply calling
+</p>
+
+<div class="highlight"><pre><span></span>   $ nikola new_post -f orgmode
+</pre></div>
+
+<p>
+Save it, build your webpage via <code>nikola build</code>, deploy it via
+<code>nikola serve</code> and <b>boom you are done</b>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org09b37a6" class="outline-3">
+<h3 id="org09b37a6">Github Deployment</h3>
+<div class="outline-text-3" id="text-org09b37a6">
+<p>
+Nikola is moreover interesting as it allows a straightforward
+integration with Github pages. 
+</p>
+
+<p>
+You can simply specify the following parameters in your python
+configuration file
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="n">SITE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://marcohassan.github.io/bits-of-experience/&quot;</span>
+   <span class="n">GITHUB_SOURCE_BRANCH</span> <span class="o">=</span> <span class="s1">&#39;master&#39;</span>
+   <span class="n">GITHUB_DEPLOY_BRANCH</span> <span class="o">=</span> <span class="s1">&#39;gh-pages&#39;</span>
+
+   <span class="c1"># The name of the remote where you wish to push to, using github_deploy.</span>
+   <span class="n">GITHUB_REMOTE_NAME</span> <span class="o">=</span> <span class="s1">&#39;origin&#39;</span>
+
+   <span class="c1"># Whether or not github_deploy should commit to the source branch automatically</span>
+   <span class="c1"># before deploying.</span>
+   <span class="n">GITHUB_COMMIT_SOURCE</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+
+<br>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9d2bddc" class="outline-2">
+<h2 id="org9d2bddc">How to integrate PDFs and Videos</h2>
+<div class="outline-text-2" id="text-org9d2bddc">
+<p>
+You can integrate all of  the possible items you can integrate on
+standard <code>HTML</code> on the different browsers. 
+</p>
+
+<p>
+It is however important that you set you files in the <code>output</code>
+directory in your blog directory. 
+</p>
+
+<p>
+Then you find the source code 
+</p>
+
+<br>
+<br>
+
+<object data="../../pdfs/dummy.pdf" type="application/pdf"
+	width="100%" height="600px" align="center">
+  <iframe   jsname="L5Fo6c" jscontroller="usmiIb"
+	    jsaction="rcuQ6b:WYd;" class="YMEQtfL6cTce-purZT L6cTce-pSzOP"
+	    frameborder="0" allowfullscreen="" src="../../pdfs/dummy.pdf"
+	    width="100%" height="600px" align="center"/>
+
+</object>
+
+
+<br>
+<br>
+<br>
+<br>
+<video controls="controls" width="100%" height="100%" 
+name="Video Name" src="../../videos/Bildschirmvideo%20aufnehmen%202020-02-20%20um%2016.12.36.mov"></video>
+
+<br>
+<br>
+</div>
+</div>
+
+<div id="outline-container-org270da68" class="outline-2">
+<h2 id="org270da68">Render LaTex</h2>
+<div class="outline-text-2" id="text-org270da68">
+<p>
+Just include the <code>.. has_math: yes</code> argument in your post arguments.
+</p>
+
+<p>
+Then you can render LaTex code
+</p>
+
+<p>
+\[ Y_{ijk} = \mu + \alpha_i + \beta_j + \alpha \beta_{ij} + \epsilon_{ijk} \]
+</p>
+
+<p>
+Note, that you cannot download arbitrary latex packages. But there is
+quite some compatible stuff with MathJax. Check at <a href="https://quantumcomputing.meta.stackexchange.com/questions/49/tutorial-how-to-use-tex-mathjax-to-render-math-notation/76#76">this URL</a> for more.
+Recall to use the $ when using stuff on that page, for instance:
+\(\mathscr{X}\).
+</p>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org6edd0a4" class="outline-2">
+<h2 id="org6edd0a4">On Exporting Tables</h2>
+<div class="outline-text-2" id="text-org6edd0a4">
+<p>
+So when rendering org-tables via Nikola. I still have issues. The html
+tags fro the body and the header of tables is not rendered. Moreover
+when exporting the table there is no buffer or air between the
+columns.
+</p>
+
+<p>
+To solve it you should probably go into the details of the nikola
+rendering and the built-in CSS style. The HTML is indeed a table but
+there is no good formatting and rendering of it.
+</p>
+
+<p>
+For the moment I solved it simply using <code>table.el</code> of emacs. 
+</p>
+
+<p>
+This allows to convert an org table into a <code>table.el</code> table with the
+command <code>M-x org-table-convert</code> in emacs. Then you can enter the
+dedicated buffer to edit it. There are good funtions to justify the
+entries of your table. You can refer to them with the <code>C-c C-c :</code>
+shortcut. 
+</p>
+
+<p>
+Finally there are good options to play with the height and width of
+the column cells. See <code>M-x table-heighten-cell</code>, <code>M-x
+table-shorten-cell</code>, <code>M-x table-shorten-cell</code>, <code>M-x
+table-narrow-cell</code>, <code>M-x table-expand-cell</code>
+</p>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-orgd3a9f62" class="outline-2">
+<h2 id="orgd3a9f62">Creating SVG with text</h2>
+<div class="outline-text-2" id="text-orgd3a9f62">
+<svg viewBox="0 0 120 120" xmlns="../../images/bayesNet1.svg">
+  <!-- Materialization of anchors -->
+  <path d="M60,15 L60,110 M30,40 L90,40 M30,75 L90,75 M30,110 L90,110" stroke="grey" />
+
+  <!-- Anchors in action -->
+  <text text-anchor="start" x="60" y="40">Helloooooo</text>
+  <text text-anchor="middle" x="60" y="75">A</text>
+  <text text-anchor="end" x="60" y="110">A</text>
+
+  <!-- Materialization of anchors -->
+  <circle cx="60" cy="40" r="3" fill="red" />
+  <circle cx="60" cy="75" r="3" fill="red" />
+  <circle cx="60" cy="110" r="3" fill="red" />
+
+  <style><![CDATA[
+  text {
+    font: bold 36px Verdana, Helvetica, Arial, sans-serif;
+  }
+  ]]></style>
+</svg>
+</div>
+</div>
+
+
+<div id="outline-container-org2a097a9" class="outline-2">
+<h2 id="org2a097a9">Supporting Script for Nikola Github Pages Auto Commit</h2>
+<div class="outline-text-2" id="text-org2a097a9">
+<p>
+Albeit the solution so far outlined works well for local deployment or
+for a deployment over a PaaS infrastructure when working with the
+default autocommit option of <code>nikola</code> all the pdfs and videos are not
+automatically imported in the directory used for creating the github
+page <code>gh-pages</code> in my case. 
+</p>
+
+<p>
+To obviate such a problem I decided to create two directories <code>pdfs</code>
+and <code>vidoes</code> in the <code>Blog</code> directory where I keep my github repo. 
+</p>
+
+<p>
+There I created the following script
+</p>
+
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+<span class="nb">cd</span> bits-of-experience
+
+<span class="nb">source</span> ~/Desktop/python_venv/nikola/bin/activate
+
+nikola github_deploy
+
+git checkout gh-pages
+
+cp -r ../pdfs .
+
+cp -r ../videos .
+
+git add .
+
+git commit -m <span class="s2">&quot;add pdfs and videos&quot;</span>
+
+git push
+
+git checkout master
+</pre></div>
+
+<p>
+Running the script you will both auto commit your changes and generate
+the <code>html</code> pages as well as automatically update the resources so
+that the Github page works as desired. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org2748d0b" class="outline-2">
+<h2 id="org2748d0b">Pygments</h2>
+<div class="outline-text-2" id="text-org2748d0b">
+<p>
+Note that you should first download it via Python.
+</p>
+
+<p>
+You can then theoretically set the most suited pygments for your
+block source files&#x2026; <a href="https://help.farbox.com/pygments.html">see this</a>.
+</p>
+
+<p>
+Finally note that you can choose the one that fits you the best in
+the following way:
+</p>
+
+<div class="highlight"><pre><span></span>  mkdir -p files/assets/css
+  pygmentize -S &lt;PYGMENTS_STYLE&gt; -a .highlight -f html &gt;&gt; files/assets/css/custom.css
+</pre></div>
+
+<p>
+And you can see all fo the available styles by:
+</p>
+
+<div class="highlight"><pre><span></span>  pygmentize -L style
+</pre></div>
+</div>
+</div>
