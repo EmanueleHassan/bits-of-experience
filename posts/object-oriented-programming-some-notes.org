@@ -641,6 +641,276 @@ All following calls to this method return the cached object.
   The Structural class patterns use inheritance to compose classes,
   while the Structural object patterns describe ways to *assemble
   objects*.
+  
+** Adapter
+
+   This is a special object that *converts the interface* of one
+   object so that another object can understand it.
+
+   Here is how it works:
+
+   1. The adapter gets an interface, compatible with one of the
+      existing objects.
+
+   2. Using this interface, the existing object can *safely call the
+      adapter’s methods*.
+
+   3. Upon receiving a call, the adapter passes the request to the
+      second object, but in a format and order that the second object
+      expects.
+
+   It essentially works in such a way:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-01 164526.png" class="center">
+   #+end_export
+
+   More precisely in an example:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-01 164921.png" class="center">
+   #+end_export
+
+   So what you are essentially doing here is encapsulating the object
+   into the adapter, and then calling the relevant method of the other
+   interface which you are interested in.
+
+
+** Bridge
+
+   This is as well a very cool pattern.
+
+   It essentially works in the following way:
+
+   #+begin_quote
+It lets you split a large class or a set of closely related classes
+into two *separate hierarchies—abstraction* and *implementation* —
+which can be developed independently of each other.
+   #+end_quote
+
+   Note that it can be well applied in the following cases:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-01 171828.png" class="center">
+   #+end_export
+
+   The solution is to use *composition* (in UML terms - recall that
+   with it the associated instances are indeed deleted).
+
+   It does in fact switch from object inheritance to object
+   composition.
+
+   So you see - one of the mayor rules of OOP.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-01 173419.png" class="center">
+   #+end_export
+
+   So the concept is very straightforward.
+
+   The way you implement it, is the following - it is quite trivial
+   once you start to see the patterns:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-02 091353.png" class="center">
+   #+end_export
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-02 091442.png" class="center">
+   #+end_export
+
+
+** Composite
+
+   Composite is a *structural design pattern* that lets you compose
+   objects into tree structures and then work with these structures as
+   if they were individual objects.
+
+   So this is actually a nice pattern as it is not a trivial one.
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-02 094258.png" class="center">
+   #+end_export
+
+   The solution for it is the following:
+
+   #+begin_quote
+The Composite pattern suggests that you work with Products and Boxes
+through a *common interface* which declares a method for calculating
+the total price.
+
+How would this method work? For a product, it’d simply return the
+product’s price. For a box, it’d *go over each item the box contains*,
+ask its price and then return a total for this box.
+
+The greatest benefit of this approach is that you don’t need to care
+about the concrete classes of objects that compose the tree. You don’t
+need to know whether an object is a simple product or a sophisticated
+box. You can treat them all the same via the common interface.
+
+When you call a method, the objects themselves pass the request down
+the tree.
+   #+end_quote
+
+   So this is a cool pattern. You can use it for instance for creating
+   the relevant entity tree when it will be the time. The current
+   solution is for instance [[http://www.ibase.ru/files/articles/programming/dbmstrees/sqltrees.html][this one]] - research more this guy and the
+   tree structure in SQL if you want to go down that path.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-02 102856.png" class="center">
+   #+end_export
+
+   See for instance the following example:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-02 103608.png" class="center">
+   #+end_export
+
+
+** Decorator
+
+   Decorator is a structural design pattern that lets you *attach new
+   behaviors* to objects by placing these objects inside *special
+   wrapper* objects that
+
+   The idea is essentially the following:
+
+   #+begin_quote
+“Wrapper” is the alternative nickname for the Decorator pattern that
+clearly expresses the main idea of the pattern. A wrapper is *an object
+that can be linked with some target object*.
+
+The wrapper contains the same set of methods as the target and
+delegates to it all requests it receives. However, the wrapper may
+*alter the result* by *doing something* either *before or after it
+passes the request to the target*.
+   #+end_quote
+
+   Then once you properly undestand the snippet above you should have
+   no issues understanding the following pictures:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 091730.png" class="center">
+   #+end_export
+
+   And more explicitely, the above, in an example:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 091833.png" class="center">
+   #+end_export
+
+   Finally the same concept in a more complex example, where there are
+   not just decorator classes but other concrete components inheriting
+   from the wrapper(funny how this post is rendered with different
+   degrees of complexity to confuse people):
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 092039.png" class="center">
+   #+end_export
+
+
+** Facade
+
+   Facade is a structural design pattern that provides a simplified
+   interface to a library, a framework, or any other complex set of
+   classes.
+
+   #+begin_quote
+   A facade is a class that provides a simple interface to a complex
+   subsystem which contains lots of moving parts. A facade might provide
+   limited functionality in comparison to working with the subsystem
+   directly.
+
+   However, it *includes only those features that clients really care
+   about*.
+
+   [Comment - this is what you find in your code base when working with
+   the libraries.]
+   #+end_quote
+
+   Note as well:
+
+   #+begin_quote
+Having a facade is handy when you need to integrate your app with a
+sophisticated library that has dozens of features, but you just need a
+tiny bit of its functionality.
+   #+end_quote
+
+   So you see the annotations of most frameworks are nothing elese
+   than the way to implement such facade patterns such that you can
+   forget everything that is behind it. So you lived through facades
+   this entire time and it was indeed a healthy discovery to check
+   what is behind it.
+
+   The high level idea is the following:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 094602.png" class="center">
+   #+end_export
+
+   You can see the following basic example for a 101 example - but
+   *never debunk* you might well think that there exist much more
+   sophisticated facades:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 095936.png" class="center">
+   #+end_export
+
+
+** Flyweight
+
+   Flyweight is a structural design pattern that lets you fit more
+   objects into the available amount of RAM by *sharing common parts
+   of state between multiple objects* instead of keeping all of the
+   data in each object.
+
+   So data are not encapsulated in a single object but rather shared
+   across objects.
+
+   So essentially the idea of this pattern is that there are intrinsic
+   things that never change, they are *immutable across time*. It is
+   the general relativity and the laws of gravitation, in Albert
+   Einstein terms.
+
+   While the flowing of the world we experience is the special
+   relativity - this is the idea of:
+
+   #+begin_quote
+Other parts of a particle’s state, such as coordinates, movement
+vector and speed, are unique to each particle. After all, the values
+of these fields change over time. This data represents the always
+changing context in which the particle exists.
+   #+end_quote
+
+   In the pattern website that you are reading:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 113853.png" class="center">
+   #+end_export
+
+   So basically this means that you *can and should* create objects
+   that differ and move but you should not change the general state
+   that moves all of the objects across time.
+
+   This is how you are asked to frame the objects of the world.
+
+   Plus it says that you do not have to create a lot of objects, just
+   the ones that need a different intrinsic state all the others will
+   reference to them - the Particles of general relativity.
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 114932.png" class="center">
+   #+end_export
+
+   
+
+** Proxy
+
+   
+
+   
+   
 
 * Behavioural Patterns
 
@@ -648,7 +918,26 @@ All following calls to this method return the cached object.
   /algorithms and flow of control/, whereas the Behavioral object
   patterns describe how a group of objects /cooperate/ to perform a
   task that no single object can carry out alone.
-  
+
+** Chain of Responsibility
+
+** Command
+
+** Iterator
+
+** Mediator
+
+** Memento
+
+** Observer
+
+** State
+
+** Strategy
+
+** Template Method
+
+** Visitor
   
 * Some core OOP principles you just have to keep on your mind
 
