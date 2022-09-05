@@ -1,0 +1,198 @@
+#+BEGIN_COMMENT
+.. title: PySpark Set-Up and Integration with Emacs
+.. slug: pyspark-set-up
+.. date: 2019-08-05 23:51:11 UTC+02:00
+.. tags: Big Data, Spark, emacs
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+BEGIN_HTML
+<br>
+<br>
+#+END_HTML
+
+This post aims at providing an overview of the necessary steps
+required in order to leverage Apache Spark through the Python API and
+the PySpark module.
+
+Despite the information is vastly reported over the internet my usual
+/procedere/ when I deal with new tools and software is to write a
+short piece of note when learning new software that is intended as an
+overview over the tool and serve as a beginner cheat sheet.
+
+{{{TEASER_END}}}
+
+*** Disclaimer
+
+Ok, before starting let me underline that this post falls under the
+category /learn by posting/.  As such it may contain a flawed
+theoretical understanding about the subject and some inaccuracies.
+
+You are can read more about this kind of posts on the home-page under
+[[https://marcohassan.github.io/bits-of-experience/pages/bits-of-experience-a-readable-view-on-my-study-adventures/][this link]].
+
+** PySpark - Why?
+
+During the last decades we observed a explosion of laptop and mobiles
+usage. They entered the houses of the vast majority of people in
+developed countries and together with that the /internet/ business
+boomed.  Together with that a huge amount of data started to be
+collected to the point where the data collected became so big they
+could not be saved over a single hardware.7
+
+This tremendous amount of data became /Big Data/, which is simply a
+huge amount of data that requires special technology and software to
+be treated as it can poorly be handled through standard hardware on
+local machines.
+
+In the early 2000nds Google published a white paper proposing a
+distributed file system architecture allowing to save and operate on
+vast amount of data by distributing data across multiple hard drives
+and saving replicas of them to handle system failures. The idea was
+soon embraced by both the academic and the industry soon becoming the
+norm.  The /hadoop distributed file system/, a Java implementation of
+google distributed open source implementation was developed and is by
+now an institution in the market.
+
+With the industry shifting to /hdfs/ its limits soon became visible.
+First of all Mapreduce operates through data batch processing and
+iterative Mapreduce jobs. What this practically means is that while
+the relation between consequent jobs is known to the user, it is not
+the framework and therefore there is no possibility of optimization of
+the operations for the Mapreduce framework. Moreover, Mapreduce offers
+no possibility of saving intermediate data in memory in the case a job
+is small enough to be sure that system failures are unlikely and no
+need for data replication across a distributed file system is needed.
+
+Here is where /Spark/ comes to play. Spark offers the possibility to
+store data in the memory, effectively eliminating intermediate disk
+persistence and thus improving completion time. 
+
+Apart from real-time and batch processing, Apache Spark supports
+interactive queries and iterative algorithms also. Apache Spark has
+its own cluster manager, where it can host its application. It
+leverages Apache Hadoop for both storage and processing. It uses HDFS
+(Hadoop Distributed File system) for storage and it can run Spark
+applications on YARN as well.
+
+In simple terms if you want to use large computing clusters but do not
+want to parallelize your programs Apache Spark kicks in.
+
+** Where do data come from?
+
+There are esentially two options. The first one is to connect hardware
+coupled with the data directly/physically to the worker nodes. This
+solution is called /JBOD/ or /direcly attached storage/ approach. In
+order then to treat the different connected hardwares as a single file
+system you need then to integrate a software component, namely HDFS.
+
+A second approach consists in leveraging external data with a special
+type of networking connection allowing a very performing I/O
+stream. This through /switching fabric/.
+
+** Software Download
+
+Notice all of the code below was executed on Ubuntu Linux
+OS. 
+
+For MacOS the [[https://www.tutorialkart.com/apache-spark/how-to-install-spark-on-mac-os/][usage of homebrew]] is recommended.
+
+*** Java Installation
+
+Pyspark is an API leveraging a Java Virtual Machine for connecting and
+operating on Spark data frames. As such the proper installation of
+Java is necessary for the smooth operation of Pyspark.
+
+*Install Java*
+
+#+BEGIN_EXAMPLE
+sudo apt install openjdk-8-jre-headless 
+#+END_EXAMPLE
+
+/Notice:/ You used a different Javascript and runtime
+environment to the one mentioned online. Consider that if having
+integration issues at a later stage and rather install this Java SE
+runtime environment [[https://docs.oracle.com/en/java/javase/12/install/installation-jdk-linux-platforms.html#GUID-ADC9C14A-5F51-4C32-802C-9639A947317F][SE]].
+
+*** Spark installation
+
+Download the compressed spark software under [[https://www.apache.org/dyn/closer.lua/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz][this link.]]
+
+Unzip it in your repository of choice.
+
+
+#+BEGIN_EXAMPLE
+$ tar -xvf ~/Scaricati/spark-2.4.3-bin-hadoop2.7.tgz
+#+END_EXAMPLE
+
+Set Spark in your path and in the Py4j API path.
+
+#+BEGIN_EXAMPLE 
+$ export SPARK_HOME=<unziped file location>/spark-2.1.0-bin-hadoop2.7
+$ export PATH=$PATH:/home/hadoop/spark-2.1.0-bin-hadoop2.7/bin
+$ export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip:$PYTHONPATH
+$ export PATH=$SPARK_HOME/python:$PATH
+#+END_EXAMPLE
+
+After the above installation you should be able to run spark directly
+on a jupyter notebook.
+
+*** PySpark on Jupyter Notebook and Emacs Integration
+ :PROPERTIES:
+ :header-args:ipython: :session kernel-6455.json :results output
+ :END:
+
+In order to start and connect to pyspark on your local machine it will
+then just be necessary to start an ipython kernel by running
+
+#+BEGIN_EXAMPLE
+$ ipython kernel
+#+END_EXAMPLE
+
+This will prompt the name of a /.json/ file that contains the
+information (port, connection protocol etc.) to connect to the kernel
+in a similar way to the following message:
+
+#+BEGIN_QUOTE
+To connect another client to this kernel, use:
+    --existing kernel-5060.json
+#+END_QUOTE
+
+You can then specify your kernel.json as your session argument in
+=ob-ipython= and connect to the running kernel. At this point after
+installing findspark via
+
+#+BEGIN_EXAMPLE
+$ pip3 install --user findspark
+#+END_EXAMPLE
+
+you are good to import your pyspark module and leverage the Pyspark
+API on your favourite editor: /emacs/
+
+#+begin_src ipython :exports both
+  import findspark
+  findspark.init()
+  import pyspark
+  import random
+  sc = pyspark.SparkContext(appName="Pi")
+  num_samples = 100000000
+  def inside(p):     
+    x, y = random.random(), random.random()
+    return x*x + y*y < 1
+  count = sc.parallelize(range(0, num_samples)).filter(inside).count()
+  pi = 4 * count / num_samples
+  print (pi)
+  sc.stop()
+#+end_src
+
+#+RESULTS:
+: 3.14109952
+
+In the case you will want to leverage a more powerful machine and run
+your pyspark application on a server you might follow the logic
+explained in the following post keeping the structure outlined in the
+post. [[https://necromuralist.github.io/posts/programming/remote-jupyter-sessions-with-ob-ipython/][Connect to remote ipython kernel.]]

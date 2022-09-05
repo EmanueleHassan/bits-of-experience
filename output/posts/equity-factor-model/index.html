@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Equity Factor Model | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/equity-factor-model/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Equity Factor Model">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/equity-factor-model/">
+<meta property="og:description" content="So this post starts to dig into equity factor models.
+
+
+
+Essentially you will understand how the factor models for your risk
+systems are derived.
+
+
+
+This basically goes in tandem with the fixed income">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-05-19T15:58:38+02:00">
+<meta property="article:tag" content="finance">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Equity Factor Model</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2022-05-19T15:58:38+02:00" itemprop="datePublished" title="2022-05-19 15:58">2022-05-19 15:58</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/finance/" rel="tag">finance</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+So this post starts to dig into equity factor models.
+</p>
+
+<p>
+Essentially you will understand how the factor models for your risk
+systems are derived.
+</p>
+
+<p>
+This basically goes in tandem with the fixed income risk factors
+models briefly touched in your other post.
+</p>
+
+<p>
+This is basically a very high level overview, on the intuition of the
+way the big risk system providers generate their risk factors.
+</p>
+
+<p>
+So the essential idea is always the same, get a linear approximations
+for the risk based on some factors of interest.
+</p>
+
+<!-- TEASER_END -->
+
+<p>
+Equity factor models are specified for single countries (of which
+there are 41 in total) plus the EMU - european monetary union - as a
+single country model. On the top of it for the EMU you as well add
+some specific country factors in order to make a differentiation
+across the various countries.
+</p>
+
+<p>
+Note that two classes of equity factors are used: <i>industry</i> and
+<i>style</i> factors.
+</p>
+
+<p>
+So basically the difference among the factors is roughly the
+following.
+</p>
+
+<ul class="org-ul">
+<li>
+<p>
+<i>industry factors:</i>
+</p>
+
+<p>
+these represent the industry of the equity - semiconductors, pharma,
+tobacco etc.
+</p>
+
+<p>
+this is for sure a strong driver for the returns.
+</p>
+</li>
+
+<li>
+<p>
+<i>style factors:</i>
+</p>
+
+<p>
+on the top of it you have the relevant style factors.
+</p>
+
+<p>
+these are the common factors used in the financial space that checks more
+the common accounting and financial properties of the academic
+literature.
+</p>
+
+<p>
+Say for instace:
+</p>
+
+<ul class="org-ul">
+<li>beta</li>
+
+<li>yields</li>
+
+<li>growth</li>
+</ul>
+<p>
+etc. etc.
+</p>
+
+<p>
+With the two set of factors you do then the relevant regressions on the equity
+returns, in such a way you can estimate the relevant factors
+mentioned above. Note that the returns are trimmed - in the sense
+that they are capped in the case of too extreme returns.
+</p>
+
+<p>
+There are then some quirks on how to estimate everything but this
+is just computational issue that is solved by iterative methods
+trying to stabilize everything.
+</p>
+
+<p>
+Then apart from it everything is pretty standard and there is
+nothing fancy. Just a cross-sectional regression through which you
+get the factors in time and through which you can compute you
+covariance matrix and simulate everything.
+</p>
+
+<p>
+The only interesting bit is that you have factor loadings on that
+equity model, that are estimated in a first step. Then based on this
+you run your standard regression.
+</p>
+</li>
+</ul>
+<div id="outline-container-org9a9db5d" class="outline-2">
+<h2 id="org9a9db5d">Factor Loadings</h2>
+<div class="outline-text-2" id="text-org9a9db5d">
+</div>
+<div id="outline-container-org75ff0aa" class="outline-3">
+<h3 id="org75ff0aa">Industry factors loadings</h3>
+<div class="outline-text-3" id="text-org75ff0aa">
+<p>
+So basically here you have already some loadings that already
+capture quite some fundamental information, in the economic sense.
+</p>
+
+<p>
+I.e. the loadings capture information about sales and assets in
+particular industries and their relation to the values of the
+companies.
+</p>
+
+<p>
+In particular they give the average value/sales and value/assets
+in an industry by regressing across all of the companies available.
+</p>
+
+<p>
+So you see that these information is actually ultimately used when
+processing your model.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge7c9a7d" class="outline-3">
+<h3 id="orge7c9a7d">Style factors loadings</h3>
+<div class="outline-text-3" id="text-orge7c9a7d">
+<p>
+As mentioned these are factors that are relevant in the financial
+space coming out of the financial theories.
+</p>
+
+<p>
+I check next how these different things are expressed.
+</p>
+</div>
+
+
+<div id="outline-container-org83142f3" class="outline-4">
+<h4 id="org83142f3">Beta Factor Loading</h4>
+<div class="outline-text-4" id="text-org83142f3">
+<p>
+Nothing new. 101 of finance.
+</p>
+
+<p>
+You basically estimate the coefficients for each security across
+time using a weighted regression.
+</p>
+
+<p>
+Then you have your alpha and beta coefficients.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org72eb328" class="outline-4">
+<h4 id="org72eb328">Momentum Factor Loading</h4>
+<div class="outline-text-4" id="text-org72eb328">
+<p>
+This is constructed based on two main components:
+</p>
+
+<ol class="org-ol">
+<li>
+<p>
+historical alpha:
+</p>
+
+<p>
+this are the alpha in time for a given security coming out
+from the CAPM.
+</p>
+</li>
+
+<li>
+<p>
+relative strength:
+</p>
+
+<p>
+this is basically a proper momentum measuring the returns in
+the previous tradings days.     
+</p>
+</li>
+</ol>
+<p>
+How the two are mixed up is then based on some optimization
+exercise maximizing the explanatory power. This is however based
+on a grid search optimization and the way the grid is initialised
+is based on qualitative elements.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org02bfccf" class="outline-4">
+<h4 id="org02bfccf">Earnings Yield Factor Loading</h4>
+<div class="outline-text-4" id="text-org02bfccf">
+<p>
+This loading is basically the product of thee different
+statistics:
+</p>
+
+<ul class="org-ul">
+<li>
+<b>predicted</b> earnings-to-price ratio</li>
+
+<li>
+<b>cash</b> earnings-to-price ratio</li>
+
+<li>
+<b>trailing</b> earnings-to-price</li>
+</ul>
+<p>
+All of them are given different weights when constructing such
+measure. I guess that such parameters are determined in a similar
+way as described in the previous sub-chapter.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org1ebc718" class="outline-4">
+<h4 id="org1ebc718">Growth Factor Loading</h4>
+<div class="outline-text-4" id="text-org1ebc718">
+<p>
+Again a mix of different statistics. Have to understand where all
+of these parameters are entered into the system.
+</p>
+
+<ul class="org-ul">
+<li>weighted average of long-term <i>predicted earnings growth</i>
+</li>
+
+<li>five-year trailing <i>earnings growth</i>
+</li>
+
+<li>five-year trailing <i>sales growth</i>
+</li>
+</ul>
+<p>
+I wonder how they compute such predictions.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org3708719" class="outline-4">
+<h4 id="org3708719">Dividend-to-price Factor Loading</h4>
+<div class="outline-text-4" id="text-org3708719">
+<p>
+Trailing 12 month dividend yield.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2a4e212" class="outline-4">
+<h4 id="org2a4e212">Book-to-price Factor Loading</h4>
+<div class="outline-text-4" id="text-org2a4e212">
+<p>
+Last reported book value divided by market capitalization in
+period <i>t</i>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3a55198" class="outline-4">
+<h4 id="org3a55198">Leverage Factor Loading</h4>
+<div class="outline-text-4" id="text-org3a55198">
+<p>
+Mix of three different statistics:
+</p>
+
+<ul class="org-ul">
+<li>weighted average of market leverage (MLEV)</li>
+
+<li>debt-to-assets ratio (DTOA)</li>
+
+<li>book leverage (BLEV)</li>
+</ul>
+<p>
+So you see here the classical value investment metrics a la
+Graham.
+</p>
+
+<p>
+You can see then in the document if you are interested how all of
+these are exactly constructed. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgea46224" class="outline-4">
+<h4 id="orgea46224">Liquidity Factor Loading</h4>
+<div class="outline-text-4" id="text-orgea46224">
+<p>
+Again through classical value investing statistics.
+</p>
+
+<p>
+Skipping everything for now as I do not want to get into it.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org05a6d52" class="outline-4">
+<h4 id="org05a6d52">Size Factor Loading</h4>
+<div class="outline-text-4" id="text-org05a6d52">
+<p>
+Some reasonings around the market cap of the company.
+</p>
+
+<p>
+So this measures the influence of the size of a company and
+having worked for quite big companies as of now I can well
+imagine why it enters as a factor.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org79259a6" class="outline-4">
+<h4 id="org79259a6">Residual Volatilty Factor Loading</h4>
+<div class="outline-text-4" id="text-org79259a6">
+<p>
+Again average of statistics reporting some volatitlity
+statistics.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgeb6bfac" class="outline-2">
+<h2 id="orgeb6bfac">Implied Volatility Factor Models</h2>
+<div class="outline-text-2" id="text-orgeb6bfac">
+<p>
+So these are used for the exotic instruments, i.e. the different
+options and the mortgage backed securities.
+</p>
+
+<p>
+Here basically is the usual story of using a pricing function,
+invert it and get the volatility based on the observed price.
+</p>
+
+<p>
+In BarraOne the dependence on <code>K_i</code> is suppressed (only
+“at-the-money” implied volatilities are modelled) in which case the
+problem reduces to describing the evolution of the volatility term
+structure <code>σ_i (t, T_i)</code>.
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

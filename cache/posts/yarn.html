@@ -1,0 +1,96 @@
+<br>
+<br>
+
+<p>
+This post briefly introduces YARN - <b>Yet Another Resource Negotiator</b>.
+It was introduced to overcome the limits of MapReduce v 1.0,
+especially the idle resources component, <a href="https://marcohassan.github.io/bits-of-experience/posts/mapreduce/">discussed in the previous post</a>.
+</p>
+
+<!-- TEASER_END -->
+
+<br>
+
+<div id="outline-container-org515ee75" class="outline-2">
+<h2 id="org515ee75">Issues with MapReduce v 1.0</h2>
+<div class="outline-text-2" id="text-org515ee75">
+<p>
+In MapReduce 1, you had a single Master - the JobTracker - being
+responsible for too many tasks. This created a bottleneck. The
+responsibilities of the JobTracker involved among the rest: 
+</p>
+
+<ul class="org-ul">
+<li>the resource management scheduling; i.e. assigning
+different jobs to different <b>slots*/*containers</b>
+(virtualized hardware) among the machines.</li>
+
+<li>the monitor; i.e. checking the smooth operations of the
+jobs and that there was no failure.</li>
+
+<li>job lifecycle; i.e. upon failure reschedule the jobs.</li>
+</ul>
+
+
+<p>
+Finally, the possible greatest shortcoming of MapReduce was the
+static allocation of slots. These are assigned in Mapreduce1 at
+the beginning -i.e. in the <b>configuration</b> time, saving X Cores
+and Y GB of memory on different machines for Reducer and Mappers
+operations. It is then clear that being MapReduce a sequential
+operation, the resources of the Reducers would sit idle, while the
+Mappers are performing.
+</p>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-org6e2270f" class="outline-2">
+<h2 id="org6e2270f">The YARN Solution</h2>
+<div class="outline-text-2" id="text-org6e2270f">
+<p>
+The idea of YARN was then to reduce the amount of operations the
+JobTracker was responsible for. The key idea was the one of
+separating the monitoring and scheduling tasks therefore
+increasing the overall performance.
+</p>
+
+<p>
+The idea was therefore to elect two different Masters types. 
+</p>
+
+<p>
+One - the ResourceManager - acting as the Master for the entire
+cluster of machines, being responsible for connecting with the
+client and scheduling the jobs. 
+</p>
+
+<p>
+One - the Application Master - working on at the Node/slave level
+being responsible for monitoring the jobs, negotiating the
+resources needed for them with the ResourceManager.
+</p>
+
+<p>
+Important, is that, in contrast to the old version, the
+Application Master would now negotiate the slots for the resources
+needed with the ResourceManager in a separate way for the Mapper
+and Reducer operation. That is it will first ask resources for the
+Mappers without reserving any slots for the Reducers. Just when
+the Mappers are done it will free up the slots assigned for such
+operations and ask new resources for performing the Reducer
+operations. You can understand that with this new architectural
+design no resources would sit idle waiting for being assigned.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdc76dcb" class="outline-2">
+<h2 id="orgdc76dcb">Literature</h2>
+<div class="outline-text-2" id="text-orgdc76dcb">
+<p>
+<a href="https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material">Big Data for Engineers - ETH course</a>
+</p>
+</div>
+</div>
