@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>PySpark Set-Up and Integration with Emacs | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/pyspark-set-up/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../on-characterial-notes/" title="On Trust, Companies and Characterial Notes" type="text/html">
+<link rel="next" href="../paredit/" title="Paredit" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="PySpark Set-Up and Integration with Emacs">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/pyspark-set-up/">
+<meta property="og:description" content="&lt;br&gt;
+&lt;br&gt;
+
+
+
+
+
+This post aims at providing an overview of the necessary steps
+required in order to leverage Apache Spark through the Python API and
+the PySpark module.
+
+
+
+Despite the information is va">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-08-05T23:51:11+02:00">
+<meta property="article:tag" content="Big Data">
+<meta property="article:tag" content="emacs">
+<meta property="article:tag" content="Spark">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">PySpark Set-Up and Integration with Emacs</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-08-05T23:51:11+02:00" itemprop="datePublished" title="2019-08-05 23:51">2019-08-05 23:51</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/big-data/" rel="tag">Big Data</a></li>
+            <li><a class="tag p-category" href="../../categories/emacs/" rel="tag">emacs</a></li>
+            <li><a class="tag p-category" href="../../categories/spark/" rel="tag">Spark</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div class="HTML" id="org250a03d">
+<p>
+&lt;br&gt;
+&lt;br&gt;
+</p>
+
+</div>
+
+<p>
+This post aims at providing an overview of the necessary steps
+required in order to leverage Apache Spark through the Python API and
+the PySpark module.
+</p>
+
+<p>
+Despite the information is vastly reported over the internet my usual
+<i>procedere</i> when I deal with new tools and software is to write a
+short piece of note when learning new software that is intended as an
+overview over the tool and serve as a beginner cheat sheet.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org137342f" class="outline-3">
+<h3 id="org137342f">Disclaimer</h3>
+<div class="outline-text-3" id="text-org137342f">
+<p>
+Ok, before starting let me underline that this post falls under the
+category <i>learn by posting</i>.  As such it may contain a flawed
+theoretical understanding about the subject and some inaccuracies.
+</p>
+
+<p>
+You are can read more about this kind of posts on the home-page under
+<a href="https://marcohassan.github.io/bits-of-experience/pages/bits-of-experience-a-readable-view-on-my-study-adventures/">this link</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org28172b9" class="outline-2">
+<h2 id="org28172b9">PySpark - Why?</h2>
+<div class="outline-text-2" id="text-org28172b9">
+<p>
+During the last decades we observed a explosion of laptop and mobiles
+usage. They entered the houses of the vast majority of people in
+developed countries and together with that the <i>internet</i> business
+boomed.  Together with that a huge amount of data started to be
+collected to the point where the data collected became so big they
+could not be saved over a single hardware.7
+</p>
+
+<p>
+This tremendous amount of data became <i>Big Data</i>, which is simply a
+huge amount of data that requires special technology and software to
+be treated as it can poorly be handled through standard hardware on
+local machines.
+</p>
+
+<p>
+In the early 2000nds Google published a white paper proposing a
+distributed file system architecture allowing to save and operate on
+vast amount of data by distributing data across multiple hard drives
+and saving replicas of them to handle system failures. The idea was
+soon embraced by both the academic and the industry soon becoming the
+norm.  The <i>hadoop distributed file system</i>, a Java implementation of
+google distributed open source implementation was developed and is by
+now an institution in the market.
+</p>
+
+<p>
+With the industry shifting to <i>hdfs</i> its limits soon became visible.
+First of all Mapreduce operates through data batch processing and
+iterative Mapreduce jobs. What this practically means is that while
+the relation between consequent jobs is known to the user, it is not
+the framework and therefore there is no possibility of optimization of
+the operations for the Mapreduce framework. Moreover, Mapreduce offers
+no possibility of saving intermediate data in memory in the case a job
+is small enough to be sure that system failures are unlikely and no
+need for data replication across a distributed file system is needed.
+</p>
+
+<p>
+Here is where <i>Spark</i> comes to play. Spark offers the possibility to
+store data in the memory, effectively eliminating intermediate disk
+persistence and thus improving completion time. 
+</p>
+
+<p>
+Apart from real-time and batch processing, Apache Spark supports
+interactive queries and iterative algorithms also. Apache Spark has
+its own cluster manager, where it can host its application. It
+leverages Apache Hadoop for both storage and processing. It uses HDFS
+(Hadoop Distributed File system) for storage and it can run Spark
+applications on YARN as well.
+</p>
+
+<p>
+In simple terms if you want to use large computing clusters but do not
+want to parallelize your programs Apache Spark kicks in.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdef3c42" class="outline-2">
+<h2 id="orgdef3c42">Where do data come from?</h2>
+<div class="outline-text-2" id="text-orgdef3c42">
+<p>
+There are esentially two options. The first one is to connect hardware
+coupled with the data directly/physically to the worker nodes. This
+solution is called <i>JBOD</i> or <i>direcly attached storage</i> approach. In
+order then to treat the different connected hardwares as a single file
+system you need then to integrate a software component, namely HDFS.
+</p>
+
+<p>
+A second approach consists in leveraging external data with a special
+type of networking connection allowing a very performing I/O
+stream. This through <i>switching fabric</i>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org38a69b5" class="outline-2">
+<h2 id="org38a69b5">Software Download</h2>
+<div class="outline-text-2" id="text-org38a69b5">
+<p>
+Notice all of the code below was executed on Ubuntu Linux
+OS. 
+</p>
+
+<p>
+For MacOS the <a href="https://www.tutorialkart.com/apache-spark/how-to-install-spark-on-mac-os/">usage of homebrew</a> is recommended.
+</p>
+</div>
+
+<div id="outline-container-orgd458a75" class="outline-3">
+<h3 id="orgd458a75">Java Installation</h3>
+<div class="outline-text-3" id="text-orgd458a75">
+<p>
+Pyspark is an API leveraging a Java Virtual Machine for connecting and
+operating on Spark data frames. As such the proper installation of
+Java is necessary for the smooth operation of Pyspark.
+</p>
+
+<p>
+<b>Install Java</b>
+</p>
+
+<pre class="example" id="orgc328fe7">
+sudo apt install openjdk-8-jre-headless 
+</pre>
+
+<p>
+<i>Notice:</i> You used a different Javascript and runtime
+environment to the one mentioned online. Consider that if having
+integration issues at a later stage and rather install this Java SE
+runtime environment <a href="https://docs.oracle.com/en/java/javase/12/install/installation-jdk-linux-platforms.html#GUID-ADC9C14A-5F51-4C32-802C-9639A947317F">SE</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5675876" class="outline-3">
+<h3 id="org5675876">Spark installation</h3>
+<div class="outline-text-3" id="text-org5675876">
+<p>
+Download the compressed spark software under <a href="https://www.apache.org/dyn/closer.lua/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz">this link.</a>
+</p>
+
+<p>
+Unzip it in your repository of choice.
+</p>
+
+
+<pre class="example" id="org424a64c">
+$ tar -xvf ~/Scaricati/spark-2.4.3-bin-hadoop2.7.tgz
+</pre>
+
+<p>
+Set Spark in your path and in the Py4j API path.
+</p>
+
+<pre class="example" id="org57181d5">
+$ export SPARK_HOME=&lt;unziped file location&gt;/spark-2.1.0-bin-hadoop2.7
+$ export PATH=$PATH:/home/hadoop/spark-2.1.0-bin-hadoop2.7/bin
+$ export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip:$PYTHONPATH
+$ export PATH=$SPARK_HOME/python:$PATH
+</pre>
+
+<p>
+After the above installation you should be able to run spark directly
+on a jupyter notebook.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org13e8359" class="outline-3">
+<h3 id="org13e8359">PySpark on Jupyter Notebook and Emacs Integration</h3>
+<div class="outline-text-3" id="text-org13e8359">
+<p>
+In order to start and connect to pyspark on your local machine it will
+then just be necessary to start an ipython kernel by running
+</p>
+
+<pre class="example" id="org73648ae">
+$ ipython kernel
+</pre>
+
+<p>
+This will prompt the name of a <i>.json</i> file that contains the
+information (port, connection protocol etc.) to connect to the kernel
+in a similar way to the following message:
+</p>
+
+<blockquote>
+<p>
+To connect another client to this kernel, use:
+    –existing kernel-5060.json
+</p>
+</blockquote>
+
+<p>
+You can then specify your kernel.json as your session argument in
+<code>ob-ipython</code> and connect to the running kernel. At this point after
+installing findspark via
+</p>
+
+<pre class="example" id="org187fe1f">
+$ pip3 install --user findspark
+</pre>
+
+<p>
+you are good to import your pyspark module and leverage the Pyspark
+API on your favourite editor: <i>emacs</i>
+</p>
+
+<div class="highlight"><pre><span></span>import findspark
+findspark.init()
+import pyspark
+import random
+sc = pyspark.SparkContext(appName="Pi")
+num_samples = 100000000
+def inside(p):     
+  x, y = random.random(), random.random()
+  return x*x + y*y &lt; 1
+count = sc.parallelize(range(0, num_samples)).filter(inside).count()
+pi = 4 * count / num_samples
+print (pi)
+sc.stop()
+</pre></div>
+
+<pre class="example">
+3.14109952
+</pre>
+
+
+<p>
+In the case you will want to leverage a more powerful machine and run
+your pyspark application on a server you might follow the logic
+explained in the following post keeping the structure outlined in the
+post. <a href="https://necromuralist.github.io/posts/programming/remote-jupyter-sessions-with-ob-ipython/">Connect to remote ipython kernel.</a>
+</p>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../on-characterial-notes/" rel="prev" title="On Trust, Companies and Characterial Notes">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../paredit/" rel="next" title="Paredit">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
