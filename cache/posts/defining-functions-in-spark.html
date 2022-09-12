@@ -1,0 +1,203 @@
+<p>
+One especially interesting feature that I already used before; but
+unfortunately I did not make notes for, is the possibility of
+specifying particular functions via the PySpark raw API and make them
+available throughout your spark session when working via data-frames -
+be it via SparkSQL or via pandas.
+</p>
+
+<p>
+Note that this notes are based on <a href="https://jaceklaskowski.gitbooks.io/mastering-spark-sql/content/spark-sql-udfs.html">this source</a>. Looks like a very
+exhaustive source. So check at it again should this project really
+start. There you might make sense of all of that. 
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org8f5ed41" class="outline-2">
+<h2 id="org8f5ed41">User Defined Functions</h2>
+<div class="outline-text-2" id="text-org8f5ed41">
+<p>
+So the usual way to work to specify the functions you would need to
+work with is via <b>user-defined-functions</b>.
+</p>
+
+<p>
+This is a very neat feature when working with Spark as it will
+allow you to define functions you can then apply to data-frames.
+</p>
+
+<p>
+So if you are working with data in tabular format it might well
+makes sense to work in such a way leveraging such customizable
+functions.
+</p>
+
+<p>
+The idea of udf when working with Python is now the following:
+</p>
+
+<blockquote>
+<p>
+User-Defined Functions (aka UDF) is a feature of Spark SQL to
+define new Column-based functions that extend the vocabulary of
+Spark SQL’s DSL for transforming Datasets.
+</p>
+
+<p>
+Historically, user-defined functions operate one-row-at-a-time, and thus
+suffer from high serialization and invocation overhead. As a
+result, many data pipelines define UDFs in Java and Scala and then
+invoke them from Python.
+</p>
+
+<p>
+Now, with the rise of <a href="https://arrow.apache.org/">Apache Arrow</a>, it is now possible to define
+low-overhead, high-performant user-defined functions directly in
+Python.
+</p>
+</blockquote>
+
+<p>
+Specifically so far it was just possible in python to use the
+SparkSQL user-defined functions and perform row by row operations.
+</p>
+
+<p>
+You can think for instance at the following:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1">##############</span>
+   <span class="c1">## Syntax 1 ##</span>
+   <span class="c1">##############</span>
+
+   <span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="n">udf</span>
+
+   <span class="c1"># Use udf to define a row-at-a-time udf</span>
+   <span class="nd">@udf</span><span class="p">(</span><span class="s1">&#39;double&#39;</span><span class="p">)</span>
+   <span class="c1"># Input/output are both a single double value</span>
+   <span class="k">def</span> <span class="nf">squared</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+	 <span class="k">return</span> <span class="n">v</span> <span class="o">*</span> <span class="n">v</span>
+
+   <span class="c1"># work with it either leveraging dataframes methods or sql</span>
+
+   <span class="n">df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="n">plus_one</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">v</span><span class="p">))</span> <span class="c1"># note that df is a spark data frame</span>
+
+   <span class="c1"># or call via sql  - should be a separate chuck with the magic %sql call</span>
+   <span class="o">%</span><span class="n">sql</span> 
+   <span class="n">select</span> <span class="n">v2</span><span class="p">,</span> <span class="n">squaredWithPython</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span> <span class="k">as</span> <span class="n">id_squared</span> <span class="kn">from</span> <span class="nn">df</span>
+
+   <span class="c1">##############</span>
+   <span class="c1">## Syntax 2 ##</span>
+   <span class="c1">##############</span>
+
+   <span class="k">def</span> <span class="nf">squared</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+     <span class="k">return</span> <span class="n">s</span> <span class="o">*</span> <span class="n">s</span>
+
+   <span class="n">spark</span><span class="o">.</span><span class="n">udf</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;squaredWithPython&quot;</span><span class="p">,</span> <span class="n">squared</span><span class="p">)</span>
+
+   <span class="c1"># assume a test spark dataframe</span>
+
+   <span class="c1"># call it via sql - should be a separate chuck with the magic %sql call</span>
+   <span class="o">%</span><span class="n">sql</span>
+   <span class="n">select</span> <span class="nb">id</span><span class="p">,</span> <span class="n">squaredWithPython</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">as</span> <span class="n">id_squared</span> <span class="kn">from</span> <span class="nn">test</span>
+
+   <span class="c1"># or call it via dataframes methods </span>
+   <span class="n">test</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">squaredWithPython</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+</pre></div>
+
+<p>
+Vis à vis the following new vectorized udf or stated differently
+pandas-udf:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+   <span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="n">col</span><span class="p">,</span> <span class="n">pandas_udf</span>
+   <span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="kn">import</span> <span class="n">LongType</span>
+
+   <span class="c1"># Declare the function and create the UDF</span>
+   <span class="k">def</span> <span class="nf">multiply_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+       <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+   <span class="n">multiply</span> <span class="o">=</span> <span class="n">pandas_udf</span><span class="p">(</span><span class="n">multiply_func</span><span class="p">,</span> <span class="n">returnType</span><span class="o">=</span><span class="n">LongType</span><span class="p">())</span>
+
+   <span class="c1">### Applied to Pandas data objectes ###</span>
+
+   <span class="c1">## The function for a pandas_udf should be able to execute with local Pandas data</span>
+   <span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">multiply_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+   <span class="c1"># 0    1</span>
+   <span class="c1"># 1    4</span>
+   <span class="c1"># 2    9</span>
+   <span class="c1"># dtype: int64</span>
+
+   <span class="c1">### Applied Spark Data Frames  ###</span>
+
+   <span class="c1"># Create a Spark DataFrame, &#39;spark&#39; is an existing SparkSession</span>
+   <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]))</span>
+
+   <span class="c1"># Execute function as a Spark vectorized UDF</span>
+   <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">multiply</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">),</span> <span class="n">col</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)))</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+   <span class="c1"># +-------------------+</span>
+   <span class="c1"># |multiply_func(x, x)|</span>
+   <span class="c1"># +-------------------+</span>
+   <span class="c1"># |                  1|</span>
+   <span class="c1"># |                  4|</span>
+   <span class="c1"># |                  9|</span>
+   <span class="c1"># +-------------------+</span>
+</pre></div>
+
+<p>
+Then you can do numerical tests yourself and see that the
+vectorized operations rather than the row by row operations has a
+computational edge. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge1df2dd" class="outline-2">
+<h2 id="orge1df2dd">Note and understand the difference between vectorized udf and toPandas</h2>
+<div class="outline-text-2" id="text-orge1df2dd">
+<p>
+Note that the two are quite different.
+</p>
+
+<p>
+Although it might come naturally to work with pandas and so you
+might be tempted to call the convert <code>toPandas ()</code> function and
+work with Pandas methods etc. this is not recommended as the entire
+benefit of working with distributed data would be gone.
+</p>
+
+<p>
+In this sense, when calling the spark method of udf what you would
+actually do is specifying working a function and work on vectorized
+columns stores leveraging data structures that resolves such
+operations in a computationally intense and fast way.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org975f8b2" class="outline-2">
+<h2 id="org975f8b2">Very Important Note</h2>
+<div class="outline-text-2" id="text-org975f8b2">
+<p>
+Notice that despite the fact that <i>Apache Arrow</i> and the vectorized
+pandas operations are able to bring quite some computational edge
+over the standard available udf functions that were so far
+available it is still recommended to work with SQL when working
+with dataframes.
+</p>
+
+<p>
+In this sense, you should not fall in the temptation of writing to
+many udf functions yourself even if you like to work in a pythonic
+way, as project Tungsten and the Catalyst optimizer leveraging the
+decades of research on relational structures and SQL will still be
+there so that you should go with it and be thoughtful in the extent
+you should apply such weapon. 
+</p>
+</div>
+</div>
