@@ -1,0 +1,528 @@
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+<p>
+Notes based on <a href="https://developers.redhat.com/media-download-confirmation?tcDownloadFileName=Kubernetes-native-microservices-ebook-v3.pdf&amp;tcRedirect=5000&amp;tcSrcLink=https%3A%2F%2Fdevelopers.redhat.com%2Fcontent-gateway%2Fdevelopers%2FKubernetes-native-microservices-ebook-v3.pdf&amp;p=Media%3A+Kubernetes+Native+Microservices+Ebook&amp;pv=v3&amp;tcDownloadURL=https%3A%2F%2Faccess.cdn.redhat.com%2Fdevelopers%2FKubernetes-native-microservices-ebook-v3.pdf%3F_auth_%3D1639834492_4a7529fa776a83612c3fae41e4b878b8">kubernetes native development with quarkus and
+microprofile</a>. This is one of the books available on the red-hat
+developer website. From my personal experience these are good and
+red-hat is in fact a strong company - great products are coming out of
+it and they seem to deliver quality products throughout time.
+</p>
+
+<p>
+They know that space and it is a very interesting to my mind so I am
+taking a bit to make some notes and organize thoughts around it.
+</p>
+
+<p>
+Note as well <a href="https://github.com/wso2/reference-architecture/blob/master/api-driven-microservice-architecture.md">this resource</a> and <a href="https://microservices.io/index.html">as well this</a> (read there every now and
+then).
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-orgd2247dd" class="outline-2">
+<h2 id="orgd2247dd">Definition</h2>
+<div class="outline-text-2" id="text-orgd2247dd">
+<blockquote>
+<p>
+a microservice consists of a single deployment executing within a
+single process, isolated from other deployments and processes, that
+supports the fulfillment of a specific piece of business
+functionality.
+</p>
+</blockquote>
+
+<p>
+First, a microservice implements a specific piece of business
+functionality. This is known as a a bounded context , which is a
+logical separation of multiple business problem domains within an
+enterprise. By <i>logically breaking down a business domain into
+multiple bounded contexts</i>, each bounded context <i>more accurately
+represents its specific view</i> of the business domain and becomes
+easier to model.
+</p>
+
+<p>
+Multiple bounded contexts within in a single monolith can result in
+"spaghetti code" as a result of <i>unnecessary inter-dependencies and
+unplanned intermixing of contexts</i>. In a microservices architecture,
+each of these capabilities is modeled individually as a bounded
+context and implemented as a microservice that addresses each
+specific bounded context.
+</p>
+
+<p>
+Note that the industry believes now in the following concept <i>a
+single application</i> for microservices.
+</p>
+
+<p>
+This began nearly a decade ago by deploying a single microservice
+per application server, and shortly thereafter evolved into
+specialized microservice runtimes like Dropwizard, <i>Spring Boot</i>,
+and more recently <i>Quarkus</i> to improve the developer and
+administrator experience.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf41fefb" class="outline-2">
+<h2 id="orgf41fefb">Learn in fast iterative steps</h2>
+<div class="outline-text-2" id="text-orgf41fefb">
+<p>
+When it’s the first time a team is developing microservice
+architectures, it’s even more critical to not create a <b>big picture</b>
+up front.
+</p>
+
+<p>
+Taking the time to create that big picture without previous
+experience of microservices architecture design will expend time
+when it’s likely the final architecture will actually be very
+different.
+</p>
+
+<p>
+During the process of gaining experience with microservices, the
+architecture will shift over time towards a more appropriate
+one.<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup>
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdbe4f37" class="outline-2">
+<h2 id="orgdbe4f37">On the transition period that is occuring</h2>
+<div class="outline-text-2" id="text-orgdbe4f37">
+<p>
+Java EE has been the standard-bearer for enterprise Java
+specifications for roughly 20 years.
+</p>
+
+<p>
+However, Java EE has been traditionally focused on 3-tier monolithic
+architecture with a steady, measured evolution and a strong focus on
+backward compatibility. Java EE stopped evolving between 2014 and
+2017 just as the industry began to heavily adopt microservices
+</p>
+
+<p>
+During that pause, the Java EE community <b>began to experiment and
+deliver early microservices APIs</b>. There was an increasing risk of
+API fragmentation across Java runtimes that had been known for
+application portability.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgaa057b3" class="outline-2">
+<h2 id="orgaa057b3">Microprofile</h2>
+<div class="outline-text-2" id="text-orgaa057b3">
+<p>
+MicroProfile extends that foundation through the creation and
+evolution of Java API specifications for well-understood
+microservices patterns and cloud-related standards.
+</p>
+
+<p>
+Today, twelve sepcificications have been developed by the
+MicroProfile community:
+</p>
+
+<img src="../../images/Screenshot 2021-12-21 142211.png" class="center">
+
+<p>
+So note for instance the open API specification. This is must be
+similar to the RESTful swagger package you used to work with in
+python. With it will be possible for you to easily specify the API
+and document your RESTful endpoints. Note that you actually have
+packages as that one <a href="https://swagger.io/tools/open-source/open-source-integrations/">for java as well</a>.
+</p>
+
+<p>
+Back to Microprofile, the idea is essentially this, create a narrow
+set of Java APIs for working in a more agile, microservices way.
+</p>
+
+<p>
+As per Dec 2016 it was incorporated into the Eclipse Foundation.
+This practically means that now the project is under the mantra:
+open source, vendor neutrality, and community engagement and
+collaboration.
+</p>
+
+<p>
+On the top of it the Microprofile Working Group charter extends
+those with additional standards. Pretty general and non-interesting
+stuff but for this:
+</p>
+
+<ul class="org-ul">
+<li><b>no backward compatibility guarantee</b> I mean: awkshj?!?!?!?!??</li>
+</ul>
+
+<p>
+That is interesting and if you will ever work with it you will have
+well to bear it in mind. They justify it as follows:
+</p>
+
+<blockquote>
+<p>
+MicroProfile considers itself an agile project and is willing to
+break backward compatibility. This willingness results from a
+rapid-moving specification project, and any breaking changes are well
+thought out with strong justification and as narrow a scope as
+possible.
+</p>
+</blockquote>
+
+<p>
+bah&#x2026; not too convincing&#x2026; will cause troubles..
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgbcc578d" class="outline-2">
+<h2 id="orgbcc578d">Quarkus</h2>
+<div class="outline-text-2" id="text-orgbcc578d">
+<p>
+This is a Java microservices runtime.
+</p>
+
+<p>
+Note that although you might think that there is no need for a new
+microservice runtime, consider the following:
+</p>
+
+<p>
+Another pain point is that <i>developer productivity</i> often suffers with
+Java microservice runtimes.  Every time a developer makes a change
+they have to save the file, <i>rebuild</i> the application, <i>restart</i> the
+application, and <i>refresh</i> the browser. This can take 10s of seconds,
+significantly impacting the productivity of a developer.
+</p>
+
+<p>
+Developers and DevOps teams began to feel the pain of developing and
+deploying Java microservices, and have been increasingly considering
+alternatives like Node.js and Golang due to their reduced RAM
+requirements and fast startup time. These alternatives can also
+achieve a 5x to 10x deployment density on the same hardware,
+significantly reducing cost.
+</p>
+
+<p>
+So you understand that for these reasons it is convenient to have a
+very well functioning microservices runtime.
+</p>
+
+<p>
+Note as well that there is an interesting point for the case of
+<b>dynamic language runtimes</b> - a thing that Quarkus is working in order
+to deliver. I come from dynamic language runtimes languages and I
+must say this is in fact a feature I like that allowed me to develop
+at twice the speed and introducing less bugs as I had the
+opportunity to double check on the fly and make some tests about the
+current status of the application instead of having to compile,
+start the application and enter in debug modus. 
+</p>
+
+<p>
+Developers are rightfully enamored with the productivity of dynamic
+language runtimes like Node.js, and Quarkus is driving to deliver
+that experience even though Java is a "static" (pre-compiled)
+language
+</p>
+
+<p>
+Note now the functioning with Quarkus:
+</p>
+
+<blockquote>
+<p>
+The top developer joy feature is live coding, where code changes are
+detected, recompiled, and reloaded without having to restart the
+JVM. Live coding is enabled when Quarkus is started in developer mode
+using mvn quarkus:dev. Specifically, Quarkus checks for code changes
+when it receives external events like HTTP requests or Kafka
+messages. The developer simply makes code changes, saves the file, and
+refreshes the browser for near-instant updates. Live coding even works
+with pom.xml changes. The Quarkus maven plugin will detect pom.xml
+changes and restart the JVM. It is not uncommon for Quarkus developers
+to start Quarkus in developer mode, and then minimize the terminal
+window, never having to restart the JVM during a coding session.
+</p>
+</blockquote>
+
+<p>
+That is neat and not just an ancillary benefit.
+</p>
+
+<p>
+Check at the following statistics:
+</p>
+
+<img src="../../images/Screenshot 2021-12-21 164848.png" class="center">
+</div>
+</div>
+
+
+<div id="outline-container-org06840e6" class="outline-2">
+<h2 id="org06840e6">On Working in tandem Quarkus + MicroProfile</h2>
+<div class="outline-text-2" id="text-org06840e6">
+<p>
+Basically if you want to go down the microservices road in a serious
+way you will have to start to think in these terms:
+</p>
+
+<ul class="org-ul">
+<li>Quarkus as first class citizen for microservices running on
+Kubernetes</li>
+
+<li>MicroProfile - use this specifications to facilitate microservices
+development.</li>
+</ul>
+
+<p>
+So you understand that ideally you would use the two in tandem.
+</p>
+
+<p>
+Now on the concrete side of the coin, you know that to have a proper
+kubernetes development experience in your team is almost
+impossible. It is too small and to this stage I do not really see it
+as a viable road. I will reconsider later in time when I will see
+how much the reality barrier will drag me down and how much it is
+really possible to develop in the given time with the given
+resources.
+</p>
+
+<p>
+So maybe start to dig a little bit more down the road of
+MicroProfile at first and leave Quarkus then for a later moment when
+you will have the first things more under control.
+</p>
+
+<p>
+I am especially interested to understand how the MicroProfile component
+interfaces with the Spring framework. As far as I understood this is
+the go-to framework in the industry to develop microservices in
+Java. However, this changes a bit the perspectives.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org1546eb2" class="outline-2">
+<h2 id="org1546eb2"><span class="todo TODO">TODO</span> I think there is still a bit of confusion in these dimensions - clear that out</h2>
+<div class="outline-text-2" id="text-org1546eb2">
+</div>
+<div id="outline-container-orgb1527f8" class="outline-3">
+<h3 id="orgb1527f8">Spring Boot vs. Quarkus</h3>
+<div class="outline-text-3" id="text-orgb1527f8">
+<ul class="org-ul">
+<li><p>
+spring boot vs. quarkus - so the basic difference at high level is
+that spring boot is more mature as a project, it is better
+integrated with the entire Java Ecosystem.
+</p>
+
+<p>
+On the other hand Quarkus aims to develop in that dimension while
+being more suited as architecture for the container world. The
+start up time is much faster and you can construct with it more
+robust reactive architectures.
+</p>
+
+<p>
+You can read more for the difference among the two - at high
+level - at the <a href="https://www.baeldung.com/spring-boot-vs-quarkus">following url</a>.
+</p></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orge827778" class="outline-3">
+<h3 id="orge827778">Spring Boot/Quarkus vs Spring/Quarkus Native</h3>
+<div class="outline-text-3" id="text-orge827778">
+<p>
+This is also a thing that you will better have to understand.
+</p>
+
+<p>
+Take time at some point to go over it.
+</p>
+
+<p>
+But basically you have Spring and Quarkus Native that are in fact
+the real way of doing containerized workloads and reactive
+architectures in the cloud.
+</p>
+
+<p>
+You can start reading about it <a href="https://dev.to/antmordel/spring-native-spring-boot-but-faster-4o5h">here</a>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org67a49fa" class="outline-3">
+<h3 id="org67a49fa">Tomcat</h3>
+<div class="outline-text-3" id="text-org67a49fa">
+<p>
+As ngnix was still underlying the entire concept of docker. So will
+tomcat, Jboss or whatever still underpin the concept here.
+</p>
+
+<p>
+Have to understand better how that concept works. Also with respect
+to quarkus and spring boot.
+</p>
+
+<p>
+I know that tomcat underpins spring boot. Does it also underpins
+quarkus? How is the fast start-up etc. ensured?
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org887a271" class="outline-3">
+<h3 id="org887a271">Note that spring as a framework is still used by Quarkus</h3>
+<div class="outline-text-3" id="text-org887a271">
+<p>
+I.e. you have under this project all of the necessary dependencies
+with Spring etc.
+</p>
+
+<p>
+Recall that Spring is a broader framework containing mulitple
+functionalities in the Java world. Such as JPA etc. 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge3d420d" class="outline-2">
+<h2 id="orge3d420d"><span class="todo TODO">TODO</span> read the chapter - reactive in an imperative world</h2>
+<div class="outline-text-2" id="text-orge3d420d">
+<p>
+must be quite interesting.
+</p>
+
+<p>
+and I am also sure these are the architectures where you should go.
+</p>
+
+<p>
+like this you will start to do interesting thing on the scale out
+side of the world and you can bring quite some operational
+excellence in this sense. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orga6204d7" class="outline-2">
+<h2 id="orga6204d7">On a side Note - on cloud-native java vs. Golang</h2>
+<div class="outline-text-2" id="text-orga6204d7">
+<p>
+One of the things that I was continuously reading was the emergence
+of Golang. 
+</p>
+
+<p>
+Now that I understand better the Java ecosystem and that I am
+experiencing its transition and I understand better key benefits and
+drawbacks I understand why such language is emerging. 
+</p>
+
+<p>
+It is not simply a thing of the language itself. People are saying
+that is very easy to pick up etc. and is a very powerful language
+etc.
+</p>
+
+<p>
+Now that I am starting to understand better the IT landscape I am
+starting to understand that this is the sauce around the meat, not
+the meat itself. 
+</p>
+
+<p>
+Ecosystems develop. That is the important thing. And the ecosystem
+game is the one that signals if a language will win over the other
+or not. 
+</p>
+
+<p>
+And that is what is happening right now. The java ecosystem is
+moving as you can read above. And I guess it will not go away
+overnight as I see it in my working experience. It is much easier to
+modernize staying in the same language as completely switching. 
+</p>
+
+<p>
+That will be the most painful thing bounding an extreme amount of
+resource. No way to go.
+</p>
+
+<p>
+That said here <a href="https://medium.com/swlh/cloud-native-java-vs-golang-2a72c0531b05#:~:text=Both%2520the%2520golang%2520and%2520cloud,and%2520very%2520rarely%2520within%25207s.">an article</a> that goes a bit in that direction. You can
+read about it more when you have time. To make a precise idea about
+it will take lots of time though&#x2026;
+</p>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> <div class="footpara"><p class="footpara">
+I guess this will always change no matter if it is the first
+time you do a long transition from a monolith to microservices or
+not. 
+</p></div></div>
+
+
+</div>
+</div>

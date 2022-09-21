@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>When creating a home-made ML model | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/when-creating-a-home_made-ml-model/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../embedding-watson-assistant-into-a-client-webpage/" title="Embedding Watson Assistant into a Client Webpage" type="text/html">
+<link rel="next" href="../remotely-login-ssh-key/" title="Remotely Login - SSH Key" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="When creating a home-made ML model">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/when-creating-a-home_made-ml-model/">
+<meta property="og:description" content="In this post I go over some beginner mistake and set up the workflow for
+further works that involve some custom-created ML model.
+
+
+
+
+
+The Story…
+
+
+For a recent project I had to create a home-made ML ">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-04-22T15:34:50+02:00">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Sklearn">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">When creating a home-made ML model</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2020-04-22T15:34:50+02:00" itemprop="datePublished" title="2020-04-22 15:34">2020-04-22 15:34</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/machine-learning/" rel="tag">Machine Learning</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">Python</a></li>
+            <li><a class="tag p-category" href="../../categories/sklearn/" rel="tag">Sklearn</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+In this post I go over some beginner mistake and set up the workflow for
+further works that involve some custom-created ML model.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org2706de9" class="outline-2">
+<h2 id="org2706de9">The Story…</h2>
+<div class="outline-text-2" id="text-org2706de9">
+<p>
+For a recent project I had to create a home-made ML model. It turned
+out that after a month working on it I wanted to do some grid-search
+for tuning some hyperparameters.
+</p>
+
+<p>
+A self-constructed code snippet for doing that can be easily
+implemented via nested functions, or even a less cumbersome snippet
+using the <code>ParameterGrid</code> function in the <code>sklearn</code> package does the
+job:
+</p>
+
+<div class="highlight"><pre><span></span> <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">ParameterGrid</span>
+ <span class="kn">import</span> <span class="nn">tqdm</span>
+
+ <span class="n">grid_param</span> <span class="o">=</span> <span class="p">{</span>
+     <span class="s1">'hyp_weight_scale'</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> 
+     <span class="s1">'hyp_weight_scale_question'</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>
+     <span class="s1">'hyp_chosen_method'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'precision'</span><span class="p">,</span> <span class="s1">'f-measure'</span><span class="p">],</span>
+     <span class="s1">'hyp_ngram'</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
+     <span class="s1">'hyp_scale_one_leafs'</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+     <span class="s1">'hyp_mix_weight_dict1'</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+ <span class="p">}</span>
+
+ <span class="n">hyp_grid</span> <span class="o">=</span> <span class="n">ParameterGrid</span><span class="p">(</span><span class="n">grid_param</span><span class="p">)</span>
+ <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">hyp_grid</span><span class="p">))</span>
+
+ <span class="n">best_score</span> <span class="o">=</span> <span class="mi">0</span>
+
+ <span class="k">for</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">hyp_grid</span><span class="p">):</span>
+
+     <span class="n">hyp_score</span> <span class="o">=</span> <span class="c1">#&lt;your function&gt;#</span>
+
+     <span class="k">if</span> <span class="n">hyp_score</span> <span class="o">&gt;</span> <span class="n">best_score</span><span class="p">:</span>
+	 <span class="n">best_param</span> <span class="o">=</span> <span class="n">params</span>
+	 <span class="n">best_score</span> <span class="o">=</span> <span class="n">hyp_score</span>
+</pre></div>
+
+
+<p>
+I wanted something quicker. After all, the full mash of the above
+hyperparameters resulted in 1008 combinations and the function to
+maximize was quite computationally intense. 
+</p>
+
+<p>
+Non-linear optimazion was at the time an overkill as I had no idea on
+the functional shape of the target and wanted to understand first how
+the function was reacting to some parameters tuning.
+</p>
+
+<p>
+While the ParameterGrid function just removed some verbose lines from
+the code, the above hyperparamter grid search above cannot compare to
+the many well thought implementations.
+</p>
+
+<p>
+The correct logic is mostly the one of <a href="https://en.wikipedia.org/wiki/Standing_on_the_shoulders_of_giants">standing on giant's
+shoulders</a>. Therefore, I wanted to integrate my home made function
+with the sklearn library to leverage the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html">GridsearchCV function</a> to
+distribute the processing on the 16 cores of my PC.
+</p>
+
+<p>
+It turned out that to do that was quite nasty. I would have to
+rewrite my entire function respecting the sklearn logic and API
+<a href="https://scikit-learn.org/dev/developers/develop.html">discussed here</a>. Under strict time constraint for delivering a new
+release I had to postpone that. I therefore decided to rely on
+non-linear optimization for finding the optimal hyperparameters using
+the <code>powell algorithm</code>. 
+</p>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-orgb4678c9" class="outline-2">
+<h2 id="orgb4678c9">Lesson Learned</h2>
+<div class="outline-text-2" id="text-orgb4678c9">
+<p>
+Whenever you start a big project it is not only worthy to spend a
+lot of time looking at the different approaches to eventually
+converge on one. It is rather as well important as to think in
+terms of embedding your model in the bigger existing
+ML-frameworks. 
+</p>
+
+<p>
+This will allow to access and use out of the box the many valuable
+functions available on the framework - be it at testing,
+preprocessing or tuning time -.
+</p>
+
+<p>
+Apart from the specific example mentioned above, it is clear that
+when embedding your model into the bigger frameworks you can even
+leverage the transformations available for creating your <code>data
+   pipelines</code>.
+</p>
+
+<p>
+A final point, that is worth to stress as a further important
+lesson learned is that embedding your model into a framework does
+not simply give you an edge by providing you with a very vast set
+of functions. It also tight you to the logic of the framework. 
+</p>
+
+<p>
+It was then clear to me after reading of the sklearn API and how
+all of the models are implemented there, that the logic of all of
+the ML models is clearly split into its four components:
+</p>
+
+<ul class="org-ul">
+<li>estimator   - this is the first class citizen that instantiate
+your model with the hyperparameters and the 
+fitted, available, data.
+End of the story. For the prediction you have a
+separate layer.</li>
+
+<li>predictor   - your ML model prediction</li>
+
+<li>transformer - for creating data pipelines</li>
+
+<li>model       - a module where you implement some goodness of fit.</li>
+</ul>
+<p>
+By using a framework API you hence, also inherit by product the
+logical level of the framework models. This might make you more
+aware of the different components of your model.
+</p>
+
+<p>
+Finally, once you understand the mathematical fundamentals of the
+models available in the framework it is now clear to me that the
+best way to learn a framework is learning its API and therefore its
+ordered logic workflow. Master the API and you will master the
+framework.
+</p>
+
+<p>
+In this sense, it would be a helpful exercise for you in the future
+to have a look at the <a href="https://databricks.com/session/extending-spark-machine-learning-adding-your-own-algorithms-and-tools">pyspark API</a> and try to integrate a demo ML
+algo there. This is left as a todo for times with more spare time.
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../embedding-watson-assistant-into-a-client-webpage/" rel="prev" title="Embedding Watson Assistant into a Client Webpage">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../remotely-login-ssh-key/" rel="next" title="Remotely Login - SSH Key">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

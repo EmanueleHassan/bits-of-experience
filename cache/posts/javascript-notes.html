@@ -1,0 +1,1641 @@
+<p>
+The time has come. It is the moment to start learning javascript. This
+is a quite fundamental technology. No need to tell you why. Everyone
+knows it.
+</p>
+
+<p>
+For a project I might use <code>Node.js</code>. We will decide next week
+but in the meanwhile I will take 1-2h now to explore javascript. 
+</p>
+
+<p>
+Note that these notes, are mainly taken from Javascript the Definitive
+Guide - 7th edition.
+</p>
+
+<p>
+After all it is quite standard and easy. The only particular thing is
+the asynchronous javascript. But after your course on distributed
+systems algo it should be no difficulty to make sense of all of this.
+</p>
+
+<p>
+This is a must know language as being it the programming language of
+the web and with the rise of <code>Node.js</code> that brought it also out of the
+web into the backend it is by now the most used programming language
+among Software Developers.
+</p>
+
+<p>
+Update end of March - this project did not take of due to bureaucratic
+issues. Good is that for the next project I have the decision on the
+entire architecture and it turns out that I will also have to deal a
+bit with the front-end. So it was indeed a good idea to learn
+Javascript. Talked with a colleague that introduced my to Angular
+architecture. I mean I will never learn it at a level to write code in
+it as front-end is not my bread but at least I will be able to
+navigate and read the code and get an idea of how the front-end operates.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org2013ab0" class="outline-2">
+<h2 id="org2013ab0">Characteristics of Javascript</h2>
+<div class="outline-text-2" id="text-org2013ab0">
+<ul class="org-ul">
+<li>Javascript variables are untyped.</li>
+
+<li>To be useful, every language must have a platform, or <i>standard
+library</i>, for performing things like basic input and output. The
+core JavaScript language defines a minimal API for working with
+<b>numbers, text, arrays, sets, maps</b>, and so on, but <b>does not include
+any input or output</b> functionality. Input and output (as well as
+more sophisticated features, such as networking, storage, and
+graphics) are the responsibility of the “host environment” within
+which JavaScript is embedded.</li>
+
+<li>The original host environment for JavaScript was a web</li>
+
+<li>Since 2010, another host environment has been available for
+JavaScript code. Node gives JavaScript access to the entire
+operating system, allowing JavaScript programs to read and write
+files, send and receive data over the network, and make and serve
+HTTP requests.</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orge93c271" class="outline-2">
+<h2 id="orge93c271">First Quick Intro and Javascript in Org Babel</h2>
+<div class="outline-text-2" id="text-orge93c271">
+<p>
+Ok so usually people save their code into a javascript file, say
+<code>hello.js</code> and then would run it via shell as <code>node hello.js</code>.
+</p>
+
+<p>
+You can work in org babel in the following way.
+</p>
+
+<p>
+See for instance the following snippet that amounts to a print
+statement in python. Notice that the code will display on the
+REPL. So you have to work with this opened. Could not find a way to
+this stage to have a nicely formatted result in org-babel, directly
+in org mode.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="p">(</span><span class="s2">&quot;Hello world&quot;</span><span class="p">);</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="p">(</span><span class="s2">&quot;hello world&quot;</span><span class="p">);</span>
+<span class="nx">x</span> <span class="o">=</span> <span class="mf">3</span><span class="p">;</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1">// Anything following double slashes is an English-language comment.</span>
+<span class="c1">// Read the comments carefully: they explain the JavaScript code.</span>
+
+<span class="c1">// A variable is a symbolic name for a value.</span>
+<span class="c1">// Variables are declared with the let keyword:</span>
+<span class="kd">let</span> <span class="nx">x</span><span class="p">;</span>                     <span class="c1">// Declare a variable named x.</span>
+
+<span class="c1">// Values can be assigned to variables with an = sign</span>
+<span class="nx">x</span> <span class="o">=</span> <span class="mf">0</span><span class="p">;</span>                     <span class="c1">// Now the variable x has the value 0</span>
+<span class="nx">x</span>                          <span class="c1">// =&gt; 0: A variable evaluates to its value.</span>
+
+<span class="c1">// JavaScript supports several types of values</span>
+<span class="nx">x</span> <span class="o">=</span> <span class="mf">1</span><span class="p">;</span>                     <span class="c1">// Numbers.</span>
+<span class="nx">x</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">;</span>                  <span class="c1">// Numbers can be integers or reals.</span>
+<span class="nx">x</span> <span class="o">=</span> <span class="s2">&quot;hello world&quot;</span><span class="p">;</span>         <span class="c1">// Strings of text in quotation marks.</span>
+<span class="nx">x</span> <span class="o">=</span> <span class="s1">&#39;JavaScript&#39;</span><span class="p">;</span>          <span class="c1">// Single quote marks also delimit strings.</span>
+<span class="nx">x</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>                  <span class="c1">// A Boolean value.</span>
+<span class="nx">x</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>                 <span class="c1">// The other Boolean value.</span>
+<span class="nx">x</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>                  <span class="c1">// Null is a special value that means &quot;no value.&quot;</span>
+<span class="nx">x</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>             <span class="c1">// Undefined is another special value like null.</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgcd5b69f" class="outline-2">
+<h2 id="orgcd5b69f">JavaScript Citizens</h2>
+<div class="outline-text-2" id="text-orgcd5b69f">
+</div>
+
+
+<div id="outline-container-orgd5dbb14" class="outline-3">
+<h3 id="orgd5dbb14">Object</h3>
+<div class="outline-text-3" id="text-orgd5dbb14">
+<p>
+This is javascript most important datatype. It corresponds to the
+dictionary in python. It is a collection of name/value pairs, or a
+string to value  map
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kd">let</span> <span class="nx">book</span> <span class="o">=</span> <span class="p">{</span>               <span class="c1">// Objects are enclosed in curly braces.</span>
+       <span class="nx">topic</span><span class="o">:</span> <span class="s2">&quot;JavaScript&quot;</span><span class="p">,</span>   <span class="c1">// The property &quot;topic&quot; has value &quot;JavaScript.&quot;</span>
+       <span class="nx">edition</span><span class="o">:</span> <span class="mf">7</span>             <span class="c1">// The property &quot;edition&quot; has value 7</span>
+   <span class="p">};</span>                         <span class="c1">// The curly brace marks the end of the object.</span>
+
+   <span class="c1">// Access the properties of an object with . or []:</span>
+   <span class="nx">book</span><span class="p">.</span><span class="nx">topic</span>                 <span class="c1">// =&gt; &quot;JavaScript&quot;</span>
+   <span class="nx">book</span><span class="p">[</span><span class="s2">&quot;edition&quot;</span><span class="p">]</span>            <span class="c1">// =&gt; 7: another way to access property values.</span>
+   <span class="nx">book</span><span class="p">.</span><span class="nx">author</span> <span class="o">=</span> <span class="s2">&quot;Flanagan&quot;</span><span class="p">;</span>  <span class="c1">// Create new properties by assignment.</span>
+   <span class="nx">book</span><span class="p">.</span><span class="nx">contents</span> <span class="o">=</span> <span class="p">{};</span>        <span class="c1">// {} is an empty object with no properties.</span>
+   <span class="nx">book</span><span class="p">.</span><span class="nx">contents</span><span class="p">;</span>             <span class="c1">// retrieve empty object</span>
+</pre></div>
+
+<p>
+Note the following property - two objects are <b>never equal</b>
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{</span><span class="nx">x</span><span class="o">:</span> <span class="mf">1</span><span class="p">},</span> <span class="nx">p</span> <span class="o">=</span> <span class="p">{</span><span class="nx">x</span><span class="o">:</span> <span class="mf">1</span><span class="p">};</span>  <span class="c1">// Two objects with the same properties</span>
+   <span class="nx">o</span> <span class="o">===</span> <span class="nx">p</span>                      <span class="c1">// =&gt; false: distinct objects are never equal</span>
+   <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">[];</span>          <span class="c1">// Two distinct, empty arrays</span>
+   <span class="nx">a</span> <span class="o">===</span> <span class="nx">b</span>                      <span class="c1">// =&gt; false: distinct arrays are never equal</span>
+</pre></div>
+
+<p>
+Note however:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[];</span>   <span class="c1">// The variable a refers to an empty array.</span>
+   <span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">a</span><span class="p">;</span>    <span class="c1">// Now b refers to the same array.</span>
+   <span class="nx">b</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1</span><span class="p">;</span>     <span class="c1">// Mutate the array referred to by variable b.</span>
+   <span class="nx">a</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>          <span class="c1">// =&gt; 1: the change is also visible through variable a.</span>
+   <span class="nx">a</span> <span class="o">===</span> <span class="nx">b</span>       <span class="c1">// =&gt; true: a and b refer to the same object, so they are equal.</span>
+</pre></div>
+
+<p>
+Note that the <code>new</code> operator initializes a new object. The <code>new</code>
+keyword must be followed by a class/function invocation. Such a
+function is called a <i>constructor</i>.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1">// Example</span>
+   <span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="ow">new</span> <span class="nb">Object</span><span class="p">();</span>  <span class="c1">// Create an empty object: same as {}.</span>
+   <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="ow">new</span> <span class="nb">Array</span><span class="p">();</span>   <span class="c1">// Create an empty array: same as [].</span>
+</pre></div>
+</div>
+
+<div id="outline-container-orgd6f081d" class="outline-4">
+<h4 id="orgd6f081d">Object Inheritance</h4>
+<div class="outline-text-4" id="text-orgd6f081d">
+<p>
+This is again the very principle of object oriented programming
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1">// Example</span>
+
+    <span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{};</span>               <span class="c1">// o inherits object methods from Object.prototype - base class</span>
+    <span class="nx">o</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mf">1</span><span class="p">;</span>                  <span class="c1">// and it now has an own property x.</span>
+    <span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span> <span class="c1">// p inherits properties from o and Object.prototype</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="mf">2</span><span class="p">;</span>                  <span class="c1">// and has an own property y.</span>
+    <span class="kd">let</span> <span class="nx">q</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">p</span><span class="p">);</span> <span class="c1">// q inherits properties from p, o, and...</span>
+    <span class="nx">q</span><span class="p">.</span><span class="nx">z</span> <span class="o">=</span> <span class="mf">3</span><span class="p">;</span>                  <span class="c1">// ...Object.prototype and has an own property z.</span>
+    <span class="kd">let</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>     <span class="c1">// toString is inherited from Object.prototype</span>
+    <span class="nx">q</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">q</span><span class="p">.</span><span class="nx">y</span>                 <span class="c1">// =&gt; 3; x and y are inherited from o and p</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org8489ad1" class="outline-4">
+<h4 id="org8489ad1">Extending Objects</h4>
+<div class="outline-text-4" id="text-org8489ad1">
+<p>
+One intuitive way
+</p>
+
+
+<div class="highlight"><pre><span></span>    <span class="kd">let</span> <span class="nx">target</span> <span class="o">=</span> <span class="p">{</span><span class="nx">x</span><span class="o">:</span> <span class="mf">1</span><span class="p">},</span> <span class="nx">source</span> <span class="o">=</span> <span class="p">{</span><span class="nx">y</span><span class="o">:</span> <span class="mf">2</span><span class="p">,</span> <span class="nx">z</span><span class="o">:</span> <span class="mf">3</span><span class="p">};</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">key</span> <span class="k">of</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">source</span><span class="p">))</span> <span class="p">{</span>
+	<span class="nx">target</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">source</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="nx">target</span>  <span class="c1">// =&gt; {x: 1, y: 2, z: 3}</span>
+</pre></div>
+
+
+<p>
+The JavaScript way; the methods <code>assign</code> and <code>extend</code>. It is
+impressive to see every time how much python and JavaScript are
+related.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf70816b" class="outline-3">
+<h3 id="orgf70816b">Arrays</h3>
+<div class="outline-text-3" id="text-orgf70816b">
+<p>
+Standard stuff. Same as python lists
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1">// JavaScript also supports arrays (numerically indexed lists) of values:</span>
+   <span class="kd">let</span> <span class="nx">primes</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="mf">7</span><span class="p">];</span> <span class="c1">// An array of 4 values, delimited with [ and ].</span>
+   <span class="nx">primes</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>                  <span class="c1">// =&gt; 2: the first element (index 0) of the array.</span>
+   <span class="nx">primes</span><span class="p">.</span><span class="nx">length</span>              <span class="c1">// =&gt; 4: how many elements in the array.</span>
+   <span class="nx">primes</span><span class="p">[</span><span class="nx">primes</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>    <span class="c1">// =&gt; 7: the last element of the array.</span>
+   <span class="nx">primes</span><span class="p">[</span><span class="mf">4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">9</span><span class="p">;</span>             <span class="c1">// Add a new element by assignment.</span>
+   <span class="nx">primes</span><span class="p">[</span><span class="mf">4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">11</span><span class="p">;</span>            <span class="c1">// Or alter an existing element by assignment.</span>
+   <span class="kd">let</span> <span class="nx">empty</span> <span class="o">=</span> <span class="p">[];</span>            <span class="c1">// [] is an empty array with no elements.</span>
+   <span class="nx">empty</span><span class="p">.</span><span class="nx">length</span>               <span class="c1">// =&gt; 0</span>
+</pre></div>
+
+<p>
+Notice that Arrays and objects can hold other arrays and objects:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">points</span> <span class="o">=</span> <span class="p">[</span>             <span class="c1">// An array with 2 elements.</span>
+    <span class="p">{</span><span class="nx">x</span><span class="o">:</span> <span class="mf">0</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mf">0</span><span class="p">},</span>          <span class="c1">// Each element is an object.</span>
+    <span class="p">{</span><span class="nx">x</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mf">1</span><span class="p">}</span>
+<span class="p">];</span>
+<span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span>                 <span class="c1">// An object with 2 properties</span>
+    <span class="nx">trial1</span><span class="o">:</span> <span class="p">[[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">]],</span>  <span class="c1">// The value of each property is an array.</span>
+    <span class="nx">trial2</span><span class="o">:</span> <span class="p">[[</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">]]</span>   <span class="c1">// The elements of the arrays are arrays.</span>
+<span class="p">};</span>
+</pre></div>
+
+<p>
+So up to now very similar syntax to Python.
+</p>
+</div>
+
+
+<div id="outline-container-orgc37ef78" class="outline-4">
+<h4 id="orgc37ef78">Spreader Operator</h4>
+<div class="outline-text-4" id="text-orgc37ef78">
+<p>
+The spread operator <code>...</code>, to include the elements of one array
+within an array literal. I.e. it spreads the argument into your
+array. See for instance the following:
+</p>
+
+
+<div class="highlight"><pre><span></span>    <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">];</span>
+    <span class="nx">b</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="p">...</span><span class="nx">a</span><span class="p">,</span> <span class="mf">4</span><span class="p">];</span>  <span class="c1">// b == [0, 1, 2, 3, 4]</span>
+
+    <span class="c1">// vs</span>
+
+    <span class="nx">b</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="mf">4</span><span class="p">]</span> <span class="c1">// // b == [0, [1, 2, 3], 4]</span>
+</pre></div>
+
+<p>
+Notice that the operator can also be used to quickly create a copy
+of an object
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kd">let</span> <span class="nx">original</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">];</span>
+    <span class="kd">let</span> <span class="nx">copy</span> <span class="o">=</span> <span class="p">[...</span><span class="nx">original</span><span class="p">];</span>
+    <span class="nx">copy</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0</span><span class="p">;</span>  <span class="c1">// Modifying the copy does not change the original</span>
+    <span class="nx">original</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>   <span class="c1">// =&gt; 1</span>
+</pre></div>
+
+<p>
+Note moreover that the spread operator does not just work with
+arrays but rather with any iterable object. To understand this
+consider
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kd">let</span> <span class="nx">digits</span> <span class="o">=</span> <span class="p">[...</span><span class="s2">&quot;0123456789ABCDEF&quot;</span><span class="p">];</span>
+    <span class="nx">digits</span> <span class="c1">// =&gt; [&quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;,&quot;7&quot;,&quot;8&quot;,&quot;9&quot;,&quot;A&quot;,&quot;B&quot;,&quot;C&quot;,&quot;D&quot;,&quot;E&quot;,&quot;F&quot;]</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org7589979" class="outline-4">
+<h4 id="org7589979">Array Extension</h4>
+<div class="outline-text-4" id="text-org7589979">
+<p>
+This corresponds to the <code>[].extend()</code> method in Python.
+</p>
+
+<p>
+In JavaScript it is the <code>[].push()</code> method.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="nx">a</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">)</span> <span class="c1">// without assignment; returns 3</span>
+    <span class="nx">a</span> <span class="c1">// notice that it was updated. Returns [ &#39;a&#39;, &#39;b&#39;, &#39;c&#39; ]</span>
+</pre></div>
+
+<p>
+For deleting simply use the <code>delete</code> command
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="ow">delete</span> <span class="nx">a</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
+
+    <span class="nx">a</span> <span class="c1">// =&gt; [ &lt;1 empty item&gt;, &#39;b&#39;, &#39;c&#39; ]; length still 3.</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org6c6a221" class="outline-4">
+<h4 id="org6c6a221">forEach</h4>
+<div class="outline-text-4" id="text-org6c6a221">
+<p>
+It is the lambda functions and the <code>apply</code> logic in Python/R.
+</p>
+
+<p>
+I.e. it is an array method that offers a functional approach to
+array iteration.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1">// Example</span>
+    <span class="kd">let</span> <span class="nx">letters</span> <span class="o">=</span> <span class="p">[...</span><span class="s2">&quot;Hello world&quot;</span><span class="p">];</span>  <span class="c1">// An array of letters</span>
+
+    <span class="kd">let</span> <span class="nx">uppercase</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+    <span class="nx">letters</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">letter</span> <span class="p">=&gt;</span> <span class="p">{</span>  <span class="c1">// Note arrow function syntax here,</span>
+				 <span class="c1">// i.e. input letter maps to ... Note</span>
+				 <span class="c1">// that the input is given by the forEach</span>
+				 <span class="c1">// method</span>
+	<span class="nx">uppercase</span> <span class="o">+=</span> <span class="nx">letter</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">();</span>
+    <span class="p">});</span>
+    <span class="nx">uppercase</span>  <span class="c1">// =&gt; &quot;HELLO WORLD&quot;</span>
+
+    <span class="c1">// Example 2</span>
+
+    <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">],</span> <span class="nx">sum</span> <span class="o">=</span> <span class="mf">0</span><span class="p">;</span>
+    <span class="c1">// Compute the sum of the elements of the array</span>
+    <span class="nx">data</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">value</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">value</span><span class="p">;</span> <span class="p">});</span>          <span class="c1">// sum == 15</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orge9132f0" class="outline-4">
+<h4 id="orge9132f0">Map</h4>
+<div class="outline-text-4" id="text-orge9132f0">
+<p>
+That is the same as the map method in python. It passes each
+element of the array on which it is invoked to the function you
+specify.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1">// Example</span>
+    <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">];</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span><span class="o">*</span><span class="nx">x</span><span class="p">)</span>   <span class="c1">// =&gt; [1, 4, 9]: the function takes input x and returns x*x</span>
+
+
+    <span class="c1">// so that is ultimately similar in funcition to the forEach method</span>
+    <span class="c1">// see for instance</span>
+    <span class="nx">bx</span> <span class="o">=</span> <span class="p">[];</span> <span class="nx">a</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="p">{</span><span class="nx">bx</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">x</span><span class="o">*</span><span class="nx">x</span><span class="p">)})</span>
+
+    <span class="nx">bx</span> <span class="c1">// =&gt; [1, 4, 9]</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org0494b34" class="outline-4">
+<h4 id="org0494b34">Filter</h4>
+<div class="outline-text-4" id="text-org0494b34">
+<p>
+Filter is also very intuitive and similar to the one you use in
+python
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">1</span><span class="p">];</span>
+    <span class="c1">// note that you pass a function that should return either true or false, so a boolean</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span> <span class="o">&lt;</span> <span class="mf">3</span><span class="p">)</span>         <span class="c1">// =&gt; [2, 1]; values less than 3</span>
+
+    <span class="c1">// note that here the i is the index.</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">filter</span><span class="p">((</span><span class="nx">x</span><span class="p">,</span><span class="nx">i</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">i</span><span class="o">%</span><span class="mf">2</span> <span class="o">===</span> <span class="mf">0</span><span class="p">)</span> <span class="c1">// =&gt; [5, 3, 1]; every other value</span>
+
+    <span class="c1">// in order to see this check the following</span>
+    <span class="nx">bx</span> <span class="o">=</span> <span class="p">[];</span> <span class="nx">a</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">x</span><span class="p">,</span><span class="nx">i</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">bx</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
+    <span class="nx">bx</span> <span class="c1">// =&gt; [ 0, 1, 2, 3, 4 ]</span>
+</pre></div>
+
+
+<p>
+To skip missing values in a sparse array you can also use the
+<code>filter</code> command, filtering out all of the empty entries
+</p>
+
+<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">sparse</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,,,,</span><span class="mf">4</span><span class="p">]</span>
+
+<span class="nx">bx</span> <span class="o">=</span> <span class="nx">sparse</span><span class="p">.</span><span class="nx">filter</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="kc">true</span><span class="p">)</span>
+
+<span class="nx">bx</span> <span class="c1">// =&gt; [1, 4]</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org1383616" class="outline-4">
+<h4 id="org1383616">Find &amp; Findindex</h4>
+<div class="outline-text-4" id="text-org1383616">
+<p>
+The find() and findIndex() methods are like filter() in that they
+iterate through your array looking for elements for which your
+predicate function returns a truthy value. Unlike filter(),
+however, these two methods <b>stop iterating the first time the
+predicate finds an element</b>.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">];</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span> <span class="o">===</span> <span class="mf">3</span><span class="p">)</span>  <span class="c1">// =&gt; 2; the value 3 appears at index 2</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span> <span class="o">&lt;</span> <span class="mf">0</span><span class="p">)</span>    <span class="c1">// =&gt; -1; no negative numbers in the array</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span> <span class="o">%</span> <span class="mf">5</span> <span class="o">===</span> <span class="mf">0</span><span class="p">)</span>   <span class="c1">// =&gt; 5: this is a multiple of 5</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span> <span class="o">%</span> <span class="mf">7</span> <span class="o">===</span> <span class="mf">0</span><span class="p">)</span>   <span class="c1">// =&gt; undefined: no multiples of 7 in the array</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbf2b699" class="outline-4">
+<h4 id="orgbf2b699">Every and Some</h4>
+<div class="outline-text-4" id="text-orgbf2b699">
+<p>
+The <code>every()</code> and <code>some()</code> methods are array predicates: they
+apply a predicate function you specify to the elements of the
+array, then return true or false.
+</p>
+
+<p>
+<code>every()</code> returns true if the condition holds for all of the
+values.
+</p>
+
+<p>
+<code>some()</code> returns true if just for at least 1 value the condition
+holds true.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1">// every</span>
+    <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">];</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span> <span class="o">&lt;</span> <span class="mf">10</span><span class="p">)</span>      <span class="c1">// =&gt; true: all values are &lt; 10.</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span> <span class="o">%</span> <span class="mf">2</span> <span class="o">===</span> <span class="mf">0</span><span class="p">)</span> <span class="c1">// =&gt; false: not all values are even.</span>
+
+    <span class="c1">// some</span>
+    <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">];</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span><span class="o">%</span><span class="mf">2</span><span class="o">===</span><span class="mf">0</span><span class="p">)</span>  <span class="c1">// =&gt; true; a has some even numbers.</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="nb">isNaN</span><span class="p">)</span>         <span class="c1">// =&gt; false; a has no non-numbers.</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orga180760" class="outline-4">
+<h4 id="orga180760">Reduce</h4>
+<div class="outline-text-4" id="text-orga180760">
+<p>
+Here again is the same as in python and together with map you are
+back to your favourite Map-Reduce framework.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">];</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">x</span><span class="p">,</span><span class="nx">y</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">x</span><span class="o">+</span><span class="nx">y</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>          <span class="c1">// =&gt; 15; the sum of the values</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">x</span><span class="p">,</span><span class="nx">y</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">x</span><span class="o">*</span><span class="nx">y</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>          <span class="c1">// =&gt; 120; the product of the values</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">x</span><span class="p">,</span><span class="nx">y</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">y</span><span class="p">)</span> <span class="o">?</span> <span class="nx">x</span> <span class="o">:</span> <span class="nx">y</span><span class="p">)</span> <span class="c1">// =&gt; 5; the largest of the values</span>
+
+    <span class="c1">// recall thatt the paradigm is to combine two sequentially.</span>
+
+    <span class="c1">// note the syntax! the 0 and 1 after the comma above are the</span>
+    <span class="c1">// initializers values. The first argument is the accumulated result</span>
+    <span class="c1">// of the reduction so far.  On the first call to the function, this</span>
+    <span class="c1">// first argument is the initial value you passed as the second</span>
+    <span class="c1">// argument to reduce(). On subsequent calls, it is the value returned</span>
+    <span class="c1">// by the previous invocation of the function.</span>
+
+    <span class="c1">// Note that in the third example above there is no intializer.  When</span>
+    <span class="c1">// you invoke reduce() like this with no initial value, it uses the</span>
+    <span class="c1">// first element of the array as the initial value.</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgcb450db" class="outline-4">
+<h4 id="orgcb450db">Flat</h4>
+<div class="outline-text-4" id="text-orgcb450db">
+<p>
+In ES2019, the <code>flat()</code> method creates and returns a new array that
+contains the same elements as the array it is called on, except
+that any elements that are themselves arrays are “flattened” into
+the returned array. For example:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">]].</span><span class="nx">flat</span><span class="p">()</span>    <span class="c1">// =&gt; [1, 2, 3]</span>
+    <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">3</span><span class="p">]]].</span><span class="nx">flat</span><span class="p">()</span>  <span class="c1">// =&gt; [1, 2, [3]]</span>
+
+    <span class="c1">// and note moreover</span>
+
+    <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">3</span><span class="p">,</span> <span class="p">[</span><span class="mf">4</span><span class="p">]]]];</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">flat</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>   <span class="c1">// =&gt; [1, 2, [3, [4]]]</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">flat</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>   <span class="c1">// =&gt; [1, 2, 3, [4]]</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">flat</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>   <span class="c1">// =&gt; [1, 2, 3, 4]</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">flat</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span>   <span class="c1">// =&gt; [1, 2, 3, 4]</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org35b0170" class="outline-4">
+<h4 id="org35b0170">Flatmap</h4>
+<div class="outline-text-4" id="text-org35b0170">
+<p>
+Just works like the <code>flat()</code> function combining with a <code>map()</code>
+part.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kd">let</span> <span class="nx">phrases</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;hello world&quot;</span><span class="p">,</span> <span class="s2">&quot;the definitive guide&quot;</span><span class="p">];</span>
+    <span class="kd">let</span> <span class="nx">words</span> <span class="o">=</span> <span class="nx">phrases</span><span class="p">.</span><span class="nx">flatMap</span><span class="p">(</span><span class="nx">phrase</span> <span class="p">=&gt;</span> <span class="nx">phrase</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">));</span>
+    <span class="nx">words</span> <span class="c1">// =&gt; [&quot;hello&quot;, &quot;world&quot;, &quot;the&quot;, &quot;definitive&quot;, &quot;guide&quot;];</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4366eb4" class="outline-3">
+<h3 id="org4366eb4">Shorthand Arithmetics</h3>
+<div class="outline-text-3" id="text-org4366eb4">
+<div class="highlight"><pre><span></span>   <span class="c1">// JavaScript defines some shorthand arithmetic operators</span>
+   <span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="mf">0</span><span class="p">;</span>             <span class="c1">// Define a variable</span>
+   <span class="nx">count</span><span class="o">++</span><span class="p">;</span>                   <span class="c1">// Increment the variable. Weird for some</span>
+			      <span class="c1">// reason it returns the number before in</span>
+			      <span class="c1">// the REPL.</span>
+   <span class="nx">count</span><span class="o">--</span><span class="p">;</span>                   <span class="c1">// Decrement the variable</span>
+   <span class="nx">count</span> <span class="o">+=</span> <span class="mf">2</span><span class="p">;</span>                <span class="c1">// Add 2: same as count = count + 2;</span>
+   <span class="nx">count</span> <span class="o">*=</span> <span class="mf">3</span><span class="p">;</span>                <span class="c1">// Multiply by 3: same as count = count * 3;</span>
+   <span class="nx">count</span>                      <span class="c1">// =&gt; 6: variable names are expressions, too.</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgb0a5b1a" class="outline-3">
+<h3 id="orgb0a5b1a">Shorthand Declaration</h3>
+<div class="outline-text-3" id="text-orgb0a5b1a">
+<div class="highlight"><pre><span></span>   <span class="kd">let</span> <span class="p">[</span><span class="nx">x</span><span class="p">,</span><span class="nx">y</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">];</span>  <span class="c1">// Same as let x=1, y=2</span>
+   <span class="p">[</span><span class="nx">x</span><span class="p">,</span><span class="nx">y</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">x</span><span class="o">+</span><span class="mf">1</span><span class="p">,</span><span class="nx">y</span><span class="o">+</span><span class="mf">1</span><span class="p">];</span>  <span class="c1">// Same as x = x + 1, y = y + 1</span>
+   <span class="p">[</span><span class="nx">x</span><span class="p">,</span><span class="nx">y</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">y</span><span class="p">,</span><span class="nx">x</span><span class="p">];</span>      <span class="c1">// Swap the value of the two variables</span>
+   <span class="p">[</span><span class="nx">x</span><span class="p">,</span><span class="nx">y</span><span class="p">]</span>               <span class="c1">// =&gt; [3,2]: the incremented and swapped values</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgb9c8cfb" class="outline-3">
+<h3 id="orgb9c8cfb">Equality and Logical Operators</h3>
+<div class="outline-text-3" id="text-orgb9c8cfb">
+<p>
+Notice that in contrast to python here equality (strict equality
+without conversion) is expressed by triple <i><code>=</code></i>.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nx">x</span> <span class="o">=</span> <span class="mf">2</span><span class="p">;</span> <span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="mf">3</span><span class="p">;</span>          <span class="c1">// These = signs are assignment, not equality tests</span>
+   <span class="nx">x</span> <span class="o">===</span> <span class="nx">y</span><span class="p">;</span>                   <span class="c1">// =&gt; false: equality ;; notice that does</span>
+			      <span class="c1">// not type conversion.</span>
+</pre></div>
+
+<p>
+For the logical operators it hold
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1">// Logical operators combine or invert boolean values</span>
+   <span class="p">(</span><span class="nx">x</span> <span class="o">===</span> <span class="mf">2</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">y</span> <span class="o">===</span> <span class="mf">3</span><span class="p">)</span>     <span class="c1">// =&gt; true: both comparisons are true. &amp;&amp; is AND</span>
+   <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="mf">3</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&lt;</span> <span class="mf">3</span><span class="p">)</span>         <span class="c1">// =&gt; false: neither comparison is true. || is OR</span>
+   <span class="o">!</span><span class="p">(</span><span class="nx">x</span> <span class="o">===</span> <span class="nx">y</span><span class="p">)</span>                 <span class="c1">// =&gt; true: ! inverts a boolean value</span>
+</pre></div>
+
+
+<p>
+Notice that in Javascript there is also the usual equality. This is
+the <i>==</i> operator.
+</p>
+
+<p>
+The “strict equality operator,” <i><code>=</code></i>, does not consider its operands
+to be equal if they are not of the same type, and this is almost
+always the right operator to use when coding. But because
+JavaScript is so flexible with type conversions, it also defines
+the <i>==</i> operator with a flexible definition of equality. All of the
+following comparisons are true, for example:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kc">null</span> <span class="o">==</span> <span class="kc">undefined</span> <span class="c1">// =&gt; true: These two values are treated as equal.</span>
+   <span class="s2">&quot;0&quot;</span> <span class="o">==</span> <span class="mf">0</span>          <span class="c1">// =&gt; true: String converts to a number before comparing.</span>
+   <span class="mf">0</span> <span class="o">==</span> <span class="kc">false</span>        <span class="c1">// =&gt; true: Boolean converts to number before comparing.</span>
+   <span class="s2">&quot;0&quot;</span> <span class="o">==</span> <span class="kc">false</span>      <span class="c1">// =&gt; true: Both operands convert to 0 before comparing!</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org3052c5a" class="outline-3">
+<h3 id="org3052c5a">Casting</h3>
+<div class="outline-text-3" id="text-org3052c5a">
+<p>
+In contrast to this you can work with explicit conversions directly
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nb">Number</span><span class="p">(</span><span class="s2">&quot;3&quot;</span><span class="p">)</span>    <span class="c1">// =&gt; 3</span>
+   <span class="nb">String</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>  <span class="c1">// =&gt; &quot;false&quot;:  Or use false.toString()</span>
+   <span class="nb">Boolean</span><span class="p">([])</span>    <span class="c1">// =&gt; true</span>
+</pre></div>
+
+<p>
+Other more fancy conversion styles include
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nx">x</span> <span class="o">=</span> <span class="mf">3</span>
+   <span class="nx">x</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span>   <span class="c1">// =&gt; String(x)</span>
+   <span class="o">+</span><span class="nx">x</span>       <span class="c1">// =&gt; Number(x); i.e. back to a numeric variable</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org4fd27c8" class="outline-3">
+<h3 id="org4fd27c8">Functions Syntax</h3>
+<div class="outline-text-3" id="text-org4fd27c8">
+<div class="highlight"><pre><span></span>   <span class="kd">let</span> <span class="nx">square</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Functions are values and can be assigned to vars</span>
+       <span class="k">return</span> <span class="nx">x</span> <span class="o">*</span> <span class="nx">x</span><span class="p">;</span>          <span class="c1">// Compute the function&#39;s value</span>
+   <span class="p">};</span>                         <span class="c1">// Semicolon marks the end of the assignment.</span>
+
+   <span class="nx">square</span><span class="p">(</span><span class="nx">y</span><span class="p">)</span>                  <span class="c1">// =&gt; 9: invoke the function above</span>
+</pre></div>
+
+<p>
+There is also a shorthand notation for defining functions. Think of
+it as a lambda function in python.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kd">const</span> <span class="nx">square</span> <span class="o">=</span> <span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span> <span class="o">*</span> <span class="nx">x</span><span class="p">;</span>  <span class="c1">// The input x maps to the output x * x</span>
+
+   <span class="nx">square</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span>                   <span class="c1">// =&gt; 16</span>
+</pre></div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgc8bc5b3" class="outline-3">
+<h3 id="orgc8bc5b3">Methods</h3>
+<div class="outline-text-3" id="text-orgc8bc5b3">
+<p>
+When functions are assigned to the properties of an object, we call
+them "methods." Notice that in javascript it is not necessary to go
+as far as OOP to specifiy methods. Note that this is quite a cool
+feature of Javascript that is not shared with Python.
+</p>
+
+<p>
+All JavaScript objects (including arrays) have methods:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[];</span>                <span class="c1">// Create an empty array</span>
+   <span class="nx">a</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">);</span>             <span class="c1">// The push() method adds elements to an array</span>
+   <span class="nx">a</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>               <span class="c1">// Another method: reverse the order of elements</span>
+</pre></div>
+
+<p>
+We can define our own methods, too.
+</p>
+
+<p>
+The "this" keyword refers to the object on which the method is
+defined: in this case, the points array from earlier. I.e. the
+points object we previously defined.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nx">points</span><span class="p">.</span><span class="nx">dist</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// Define a method to compute distance between points</span>
+    <span class="kd">let</span> <span class="nx">p1</span> <span class="o">=</span> <span class="k">this</span><span class="p">[</span><span class="mf">0</span><span class="p">];</span>      <span class="c1">// First element of array we&#39;re invoked on</span>
+    <span class="kd">let</span> <span class="nx">p2</span> <span class="o">=</span> <span class="k">this</span><span class="p">[</span><span class="mf">1</span><span class="p">];</span>      <span class="c1">// Second element of the &quot;this&quot; object</span>
+    <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">p2</span><span class="p">.</span><span class="nx">x</span><span class="o">-</span><span class="nx">p1</span><span class="p">.</span><span class="nx">x</span><span class="p">;</span>     <span class="c1">// Difference in x coordinates</span>
+    <span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">p2</span><span class="p">.</span><span class="nx">y</span><span class="o">-</span><span class="nx">p1</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span>     <span class="c1">// Difference in y coordinates</span>
+    <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span><span class="nx">a</span><span class="o">*</span><span class="nx">a</span> <span class="o">+</span> <span class="c1">// The Pythagorean theorem</span>
+		     <span class="nx">b</span><span class="o">*</span><span class="nx">b</span><span class="p">);</span> <span class="c1">// Math.sqrt() computes the square root</span>
+<span class="p">};</span>
+<span class="nx">points</span><span class="p">.</span><span class="nx">dist</span><span class="p">()</span>              <span class="c1">// =&gt; Math.sqrt(2): distance between our 2 points</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orga08f70e" class="outline-3">
+<h3 id="orga08f70e">Flow control in Javascript</h3>
+<div class="outline-text-3" id="text-orga08f70e">
+<p>
+Just notice the syntax
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kd">function</span> <span class="nx">abs</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>          <span class="c1">// A function to compute the absolute value.</span>
+       <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;=</span> <span class="mf">0</span><span class="p">)</span> <span class="p">{</span>          <span class="c1">// The if statement...</span>
+	   <span class="k">return</span> <span class="nx">x</span><span class="p">;</span>          <span class="c1">// executes this code if the comparison is true.</span>
+       <span class="p">}</span>                      <span class="c1">// This is the end of the if clause.</span>
+       <span class="k">else</span> <span class="p">{</span>                 <span class="c1">// The optional else clause executes its code if</span>
+	   <span class="k">return</span> <span class="o">-</span><span class="nx">x</span><span class="p">;</span>         <span class="c1">// the comparison is false.</span>
+       <span class="p">}</span>                      <span class="c1">// Curly braces optional when 1 statement per clause.</span>
+   <span class="p">}</span>                          <span class="c1">// Note return statements nested inside if/else.</span>
+   <span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mf">10</span><span class="p">)</span> <span class="o">===</span> <span class="nx">abs</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>       <span class="c1">// =&gt; true</span>
+
+   <span class="kd">function</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">array</span><span class="p">)</span> <span class="p">{</span>      <span class="c1">// Compute the sum of the elements of an array</span>
+       <span class="kd">let</span> <span class="nx">sum</span> <span class="o">=</span> <span class="mf">0</span><span class="p">;</span>           <span class="c1">// Start with an initial sum of 0.</span>
+       <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">x</span> <span class="k">of</span> <span class="nx">array</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// Loop over array, assigning each element to x. Same as =for i in array= in Python.</span>
+	   <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">x</span><span class="p">;</span>          <span class="c1">// Add the element value to the sum.</span>
+       <span class="p">}</span>                      <span class="c1">// This is the end of the loop.</span>
+       <span class="k">return</span> <span class="nx">sum</span><span class="p">;</span>            <span class="c1">// Return the sum.</span>
+   <span class="p">}</span>
+   <span class="nx">sum</span><span class="p">(</span><span class="nx">primes</span><span class="p">)</span>                <span class="c1">// =&gt; 28: sum of the first 5 primes 2+3+5+7+11</span>
+
+   <span class="kd">function</span> <span class="nx">factorial</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>    <span class="c1">// A function to compute factorials</span>
+       <span class="kd">let</span> <span class="nx">product</span> <span class="o">=</span> <span class="mf">1</span><span class="p">;</span>       <span class="c1">// Start with a product of 1</span>
+       <span class="k">while</span><span class="p">(</span><span class="nx">n</span> <span class="o">&gt;</span> <span class="mf">1</span><span class="p">)</span> <span class="p">{</span>         <span class="c1">// Repeat statements in {} while expr in () is true</span>
+	   <span class="nx">product</span> <span class="o">*=</span> <span class="nx">n</span><span class="p">;</span>      <span class="c1">// Shortcut for product = product * n;</span>
+	   <span class="nx">n</span><span class="o">--</span><span class="p">;</span>               <span class="c1">// Shortcut for n = n - 1</span>
+       <span class="p">}</span>                      <span class="c1">// End of loop</span>
+       <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>        <span class="c1">// Return the product</span>
+   <span class="p">}</span>
+   <span class="nx">factorial</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span>               <span class="c1">// =&gt; 24: 1*4*3*2</span>
+
+   <span class="kd">function</span> <span class="nx">factorial2</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>   <span class="c1">// Another version using a different loop</span>
+       <span class="kd">let</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">product</span> <span class="o">=</span> <span class="mf">1</span><span class="p">;</span>    <span class="c1">// Start with 1</span>
+       <span class="k">for</span><span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mf">2</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span>  <span class="c1">// Automatically increment i from 2 up to n</span>
+	   <span class="nx">product</span> <span class="o">*=</span> <span class="nx">i</span><span class="p">;</span>      <span class="c1">// Do this each time. {} not needed for 1-line loops</span>
+       <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>        <span class="c1">// Return the factorial</span>
+   <span class="p">}</span>
+   <span class="nx">factorial2</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>              <span class="c1">// =&gt; 120: 1*2*3*4*5</span>
+</pre></div>
+</div>
+
+<div id="outline-container-org5ea72c5" class="outline-4">
+<h4 id="org5ea72c5">On Using Const in Loops</h4>
+<div class="outline-text-4" id="text-org5ea72c5">
+<p>
+This is handy and it is a further guarantee that you will not mess
+up with the variable when looping.
+</p>
+
+<p>
+It may seem surprising, but you can also use const to declare the
+loop “variables” for for/in and for/of loops, as long as the body
+of the loop does not reassign a new value. In this case, the const
+declaration is just saying that the value is <b>constant for the
+duration of one loop iteration</b>:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1">// Example</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">const</span> <span class="nx">datum</span> <span class="k">of</span> <span class="nx">data</span><span class="p">)</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">datum</span><span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">const</span> <span class="nx">property</span> <span class="ow">in</span> <span class="nx">object</span><span class="p">)</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">property</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgf605f9e" class="outline-4">
+<h4 id="orgf605f9e">For/in loops</h4>
+<div class="outline-text-4" id="text-orgf605f9e">
+<p>
+A for/in loop looks a lot like a for/of loop, with the of keyword
+changed to in. While a for/of loop requires an iterable object after
+the of, a for/in loop works with any object after the in.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">x</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mf">2</span><span class="p">,</span> <span class="nx">z</span><span class="o">:</span> <span class="mf">3</span> <span class="p">};</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">element</span> <span class="ow">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Throws TypeError because o is not iterable</span>
+	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span> 
+    <span class="p">}</span> <span class="c1">// =&gt;  : x : y : z</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org5831f54" class="outline-4">
+<h4 id="org5831f54">Jumps</h4>
+<div class="outline-text-4" id="text-org5831f54">
+<p>
+Notice that you can <b>name</b> statements in Javascript. That is
+quite a cool and particular characteristic.
+</p>
+
+<p>
+You can then use the classical <code>continue</code>, <code>break</code> statements
+etc.
+</p>
+
+<p>
+Think for instance to the following example
+</p>
+
+<div class="highlight"><pre><span></span><span class="nx">mainloop</span><span class="o">:</span> <span class="k">while</span><span class="p">(</span><span class="nx">token</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Code omitted...</span>
+    <span class="k">continue</span> <span class="nx">mainloop</span><span class="p">;</span>  <span class="c1">// Jump to the next iteration of the named loop</span>
+    <span class="c1">// More code omitted...</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>
+You need the labeled form of the jump statement when you want to
+break out of a statement that is not the nearest enclosing loop.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org14ddab7" class="outline-3">
+<h3 id="org14ddab7">Conditional Property Access</h3>
+<div class="outline-text-3" id="text-org14ddab7">
+<p>
+Note that <b>ES2020</b> (check well and be sure you have it) adds two
+new kinds of property access expressions:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="nx">expression</span><span class="o">?</span><span class="p">.</span><span class="nx">identifier</span>
+
+     <span class="c1">// and</span>
+
+     <span class="nx">expression</span><span class="o">?</span><span class="p">.[</span><span class="nx">expression</span><span class="p">]</span>
+</pre></div>
+
+<p>
+In JavaScript, the values null and undefined are the only two values
+that do not have properties. In a regular property access expression
+using . or [], you get a TypeError if the expression on the left
+evaluates to null or undefined. You can use <code>?.</code> and <code>?.[]</code> syntax to
+guard against errors of this type.
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="c1">// example</span>
+    <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">b</span><span class="o">:</span> <span class="kc">null</span> <span class="p">};</span>
+    <span class="nx">a</span><span class="p">.</span><span class="nx">b</span><span class="o">?</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">d</span>   <span class="c1">// =&gt; undefined</span>
+</pre></div>
+
+<p>
+Note that this might be handy for having shortcut notation when
+using <b>optional functions</b>. Think for instance to the following
+situation:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">square</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">log</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// The second argument is an optional function</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">log</span><span class="p">)</span> <span class="p">{</span>            <span class="c1">// If the optional function is passed</span>
+	<span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>           <span class="c1">// Invoke it</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">x</span> <span class="o">*</span> <span class="nx">x</span><span class="p">;</span>         <span class="c1">// Return the square of the argument</span>
+<span class="p">}</span>
+
+<span class="c1">// skip the invocation next</span>
+<span class="kd">function</span> <span class="nx">square</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">log</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// The second argument is an optional function</span>
+    <span class="nx">log</span><span class="o">?</span><span class="p">.(</span><span class="nx">x</span><span class="p">);</span>             <span class="c1">// Call the function if there is one</span>
+    <span class="k">return</span> <span class="nx">x</span> <span class="o">*</span> <span class="nx">x</span><span class="p">;</span>         <span class="c1">// Return the square of the argument</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>
+I.e. the above is handy if you want to use conditional variables
+representing functions.
+</p>
+
+<p>
+Note, however, that ?.() only checks whether the lefthand side is
+null or undefined. It <b>does not verify that the value is actually
+a function</b>. So the square() function in this example would still
+throw an exception if you passed two numbers to it, for example.
+</p>
+
+<p>
+Note moreover that the conditional invocation is
+short-circuiting, that is:
+</p>
+
+<div class="highlight"><pre><span></span>     <span class="kd">let</span> <span class="nx">f</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">x</span> <span class="o">=</span> <span class="mf">0</span><span class="p">;</span>
+     <span class="k">try</span> <span class="p">{</span>
+	 <span class="nx">f</span><span class="p">(</span><span class="nx">x</span><span class="o">++</span><span class="p">);</span> <span class="c1">// Throws TypeError because f is null</span>
+     <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+	 <span class="nx">x</span>       <span class="c1">// =&gt; 1: x gets incremented before the exception is thrown</span>
+     <span class="p">}</span>
+     <span class="nx">f</span><span class="o">?</span><span class="p">.(</span><span class="nx">x</span><span class="o">++</span><span class="p">)</span>    <span class="c1">// =&gt; undefined: f is null, but no exception thrown</span>
+     <span class="nx">x</span>           <span class="c1">// =&gt; 1: increment is skipped because of short-circuiting</span>
+</pre></div>
+
+<p>
+Conditional invocation expressions with ?.() <b>work just as well
+for methods as they do for functions</b>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org769c6e5" class="outline-3">
+<h3 id="org769c6e5">Variables Scope</h3>
+<div class="outline-text-3" id="text-org769c6e5">
+<p>
+The scope of a variable is the region of your program source code in
+which it is defined. Variables and constants declared with let and
+const are block scoped. This means that they are only defined within
+the block of code in which the let or const statement
+appears.
+</p>
+
+<p>
+JavaScript class and function definitions are blocks, and so are the
+bodies of if/else statements, while loops, for loops, and so on.
+</p>
+
+<p>
+Roughly speaking, if a variable or constant is declared within a set
+of curly braces, then those curly braces delimit the region of code in
+which the variable or constant is defined.
+</p>
+
+<p>
+When a declaration appears at the top level, outside of any code
+blocks, we say it is a global variable or constant and has global
+scope.
+</p>
+
+<p>
+In <code>Node</code> and in client-side JavaScript modules (see Chapter
+10), the scope of a global variable is the <b>file that it is defined
+in</b>.
+</p>
+
+<p>
+In traditional client-side JavaScript, however, the scope of a
+global variable is the <b>HTML document</b> in which it is defined. That
+is: if one &lt;script&gt; declares a global variable or constant, that
+variable or constant is defined in all of the &lt;script&gt; elements in
+that document (or at least all of the scripts that execute after
+the let or const statement executes).
+</p>
+</div>
+
+<div id="outline-container-org5298c10" class="outline-4">
+<h4 id="org5298c10">Warning BAD PRACTICE</h4>
+<div class="outline-text-4" id="text-org5298c10">
+<p>
+It is a syntax error to use the <b>same name</b> with more than one let
+or const declaration <b>in the same scope</b>. It is legal (though a
+practice best avoided) to declare a new variable with the same
+name in a nested scope:
+</p>
+
+<div class="highlight"><pre><span></span>    <span class="kd">const</span> <span class="nx">x</span> <span class="o">=</span> <span class="mf">1</span><span class="p">;</span>        <span class="c1">// Declare x as a global constant</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">===</span> <span class="mf">1</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mf">2</span><span class="p">;</span>      <span class="c1">// Inside a block x can refer to a different value</span>
+	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span> <span class="c1">// Prints 2</span>
+    <span class="p">}</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>     <span class="c1">// Prints 1: we&#39;re back in the global scope now</span>
+    <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mf">3</span><span class="p">;</span>          <span class="c1">// ERROR! Syntax error trying to re-declare x</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc217379" class="outline-3">
+<h3 id="orgc217379">Var vs Let - Warning quite Different</h3>
+<div class="outline-text-3" id="text-orgc217379">
+<p>
+Variables declared with var <b>do not have block scope</b>. Instead, they
+are scoped to the body of the containing function no matter how
+deeply nested they are inside that function.
+</p>
+
+<p>
+If you use var outside of a function body, it declares a global
+variable. But global variables declared with var differ from
+globals declared with let in an important way. Globals declared
+with var are implemented as properties of the global object
+(§3.7). The global object can be referenced as globalThis.
+</p>
+
+<p>
+So if you write var x = 2; outside of a function, it is like you
+wrote globalThis.x = 2;
+</p>
+
+<p>
+Unlike variables declared with let, it is <b>legal to declare the
+same variable multiple times with var</b>. I.e. <code>let</code> one time and
+that was it.
+</p>
+
+<p>
+One of the most unusual features of var declarations is known as
+<code>hoisting</code>. When a variable is declared with var, the declaration is
+<i>lifted up (or “hoisted”) to the top of the enclosing function</i>. The
+initialization of the variable remains where you wrote it, but the
+definition of the variable moves to the top of the function.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org456f452" class="outline-3">
+<h3 id="org456f452">The <i>in</i> operator</h3>
+<div class="outline-text-3" id="text-org456f452">
+<p>
+Understand the following concepts
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kd">let</span> <span class="nx">point</span> <span class="o">=</span> <span class="p">{</span><span class="nx">x</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mf">1</span><span class="p">};</span>  <span class="c1">// Define an object</span>
+   <span class="s2">&quot;x&quot;</span> <span class="ow">in</span> <span class="nx">point</span>               <span class="c1">// =&gt; true: object has property named &quot;x&quot;</span>
+   <span class="s2">&quot;z&quot;</span> <span class="ow">in</span> <span class="nx">point</span>               <span class="c1">// =&gt; false: object has no &quot;z&quot; property.</span>
+   <span class="s2">&quot;toString&quot;</span> <span class="ow">in</span> <span class="nx">point</span>        <span class="c1">// =&gt; true: object inherits toString method</span>
+
+   <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span><span class="mf">7</span><span class="p">,</span><span class="mf">8</span><span class="p">,</span><span class="mf">9</span><span class="p">];</span>        <span class="c1">// An array with elements (indices) 0, 1, and 2</span>
+   <span class="s2">&quot;0&quot;</span> <span class="ow">in</span> <span class="nx">data</span>                <span class="c1">// =&gt; true: array has an element &quot;0&quot;</span>
+   <span class="mf">1</span> <span class="ow">in</span> <span class="nx">data</span>                  <span class="c1">// =&gt; true: numbers are converted to strings</span>
+   <span class="mf">3</span> <span class="ow">in</span> <span class="nx">data</span>                  <span class="c1">// =&gt; false: no element 3</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgb3d65d7" class="outline-3">
+<h3 id="orgb3d65d7">Instanceof</h3>
+<div class="outline-text-3" id="text-orgb3d65d7">
+<p>
+The instanceof operator expects a left-side operand that is an
+<b>object</b> and a right-side operand that identifies a <b>class</b> of
+objects.
+</p>
+
+<p>
+Some examples in this sense are:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kd">let</span> <span class="nx">d</span> <span class="o">=</span> <span class="ow">new</span> <span class="nb">Date</span><span class="p">();</span>  <span class="c1">// Create a new object with the Date() constructor</span>
+   <span class="nx">d</span> <span class="ow">instanceof</span> <span class="nb">Date</span>    <span class="c1">// =&gt; true: d was created with Date()</span>
+   <span class="nx">d</span> <span class="ow">instanceof</span> <span class="nb">Object</span>  <span class="c1">// =&gt; true: all objects are instances of Object</span>
+   <span class="nx">d</span> <span class="ow">instanceof</span> <span class="nb">Number</span>  <span class="c1">// =&gt; false: d is not a Number object</span>
+   <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">];</span>   <span class="c1">// Create an array with array literal syntax</span>
+   <span class="nx">a</span> <span class="ow">instanceof</span> <span class="nb">Array</span>   <span class="c1">// =&gt; true: a is an array</span>
+   <span class="nx">a</span> <span class="ow">instanceof</span> <span class="nb">Object</span>  <span class="c1">// =&gt; true: all arrays are objects</span>
+   <span class="nx">a</span> <span class="ow">instanceof</span> <span class="nb">RegExp</span>  <span class="c1">// =&gt; false: arrays are not regular expressions</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgefc7955" class="outline-3">
+<h3 id="orgefc7955">Logical OR</h3>
+<div class="outline-text-3" id="text-orgefc7955">
+<p>
+Note the following usage of the OR operator <code>||</code>. Note that this is
+quite funny. You can avoid with it lengthy conditional statements.
+</p>
+
+<p>
+Should try to check also in Python how it looks with it.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1">// If maxWidth is truthy, use that. Otherwise, look for a value in</span>
+   <span class="c1">// the preferences object. If that is not truthy, use a hardcoded constant.</span>
+   <span class="kd">let</span> <span class="nx">max</span> <span class="o">=</span> <span class="nx">maxWidth</span> <span class="o">||</span> <span class="nx">preferences</span><span class="p">.</span><span class="nx">maxWidth</span> <span class="o">||</span> <span class="mf">500</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org8e8df00" class="outline-3">
+<h3 id="org8e8df00">The <i>eval</i> command</h3>
+<div class="outline-text-3" id="text-org8e8df00">
+<p>
+Note, this is another funny one. It says that it is common to many
+interpreted languages. You should check if this is the case in
+python as it might be handy as you might have the argument coming
+as a string in a loop that you can pass to a function in such a way
+using and <code>f-string</code>.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1">// example 1</span>
+   <span class="nx">x</span> <span class="o">=</span> <span class="mf">4</span><span class="p">;</span>
+   <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">);</span> <span class="c1">// =&gt; 4</span>
+
+   <span class="c1">// example 2</span>
+   <span class="kd">function</span> <span class="nx">f</span><span class="p">(</span><span class="nx">x</span><span class="p">){</span><span class="k">return</span> <span class="nx">x</span> <span class="o">*</span> <span class="mf">2</span><span class="p">};</span>
+   <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;f(4)&quot;</span><span class="p">);</span> <span class="c1">// =&gt; 8</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf78a9a4" class="outline-3">
+<h3 id="orgf78a9a4">Quick Intro to OOP in JavaScript</h3>
+<div class="outline-text-3" id="text-orgf78a9a4">
+<div class="highlight"><pre><span></span>   <span class="kd">class</span> <span class="nx">Point</span> <span class="p">{</span>              <span class="c1">// By convention, class names are capitalized.</span>
+
+       <span class="c1">// Notice the constructor below corresponds to the __init__ in python.</span>
+
+       <span class="kr">constructor</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>    <span class="c1">// Constructor function to initialize new instances.</span>
+	   <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>        <span class="c1">// This keyword is the new object being initialized.</span>
+	   <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>        <span class="c1">// Store function arguments as object properties.</span>
+       <span class="p">}</span>                      <span class="c1">// No return is necessary in constructor functions.</span>
+
+       <span class="c1">// Class Method </span>
+       <span class="nx">distance</span><span class="p">()</span> <span class="p">{</span>           <span class="c1">// Method to compute distance from origin to point.</span>
+	   <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span>  <span class="c1">// Return the square root of xÂ² + yÂ².</span>
+	       <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span>  <span class="c1">// this refers to the Point object on which</span>
+	       <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">y</span>    <span class="c1">// the distance method is invoked.</span>
+	   <span class="p">);</span>
+       <span class="p">}</span>
+   <span class="p">}</span>
+
+   <span class="c1">// Use the Point() constructor function with &quot;new&quot; to create Point objects</span>
+   <span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="ow">new</span> <span class="nx">Point</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">);</span>   <span class="c1">// The geometric point (1,1).</span>
+
+   <span class="c1">// Now use a method of the Point object p</span>
+   <span class="nx">p</span><span class="p">.</span><span class="nx">distance</span><span class="p">()</span>               <span class="c1">// =&gt; Math.SQRT2</span>
+</pre></div>
+
+<p>
+<b>Note:</b> Technically, it is only JavaScript objects that have
+methods. But numbers, strings, boolean, and symbol values behave as
+if they have methods. In JavaScript, null and undefined are the
+only values that methods cannot be invoked on.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgb20b3a0" class="outline-3">
+<h3 id="orgb20b3a0">Multiline Comments</h3>
+<div class="outline-text-3" id="text-orgb20b3a0">
+<div class="highlight"><pre><span></span><span class="cm">/*</span>
+<span class="cm"> * This is a multi-line comment. The extra * characters at the start of</span>
+<span class="cm"> * each line are not a required part of the syntax; they just look cool!</span>
+<span class="cm"> */</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org0aedd23" class="outline-3">
+<h3 id="org0aedd23">Constants</h3>
+<div class="outline-text-3" id="text-org0aedd23">
+<div class="highlight"><pre><span></span>   <span class="kd">const</span> <span class="nx">xx</span> <span class="o">=</span> <span class="mf">3</span><span class="p">;</span>
+
+   <span class="nx">xx</span> <span class="o">=</span> <span class="mf">4</span>  <span class="c1">// will throw an error. constants are ment to stay</span>
+	   <span class="c1">// constant. Nice feature missing from python</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org89fdef0" class="outline-3">
+<h3 id="org89fdef0">Strings</h3>
+<div class="outline-text-3" id="text-org89fdef0">
+<p>
+Note that strings are <b>immutable</b>. They are primitives
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nx">miele</span> <span class="o">=</span>  <span class="s1">&#39;miele&#39;</span>
+   <span class="nx">miele</span>                  <span class="c1">// =&gt; miele</span>
+
+   <span class="nx">miele</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>               <span class="c1">// =&gt; m</span>
+
+   <span class="nx">miele</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span>         <span class="c1">// does not throw an error but does not</span>
+			  <span class="c1">// update because of immutabilitiy.</span>
+
+   <span class="nx">miele</span>                  <span class="c1">// =&gt; miele</span>
+
+   <span class="c1">// Nonetheless you can change the entire string</span>
+
+   <span class="nx">miele</span> <span class="o">=</span> <span class="s2">&quot;latte&quot;</span>
+
+   <span class="nx">miele</span>                 <span class="c1">// =&gt; latte</span>
+
+   <span class="c1">// Another example</span>
+   <span class="kd">let</span> <span class="nx">s</span> <span class="o">=</span> <span class="s2">&quot;hello&quot;</span><span class="p">;</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">();</span>   <span class="c1">// Returns &quot;HELLO&quot;, but doesn&#39;t alter s</span>
+   <span class="nx">s</span>                  <span class="c1">// =&gt; &quot;hello&quot;: the original string has not changed</span>
+
+   <span class="c1">// so you can use the above and assign it to a new variable</span>
+   <span class="kd">let</span> <span class="nx">s1</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">();</span>
+   <span class="nx">s1</span>                 <span class="c1">// =&gt; &quot;HELLO&quot;</span>
+</pre></div>
+
+<p>
+Note the possible syntax
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1">// A string representing 2 lines written on one line:</span>
+   <span class="s1">&#39;two\nlines&#39;</span>
+
+   <span class="c1">// A one-line string written on 3 lines:</span>
+   <span class="s2">&quot;one\</span>
+<span class="s2">    long\</span>
+<span class="s2">    line&quot;</span>
+
+   <span class="c1">// A two-line string written on two lines:</span>
+   <span class="sb">`the newline character at the end of this line</span>
+<span class="sb">   is included literally in this string`</span>
+</pre></div>
+
+
+<p>
+On math operators in strings. Same as python.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kd">let</span> <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;Hello, &quot;</span> <span class="o">+</span> <span class="s2">&quot;world&quot;</span><span class="p">;</span>   <span class="c1">// Produces the string &quot;Hello, world&quot;</span>
+
+   <span class="kd">let</span> <span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;Marco&#39;</span>
+
+   <span class="kd">let</span> <span class="nx">greeting</span> <span class="o">=</span> <span class="s2">&quot;Welcome to my blog,&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">;</span>
+</pre></div>
+
+<p>
+Standard string methods
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kd">let</span> <span class="nx">s</span> <span class="o">=</span> <span class="s2">&quot;Hello, world&quot;</span><span class="p">;</span> <span class="c1">// Start with some text.</span>
+
+   <span class="c1">// Obtaining portions of a string</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">4</span><span class="p">)</span>        <span class="c1">// =&gt; &quot;ell&quot;: the 2nd, 3rd, and 4th characters.</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">4</span><span class="p">)</span>            <span class="c1">// =&gt; &quot;ell&quot;: same thing</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">)</span>             <span class="c1">// =&gt; &quot;rld&quot;: last 3 characters</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>           <span class="c1">// =&gt; [&quot;Hello&quot;, &quot;world&quot;]: split at delimiter string</span>
+
+   <span class="c1">// Searching a string</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;l&quot;</span><span class="p">)</span>          <span class="c1">// =&gt; 2: position of first letter l</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>       <span class="c1">// =&gt; 3: position of first &quot;l&quot; at or after 3</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;zz&quot;</span><span class="p">)</span>         <span class="c1">// =&gt; -1: s does not include the substring &quot;zz&quot;</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s2">&quot;l&quot;</span><span class="p">)</span>      <span class="c1">// =&gt; 10: position of last letter l</span>
+
+   <span class="c1">// Boolean searching functions in ES6 and later</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;Hell&quot;</span><span class="p">)</span>    <span class="c1">// =&gt; true: the string starts with these</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">endsWith</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">)</span>         <span class="c1">// =&gt; false: s does not end with that</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="s2">&quot;or&quot;</span><span class="p">)</span>        <span class="c1">// =&gt; true: s includes substring &quot;or&quot;</span>
+
+   <span class="c1">// Creating modified versions of a string</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;llo&quot;</span><span class="p">,</span> <span class="s2">&quot;ya&quot;</span><span class="p">)</span>  <span class="c1">// =&gt; &quot;Heya, world&quot;</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>         <span class="c1">// =&gt; &quot;hello, world&quot;</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span>         <span class="c1">// =&gt; &quot;HELLO, WORLD&quot;</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">normalize</span><span class="p">()</span>           <span class="c1">// Unicode NFC normalization: ES6</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">normalize</span><span class="p">(</span><span class="s2">&quot;NFD&quot;</span><span class="p">)</span>      <span class="c1">// NFD normalization. Also &quot;NFKC&quot;, &quot;NFKD&quot;</span>
+
+   <span class="c1">// Inspecting individual (16-bit) characters of a string</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>             <span class="c1">// =&gt; &quot;H&quot;: the first character</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>    <span class="c1">// =&gt; &quot;d&quot;: the last character</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">charCodeAt</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>         <span class="c1">// =&gt; 72: 16-bit number at the specified position</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">codePointAt</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>        <span class="c1">// =&gt; 72: ES6, works for codepoints &gt; 16 bits</span>
+
+   <span class="c1">// String padding functions in ES2017</span>
+   <span class="s2">&quot;x&quot;</span><span class="p">.</span><span class="nx">padStart</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>         <span class="c1">// =&gt; &quot;  x&quot;: add spaces on the left to a length of 3</span>
+   <span class="s2">&quot;x&quot;</span><span class="p">.</span><span class="nx">padEnd</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>           <span class="c1">// =&gt; &quot;x  &quot;: add spaces on the right to a length of 3</span>
+   <span class="s2">&quot;x&quot;</span><span class="p">.</span><span class="nx">padStart</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">)</span>    <span class="c1">// =&gt; &quot;**x&quot;: add stars on the left to a length of 3</span>
+   <span class="s2">&quot;x&quot;</span><span class="p">.</span><span class="nx">padEnd</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>      <span class="c1">// =&gt; &quot;x--&quot;: add dashes on the right to a length of 3</span>
+
+   <span class="c1">// Space trimming functions. trim() is ES5; others ES2019</span>
+   <span class="s2">&quot; test &quot;</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span>         <span class="c1">// =&gt; &quot;test&quot;: remove spaces at start and end</span>
+   <span class="s2">&quot; test &quot;</span><span class="p">.</span><span class="nx">trimStart</span><span class="p">()</span>    <span class="c1">// =&gt; &quot;test &quot;: remove spaces on left. Also trimLeft</span>
+   <span class="s2">&quot; test &quot;</span><span class="p">.</span><span class="nx">trimEnd</span><span class="p">()</span>      <span class="c1">// =&gt; &quot; test&quot;: remove spaces at right. Also trimRight</span>
+
+   <span class="c1">// Miscellaneous string methods</span>
+   <span class="nx">s</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">)</span>           <span class="c1">// =&gt; &quot;Hello, world!&quot;: just use + operator instead</span>
+   <span class="s2">&quot;&lt;&gt;&quot;</span><span class="p">.</span><span class="nx">repeat</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>          <span class="c1">// =&gt; &quot;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&quot;: concatenate n copies. ES6</span>
+</pre></div>
+
+<p>
+F-strings equivalent
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;Marco&quot;</span><span class="p">;</span>
+
+   <span class="c1">// Note the special ` marks. With normal &quot; it will not work.</span>
+   <span class="nx">greeting</span> <span class="o">=</span> <span class="sb">`Hello </span><span class="si">${</span> <span class="nx">name</span> <span class="si">}</span><span class="sb">.`</span><span class="p">;</span>  <span class="c1">// greeting == &quot;Hello Bill.&quot;</span>
+
+   <span class="c1">// Everything between ${ and the matching } is interpreted as a JavaScript expression.</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org5b39bfb" class="outline-3">
+<h3 id="org5b39bfb">Null and Undefined</h3>
+<div class="outline-text-3" id="text-org5b39bfb">
+<p>
+<code>null</code> is a language keyword that evaluates to a special value that is
+usually used to indicate the absence of a value. Using the typeof
+operator on null returns the string “object”, indicating that null can
+be thought of as a special object value that indicates “no object”. In
+practice, however, null is typically regarded as the sole member of
+its own type, and it can be used to indicate “no value” for numbers
+and strings as well as objects. Most programming languages have an
+equivalent to JavaScript’s null: you may be familiar with it as NULL,
+nil, or None.
+</p>
+
+<p>
+JavaScript also has a second value that indicates absence of
+value. The <code>undefined</code> value represents a deeper kind of absence. It is
+the value of variables that have not been initialized and the value
+you get when you query the value of an object property or array
+element that does not exist. If you apply the typeof operator to the
+undefined value, it returns “undefined”, indicating that this value is
+the sole member of a special type.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org2741f88" class="outline-3">
+<h3 id="org2741f88">Infinity, NaN and other numerical values</h3>
+<div class="outline-text-3" id="text-org2741f88">
+<div class="highlight"><pre><span></span>   <span class="kc">Infinity</span>
+
+
+   <span class="kc">NaN</span>
+
+   <span class="kc">Infinity</span><span class="o">/</span><span class="kc">Infinity</span> <span class="c1">// =&gt; NaN</span>
+
+   <span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="kc">Infinity</span> <span class="c1">// =&gt; -0; i.e. negative 0. Funny notion. Like limit.</span>
+
+    <span class="o">-</span><span class="mf">0</span> <span class="o">===</span> <span class="mf">0</span> <span class="c1">// =&gt; true; they are equal</span>
+
+
+    <span class="c1">// The following Number properties are defined in ES6. Note, Number is built-in</span>
+    <span class="nb">Number</span><span class="p">.</span><span class="nb">parseInt</span><span class="p">()</span>       <span class="c1">// Same as the global parseInt() function</span>
+    <span class="nb">Number</span><span class="p">.</span><span class="nb">parseFloat</span><span class="p">()</span>     <span class="c1">// Same as the global parseFloat() function</span>
+    <span class="nb">Number</span><span class="p">.</span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>         <span class="c1">// Is x the NaN value?</span>
+    <span class="nb">Number</span><span class="p">.</span><span class="nb">isFinite</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>      <span class="c1">// Is x a number and finite?</span>
+    <span class="nb">Number</span><span class="p">.</span><span class="nx">isInteger</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>     <span class="c1">// Is x an integer?</span>
+    <span class="nb">Number</span><span class="p">.</span><span class="nx">isSafeInteger</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="c1">// Is x an integer -(2**53) &lt; x &lt; 2**53?</span>
+    <span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_SAFE_INTEGER</span> <span class="c1">// =&gt; -(2**53 - 1)</span>
+    <span class="nb">Number</span><span class="p">.</span><span class="nx">MAX_SAFE_INTEGER</span> <span class="c1">// =&gt; 2**53 - 1</span>
+    <span class="nb">Number</span><span class="p">.</span><span class="nx">EPSILON</span>          <span class="c1">// =&gt; 2**-52: smallest difference between numbers</span>
+</pre></div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org362d155" class="outline-3">
+<h3 id="org362d155">Regex</h3>
+<div class="outline-text-3" id="text-org362d155">
+<p>
+Notice the following interesting fact. When searching for Regex you
+do not do it through a package. You do it by <b>declaring</b> a
+variable with your regex expression. This will be interpreted as
+some object. It is in fact a datatype known as RegExp and it has
+several <b>methods</b> associated with it to deal with regexp stories.
+</p>
+
+<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;testing: 1, 2, 3&quot;</span><span class="p">;</span>   <span class="c1">// Sample text</span>
+
+<span class="c1">// See below how you define your regexp variable</span>
+<span class="kd">let</span> <span class="nx">pattern</span> <span class="o">=</span> <span class="sr">/\d+/g</span><span class="p">;</span>            <span class="c1">// Matches all instances of one or more digits</span>
+
+<span class="c1">// Some methods associated to the object.</span>
+<span class="nx">pattern</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span>               <span class="c1">// =&gt; true: a match exists</span>
+
+<span class="c1">// Some methods associated with the string object</span>
+<span class="nx">text</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">pattern</span><span class="p">)</span>             <span class="c1">// =&gt; 9: position of first match</span>
+<span class="nx">text</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">pattern</span><span class="p">)</span>              <span class="c1">// =&gt; [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]: array of all matches</span>
+<span class="nx">text</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">pattern</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">)</span>       <span class="c1">// =&gt; &quot;testing: #, #, #&quot;</span>
+<span class="nx">text</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\D+/</span><span class="p">)</span>                <span class="c1">// =&gt; [&quot;&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;]: split on nondigits</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org8cfc840" class="outline-3">
+<h3 id="org8cfc840">Throwing Errors</h3>
+<div class="outline-text-3" id="text-org8cfc840">
+<p>
+Similar to python you throw exceptions and specify errors using the
+<code>throw command</code>.
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">throw</span> <span class="nx">expression</span><span class="p">;</span>
+</pre></div>
+
+<p>
+Note that theoretically expression, may evaluate to any
+expression. I.e. you might throw a number that represents an error
+code or a string that contains a human-readable error message. 
+</p>
+
+<p>
+That being said, the <code>Error class</code> and its subclasses are used when
+the JavaScript interpreter itself throws an error, and you can use
+them as well. This is what usually makes the most sense.
+</p>
+
+<p>
+A concrete example is the following
+</p>
+
+<div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">factorial</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// If the input argument is invalid, throw an exception!</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mf">0</span><span class="p">)</span> <span class="k">throw</span> <span class="ow">new</span> <span class="ne">Error</span><span class="p">(</span><span class="s2">&quot;x must not be negative&quot;</span><span class="p">);</span>
+    <span class="c1">// Otherwise, compute a value and return normally</span>
+    <span class="kd">let</span> <span class="nx">f</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="nx">f</span> <span class="o">=</span> <span class="mf">1</span><span class="p">;</span> <span class="nx">x</span> <span class="o">&gt;</span> <span class="mf">1</span><span class="p">;</span> <span class="nx">f</span> <span class="o">*=</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">x</span><span class="o">--</span><span class="p">)</span> <span class="cm">/* empty */</span> <span class="p">;</span>
+    <span class="k">return</span> <span class="nx">f</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nx">factorial</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span>   <span class="c1">// =&gt; 24</span>
+</pre></div>
+
+<p>
+When an exception is thrown, the JavaScript interpreter immediately
+stops normal program execution and jumps to the nearest exception
+handler. Exception handlers are written using the catch clause of
+the <b>try/catch/finally</b> statement. These operates in the same way
+as Python.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org3137f9c" class="outline-3">
+<h3 id="org3137f9c">with Statements</h3>
+<div class="outline-text-3" id="text-org3137f9c">
+<p>
+The <code>with</code> statement runs a block of code as if the properties of a
+specified object were variables in scope for that code
+</p>
+
+<p>
+Example if you need to write expressions like this a number of
+times, you can use the with statement to treat the properties of
+the form object like variables:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">f</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">forms</span><span class="p">[</span><span class="mf">0</span><span class="p">];</span>
+<span class="nx">f</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+<span class="nx">f</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+<span class="nx">f</span><span class="p">.</span><span class="nx">email</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+
+<span class="c1">// vs.</span>
+
+<span class="kd">with</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">forms</span><span class="p">[</span><span class="mf">0</span><span class="p">])</span> <span class="p">{</span>
+    <span class="c1">// Access form elements directly here. For example:</span>
+    <span class="nx">name</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+    <span class="nx">address</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+    <span class="nx">email</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org594c539" class="outline-3">
+<h3 id="org594c539">Peculiarities of JavaScript</h3>
+<div class="outline-text-3" id="text-org594c539">
+<p>
+JavaScript differs from more static languages in that functions and
+classes are not just part of the language syntax: they are
+<i>themselves values that can be manipulated by JavaScript programs</i>.
+</p>
+
+<p>
+Like any JavaScript value that is not a primitive value, functions
+and classes are a <b>specialized kind of object</b>.
+</p>
+
+<p>
+The JavaScript interpreter performs <b>automatic garbage collection</b>
+for memory management. This means that a JavaScript programmer
+generally does not need to worry about destruction or deallocation
+of objects or other values.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1e5b6db" class="outline-2">
+<h2 id="org1e5b6db">Asynchronous Javascript</h2>
+<div class="outline-text-2" id="text-org1e5b6db">
+<p>
+This is in fact the most interesting property of JavaScript. Here is
+where it takes a clear edge over python for the backend development. 
+</p>
+
+<p>
+I.e. the asynchronous execution allows you a degree of flexibility
+that is not possible in other languages. 
+</p>
+
+<p>
+To understand asynchronous JavaScript understand the following
+video. This makes the point ultra-well. It is a bit focused on the
+browser side of JavaScript but it makes the point.
+</p>
+
+<p>
+I have to still write down promises, subscribe etc&#x2026; syntax. This is
+however syntax. I will keep it to the moment where I will start
+working in javascript projects. To this stage just watch the video and
+understand the logic. Pretty clear the idea.
+</p>
+
+<style>
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+<div class="container"> 
+  <iframe class="responsive-iframe" src="https://www.youtube.com/embed/8aGhZQkoFbQ" frameborder="0" allowfullscreen;> </iframe>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org87aa21a" class="outline-2">
+<h2 id="org87aa21a">Angular</h2>
+<div class="outline-text-2" id="text-org87aa21a">
+<p>
+Here some notes on Angular. I did not read any book or worked in a
+structured way. It is more jump into the project and make your way
+through. 
+</p>
+
+<p>
+So don't take at golden what is written here. You can probably find
+much better notes and explanations. 
+</p>
+
+<p>
+Basically the structure of Angular consists of the following,
+where components and services are the building blocks:
+</p>
+
+<ul class="org-ul">
+<li>you call components in html pages and call the functions of the
+components from there. components also define html tags that
+perform given functionalities.</li>
+
+<li>in the <code>&lt;name&gt;.components.ts</code> you write in typescript the
+functions of interest and eventually load and call services
+functions. you import the services at the beginning of your
+component files as you would import python modules. html tags for
+the component exists then generally via the
+<code>&lt;app-component_name&gt;</code>.</li>
+
+<li>services implement functions that can be called from components
+but are unrelated from html and get not embedded in there.</li>
+
+<li>an <code>app.component</code> part, which consists of:
+
+<ul class="org-ul">
+<li><code>app.component.html</code> this is the root governing html calls all
+of the routes to the other components via &lt;router-outlet&gt;</li>
+
+<li><code>app.component.ts</code> this just refers to the component html and
+css as it is a component itself.</li>
+
+<li><code>app-routing.module.ts</code> specifies all of the routes to the
+other compoents and the website <b>routes</b> associated with it.</li>
+
+<li><p>
+Example of component syntax in the <code>app.component.ts</code> file
+where you actually specify the component
+</p>
+
+<div class="highlight"><pre><span></span>       <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+		   <span class="nx">selector</span><span class="o">:</span> <span class="s1">&#39;app-chat&#39;</span><span class="p">,</span>
+		   <span class="nx">templateUrl</span><span class="o">:</span> <span class="s1">&#39;./chat.component.html&#39;</span><span class="p">,</span>
+		   <span class="nx">styleUrls</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;./chat.component.css&#39;</span><span class="p">]</span>
+		 <span class="p">})</span>
+</pre></div>
+
+<p>
+Moreover you have some modules built-in angular. for instance
+you work with ngOnInit() which is similar to the <code>__init__</code>
+module in python that immediately runs when importing a
+module. I.e. this makes specific API calls, loads variables
+etc. when the component is first called.
+</p></li>
+
+<li><code>app.module.ts</code> here you import all of the modules you will use
+throughout your implementations. there are also maps to the
+components you specify yourself. such maps and "syslinks" are
+created automatically when creating a component via <code>ng
+       generate compoent</code> use such command therefore.</li>
+</ul></li>
+
+<li>um ein neues component zu machen: <code>ng generate component</code></li>
+</ul>
+</div>
+</div>
