@@ -1712,14 +1712,168 @@ changed its class*.
 
 ** Strategy
 
+   Strategy is a behavioral design pattern that lets you /define a
+   family of algorithms/, put each of them into a /separate class/,
+   and /make their objects interchangeable/.
+
+   So the idea is essentially the following:
+
+   #+begin_quote
+The Strategy pattern suggests that you *take a class that does
+something specific in a lot of different ways* and *extract all of these
+algorithms into separate classes called strategies*.
+   #+end_quote
+
+   So have a /single master/.
+
+   The original class, called /context/ must have a field for storing
+   *reference* to one of the strategies.
+
+   The context isn’t responsible for selecting an appropriate
+   algorithm for the job. Instead, the client passes the desired
+   strategy to the context. In fact, the context doesn’t know much
+   about strategies. It works with all strategies through the same
+   generic interface, which only exposes a single method for
+   triggering the algorithm encapsulated within the selected strategy.
+
+   So you see it is always the same concept behind it.
+
+   Essentially the pattern would look as follows:
    
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 104033.png" class="center">
+   #+end_export
+
+   And more specifically:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 104813.png" class="center">
+   #+end_export
+
+   
+*** TODO task is to understand the difference with the state pattern
+
+    If you check at the two they look exaclty equal. 
+
 
 ** Template Method
 
-** Visitor
-  
-* Some core OOP principles you just have to keep on your mind
+   #+begin_quote
+   Template Method is a behavioral design pattern that defines the
+   skeleton of an algorithm in the superclass but lets subclasses
+   override specific steps of the algorithm without changing its
+   structure.
+   #+end_quote
 
+   You know it very well from the front-end development. There it is
+   quite standard to work in such a way in order to create the
+   relevant html pages. 
+
+   So here the idea is always the same. Avoid repetition. Use
+   templates, i.e. general raw models and inherit from there or work
+   with them via composition.
+
+   I.e. understand what is intrinsic and shared in time, the general
+   relativity and then just leave the details of the special
+   relativity to the classes inheriting enhancing by composition.
+
+   #+begin_quote
+The Template Method pattern suggests that you break down an algorithm
+into a series of steps, turn these steps into methods, and put a
+series of calls to these methods inside a single template method. The
+steps may either be abstract, or have some default implementation.
+   #+end_quote
+
+   Think then about the following problem:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 112158.png" class="center">
+   #+end_export
+
+   The idea here is that a lot of stuff is simple repetition of the
+   same concepts. Therefore, you should not implement and duplicate
+   your code. Work via templates, i.e. define thegeneral structure
+   somewhere there and then point to these templates in order to
+   construct the general pipeline.
+
+   You see that this si in fact what you were doing with ML pipelines.
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 112909.png" class="center">
+   #+end_export
+
+   Understand as well the concept of /hooks/ used in the
+   applications. This is what you work with as well in your editor.
+
+   #+begin_quote
+   There’s another type of step, called hooks. A hook is an optional
+   step with an empty body. A template method would work even if a
+   hook isn’t overridden.
+
+   Usually, hooks are *placed before and after crucial steps of
+   algorithms, providing* *subclasses with additional extension points
+   for an algorithm*. [I.e. you can supply additional information in
+   such a way].
+   #+end_quote
+
+   Think about *IKEA* as well when thinking about this method. Think
+   about how you construct their furniture. It is exactly this pattern.
+
+   I.e. in general the structure is the following:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 113852.png" class="center">
+   #+end_export
+
+   So you see that this is as well what is happening in the Feeds
+   application.
+
+
+** Visitor
+
+   #+begin_quote
+   Visitor is a behavioral design pattern that lets you separate
+   algorithms from the objects on which they operate.
+   #+end_quote
+   
+   This is important as in this way you can design very flexible
+   software without having to touch many existing classes.
+
+   The idea is essentially the following:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 132829.png" class="center">
+   #+end_export
+
+   I.e. you should not put the implementation of the algorithm in the
+   classes themselves, even if the class type will dictate *different
+   types of behaviour* *for the algorithm - i.e. in the above the
+   algorithm* *is dependent on the actual classes (City, Industry
+   etc.)*.
+
+   Then the idea is to put the implementation of the alogrithm in a
+   *visitor*. There you would actually implement the algorithm.
+
+   A reference to the different class types will then hold the
+   relevant information for the algorithm to perform on that
+   particular class.
+
+   In this sense you would implement the algorithm in the following
+   way.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 150920.png" class="center">
+   #+end_export
+
+   So you see you work with visitor (the elemenent above) and you
+   actually call a single interface /accept/. Then you know which
+   algorithm to apply, cause recall that in the visitor you *pass a
+   reference*.
+
+   I.e. you will automatically apply the correct apply method. 
+
+
+* Some core OOP principles you just have to keep on your mind
 
 ** Polymorphism
 
@@ -1733,6 +1887,7 @@ changed its class*.
    defines those methods that the derived class must implement on its
    own. This allows the subclass the flexibility to define its own
    methods, yet still enforces a consistent interface.
+
 
 ** Encapsulation
 
@@ -1757,6 +1912,7 @@ changed its class*.
    #+begin_export html
     <img src="../../images/Screenshot 2022-08-26 093006.png" class="center">
    #+end_export
+
 
 ** Key Concept - Favour Object Composition over Inheritance
 
@@ -1857,6 +2013,7 @@ whereas before it would have inherited those operations.
     that you can *always replace inheritance with object composition*
     as a mechanism for code reuse.
 
+
 ** Callback Methods
 
    So the basic idea is to create an interface with the methods that
@@ -1940,6 +2097,7 @@ class TAX {
 
    I.e. your callback interface is implemented directly via functional
    programming and it is never explicitely written anywehere.
+
 
 ** Anonymous Inner Classes
 
