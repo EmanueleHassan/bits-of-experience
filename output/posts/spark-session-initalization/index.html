@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Spark Session Initialization, RDD and DataFrames | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/spark-session-initalization/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../paredit/" title="Paredit" type="text/html">
+<link rel="next" href="../git-useful-commands/" title="Git Useful Commands" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Spark Session Initialization, RDD and DataFrames">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/spark-session-initalization/">
+<meta property="og:description" content="This second post present the basic set up of a Spark session and goes
+over the basic of creating Spark RDDs, the first-class citizens of
+Spark. An RDD is a Resilient Distributed Dataset. It is Resilie">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-08-21T23:31:02+02:00">
+<meta property="article:tag" content="Big Data">
+<meta property="article:tag" content="Spark">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Spark Session Initialization, RDD and DataFrames</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-08-21T23:31:02+02:00" itemprop="datePublished" title="2019-08-21 23:31">2019-08-21 23:31</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/big-data/" rel="tag">Big Data</a></li>
+            <li><a class="tag p-category" href="../../categories/spark/" rel="tag">Spark</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <br><br><p>
+This second post present the basic set up of a Spark session and goes
+over the basic of creating Spark RDDs, the first-class citizens of
+Spark. An RDD is a <code>Resilient Distributed Dataset</code>. It is Resilient as
+it can be recomputed if cluster failures happens. It is distributed as
+an RDD can be distributed among cores and machines. And it is finally
+a dataset.
+</p>
+
+<p>
+RDDs are saved in-memory by default. Nonetheless when the memory of
+the machine is not sufficient to handle the data, RDDs are splitted to
+disk.
+</p>
+
+<p>
+Finally this post outlines a bit the difference among RDDs and
+DataFrames and tries to clarify that.
+</p>
+
+<!-- TEASER_END -->
+
+<br><div id="outline-container-orga79545f" class="outline-2">
+<h2 id="orga79545f">Session Set Up</h2>
+<div class="outline-text-2" id="text-orga79545f">
+<p>
+First of all it is necessary to create entry point to programming
+Spark with the Dataset and DataFrame API. This is done through the
+SparkSession function of the pyspark module. This will allow you to
+create DataFrame, register DataFrame as tables, execute SQL over
+tables, cache tables, and read parquet files (a special kind of files
+particularly suited for big data storage and processing).
+</p>
+
+<p>
+Unless you will work as a Data Engineer your job will not be the one
+of initiating a spark session however, should that be the case or if
+you will want to run Spark locally for training yourself as I am doing
+you can follow the instructions below.
+</p>
+
+<p>
+At a high level, every Spark application consists of a <b>driver
+program</b> that launches various parallel operations on a cluster. The
+driver program contains your application's main function and defines
+distributed datasets on the cluster, then applies operations to them.
+</p>
+
+<p>
+Driver programs access Spark through a <b>SparkContext</b> object, which
+represents a connection to a computing cluster.
+</p>
+
+<p>
+When you initiate such <b>SparkContext</b> you can specify a multitude of
+arguments that will affect the general scope of your session. You can
+find a reference for session arguments under <a href="http://spark.apache.org/docs/latest/api/python/pyspark.sql.html#pyspark.sql.SparkSession">this official Spark link</a>.
+Such configuration parameters specified will be passed from your Spark
+driver application to the SparkContext. Some of these parameters
+define properties of your Spark driver application and some are used
+by Spark to allocate resources on the cluster such as, the number,
+memory size and cores uses by the executors running on the
+workernodes.
+</p>
+
+<p>
+Among the other I underline:
+</p>
+
+<ul class="org-ul">
+<li>master = ["local", "local[4]", “spark://master:7077”], where the
+first element is setting the Spark master locally and the second
+sets the Spark master locally with 4 cores, while the third option
+is an example of selecting a Spark standalone cluster.</li>
+
+<li>config = either a key value pair of an existing <i>SparkConf</i> containing the
+configuration arguments or the <i>SparkConf</i> object itself.</li>
+
+<li>getOrCreate() = Gets an existing SparkSession or, if there is no
+existing one, creates a new one based on the options set in this
+builder.</li>
+</ul>
+<div class="highlight"><pre><span></span>import findspark
+findspark.init()
+
+from pyspark.sql import SparkSession
+
+spark = SparkSession \
+    .builder \
+    .master ("local") \
+    .appName("My first Spark Session") \
+    .getOrCreate()
+</pre></div>
+
+<p>
+Good you just created your first Spark Session. In the next section I
+will start to check at the different data import options and data tweaks.
+</p>
+
+<p>
+Notice that to set the correct amount of cores to use on your local
+machine you can use the following command
+</p>
+
+<div class="highlight"><pre><span></span>sysctl hw.physicalcpu hw.logicalcpu
+</pre></div>
+
+<p>
+You can go as high as the number of your logical cpus.
+</p>
+
+<br>
+</div>
+</div>
+
+<div id="outline-container-orgb587e74" class="outline-2">
+<h2 id="orgb587e74">Data Creation</h2>
+<div class="outline-text-2" id="text-orgb587e74">
+</div>
+
+<div id="outline-container-org49ba7c2" class="outline-3">
+<h3 id="org49ba7c2">From Python objects</h3>
+<div class="outline-text-3" id="text-org49ba7c2">
+<p>
+Here you use the parallelize method to a local Python
+collection to form an RDD.
+</p>
+
+<div class="highlight"><pre><span></span>spark.sparkContext.parallelize([(1, 2, 3, 'a b c'),
+				(4, 5, 6, 'd e f'),
+				(7, 8, 9, 'g h i')]).collect()
+</pre></div>
+
+<pre class="example">
+[(1, 2, 3, 'a b c'), (4, 5, 6, 'd e f'), (7, 8, 9, 'g h i')]
+</pre>
+
+
+<p>
+You might even create different partitions of the RDDs when creating
+one. This is done by entering the different partitions in a list and
+selecting the number of partitions.
+</p>
+
+<div class="highlight"><pre><span></span>rdd = spark.sparkContext.parallelize([(1, 2, 3, 'a b c'),
+				   (4, 5, 6, 'd e f'),
+				   (7, 8, 9, 'g h i')], 3)
+
+print(rdd.getNumPartitions())
+
+print (rdd.glom ().collect())
+</pre></div>
+
+<pre class="example">
+3
+[[(1, 2, 3, 'a b c')], [(4, 5, 6, 'd e f')], [(7, 8, 9, 'g h i')]]
+</pre>
+
+
+<p>
+The <code>glom()</code> method above returns an RDD created by coalescing all
+elements within each partition into a list.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org693472d" class="outline-3">
+<h3 id="org693472d">From a stable Storage</h3>
+<div class="outline-text-3" id="text-org693472d">
+<p>
+It is possible to create an RDD from multiple stable storage options.
+</p>
+
+<p>
+<i>Local File system:</i>
+</p>
+<ul class="org-ul">
+<li>
+<code>file</code>: Read from the local file system.</li>
+</ul>
+<p>
+<i>HDFS:</i>
+</p>
+<ul class="org-ul">
+<li>
+<code>hdfs</code>: Read from a Hadoop Distributed File System.</li>
+</ul>
+<p>
+<i>Block Storage:</i>
+</p>
+<ul class="org-ul">
+<li>
+<code>s3</code> : Read from AWS S3 Storage.</li>
+<li>
+<code>wasb</code>: Read from Azure Blob Storage.</li>
+</ul>
+<p>
+The blow illustrates such an example.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1"># sc is the Spark Context object automatically created for you</span>
+<span class="n">fruits</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">'wasb:///example/data/fruits.txt'</span><span class="p">)</span>
+<span class="n">yellowThings</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">'wasb:///example/data/yellowthings.txt'</span><span class="p">)</span>
+</pre></div>
+
+
+<br>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd14f4c4" class="outline-2">
+<h2 id="orgd14f4c4">RDD vs DataFrame</h2>
+<div class="outline-text-2" id="text-orgd14f4c4">
+</div>
+
+<div id="outline-container-org2e91838" class="outline-3">
+<h3 id="org2e91838">The idea of DataFrames</h3>
+<div class="outline-text-3" id="text-org2e91838">
+<p>
+The conversion from Spark RDDs to Dataframe came essentially with
+Spark 2.0. The idea was to bring Spark RDDs under the hood of SQL
+and leverage the many benefits from the very long lasting research
+literature on SQL. See <a href="https://marcohassan.github.io/bits-of-experience/posts/Apache%20Spark%20SQL/">Catalyst and Project Tungsten</a>.
+</p>
+
+<p>
+A data frame is in fact "tabular" data: a data structure
+representing cases (rows), each of which consists of a number of
+observations or measurements (columns).
+</p>
+
+<p>
+The idea for making that possible was then the one of having a
+schema where each value of an RDD would contain a row of the table
+you aim to represent.
+</p>
+
+<p>
+A futher benefit of creating a dataframe representation from RDD is
+the one of <code>columnar storage</code>. Here the key concept is the one of
+standardization. Once you have a tabular representation of your
+data through RDDs it is possible to save columns which are likely
+highly standardized together reaching the highest possible
+efficiency. This means concretely that you therefore save memory
+and reduce the computation time.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga047bd2" class="outline-3">
+<h3 id="orga047bd2">Creation of DataFrames</h3>
+<div class="outline-text-3" id="text-orga047bd2">
+<p>
+A spark RDD can be created in multiple ways among the others by:
+</p>
+
+
+<ul class="org-ul">
+<li>
+<p>
+Transforming an existing RDD into a dataframe
+</p>
+
+<div class="highlight"><pre><span></span>    df = spark.sparkContext.parallelize([(1, 2, 3, 'a b c'),
+					 (4, 5, 6, 'd e f'),
+					 (7, 8, 9, 'g h i')]).toDF(['col1', 'col2', 'col3','col4'])
+
+    df.show ()
+</pre></div>
+
+<pre class="example">
++----+----+----+-----+
+|col1|col2|col3| col4|
++----+----+----+-----+
+|   1|   2|   3|a b c|
+|   4|   5|   6|d e f|
+|   7|   8|   9|g h i|
++----+----+----+-----+
+
+</pre>
+</li>
+</ul>
+<ul class="org-ul">
+<li>
+<p>
+Importing your data as a RDD dataframe
+</p>
+
+<p>
+This is achieved through the <code>read ()</code> method of the
+<code>pyspark.sql</code> API. It returns a DataFrameReader that can be used
+to read data in as a DataFrame.
+</p>
+
+<div class="highlight"><pre><span></span>    df = spark.read.csv("file:///Users/marcohassan/Desktop/my_test.csv")
+
+    df.show ()
+</pre></div>
+
+<pre class="example">
++-----+------+-------+-------+
+|  _c0|   _c1|    _c2|    _c3|
++-----+------+-------+-------+
+|hello| world| hello2| world2|
++-----+------+-------+-------+
+
+</pre>
+</li>
+</ul>
+<p>
+Notice that you can read among the many different file formats and
+not just the classical tabular <code>csv</code> format.
+</p>
+
+<p>
+<code>read.json ()</code>
+<code>read.parquet ()</code>
+<code>read.text ()</code>
+<code>read.jdbc ()</code>
+<code>read.format("avro")</code>
+</p>
+
+<p>
+<b>Important:</b>  Note, that your json does have to have one object per
+row in the text file. I was keeping my json in pretty-print format
+and I lost like a good hour understanding what went wrong when
+importing the data.
+</p>
+
+<p>
+Are also viable options. Moreover, you can as always select
+Blockstorage, the Local File System or HDFS as the source of your
+data.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org92010f3" class="outline-3">
+<h3 id="org92010f3">Schema Inference</h3>
+<div class="outline-text-3" id="text-org92010f3">
+<p>
+An important question that arises is how to specify the schema of
+the tabular representation of the data you are
+importing. Interesting is that in contrast to SQL there is no need
+to create a table and specifying the schema of it when importing
+the data.
+</p>
+
+<p>
+Such a schema is internally inferred by Spark at the time of
+the data import. Should you be interested in the available data
+types of spark you can consul the <a href="https://spark.apache.org/docs/latest/sql-reference.html">following link</a>. There is even
+the option to manually set the data schema for the imported data,
+so should you even need that you can go into it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbc73d75" class="outline-3">
+<h3 id="orgbc73d75">About the break of first-normal form</h3>
+<div class="outline-text-3" id="text-orgbc73d75">
+<p>
+It is clear that when importing tree-shaped data, your data might
+easily break the first-normal form.
+</p>
+
+<p>
+How are such data saved in the tabular form? 
+</p>
+
+<p>
+The solution was here to extend the relational base logic by
+allowing a futher <code>array datatype</code> as you can see from the link in
+the previous section. You can think it as follows:
+</p>
+
+<p>
+<img src="../../images/Bildschirmfoto_2020-05-03_um_11.58.39.png" alt="nil"></p>
+</div>
+</div>
+
+<div id="outline-container-org0ba4c65" class="outline-3">
+<h3 id="org0ba4c65">SQL commands</h3>
+<div class="outline-text-3" id="text-org0ba4c65">
+<p>
+As your data are in tabular form you may now leverage the SQL
+syntax for querying your data.
+</p>
+</div>
+
+<div id="outline-container-org55f5f94" class="outline-4">
+<h4 id="org55f5f94">Array Objects</h4>
+<div class="outline-text-4" id="text-org55f5f94">
+<p>
+Notice that it is now clear though that we have to extend the
+functions of SQL for dealing with such a cases.
+</p>
+
+<p>
+This was solved by introducing some new functions such as
+<code>EXPLODE</code>.
+</p>
+
+<p>
+To see that consider the following <code>json</code>.
+</p>
+
+<div class="highlight"><pre><span></span>    {
+      "First": "Albert",
+      "Last": "Einstein",
+      "Countries": [
+	"D",
+	"I",
+	"CH",
+	"A",
+	"BE",
+	"US"
+      ]
+    }
+</pre></div>
+
+<p>
+Notice again that the above is in pretty-print format just for
+facilitating you to read it but it should be saved as a one liner
+for the spark API to correctly work.
+</p>
+
+<div class="highlight"><pre><span></span>    df = spark.read.json("file:///Users/marcohassan/Desktop/my_test.json")
+
+    df.createOrReplaceTempView("dataset")
+
+    ## note that the space at the end of each line is important for the
+    ## SQL API
+    df2 = spark.sql("SELECT First,EXPlODE(Countries) "
+		    "FROM dataset ")
+
+    df2.show ()
+</pre></div>
+
+<pre class="example" id="org87ede9e">
++------+---+
+| First|col|
++------+---+
+|Albert|  D|
+|Albert|  I|
+|Albert| CH|
+|Albert|  A|
+|Albert| BE|
+|Albert| US|
++------+---+
+
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org0301953" class="outline-4">
+<h4 id="org0301953">Nested Objects</h4>
+<div class="outline-text-4" id="text-org0301953">
+<p>
+The same holds for nested entries.
+</p>
+
+<div class="highlight"><pre><span></span>   {
+   "Name": {
+   "First": "Albert",
+   "Last": "Einstein"
+   },
+   "Countries": 6
+   }
+   {
+   "Name": {
+   "First": "Srinivasa",
+   "Last": "Ramanujan"
+   },
+   "Countries": 2
+   }
+   {
+   "Name": {
+   "First": "Kurt",
+   "Last": "GÃ¶del"
+   },
+   "Countries": 1
+   }
+</pre></div>
+
+<div class="highlight"><pre><span></span>   df = spark.read.json("file:///Users/marcohassan/Desktop/my_test.json")
+
+   df.createOrReplaceTempView("dataset")
+
+   ## note that the space at the end of each line is important for the
+   ## SQL API
+   print (spark.sql("SELECT * "
+		    "FROM dataset ").show ())
+
+
+   df2 = spark.sql("SELECT Name.First "
+		   "FROM dataset ")
+
+   df2.show ()
+</pre></div>
+
+<pre class="example" id="org0fbb344">
++---------+--------------------+
+|Countries|                Name|
++---------+--------------------+
+|        6|  [Albert, Einstein]|
+|        2|[Srinivasa, Raman...|
+|        1|       [Kurt, Gödel]|
++---------+--------------------+
+
+None
++---------+
+|    First|
++---------+
+|   Albert|
+|Srinivasa|
+|     Kurt|
++---------+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgafcd82d" class="outline-3">
+<h3 id="orgafcd82d">The heterogeneity flaw.</h3>
+<div class="outline-text-3" id="text-orgafcd82d">
+<p>
+Notice that there is one last fundamental flaw when working with
+DataFrames API of spark.
+</p>
+
+<p>
+Consider the case when your data are heterogeneous as follows:
+</p>
+
+
+<div class="highlight"><pre><span></span>   { "foo" : 1, "bar" : true}
+   { "foo" : 2, "bar" : true}
+   { "foo" : [3, 4], "bar" : false}
+   { "foo" : 4, "bar" : true}
+   { "foo" : 5, "bar" : true}
+   { "foo" : 6, "bar" : false}
+   { "foo" : 7, "bar" : true}
+</pre></div>
+
+<div class="highlight"><pre><span></span>   df = spark.read.json("file:///Users/marcohassan/Desktop/my_test.json")
+
+   df.createOrReplaceTempView("dataset")
+
+   ## note that the space at the end of each line is important for the
+   ## SQL API
+   df2 = spark.sql("SELECT *"
+		   "FROM dataset ")
+
+   df2.show ()
+</pre></div>
+
+<pre class="example" id="orge8bede9">
++-----+-----+
+|  bar|  foo|
++-----+-----+
+| true|    1|
+| true|    2|
+|false|[3,4]|
+| true|    4|
+| true|    5|
+|false|    6|
+| true|    7|
++-----+-----+
+</pre>
+
+<p>
+It follows now that the inferred Schema of foo will be a string as
+this is the only way of dealing with the outlier array entry and
+not an integer.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga916f7b" class="outline-2">
+<h2 id="orga916f7b">Literature</h2>
+<div class="outline-text-2" id="text-orga916f7b">
+<p>
+<a href="https://runawayhorse001.github.io/LearningApacheSpark/rdd.html">https://runawayhorse001.github.io/LearningApacheSpark/rdd.html</a>
+</p>
+
+<p>
+<a href="https://blogs.msdn.microsoft.com/bigdatasupport/2015/09/14/understanding-sparks-sparkconf-sparkcontext-sqlcontext-and-hivecontext/">https://blogs.msdn.microsoft.com/bigdatasupport/2015/09/14/understanding-sparks-sparkconf-sparkcontext-sqlcontext-and-hivecontext/</a>
+</p>
+
+<p>
+<a href="http://spark.apache.org/docs/latest/api/python/pyspark.sql.html#pyspark.sql.SparkSession">http://spark.apache.org/docs/latest/api/python/pyspark.sql.html#pyspark.sql.SparkSession</a>
+</p>
+
+<p>
+<a href="https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material">https://www.systems.ethz.ch/courses/spring2020/bigdataforeng/material</a>
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../paredit/" rel="prev" title="Paredit">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../git-useful-commands/" rel="next" title="Git Useful Commands">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

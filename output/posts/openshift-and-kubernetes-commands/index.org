@@ -1,0 +1,463 @@
+#+BEGIN_COMMENT
+.. title: Openshift and Kubernetes Commands
+.. slug: openshift-and-kubernetes-commands
+.. date: 2020-02-05 13:26:21 UTC+01:00
+.. tags: IT Architecture, Container Management
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+This post outlines some of the commands to operate on your Kubernetes
+and Openshift cluster via CLI.
+
+It does not contain any Kubernetes or Openshift theoretical content
+which is rather available at the [[https://marcohassan.github.io/bits-of-experience/posts/Kubernetes/][following post]].
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+{{{TEASER_END}}}
+
+** Kubernetes
+
+Particularly useful when working with Kubernetes is the dashboard. It
+provides you a neat overview over your cluster. It allows to view and
+edit single =.yaml= files for each resource. 
+
+It is a powerful way to navigate your way through and get the
+structure. You can access it from the ibm cloud on your browser
+directly. 
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+ #+begin_export html
+ <iframe width="800" height="400"
+ src="https://www.youtube.com/embed/K1HuOLzPSpU">
+ </iframe>
+ #+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+
+*** Configure your Kubeconfig file 
+
+    This is the foremost important step as you have to specify the
+    kubernetes/openshift cluster you want to operate on.
+
+    Kubectl is a command line tool for controlling Kubernetes
+    clusters. 
+
+    kubectl looks for a file named config in the $HOME/.kube
+    directory. You can specify other kubeconfig files by setting the
+    KUBECONFIG environment variable or by setting the --kubeconfig
+    flag. 
+
+    In this sense you can look up for instance the various clusters
+    running on your IBM cloud by running
+
+    #+BEGIN_SRC sh :results output
+    ibmcloud ks cluster ls
+    #+END_SRC
+
+    #+RESULTS:
+    : OK
+    : Name          ID                     State    Created       Workers   Location    Version                   Resource Group Name   Provider   
+    : DATAiks       xxx                    normal   3 weeks ago   1         Frankfurt   1.14.9_1541*              Default               classic   
+    : myDataShild   YYY                    normal   1 month ago   1         Frankfurt   3.11.154_1533_openshift   Default               classic   
+
+    You can then withdraw the specific configuration settings for a
+    cluster by running
+
+    #+BEGIN_SRC sh
+    ibmcloud ks cluster config <cluster-ID>
+    #+END_SRC
+
+    Finally you can export it and configuring the KUBECONFIG file by running.
+
+    #+BEGIN_SRC sh
+    export KUBECONFIG=/Users/marcohassan/.bluemix/plugins/container-service/clusters/<cluster-id>/<configuration .yaml>
+    #+END_SRC
+
+    Notice that by exporting multiple kubeconfig files you can handle
+    multiple customers/applications from the same machine and through
+    the same CLI.
+
+    An important thing in this context is on how to handle different
+    kubernetes clusters contemporarily. You can refer to this [[https://medium.com/faun/using-different-kubectl-versions-with-multiple-kubernetes-clusters-a3ad8707b87b][nice
+    intro]].
+
+*** On Kubernetes Contexts
+
+    To view your configuration file with all of its contexts and users use:
+
+    #+BEGIN_SRC sh :results drawer
+    kubectl config view -o json
+    #+END_SRC
+
+    The KUBECONFIG file contains several things of interest including the
+    cluster information so that kubectl is executing commands on the
+    correct cluster. It also stores authentication information such as
+    username/passwords, certificates or tokens. Lastly, the KUBECONFIG
+    file stores contexts.
+
+    Contexts group access information under an easily recognizable
+    name. So a context would include a cluster, a user and a
+    namespace. Now you can use KUBECONFIG and context to set our default
+    namespaces. No more logging in and being dumped into the default
+    namespace.
+
+    What if you do not need a context anymore 
+
+    #+BEGIN_SRC sh
+    kubectl config get-contexts
+    #+END_SRC
+
+    #+RESULTS:
+    | CURRENT                                                                             | NAME                                        | CLUSTER                                                              | AUTHINFO                                              | NAMESPACE |
+    | ibm-cert-store/c100-e-eu-de-containers-cloud-ibm-com:31633/IAM#marco.hassan@ibm.com | c100-e-eu-de-containers-cloud-ibm-com:31633 | IAM#marco.hassan@ibm.com/c100-e-eu-de-containers-cloud-ibm-com:31633 | ibm-cert-store                                        |           |
+
+    #+BEGIN_SRC sh
+   kubectl config unset contexts.ibm-cert-store/c100-e-eu-de-containers-cloud-ibm-com:31633/IAM#marco.hassan@ibm.com
+    #+END_SRC
+
+    #+RESULTS:
+    : contexts.ibm-cert-store/c100-e-eu-de-containers-cloud-ibm-com:31633/IAM#marco.hassan@ibm.com
+
+*** General Clutster Info
+
+    #+BEGIN_SRC sh
+    kubectl cluster-info
+    #+END_SRC
+
+*** Look at the running pods and Namespaces
+
+    In a similar way to Openshift; you can operate on your IKS cluster
+    using the =kubectl= command. The important thing is that you properly
+    configured and exported the =KUBECONFIG= yaml with the necessary
+    information on the cluster you wish to operate in the first place.
+
+    #+BEGIN_SRC sh
+    kubectl get pods
+
+    kubectl get namespaces 
+    #+END_SRC
+
+    In contrast to Openshift there is not a single command to change namespace
+    in Kubernetes.
+
+    In order to do that you can follow the steps under the following post: [[https://suraj.io/post/changing-k8s-ns/][link]].
+
+*** Apply changes to resource
+
+    With the =kubectl apply= command you are actually changing some
+    =.yaml= file of your images. 
+
+    This is for instance useful when you don't want to validate the
+    input before sending it.
+
+    #+BEGIN_SRC sh
+    kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.10.0/cert-manager-openshift.yaml 
+    #+END_SRC
+
+    This is moreover the correct way to program in a declarative way
+    in kubernetes, which is generally the recommended way.
+
+    To understand that better check the following video
+
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+ #+begin_export html
+ <iframe width="800" height="400"
+ src="https://www.youtube.com/embed/UNZvuGU26uA">
+ </iframe>
+ #+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+*** Gather more info for dealing with specific errors.
+
+    #+BEGIN_SRC sh
+    kubectl describe pod <my-pod>
+    #+END_SRC
+
+    This is for instance helpful when dealing with
+    CrashloopBackOff. This happens when you have a pod starting,
+    crashing, starting again, and then crashing again. 
+
+    A quick Google search will show us that crash loop events can happen
+    for a number of different reasons (and they happen frequently). Here
+    are some of the umbrella causes for why they occur:
+
+    The application inside the container keeps crashing Some type of
+    parameters of the pod or container have been configured incorrectly An
+    error has been made when deploying Kubernetes
+
+    Doing a kubectl describe pod will give you more information on that
+    pod. 
+
+    There you can read the specific error code - for instance in a
+    case of mine -  a =255 error=, which means that there likely is a
+    file specification error and this could not be found.
+
+*** When disrupting the Kubernetes Backend
+
+    It happened to me, when trying to debug Kubernetes issues that
+    I somehow altered the kubernetes structure and got the following error.
+
+    #+BEGIN_EXAMPLE
+    Error: could not get apiVersions from Kubernetes: unable to retrieve
+    the complete list of server APIs:
+    admission.certmanager.k8s.io/v1beta1: the server is currently unable
+    to handle the request
+    #+END_EXAMPLE
+
+    This turned out to be the case when the api-services no longer have backends running.
+
+    To fix it I run:
+
+    #+BEGIN_SRC sh
+    kubectl get apiservice
+    #+END_SRC
+
+    This will list the kubernetes api services of your cluster and
+    issues arises for ones where the AVAILABLE entry is False.
+
+    If you don't need those APIs any more, delete them:
+
+    #+BEGIN_SRC sh
+    kubectl delete apiservce <service-name>
+    #+END_SRC
+
+    You should be back to a normal behaving cluster then.
+
+#+BEGIN_EXPORT html
+<br>
+#+END_EXPORT
+
+
+** Openshift
+
+   Openshift is also a cluster management tool. This is a more well
+   rounded management tool. Especially in monitoring the cluster and
+   creating new services and resources it is particularly
+   strong. Openshift sits in fact on top of kubernetes adding feature
+   functionalities to it.
+
+   The GUI interface is very well done and comprehensive. This section
+   looks at the CLI to directly operate on your openshift
+   cluster. Here is important to configure your cluster as previously
+   noted in the kubernetes section. The KUBECONFIG of your openshift
+   cluster will allow you to directly operate on your cluster.
+
+   Commands are pretty similar to Kubernetes CLI in fact you might
+   even use =kubectl= command. 
+
+   Interesting is that instead of Docker for administrating the
+   containers Openshift uses Podman. This is another open source tool
+   for managing containers and container images and interacting with
+   image registries.
+
+
+*** General glimpse of Cluster
+
+    Look at the general settings of your cluster 
+
+    #+BEGIN_SRC sh
+    oc config view
+    #+END_SRC
+
+    In order to list the current namespaces or pods make use of
+
+*** Look at namespaces and pods
+
+    #+begin_src sh
+    oc get pods
+
+    oc get namespace
+    #+end_src
+
+    If you want more detail instructions on a given pod you can run
+
+    #+BEGIN_SRC sh
+    oc describe pod <my-pod>
+    #+END_SRC
+
+   
+*** Get satatus of running pods
+
+     #+BEGIN_SRC sh
+     oc status
+     #+END_SRC
+
+*** Look at specific pod configuration
+
+    #+BEGIN_SRC sh
+    oc edit pod <pod-name>
+    #+END_SRC
+    
+*** Switch among namespaces
+
+     To switch between different namespaces use
+
+     #+BEGIN_SRC sh
+     oc project <namespace>
+     #+END_SRC
+
+     Look at the user configuration in the =kube config= file.
+
+     #+begin_src ipython
+     oc get users
+     #+end_src
+
+*** Searching for Images via Podman
+
+    #+BEGIN_SRC sh
+    sudo podman search rhel
+    #+END_SRC
+
+    #+RESULTS:
+    
+    Important is that you can configure the registries (be it Docker
+    Hub or whatever) the podman will search your images in. 
+
+    After you found the image of your desire you can download the
+    image via podman through
+
+    #+BEGIN_SRC sh
+    sudo podman pull rhel
+    #+END_SRC
+
+    The usual structure of an image is:
+    =registry_name/user_name/image_name:tag= if you do not specify a
+    tag manually the default is *latest*.
+
+*** Run an Image via Podman
+
+    You can run an image after you downloaded it via podman through
+
+    #+BEGIN_SRC sh
+    sudo podman run <image_name>:<tag> 
+    #+END_SRC
+
+    You can even run it as demon if the image deployment will be long
+
+    #+BEGIN_SRC sh
+    sudo podman run -d <image_name>:<tag> 
+    #+END_SRC
+
+    Further important options are the ~--name~ to specify a name for
+    the container.
+
+    You can finally pass environment variables that might be necessary
+    to specify in Relation to the image (for instance a database user,
+    table, password) with the ~-e~ flag.
+
+*** Running an Interactive shell on a container
+
+    An important option is the ~-t~ flag used to create a pseudo
+    terminal. 
+
+    For instance to open a shell within a container you can use
+
+    #+BEGIN_SRC sh
+    sudo oc exec -it <container-name> /bin/bash
+
+    ## also possible via podman.
+    sudo podman exec -it <container-name> /bin/bash
+    #+END_SRC
+
+*** Get the services of the Cluster
+
+   #+BEGIN_SRC sh
+   oc get svc
+   #+END_SRC
+
+   This will allow to see the IP of the service and you might expose
+   it to the world wide web via routes.
+
+   To expose a service via a route *DNS host name* you can run
+
+   #+BEGIN_SRC sh
+   oc expose service svc/<service-name>
+   #+END_SRC
+
+   This would basically expose a DNS host name, for instance
+   www.mypod.com, to the WLAN and the DNS host name can redirect the
+   outside traffic to the different services pods. Finally the service
+   will point and load balance to the different pods running the
+   containers.
+
+   The DNS host name is of the form:
+   =route-name-project-name.default-domain=.
+
+   To get detailed information about a route after it was created you
+   can use 
+
+   #+BEGIN_SRC sh
+   oc describe route <route-name>
+   #+END_SRC
+
+   To better understand this workflow check at the following video:
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+ #+begin_export html
+ <iframe width="800" height="400"
+ src="https://www.youtube.com/embed/tTYY1Iz9DGw">
+ </iframe>
+ #+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+ #+begin_export html
+ <iframe width="800" height="400"
+ src="https://www.youtube.com/embed/ohSUtEfDefc">
+ </iframe>
+ #+end_export
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+*** Oc new-app
+
+    A nice command since openshift 4.0 is ~oc new-app~. This allows
+    you to enter the link of a github repository and openshift will
+    automatically infer the languages you are using and create a
+    dockerfile running the application there.
+
+

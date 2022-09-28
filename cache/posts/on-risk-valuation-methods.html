@@ -1,0 +1,235 @@
+<style>
+
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+<p>
+So writing a quick notes about this as I see a lot of confusion in my
+broader team around this topic and want to make sense in this space
+and create a bit of order.
+</p>
+
+<p>
+So basically the topic is around <i>full revaluation methods vs. factor
+based revaluation methods</i>. This was a bit the topic of the talk of the morning.
+</p>
+
+
+<!-- TEASER_END -->
+
+<p>
+I mean I will get to a full appreciation of the topic in a couple of
+years as there are so many things to be done here that I still did not
+properly got the time to read into the full methodology of the market
+risk. But got quite a sense into it by now in the sense that I can
+start to put things in perspective at high level.
+</p>
+
+<p>
+<i>Update:</i> wow it works well the thing of checking where the pain
+points are and exploring. Many questions suddenly open up. Many things
+to verify and in general a better feeling of the thing. Time to take
+off now. It's Tel-aviv time tomorrow.
+</p>
+
+<p>
+Have a bit to reorganize everything as it was an exploration journey
+and it is still quite messy this post to this stage. 
+</p>
+
+<div id="outline-container-orgf5c5812" class="outline-2">
+<h2 id="orgf5c5812">Different Valuation Options</h2>
+<div class="outline-text-2" id="text-orgf5c5812">
+<p>
+Some of this notes are still based on a bit of guessing. This is what
+you have to do when you work in this stand-alone way.
+</p>
+
+<p>
+Paper used for guessing and inferring: <a href="https://www.alexandria.unisg.ch/12592/1/PubsAmmann2001VaRFMPM.pdf">this</a>. By the good old
+Ammann. Should give you quite an overview. 
+</p>
+
+<p>
+So basically start by understanding all of the different ways you
+have for computing the VaR - good to have an overview here in order
+to make mental order:
+</p>
+
+<img src="../../images/Screenshot 2022-05-18 163331.png" class="center">
+
+<p>
+The essential idea that leads to such a fragmented space is the
+following:
+</p>
+
+<img src="../../images/Screenshot 2022-05-18 165208.png" class="center">
+
+<p>
+Now note that in order to overcome such issues and having to go
+into computational heavy non-parameteric models there is the option
+as well to make approximation - such as the delta or delta-gamma -
+to get ultimately a linear function and compute your risk in a
+handy way.
+</p>
+
+<p>
+So basically if you understand now the different options in this
+dimension you can understand how to set up the entire system
+properly. Cause I understood that most of our portfolio is actually
+based on very simple instruments meaning very easy linear stuff.
+</p>
+
+<p>
+So it makes little sense to model everything via
+full-revaluation. That is wasted computational energy for the world
+and wasted waiting time for the team in general. I mean will have
+to double check again in time but keep it as an open item and question.
+</p>
+</div>
+
+<div id="outline-container-org5639248" class="outline-3">
+<h3 id="org5639248">On the Delta-Factor Model VaR</h3>
+<div class="outline-text-3" id="text-org5639248">
+<p>
+Ok so that is actually as well interesting and develops a bit on
+the top of the above.
+</p>
+
+<p>
+When reading the internal methodology paper it is like the guy
+wanted to show off the biggest math arsenal available.
+</p>
+
+<p>
+The paper could be written much more in a simplified way at high
+level or at least there could have been a little bit more the high
+level intuition.
+</p>
+
+<p>
+This instead of going big on the little details such as the Ito's
+lemma derivation of the fixed income factor exposures.
+</p>
+
+<p>
+But maybe the point is that the high level stuff is so obvious
+that they skipped it all-together in order for the regulator to
+just get the juicy parts. Well not so sure. I am in general always
+inclined to high level and would just go into lower level stuff if
+forced to.
+</p>
+
+<p>
+In any case what you actually do over there is to find all of the
+different mathematical derivations in order to express the risks
+as functions of changes in the underlying factors, which are then
+often normal distributed such that you would actually ultimately
+be in the delta-normal risk factor world and such that you could
+actually compute the risk in a parametric way.
+</p>
+
+<p>
+So what you are actually reading there is nothing else than
+delta-normal (or other taylor expansions) VaR models with complex
+derivations of the delta-factors.
+</p>
+
+<p>
+I mean still have to double check as I go along and get more of a
+full spectrum idea of what is going on there but at the moment
+what I read is like this. Meaning that I just read some fragments
+of the entire risk system value prop.
+</p>
+
+<p>
+There is still as well a mental short circuit I have to surpass
+cause actually you do set the option full-revaluation method or
+not before doing the post-processing simulation - the in house
+defined stuff.
+</p>
+
+<p>
+So basically this is likely dependent just on the portfolios you
+upload and here the choice should be in this regard and not across
+the entire risk generation value chain. So everything depends
+about what is actually in these portfolios.
+</p>
+
+<p>
+This is a thing I still have to dig into and understand but if it
+is how I think it is, well then not sure full revaluation is needed.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org667e51a" class="outline-3">
+<h3 id="org667e51a">Actually pricing the changes</h3>
+<div class="outline-text-3" id="text-org667e51a">
+<p>
+So basically given the above you understand that you could
+actually use the parametric model in order to compute your risk.
+</p>
+
+<p>
+We do everything with full revaluation. Why? Understand this. &#x2013;
+see point above, same question. 
+</p>
+
+<p>
+In any case full revaluation is then the concept of generating a
+new portfolio value for each price path.
+</p>
+
+<p>
+In contrast to it if you use delta-approximations the concept is
+that what you actually do is to leverage greek letters or in
+general taylor approximations in order to have your risk function.
+</p>
+
+<p>
+In such a way you could compute the change in the portfolio value
+in an easier way as that component would simply enter the relation
+in a linear way such that per risk factor change you would not
+have to reprice everything but you could enter the thing in the
+formula and get its contribution in a simple way as the relation
+is linear. Note that when working with such methods you obviously
+loose some precision as you are in fact working with approximations.
+</p>
+</div>
+</div>
+</div>
