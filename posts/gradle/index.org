@@ -81,6 +81,48 @@ deployment.
 
 {{{TEASER_END}}}
 
+* Resoruces
+
+  So basically this post is not the best written.
+
+  I was doing a lot at the time together. It works and I was able to
+  keep on moving on a lots of fronts. /Concurrently/.
+
+  Though, I am aware that this post is not the most well written. It
+  is ok. You will have the time to restructure the thing. In general
+  this section should give you this sum-up understanding of a proper
+  use of the tool.
+
+  I would just have to take the time to restructure the entire post
+  but this is likely never gonna happen given the amount of things I
+  have to work on.
+
+  In any case now you understand that this is pretty much a
+  programming language. It is like the emacs config you
+  program.
+
+  Conceptually a similar way of programming, which makes actually
+  sense given that the ultimate program goal.
+  
+  Note now that essentially you have to understand that there are a
+  couple of basics api - the repositories, plugin etc. These are
+  written in groovy which is the language behind it. It is like lisp
+  in the emacs counterpart. 
+
+  Then given the fact that you use a plugin, it will give you a futher
+  set of api that you can leverage in order to perform the relevant
+  tasks and leverage the power of the functions behind it.
+
+  You can find a list of all of the available plugins [[https://plugins.gradle.org/][here]].
+
+  This is handy as you might find sometimes in books etc. outdated
+  stuff. You can then search there the relevant plugins if existing
+  etc.
+
+  You can then see the api referece there once you select the relevant
+  package. 
+
+
 * General Idea
 
   So basically this is nothing else than a tool that is system and OS
@@ -272,7 +314,7 @@ jar tvf <pacakged-binary>
 
    We are half way there in our team. Go back to it at some point when
    you have time.
-   
+
 
 ** Syntax
 
@@ -981,6 +1023,227 @@ gradlew.bat -q dependencies
     is in the =classpath= or not.
     
 
+** Multi-projects
+
+   So this is another important piece of the cake in gradle.
+
+   This is of paramount importance when your project grow larger.
+
+   The idea is to work in a modularized way via seperation of
+   concerns.
+
+   You should not work on the highest level.It is not recommended and
+   sooner or later the code will be too cluttered. On the top of it
+   when projects will grow very large, the build time will grow too
+   large.
+
+   So from here the idea of multi-projects set-up. See for instance
+   [[https://marcohassan.github.io/bits-of-experience/posts/spring/][spring as a good example]] of a large well constructed
+   multi-project. 
+
+   So the first thing to understand is that you register different
+   projects in the =settings.gradle= file.
+
+   Once you do so, you should be able to see the registered projects
+   via the following command:
+
+   #+begin_src sh
+gradle projects
+   #+end_src
+
+*** How to register new projects
+
+    Consider the following 101 example:
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-22 100435.png" class="center">
+    #+end_export
+
+    Consider as well the following dependency structure among the
+    different projects:
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-22 100742.png" class="center">
+    #+end_export
+
+    Note that the process for understanding multi-projects set ups in
+    gradle is the follwoing:
+
+    #+begin_quote
+In step 1, Gradle searches for a settings file in a *directory called
+master* with the same nesting level as the current directory.
+
+If no settings file is found in step 1, Gradle searches for a settings
+file *in the parent directories, starting from the current directory*.
+
+In the case of subproject2, the search would be suproject1 > root.
+
+If one of the steps finds a settings file and the project is included
+in its definition, the project is considered part of a multiproject
+build.
+    #+end_quote
+    
+    The question is then about how to write the =settings.gradle= file
+    in order to specify the project structure.
+
+    You can induce the projects in the follwoing way (see that below
+    is just illustrative, could have written everything in the same
+    line - note that you could also specify more fine grade properites
+    such as build files naming conventions in the projects etc.; see
+    the book if interested):
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-22 100954.png" class="center">
+    #+end_export
+
+    Finally note that there are two ways for structuring your
+    projects; one is hierarchical the other is flat. I am going for
+    the hierarchical one.
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-22 102502.png" class="center">
+    #+end_export
+
+*** Project Interface
+
+    This is the interface when working with your projects. Meaning
+    that here are the methods for working with your projects when
+    setting up the multi-project build process.
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-22 103647.png" class="center">
+    #+end_export
+
+    We will check at them sequentially in general understand that the
+    first chunck represents the specific project configurations,
+    i.e. just applied at project level.
+
+    The second chunck represent build set up that should be shared
+    across all projects (including root) / sub-projects (without root). 
+    
+    The last chunck controls the build lifecycle - which project
+    should be built first, which second etc.
+
+**** Example
+
+     Note the following example, nothing fancy. There is as well a lot
+     of repetition that could be avoided by using the =subproject=
+     api.
+
+     What is important to see is that you specify per project
+     configuration by passing the relevant path to the project you
+     wish to configure as a /path/ parameter in the project interface.
+
+     Example:
+     
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-09-22 105752.png" class="center">
+     #+end_export
+
+     Note that it is possible now to compile individual sub-projects
+     without having to recompile the entire project.
+
+     I.e. from the root project you can point to the relevant
+     sub-project and compile with build.
+
+     Thik for instance in the example at =$ gradle :model:build=.
+
+     Finally important is to specify the relevant project
+     dependencies. Meaning if you a project is dependent on another
+     you should specify this compile time dependency and add the
+     relevant classes and transitive dependencies to your build.
+
+     You can do this in the relevant dependencies section within the
+     relevant project. Say for instance in the example discussed:
+
+     #+begin_src groovy
+project(':repository') {
+ ...
+
+ dependencies {
+ compile project(':model') 
+ }
+
+}
+     #+end_src
+
+     Note now that in multi-projects you might have tons of
+     dependencies. You might not want to rebuild the entire project
+     together will all of its dependencies.
+
+     The idea is the following:
+
+     #+begin_quote
+During development, often times you know which source files have been
+changed in what subproject.
+
+You don’t need to rebuild a *subproject that you didn’t change*.
+
+For these situations, Gradle provides a feature called partial
+builds.
+
+Partial builds are enabled through the command-line option –a or
+--no-rebuild.
+     #+end_quote
+
+     So this is essentially it: =gradle :repository:build -a=
+
+     Note now the following two commands:
+
+     #+begin_src sh
+
+     gradle :repository:buildNeeded           ## To ensure that code didn’t
+					      ## break by accident, you’ll
+					      ## want to rebuild and test
+					      ## the projects your current
+					      ## project **depends on**.
+
+     gradle :repository:buildDependents       ## you can verify the impact
+					      ## of your code change by
+					      ## building and testing
+					      ## **dependent** projects
+
+     #+end_src
+
+     You can even set *task dependencies*:
+
+     #+begin_src groovy
+project(':model') {
+ task hello(dependsOn: ':repository:hello') << { 
+ println 'Hello from model project'
+ }
+}
+     #+end_src
+
+**** Example improvements
+
+     So basically the above was the general set up.
+
+     Common practice is to set the relevant properties that apply
+     across all of the projects - think for instance at the groupid
+     variable - with the =allprojects= variable.
+
+     The relevant properties that apply at subproject level with the
+     =subproject= variable at root level.
+
+     You can then create nested =build.gradle= files at the different
+     subprojects levels.
+     
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-09-22 134244.png" class="center">
+     #+end_export
+
+     Important is to understand that:
+
+     #+begin_quote
+Having a dedicated Gradle file per project indicates that you’re
+dealing with a specific project.
+
+Therefore, enclosing your code into a project closure becomes
+optional.
+     #+end_quote
+
+     
 ** Testing
 
    Recall the three types of tests:
@@ -1370,6 +1633,8 @@ test {
 #+end_export
 
 
+
+
 * On checking the dependencies of a project
 
   This is fundamental in order to properly refactor the code.
@@ -1387,52 +1652,3 @@ gradle -q dependencies --configuration testRuntimeClasspath
   dependencies and create compact gradle scripts for your code. 
 
 
-* Hands On
-
-  Ok so the above notes will help you to gain a high level overview of
-  gradle.
-
-  In this way you were able to understand at the high-level the
-  general structure and life-cycle of a Java project.
-
-  But as the germans always say: /übugng macht den Meister/.
-
-  So let's practice.
-
-  This is a good way to strat writing your Java projects and start to
-  gain your independence in that language.
-
-  Plus our testing and productive environment is too large to proper
-  understand the language. It is too complex to start it.
-
-  You have to gain the understanding of the Java environments bottom
-  up. You need a playground. There you can start to set up different
-  projects etc. 
-
-  In order to get my playground I installed gradle =7.1.1=, same
-  version we use for the productive env.
-
-  It is nice that in gradle you can set up a project with ~gradle
-  init~ command.
-
-  Then you can enter a few decisions and you will have your skeleton
-  for your project.
-
-  This is very similar to the way you set up spring projects with the
-  online spring initializer. So basically there is a tendency to work
-  in such a way in Java, and for freshies of the environment like me
-  it is ok - use it until you will be able to properly stand on your
-  feet.
-
-  So started a project. This is on your Desktop. Try to test the
-  Java-LSP on emacs seriously over there.
-
-  Start to write a parser application over there.
-
-  I have created a playground project as well. Have access to sandbox
-  in the cloud as well. You should be ready to get up and running in a
-  fast way now.
-
-  
-
-    

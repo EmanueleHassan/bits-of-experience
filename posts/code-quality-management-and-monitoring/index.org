@@ -55,7 +55,9 @@ in order to see the quality of it.
 
 This is important in order find blind spots in your code. Moreover, it
 is important to keep track of the history of the quality of the
-software in time. So it is a very important piece of the puzzle. 
+software in time. So it is a very important piece of the puzzle.
+
+These notes are based on the gradle in action book.
 
 {{{TEASER_END}}}
 
@@ -222,8 +224,166 @@ preferred.
     <img src="../../images/Screenshot 2022-09-21 115628.png" class="center">
    #+end_export
 
+      
+*** Checkstyle
+
+    So this is the first component of the static code analysis is
+    style checking.
+
+    It is important to adhere to coding styles. It will keep your code
+    uniform and clean.
+
+    In my python projects I have the style checks already implemented
+    at lsp level giving me warnings if I am not [[https://github.com/PyCQA/pycodestyle][pycodestyle conform]].
+
+    In this sense the first step in this dimension is to select a
+    relevant coding style. Check at the [[https://checkstyle.sourceforge.io/][following webpage]] in this
+    sense.
+
+    Note that while this is the primary task of checkstyle the
+    *project developed in time*:
+
+    #+begin_quote
+The project started out as a tool for finding areas in your source
+code that don’t comply with your coding rules. Over time, the feature
+set was expanded to *also check for design problems, duplicate code,
+and common bug patterns*.
+    #+end_quote
+
+    However, note that in this sense it is better to use the PMD
+    project. This is focused simply around the latter.
+    
+    
+*** PMD
+
+    As mentioned [[http://pmd.sourceforge.net/][PMD]]:
+
+    #+begin_quote
+PMD is similar to Checkstyle, though it exclusively focuses on coding
+problems like dead or duplicated code, overly complex code, and
+possible bugs.
+    #+end_quote
+    
+
+*** FindBugs / SpotBugs
+
+    [[http://findbugs.sourceforge.net/][This]] is as well for finding bugs and general poor design
+    practices.
+
+    #+begin_quote
+The bugs identified include problems like equals/hashCode
+implementations, redundant null checks, and even performance
+issues. Unlike the other analyzers presented earlier, FindBugs
+operates on the Java bytecode, rather than the source code. You’ll
+find that operating on bytecode makes the analysis slower than source
+code analysis. For bigger projects, be prepared for it to take
+minutes.
+    #+end_quote
+
+    Note that according to the official gradle documentation in the
+    migration between 5.X -> 6.X the findbugs plugin was
+    deprecated. It was replaced by [[https://github.com/spotbugs/spotbugs-gradle-plugin][the following]].
+
+    Note that this seems to be quite well done as a check. The issue
+    is that it is not properly integrated and does not generate html
+    or xml reports via the gradle plugin.
+
+    You should maybe use something [[https://spotbugs.readthedocs.io/en/latest/running.html][along these lines]].
+
+    I leave it for another moment though.
+
+    In any case this is most likely the go to software - see for
+    instance this thread:
+
+    You can understand it as well by the fact that there are a lot of
+    adds-on to it, such as:
+
+    - https://find-sec-bugs.github.io/
+    - https://github.com/KengoTODA/findbugs-slf4j    
+
+
+*** JDepend
+
+    [[http://clarkware.com/software/JDepend.html][This]] is also a very cool one and differes in general from the
+    above static code analysis.
+
+    #+begin_quote
+The static code analysis tool JDepend produces metrics that measure
+the design quality of your code.
+
+It scans all packages of your Java code, counts the number of classes
+and interfaces, and determines their dependencies.
+
+This information will help you identify hot spots of unwanted or
+strong coupling.
+    #+end_quote
+
+
+*** Other options
+
+    Note that there a ton of options on top of the above.
+
+    You can navigate the world wide web and try to make sense of it.
+
+    Some that might be worth exploring at some point are:
+
+    - [[https://niels.nu/blog/2018/testing-the-architecture][archUnit]]
+
    
-** TODO understand 
+** Aggregation of the different Code Quality Reports
+
+   Understand the following:
+
+   #+begin_quote
+You’ve seen how to generate code metrics for your project using
+different code analysis tools. Each of these tools produces reports
+that need to be checked individually.  With every build, the existing
+report is potentially deleted and a new one is created, so you have no
+idea whether the code quality has improved or decayed over time. What
+you need is a centralized tool that monitors, visualizes, and
+aggregates your metrics. A tool that provides this functionality is
+[[http://www.sonarsource.org/][Sonar]].
+   #+end_quote
+
+   Note that you can easily understand that the way the person
+   develops in the book is quite outdated. Some of the plugins do not
+   exists anymore in newer software versions.
+
+   Moreover, even the sonar component is not as it used to be. It is
+   now split across two projects.
+
+   1. =sonarlint=:
+
+      this is cool cause it has a flavour of the static analysis tools
+      you have seen above but it is on the fly.
+
+      See the [[https://www.sonarqube.org/][official webpage]] for more.
+
+      Note that there is an emacs plug in for it. It works in tandem
+      with lsp so you are [[https://github.com/emacs-lsp/lsp-sonarlint][good to go]].
+
+   2. =sonarqube=:
+
+      This is actually the point mentioned in the gradle in action
+      book.
+
+      It is quite short there. You shall read more into detail over
+      [[https://docs.sonarqube.org/latest/setup/install-server/][here]].
+
+      
+   
+** IN-PROGRESS test sonarlint and integrate it with lsp. write notes where necessary
+
+   I installed everything and verified everything.
+
+   Should work correctly.
 
 
+   
+
+   
+
+   
+      
+   
    
