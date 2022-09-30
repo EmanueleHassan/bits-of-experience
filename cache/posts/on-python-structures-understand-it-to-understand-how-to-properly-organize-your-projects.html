@@ -1,0 +1,395 @@
+<p>
+So I finally took some time to go over the documentation and make some
+notes about the different naming conventions and some basics
+structures you should get when building larger projects.
+</p>
+
+<p>
+I just finished a third larger python project and I am by now
+conscious of the strength of well organized code. It can save you a
+very big amount of time, especially when your projects start to grow
+very large and it becomes difficult to keep a clean mental structure
+over the code-base.
+</p>
+
+<p>
+I therefore started to write a couple of posts where I am writing and
+will update my way of working and structuring projects. I will expand
+on it in time once my knowledge will expand and more sophistication
+will occur.
+</p>
+
+<p>
+This particular posts deals with the basics structures that you have
+to understand to properly set up projects and manage to well deal with
+larger code-bases. 
+</p>
+
+<!-- TEASER_END -->
+
+<p>
+The first important difference you have to understand is the one among
+<code>script</code>, <code>modules</code> and <code>packages</code>. Just when you will understand this
+properly you will be able to well structure projects.
+</p>
+
+<div id="outline-container-org6400e43" class="outline-2">
+<h2 id="org6400e43">Script vs. Module vs. Package</h2>
+<div class="outline-text-2" id="text-org6400e43">
+<p>
+So notice that there is an inherit difference among the three. The
+first one; the <code>script</code> is the ultimate file you pass to your
+python interpreter when running your program.
+</p>
+
+<p>
+A <code>module</code> is a support file containing some python code that you
+call from within a runtime. Or using python official documentation
+terms:
+</p>
+
+<blockquote>
+<p>
+To support this, Python has a way to put definitions in a file and use
+them in a script or in an interactive instance of the
+interpreter. Such a file is called a module; definitions from a module
+can be imported into other modules or into the main module (the
+collection of variables that you have access to in a script executed
+at the top level and in calculator mode).
+</p>
+</blockquote>
+
+<p>
+So that is basically it and the distinction between a module and a
+script is not that big.
+</p>
+
+<p>
+Note as well this <code>__name__</code> object that you often use when
+programming. This has the following meaning:
+</p>
+
+<p>
+Within a module, the module’s name (as a string) is available as
+the value of the global variable <code>__name__</code>. In such a way you can
+easily write if statements that depending on the case where the
+file will be a <code>module</code> or a <code>script</code> (in this case the <code>__name__</code>
+is bounded to "<span class="underline"><span class="underline">main</span></span>") will perform different actions.
+</p>
+
+<p>
+However, what is important to understand is that the scope of each
+variables is dependent on the file it resides in. This is important
+to understand. Once you get this, it will be possible for you to
+avoid loosing time because of issues relating to some
+non-accessible variables etc.
+</p>
+
+<p>
+In order to understand this, note again the words of the official
+documentation:
+</p>
+
+<pre class="example" id="org0643edb">
+Each module has its own *private symbol table*, which is used as the
+global symbol table by all functions defined in the module. Thus,
+the *author* of a module can use global variables in the module
+without worrying about accidental clashes with a user’s global
+variables.
+
+On the other hand, if you know what you are doing you
+can touch a module’s global variables with the same notation used
+to refer to its functions, =modname.itemname=.
+</pre>
+
+<p>
+So that is essentially the idea.. each module has its own global
+variables and namespace. This has pro and cons. It will help you to
+avoid conflicts as everything is well separated. On the other hand
+this means that modules that are installed in another module are
+not automatically in the private symbol table of a particular
+module such that you will have to import them once more.
+</p>
+
+<p>
+As following coding best practices you should write your code one
+and one time only it makes sense to organize functions and
+libraries you often use and import in your modules in a distinct
+package that you might call <code>utils</code>.
+</p>
+
+<p>
+The final component that you will use when creating your Python
+projects are <code>packages</code>. You can think about packages as a way to
+organize modules.
+</p>
+
+<p>
+In official docu terms:
+</p>
+
+<pre class="example" id="orge3e2b78">
+Just like the use of modules saves the authors of different modules
+from having to worry about each other’s global variable names, the use
+of dotted module names saves the authors of multi-module packages like
+NumPy or Pillow from having to worry about each other’s module names.
+</pre>
+
+<p>
+So you get the point&#x2026; although from a practical point of view I
+see it more as way to separate your modules and program in logical
+structure and keep the code clean.
+</p>
+
+<p>
+Note just that in order for a repository to count as package you
+have to add to it the <code>__init__.py</code> module. You can either leave it
+blank or you can put code into it that it will be executed when the
+package is imported as such, i.e. when you import the package name
+without a path to a module in that package.
+</p>
+
+<p>
+It is recommended to use such a module to store global variables
+and to store packages that you will use within your project.
+</p>
+
+<p>
+You can then access such global variables within the module in the
+following way:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">from</span> <span class="nn">PACKAGENAME</span> <span class="kn">import</span> <span class="n">GLOBAL</span><span class="o">-</span><span class="n">VARIABLE</span><span class="o">-</span><span class="n">SAVED</span><span class="o">-</span><span class="n">IN</span><span class="o">-</span><span class="n">THE</span><span class="o">-</span><span class="n">INIT</span>
+</pre></div>
+
+<p>
+and even if you run the above in a module inside a given package it
+will work well.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3fb3a33" class="outline-2">
+<h2 id="org3fb3a33">On that many .pyc modules</h2>
+<div class="outline-text-2" id="text-org3fb3a33">
+<p>
+To speed up loading modules, Python caches the compiled version of
+each module in the <span class="underline"><span class="underline">pycache</span></span> directory under the name
+module.version.pyc, where the version encodes the format of the
+compiled file; it generally contains the Python version number.
+</p>
+
+<p>
+So that is what all of these auto-generated directories are. You
+can safely ignore them when committing your code, however you
+should not cancel them at any time form your project. This is order
+to not have to recompile the entire module each time. 
+</p>
+
+<p>
+Python checks the modification date of the source against the
+compiled version to see if it’s out of date and needs to be
+recompiled. This is a completely automatic process. Also, the
+compiled modules are platform-independent, so the same library can
+be shared among systems with different architectures.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc27ec49" class="outline-2">
+<h2 id="orgc27ec49">On relative paths</h2>
+<div class="outline-text-2" id="text-orgc27ec49">
+<p>
+Here you should specify the path relative to the package you are
+currently working (i.e. relative to the package where your module
+resides).
+</p>
+
+<p>
+Note that the directory from which relative paths are defined is
+the one of your <code>script</code> file.
+</p>
+
+<p>
+Note that relative path just work across <code>packages</code>, i.e. you
+cannot reference a module that is not part of a package with
+relative paths.
+</p>
+
+<p>
+Note that the directory where your script is running is the root
+directory. I.e. everything is defined relative to that. Notice that
+you cannot go higher in the tree in comparison to that directory.
+</p>
+
+<p>
+Or at least you should use tricks then. A very good entry is under
+<a href="https://stackoverflow.com/questions/16981921/relative-imports-in-python-3">this url</a>. The one you up-voted.
+</p>
+
+<p>
+And within it there is this trick of defining a function from which
+you can change the root directory for relative paths so to say.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span> <span class="ow">and</span> <span class="n">__package__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+       <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       basic test procedure for logger.py</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+
+       <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">importlib</span>
+       <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+       <span class="k">def</span> <span class="nf">import_parents</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+	   <span class="k">global</span> <span class="n">__package__</span>
+	   <span class="n">file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+	   <span class="n">parent</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="n">level</span><span class="p">]</span>
+
+	   <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">top</span><span class="p">))</span>
+	   <span class="k">try</span><span class="p">:</span>
+	       <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parent</span><span class="p">))</span>
+	   <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span> <span class="c1"># already removed</span>
+	       <span class="k">pass</span>
+
+	   <span class="n">__package__</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">top</span><span class="o">.</span><span class="n">parts</span><span class="p">):])</span>
+	   <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">__package__</span><span class="p">)</span> <span class="c1"># won&#39;t be needed after that</span>
+
+       <span class="c1">## Relative to 2 directories higher</span>
+       <span class="n">import_parents</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># N = 2</span>
+
+       <span class="c1">## do your code for running the file as script</span>
+</pre></div>
+
+<p>
+That is quite useful, for instance when you want to test some of
+your modules that require a different module in a different
+package.
+</p>
+
+<p>
+Note however that if you start to import modules in different
+packages you will run into errors when working in such a way.
+</p>
+
+<p>
+This because when you program all of your code you specify all of
+the relative path in relation to the <code>src</code> directory - i.e. the
+directory where your <code>__main__</code> script is.
+</p>
+
+<p>
+You will hence get errors as, in the case above, the relative path
+would be in relation to the module you are running your tests for.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcf3ceed" class="outline-2">
+<h2 id="orgcf3ceed">Adding the root directory from which the imports are specified</h2>
+<div class="outline-text-2" id="text-orgcf3ceed">
+<p>
+So the one strategy you can use to circumvent this would be to set
+the root where your normal <code>__main__.py</code> <i>script</i> is. Then you do
+not have to modify the relative path of all of your modules.
+</p>
+
+<p>
+You can do that in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span> <span class="ow">and</span> <span class="n">__package__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+       <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       basic test procedure for logger.py</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+
+       <span class="c1">## add the path of the root directory so that you get relative</span>
+       <span class="c1">## imports from there</span>
+       <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span><span class="nn">os</span>
+       <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">))</span>
+
+       <span class="c1">## your module tests when running it as a script.</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org2044f97" class="outline-2">
+<h2 id="org2044f97">On Naming Conventions According to PEP8</h2>
+<div class="outline-text-2" id="text-org2044f97">
+<p>
+<code>Modules</code> should have short, all-lowercase names. Underscores can
+be used in the module name if it improves readability. Python
+<code>packages</code> should also have short, all-lowercase names, although
+the use of underscores is <b>discouraged</b>.
+</p>
+
+<hr />
+
+<p>
+Some other practice; I do not think it is PEP but would have to
+double check it.
+</p>
+
+<p>
+Note that some people like to call their <i>script</i>, i.e. the file
+they execute the <code>__main__.py</code>.
+</p>
+
+<p>
+It is up to you if you want to follow that structure or not. You
+can make some research on the best practice in the following
+depending on the time.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org909db76" class="outline-2">
+<h2 id="org909db76">Putting module level information</h2>
+<div class="outline-text-2" id="text-org909db76">
+<p>
+Module level “dunders” (i.e. names with two leading and two
+trailing underscores) such as <span class="underline"><span class="underline">all</span></span>, <span class="underline"><span class="underline">author</span></span>, <span class="underline"><span class="underline">version</span></span>,
+etc. should be placed after the module docstring but before any
+import statements except from <span class="underline"><span class="underline">future</span></span> imports.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="sd">&quot;&quot;&quot;This is the example module.</span>
+
+<span class="sd">   This module does stuff.</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+
+   <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">barry_as_FLUFL</span>  
+
+   <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
+   <span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1&#39;</span>
+   <span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Cardinal Biggles&#39;</span>
+   <span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;rob@spot.colorado.edu&quot;</span>
+   <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Production&quot;</span>
+   <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;GPL&quot;</span>
+
+   <span class="kn">import</span> <span class="nn">os</span>
+   <span class="kn">import</span> <span class="nn">sys</span>
+</pre></div>
+</div>
+
+<div id="outline-container-org77f9598" class="outline-3">
+<h3 id="org77f9598"><span class="todo TODO">TODO</span> What are <span class="underline"><span class="underline">future</span></span> imports ?</h3>
+</div>
+</div>
+
+<div id="outline-container-org7af0bce" class="outline-2">
+<h2 id="org7af0bce">On the setup.py</h2>
+<div class="outline-text-2" id="text-org7af0bce">
+<p>
+So you still specify such file but you do not run it anymore in
+order to build and distribute your packages. See <a href="https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html">the following</a>.
+</p>
+
+<p>
+If you are interested in packaging and distributing python pacakges
+you should rather read <a href="https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/">the following</a>.
+</p>
+</div>
+</div>
