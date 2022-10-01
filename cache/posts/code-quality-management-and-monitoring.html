@@ -1,0 +1,548 @@
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+<p>
+So basically this post contains a way to statically analyze your code
+in order to see the quality of it.
+</p>
+
+<p>
+This is important in order find blind spots in your code. Moreover, it
+is important to keep track of the history of the quality of the
+software in time. So it is a very important piece of the puzzle.
+</p>
+
+<p>
+These notes are based on the gradle in action book.
+</p>
+
+<!-- TEASER_END -->
+
+<p>
+Understand the following:
+</p>
+
+<blockquote>
+<p>
+In the Java space, you can choose from a wide range of open source and
+commercial solutions, such as Checkstyle, PMD, Cobertura, FindBugs,
+and Sonar.  Many of these tools are already available in the form of
+Gradle core or third-party plugins and can be seamlessly integrated
+into your build.
+</p>
+</blockquote>
+
+<p>
+So a good idea to this point is to include these metrics and
+include them in git. Just to keep track about the quality of your
+code as a time series.
+</p>
+
+<p>
+In general such tools produce metrics along the following
+categories:
+</p>
+
+<ol class="org-ol">
+<li>Code Coverage</li>
+
+<li>Adherence to coding standards</li>
+
+<li>Bad coding practices and design problems</li>
+
+<li>Overly complex, duplicated, and strongly coupled code</li>
+</ol>
+
+<div id="outline-container-org2bfdd8f" class="outline-3">
+<h3 id="org2bfdd8f">Important practical aspects</h3>
+<div class="outline-text-3" id="text-org2bfdd8f">
+<p>
+It is important to understand that you should group different code
+quality metrics in different gradle tasks.
+</p>
+
+<p>
+The idea is that you do not want to execute all of them together
+and across the entire codebase. It will take too much time.
+</p>
+
+<p>
+In this sense, you should rather decouple the tasks and also
+understand the opportunity to run them for smaller portions of
+your codebase.
+</p>
+
+<blockquote>
+<p>
+For example, during development you may want to know whether you’ve
+improved the code coverage of the class you’re currently refactoring
+without having to run other lengthy code quality processes.
+</p>
+</blockquote>
+</div>
+</div>
+
+
+<div id="outline-container-org6741aaa" class="outline-2">
+<h2 id="org6741aaa">Code Coverage</h2>
+<div class="outline-text-2" id="text-org6741aaa">
+<p>
+Code coverage analysis (also called test coverage analysis) is the
+process of finding the areas in your code that are not exercised by
+test cases.
+</p>
+
+<p>
+Empirical studies show that reasonable code coverage has an
+indirect impact on the quality of your code.
+</p>
+
+<p>
+In any case understand the following:
+</p>
+
+<blockquote>
+<p>
+But despite all these benefits, code analysis <b>doesn’t replace a code
+review</b> by an experienced peer; rather, it complements it.
+</p>
+</blockquote>
+
+<p>
+A further important question in this space is the type of coverage
+metrics that you want to use.
+</p>
+</div>
+
+
+<div id="outline-container-orgf695c8c" class="outline-3">
+<h3 id="orgf695c8c">Types of Coverage</h3>
+<div class="outline-text-3" id="text-orgf695c8c">
+<p>
+There is in fact more than an option to consider and especially the
+following:
+</p>
+
+<ul class="org-ul">
+<li><i>Branch coverage</i>: Measures which of the possible execution paths
+(for example, in if/else branching logic) is executed by tests.</li>
+
+<li><i>Statement coverage</i>: Measures which statements in a code block
+have been executed. (The default in pytest-coverage).</li>
+
+<li><i>Method coverage</i>: Measures which of the methods were entered
+during test execution</li>
+
+<li><i>Complexity metrics</i>: Measures cyclomatic complexity (the number
+of independent paths through a block of code) of packages,
+classes, and methods.</li>
+</ul>
+
+<p>
+Especially interesting to me is the <i>complexity metric</i> as it is a
+metric that I want to explore on the codebase I work on as being
+quite indicative.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org049120b" class="outline-3">
+<h3 id="org049120b">Types of Instrumentation</h3>
+<div class="outline-text-3" id="text-org049120b">
+<p>
+Essentially instrumentation is the way your programs actually
+check the coverage.
+</p>
+
+<p>
+I.e. as per gradle in action:
+</p>
+
+<blockquote>
+<p>
+The job of instrumentation is to inject instructions that are used to
+detect whether a particular code line or block is hit during test
+execution.
+</p>
+</blockquote>
+
+<p>
+Understand that there are now three types of instrumentation
+possibilities in Java:
+</p>
+
+<ol class="org-ol">
+<li><b>Source code</b> instrumentation adds instructions to the source
+code before compiling it to trace which part of the code has
+been executed.</li>
+
+<li><b>Offline bytecode</b> instrumentation applies these instructions
+directly to the compiled bytecode.</li>
+
+<li><b>On-the-fly</b> instrumentation adds these same instructions to the
+bytecode, but does this when it’s loaded by the JVM’s class
+loader.</li>
+</ol>
+
+<p>
+Note now, that obviously the last one is the better option, due to
+the following straightforward reasoning:
+</p>
+
+<blockquote>
+<p>
+In the context of a continuous delivery pipeline, where bundling the
+deliverable is done after executing the code analysis phase, you want
+to make sure that the source or bytecode isn’t modified after the
+compilation process to avoid unexpected behavior in the target
+environment.  Therefore, on-the-fly instrumentation should be
+preferred.
+</p>
+</blockquote>
+
+<p>
+Note that in other cases there are ways to avoid instrumentation
+problems. However, this requires more thought and I am not
+treating it here as for the moment I am going with an on the fly
+implementation software.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org46d2403" class="outline-3">
+<h3 id="org46d2403">Software Decision</h3>
+<div class="outline-text-3" id="text-org46d2403">
+<p>
+I will use <i>JaCoCo</i> for running coverage and this is on the fly
+implementation such that this problem is solved in the first
+place. Note that JaCoCo produces <b>line and branch coverage</b>
+metrics. The complexity coverage metric is missing in this sense.
+</p>
+
+<p>
+If you want that cyclomatic complexity you should go with
+enterprise solutions such as Cobertura. Keep it in the back of
+your mind. You are likely going back with the request at some
+point.
+</p>
+
+<p>
+An example of cobertura report would look as follows, you see that
+you have a lot information there:
+</p>
+
+
+<img src="../../images/Screenshot 2022-09-21 112958.png" class="center">
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgcc2d33d" class="outline-2">
+<h2 id="orgcc2d33d">Static Code Analysis</h2>
+<div class="outline-text-2" id="text-orgcc2d33d">
+<p>
+Recall the intro.
+</p>
+
+<p>
+Basically these software covers the other points 2-4.
+</p>
+
+<p>
+An overview of the available tools is the following:
+</p>
+
+<img src="../../images/Screenshot 2022-09-21 115628.png" class="center">
+</div>
+
+
+<div id="outline-container-org7d2b8c8" class="outline-3">
+<h3 id="org7d2b8c8">Checkstyle</h3>
+<div class="outline-text-3" id="text-org7d2b8c8">
+<p>
+So this is the first component of the static code analysis is
+style checking.
+</p>
+
+<p>
+It is important to adhere to coding styles. It will keep your code
+uniform and clean.
+</p>
+
+<p>
+In my python projects I have the style checks already implemented
+at lsp level giving me warnings if I am not <a href="https://github.com/PyCQA/pycodestyle">pycodestyle conform</a>.
+</p>
+
+<p>
+In this sense the first step in this dimension is to select a
+relevant coding style. Check at the <a href="https://checkstyle.sourceforge.io/">following webpage</a> in this
+sense.
+</p>
+
+<p>
+Note that while this is the primary task of checkstyle the
+<b>project developed in time</b>:
+</p>
+
+<blockquote>
+<p>
+The project started out as a tool for finding areas in your source
+code that don’t comply with your coding rules. Over time, the feature
+set was expanded to <b>also check for design problems, duplicate code,
+and common bug patterns</b>.
+</p>
+</blockquote>
+
+<p>
+However, note that in this sense it is better to use the PMD
+project. This is focused simply around the latter.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgece9e34" class="outline-3">
+<h3 id="orgece9e34">PMD</h3>
+<div class="outline-text-3" id="text-orgece9e34">
+<p>
+As mentioned <a href="http://pmd.sourceforge.net/">PMD</a>:
+</p>
+
+<blockquote>
+<p>
+PMD is similar to Checkstyle, though it exclusively focuses on coding
+problems like dead or duplicated code, overly complex code, and
+possible bugs.
+</p>
+</blockquote>
+</div>
+</div>
+
+
+<div id="outline-container-orgffc0ffa" class="outline-3">
+<h3 id="orgffc0ffa">FindBugs / SpotBugs</h3>
+<div class="outline-text-3" id="text-orgffc0ffa">
+<p>
+<a href="http://findbugs.sourceforge.net/">This</a> is as well for finding bugs and general poor design
+practices.
+</p>
+
+<blockquote>
+<p>
+The bugs identified include problems like equals/hashCode
+implementations, redundant null checks, and even performance
+issues. Unlike the other analyzers presented earlier, FindBugs
+operates on the Java bytecode, rather than the source code. You’ll
+find that operating on bytecode makes the analysis slower than source
+code analysis. For bigger projects, be prepared for it to take
+minutes.
+</p>
+</blockquote>
+
+<p>
+Note that according to the official gradle documentation in the
+migration between 5.X -&gt; 6.X the findbugs plugin was
+deprecated. It was replaced by <a href="https://github.com/spotbugs/spotbugs-gradle-plugin">the following</a>.
+</p>
+
+<p>
+Note that this seems to be quite well done as a check. The issue
+is that it is not properly integrated and does not generate html
+or xml reports via the gradle plugin.
+</p>
+
+<p>
+You should maybe use something <a href="https://spotbugs.readthedocs.io/en/latest/running.html">along these lines</a>.
+</p>
+
+<p>
+I leave it for another moment though.
+</p>
+
+<p>
+In any case this is most likely the go to software - see for
+instance this thread:
+</p>
+
+<p>
+You can understand it as well by the fact that there are a lot of
+adds-on to it, such as:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://find-sec-bugs.github.io/">https://find-sec-bugs.github.io/</a></li>
+<li><a href="https://github.com/KengoTODA/findbugs-slf4j">https://github.com/KengoTODA/findbugs-slf4j</a></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgf29ab5b" class="outline-3">
+<h3 id="orgf29ab5b">JDepend</h3>
+<div class="outline-text-3" id="text-orgf29ab5b">
+<p>
+<a href="http://clarkware.com/software/JDepend.html">This</a> is also a very cool one and differes in general from the
+above static code analysis.
+</p>
+
+<blockquote>
+<p>
+The static code analysis tool JDepend produces metrics that measure
+the design quality of your code.
+</p>
+
+<p>
+It scans all packages of your Java code, counts the number of classes
+and interfaces, and determines their dependencies.
+</p>
+
+<p>
+This information will help you identify hot spots of unwanted or
+strong coupling.
+</p>
+</blockquote>
+</div>
+</div>
+
+
+<div id="outline-container-org95e5f2c" class="outline-3">
+<h3 id="org95e5f2c">Other options</h3>
+<div class="outline-text-3" id="text-org95e5f2c">
+<p>
+Note that there a ton of options on top of the above.
+</p>
+
+<p>
+You can navigate the world wide web and try to make sense of it.
+</p>
+
+<p>
+Some that might be worth exploring at some point are:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://niels.nu/blog/2018/testing-the-architecture">archUnit</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc2823ba" class="outline-2">
+<h2 id="orgc2823ba">Aggregation of the different Code Quality Reports</h2>
+<div class="outline-text-2" id="text-orgc2823ba">
+<p>
+Understand the following:
+</p>
+
+<blockquote>
+<p>
+You’ve seen how to generate code metrics for your project using
+different code analysis tools. Each of these tools produces reports
+that need to be checked individually.  With every build, the existing
+report is potentially deleted and a new one is created, so you have no
+idea whether the code quality has improved or decayed over time. What
+you need is a centralized tool that monitors, visualizes, and
+aggregates your metrics. A tool that provides this functionality is
+<a href="http://www.sonarsource.org/">Sonar</a>.
+</p>
+</blockquote>
+
+<p>
+Note that you can easily understand that the way the person
+develops in the book is quite outdated. Some of the plugins do not
+exists anymore in newer software versions.
+</p>
+
+<p>
+Moreover, even the sonar component is not as it used to be. It is
+now split across two projects.
+</p>
+
+<ol class="org-ol">
+<li><p>
+<code>sonarlint</code>:
+</p>
+
+<p>
+this is cool cause it has a flavour of the static analysis tools
+you have seen above but it is on the fly.
+</p>
+
+<p>
+See the <a href="https://www.sonarqube.org/">official webpage</a> for more.
+</p>
+
+<p>
+Note that there is an emacs plug in for it. It works in tandem
+with lsp so you are <a href="https://github.com/emacs-lsp/lsp-sonarlint">good to go</a>.
+</p></li>
+
+<li><p>
+<code>sonarqube</code>:
+</p>
+
+<p>
+This is actually the point mentioned in the gradle in action
+book.
+</p>
+
+<p>
+It is quite short there. You shall read more into detail over
+<a href="https://docs.sonarqube.org/latest/setup/install-server/">here</a>.
+</p></li>
+</ol>
+</div>
+</div>
+
+
+
+<div id="outline-container-org6e1fc17" class="outline-2">
+<h2 id="org6e1fc17">IN-PROGRESS test sonarlint and integrate it with lsp. write notes where necessary</h2>
+<div class="outline-text-2" id="text-org6e1fc17">
+<p>
+I installed everything and verified everything.
+</p>
+
+<p>
+Should work correctly.
+</p>
+</div>
+</div>

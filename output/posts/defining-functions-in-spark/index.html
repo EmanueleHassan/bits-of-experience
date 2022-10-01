@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Defining Functions in Spark | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/defining-functions-in-spark/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../helm/" title="Helm" type="text/html">
+<link rel="next" href="../flask-login-vs-flask-auth/" title="Flask Login vs Flask Auth" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Defining Functions in Spark">
+<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/defining-functions-in-spark/">
+<meta property="og:description" content="One especially interesting feature that I already used before; but
+unfortunately I did not make notes for, is the possibility of
+specifying particular functions via the PySpark raw API and make them
+a">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-06-03T14:34:46+02:00">
+<meta property="article:tag" content="Spark">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Defining Functions in Spark</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2021-06-03T14:34:46+02:00" itemprop="datePublished" title="2021-06-03 14:34">2021-06-03 14:34</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/spark/" rel="tag">Spark</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+One especially interesting feature that I already used before; but
+unfortunately I did not make notes for, is the possibility of
+specifying particular functions via the PySpark raw API and make them
+available throughout your spark session when working via data-frames -
+be it via SparkSQL or via pandas.
+</p>
+
+<p>
+Note that this notes are based on <a href="https://jaceklaskowski.gitbooks.io/mastering-spark-sql/content/spark-sql-udfs.html">this source</a>. Looks like a very
+exhaustive source. So check at it again should this project really
+start. There you might make sense of all of that. 
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org1b71dbc" class="outline-2">
+<h2 id="org1b71dbc">User Defined Functions</h2>
+<div class="outline-text-2" id="text-org1b71dbc">
+<p>
+So the usual way to work to specify the functions you would need to
+work with is via <b>user-defined-functions</b>.
+</p>
+
+<p>
+This is a very neat feature when working with Spark as it will
+allow you to define functions you can then apply to data-frames.
+</p>
+
+<p>
+So if you are working with data in tabular format it might well
+makes sense to work in such a way leveraging such customizable
+functions.
+</p>
+
+<p>
+The idea of udf when working with Python is now the following:
+</p>
+
+<blockquote>
+<p>
+User-Defined Functions (aka UDF) is a feature of Spark SQL to
+define new Column-based functions that extend the vocabulary of
+Spark SQL’s DSL for transforming Datasets.
+</p>
+
+<p>
+Historically, user-defined functions operate one-row-at-a-time, and thus
+suffer from high serialization and invocation overhead. As a
+result, many data pipelines define UDFs in Java and Scala and then
+invoke them from Python.
+</p>
+
+<p>
+Now, with the rise of <a href="https://arrow.apache.org/">Apache Arrow</a>, it is now possible to define
+low-overhead, high-performant user-defined functions directly in
+Python.
+</p>
+</blockquote>
+
+<p>
+Specifically so far it was just possible in python to use the
+SparkSQL user-defined functions and perform row by row operations.
+</p>
+
+<p>
+You can think for instance at the following:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1">##############</span>
+   <span class="c1">## Syntax 1 ##</span>
+   <span class="c1">##############</span>
+
+   <span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="n">udf</span>
+
+   <span class="c1"># Use udf to define a row-at-a-time udf</span>
+   <span class="nd">@udf</span><span class="p">(</span><span class="s1">'double'</span><span class="p">)</span>
+   <span class="c1"># Input/output are both a single double value</span>
+   <span class="k">def</span> <span class="nf">squared</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+	 <span class="k">return</span> <span class="n">v</span> <span class="o">*</span> <span class="n">v</span>
+
+   <span class="c1"># work with it either leveraging dataframes methods or sql</span>
+
+   <span class="n">df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'v2'</span><span class="p">,</span> <span class="n">plus_one</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">v</span><span class="p">))</span> <span class="c1"># note that df is a spark data frame</span>
+
+   <span class="c1"># or call via sql  - should be a separate chuck with the magic %sql call</span>
+   <span class="o">%</span><span class="n">sql</span> 
+   <span class="n">select</span> <span class="n">v2</span><span class="p">,</span> <span class="n">squaredWithPython</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span> <span class="k">as</span> <span class="n">id_squared</span> <span class="kn">from</span> <span class="nn">df</span>
+
+   <span class="c1">##############</span>
+   <span class="c1">## Syntax 2 ##</span>
+   <span class="c1">##############</span>
+
+   <span class="k">def</span> <span class="nf">squared</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+     <span class="k">return</span> <span class="n">s</span> <span class="o">*</span> <span class="n">s</span>
+
+   <span class="n">spark</span><span class="o">.</span><span class="n">udf</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">"squaredWithPython"</span><span class="p">,</span> <span class="n">squared</span><span class="p">)</span>
+
+   <span class="c1"># assume a test spark dataframe</span>
+
+   <span class="c1"># call it via sql - should be a separate chuck with the magic %sql call</span>
+   <span class="o">%</span><span class="n">sql</span>
+   <span class="n">select</span> <span class="nb">id</span><span class="p">,</span> <span class="n">squaredWithPython</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">as</span> <span class="n">id_squared</span> <span class="kn">from</span> <span class="nn">test</span>
+
+   <span class="c1"># or call it via dataframes methods </span>
+   <span class="n">test</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'id'</span><span class="p">,</span> <span class="n">squaredWithPython</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+</pre></div>
+
+<p>
+Vis à vis the following new vectorized udf or stated differently
+pandas-udf:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+   <span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="n">col</span><span class="p">,</span> <span class="n">pandas_udf</span>
+   <span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="kn">import</span> <span class="n">LongType</span>
+
+   <span class="c1"># Declare the function and create the UDF</span>
+   <span class="k">def</span> <span class="nf">multiply_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+       <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+   <span class="n">multiply</span> <span class="o">=</span> <span class="n">pandas_udf</span><span class="p">(</span><span class="n">multiply_func</span><span class="p">,</span> <span class="n">returnType</span><span class="o">=</span><span class="n">LongType</span><span class="p">())</span>
+
+   <span class="c1">### Applied to Pandas data objectes ###</span>
+
+   <span class="c1">## The function for a pandas_udf should be able to execute with local Pandas data</span>
+   <span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">multiply_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+   <span class="c1"># 0    1</span>
+   <span class="c1"># 1    4</span>
+   <span class="c1"># 2    9</span>
+   <span class="c1"># dtype: int64</span>
+
+   <span class="c1">### Applied Spark Data Frames  ###</span>
+
+   <span class="c1"># Create a Spark DataFrame, 'spark' is an existing SparkSession</span>
+   <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]))</span>
+
+   <span class="c1"># Execute function as a Spark vectorized UDF</span>
+   <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">multiply</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">"x"</span><span class="p">),</span> <span class="n">col</span><span class="p">(</span><span class="s2">"x"</span><span class="p">)))</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+   <span class="c1"># +-------------------+</span>
+   <span class="c1"># |multiply_func(x, x)|</span>
+   <span class="c1"># +-------------------+</span>
+   <span class="c1"># |                  1|</span>
+   <span class="c1"># |                  4|</span>
+   <span class="c1"># |                  9|</span>
+   <span class="c1"># +-------------------+</span>
+</pre></div>
+
+<p>
+Then you can do numerical tests yourself and see that the
+vectorized operations rather than the row by row operations has a
+computational edge. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1b527c6" class="outline-2">
+<h2 id="org1b527c6">Note and understand the difference between vectorized udf and toPandas</h2>
+<div class="outline-text-2" id="text-org1b527c6">
+<p>
+Note that the two are quite different.
+</p>
+
+<p>
+Although it might come naturally to work with pandas and so you
+might be tempted to call the convert <code>toPandas ()</code> function and
+work with Pandas methods etc. this is not recommended as the entire
+benefit of working with distributed data would be gone.
+</p>
+
+<p>
+In this sense, when calling the spark method of udf what you would
+actually do is specifying working a function and work on vectorized
+columns stores leveraging data structures that resolves such
+operations in a computationally intense and fast way.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org077759f" class="outline-2">
+<h2 id="org077759f">Very Important Note</h2>
+<div class="outline-text-2" id="text-org077759f">
+<p>
+Notice that despite the fact that <i>Apache Arrow</i> and the vectorized
+pandas operations are able to bring quite some computational edge
+over the standard available udf functions that were so far
+available it is still recommended to work with SQL when working
+with dataframes.
+</p>
+
+<p>
+In this sense, you should not fall in the temptation of writing to
+many udf functions yourself even if you like to work in a pythonic
+way, as project Tungsten and the Catalyst optimizer leveraging the
+decades of research on relational structures and SQL will still be
+there so that you should go with it and be thoughtful in the extent
+you should apply such weapon. 
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../helm/" rel="prev" title="Helm">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../flask-login-vs-flask-auth/" rel="next" title="Flask Login vs Flask Auth">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
