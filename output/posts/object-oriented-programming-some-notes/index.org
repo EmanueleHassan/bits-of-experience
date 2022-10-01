@@ -1,0 +1,2189 @@
+#+BEGIN_COMMENT
+.. title: Object Oriented Programming - Some Notes
+.. slug: object-oriented-programming-some-notes
+.. date: 2021-11-17 16:37:49 UTC+01:00
+.. tags: software-engineering, oop
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+.. status: 
+#+END_COMMENT
+
+
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+#+end_export
+
+
+So here are some notes on concepts you have to use when working in a
+proper OOP way.
+
+Once upon a time, I had written some notes about major OOP
+concepts. Unfortunately it got lost. Learn your lesson from it as this
+is a real pity.
+
+In any case start anew here. Basically this should cover a little bit
+of Software Design best practices. Add some notes for instance through
+the following sources
+
+- [[https://refactoring.guru/design-patterns][design-patterns and refactoring]] - online source. 
+
+- [[http://www.javier8a.com/itc/bd1/articulo.pdf][desing patterns]] - apparently /THE BOOK/ in order to write proper
+  software .
+
+So when you read the book it is immediate that the design patterns
+ultimately depend on the OOP concepts, such as composition,
+inheritance, delegation etc. So basically these are the atoms of OOP
+and patterns are based on such atoms. So in the book you start from
+the atoms. Otherwise it makes sense to read a separate book completely
+dedicated to it, such as: /Object-Oriented Thought Process/.
+
+It is a good investement learning such patterns. You will be then much
+better able to decompose the existing applications. This will help you
+to navigate big existing legacy applications where no description of
+it is attached to it.
+
+{{{TEASER_END}}}
+
+* On a Side Note about the Notation
+
+  Note that all of the UML charts in this post are produced with the
+  UML class notation.
+
+  Here an overview:
+  
+  #+begin_export html
+   <img src="../../images/Screenshot 2022-09-07 135455.png" class="center">
+  #+end_export
+
+
+* Design Patterns
+
+  So taking now a moment to dig into design patterns.
+
+  Basically understand that they are broadly defined in to 3
+  categories:
+
+  - =Creational patterns=: provide object creation mechanisms that
+    increase flexibility and reuse of existing code.
+
+  - =Structural patterns=: explain how to assemble objects and classes
+    into larger structures, while keeping the structures flexible and
+    efficient.
+
+  - =Behavioral patterns=: take care of effective communication and
+    the assignment of responsibilities between objects.
+
+  At the end you will see that many things you already started to use
+  out of the box after a couple of month working more in an OOP way.
+
+** Map of Design Patterns
+  
+   Generally keep in mind the following overview:
+  
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-25 085656.png" class="center">
+   #+end_export
+
+   Note that above *object patterns* refer to object relationships that
+   can be changed at *run-time*. In contrast *classes patterns* refer
+   to reletionships among classes, meaning these are static and fixed
+   at *compile time*.
+
+
+** Relation Among the Patterns
+   
+   Important is as well to understand that there is a relation among
+   patterns. I.e. it is quite common to combine them in order to
+   perform the necessary logic of your programs.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-25 090514.png" class="center">
+   #+end_export
+
+   Note that some patterns are as well subsititute; think for instance
+   of /prototype/ and /abstract factory/.
+
+
+** Intent classification for the different Patterns
+
+   So you can refer as well to the following for designing the thing.
+
+   It will be useful as well, especially at the beginning, for
+   understanding what patterns you want to apply when creating your
+   code - less so for reverse engineering existing code - I might be
+   wrong here though.
+
+   Note that this is a copy and paste from the design patterns book
+   p. 24-25. 
+
+   #+begin_quote
+1. Design patterns: Abstract Factory (87),Factory Method
+   (107),Prototype (117).
+
+   Creating an object by specifying a class explicitly. Specifying a
+   class name when you create an object commits you to a particular
+   implementation instead of a particular interface. This commitment
+   can complicate future changes. *To avoid it, create objects
+   indirectly*.
+
+2. Design patterns: Chain of Responsibility (223),Command (233).
+
+   Dependence on specific operations. When you specify a particular
+   operation, you commit to one way of satisfying a request. By
+   *avoiding hard-coded requests*, you make it easier to change the way
+   a request gets satisfied both at compile-time and at run-time.
+
+3. Design patterns: Abstract Factory(87),Bridge (151).
+
+   Dependence on hardware and software platform. External operating
+   system interfaces and application programming interfaces (APIs) are
+   different on different hardware and software platforms.Software
+   that depends on a particular platform will be harder to port to
+   other platforms.It may even be difficult to keep it up to date on
+   its native platform. It's important therefore to *design your system
+   to limit its platform dependencies*.
+
+4. Design patterns: AbstractFactory (87),Bridge (151), Memento (283),Proxy (207).
+
+   Dependence on object representations or implementations. Clients
+   that know how an object is represented, stored, located, or
+   implemented might need to be changed when the object
+   changes. *Hiding this information from clients keeps changes from
+   cascading*. So this is the *concept of Transparency*.
+
+5. Design patterns: Builder (97), Iterator (257), Strategy (315),
+   Template Method (325),Visitor(331).
+
+   Algorithmic dependencies. *Algorithms are often extended, optimized,
+   and replaced* during development and reuse. Objects that depend on
+   an algorithm will have to change when the algorithm
+   changes. *Therefore algorithms that are likely to change should be
+   isolated*.
+
+   /Personal note:/ sounds much like transparency and the previous
+   point. Once you have all the patterns studied and clear in the mind
+   come back here.
+   
+6. Design patterns: AbstractFactory (87), Bridge (151), Chain of
+   Responsibility (223), Command (233), Facade (185),Mediator (273),
+   Observer (293).
+
+   Tight coupling. Classes that are tightly coupled are hard to reuse
+   in isolation, since they depend on each other. *Tight coupling
+   leads to monolithic systems*, where you can't change or remove a
+   class without understanding and changing many other classes. The
+   system becomes a dense mass that's hard to learn, port, and
+   maintain. -> Gordian Knot.
+   
+   *Loose coupling increases the probability* that a class can be reused
+   by itself and that a system can be learned, ported, modified, and
+   extended more easily. Design patterns use techniques such as
+   abstract coupling and layering to promote loosely coupled systems.
+
+   Note layering - old trick of CS - add a layer of indirection.
+   
+7. Design patterns: Bridge (151), Chain of Responsibility (223),
+   Composite (163), Decorator (175), Observer (293),Strategy (315).
+
+   Customizing an object by subclassing often isn't easy. Every new
+   class has a fixed implementation overhead (initialization,
+   finalization, etc.). Defining a subclass also requires an in-depth
+   understanding of the parent class. For example, overriding one
+   operation might require overriding another.An overridden operation
+   might be required to call an inherited operation. And subclassing
+   can lead to an explosion of classes, because you might have to
+   introduce many new subclasses for even a simple extension.
+
+   *Object composition in general and delegation* in particular
+   provide flexible *alternatives to inheritance for combining
+   behavior*. *New functionality* can be added to an application by
+   *composing existing objects* in new ways rather than by defining
+   new subclasses of existing classes. On the other hand, *heavy use
+   of object composition can make designs harder to understand*. Many
+   design patterns produce designs in which you can introduce
+   customized functionality just by defining one subclass and
+   composing its instances with existing ones.
+   
+8. Design patterns: Adapter (139),Decorator(175),Visitor(331).
+
+   *Inability to alter classes conveniently - these design patterns
+   fix it*.
+
+   Sometimes you have to modify a class that can't be modified
+   conveniently.Perhaps you need the source code and don't have it (as
+   may be the case with a commercial class library). Or maybe any
+   change would require modifying lots of existing subclasses. Design
+   patterns offer ways to modify classes in such circumstances.
+   #+end_quote
+
+
+** Aspect that can vary per design pattern
+
+   This is as well useful; in the sense that you can refer to the
+   following to understand what you would like to keep flexible in
+   your system and what not.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-25 164022.png" class="center">
+   #+end_export
+   
+
+* Logic of OOP that makes some patterns possible
+
+  So one of the mayor concept in OOP is the one of *dynamic
+  binding*. This allows patterns such as the abstract factory.
+
+  The essential idea is that when you trigger a method (a request),
+  the behaviour is not simply defined by the method itself but it is
+  rather a combination of *object* and *method*, this actually
+  specifies the operation.
+
+  #+begin_quote
+The run-time association of a request to an object and one of its
+operations (methods) is known as *dynamic binding*.
+  #+end_quote 
+
+  /Side note - the concept is clear. There is just a bit of new
+  terminology. Do not get confused as everything boils down to:/
+
+  #+begin_quote
+Dynamic binding means that issuing a request doesn't commit you to a
+particular implementation until run-time.
+  #+end_quote
+  
+  
+* Creational Patterns
+
+  Creational class patterns defer some part of object creation to
+  subclasses, while Creational object patterns defer it to another
+  object.
+
+  Note that creational patterns heavy leverage the Java future of
+  reference variables. See for instance the following snippet for it
+  on your Java notes in the following section.
+
+
+** On reference variables using interafaces              :reference_variable:
+
+    This is convenient. Recall that it was possible to define
+    reference variables as superclasses and to reference then objects
+    of subclasses. It was then possible to call the different abstract
+    methods of the superclass that would then trigger the right call
+    to the actual implementation of it in the subclass.
+
+    In a similar way it is possible to create reference variables as
+    interfaces and point then to the different objects of classes
+    implementing such interface.
+
+    *Any instance of any class that implements the declared interface
+    can be referred to by such a variable*.
+
+    The exact way the interface is implemented depends then on the
+    type of object that the reference interface variable points
+    at. This in a very similar way to what was already explained for
+    the case of superclass reference variable.
+
+    *Note:* interestingly when you implement a reference variable of
+    type interface and then refer to an object of some class referring
+    to that interface you can access all of the methods specified by
+    the interface via the reference variable but *you cannot access
+    any other members defined in the class* implementing the
+    interface.
+    
+    The method to be executed is looked up dynamically at run time,
+    allowing classes to be created later than the code which calls
+    methods on them.
+
+    #+begin_quote
+CAUTION Because dynamic lookup of a method at run time incurs a
+significant overhead when compared with the normal method invocation
+in Java, you should be careful not to use interfaces casually in
+performance-critical code.
+    #+end_quote
+
+  
+** Factory Methods
+
+   Basically this is the one I was already noting when making some
+   notes generally about Java.
+
+   This is very core in order to write a bit of solid code. You have to
+   understand and interiorize it.
+
+   Basically the idea is the following:
+
+   - Define an interface for creating an object, but let subclasses
+     decide *which class* (so you see this pattern is at class level -
+     meaning compile time) to instantiate.
+
+     Factory Method lets a class defer instantiation to subclasses.
+
+   - So that is basically a /virtual/ constructor via a method.
+
+   So the idea is essentailly the following:
+  
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-01-28 122956.png" class="center">
+   #+end_export
+
+   Note that this is called *method* for a reason. You have actually
+   here a method in the interface and the ProductOne and ProductTwo in
+   the above will *implement that method constructing an object from
+   the desired class*. So actually the construction happens via method
+   and not by reference assigning an object to a general
+   interface. Keep this /well into your mind/.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-26 155654.png" class="center">
+   #+end_export
+
+**** On a side note in debugging
+
+     So basically I am working quite a bit on some legacy code. You
+     should be careful about such factory methods as when you have for
+     instance interfaces which are implemented by similar but
+     different objects - possibly in a hierarchical way -, say for
+     instance =AbstractFeed= and =AbstractQuarterly=  (implementing
+     Abstractfeed) and overwriting some methods, well then you see
+     that it is easy to get confused.
+
+     You will notice that factory structure by debugging the thing. 
+     
+
+** Abstract Factory
+
+   This is another pattern that uses the concept of dynamic binding in
+   OOP.
+
+   Note that the way it uses such concept is quite elaborated.
+
+   I will elaborate next but you see that such patterns are indeed
+   swiss knifes. Meaning it is not something that you implement on the
+   fly when you program. At least not at the beginning. You have to
+   make some explicit thinking before and take quite some design
+   steps.
+
+   In general this pattern looks as follows:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-26 162111.png" class="center">
+   #+end_export
+
+   And to understand that better think of the following
+   implementation:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-26 162847.png" class="center">
+   #+end_export
+
+   In this sense understand the following pseudo-code in order to
+   understand the pattern - note that *factory methods* are used (you
+   can also use other patterns such as prototypes there -:   
+
+   #+begin_src java
+
+   // The abstract factory interface declares a set of methods that
+   // return different abstract products. These products are called
+   // a family and are related by a high-level theme or concept.
+   // Products of one family are usually able to collaborate among
+   // themselves. A family of products may have several variants,
+   // but the products of one variant are incompatible with the
+   // products of another variant.
+   interface GUIFactory is
+       method createButton():Button
+       method createCheckbox():Checkbox
+
+
+   // Concrete factories produce a family of products that belong
+   // to a single variant. The factory guarantees that the
+   // resulting products are compatible. Signatures of the concrete
+   // factory's methods return an abstract product, while inside
+   // the method a concrete product is instantiated.
+   class WinFactory implements GUIFactory is
+       method createButton():Button is
+	   return new WinButton()
+       method createCheckbox():Checkbox is
+	   return new WinCheckbox()
+
+   // Each concrete factory has a corresponding product variant.
+   // so you see this uses factory methods
+   class MacFactory implements GUIFactory is
+       method createButton():Button is
+	   return new MacButton()
+       method createCheckbox():Checkbox is
+	   return new MacCheckbox()
+
+
+   // Each distinct product of a product family should have a base
+   // interface. All variants of the product must implement this
+   // interface.
+   interface Button is
+       method paint()
+
+   // Concrete products are created by corresponding concrete
+   // factories.
+   class WinButton implements Button is
+       method paint() is
+	   // Render a button in Windows style.
+
+   class MacButton implements Button is
+       method paint() is
+	   // Render a button in macOS style.
+
+   // Here's the base interface of another product. All products
+   // can interact with each other, but proper interaction is
+   // possible only between products of the same concrete variant.
+   interface Checkbox is
+       method paint()
+
+   class WinCheckbox implements Checkbox is
+       method paint() is
+	   // Render a checkbox in Windows style.
+
+   class MacCheckbox implements Checkbox is
+       method paint() is
+	   // Render a checkbox in macOS style.
+
+
+   // The client code works with factories and products only
+   // through abstract types: GUIFactory, Button and Checkbox. This
+   // lets you pass any factory or product subclass to the client
+   // code without breaking it.
+   class Application is
+       private field factory: GUIFactory
+       private field button: Button
+
+       constructor Application(factory: GUIFactory) is
+	   this.factory = factory
+
+       method createUI() is
+	   this.button = factory.createButton()
+
+       method paint() is
+	   button.paint()
+
+
+   // The application picks the factory type depending on the
+   // current configuration or environment settings and creates it
+   // at runtime (usually at the initialization stage).
+   class ApplicationConfigurator is
+       method main() is
+	   config = readApplicationConfigFile()
+
+	   if (config.OS == "Windows") then
+	       factory = new WinFactory()
+	   else if (config.OS == "Mac") then
+	       factory = new MacFactory()
+	   else
+	       throw new Exception("Error! Unknown operating system.")
+
+	   Application app = new Application(factory)
+
+   #+end_src
+   
+
+** Builder
+
+   You use this pattern in order to create very laborious objects that
+   require a lot of effort being created.
+
+   In this sense what you do is to define a builder with all of the
+   different components that you need for creating the complex
+   objects. You can then call directly from your client the builder
+   components that you need to instantiate your complex objects - and
+   forms, derivatives of it -.
+
+   Another option is to work with a second type of objects - /a
+   Director/.
+
+   The idea is well sum-up in the following:
+
+   #+begin_quote
+If the client code needs to assemble a special, fine-tuned model of a
+car, it can work with the builder directly. On the other hand, the
+client can delegate the assembly to the director class, which knows
+how to use a builder to construct several of the most popular models
+of cars.
+   #+end_quote
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-29 084214.png" class="center">
+   #+end_export
+
+   So you see for instance in the pattern above that the Director
+   holds all of the different types of car categories. These are
+   mapped to the relevant input parameters in the director, which uses
+   then the general builder objects to create them.
+
+
+** Prototype
+
+   Prototype is a creational design pattern that lets you copy
+   existing objects without making your code dependent on their
+   classes.
+
+   The essential idea why you need a pattern for it is threefold:
+
+   #+begin_quote
+1. Not all objects can be copied that way because some of the object’s
+   fields may be private and not visible from outside of the object
+   itself.
+
+2. Since you have to know the object’s class to create a duplicate,
+   your code becomes dependent on that class. If the extra dependency
+   doesn’t scare you, there’s another catch.
+
+3. Sometimes you only know the interface that the object follows, but
+   not its concrete class, when, for example, a parameter in a method
+   accepts any objects that follow some interface.
+   #+end_quote
+
+   The pattern works as follows:
+
+   #+begin_quote
+The pattern declares a common interface for all objects that support
+cloning. This interface lets you clone an object without coupling your
+code to the class of that object.
+
+Usually, such an interface contains just a single clone method.
+
+An object that supports cloning is called a prototype. When your
+objects have dozens of fields and hundreds of possible configurations,
+cloning them might serve as an alternative to subclassing.
+   #+end_quote
+
+   The pattern looks as follows:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-29 091559.png" class="center">
+   #+end_export
+
+   As always understand it via the concrete case; it is much more
+   simple to digest it then:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-29 100157.png" class="center">
+   #+end_export
+
+   So that is it. Quite easy to understand; or maybe I am just getting
+   into the pattern mentality.
+   
+
+** Singleton
+
+   This is again the usual concept in CS. It is to have a single
+   access to the resources or objects such that you apply exclusivity
+   =a la= lord of the flies.
+
+   It is the concept of /Single Responsibility Principle/.
+
+   Here’s how it works: imagine that you created an object, but after
+   a while decided to create a new one. Instead of receiving a fresh
+   object, *you’ll get the one you already created*.
+
+   Note that this behavior is impossible to implement with a regular
+   constructor since a constructor call must always return a new
+   object by design.
+
+   Note that the above is the general concept and people most often
+   refer as Singleton an Object solving that issue. *Important to
+   note* is that it is much more.
+
+   The general idea for implementing this is the following:
+
+   #+begin_quote
+Make the default constructor private, to prevent other objects from
+using the new operator with the Singleton class.
+
+Create a static creation method that acts as a constructor. Under the
+hood, this method calls the private constructor to create an object
+and saves it in a static field.
+
+All following calls to this method return the cached object.
+   #+end_quote
+
+   This is as well pretty simple to implement. You can think about it
+   in the following way:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-29 102854.png" class="center">
+   #+end_export
+
+   
+* Structural Patterns
+
+  The Structural class patterns use inheritance to compose classes,
+  while the Structural object patterns describe ways to *assemble
+  objects*.
+  
+** Adapter
+
+   This is a special object that *converts the interface* of one
+   object so that another object can understand it.
+
+   Here is how it works:
+
+   1. The adapter gets an interface, compatible with one of the
+      existing objects.
+
+   2. Using this interface, the existing object can *safely call the
+      adapter’s methods*.
+
+   3. Upon receiving a call, the adapter passes the request to the
+      second object, but in a format and order that the second object
+      expects.
+
+   It essentially works in such a way:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-01 164526.png" class="center">
+   #+end_export
+
+   More precisely in an example:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-01 164921.png" class="center">
+   #+end_export
+
+   So what you are essentially doing here is encapsulating the object
+   into the adapter, and then calling the relevant method of the other
+   interface which you are interested in.
+
+
+** Bridge
+
+   This is as well a very cool pattern.
+
+   It essentially works in the following way:
+
+   #+begin_quote
+It lets you split a large class or a set of closely related classes
+into two *separate hierarchies—abstraction* and *implementation* —
+which can be developed independently of each other.
+   #+end_quote
+
+   Note that it can be well applied in the following cases:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-01 171828.png" class="center">
+   #+end_export
+
+   The solution is to use *composition* (in UML terms - recall that
+   with it the associated instances are indeed deleted).
+
+   It does in fact switch from object inheritance to object
+   composition.
+
+   So you see - one of the mayor rules of OOP.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-01 173419.png" class="center">
+   #+end_export
+
+   So the concept is very straightforward.
+
+   The way you implement it, is the following - it is quite trivial
+   once you start to see the patterns:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-02 091353.png" class="center">
+   #+end_export
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-02 091442.png" class="center">
+   #+end_export
+
+
+** Composite
+
+   Composite is a *structural design pattern* that lets you compose
+   objects into tree structures and then work with these structures as
+   if they were individual objects.
+
+   So this is actually a nice pattern as it is not a trivial one.
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-02 094258.png" class="center">
+   #+end_export
+
+   The solution for it is the following:
+
+   #+begin_quote
+The Composite pattern suggests that you work with Products and Boxes
+through a *common interface* which declares a method for calculating
+the total price.
+
+How would this method work? For a product, it’d simply return the
+product’s price. For a box, it’d *go over each item the box contains*,
+ask its price and then return a total for this box.
+
+The greatest benefit of this approach is that you don’t need to care
+about the concrete classes of objects that compose the tree. You don’t
+need to know whether an object is a simple product or a sophisticated
+box. You can treat them all the same via the common interface.
+
+When you call a method, the objects themselves pass the request down
+the tree.
+   #+end_quote
+
+   So this is a cool pattern. You can use it for instance for creating
+   the relevant entity tree when it will be the time. The current
+   solution is for instance [[http://www.ibase.ru/files/articles/programming/dbmstrees/sqltrees.html][this one]] - research more this guy and the
+   tree structure in SQL if you want to go down that path.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-02 102856.png" class="center">
+   #+end_export
+
+   See for instance the following example:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-02 103608.png" class="center">
+   #+end_export
+
+
+** Decorator
+
+   Decorator is a structural design pattern that lets you *attach new
+   behaviors* to objects by placing these objects inside *special
+   wrapper* objects that
+
+   The idea is essentially the following:
+
+   #+begin_quote
+“Wrapper” is the alternative nickname for the Decorator pattern that
+clearly expresses the main idea of the pattern. A wrapper is *an object
+that can be linked with some target object*.
+
+The wrapper contains the same set of methods as the target and
+delegates to it all requests it receives. However, the wrapper may
+*alter the result* by *doing something* either *before or after it
+passes the request to the target*.
+   #+end_quote
+
+   Then once you properly undestand the snippet above you should have
+   no issues understanding the following pictures:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 091730.png" class="center">
+   #+end_export
+
+   And more explicitely, the above, in an example:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 091833.png" class="center">
+   #+end_export
+
+   Finally the same concept in a more complex example, where there are
+   not just decorator classes but other concrete components inheriting
+   from the wrapper(funny how this post is rendered with different
+   degrees of complexity to confuse people):
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 092039.png" class="center">
+   #+end_export
+
+
+** Facade
+
+   Facade is a structural design pattern that provides a simplified
+   interface to a library, a framework, or any other complex set of
+   classes.
+
+   #+begin_quote
+   A facade is a class that provides a simple interface to a complex
+   subsystem which contains lots of moving parts. A facade might provide
+   limited functionality in comparison to working with the subsystem
+   directly.
+
+   However, it *includes only those features that clients really care
+   about*.
+
+   [Comment - this is what you find in your code base when working with
+   the libraries.]
+   #+end_quote
+
+   Note as well:
+
+   #+begin_quote
+Having a facade is handy when you need to integrate your app with a
+sophisticated library that has dozens of features, but you just need a
+tiny bit of its functionality.
+   #+end_quote
+
+   So you see the annotations of most frameworks are nothing elese
+   than the way to implement such facade patterns such that you can
+   forget everything that is behind it. So you lived through facades
+   this entire time and it was indeed a healthy discovery to check
+   what is behind it.
+
+   The high level idea is the following:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 094602.png" class="center">
+   #+end_export
+
+   You can see the following basic example for a 101 example - but
+   *never debunk* you might well think that there exist much more
+   sophisticated facades:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 095936.png" class="center">
+   #+end_export
+
+
+** Flyweight
+
+   Flyweight is a structural design pattern that lets you fit more
+   objects into the available amount of RAM by *sharing common parts
+   of state between multiple objects* instead of keeping all of the
+   data in each object.
+
+   So data are not encapsulated in a single object but rather shared
+   across objects.
+
+   So essentially the idea of this pattern is that there are intrinsic
+   things that never change, they are *immutable across time*. It is
+   the general relativity and the laws of gravitation, in Albert
+   Einstein terms.
+
+   While the flowing of the world we experience is the special
+   relativity - this is the idea of:
+
+   #+begin_quote
+Other parts of a particle’s state, such as coordinates, movement
+vector and speed, are unique to each particle. After all, the values
+of these fields change over time. This data represents the always
+changing context in which the particle exists.
+   #+end_quote
+
+   In the pattern website that you are reading:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 113853.png" class="center">
+   #+end_export
+
+   So basically this means that you *can and should* create objects
+   that differ and move but you should not change the general state
+   that moves all of the objects across time.
+
+   This is how you are asked to frame the objects of the world.
+
+   Plus it says that you do not have to create a lot of objects, just
+   the ones that need a different intrinsic state all the others will
+   reference to them - the Particles of general relativity.
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 114932.png" class="center">
+   #+end_export
+
+
+   Side note. Not that powerful as the above, as it is simply an
+   application of it. But check the following picture:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 150452.png" class="center">
+   #+end_export
+
+   This is what is happening in the Context class in the front-end.
+
+   
+*** On the Flyweight Factory
+
+    This is as well interesting and important. You have still to
+    develop that system view on the different patterns so come back
+    here but it is for sure interesting. 
+
+    #+begin_quote
+For more convenient access to various flyweights, you can create a
+*factory method that manages a pool of existing flyweight
+objects*. The method accepts the intrinsic state of the desired
+flyweight from a client, looks for an existing flyweight object
+matching this state, and returns it if it was found. If not, it
+creates a new flyweight and adds it to the pool.
+
+There are several options where this method could be placed. The most
+obvious place is a flyweight container. Alternatively, you could
+create a new factory class. Or you could make the factory method
+static and put it inside an actual flyweight class. 
+    #+end_quote
+
+
+** Proxy
+
+   Recall that this is used by Hibernate.
+
+   Recall that this is the following:
+
+   #+begin_quote
+Proxy is a structural design pattern that lets you provide a
+substitute or *placeholder for another object*.
+
+A *proxy controls access to the original object*, allowing you to
+perform something either before or after the request gets through to
+the original object.
+   #+end_quote
+
+   So this is the same idea of networking with the proxies around the
+   world. Or see below the other real world
+   analogy. Fantastic. Everything was written, /at the end of the
+   storm there is a golden sky/.
+
+   Note now that the problem is stated in the following form. Not sure
+   why it is expressed in such a way. I think this is noise but it
+   might be not - double think when you have time. Just focus on the
+   quoted above.
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 161035.png" class="center">
+   #+end_export
+
+   The solution to it is the following:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 161451.png" class="center">
+   #+end_export
+
+   So you see this is nothing else than the connectivity pools that
+   your applications have. And Hibernate must use them behind the
+   scenes. Reread your Hibernate notes in this sense.
+
+   On the real world example of proxies:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 163426.png" class="center">
+   #+end_export
+
+   Plus we should add that this is a proxy for gold. Or at least, it
+   used to be.
+
+   Now note that the proxy works in the following way:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-05 164156.png" class="center">
+   #+end_export
+
+   You can see then that this pattern is one of the most
+   wide-spread. It has multiple applications, some of which you listed
+   above, some of which you still have to understand.
+
+   Among the others you count:
+
+   1. Lazy initialization (*virtual proxy*). This is when you have a
+      heavyweight service object that wastes system resources by being
+      always up, even though you only need it from time to time.
+
+   2. Access control (*protection proxy*). This is when you want only
+      specific clients to be able to use the service object; for
+      instance, when your objects are crucial parts of an operating
+      system and clients are various launched applications (including
+      malicious ones).
+
+      And this was in general my /point about proxies/.
+
+   3. /Local execution of a remote service/ (*remote proxy*). This is when
+      the service object is located on a remote server.
+
+      So you see this is a pattern but it has apparently little to do
+      with programming. I mean, everything is a program, but this is
+      more at networking level etc. So not understanding why this is
+      relevant as a patternw henyou program at [[https://en.wikipedia.org/wiki/OSI_model][layer 7]].
+
+      Note that in fact this is nothing else than the internet proxies
+      I was talking above and it is again the conecpt of being
+      transparent and abstracting all of the complexity that is
+      underneath.
+
+   4. Logging requests (*logging proxy*). This is when you want to keep
+      a history of requests to the service object.
+
+      The proxy can log each request before passing it to the service.
+
+      You can think about the git system as some kind of proxy.
+
+   5. Caching request results (*caching proxy*).
+
+      This is when you need to cache results of client requests and
+      manage the life cycle of this cache, especially if results are
+      quite large.
+
+      So this is what CDNs are doing. This is the chaching proxy
+      pattern there. Note that this is handy when the requests that
+      come are always the same. This happens quite often as we all
+      know.
+
+   6. Smart reference. This is when you need to be able to *dismiss a
+      heavyweight object once there are no clients that use it*.
+
+      The proxy can keep track of clients that obtained a reference to
+      the service object or its results. From time to time, the proxy
+      may go over the clients and check whether they are still active.
+   
+
+* Behavioural Patterns
+
+  The Behavioral class patterns use inheritance to describe
+  /algorithms and flow of control/, whereas the Behavioral object
+  patterns describe how a group of objects /cooperate/ to perform a
+  task that no single object can carry out alone.
+
+** Chain of Responsibility
+
+   This is a design pattern that lets you pass requests along a chain
+   of handlers.
+
+   Upon receiving a request, each handler decides *either to process
+   the request* /or/ to *pass it to the next handler* in the chain.
+
+   So you could already find this pattern as well in the code that you
+   are working on. It is quite cool stuff this low level code
+   base. You are seeing all of the underground world of CS and it is
+   beautiful.
+
+   So every request that comes in via HTTP is essentially processed
+   via this pattern of chain of responsibility. I.e. you see if you
+   should process it or pass it to the next handler that will take
+   care of it.
+
+   This is how our world works. There is a big message behind this. Do
+   not process requests that you do not think belong to you. *Pass them
+   along the chain*.
+   
+*** Pattern in Ordering Schema
+
+    And /nota bene/: we live in an ordering schema.
+
+    The idea in this snippet is the following. Get the request and
+    authenticate it. If it is proper pass it to the ordering system,
+    the next piece of the the chain that will perform its
+    operation.
+
+    If it is not do not let it pass and break the chain - no more
+    handlers for this request. But note that there is much more behind
+    it. The following is interesting:
+
+    #+begin_quote
+One of your colleagues suggested that it’s *unsafe to pass raw data
+straight to the ordering system*. So you added an extra validation
+step *to sanitize the data* in a request.
+    #+end_quote
+
+    So you see this is also important in the chain of
+    responsibility. This is the ultimate reason proxies exists. And
+    then you see that they are themselves developed via a chain of
+    responsibility pattern.
+
+    You see as well that the security of the world works in the
+    following way:
+
+    #+begin_quote
+    Later, somebody noticed that the system is vulnerable to *brute
+    force password cracking*. To negate this, you promptly added a
+    check that filters repeated failed requests coming from the same
+    IP address.
+    #+end_quote
+
+    Understand the relation of this and the hot topic of quantum safe
+    passwords. Why is this a threat? If you go over the internet cause
+    the password are ultimately stored on a server somewhere then you
+    could have such a check.
+
+    But recall that quantum is not a concept of calcus strength it is
+    rather another way of thinking that makes some solutions more
+    computationally software if you change the paradigm. So this is
+    what is about - a change of paradigm.
+
+    So I guess it makes sense to develop algorithms that makes it
+    difficult to crack a password by brute force, but I guess there
+    should as well be another mechanism that works as a proxy that
+    makes such attacks pointless in the first place.
+
+    So apart from the ideas that I writing here for the community, the
+    concept is simple and it is all in the name. It is simply a chain
+    of responsibility, if everybody diligently makes his part in it
+    everything will be good.
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-06 103812.png" class="center">
+    #+end_export
+
+
+*** Very core idea - canonical idea
+    
+    So the essential idea here is to modularize your code in terms of
+    handlers. These will be standalone object performing the needed
+    piece of logic that you can chain together in a second step. It is
+    like playing lego after all. This concept of /lego/ it is
+    everywhere.
+
+    And recall the following component of this pattern, this applies
+    well in life and it is a message. A handler is part of the chain,
+    so understand that every handler is decisive in how the chain
+    performs:
+
+    #+begin_quote
+*Here’s the best part: a handler can decide not to pass the request
+further down the chain and effectively stop any further processing.*
+    #+end_quote
+
+    This concept is powerful and the true *canonical [understand the
+    shoresh of this word please]* concept.
+
+    Once you see the shoresh it is clear that the following two ways
+    of expressing the chain of responsibility pattern described as
+    follows in the following images are ultimately the same, and not
+    as [[https://refactoring.guru/design-patterns/chain-of-responsibility][the page]] wants you to think.
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-06 110035.png" class="center">
+    #+end_export
+
+
+    
+*** Implementation
+    
+    The real world analogy in the url is pure comics. Nothing to think much
+    over.
+
+    See then the following schema for working with the pattern and see
+    how everything is implemented through interfaces and baseHandlers
+    and not directly as in your code base. So use it.
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-06 111017.png" class="center">
+    #+end_export
+
+
+*** An Implementation Example
+
+    You see that the entire concept of the GUI and the DOM and its
+    javascript modification is build upon such pattern.
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-06 113348.png" class="center">
+    #+end_export
+
+
+** Command
+
+   This is a pattern that lets you turn a request into an object with
+   all of the relevant information that is encapsulated in the
+   request.
+
+   So you should be able to see the pattern. Think for instance at an
+   HTTP request. This is already an object so it was confusing to me
+   to see and understand from the above.
+
+   Once you think enough about it, you can see the pattern in multiple
+   places across the internet stack.
+
+   Think for instance about all of the bytes of inforamtion at layer 2
+   and how they are transformed into a single HTTP object at layer 7.
+
+   Think about how that same HTTP object is then parsed and
+   transformed into a JSON object containing all of the relevant
+   information. And how this is then packaged entirely in an Object
+   performing the relevant application logic.
+
+   All of these are examples of the =Command pattern=.
+
+   Note now that all of the patterns are really interrelated. Once you
+   see it everything is clear. I think it is a bit the idea of the
+   flyweight pattern. The gravity is the same. The coordinates are a
+   bit different but the underlying idea is the THE ONE.
+
+   Anyways going back to this pattern, it is about the *separation of
+   concerns*. So you see that no one is better than the
+   other. Everyone holds his place in this world. After all we are all
+   cogs embedded in a deeper system.
+
+   
+*** Example via Problem
+
+    Think about programming the UI - the entire one. Think about
+    having different types of buttons implementing different
+    functionalities. 
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-06 131412.png" class="center">
+    #+end_export
+
+    Logically this is not a good idea as you will have an exponential
+    amount of these subclasses with *code replication*.
+
+    Think simply about the fact that you can do everything in the
+    front-end via /buttons events/ or via /shortcut events/. So you
+    would have to replicate code there for instance.
+    
+    I.e. you use the command pattern and *structure everything in
+    layers* - i.e. old trick of computer science (*add a layer of
+    indirection*).
+
+    The solution would then look as follows:
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-06 132436.png" class="center">
+    #+end_export
+
+    But you see that this does not stop there. The entire value chain
+    works along these lines.
+
+    Note as well that along the entire value chain you have an event
+    based method - i.e. an action triggers the next element in the
+    chain via an *execute* command. It does not pass any parameter.
+
+    The node that will be triggered will know exactly what to do. It
+    has all of the knowledge in its DNA to know exactly what to do.
+
+    So basically *here is the order*: *trigger the nodes*, they will
+    know what to do.
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-06 133439.png" class="center">
+    #+end_export
+
+    And here is the idea of Bayesian or of Openshift. There are rigid
+    rules for the most. But there is a minority that can encompass the
+    rigid schema and trigger events. In Bayesian with Priors, in
+    Openshift by being multi-platform. Who knows how many patterns as
+    this there are out there that I was never able to experience that
+    far. But now I am starting to see quite many of them out there.
+
+    
+*** Real World Pattern
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-06 134613.png" class="center">
+    #+end_export
+
+    And we all know where this come from. Just be thankful for the
+    food on your table.
+
+
+*** Implementation Example
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-06 135510.png" class="center">
+    #+end_export
+
+    Can you see other patterns? I see for instance the chain of
+    responsibility in a clear way here.
+
+    Note that the client here might trigger as well the direct
+    commands without going through the another handler.
+
+    
+*** Example 2
+
+    This is again the command pattern but it shows you how an
+    application of a text editor works - to the extent of chainging
+    text etc.
+
+    You can see it next, nothing too special with it. Just cool to
+    think how the things work behind the hoods in the programs you
+    spend a lot of time on:
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-07 092704.png" class="center">
+    #+end_export
+
+    The client code (GUI elements, command history, etc.) *isn’t
+    coupled to concrete command classes* because it *works with
+    commands via the command interface* [two times commands -
+    understand it, you do not repeat yourself]. This approach lets you
+    introduce new commands into the app without breaking any existing
+    code.
+    
+
+*** When to use the pattern
+
+    It is important to appreciate that you should use this pattern
+    when you want to /implement revisible operations/. 
+
+
+*** How to implement section
+
+    You see there the relation to all of the other patterns.
+
+    Everything is interrelated, this is the ultimate reason why it is
+    difficult to decouple software. Especially when it is written at
+    this level of sophistication.
+
+    See for instance the section about hte  implementation of this
+    pattern.
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-07 095343.png" class="center">
+    #+end_export
+
+
+** Iterator
+
+   Iterator is a behavioral design pattern that lets *you traverse
+   elements of a collection* *without exposing its underlying
+   representation* (list, stack, tree, etc.).
+
+   So note that this is what is actually used in the java standard
+   class in the collection class. And note that you should work on the
+   top of it when you will encounter a similar problem. It goes along
+   the same line of reasoning that I did once made [[https://marcohassan.github.io/bits-of-experience/posts/when-creating-a-home_made-ml-model/][in this post]].
+
+   So the essential idea of this pattern is to say, hey dude you have
+   different topological collection structures. On the top of it you
+   might want to traverse these topological structures in multiple
+   ways.
+
+   101 example:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-07 110058.png" class="center">
+   #+end_export
+
+   So the idea of this pattern is to model a way to traverse these
+   objects in a very general way.
+
+   In general the idea is to decouple the traverse mechanism from the
+   actual data structure specification. The data structure should just
+   be responsible for the efficient storage of the information and
+   should do that in the best possible way.
+
+   Then once you added that layer of indirection you can start to work
+   on this iterator pattern, specifying multiple traversing
+   possibilies on the same collection object.
+
+   This is exactly what you see down here - focus on the /Collection/
+   idea and on the /Iterator/ idea that you see, not on the noise
+   around it.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-07 113108.png" class="center">
+   #+end_export
+
+   Note as well the next *very important point*:
+
+   #+begin_quote
+In addition to implementing the algorithm itself, an iterator object
+*encapsulates all of the traversal details*, such as the current
+position and how many elements are left till the end.
+
+Because of this, *several iterators* can go through the same collection
+*at the same time*, independently of each other.
+   #+end_quote
+
+   Now it is clear that you could set up such iterators by referring
+   to a common concept of /Iterator/ and an interface for it.  This is
+   what I would actually do if I would have to implement a new data
+   structure and I am sure that it is what happens behind the hoods in
+   the existing libraries. So it means that behind it there is in
+   general /the concept of separation of concerns/ - i.e. you can see
+   the concept of the [[*Command][Command]] pattern here if you pay enough attention
+   to it.
+
+   This is essentially what is expressed there on the website:
+
+   #+begin_quote
+All iterators must implement the same interface. This makes the client
+code compatible with any collection type or any traversal algorithm as
+long as there’s a proper iterator. If you need a special way to
+traverse a collection, you just create a new iterator class, without
+having to change the collection or the client.
+   #+end_quote
+   
+*** Real World Example
+
+    This is quite funny cause it is far away from a concrete
+    mathematical stuff.
+
+    It is much more the concept that there is general relativity, that
+    thing that truly impose substance on the objects in this
+    world. How we traverse it, it just a matter of choice.
+
+    We are free to set the coordinates for it via various types of
+    iterator classes that are defined / that our /Avi/ set out for us.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-07 112930.png" class="center">
+   #+end_export
+
+*** Structure
+
+    The structure for it is quite simple then, you can see how this is
+    implemented on the FB applicaiton as well on that website.
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-07 115138.png" class="center">
+    #+end_export
+
+    
+
+** Mediator
+
+   So this pattern is as well very common in the world.
+
+   The essential idea is that if you let everybody talk with
+   everybody, everything become a mess.
+
+   So the solution is to impose some rules on the world. You cannot
+   let it run amock.
+
+   This is what system try to do with centralized institutions
+   performing checks on the operations of some people. This pattern is
+   all around you. In every moment of your experience.
+
+   It is the frame that is imposed in the world.
+
+
+*** Practical Problem When Programming
+
+    An example of how things can go wild is the following. This is an
+    example of programming the front-end. If you do not put any order
+    in the way things interact with each other you will never be able
+    to keep track of what is happening.
+
+    So the only way to have a high level overview of what is happening
+    in your system as it evolves across time, is to impose a mediator
+    on the system.
+
+    You understand that again is an introduction of a layer of
+    indirection / a hierarchical component on the system.
+
+    An example of the messiness without layers of indirection is when
+    you go peer to peer as in the example below:
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-07 142831.png" class="center">
+    #+end_export
+
+    So you see that with this way of working you couple too much all
+    of the elements together. This is not good, you should be careful
+    with it.
+
+    [[[ SIDE NOTE 
+    
+    The question is though when to stop with all of these hierarchies?
+    You know by know Atlantide with all of the things you studied. But
+    in order to work you should be able to abstract and just focus on
+    different mental layers.
+
+    So the approach is, design such layers, then work on each
+    component separately.
+
+    ]]]
+
+
+*** Solution
+
+    #+begin_quote
+The Mediator pattern suggests that you should *cease all direct
+communication between* *the components which you want to make
+independent* of each other.
+
+Instead, these components must collaborate indirectly, by calling a
+special mediator object that redirects the calls to appropriate
+components.
+    #+end_quote
+
+    In such a way the components just depend on a single mediator
+    class instead of being coupled with dozen of their colleagues. 
+
+    You see that this is the chosen design technique used for the
+    objects across the internet. Think for instance at the UI example
+    above:
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-07 144014.png" class="center">
+    #+end_export
+
+    Note the following important change that you bring along in such a
+    way:
+
+    #+begin_quote
+The most significant change happens to the actual form elements. Let’s
+consider the submit button. Previously, each time a user clicked the
+button, it had to validate the values of all individual form
+elements.
+
+Now its *single job is to notify the dialog about the click*.  Thus,
+instead of being tied to a dozen form elements, the button is *only
+dependent on the dialog class*.
+    #+end_quote
+
+    See again the chain of responsibility pattern.
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-07 144704.png" class="center">
+    #+end_export
+
+
+** Memento
+
+   So this is a pattern to have the chance in your code to save the
+   status of an object without breaking encapsulation and exposing its
+   state to other objects but the /creator/.
+
+   So you see that this is as well a pattern that is everywhere in the
+   world. Not everybody knows what happened in the world. Not
+   everybody knows what I ate this morning. I am the creator of that
+   state and while I cannot go back to it, I can close my eyes and see
+   restore the state. 
+
+   So essentially the idea of this pattern is the one of storing
+   history as objects that can just be accessible by the *creator*.
+
+   You add then a group of objects which is given the responsibility
+   of deciding where history moves. These are the *caretakers*.
+
+   (Side note, this is what happens in text editors and other
+   applications where you can reverse the history.)
+
+   Essentially the pattern would then look as follows and you can
+   create it in different flavours depending on the options your OOP
+   language offers you and the degree of encapsulation that you want
+   to reach.
+
+   Some of the implementations that are possible are available
+   next. You can decide among one fo the many once you will have to
+   implement this pattern:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-09 141651.png" class="center">
+   #+end_export
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-09 141732.png" class="center">
+   #+end_export
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-09 141801.png" class="center">
+   #+end_export
+
+
+** Observer
+
+   With this and the next you actually create the event driven
+   programming patterns that you had well into your mind.
+
+   This is in fact the very core of asynchronous programming as
+   discussed over [[https://marcohassan.github.io/bits-of-experience/posts/asynchronous-jobs/][here]]. The juice is this pattern. Also the one behind
+   [[https://marcohassan.github.io/bits-of-experience/posts/asynchronous-schema-in-python/][this]]. 
+
+   So you can describe this pattern as follows:
+
+   #+begin_quote
+Observer is a behavioral design pattern that lets you define a
+subscription mechanism to notify multiple objects about any events
+that happen to the object they’re observing.
+   #+end_quote
+
+   The problem as described here, but the one you know well given your
+   initial conversations within your team, is that you do not want to
+   make tons of round-trips over the network to check if the event
+   occurred, nor you want to spam everyone notifying about an event.
+
+   You just want to inform the right people. So essentially don't do
+   this:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-12 111445.png" class="center">
+   #+end_export
+
+   So as you already know from your previous wanderings, the solution
+   is a simple pub-subscribe mechanism.
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-12 112358.png" class="center">
+   #+end_export
+
+   Now the question is /how to notify/ all of these subscribers when
+   the event happens. The idea is that you do not want to couple your
+   publisher to the tons of subscriber classes of the clients that
+   requested the subscription.
+
+   The idea is to work with a common interface shared across all of
+   the subscribers. Then you can work with it for the notification of
+   the events.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-12 113654.png" class="center">
+   #+end_export
+
+   #+begin_quote
+That’s why it’s crucial that all subscribers implement the same
+interface and that the publisher communicates with them only via that
+interface. This interface should declare the notification method along
+with a set of parameters that the publisher can use to pass some
+contextual data along with the notification.
+   #+end_quote
+
+   In general you can implement the pattern in the following way:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-12 114312.png" class="center">
+   #+end_export
+
+   So it is important now to use this pattern in the following
+   context:
+
+   #+begin_quote
+ Use the Observer pattern when *changes to the state of one object may
+ require changing other objects*, and the actual set of objects is
+ unknown beforehand or changes dynamically.
+   #+end_quote
+
+
+** State
+
+   This is a very cool pattern in order to implement the following:
+
+   #+begin_quote
+State is a behavioral design pattern that lets an object *alter its
+behavior when its internal state changes*. It *appears as if the object
+changed its class*.
+   #+end_quote
+
+   The main idea of this pattern is to create final state machines
+   without using clumsy swtich statements that can grow big, ugly and
+   difficult to mantain across classes but rather by using OOP in an
+   elegant way.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-12 123058.png" class="center">
+   #+end_export
+
+   Note that this is very similar to the idea of Markov
+   Chains. However, here state transitions are non-probabilistic.
+
+   In fact, you dot he following in such a way:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-12 123517.png" class="center">
+   #+end_export
+
+   So you see that there are heavy mediator patterns in here as
+   well. As well as the concpet of separation of concerns.
+
+   The structure is the following. I am pretty sure that I already
+   seen this pattern. But recall things /never/ repeat themselves. So
+   double think then what is /different/ in here as well what is
+   /equal/.
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-12 124940.png" class="center">
+   #+end_export
+
+
+** Strategy
+
+   Strategy is a behavioral design pattern that lets you /define a
+   family of algorithms/, put each of them into a /separate class/,
+   and /make their objects interchangeable/.
+
+   So the idea is essentially the following:
+
+   #+begin_quote
+The Strategy pattern suggests that you *take a class that does
+something specific in a lot of different ways* and *extract all of these
+algorithms into separate classes called strategies*.
+   #+end_quote
+
+   So have a /single master/.
+
+   The original class, called /context/ must have a field for storing
+   *reference* to one of the strategies.
+
+   The context isn’t responsible for selecting an appropriate
+   algorithm for the job. Instead, the client passes the desired
+   strategy to the context. In fact, the context doesn’t know much
+   about strategies. It works with all strategies through the same
+   generic interface, which only exposes a single method for
+   triggering the algorithm encapsulated within the selected strategy.
+
+   So you see it is always the same concept behind it.
+
+   Essentially the pattern would look as follows:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 104033.png" class="center">
+   #+end_export
+
+   And more specifically:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 104813.png" class="center">
+   #+end_export
+
+   
+*** TODO task is to understand the difference with the state pattern
+
+    If you check at the two they look exaclty equal. 
+
+
+** Template Method
+
+   #+begin_quote
+   Template Method is a behavioral design pattern that defines the
+   skeleton of an algorithm in the superclass but lets subclasses
+   override specific steps of the algorithm without changing its
+   structure.
+   #+end_quote
+
+   You know it very well from the front-end development. There it is
+   quite standard to work in such a way in order to create the
+   relevant html pages. 
+
+   So here the idea is always the same. Avoid repetition. Use
+   templates, i.e. general raw models and inherit from there or work
+   with them via composition.
+
+   I.e. understand what is intrinsic and shared in time, the general
+   relativity and then just leave the details of the special
+   relativity to the classes inheriting enhancing by composition.
+
+   #+begin_quote
+The Template Method pattern suggests that you break down an algorithm
+into a series of steps, turn these steps into methods, and put a
+series of calls to these methods inside a single template method. The
+steps may either be abstract, or have some default implementation.
+   #+end_quote
+
+   Think then about the following problem:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 112158.png" class="center">
+   #+end_export
+
+   The idea here is that a lot of stuff is simple repetition of the
+   same concepts. Therefore, you should not implement and duplicate
+   your code. Work via templates, i.e. define thegeneral structure
+   somewhere there and then point to these templates in order to
+   construct the general pipeline.
+
+   You see that this si in fact what you were doing with ML pipelines.
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 112909.png" class="center">
+   #+end_export
+
+   Understand as well the concept of /hooks/ used in the
+   applications. This is what you work with as well in your editor.
+
+   #+begin_quote
+   There’s another type of step, called hooks. A hook is an optional
+   step with an empty body. A template method would work even if a
+   hook isn’t overridden.
+
+   Usually, hooks are *placed before and after crucial steps of
+   algorithms, providing* *subclasses with additional extension points
+   for an algorithm*. [I.e. you can supply additional information in
+   such a way].
+   #+end_quote
+
+   Think about *IKEA* as well when thinking about this method. Think
+   about how you construct their furniture. It is exactly this pattern.
+
+   I.e. in general the structure is the following:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 113852.png" class="center">
+   #+end_export
+
+   So you see that this is as well what is happening in the Feeds
+   application.
+
+
+** Visitor
+
+   #+begin_quote
+   Visitor is a behavioral design pattern that lets you separate
+   algorithms from the objects on which they operate.
+   #+end_quote
+   
+   This is important as in this way you can design very flexible
+   software without having to touch many existing classes.
+
+   The idea is essentially the following:
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 132829.png" class="center">
+   #+end_export
+
+   I.e. you should not put the implementation of the algorithm in the
+   classes themselves, even if the class type will dictate *different
+   types of behaviour* *for the algorithm - i.e. in the above the
+   algorithm* *is dependent on the actual classes (City, Industry
+   etc.)*.
+
+   Then the idea is to put the implementation of the alogrithm in a
+   *visitor*. There you would actually implement the algorithm.
+
+   A reference to the different class types will then hold the
+   relevant information for the algorithm to perform on that
+   particular class.
+
+   In this sense you would implement the algorithm in the following
+   way.
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-09-13 150920.png" class="center">
+   #+end_export
+
+   So you see you work with visitor (the elemenent above) and you
+   actually call a single interface /accept/. Then you know which
+   algorithm to apply, cause recall that in the visitor you *pass a
+   reference*.
+
+   I.e. you will automatically apply the correct apply method. 
+
+
+* Some core OOP principles you just have to keep on your mind
+
+** Polymorphism
+
+   Overridden methods are another way that Java implements the “one
+   interface, multiple methods” aspect of polymorphism.
+
+   Part of the key to successfully applying polymorphism is understanding
+   that the superclasses and subclasses form a hierarchy which moves from
+   lesser to greater specialization.  Used correctly, the superclass
+   provides all elements that a subclass can use directly. It also
+   defines those methods that the derived class must implement on its
+   own. This allows the subclass the flexibility to define its own
+   methods, yet still enforces a consistent interface.
+
+
+** Encapsulation
+
+   The idea of OOP is the one of keeping data and methods operating on
+   them together.
+
+   In such a way you can keep the internal state of the object hidden
+   from the outside world.
+
+   
+  
+** Key Concept - Favour Prgramming by Interface over Implementation
+
+   The idea is that in OOP you can work through the reference
+   variables mechanism. You can refresh them: [[file:java-notes-history-syntax-and-tricks.org::*Superclass reference Subclass][Superclass reference
+   Subclass]], [[file:java-notes-history-syntax-and-tricks.org::*On reference variables using interafaces][On reference variables using interafaces]] (note set the
+   index for emacs locally on www site it will not work).
+
+   This is in fact many the idea behind creational patterns as you
+   already got when learning about the concept. 
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-08-26 093006.png" class="center">
+   #+end_export
+
+
+** Key Concept - Favour Object Composition over Inheritance
+
+   So in order to understand this, you have to start from the
+   disadvantages of Inheritance.
+
+   You can think about it in the following terms:
+
+   #+begin_quote
+1. You can't change the implementations inherited from parent classes
+   at run-time, because inheritance is defined at compile-time.
+
+2. Second, and generally worse, parent classes often define at least
+   part of their subclasses' physical representation. Because
+   inheritance exposes a subclass to details of its parent's
+   implementation, it's often said that "inheritance breaks
+   encapsulation" [Sny86]. The implementation of a subclass becomes
+   *so bound up with the implementation of its parent class* that any
+   change in the parent's implementation *will force the subclass to
+   change*.
+
+   Implementation dependencies can cause *problems when you're trying
+   to reuse a subclass*.
+
+   This dependency limits flexibility and ultimately reusability. From
+   here the idea of using *object composition*.
+   #+end_quote
+      
+*** Object Composition
+
+    Object composition is defined dynamically at run-time through
+    objects acquiring references to other objects.
+
+    I.e. you encapsulate one object into antoher one. From here the
+    idea of Object Composition.
+
+    Because objects are accessed solely through their interfaces, we
+    don't break encapsulation. Any *object can be replaced at run-time
+    by another as long as it has the same type*.
+
+    Favoring object composition over class inheritance helps you keep
+    each class encapsulated and focused on one task.
+
+    So this is the idea of the second principle:
+
+    #+begin_quote
+    Favor object composition over class inheritance.
+    #+end_quote
+
+    Nevertheless, our experience is that designers *overuse
+    inheritance as a reuse technique*, and designs are often made more
+    reusable (and simpler) by depending more on object
+    composition. You'll see object composition applied again and again
+    in the design patterns.
+
+*** Delegation
+
+    Delegation is a way of making composition as powerful for reuse as
+    inheritance [Lie86, JZ911]. In delegation, two objects are
+    involved in handling a request: a *receiving object delegates*
+    operations to its delegate - which is encapsulated.
+
+    The following window example makes quite the point:
+
+    #+begin_quote
+Window classmight reuse the behavior of Rectangle by keeping a
+Rectangle instance variable and delegating Rectangle-specific behavior
+to it.
+
+In other words, instead of a Window being a Rectangle, it would have a
+Rectangle.
+
+Window must now forward requests to its Rectangle instance explicitly,
+whereas before it would have inherited those operations.
+    #+end_quote
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-08-29 123626.png" class="center">
+    #+end_export
+
+    Note now the benefit as well, that if you want to change and
+    create a window with a circle shape you just changing a Rectangle
+    instance with a /Circle instance/ at run time.
+
+    Delegation has a disadvantage it shares with other techniques that
+    make softwaremore flexible through object composition: Dynamic,
+    highly parameterized software is *harder to understand* than more
+    static software. - layer of indirection; solves issues but more
+    complex. Same as distributed microservices.
+
+    There are also run-time inefficiencies, but the human
+    inefficiencies are more important in the long run.
+
+    Delegation is a good design choice only when it simplifies more
+    than it complicates.
+
+    Delegation is an extreme example of object composition. It shows
+    that you can *always replace inheritance with object composition*
+    as a mechanism for code reuse.
+
+
+** Callback Methods
+
+   So the basic idea is to create an interface with the methods that
+   the callback will leverage.
+
+   Then basically depedning on the object that will implement that
+   intereface you will fallback to different implementations of it.
+
+   Check as well at this event. [[https://www.tutorialspoint.com/Callback-using-Interfaces-in-Java][Equally good - if not better]]. 
+  
+   Say for instance the following
+
+   #+begin_src java :results output raw  
+// Java program to demonstrate callback mechanism
+// using interface is Java
+ 
+// Create interface
+import java.util.Scanner;
+interface STax {
+    double stateTax();
+}
+ 
+// Implementation class of Punjab state tax
+class Punjab implements STax {
+    public double stateTax()
+    {
+        return 3000.0;
+    }
+}
+ 
+// Implementation class of Himachal Pardesh state tax
+class HP implements STax {
+    public double stateTax()
+    {
+        return 1000.0;
+    }
+}
+ 
+class TAX {
+    public static void main(String[] args)
+	throws ClassNotFoundException, IllegalAccessException, InstantiationException
+    {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the state name");
+        String state = sc.next(); // name of the state
+ 
+        // The state name is then stored in an object c
+        Class c = Class.forName(state);
+ 
+        // Create the new object of the class whose name is in  c
+        // Stax interface reference is now referencing that new object
+        STax ref = (STax)c.newInstance();
+ 
+        /*Call the method to calculate total tax
+	  and pass interface reference - this is callback .
+	  Here, ref may refer to stateTax() of Punjab or HP classes
+	  depending on the class for which the object is created
+	  in the previous step
+	,*/
+ 
+        calculateTax(ref);
+    }
+    static void calculateTax(STax t)
+    {
+        // calculate central tax
+        double ct = 2000.0;
+ 
+        // calculate state tax
+        double st = t.stateTax();
+        double totaltax = st + ct;
+ 
+        // display total tax
+        System.out.println("Total tax =" + totaltax);
+    }
+}
+   #+end_src 
+
+   Note that in your code - for instance in the case of the zipParser
+   you use this concept coupled with the one of functional
+   programming.
+
+   I.e. your callback interface is implemented directly via functional
+   programming and it is never explicitely written anywehere.
+
+
+** Anonymous Inner Classes
+
+   This is something quite interesting.
+
+   Anonymous classes are /inner classes with no name/.
+
+   Since they have no name, we can't use them in order to create
+   instances of anonymous classes.
+
+   As a result, we have to *declare and instantiate anonymous classes in
+   a single expression at the point of use*. -> so essentially this is
+   ultimately the idea.
+
+   The way you declare this anonymous inner class with no name is the
+   following:
+
+   #+begin_quote
+ new ParentClass (...) {}
+
+ where:
+
+ - ParentClass the class you want to create the inner class in
+
+ - (...) here you have to pass the constructor arguments. Note that
+   this is /necessary/ as you are creating a new object out of the
+   box. 
+
+ - {} here you have the methods your anonymous class should implement
+   #+end_quote
+
+   Example
+
+   #+BEGIN_SRC java :results output drawer :classname
+// Anonymous class - no name.
+// It basically is an inner class of the parentclass: Book
+myNewObject = new Book("Design Patterns") // constructors arguments of parent class
+{
+    @Override
+    public String description() {   // inner class with this method
+        return "Famous GoF book.";
+    }
+}
+   #+END_SRC
+
+   Note that this is essentially it. The question is then why it is an
+   /inner/ class? Not that clear to me at this stage. I think that the
+   naming is a bit confusing.
+
+   Check at the following minor test that I did. You can in fact as
+   well access the methods of the parent class. So it looks to me
+   simply as an extended class object. So don't know keep it as an open
+   question and do not spend too much time on it now... too many things
+   to learn. 
+
+   #+BEGIN_SRC java :results output drawer :classname TestAnnonymousInner
+class Person{
+    void eat(){};
+
+    void helloWorld (){
+	System.out.println ("hello world");
+    };
+}
+
+class TestAnnonymousInner{
+    public static void main(String args[]){
+	Person p=new Person(){
+
+		@Override
+		void eat(){System.out.println("nice fruits");}
+	    };
+
+	p.eat();
+	p.helloWorld ();
+    }
+}
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   nice fruits
+   hello world
+   :end:
+
+   *Finally note*: that it is very common as well to use the /abstract
+   inner class/ patterns as well for interfaces. You can use this as
+   well there.
+
+   

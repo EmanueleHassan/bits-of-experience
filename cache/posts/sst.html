@@ -1,0 +1,1217 @@
+<style>
+
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+<p>
+So time to learn a bit of SST and the concepts in this dimension.
+</p>
+
+<p>
+As I am running the thing it will make sense to have a broad
+understanding of the thing.
+</p>
+
+<p>
+It will give as well an understanding of some terms that you see going
+around.
+</p>
+
+<!-- TEASER_END -->
+
+<p>
+It will give you some conceptual understanding of some inputs that are
+feeded into the system. It will give a bit of understand on how
+certain things run.
+</p>
+
+<p>
+Some concepts as RBC are tighlty related to it etc.
+</p>
+
+<p>
+So basically I gathered a bit of sources:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://www.finma.ch/FinmaArchiv/bpv/download/e/WhitePaperSST_en.pdf">whitepaper of FINMA</a></li>
+
+<li><a href="http://www.actuaries.org/CTTEES_SOLV/documents/Stockholm_Keller.pdf">more compressed info</a></li>
+
+<li><a href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwjOpcOI8vT2AhUIuaQKHcZEBHMQFnoECAMQAQ&amp;url=https%3A%2F%2Fwww.ag-ai.nl%2Fdownload%2F1378-12-4PP-summary_swiss_solvency.pdf&amp;usg=AOvVaw2z6AoKfDr7WpGF_PoPx-iZ">more compressed info in plain text</a>.</li>
+</ul>
+
+<p>
+Now the task is simply to put the info together but before a clear
+high level understanding about SST.
+</p>
+
+<p>
+That is regulatory capital. You also have to make some Solvency II
+calculations but leave it on the side for now as you can eat simple
+one piece of the cake at the time.
+</p>
+
+<p>
+Understand in any case the difference of EC and RC.
+</p>
+
+<div class="container"> 
+  <iframe class="responsive-iframe" src="https://www.youtube.com/embed/l8lrpWp6MJs" frameborder="0" allowfullscreen;> </iframe>
+</div>
+
+<p>
+At the end you can simply take it as two different constraints that
+you as a business have to fulfill. It is a simple:
+</p>
+
+<p>
+\[ CapitalToSetAside = max (RC, EC)  \]
+</p>
+
+<p>
+I guess that here comes the science in the investment part as well.
+</p>
+
+<p>
+When you invest you have to think about how a thing impacts the
+both. This is why you make the optimization at group level and then
+you propagate and implement. 
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org021fd65" class="outline-2">
+<h2 id="org021fd65">Motivation and origin of SST</h2>
+<div class="outline-text-2" id="text-org021fd65">
+<p>
+The financial stability of several insurers has been shaken in the
+past few years. Events which have had significant adverse effects
+include the <i>crash in the equity markets</i> in 2001 and 2002, the steady
+fall in bond yields as well as the impact of increased longevity.
+</p>
+
+<p>
+For some insurers, the effects of the fall in the equity markets
+have been compounded by deteriorating technical results and large
+catastrophe claims.
+</p>
+
+<p>
+This is actually what happened in the Swiss insurance market back in
+2001 and why everything crashed drammatically.
+</p>
+
+<p>
+You can get an idea by reading the <a href="https://www.swissre.com/dam/jcr:638f00a0-71b9-4d8e-a960-dddaf9ba57cb/150_history_of_insurance.pdf">following paper</a>:
+</p>
+
+<blockquote>
+<p>
+The size and complexity of losses would force companies but also
+society at large to think differently about risk. Although the stock
+markets remained reasonably robust in the aftermath of 9/11, the
+attack brought the global economy to a grinding halt, due to
+uncertainty of the effect on stocks worldwide. 
+</p>
+
+<p>
+Insurers had to contend with unstable financial markets during this
+volatile period
+</p>
+
+<p>
+The insurance industry shouldered much of the economic
+burden. Insurers paid an estimated USD 23.8 billion, making 9/11 the
+most costly insured man-made disaster ever – and, at the time, the
+second most expensive insured loss after Hurricane Andrew. 
+</p>
+
+<p>
+Assessing the insured loss was a highly complex undertaking; large
+claims were filed for a number of seemingly unrelated risks including
+aviation, property, liability lines, business interruption and life
+insurance. Losses and potential exposures were not confined to New
+York, either – airlines were grounded, restrictive security measures
+were implemented and events were cancelled around the world.
+</p>
+
+<p>
+Some insurers, and European reinsurers in particular, embarked on an
+accelerated programme to strengthen their risk management, governance,
+and asset management. They fortified their systems to manage
+accumulations of risk and liabilities in their asset portfolios and
+developed the first economic models.
+</p>
+</blockquote>
+
+<p>
+So basically this is what brought to a change in the regulation
+environment for the insurance sector.
+</p>
+
+<p>
+The result was:
+</p>
+
+<blockquote>
+<p>
+While there are many strands to these changes, they all have common
+themes: more appropriate assessment of the specific risks companies
+are running using an improved and comprehensive financial reporting
+framework, standardization of approaches between countries and
+industries where sensible, and improved transparency and
+comparability.
+</p>
+</blockquote>
+</div>
+</div>
+
+
+<div id="outline-container-org9514f03" class="outline-2">
+<h2 id="org9514f03">SST Core Principle</h2>
+<div class="outline-text-2" id="text-org9514f03">
+<blockquote>
+<p>
+The proposal, which is described in more detail in later sections of
+this document, can be summarized as protecting insurance customers by
+ensuring that each insurance company has sufficient capital available.
+</p>
+
+<p>
+‘Sufficient’ means that even in an unlikely situation (e.g.  one with
+a probability of 1%), there is (on average) enough capital to allow
+the assets and liabilities of the company to be transferred to a third
+party. There must then still be sufficient assets to cover the
+liability and the future capital costs of that third party.
+</p>
+</blockquote>
+</div>
+</div>
+
+
+<div id="outline-container-orga4e6086" class="outline-2">
+<h2 id="orga4e6086">On SST and Solvency II</h2>
+<div class="outline-text-2" id="text-orga4e6086">
+<p>
+In order for Swiss companies not to be at a competitive disadvantage
+to insurers domiciled in EU (and EEA) member countries, it is an aim
+of the SST to be compatible with the future European Solvency II
+framework.
+</p>
+
+<p>
+This entails in particular that both a minimal solvency level and
+target capital have to be calculated and that internal models –
+provided they satisfy regulatory requirements - can be used for
+target capital calculation.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org4fe86f7" class="outline-2">
+<h2 id="org4fe86f7">Consistent Valuation of Assets and Liabilities</h2>
+<div class="outline-text-2" id="text-org4fe86f7">
+<p>
+This risk-based supervision aims to take all financial and insurance
+risks into account, especially asset and liability risks. The system
+will focus on explicitly measuring risks and minimizing systemic
+risk via transparency.
+</p>
+
+<p>
+This is in fact the first requisit for a transparent and comparable
+regime:
+</p>
+
+<blockquote>
+<p>
+assets and liabilities must be valued in a consistent way by each
+company.
+</p>
+</blockquote>
+
+<p>
+This leads to the concept of <b>economic vs. accounting
+information</b>. So you see that is worth reading such papers. You are
+finally able to put all of these concepts flying around in your data
+into a coherent frame.
+</p>
+
+<p>
+The necessity for the translation is that:
+</p>
+
+<blockquote>
+<p>
+Companies, investors and regulators have long struggled with
+interpreting accounting information where assets and liabilities are
+valued on different bases.
+</p>
+
+<p>
+The inconsistencies can cause artificial volatility in free capital.
+</p>
+</blockquote>
+
+<p>
+So SST aims to bring a little bit of order in this sense:
+</p>
+
+<blockquote>
+<p>
+The SST is based on “market-consistent valuation” of both assets and
+liabilities. This is described in more detail in later sections, but
+essentially it means that assets are valued at their price in the
+market, while guaranteed liabilities are valued based on the price
+that financial markets would place on these liabilities, taking into
+account all embedded options and financial guarantees.
+</p>
+</blockquote>
+</div>
+
+<div id="outline-container-orge090bce" class="outline-3">
+<h3 id="orge090bce">On Internal vs. Standard Models</h3>
+<div class="outline-text-3" id="text-orge090bce">
+<p>
+Since risk profiles of the supervised insurers can be very
+heterogeneous, a regulatory model capturing correctly the risk
+situation of each company would be very complex.
+</p>
+
+<p>
+For the SST, simpler models were developed which have to be adapted
+by each company to fit its specific risk profile, thereby also
+making companies responsible for target capital calculation.
+</p>
+
+<p>
+While a standard model is being developed to ensure that all
+companies can implement a minimum standard, the SST encourages
+companies to develop internal models.
+</p>
+
+<blockquote>
+<p>
+Companies can deviate from the standard models, parameters
+etc. with the permission of the regulator.
+</p>
+
+<p>
+This permission is granted if a company can show that its internal
+model better reflects the risk situation than the standard model.
+</p>
+</blockquote>
+</div>
+</div>
+
+<div id="outline-container-org1b88f44" class="outline-3">
+<h3 id="org1b88f44">On the capital concepts at the basis of SST</h3>
+<div class="outline-text-3" id="text-org1b88f44">
+<p>
+Insurers must calculate two capital numbers: 
+</p>
+
+<ul class="org-ul">
+<li><b>minimum solvency</b> (statutory - i.e. minimal amount of capital
+for an insurance to retain a license to do business).</li>
+
+<li><b>target capital</b> (market-consistent).</li>
+</ul>
+
+<p>
+With minimum solvency and target capital, two complementary views
+of an insurer’s financial situation are incorporated into the SST:
+the statutory and the market-consistent view.
+</p>
+
+<p>
+Minimum solvency is based on the <i>statutory balance sheet</i>. It is
+easy to calculate but does not refelct directly the insurer’s
+specific risk exposures.
+</p>
+
+<p>
+Statutory balance sheets are some given accounting standard in
+order to compose your balance sheet. So will not go in the details
+of it but I imagine simply a situation that based on a given
+logic - a business focused - you aggregate your numbers and do the
+accounting. Then based on this you have some dummy calculations in
+order to arrive to the minimum solvency capital - meaning that if
+the numbers do not add up in this dimension <b>you are basically
+already bust</b>.
+</p>
+
+<p>
+The target capital, conversely, is <i>risk-based</i> and grounded in a
+<b>market-consistent assessment</b>. So you see that here you start to
+depart from the accounting dimension and you start to price the
+stuff at fair value.
+</p>
+
+<p>
+So you see there is no way to escape accounting in the financial
+world. That is the basis as everything is registered in such
+dimensions. It is then annoying cause there are a lot of nuances
+and accounting does not always has to relect the actual as-is
+situation. I remember the many different ways of reporting the
+things in your books that I studied it in my bachelor; the various
+GAAP vs IFRS standards and the many different "views of the world"
+and ways of doing things.
+</p>
+
+<p>
+So basically then this is as well a lot of time the operation in
+this world. The reasoning is pretty much the following: <i>ok there
+is accounting but we all know that it does not actually capture</i>
+<i>the as is value on your books</i>.
+So make sure that you are actually pricing everything at fair value
+and then based on this fair values start to make your risk
+scenarios.
+</p>
+
+<p>
+At the end you basically have the two following core principles:
+</p>
+
+<ul class="org-ul">
+<li>statutory capital: if you do not meet the minimum - goodbye my
+friend.</li>
+
+<li>target capital: make all the fair value conversion and risk based
+calculations. If you do not have enough capital to meet this
+target capital you might be still a running company. But we fear
+that you are not well positioned to cover possible losses and
+face possible risks. Meaning: we are coming down and will start
+to check on you.</li>
+</ul>
+
+<img src="../../images/Screenshot 2022-04-02 101824.png" class="center">
+</div>
+
+<div id="outline-container-orgfe0318f" class="outline-4">
+<h4 id="orgfe0318f">On the geo-component of the thing</h4>
+<div class="outline-text-4" id="text-orgfe0318f">
+<p>
+Both minimum solvency and target capital requirements would apply
+to insurers domiciled in Switzerland, together with their
+branches, i.e. on a legal entity level. Excluded are subsidiaries
+or branches of insurers domiciled outside Switzerland.
+</p>
+
+<p>
+So this bit is as well interesting. This is why everything is so
+messy and fragmented in the system.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org427e4a0" class="outline-4">
+<h4 id="org427e4a0">On the Market Consistent Valuation</h4>
+<div class="outline-text-4" id="text-org427e4a0">
+<p>
+So you should understand by now the difference between the
+economic and accounting view.
+</p>
+
+<p>
+In this section we talk about market consistent valuation - that
+is a relevant topic for the risk based capital models and the
+economic view so to say.
+</p>
+
+<p>
+The principle is the following:
+</p>
+
+<blockquote>
+<p>
+Where possible, market-consistent valuation of assets and
+liabilities will be based on observable market prices. If no
+actual market prices are available, market-consistent values will
+be determined by examining comparable market values, taking into
+account liquidity and other product-specific features.
+</p>
+</blockquote>
+
+<p>
+Note now that if it is easy to price the asset side of the balance
+sheet given market conditions it is generally more difficult to
+price liabilities at a market consistent rate.
+</p>
+
+<p>
+Here you will eventually come to the concept of replicating
+portfolios and similars that you see quite often going around in
+the system.
+</p>
+
+<p>
+In any case, given the difficulty of giving a market value to the
+liability side of the balance sheet you generally talk about a
+<i>Best-estimate</i> effort for pricing the libialities in a fair
+value. On the top of it you add some buffer for the <a href="#org4c23d9b">Risk Margin</a> -
+meaning the needed capital in order for a private to take over
+your liabilties without having to register a loss on the books.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgad88b41" class="outline-4">
+<h4 id="orgad88b41">Best Estimate of Liabilities</h4>
+<div class="outline-text-4" id="text-orgad88b41">
+<p>
+For liabilities, the market consistent value is defined as the sum
+of the best-estimate of the liabilities and the risk margin.
+</p>
+
+<img src="../../images/Screenshot 2022-04-03 181454.png" class="center">
+
+<p>
+Note that the risk-bearing capital naming convention is
+clear. Best estimate liabilties do not carry the risk. I.e. they
+cannot absorb risk. It is not buffer. It is claims. 
+</p>
+
+<p>
+Note now the following:
+</p>
+
+<p>
+No specific method for valuing the liabilities on a market
+consistent basis has been prescribed by the regulator. Valid
+approaches include valuing a replicating portfolio (see for
+instance [BH]), modeling all policyholder liabilities and
+interactions with the financial markets on a stochastic basis and
+using discounting methods (deflators) and/or scenarios
+(risk-neutral) which ensure market-consistency.
+</p>
+
+<p>
+So you see that there is an entire science over there. Would be
+cool to read into such methods at some point. You understand what
+your input is now.
+</p>
+
+<p>
+Note now the origin of the best estimate naming convention:
+</p>
+
+<blockquote>
+<p>
+All assumptions concerning insurance risks (e.g. mortality, disability
+rate, etc) are to be made on a best-estimate basis <i>without implicit
+or explicit safety margins</i>.
+</p>
+</blockquote>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org64b9483" class="outline-2">
+<h2 id="org64b9483">On the Target Capital calculation</h2>
+<div class="outline-text-2" id="text-org64b9483">
+<p>
+So understand that SST is interested in the risk of an insurance as
+a whole.
+</p>
+
+<p>
+This means that it is interested in:
+</p>
+
+<ul class="org-ul">
+<li>market risk</li>
+
+<li>credit risk</li>
+
+<li>life insurance risk</li>
+
+<li>non-life insurance risk</li>
+
+<li>health insurance risks</li>
+</ul>
+
+<img src="../../images/Screenshot 2022-04-02 234429.png" class="center">
+
+<p>
+It is clear that you are taking care of the financial risk of your
+company. 
+</p>
+
+<p>
+So understand that the risk modeling is done at two levels:
+</p>
+
+<ul class="org-ul">
+<li>on a stochastic level - i.e. you model you risks in the stochastic
+way. You have your different risk models in order to compute
+possible scenarios etc. You then check at the tails of the
+distributions and all of that stuff where you pretty much
+specialized in your academic life.</li>
+
+<li>scenario - these are like single-state shocks that are
+calculated. They should capture possible adverse scenarios that
+are not captured in your parameteric stochastic models. They will
+be then used in order to do adjustments to the risk based capital
+computations coming out of the the stochastic compuations.</li>
+</ul>
+
+<p>
+Meaning the final capital requirements will result from some kind
+of aggregation of the two.
+</p>
+
+<img src="../../images/Screenshot 2022-04-02 104930.png" class="center">
+
+<p>
+Note now that the target capital is basically composed of two
+components:
+</p>
+
+<ul class="org-ul">
+<li>Expected Shortfall</li>
+
+<li>Risk margin</li>
+</ul>
+
+<img src="../../images/Screenshot 2022-04-02 234202.png" class="center">
+
+<p>
+While the conceptual understanding of the expected shortfall is
+very clear from your academic background.
+</p>
+
+<p>
+An understanding of the risk margin is a little bit tricky and it
+is outlined in <a href="#org4c23d9b">Risk Margin</a>.
+</p>
+</div>
+
+
+<div id="outline-container-org4c23d9b" class="outline-3">
+<h3 id="org4c23d9b">Risk Margin</h3>
+<div class="outline-text-3" id="text-org4c23d9b">
+<p>
+The risk margin of an insurance portfolio is defined as the
+hypothetical cost of regulatory capital <i>necessary to run-off all
+the insurance liabilities</i>, following financial distress of the
+company.
+</p>
+
+<p>
+For the regulator it is imperative that in the case of insolvency,
+the rightful claimants be protected.
+</p>
+
+<p>
+Policyholders are best served if a third party can take over the
+assets and liabilities of their initial insurer.
+</p>
+
+<p>
+A third party will only be prepared to do this if the cost of
+setting up the regulatory capital that would be required is covered
+by the portfolio.
+</p>
+
+<p>
+This is the obvious statement: If the private sector takes over the
+thing, then the private will just step in if it makes economical
+sense for them.
+</p>
+
+<p>
+It should be noted that the risk margin is only indirectly risk
+bearing and does not belong to the insurer but to the
+policyholders, and is part of the market-consistent liabilities of
+the company. <i>In case of a transfer of the portfolio, the risk
+margin has to be transferred too</i>.
+</p>
+
+<p>
+Note now why this risk margine must sit on the top of the ES
+calculation for the company.
+</p>
+
+<p>
+The basic reason is outlined in section 4.3 of the whitepaper and
+is well described into the following image: 
+</p>
+
+<img src="../../images/Screenshot 2022-04-03 184837.png" class="center">
+
+<p>
+So the idea is the following:
+</p>
+
+<p>
+Asset allocation can be changed to optimally represent the
+insurance liabilities. This asset allocation is called optimally
+replicating portfolio. If an optimally replicating portfolio is
+achieved, target capital requirements are minimized.
+</p>
+
+<p>
+So I guess that the reasoning is a little bit as well in that
+direction.
+</p>
+
+<p>
+When the third party will take over the stuff it will have a higher
+expected shortfall as it has not reached an optimal asset
+allocation replicating the portfolio. So it is obvious that setting
+apart just the ES stochastic number will not be enough as then when
+bad things happens this transition will be there and you have to
+have capital for making it possible and cover the costs of a
+sub-optimal asset allocation.
+</p>
+
+<p>
+Note that the rate of covergence to the optimally replicating
+portfolio one is a function of the liquidity of your assets etc.
+</p>
+</div>
+
+<div id="outline-container-orgf5e5df9" class="outline-4">
+<h4 id="orgf5e5df9">Actual calculation</h4>
+<div class="outline-text-4" id="text-orgf5e5df9">
+<p>
+Update 07/04/2022:
+</p>
+
+<p>
+Ok so here it is interesting to check at the different material and
+sources. They are not perfectly aligned.
+</p>
+
+<p>
+I guess that while the closing remarks of the previous sections
+point to a theoretical motivation for the risk margin. The actual
+calculation is not based on that concept.
+</p>
+
+<p>
+It is actually much easier.
+</p>
+
+<p>
+The idea is to say. Another dude in the private sector will take
+over that book and will <b>run it off</b>.
+</p>
+
+<p>
+So basically you have to think:
+</p>
+
+<ul class="org-ul">
+<li>how much capital will you need to set aside in order to meet the
+required target capital in time?</li>
+
+<li>how much will the target capital be?</li>
+</ul>
+
+<p>
+So basically you answer all of these questions in the following
+way.
+</p>
+
+<p>
+You say - it is difficult to estimate the target capital that the
+other dude will need because of the reasoning expressed at the end
+of the previous paragraph. Moreover it is fun cause I am not even
+sure that the other dude will ultimately run off the entire book.
+</p>
+
+<p>
+Maybe he will as per regulatory imposion. Not that interesting to
+me in any case. Take it as given.
+</p>
+
+<p>
+So what you basically say is that:
+</p>
+
+<ul class="org-ul">
+<li>target capital will be prop. to the best-estimate for the
+libabilities.</li>
+</ul>
+
+<p>
+Such that once you have an estimate of the run off pattern of the
+liabilities based on how quickly you can sell all of these books
+you can compute your risk margin as follows - with a discounting
+rate <i>s</i> fixed by the regulator, usually 8-10%:
+</p>
+
+<img src="../../images/Screenshot 2022-04-07 172244.png" class="center">
+
+<p>
+So you see that the ratio - target capital to liabilities is given
+based on the one of today and is assumed to be constant in time.
+</p>
+
+
+<p>
+Note that all of this is again quite arbitrary. Cause it is
+fun. The capital of one year is likely the same of the next year
+so makes little sense to sum it according to my mind. So basically
+the issue mentioned in the other source and expressed in the
+previous section is not accounted for. 
+</p>
+
+<p>
+Anyways you see that this side of the world functions like
+this. At the end you just ask the insurances to put a little bit
+more capital aside. I guess the motivation is the one of the
+previous section.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org32a1be9" class="outline-3">
+<h3 id="org32a1be9">On the standard models</h3>
+<div class="outline-text-3" id="text-org32a1be9">
+<p>
+I am making some very quick notes here as I guess that in any case
+the internal model will follow similar structures and will more
+less borrow and extend from the standard. I can not imagine a
+complete different model. You will likely not get the approval
+otherwise.
+</p>
+
+<p>
+In the whitepaper there is a brief paragraph about the different
+distributions and assumptions for the stochastic models. That is
+not that interesting to you.
+</p>
+
+<p>
+Interesting is the understanding of the following types of
+parameters:
+</p>
+
+<ul class="org-ul">
+<li><code>Type 1</code>: Parameters which are set by the regulator and which can
+not be changed. For instance, these include the risk-free
+interest rate, the safety level and the probabilities of some of
+the prescribed scenarios as well as some other macro-economic
+parameters. Other examples would include parameters specifying
+the frequency and severity of natural catastrophes.</li>
+
+<li><code>Type 2</code>: Parameters which have to be set by companies, for example
+the volatility of the hedge fund exposure, where the exposures of
+different companies are so different that prescribing any fixed
+parameter would be pointless.</li>
+
+<li><code>Type 3</code>: Parameters which are set by the regulator and which can
+be changed by the companies. Most of the parameters are elements
+of this class. The parameter estimation by the company has to
+follow the guidelines of the regulator. The company has to show
+the estimation procedure to the regulator.</li>
+</ul>
+
+<p>
+So you see that in standard models you have usually prescribed
+models and you then just set the parameters. This is the actual way
+smaller companies are working.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgcefa3b1" class="outline-2">
+<h2 id="orgcefa3b1">Asset Models in the Standard Models</h2>
+<div class="outline-text-2" id="text-orgcefa3b1">
+<p>
+So note that there is a section in the whitepaper that goes a little
+bit deeper in the different modeling techniques of the standard
+models in order to compute the general risk of insurance companies.
+</p>
+
+<p>
+So generally you have a split in the 5 categories mentioned in the <a href="#org64b9483">On the Target Capital calculation</a>.
+</p>
+
+<p>
+You can read the risks for the other categories in there if you want
+if you will ever have time - I doubt it as I am already quite under
+pressure with my current work.
+</p>
+
+<p>
+This section deals primarily with the asset model as this is the one
+of interest for the market risk compoenent that your team deals
+with.
+</p>
+
+<p>
+Note that the standard model for measuring the asset model risk is
+based on the standard RiskMetrics technique - conceptually similar I
+read in the paper.
+</p>
+
+<p>
+I understand by now that this is pretty the standard thing in the
+industry. Nothing too fancy. Very simple model based on the
+assumption of normality.
+</p>
+
+<p>
+Basically you have 23 risk factors:
+</p>
+
+<ul class="org-ul">
+<li>Discretized term structure of interest rate using time buckets of
+0-2 years, 2-3 years, 3-4 years, 5-7 years, 7-10 years, 10-15
+years, 15-20 years, 20-30 years, 30 and more years.</li>
+<li>Implied volatility of interest rates</li>
+<li>Exchange rates (FX): EUR/CHF, GBP/CHF, USD/CHF, JPY/CHF</li>
+<li>Implied volatility of FX rates</li>
+<li>Share price index (including dividends, modeled by one global index)</li>
+<li>Private Equity (modeled by one global index)</li>
+<li>Hedge Funds (modeled by one global index)</li>
+<li>Participations</li>
+<li>Other equity</li>
+<li>Implied volatility of share price index</li>
+<li>Property (residential and commercial)</li>
+<li>Credit spread (Investments and sub-investment grade)</li>
+</ul>
+
+<p>
+All the risk factor changes are assumed to be normally distributed
+(with mean 0). The joint behavior of the risk factors is described
+by their covariance matrix. - See here the riskMetrics stuff.
+</p>
+
+<p>
+Changes in risk factors lead to changes in the risk bearing
+capital. For reasons of simplicity, it is assumed that the change in
+risk-bearing capital is a linear function of the risk factor
+changes.
+</p>
+
+<p>
+So basically your task is then to estimate the coeficient of this
+expression. You know well from your statistics classes the possible
+ways of doing it.
+</p>
+
+<p>
+Based on such model it is then possible to compute the possible
+volatility of your risk bearing capital and its modeled change in
+a change of risk factors.
+</p>
+
+<img src="../../images/Screenshot 2022-04-05 180045.png" class="center">
+</div>
+
+<div id="outline-container-org0cc57f3" class="outline-3">
+<h3 id="org0cc57f3">Simplifications</h3>
+<div class="outline-text-3" id="text-org0cc57f3">
+<p>
+So as well noted this standard model for asset valuation is quite
+simple. Will be interesting to now make a benchmark with the
+internal model but that is no info for the public.
+</p>
+
+<p>
+Note in any case that among the risk that such models do not
+include are:
+</p>
+
+<ul class="org-ul">
+<li>Specific risks (country, industry, counterparty …)</li>
+<li>Concentration risks</li>
+<li>Liquidity risks</li>
+<li>non-linear risks due to the effect of derivatives in your portfolio</li>
+</ul>
+
+<blockquote>
+<p>
+If these nonlinear effects are relevant, then the appointed actuary
+needs to model them appropriately, for instance by adjusting the
+sensitivities, by defining scenarios or by some other method.
+</p>
+</blockquote>
+
+<p>
+So you see that this is a crude adjustment. I went and check the
+modeling team in Group Risk Management. Pretty solid backgrounds so
+I am sure they are doing cool stuff in order to model that.
+</p>
+
+<p>
+I guess that this might even be the responsibility of the MRA in my
+team. I guess I will discover in time.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org58b34b8" class="outline-3">
+<h3 id="org58b34b8">Calibration - Using Historic Data</h3>
+<div class="outline-text-3" id="text-org58b34b8">
+<p>
+So you basically have to calculate the volatilities and historical
+sensitivities in order to have the parameterization of the model
+such that all of the rest will be a simple plug in and calculate
+exercise.
+</p>
+
+<blockquote>
+<p>
+To calibrate the volatilities and correlation matrix, monthly data is
+used, if possible. In cases where the market is sufficiently liquid,
+the volatilities can be estimated directly using observable data. In
+cases where the market is illiquid, observed data has to be
+supplemented or adjusted to take into account illiquidity or
+intransparency.
+</p>
+</blockquote>
+
+<p>
+Note as well that some volatilities will be prescribed by the
+regulator. So you come back to <a href="#org32a1be9">this</a> types of parameters.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org82936c1" class="outline-3">
+<h3 id="org82936c1">Aggregation across Risks</h3>
+<div class="outline-text-3" id="text-org82936c1">
+<p>
+This is not interesting to your team as you stop when you produce
+your distribution and simulations of interest.
+</p>
+
+<p>
+In any case as a note to the interested reader you aggregate your
+probabilities distributions coming out of the different risks that
+you are modeling by means of convolution.
+</p>
+
+<img src="../../images/Screenshot 2022-04-06 085052.png" class="center">
+
+<p>
+This is interesting. Would have to read a little bit deeper. I
+would have thought that what you would actually do is produce these
+different risk values - say VaR or ES for the different segment and
+then just aggregate these.
+</p>
+
+<p>
+It seems that this is not the case in the chart above. It rather
+seem that you have a final distribution coming from the convolution
+of the others. You would then ultimately compute the risk measures
+from there.
+</p>
+</div>
+
+<div id="outline-container-org7477f89" class="outline-4">
+<h4 id="org7477f89">QUESTION come back to it at some point&#xa0;&#xa0;&#xa0;<span class="tag"><span class="methodology">methodology</span></span></h4>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org4eee4be" class="outline-2">
+<h2 id="org4eee4be"><span class="todo TODO">TODO</span> Credit Risk in the Standard Models</h2>
+</div>
+
+
+<div id="outline-container-orgac7e8cd" class="outline-2">
+<h2 id="orgac7e8cd">Scenarios and Aggregation with Standard Models</h2>
+<div class="outline-text-2" id="text-orgac7e8cd">
+<p>
+So that is as well quite simple.
+</p>
+
+<p>
+There is just a shift into the quantile that is not as
+straightforward.
+</p>
+
+<p>
+I mean could not infer it from the source I am checking at but it is
+not explained there the methodology. You just have the
+formula. Would have to find some material where they explain the
+things a little bit more.
+</p>
+
+<p>
+Anyways getting back to sauce the situation is as follows:
+</p>
+
+<img src="../../images/Screenshot 2022-04-07 165148.png" class="center">
+
+<p>
+So read the target capital in the following way - much clearer then
+to get the idea - quite simple one.
+</p>
+
+<p>
+\[ TC = ES_{\alpha^'} - \frac{p}{\alpha} * (ES_{\alpha^'} + \sum c_i * w_i) \]
+</p>
+
+<p>
+So you basically see that it is the expected shortfall for that 
+adjusted quantile corrected by some additional risk occurring for
+the scenario case. 
+</p>
+
+<p>
+So that is pretty trivial. There are still some sign things that
+make such an interpretation a little bit confusing but I am pretty
+much sure that the ultimate idea behind it is that one.
+</p>
+
+<p>
+The only thing is that quantile adjustment. That looks pretty much
+arbitrary.
+</p>
+
+<img src="../../images/Screenshot 2022-04-07 170417.png" class="center">
+</div>
+</div>
+
+<div id="outline-container-org75e1382" class="outline-2">
+<h2 id="org75e1382">Putting it all together</h2>
+<div class="outline-text-2" id="text-org75e1382">
+<p>
+There is the following flowchart which well summarize the general
+conceptual framework of SST. You understand it quite well now at
+high level:
+</p>
+
+<img src="../../images/Screenshot 2022-04-08 091844.png" class="center">
+
+<p>
+So you see that what you do is delta F. You also add the scenarios
+to it - the one for the market risk.
+</p>
+
+<p>
+Then you pass the results to Group Risk management where all of the
+other risks are processed and finally aggregated into the SST
+report. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge1394d6" class="outline-2">
+<h2 id="orge1394d6">Connecting the dots with your Risk System</h2>
+<div class="outline-text-2" id="text-orge1394d6">
+</div>
+<div id="outline-container-org6554ac9" class="outline-3">
+<h3 id="org6554ac9">On the regular SST shocks that you get into the system</h3>
+<div class="outline-text-3" id="text-org6554ac9">
+<p>
+So your guess was correct.
+</p>
+
+<p>
+The shocks that you are delivered by the FINMA regularly are done
+for creating one off calculations of bad situations that are then
+leveraged for making topside adjustments on your risk calculations.
+</p>
+
+<ul class="org-ul">
+<li>Market consistent valuation: Best estimate (discounted cash flows +
+valuation of all relevant options and guarantees) and safety margin.</li>
+
+<li>An alytical models for normal situation, scenarios take into
+account situation when models break down</li>
+
+<li><p>
+Results of analytical models and scenarios are aggregated to arrive
+at target capita
+</p>
+
+<p>
+The aggregation: weighted (quantile-adjusted) average of scenarios
+with results from analytical mode.
+</p></li>
+</ul>
+</div>
+
+<div id="outline-container-orgae3400e" class="outline-4">
+<h4 id="orgae3400e">Examples of Assets scenarios used by SST</h4>
+<div class="outline-text-4" id="text-orgae3400e">
+<ul class="org-ul">
+<li>Stock Market Crash 1987</li>
+<li>Nikkei Crash 1989</li>
+<li>European Currency Crisis 1992</li>
+<li>US Interest Rates 1994</li>
+<li>Russia / LTCM 1998</li>
+<li>Stock Market Crash 2000</li>
+<li>Default of reinsurer</li>
+<li>etc.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org0f7b4ba" class="outline-2">
+<h2 id="org0f7b4ba"><span class="todo TODO">TODO</span> note that you now got both methodological papers</h2>
+<div class="outline-text-2" id="text-org0f7b4ba">
+<p>
+i.e. you got both Z-ECM and SST.
+</p>
+
+<p>
+So read the both and understand what exactly is different between
+them.
+</p>
+
+<p>
+this approach of understanding the thing at high level and then
+going down in the code is promising. I am starting to connecting
+quite many dots and you are slowly getting a very clear
+understanding of the thing.
+</p>
+</div>
+</div>
