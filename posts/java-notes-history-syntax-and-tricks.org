@@ -77,6 +77,7 @@ Schildt)" publicly available on the world wide web at [[https://gfgc.kar.nic.in/
 
   A nice website to navigate some Java is [[https://www.javabrahman.com/category/java-8/][this]]. 
 
+
 * Making it Real
 
   So when reading about project Lombok I have seen that lots of =jugs=
@@ -273,6 +274,25 @@ that has the .class extension.
 
    It is then straightforward that due to this structure you should
    *always name your source code file after your class*.
+
+
+* Checked vs. Unchecked Exceptions
+
+  This is a theoretical thing you should keep in the back of your mind
+  when working.
+
+  It is important in order to understand in order to understand what
+  errors you might encounter at runtime destroying your applications:
+
+  #+begin_export html
+   <img src="../../images/Screenshot 2022-12-06 171803.png" class="center">
+  #+end_export
+
+  Think about what you want to catch and what not. Recall that with
+  unchecked exceptions, you will not get any compiling error if you do
+  not catch them.
+
+  That means that you should deal with them separately.
 
 
 * Syntax
@@ -3503,9 +3523,6 @@ System.out.println(String.format("Found %d names", startsWithN.size()));
    requires your objects be proper JavaBeans).
    
 
-
-   
-
 ** Intersting point - no parameter initialization
 
    Check at [[https://stackoverflow.com/questions/997482/does-java-support-default-parameter-values][this article]].
@@ -3536,26 +3553,26 @@ System.out.println(String.format("Found %d names", startsWithN.size()));
   In order to cristallize this consider the following example:
 
   #+begin_src java :classname CallByValue :results output raw
-// Primitive types are *passed by value*.
-class Test {
-    void meth(int i, int j) {
-	i *= 2;
-	j /= 2;
-    }
-}
-class CallByValue {
-    public static void main(String args[]) {
-	Test ob = new Test();
-	int a = 15, b = 20;
-	System.out.println("a and b before call: " +
-			   a + " " + b);
+      // Primitive types are *passed by value*.
+      class Test {
+	  void meth(int i, int j) {
+	      i *= 2;
+	      j /= 2;
+	  }
+      }
+      class CallByValue {
+	  public static void main(String args[]) {
+	      Test ob = new Test();
+	      int a = 15, b = 20;
+	      System.out.println("a and b before call: " +
+				 a + " " + b);
 
-	ob.meth(a, b);  // pass by value does not change the results.
+	      ob.meth(a, b);  // pass by value does not change the results.
 
-	System.out.println("a and b after call: " +
-			   a + " " + b);
-    }
-}
+	      System.out.println("a and b after call: " +
+				 a + " " + b);
+	  }
+      }
   #+end_src 
 
   #+RESULTS:
@@ -3600,6 +3617,9 @@ Test ob = new Test(15, 20);
 
 
 * Garbage Collection
+
+  You can read about it in the newly separated tailored blog entry
+  that you created. 
 
   Since objects are dynamically allocated by using the new operator,
   you might be wondering how such objects are destroyed and their
@@ -4551,36 +4571,36 @@ interface Map.Entry<K,V>
      second one will overwrite the entry of the first.
 
      #+begin_src java :results output raw :classname MapsBasics :results drawer
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;    
+     import java.util.List;
+     import java.util.Map;
+     import java.util.HashMap;
+     import java.util.ArrayList;    
 
-class MapsBasics {
-    public static void main(String args[]) {
-        Map<String, List<Integer>> map = new HashMap<>();
+     class MapsBasics {
+	 public static void main(String args[]) {
+	     Map<String, <Integer>> map = new HashMap<>();
 
-	List<Integer> myList = new ArrayList<>();
+	     List<Integer> myList = new ArrayList<>();
 
-	myList.add(1); // add the desired value
-	    
-	map.put("hello", myList);
+	     myList.add(1); // add the desired value
 
-	if (map.containsKey("hello")) {
-		List<Integer> myTest = map.get("hello");
+	     map.put("hello", myList);
 
-		myTest.add(2);
+	     if (map.containsKey("hello")) {
+		     List<Integer> myTest = map.get("hello");
 
-		map.put("hello", myTest);
-	}
+		     myTest.add(2);
+
+		     map.put("hello", myTest);
+	     }
 
 
-	List<Integer> myTest = map.get("hello");
+	     List<Integer> myTest = map.get("hello");
 
-	myTest.stream().forEach(System.out::println);
+	     myTest.stream().forEach(System.out::println);
 
-    }
-}
+	 }
+     }
      #+end_src 
 
      #+RESULTS:
@@ -4790,6 +4810,7 @@ public class Reminder {
    java package called /java.lang/. This is implicitly imported by
    the compiler for all programs.
    
+
 
 ** Logger Package
 
@@ -5004,7 +5025,6 @@ public class Reminder {
     things consistent. You should just always have a single source
     of truth otherwise complexity will explode.
 
-
 *** On an Azure Note
 
     Recall that we work with Azure Webapps and the following bit of
@@ -5028,6 +5048,7 @@ public class Reminder {
 
     You should use it in order to properly increase the analytics on
     your logs and really understand what it is going on.
+
 
 
 ** Project Lombok
@@ -5095,6 +5116,7 @@ public class Reminder {
 
       Cool for [[https://projectlombok.org/features/ToString][debugging]].
     
+
 
 ** Jackson
 
@@ -5422,7 +5444,83 @@ public class MyBean {
     idea in Java: /always recall who is the first class citizen/.
     
 
-*** TODO other interesting stuff
+*** Validation
+
+    A further important point consists in validating the json object
+    itself.
+
+    Essentially there are three options - see [[https://guillaumeblanchet.medium.com/three-ways-to-validate-json-in-java-4b38d95ba7c][here]].
+
+    Let's explore the first two and the pro and cons of them.
+    
+**** Jackson
+
+     This option essentially consists in parsing the json object withe
+     Jackson and mapping it to the desired object.
+
+     Then it obviously follows that if the field type of the json does
+     not match the one specified in the Object being mapped to you
+     will get errors.
+
+     On the top of it you can write all of the necessary logic you
+     desire. I.e. you can write the relevant logic for constraining
+     the field to be of a particular type. 
+
+**** Json Schema
+
+     This is a more readable way to validate your json.
+
+     This due to the property that the json format is more readable
+     than plain java code.
+
+     The idea is then essentially to write json objects specifying the
+     characteristics that your json objects should have.
+
+     An example could be the following:
+
+     #+begin_src json
+       {
+	   "$schema": "http://json-schema.org/draft-07/schema#",
+	   "$id": "#MyJsonClassSchema.json",
+	   "type": "object",
+	   "properties": {
+	       "myProperty": {
+		   "oneOf": [
+		       {
+		       "type": "string"
+		   },
+		       {
+		       "type": "array",
+		       "items": [
+			   {
+			   "type": "string"
+		       }
+		       ]
+		   }
+		   ]
+	       }
+	   }
+       }
+     #+end_src
+
+     You can then validate according to such schema for instance as
+     follows:
+
+     #+begin_src java
+     @Test
+     public void validateFromJsonSchema() throws JsonProcessingException {
+	 JsonSchema schema = getJsonSchema("#MyJsonClassSchema.json");
+	 String json =
+	     "{\n"
+	     + "  \"myProperty\": [\"a value\"]\n"
+	     + "}";
+	 Set<ValidationMessage> errors = schema.validate(new ObjectMapper().readTree(json));
+	 assertThat(errors).isEmpty();
+     }
+     #+end_src
+
+
+*** TODO Possible Readings
 
     There is as well other interesting stuff in there.
 
@@ -5435,6 +5533,8 @@ public class MyBean {
     some [[https://www.baeldung.com/jackson][other tutorials]].
 
 
+
+    
 ** JDBC
 
    Note that this is just an investigation at very high level.
@@ -5649,7 +5749,8 @@ delimiter ;
     your use-case. 
 
 
-** TODO Hiberante
+
+** IN-PROGRESS Hiberante
 
    Do not actully open JDBC connections. Work with Hibernate and JPA
    in general. 
@@ -5667,6 +5768,7 @@ delimiter ;
    [[https://marcohassan.github.io/bits-of-experience/posts/object-relational-mapping/][check at it]].
 
    This goes a little bit hand in hand with what follows on JPA.  
+
 
 ** On Java Persistence API - JPA
 
@@ -5737,16 +5839,17 @@ delimiter ;
 
 
 
+
 ** TODO Guava
 
-   [[https://github.com/google/guava][url]]
+   Check at this [[https://github.com/google/guava][url]].
 
    It seems to be a thing in the Java world.
 
    Already encountered it a couple of times.
 
    Check at it in a more thorough way when you have time. 
-      
+
 
 ** TODO Method Handles
 
@@ -6403,7 +6506,6 @@ class TimeMe {
 
 
 * TODO Profiling
-   
 
 
 * On the DataFrame issue

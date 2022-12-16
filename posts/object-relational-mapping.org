@@ -389,9 +389,6 @@ javax.persistence.GenerationType enum, which you select with
        INSERTs. The default table name is HIBERNATE_SEQUENCES with
        columns SEQUENCE_NAME and SEQUENCE_NEXT_HI_VALUE. 
 
-       
-
-
 
 **** How to name your tables
 
@@ -736,7 +733,6 @@ protected double metricWeight;
     
 
     
-
 **** Generating Values
 
      With this tag you can Hibernate can automatically generate the
@@ -789,6 +785,98 @@ protected double metricWeight;
      Note that Strings are mapped ot VARCHAR(255) by default. If you
      do not want this default but rather a different value you have to
      set it in the =length= paramter.
+
+
+*** Excurs Directionality in ORM
+
+    This is an important point when designing your DBs.
+
+    In order to understand well this concept an excurs in terms of
+    =unidirectionality= and =bidirectionality= is needed.
+
+    This is of paramount importance to think when designing and
+    mapping your databse.
+
+    - =unidirectionality=:
+
+      A unidirectional relationship has only an owning side.
+
+      The *owning side* of a relationship *determines how the
+      Persistence runtime makes updates* to the relationship in the
+      database.
+
+      In this sense it is important to understand that:
+
+      #+begin_quote
+      In a unidirectional relationship, *only one entity* has a
+      relationship field or property that *refers to the other*.
+      #+end_quote
+
+      We encountered such a case multiple times already before - get
+      it well into your head:
+
+      #+begin_src java
+      @Entity
+      @Table(name = "USERS")
+      public class User {
+
+	  @ManyToOne(fetch = FetchType.LAZY)
+	  protected BillingDetails defaultBilling;
+	  // ...
+
+      }
+      #+end_src
+
+      Here many users can have a single billing. The User Entity has
+      then the =DEFAULTBILLING_ID= attribute representing the
+      relationship. So you see Users is aware of the relationship -
+      it *ownes it*.
+
+      This means for instance that if you withdraw the user you would
+      automatically withdraw as well the the CreditCard.
+
+      #+begin_src java
+      User user = em.find(User.class, USER_ID);
+
+      user.getDefaultBilling().pay(123);
+      #+end_src
+
+      Note that the directionality is important as it also gives the
+      order of the Objects that must be saved. I.e. for instance in
+      the example above billingdetails must exist in order to create a
+      User - if for instance that property is not-null, i.e. the
+      parent is mandatory.
+      
+       
+    - =bidirectionality=:
+
+      In the bidirectional case, *each entity has a relationship field*
+      or property that *refers to the other entity*.
+
+      In this sense you see that there is a kind of circular
+      relation. The one and the other are highly dependent. You
+      cannot treat them as two splitted concepts anymore.
+
+      Understand the following though - there is still an *owning
+      side*.
+
+      - The inverse side of a bidirectional relationship *must refer
+        to its owning side* by using the mappedBy element of the
+        @OneToOne, @OneToMany, or @ManyToMany annotation.
+
+	The mappedBy element designates the property or field in the
+        entity that is the owner of the relationship.
+
+      - The *many side* of many-to-one bidirectional relationships *must
+        not define the mappedBy element*. The *many side is always the
+        owning side* of the relationship.
+
+      - For one-to-one bidirectional relationships, the *owning side*
+        corresponds *to the side that contains the corresponding
+        foreign key*.
+
+      - For *many-to-many* bidirectional relationships, *either side may
+        be the owning side*.
 
 
 *** Mapping Inheritance
@@ -1343,21 +1431,2013 @@ evolution is straightforward.
      DB and work again at application layer.
 
 
-**** TODO possibly add section on polymorphic associations
+**** On Polymorphic Associations
 
-     not so well explained in the book. I think it is not conceptually
-     strucutred in the correct way. This section in the book is a bit
-     out of scope. 
+     In order to properly understand how to deal with polymorphic
+     associations think about the following:
 
-     Continue reading and then make sense of how to structure your
-     notes in this dimension. 
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-11-10 161703.png" class="center">
+     #+end_export
 
+     Note that the above is polymorphic by subtype. Note as well the
+     =defaultBillingDetails= association.
 
-*** TODO Start mapping exercise - the longrunning component
+     
+***** Many To One - As described in the picture above
 
-    check at it once Johannes is back.
+      In order to implement this into Hibernate you would use the
+      following mapping:
 
-    You can start to work in ORM way in this component. 
+      #+begin_export html
+       <img src="../../images/Screenshot 2022-11-10 165006.png" class="center">
+      #+end_export
 
+      You can then work with it as follows:
+     
+      #+begin_export html
+       <img src="../../images/Screenshot 2022-11-10 165547.png" class="center">
+      #+end_export
+     
+      #+begin_export html
+       <img src="../../images/Screenshot 2022-11-10 165727.png" class="center">
+      #+end_export
+
+***** One to Many - Opposite of the Above
+      
+      #+begin_export html
+       <img src="../../images/Screenshot 2022-11-10 165936.png" class="center">
+      #+end_export
+      
+      
+*** TODO Mapping Collections
+
+    I skip it for the moment.
+
+    The idea is that when you read the relevant chapter you will find
+    that there are multiple ways in order to map collections to
+    relational tables.
+
+    Once you work in such a way you can operate on different Objects
+    implementing the Serializable interface in a very quick and speedy
+    way.
+
+    In the meantime you can work simply through the usage of various
+    plain queries. 
+   
+
+*** @OneToMany, @ManyToMany
+
+    This continues the discussions of before.
+
+    It finishes the types of relations you may encounter in your DB.
+
+    Once you understand all of these options, the exercise will simply
+    be the one of putting the pieces together and take it from there.
+
+    This section continues the discussions on the different
+    polymorphic associations we encountered before. It also leverages
+    on the understanding mentioned in [[*Excurs Directionality in ORM][Excurs Directionality in ORM]].
     
+
+**** @OneToMany
+
+     This is used in order to impose the relevant parent-child
+     relations to your DBs.
+
+     #+begin_quote
+     The term *parent/child* implies some kind of *life cycle
+     dependency*, so a collection of strings or embeddable components
+     is appropriate.
+
+     The children are /fully dependent on the parent/; they will be
+     saved, updated, and removed always with the parent, never alone.
+     #+end_quote
+
+     So understand now the following:
+
+     #+begin_quote
+     @ManyToOne maps *associations* among entities. With it there is
+     not the full parent-child relation in action.
+     #+end_quote
+
+     I.e. with this you just have implemented a unidirectional link -
+     from the side owning the =@ManyToOne= attribute to the other.
+
+     In order to create a full parent child relation you should
+     express a *bidirectional link*.
+
+     An example would be the following:
+
+     #+begin_src java
+     @Entity
+     public class Bid {
+
+	 // NOTE from the previous discussion, this is the owner of the
+	 // relation. Has the many side.
+	 @ManyToOne(fetch = FetchType.LAZY)
+	 @JoinColumn(name = "ITEM_ID", nullable = false)
+	 protected Item item;
+	 // ...
+     }     
+
+     @Entity
+     public class Item {
+
+	 // The inverse side of the relation with mappedBy      
+	 @OneToMany(mappedBy = "item", // object with the ManyToOne
+				       // annoation above
+		    fetch = FetchType.LAZY)
+		    protected Set<Bid> bids = new HashSet<>();
+	 // ...
+
+     }
+     #+end_src
+
+     I.e. with it you can navigate all of the bids from the item
+     table. You can as well cascade all of the changes from the item
+     to the bids with such link in place. So you see that the primary
+     benefit of a one-to-many mapping is *navigational access to
+     data*.
+
+     Note as well the following:
+
+     Ask yourself if any table in the schema will have a BID_ID
+     foreign key column. If not, map the Bid class as @Embeddable,
+     not @Entity. Meaning you can work in that way highly decreasing
+     the overload of having to mantain the general bidirectional link
+     with all of the corresponding joins.
+
+     Finally note that with this bidirectional association you would
+     get the following:
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-12-07 094758.png" class="center">
+     #+end_export
+
+
+**** TODO @OneToOne
+
+
+**** IN-PROGRESS @ManyToMany
+
+     This is the concept of a *link table*. It is the M:N relationships
+     you often encounter when talking about DBs.
+     
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-12-07 095341.png" class="center">
+     #+end_export
+
+     So you see that in the link table the primary key is composed of
+     both of the entries.
+
+     You can read further in the book how to map this situation via JPA.
+
+
+** Transactionality
+
+   This is as well an important concept when setting up your ORM
+   system.
+
+   Without properly understanding this component you would just make
+   mess.
+
+   This is important cause it will highly affect the performance and
+   correctness of your ORM.
+   
+*** Managing Data
+
+    The first thing to understand in this dimension is the
+    =EntityManager= API.
+
+    With it you manage the lifecycle of your ORM object. I.e. the
+    focus in on =runtime data management=.
+    
+**** On the life cycle
+
+     The first point to note in this sense is that JPA as an ORM
+     implementation is *transparent*. This essentially means that
+     classes are /unaware of their own persistence capability/.
+
+     In general understand the following terminology as this is the
+     most important:
+
+     - persistence life cycle:
+
+       the /states an entity instance goes through/ during its life.
+
+     - unit of work:
+
+       /state-changing/ operations.
+
+     - persistence context:
+
+       service that remembers all of the modifications and state
+       changes you made to data *in a particular unit of
+       work*.
+
+     Understand now that you essentially have 4 different states in
+     JPA:
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-11-14 163909.png " class="center">
+     #+end_export
+
+     Note that all of this life-cycle is managed through the
+     Entitymanager. You can see there as well the API for it in order
+     to manage the life-cycle. You can read the next section in order
+     to understand more out of it.
+
+     We dig next in the 4 major states. It is important to understand
+     these. Just by understanding these and where your Entities are
+     in the persistence context will you be able to properly work
+     with JPA in an error-free way.
+
+     1. Transient State:
+
+	Note that if an instance is in this space, its state is *lost
+        and garbage-collected* as soon as they are *no longer
+        referenced*.
+
+	Nothing will persisted as long as the instance is in transient
+        state.
+
+     2. Persistent State:
+
+	Here the instance has a representation in the DB. It is
+        *stored in there or will be stored* when then the unit of work
+        completes.
+
+	Note that instances in the persistent state are *always
+        associated with a persistence context*.
+
+     3. Removed State:
+
+	When an instance is in the removed state, the provider will
+        delete it *at the end of a unit of work*.
+
+     4. Detached State:
+
+	This usually happens when you close the persistence unit of
+        work by one of the API persisting your data.
+
+	Then the state moves from persistent to /detached/. In
+        detached state the entities are essentially similar to the
+        /transient/ state.
+
+	I.e. further changes you applied over there are not persisted
+        to the DB. Furthermore, as soon as you discard the reference
+        the instance will be removed and garbage collection will
+        eventually reclaim the memory.
+
+	Another option is to leverage the =merge()= API, as in the
+        transient state, and move the instance back to the persistent
+        state.
+			
+
+**** The Persistence Context
+
+     So above is the general lifecycle of ORM instances. 
+
+     What you have to understand now is that such a lifecycle is
+     manged through the =EntityManager= APIs.
+
+     These are the ones mentioned above.
+
+     However, *very important* is as well to perceive that through the
+     *EntityManger* you also *define the unit of work through the
+     persistent context*. I.e. a unit of work is not bounded to a
+     particular state. It can encompass multiple states and ensures
+     transactionality for the entire unit.
+
+     Note that what you usually do to manage the persistent context is
+     create a persistent context
+     =EntityManagerFactory#createEntityManager()= and close it then
+     with =EntityManager#close()=.
+
+     Note the following now:
+
+     #+begin_quote
+In JPA terminology, this is an *application-managed persistence
+context*; your application defines the scope of the persistence
+context, *demarcating the unit of work*.
+     #+end_quote
+
+     So understand that it is up to you to properly define the unit of
+     work in your application.
+
+     Note now that once you defined your persistence context and your
+     unit of work, there will be /automatic dirty checking/ by the
+     engine. This means that the *engine will detect which entity
+     instances the application modified*.
+
+     An update with the DB will then happen either /automatically/ or
+     /on demand/.
+
+     Understand as well the concept of *first-level cache*. This means
+     that the persistence context remembers all entity instances you
+     have handled in a particular unit of work.  If you query for an
+     instance was already retrieved in the unit of work and is
+     registered in the persistence context you *will not hit the
+     DB*. Hibernate will immediately return you the given
+     records by *creating a reference to the existing instance*.
+
+     Important is to note the following drawback:
+
+     #+begin_quote
+Only if an instance with the same identifier value can’t be found in
+the current persistence context does Hibernate read the rest of the
+data from the result-set row.
+
+Hibernate *ignores any potentially newer data in the result set, due to
+read-committed transaction isolation at the database level*, if the
+entity instance is already present in the persistence context.
+     #+end_quote
+
+     You must handle this drawback at the application level by
+     explicitely refreshing the data in memory. See the following
+     section: [[*Refereshing the data in memory][Refereshing the data in memory]].
+
+     Finally note the following benefit of having a first-cache in
+     place, these generally offset the drawback discussed above. You
+     will have to put mechanism in place in order to counterbalance
+     it.
+
+     1. The persistence layer isn't vulnerable to stack overflows in
+        the case of circular references. You just have a reference
+        more. 
+
+     2. There can never be conflicting representations of the same
+        database row at the end of a unit of work.
+
+     3. Likewise, changes made in a particular persistence context are
+        always immediately visible to all other code executed inside
+        that unit of work and its persistence context.
+
+     So essentially the persistence context provides a /guaranteed
+     scope of object identity/. Meaning that both comparison by ====
+     and by =equals= will yield true if both objects have the same
+     *identifier value*. This ultimately solves the problem of
+     identity in the ORM space - see [[*The problem of Identity][above]].
+     
+
+***** On the context management
+
+      In order to manage the context check at the following:
+
+      #+begin_src java
+
+      EntityManager em = null;  // Creates the EntityManager
+
+      UserTransaction tx = TM.getUserTransaction();
+
+      try {
+
+	  tx.begin(); // Opens a Unit of Work
+	  em = JPA.createEntityManager();
+	  // ...
+	  tx.commit(); // Flushes
+
+      } catch (Exception ex) {
+
+	  // TODO Transaction rollback, exception handling
+	  // ...
+
+      } finally {
+	  if (em != null && em.isOpen())
+	      em.close(); // Closes the Unit of Work
+      }
+
+      #+end_src
+
+      *Note:* everything between =tx.begin()= and =tx.commit()= occurs
+      in one transaction. This is a *unit of work*. This means that
+      either all of the operations in the unit of work suceed or fail.
+
+      *Note:* Hibernate /won’t access the database until necessary/;
+      the EntityManager doesn’t obtain a JDBC Connection from the pool
+      until SQL statements have to be executed. You can create and
+      close an EntityManager without hitting the database. Hibernate
+      executes SQL statements when you look up or query data and when
+      it flushes changes.
+
+      When Hibernate is notified (by the JTA engine) of the commit, it
+      performs dirty checking of the persistence context and
+      synchronizes with the database. You can also force dirty
+      checking synchronization manually by calling
+      EntityManager#flush() at any time during a transaction.
+
+      
+**** On the usage of the Life Cycle API
+
+     Here I refer to the book for the basic ones, experience will also
+     teach you.
+
+     Important points are the following:
+     
+
+***** Persistence API
+      
+      #+begin_export html
+       <img src="../../images/Screenshot 2022-11-16 122012.png" class="center">
+      #+end_export
+
+      Important to understand here is as well the following:
+
+      #+begin_quote
+When you call persist(), only the identifier value of the Item is
+assigned. [The actual insert just happens when you flush/commit the
+unit of work].
+
+Alternatively, if your identifier generator isn’t
+pre-insert, the INSERT statement will be executed immediately when
+persist() is called.
+      #+end_quote 
+
+      *Very important* is as well the following:
+
+      #+begin_quote
+If one of the INSERT or UPDATE statements made when flushing fails,
+Hibernate causes a rollback of changes made to persistent instances in
+this transaction at the database level. But *Hibernate doesn’t roll
+back in-memory changes* to persistent instances.
+      #+end_quote
+
+
+***** Difference between find() and getReference()
+
+      The first one instantiates an instance fully, i.e. it hits the
+      DB. 
+
+      The second just creates a proxy if there is no instantiated
+      instance for the primary key, or assignes to the first level
+      cached instance present in the DB. 
+
+      
+***** Refereshing the data in memory
+
+      There is a very simple API that makes this possible.
+
+      This is very important as with it you will deal with the first
+      level caching issue that might make your in-memory data out of
+      date.
+
+      This is the very issue that you have to keep in mind if you work
+      in-memory in a /hibernating/ state. You might not be aware about
+      how the world outside developed.
+
+      #+begin_src java
+      Item item = em.find(Item.class, ITEM_ID);
+      item.setName("Some Name");
+
+      // Someone updates this row in the database
+
+      String oldName = item.getName(); 
+      em.refresh(item);
+
+      assertNotEquals(item.getName(), oldName);
+      #+end_src
+
+      Then it is clear that:
+
+      #+begin_quote
+      Calling refresh() causes Hibernate to execute a SELECT to read and
+      marshal a whole result set, overwriting changes you already made to
+      the persistent instance in application memory.
+      #+end_quote
+
+      Note as well:
+
+      #+begin_quote
+      Most applications don’t have to manually refresh in-memory state;
+      *concurrent modifications* are typically resolved at transaction commit
+      time.
+      #+end_quote
+
+      So this boils down to the following:
+
+      - if you modify the records multiple times in the same unit of
+        work do not worry. The thing is tricky if you are working with
+        some other application accessing and modifying the same
+        records of the DB.
+
+	So especially in a microservices set up this might be
+        particularly dangerous. 
+
+      Another interesting use-case for refreshing is the following:
+
+      #+begin_quote
+      Refreshing can be useful to undo changes made in memory during a
+      conversation, if the user cancels the dialogue.
+      #+end_quote
+     
+
+***** Replicating Data
+
+      This is used when you have to retrieve data from one database
+      and store it in another.
+
+      Note that you work with /two persistent contexts/:
+
+      #+begin_quote
+      Replication takes detached instances loaded in one persistence
+      context and makes them persistent in another persistence context.
+      #+end_quote
+
+      An example for working with the API is the following:
+
+      #+begin_src java
+      tx.begin();
+
+      EntityManager emA = getDatabaseA().createEntityManager();
+
+      Item item = emA.find(Item.class, ITEM_ID);
+
+      EntityManager emB = getDatabaseB().createEntityManager();
+
+      emB.unwrap(Session.class)
+	  .replicate(item, org.hibernate.ReplicationMode.LATEST_VERSION);
+
+      tx.commit();
+
+      emA.close();
+      emB.close()
+      #+end_src
+
+      Note now that ReplicationMode defines the replication procedure
+      in the following sense:
+
+      - IGNORE — Ignores the instance when there is an existing database
+        row with the same identifier in the database.
+
+      - OVERWRITE — Overwrites any existing database row with the same
+        identifier in the database.
+
+      - EXCEPTION — Throws an exception if there is an existing database
+        row with the same identifier in the target database.
+
+      - LATEST_VERSION — Overwrites the row in the database if its
+        version is older than the version of the given entity
+        instance, or ignores the instance otherwise. Requires enabled
+        optimistic concurrency control with entity versioning.
+
+
+***** Caching - clear and detach
+
+      The situation is the following one:
+
+      #+begin_quote
+      Many Hibernate users who ignore this simple fact run into an
+      OutOfMemoryException. This is typically the case when you load
+      thousands of entity instances in a unit of work but never intend
+      to modify them.
+
+      Hibernate still has to create a snapshot of each instance in the
+      persistence context cache, which can lead to memory exhaustion.
+
+      Note now that the persistence context *cache never shrinks
+      automatically*.
+
+      Often, many persistent instances in your context are there by
+      accident—for example, because you needed only a few items but
+      queried for many.
+
+      Extremely large graphs can have a *serious performance impact* and
+      require significant memory for state snapshots.
+      #+end_quote 
+
+      In order to clean the caching of your persistence context you
+      should work with one of the following two APIs:
+
+      - =detach=: evict a specific persistent instance manually from the
+        persistence context.
+
+      - =clear=: detach all persistent entity instances from the cache.
+
+      There is as well the option to retrieve the data in =read-only
+      mode=. This disables the state snapshots and dirty checking such
+      that Hibernate won't write modifications to the database.
+
+      #+begin_src java
+
+      em.unwrap(Session.class).setDefaultReadOnly(true);
+
+      Item item = em.find(Item.class, ITEM_ID);
+      item.setName("New Name"); 
+
+      em.flush();  // Hibernate will not update on the DB despite the
+      // setName method above.
+
+
+      // You can even set it at the individual record level
+
+      Item item = em.find(Item.class, ITEM_ID);
+
+      em.unwrap(Session.class).setReadOnly(item, true); // single item
+      item.setName("New Name");
+
+      em.flush();  // no update for the specific item
+
+      // Can set the read only property for all of the records fetched by a query
+      org.hibernate.Query query = em.unwrap(Session.class)
+	  .createQuery("select i from Item i");
+
+      query.setReadOnly(true).list();
+
+      List<Item> result = query.list();
+
+      for (Item item : result)
+	  item.setName("New Name");
+
+      em.flush();
+
+      #+end_src
+
+
+***** On the DB synchronization
+
+      Note that the Hibernate synchronizes with the DB in the
+      following circumstances:
+
+      1. When a joined JTA system transaction is =committed= - see the
+         =commit()= API.
+
+      2. Before a query is executed — we don’t mean lookup with find()
+         but a =query with javax.persistence.Query= or the similar
+         Hibernate API.
+
+      3. When the application calls =flush()= explicitly.
+
+      You can even tune this behaviour by setting the particular
+      FlushModeType in the correct way:
+
+      #+begin_src java
+      tx.begin();
+
+      EntityManager em = JPA.createEntityManager();
+
+      Item item = em.find(Item.class, ITEM_ID);
+      item.setName("New Name");
+      em.setFlushMode(FlushModeType.COMMIT); // Disables Flushing before queries
+
+      assertEquals(
+		   em.createQuery("select i.name from Item i where i.id = :id")
+		   .setParameter("id", ITEM_ID).getSingleResult(),
+		   "Original Name"
+		   );
+
+      tx.commit(); // Just here you Flush
+      em.close();
+      #+end_src
+
+      
+***** On the Detached State
+
+      You can detach an instance through the =detach()= API.
+
+      This is tricky as, when a persistence context is closed, it no
+      longer provides an identity-mapping service. This is important
+      as it has important consequences for the comparison of your
+      instances within a Hibernate application.
+
+      You can understand this at best by checking at an example:
+
+      #+begin_src java
+
+      // Persistence Context 1 //
+
+      tx.begin();
+      em = JPA.createEntityManager();
+
+      Item a = em.find(Item.class, ITEM_ID);
+      Item b = em.find(Item.class, ITEM_ID);
+
+      assertTrue(a == b);           // True
+      assertTrue(a.equals(b));      // True
+      assertEquals(a.getId(), b.getId());  // True
+
+      // You see from the above that within a single Persistence Context you
+      // actually solved the identity problem in ORM
+
+      tx.commit();
+      em.close();
+
+      // Persistence Context 2 //
+
+      tx.begin();
+
+      em = JPA.createEntityManager();
+      Item c = em.find(Item.class, ITEM_ID);   // when you retrieve from a
+					       // difference persistence
+					       // context it is a different
+					       // instance on the heap
+
+      assertTrue(a != c);                  // False
+      assertFalse(a.equals(c));            // False 
+      assertEquals(a.getId(), c.getId());  // True
+
+      // So you see that when an instance enters in detached state they loos
+      // scope of object identity. You cannot make the usual comparisons.
+      // Just the identity property remains intact. 
+
+      tx.commit();
+      em.close();
+
+      #+end_src
+
+      This has also consequences when performing operations as:
+
+      #+begin_src java
+      // Both persistent context of above closed
+
+      Set<Item> allItems = new HashSet<>();
+
+      allItems.add(a);
+      allItems.add(b);
+      allItems.add(c);
+
+      assertEquals(allItems.size(), 2);  // TRUE
+
+      // The reason is that there is a Set operations embedded in the method
+      // that leverages the =equals()= API. As per the reasonings above you
+      // might not get the expected results.
+
+      #+end_src
+
+      In order to solve this, when working with multiple persistence
+      contexts and the instances in detached state you have to define
+      and override your own implementation of the =equals()= and
+      =hashCode()= methods for your mapped entity class.
+
+      
+****** Implementing the Equals() and HashCode() Methods
+
+       You can check in the book, essentially the idea is to work with
+       *business keys* rather than *surrogate keys*. This because
+       surrogate keys are just assigned when persisting instances and
+       if you make /Set/ operations as the one mentioned above with
+       /transient/ instances, you might for instance get issues.
+
+       So one example to do that would be the following - you can
+       take this a blueprint for the rest of the projects:
+
+       #+begin_src java
+       @Entity
+       @Table(name = "USERS",
+	      uniqueConstraints =
+	      @UniqueConstraint(columnNames = "USERNAME"))
+
+       public class User {
+	   @Override
+	   public boolean equals(Object other) {
+	       if (this == other) return true;
+	       if (other == null) return false;
+	       if (!(other instanceof User)) return false;
+	       User that = (User) other;
+	       return
+		   this.getUsername().equals(that.getUsername());
+	   }
+	   @Override
+	   public int hashCode() {
+	       return getUsername().hashCode();
+	   }
+	   // ...
+       }
+       #+end_src
+
+       In such a way you get equality by =equals()=. However, it is
+       important to note that you would not get equality by reference
+       ====.
+
+       
+***** Merging State
+
+      You can move instances from =transient= and =detached= state to
+      the persistent state via the =merge()= API.
+
+      Important is to note that with such an API you *return a new
+      instance*, the old one stay in its state and you would
+      ultimately work with this new instance.
+
+      #+begin_src java
+      detachedUser.setUsername("johndoe");
+
+      tx.begin();
+
+      em = JPA.createEntityManager();
+
+      User mergedUser = em.merge(detachedUser); // NOTE: new instance
+
+      mergedUser.setUsername("doejohn");
+
+      tx.commit();
+      em.close();
+      #+end_src
+
+      Note that when you call merge() the following happens:
+
+      #+begin_quote
+      Hibernate checks whether a persistent instance in the persistence
+      context has the same database identifier as the detached instance
+      you’re merging.
+
+      If it is empty Hibernate loads an instance with this identifier
+      from the database. Then, merge() copies the detached entity
+      instance onto this loaded persistent instance.
+
+      If it is present it assigns it by reference to the existing instance.
+      #+end_quote
+
+      Graphically the following happens:
+      
+      #+begin_export html
+       <img src="../../images/Screenshot 2022-11-18 113100.png" class="center">
+      #+end_export
+
+      
+**** On Hibernate Exceptions
+
+     #+begin_quote
+All JPA operations, including flushing the persistence context, can
+throw a *RuntimeException*. This is an unchecked exception, meaning
+that you do not have to catch it at compile time.
+
+But if you run into it, it will obviously have repercussion on your
+system and application.
+
+But the methods UserTransaction#begin(), commit(), and even rollback()
+throw a checked Exception. I.e. you must /catch it at compile time/.
+
+The *exception for rollback requires special treatment: you want to
+catch this exception and log it*; otherwise, the original exception
+that led to the rollback is lost. Continue throwing the original
+exception after rollback.
+
+Typically, you have another layer of interceptors in your system that
+will finally deal with the exception, for example by rendering an
+error screen or contacting the operations team.
+     #+end_quote
+
+
+*** Concurrency
+
+    This section deals with the case of concurrent access to the
+    database by multiple persistent contexts and how to deal with it.
+
+    The idea is that the hibernating way of working with data
+    in-memory may create issues as discussed before.     
+
+    We will see how to preserve isolation and control concurrent
+    access with pessimistic and optimistic strategies.
+
+**** On the ACID property
+
+     Recall the ACID acronym and recall that usually in relational
+     databases this is a desired and achieved property.
+
+     ACID: /atomicity, consistency, isolation, durability/.
+
+     When working within a persistent context as a single user this
+     comes out of the box in a pretty straightforward way.
+
+     The thing becomes more tricky when multiple applications and
+     users start to touch the data.
+
+     In this case you can achieve the above properties with
+     /locks/. There are trade-offs in any case which we will be
+     explore in this section.
+
+     #+begin_quote
+     Database transactions have to be short, because open transactions
+     consume database resources and potentially prevent concurrent
+     access due to exclusive locks on data.
+     #+end_quote
+
+
+**** On system transactions
+
+     #+begin_quote
+     In an application that manipulates data in several systems, a
+     particular *unit of work* involves access to more than one
+     transactional resource.
+
+     In this case, you can’t achieve atomicity with JDBC alone. You need a
+     transaction manager that can handle several resources in one system
+     transaction.
+     #+end_quote
+
+     This is *JTA*.
+
+     #+begin_quote
+     JTA standardizes system transaction management and distributed
+     transactions so you won’t have to worry much about the lower-level
+     details.
+
+     [Or in more simple words]:
+
+     JTA provides a nice abstraction of the underlying resource’s
+     transaction system, with the added bonus of distributed system
+     transactions.
+     #+end_quote
+
+     Note that we are here dealing with access to multiple resources
+     on the same application. Not about a microservices setting.[fn:2]
+
+     In order to see this and how ACID is guaranteed - especially the
+     /atomicity/ part - by JTA in a system transaction, understand the
+     following:
+
+     #+begin_quote
+     When you create an EntityManager, it looks for an ongoing JTA system
+     transaction *within the current thread* of execution.
+
+     If the EntityManager finds an ongoing transaction, it *joins the
+     transaction by listening to transaction events*. 
+
+     This means you should always call UserTransaction#begin() and
+     EntityManagerFactory#createEntityManager() on the same thread if you
+     want them to be joined.
+     #+end_quote
+
+     Through this *joining of transaction* you would ultimately ensure
+     the ACID properties in a system transaction.
+
+     Side note: you can work in a multithreaded way, but you have to
+     make sure that the transaction is being created on the main
+     thread.
+
+     Note the following now:
+
+     #+begin_quote
+     If the EntityManager can’t find a started transaction in the same
+     thread when it’s created, it’s in a special *unsynchronized
+     mode*. In this mode, JPA won’t automatically flush the
+     persistence context.
+     #+end_quote
+
+     Finally, keep in mind when designing your ORM system that you
+     should keep keep database transactions /as short as possible/ in
+     a busy OLTP system. This in order not to block resources for too
+     long with the various locks etc.
+
+     
+**** On concurrent access
+
+     #+begin_quote
+Databases (and other transactional systems) attempt to ensure
+transaction *isolation*, meaning that, from the point of view of each
+concurrent transaction, it appears that no other transactions are in
+progress.
+
+Traditionally, database systems have implemented *isolation with
+locking*.
+     #+end_quote
+
+     We will deal in this section about this topic and will see the
+     trade off at hand.
+
+     In order to understand it, understand first the issues that might
+     occur in multi-user access to the DB.
+
+
+     1. =lost update=:
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-11-24 104403.png" class="center">
+     #+end_export
+
+     This occurs when transactions are not isolated. Say the first
+     update, the second tries to update, fails, aborts and rollback to
+     the original status. The event of the first transaction would be
+     lost due to the non-isolation of the thing.
+
+
+     2. =dirty read=:
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-11-24 104431.png" class="center">
+     #+end_export
+
+     Understand first that it is a /read/ issue. You should be
+     careful when reading *uncommited data*.
+
+     The danger comes out of the following: the changes made by the
+     other transaction may later be rolled back, and invalid data may
+     be written by the first transaction, such that you might
+     ultimately perform work with faulty data.
+     
+
+     3. =unrepeatable read=:
+
+     #+begin_export html
+     <img src="../../images/Screenshot 2022-11-24 104458.png" class="center">
+     #+end_export
+
+     This occurs if a transaction reads a data item twice and reads
+     different state each time. Recall these names as you will see
+     then that when choosing the isolation level for your
+     application you will have to choose among the many
+     opportunities. Obviously this a broken unrepeatable read is
+     not that bad. 
+
+	1. =last commit wins=:
+
+	#+begin_export html
+	 <img src="../../images/Screenshot 2022-11-24 104534.png" class="center">
+	#+end_export
+
+	See the issue with this race condition:
+
+	#+begin_quote
+	User A’s changes are overwritten without warning, and B has
+	potentially made a decision based on outdated information.
+	#+end_quote
+
+
+     4. =phantom read=:
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-11-24 104619.png" class="center">
+     #+end_export
+
+     #+begin_quote
+     This occurs when you read data twice and the second result
+     includes data that wasn’t visible in the first result or less
+     data because something was deleted.
+     #+end_quote
+
+     Note the difference with repeatable reads. There the *same data*
+     was updated. Now you are talking about an update to a different
+     set of data that affects the last read. 
+     
+***** ANSI ISOLATION LEVELS
+
+      Given, the issue understand now the different possibilities of
+      transactional isolation guarantees.
+
+      Note that these guarantees, are usually implemented *on the DB
+      side*. Hibernate leverages all of the years of studies in the
+      field and the advances in the field without implementing
+      isolation on the application layer.
+
+      Note that once you define your desired isolation level you can
+      specify it in JPA and /JTA/ will take care of implementing it.
+
+      The different isolation levels are summarized in the
+      following:
+
+      1. =Read uncommitted isolation=:
+
+	 Here you have: /permits dirty reads/ but /not lost updates/
+         operates in read uncommitted isolation.
+
+	 Lost update is in fact one of the most dangerous occurrences
+         and you should be careful always to avoid it.
+	 
+
+      2. =Read committed isolation=:
+
+	 /Permits unrepeatable reads/ but /not dirty reads/ implements
+         read committed isolation.
+	 
+
+      3. =Repeatable read isolation=:
+
+	 A system operating in repeatable read isolation mode permits
+         /neither unrepeatable reads nor dirty reads/. /Phantom reads
+         may occur/.
+
+      4. =Serializable isolation=:
+
+	 the strictest isolation, serializable, emulates serial
+         execution, as if transactions were executed one after
+         another, rather than concurrently.
+
+	 
+      Note that various types of locks are implemented at the DB level
+      in order to achieve this. Details are skipped here but simply
+      understand the core idea, the more locks the poorer the
+      scalability in the number of users and the poorer the
+      performance.
+
+      So there is a trade-off between full isolation where you have a
+      very strong guarantee of what is going on and
+      scalability. Depending on the business case one solution might
+      be better than the other.
+
+      In general understand the following:
+
+      #+begin_quote
+Too high an isolation level harms the scalability of a highly
+concurrent application.
+
+Insufficient isolation may cause subtle, *difficult to reproduce* bugs
+in an application that you won’t discover until the system is working
+under heavy load.
+      #+end_quote
+
+      Finally, note that Hibernate by default *assumes read committed
+      is the default isolation level*.
+
+      This means you have to /deal with unrepeatable reads, phantom
+      reads, and the last commit wins problem/.
+
+      Note that depending on your ORM there are APIs for setting the
+      desired isolation level. You can check it online.
+
+      
+***** On working with DB versioning
+
+      Create reference[fn:3].
+
+      Important, note the following now:
+
+      #+begin_quote
+      The combination of the (mandatory) persistence context cache
+      and versioning already gives you most of the nice features of
+      *repeatable read isolation*.
+      #+end_quote
+
+      Note as well that versioning switches from last commit wins to
+      first commit wins.
+
+      You can better see it in the next section. 
+
+      
+**** On Currency Control Via Locking
+
+     In general understand that, given your default isolation level
+     for your applications, it might happen at times that you might
+     need to deviate from the norm and implement:
+
+     #+begin_quote
+     From time to time, a particular unit of work in your application may
+     require a different, usually stricter isolation level.
+
+     Instead of changing the isolation level of the entire transaction, you
+     should use the Java Persistence API to obtain additional locks on the
+     relevant data.
+
+     This fine-grained locking is more scalable in a highly concurrent
+     application. JPA offers optimistic version checking and database level
+     pessimistic locking.
+     #+end_quote
+
+     We will check at the two next.
+     
+
+***** Optimistic Locking
+
+      Optimistic locking is based on the versioning scheme previously
+      mentioned.
+
+      The idea is that with such a versioning scheme you can easily
+      spot conflicts if multiple users try to write conflicting
+      records in the DB.
+
+      You can implement versioning via the =@Version= notation.
+
+      #+begin_src java
+      @Entity
+      public class Item implements Serializable {
+
+	  @Version
+	  protected long version;
+	  // ...
+
+      }
+      #+end_src
+
+      Note that this is the recommended way. There is another
+      possibilities that checks at all of the values in the table. You
+      can implement this via the
+      =@org.hibernate.annotations.OptimisticLocking( type =
+      org.hibernate.annotations.OptimisticLockType.ALL)= annotation.
+
+      This is not recommended. You can google it, should you be more
+      interesting in it.
+
+      Turning back to the versioning usage, it basically works as
+      follows.
+
+      #+begin_quote
+The JPA specification leaves open how exactly each LockModeType is
+implemented; for OPTIMISTIC, Hibernate /performs version
+checking/. There are no actual locks involved.
+
+You’ll have to enable versioning on the entity class you are
+interested in.
+      #+end_quote
+
+      Then the thing continues as follows:
+
+      #+begin_quote
+After incrementing the version number of a detected dirty entity class
+during flushing, Hibernate *compares versions* when executing the UPDATE
+and DELETE SQL statements.
+      #+end_quote
+
+      Say that you work from inception - meaning from first update
+      where version is 0 -, it would work as follows then:
+
+      #+begin_quote
+[When you work update or delete data, Hibernate will automatically
+update the version for the records with version 0. The following
+occurs then.]
+
+JDBC returns the number of updated rows to Hibernate; if that result
+is zero, it means the ITEM row is either gone or doesn’t have the
+version 0 anymore. So something must have happened in between - there
+was a conflict. 
+
+Hibernate detects this conflict during flushing, and a
+javax.persistence.OptimisticLockException is thrown.
+      #+end_quote
+
+      The above is the trivial case as you just have a single entity.
+
+      Consider now implementing a more involving case, the one of
+      retrieving a @ManyToOne relation.
+
+      #+begin_quote
+Let’s say you want to sum up all item prices in several
+categories. This requires a query for all items in each category, to
+add up the prices.
+
+The problem is, what happens if someone moves an Item from one
+Category to another Category while you’re still querying and iterating
+through all the categories and items? With read-committed isolation,
+the same Item might show up twice while your procedure runs!
+      #+end_quote
+
+      In order to deal with this you can set an optimistic lock at
+      query time. This will inform you if something has changed in
+      between.
+
+      See the following example:
+
+      #+begin_src java
+      tx.begin();
+
+      EntityManager em = JPA.createEntityManager();
+      BigDecimal totalPrice = new BigDecimal(0);
+
+      for (Long categoryId : CATEGORIES) {
+
+	  List<Item> items =
+	      em.createQuery("select i from Item i where i.category.id = :catId")
+	      .setLockMode(LockModeType.OPTIMISTIC) // set lock ensuring
+						    // that you will not get
+						    // the unwanted
+						    // behaviour mentioned
+						    // above.
+	      .setParameter("catId", categoryId)
+	      .getResultList();
+
+	  for (Item item : items)
+	      totalPrice = totalPrice.add(item.getBuyNowPrice());
+      }
+
+      tx.commit();
+      em.close();
+
+      assertEquals(totalPrice.toString(), "108.00")
+      #+end_src
+
+      Note that the following occurs behind the scenes:
+
+      #+begin_quote
+Hibernate executes a SELECT during flushing. It checks whether the
+database version of each ITEM row is still the same as when it was
+loaded.
+
+If any ITEM row has a different version or the row no longer exists,
+an OptimisticLockException is thrown.
+      #+end_quote
+
+      Important is as well to understand the consequences of this:
+
+      #+begin_quote
+Hibernate doesn’t batch or otherwise optimize the SELECT statements
+for manual version checking: If you sum up 100 items, you get 100
+additional queries at flush time.
+
+A *pessimistic approach*, as we show later in this chapter, *may be a
+better solution* for this particular case.
+      #+end_quote
+
+      Before /addressing pessimistic locking/ consider a last
+      important case in optimistic locking.
+
+      This is increasing version not simply when /updating/ or
+      /deleting/ but /as well for quering/ the data.
+
+      Check at the following example:
+
+      #+begin_src java
+      tx.begin();
+
+      EntityManager em = JPA.createEntityManager();
+
+      Item item = em.find(
+			  Item.class,
+			  ITEM_ID,
+			  LockModeType.OPTIMISTIC_FORCE_INCREMENT // force increment when quering
+			  );
+
+      Bid highestBid = queryHighestBid(em, item);
+
+      try {
+
+	  Bid newBid = new Bid(
+			       new BigDecimal("44.44"),
+			       item,
+			       highestBid
+			       );
+
+	  em.persist(newBid); 
+
+      } catch (InvalidBidException ex) {
+      }
+
+      tx.commit();
+      em.close();
+      #+end_src
+      
+      The idea is the following now:
+
+      #+begin_quote
+      The OPTIMISTIC_FORCE_INCREMENT mode tells Hibernate that the /version/
+      of the retrieved Item /should be incremented after loading/, even if
+      it’s never modified in the unit of work.
+
+      When flushing the persistence context, Hibernate executes an INSERT
+      for the new Bid and forces an UPDATE of the Item with a version
+      check. If someone *modified the Item* concurrently *or placed a Bid*
+      concurrently with this procedure, Hibernate *throws an exception*.
+      #+end_quote
+
+      Note that such manual intervention is necessary for the
+      following reasons:
+
+      #+begin_quote
+There is the potential for a race condition in between these two
+steps. If, in between reading the highest Bid and placing the new Bid,
+another Bid is made, you won’t see it.
+
+This conflict isn’t visible; even enabling versioning of the Item
+doesn’t help. The Item is never modified during the procedure.
+
+[However, note that if you do the manual procedure above it is. Just
+do the math and the thought experiment and note that, due to the
+ManyToOne relation increasing the Bid version will also increase the
+Item]
+      #+end_quote
+      
+
+***** Pessimistic Locking
+
+      This is the more standard locking procedure you already know.
+
+      In the sense this lock is the typical lord of the flies example.
+
+      *Just who has the lock can operate*.
+
+      The optimistic lock is more like, anyone can talk, but it there
+      are contradictions there are gates and checks in order to detect
+      it and deal with it.
+
+      Example for implementation of pessimistic lock:
+
+      #+begin_src java
+      tx.begin();
+
+      EntityManager em = JPA.createEntityManager();
+      BigDecimal totalPrice = new BigDecimal(0);
+
+      for (Long categoryId : CATEGORIES) {
+
+	  List<Item> items =
+	      em.createQuery("select i from Item i where i.category.id = :catId")
+	      .setLockMode(LockModeType.PESSIMISTIC_READ)
+	      .setHint("javax.persistence.lock.timeout", 5000)
+	      .setParameter("catId", categoryId)
+	      .getResultList();
+
+	  for (Item item : items)
+	      totalPrice = totalPrice.add(item.getBuyNowPrice());
+
+      }
+
+      tx.commit();
+      em.close();
+
+      assertEquals(totalPrice.compareTo(new BigDecimal("108")), 0);
+      #+end_src
+
+      Understand the following two points:
+
+      #+begin_quote
+      Hibernate locks the rows in the database with the SQL query. If
+      possible, /wait 5 seconds/ if another transaction holds a conflicting
+      lock. If the lock can’t be obtained, the query throws an exception.
+
+      If the query returns successfully, you know that you hold an exclusive
+      lock on the data and no other transaction can access it with an
+      exclusive lock or modify it until this transaction commits.
+      #+end_quote
+
+      Finally note that in case of pessimistic lock in write mode you
+      have the following:
+
+      #+begin_quote
+      JPA also standardizes the PESSIMISTIC_WRITE mode, with
+      additional guarantees: in addition to repeatable reads, the JPA
+      provider must serialize data access, and no phantom reads can
+      occur.
+      #+end_quote
+
+      Hibernate *appends a “for update”* clause to the SQL query when
+      loading data. This places a lock on the rows at the database
+      level. - This is possibly interesting if you want to do
+      everything directly at the DB level.
+
+      Note that if you have a joined inheritance mapping strategy,
+      Hibernate *will recognize this and lock the appropriate rows* in
+      super- and sub-tables.
+
+      
+**** On Nontransactional DB Operations
+
+     Note, that so far we addressed the case where we wrapped every
+     operation in transactions.
+
+     In such a case you had all of the above specified guarantees.
+
+     If you do not wrap you are automatically in /auto-commit mode/.
+
+     You’re working effectively in nontransactional mode, because
+     there are *no atomicity or isolation guarantees*.
+
+     You can read then the session, but basically the idea is that you
+     can queue all of your operations and just add them then at the
+     end by joining a transaction and commiting it.
+
+     In general use it when:
+
+     #+begin_quote
+     You don’t have a plan or a sequence of statements that you
+     consider a unit of work.
+     #+end_quote
+     
+
+** Fetch Plan, Strategies and Profiles
+
+   This section tackles the key concepts of: *cartesian product* and *n+1
+   fetching issue*.
+
+   This was one of the key problems mentioned in the introductory
+   section when dealing with ORM.
+
+*** Eager vs Lazy Loading
+
+     In your domain-model mapping, you define the *global default*
+     fetch plan, with the =FetchType.LAZY= and =FetchType.EAGER=
+     options on associations and collections.
+
+     Our recommended strategy is a *lazy default* fetch plan for all
+     entities and collections. If you map all of your associations
+     and collections with FetchType.LAZY, Hibernate will only load
+     the data you’re accessing at this time.
+
+     This will speed up your application and make sure you do not
+     withdraw all of the relevant information.
+
+     #+begin_quote
+ To implement lazy loading, Hibernate relies on runtime-generated
+ entity placeholders called *proxies* and on *smart wrappers* for
+ /collections/.
+     #+end_quote
+
+**** On Lazy Loading
+
+***** Proxies
+
+      A proxy is defined as follows:
+
+      #+begin_quote
+      The proxy is an instance of a runtime-generated subclass of Item,
+      carrying the identifier value of the entity instance it represents.
+
+      This is why Hibernate (in line with JPA) requires that entity classes
+      have *at least a public or protected no-argument constructor*.
+      #+end_quote
+
+      If you call any method on the proxy that isn’t the “identifier
+      getter,” you trigger initialization of the proxy and hit the
+      database.
+
+      Do not compare classes with Proxies. Proxies have special names
+      in the runtime.
+
+      Remember that the JPA default for =@ManyToOne= is FetchType.EAGER!
+      You usually want to override this to get a lazy default fetch
+      plan:
+
+      #+begin_src java
+      @Entity
+      public class Item {
+	  @ManyToOne(fetch = FetchType.LAZY)
+	  public User getSeller() {
+	      return seller;
+	  }
+	  // ...
+      }
+      #+end_src
+
+      
+***** Lazy persistent collections - smart wrappers
+
+      You map persistent collections with either @ElementCollection
+      for a collection of elements of basic or embeddable type or
+      with @OneToMany and @ManyToMany for many valued entity
+      associations. These collections are, unlike @ManyToOne,
+      lazy-loaded by default.
+
+      #+begin_quote
+      Hibernate implements lazy loading (and dirty checking) of collections
+      with its own special implementations called /collection wrappers/.
+      #+end_quote
+
+      The lazy bids one-to-many collection is also only *loaded on
+      demand*, when accessed and needed, note that you should map
+      such queries *to a Set*:
+
+      #+begin_src java
+      Item item = em.find(Item.class, ITEM_ID);
+
+      // select * from ITEM where ID = ?
+      Set<Bid> bids = item.getBids();               // Understand that you
+						    // have to work with
+						    // Sets and not
+						    // HashSets.
+
+      PersistenceUtil persistenceUtil = Persistence.getPersistenceUtil();
+
+      assertFalse(persistenceUtil.isLoaded(item, "bids"));
+      assertTrue(Set.class.isAssignableFrom(bids.getClass()));
+      assertNotEquals(bids.getClass(), HashSet.class);  // This is True
+      assertEquals(bids.getClass(), 
+		   org.hibernate.collection.internal.PersistentSet.class);
+      #+end_src
+
+       These special collections can detect when you access them and
+       load their data at that time.
+
+       Finally note that if you activate =LazyCollectionOption.EXTRA=,
+       you get further functionalities that are not included in the
+       normal setting.
+
+       There are other performance thing that you can read in the book
+       if you are interested in it.
+
+
+**** On Eager Loading
+
+     Understand the following concepts of eager loading.
+
+     If seller were an /uninitialized proxy/, you’d get a
+     *LazyInitializationException* when you accessed it in *detached
+     state*.
+
+     For data *to be available in detached state*, you need to either
+     /load it manually while the persistence context is still open/
+     *or, if you always want it loaded*, change your fetch plan to be
+     *eager* instead of lazy.
+
+     So you see that this depends a bit on the application and how
+     you should set it up.
+
+     Example:
+
+      #+begin_src java
+      @Entity
+      public class Item {
+	  @ManyToOne(fetch = FetchType.EAGER)
+	  protected User seller;
+	  @OneToMany(mappedBy = "item", fetch = FetchType.EAGER)
+	  protected Set<Bid> bids = new HashSet<>();
+	  // ...
+      }
+      #+end_src
+
+
+**** On the different fetching strategies
+
+     So basically we will address now the way Hibernate performs the
+     queries.
+
+     When you go lazy, your fetch plan will most likely result
+     in too many SQL statements, each loading only one small piece of
+     data. This will lead to n+1 selects problems, and we discuss this
+     issue first.
+
+     The other option is going eager. You might get here the issue
+     that larger chunks of data are loaded into memory with each SQL
+     query. You might then see the Cartesian product problem, as SQL
+     result sets become too large.
+
+     #+begin_quote
+     Like fetch plans, you can set a global fetching strategy in your
+     mappings: the default setting that is always active. Then, for a
+     particular procedure, you might override the default fetching
+     strategy.
+     #+end_quote
+
+     
+***** The n + 1 case
+
+      Recall that the n + 1 case happen in the following case:
+
+      #+begin_src java
+      List<Item> items = em.createQuery("select i from Item i").getResultList();
+
+      // select * from ITEM
+      for (Item item : items) {
+	  assertNotNull(item.getSeller().getUsername());
+	  // select * from USERS where ID = ?
+      }
+      #+end_src
+
+      So you see 1 query to get the items + n queries for getting the usernames.
+
+
+***** The cartesian product problem
+
+      Let's continue from the above.
+
+      Consider the following:
+
+      #+begin_src java
+      @Entity
+      public class Item {
+	  @ManyToOne(fetch = FetchType.EAGER)
+	  protected User seller;
+	  // ...
+      }
+      #+end_src
+
+      You want a guarantee that whenever an Item is loaded, the seller
+      will be loaded right away—you want that data to be available
+      when the Item is detached and the persistence context is closed.
+      
+      Now, Hibernate has to *stop following your FetchType.EAGER plan*
+      at some point. The number of tables joined depends on the
+      global hibernate.max_fetch_depth configuration property.
+
+      If Hibernate reaches the limit, it will still eagerly load the
+      data according to your fetch plan, but with additional SELECT
+      statements. So it happens something similar to the *lazy loading
+      case*.
+      
+      Note that the issue is the following now:
+
+      #+begin_quote
+      Eagerly *loading collections with JOINs*, on the other hand, can
+      lead to serious performance issues.
+
+      If you also switched to FetchType.EAGER for the bids and images
+      collections, you’d run into the *Cartesian product problem*.
+      #+end_quote
+
+      Considerable processing time and memory are required on the
+      database server to create such results, which then /must be
+      transferred across the network/.
+
+      If you’re hoping that the JDBC driver /will compress the data/
+      on the wire somehow, you’re /probably expecting too much/ from
+      database vendors.
+
+      
+***** The middle ground hummus
+
+      So basically you have to understand the middle ground between
+      the =n +1= and =caretesian product=.
+
+      This can be achieved in the following ways.
+
+****** Prefetching data in batches
+
+       This concept is pretty much straightforward.
+
+       #+begin_src java
+       @Entity
+       @org.hibernate.annotations.BatchSize(size = 10)
+       @Table(name = "USERS")
+       public class User {
+	   // ...
+       };
+       #+end_src
+
+       Instead of withdrawing one user at the time in a lazy way, you
+       would withdraw 10 users at the time.
+
+       Instead of n+1 SQL queries, you’ll now see =n+1/10 queries=, a
+       significant reduction. Reasonable values are usually small,
+       because you don’t want to load too much data into memory
+       either, especially if you aren’t sure you’ll need it.
+
+       Note that batching is *also available for collections*.
+
+       #+begin_src java
+       @Entity
+       public class Item {
+	   @OneToMany(mappedBy = "item")
+	   @org.hibernate.annotations.BatchSize(size = 5)
+	       protected Set<Bid> bids = new HashSet<>();
+	   // ...
+       }
+       #+end_src
+       
+       
+****** Prefetching collections with subselects
+
+       #+begin_src java
+       @Entity
+       public class Item {
+	   @OneToMany(mappedBy = "item")
+	   @org.hibernate.annotations.Fetch(
+					    org.hibernate.annotations.FetchMode.SUBSELECT
+					    )
+	       protected Set<Bid> bids = new HashSet<>();
+	   // ...
+       }
+       #+end_src
+
+       The idea is the following:
+
+       #+begin_quote
+       Hibernate now initializes *all bids* collections for all loaded
+       Item instances as soon as you force the initialization of one
+       bids collection.
+       #+end_quote
+
+       What happens then is the following - embedded subquery;
+       automatically performed by Hibernate in the background:
+
+       #+begin_src java
+       List<Item> items = em.createQuery("select i from Item i").getResultList();
+
+       // select * from ITEM
+       for (Item item : items) {
+	   assertTrue(item.getBids().size() > 0);
+	   // select * from BID where ITEM_ID in (
+	   // select ID from ITEM
+	   // )
+       }
+       #+end_src
+
+       Prefetching using a subselect is a powerful optimization, but
+       at the time of writing, it was *only available for lazy
+       collections*, not for entity proxies.
+
+       
+****** Eager fetching with multiple SELECTs
+
+       The idea is the following:
+
+       #+begin_quote
+       When you’re trying to fetch several collections with one SQL
+       query and JOINs, you run into the Cartesian product problem, as
+       explained earlier.
+
+       Instead of a JOIN operation, you can tell Hibernate to *eagerly
+       load data with additional SELECT queries* and hence avoid large
+       results and SQL products with duplicates.
+       #+end_quote
+
+       You can achieve this by the following:
+       
+       #+begin_src java
+       @Entity
+       public class Item {
+	   @ManyToOne(fetch = FetchType.EAGER)
+	   @org.hibernate.annotations.Fetch(
+					    org.hibernate.annotations.FetchMode.SELECT
+					    )
+	   protected User seller;
+
+	   @OneToMany(mappedBy = "item", fetch = FetchType.EAGER)
+	   @org.hibernate.annotations.Fetch(
+					    org.hibernate.annotations.FetchMode.SELECT
+					    )
+	   protected Set<Bid> bids = new HashSet<>();
+	   // ...
+       }
+       #+end_src
+
+       When you run the query to find the Items, you would not join
+       but actually get the following:
+       
+       #+begin_src java
+       Item item = em.find(Item.class, ITEM_ID);
+       // select * from ITEM where ID = ?
+       // select * from USERS where ID = ?
+       // select * from BID where ITEM_ID = ?
+       #+end_src
+
+       The additional SELECT queries aren’t executed lazily; the
+       find() method produces several SQL queries.
+
+
+****** Dynamic eager fetching
+
+       So here the idea is to fetch the data in an eager way but
+       dynamically.
+
+       Meaning you specify it at query level instead that at a global
+       level.
+
+       You can achieve this by the =join fetch= keywords in the
+       query. You can see below how these ultimately translate.
+
+       Apply a dynamic eager fetch strategy in a query:
+
+       #+begin_src java
+
+       List<Item> items =
+	   em.createQuery("select i from Item i join fetch i.seller")
+	   .getResultList();
+       // select i.*, u.*
+       // from ITEM i
+       // inner join USERS u on u.ID = i.SELLER_ID
+       // where i.ID = ?
+
+       em.close();
+
+       for (Item item : items) {
+	   assertNotNull(item.getSeller().getUsername());
+       }
+
+       #+end_src
+
+       Note that join fetching also works for collections - see for
+       instance below; get all bids for the collection:
+
+       #+begin_src java
+       List<Item> items =
+	   em.createQuery("select i from Item i left join fetch i.bids") 
+	   .getResultList();
+
+       // select i.*, b.*
+       // from ITEM i
+       // left outer join BID b on b.ITEM_ID = i.ID
+       // where i.ID = ?
+
+       em.close();
+
+       for (Item item : items) {
+	   assertTrue(item.getBids().size() > 0);
+       }
+       #+end_src
+
+       
+****** Using Fetch Profiles
+
+       =Fetch Profilies=:
+
+       A proprietary API.
+
+       This supports overriding lazy-mapped entity associations and
+       collections selectively, enabling a JOIN eager fetching
+       strategy for a particular unit of work.
+
+       =Entity Graphs=:
+
+       The @EntityGraph annotation.
+
+       The provided graph *controls what should be loaded*;
+       unfortunately it *doesn’t control how it should be loaded*.
+       
+
+******* Declaring Hibernate Fetch Profiles
+
+	This is the global metadata that you have to set up first when
+	creating your project.
+
+	Usually you set it up in the =package.info= java file at
+	*package level*.
+
+	So you see that you would ultimately have a global fetch
+	strategy at the package level. That is quite handy and you
+	should set up your project repositories accordingly.
+
+	An example would be the following:
+
+       #+begin_src java
+
+       @org.hibernate.annotations.FetchProfiles({
+
+	       @FetchProfile(name = Item.PROFILE_JOIN_SELLER,
+			     fetchOverrides = @FetchProfile.FetchOverride(
+									  entity = Item.class,
+									  association = "seller",
+									  mode = FetchMode.JOIN
+									  )),
+	       @FetchProfile(name = Item.PROFILE_JOIN_BIDS,
+			     fetchOverrides = @FetchProfile.FetchOverride(
+									  entity = Item.class,
+									  association = "bids",
+									  mode = FetchMode.JOIN
+									  ))
+		   })					      
+
+       #+end_src
+
+       1. Each profile has a name. This is a simple string isolated in
+          a constant.
+
+       2. Each override in a profile names *one entity association or
+          collection*.
+
+       3. The only supported mode at the time of writing is JOIN.
+
+       Then you can *activate* the specified fetching strategies in
+       the following way:
+
+       #+begin_src java
+       Item item = em.find(Item.class, ITEM_ID);
+       em.clear();
+
+       em.unwrap(Session.class).enableFetchProfile(Item.PROFILE_JOIN_SELLER);
+
+       item = em.find(Item.class, ITEM_ID);
+
+       em.clear(); // before activating another profile
+
+       em.unwrap(Session.class).enableFetchProfile(Item.PROFILE_JOIN_BIDS);
+       item = em.find(Item.class, ITEM_ID);
+       #+end_src              
+
+       1. The Item#seller is mapped lazy, so the /default fetch/ plan
+          only retrieves the Item instance.
+
+       2. You need the Hibernate API to /enable a profile/. It’s then
+          active for any operation in that unit of work.
+
+       3. Although basic, Hibernate fetch profiles can be an easy
+          solution for fetching optimization in smaller or simpler
+          applications.
+
+
+******* Working with Entity Graphs
+
+	The more involving way of working is the following.
+
+	With it you can set up more sophisticated fetching
+	strategies.
+
+	Check at the following in order to understand everything.
+
+	#+begin_src java
+
+	Map<String, Object> properties = new HashMap<>();
+
+	properties.put(
+		       "javax.persistence.loadgraph",
+		       em.getEntityGraph(Item.class.getSimpleName())
+		       );
+
+	Item item = em.find(Item.class, ITEM_ID, properties);
+	// select * from ITEM where ID = ?
+
+	#+end_src
+
+	This means attributes that are specified by attribute nodes of
+	the entity graph are treated as FetchType.EAGER, and
+	attributes that aren’t specified are treated according to
+	their specified or default FetchType in the mapping.
+	
+	#+begin_src java
+
+	Map<String, Object> properties = new HashMap<>();
+	properties.put(
+		       "javax.persistence.loadgraph",
+		       em.getEntityGraph(Item.class.getSimpleName())
+		       );
+	Item item = em.find(Item.class, ITEM_ID, properties);
+	// select * from ITEM where ID = ?
+
+	#+end_src
+
+	
+
+* Footnotes
+
+[fn:3] TODO - you will talk later about versioning in Hibernate.
+
+[fn:2] TODO - check if this is delt in the section or not.  
+
+[fn:1] TODO - Test these components. Make a test checking at this issue. Can
+be quite tricky.
 

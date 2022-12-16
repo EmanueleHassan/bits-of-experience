@@ -46,11 +46,834 @@ inception.
 
 {{{TEASER_END}}}
 
-** TODO Java
+** Java
 
-   Will come at a later stage. Good is that the theoretical
-   fundamental is the same. 
+   So in Java you have the possibility to generate true threads in
+   order to start the relevant computations. I.e. have proper
+   concurrency without having to switch the asynchronous computation
+   running on a single computing unit.
+
+   In simple words can properly leverage the multi-threaded
+   architecture with mulitple CPU cores.
+
+   There are multiple frameworks in order to program in a
+   multi-threaded way in Java. You can read more about it in [[https://www.baeldung.com/java-asynchronous-programming][this
+   post]].
+
+   In this post, I will explore the built in frameworks available
+   since java 8 and especially the [[https://www.baeldung.com/java-completablefuture][CompletableFuture class]].
+
+   Important is to understand that this class leverage multiple
+   existing interfaces such as the /Future interface/ that were
+   introduced in previous Java versions. So you see the usual pattern
+   of building of giant shoulders in time.
+
+   #+begin_quote
+CompletableFuture is at the same time a building block and a
+framework, with about 50 different methods for composing, combining,
+and executing asynchronous computation steps and handling errors.
+   #+end_quote
+
+   The next sections go a little bit into how to leverage such class
+   and its large API and methods in a simple way.
    
+
+*** Future and the most basic Interfaces in order to work in Asynchronous Way
+
+    First of all understand the general idea behind a future:
+
+    #+begin_quote
+    A /Future/ represents a future result of an asynchronous
+    computation.
+
+    If a class implements this interface it effectively manages to
+    create a data structure that is ready to save a result to be
+    computed.
+    #+end_quote
+
+    Then esssentially when you work with the following two interfaces.
+
+    You work with the Callable interface, i.e. you should create an
+    Object implementing the interface and embedd it into the Future
+    object. In such a way you define the way the Future Object will be
+    defined.
+
+    Finally, you need the interface in order to trigger the Callable
+    object (usually a /lambda/ expression); this is the
+    /ExecutorService/ - if a single thread should be spawned next to
+    the main one - or /Thread Pools/ - if you need more threads.
+
+    You can then reference the relevant interfaces in order to see how
+    to trigger the Callable Object from the /ExecutorService or
+    Thread/ Pools in a multi-threaded way, in order to see if the
+    Future task was completed and the Object populated etc.
+
+    I skip it here as I will likely use the /CompletableFuture/
+    interface which is an evolution around the concepts above
+    abstracting away part of the complexity.
+
+
+*** Using CompletableFuture as a Simple /Future/
+    
+    CompletableFuture class /implements the Future interface/, so we
+    can use it as a Future implementation, but with additional
+    completion logic.
+
+    #+begin_quote
+For example, we can create an instance of this class with a *no-arg
+constructor* to represent some future result, hand it out to the
+consumers, and complete it at some time in the future using the
+*complete method*.
+    #+end_quote
+
+    An example of using this API is the following:
+
+    #+BEGIN_SRC java
+    public Future<String> calculateAsync() throws InterruptedException {
+	CompletableFuture<String> completableFuture = new CompletableFuture<>();
+
+	Executors.newCachedThreadPool().submit(() -> {
+		Thread.sleep(500);
+		completableFuture.complete("Hello");
+		return null;
+	    });
+
+	return completableFuture;
+
+    }
+
+    // For using it //
+    Future<String> completableFuture = calculateAsync();
+
+    // ... 
+
+    String result = completableFuture.get();
+    assertEquals("Hello", result);
+    #+END_SRC
+
+    
+*** CompletableFuture with Encapsulated Computation Logic
+
+    This is a way of running the above with less boilerplate.
+
+    It essentially consists in the following:
+
+    #+begin_quote
+Static methods /runAsync/ and /supplyAsync/ allow us to create a
+CompletableFuture instance out of /Runnable/ and /Supplier/ functional
+types correspondingly.
+
+Both Runnable and Supplier are functional interfaces that allow
+passing lambda expressions.
+    #+end_quote
+
+    Understand the difference among the two interfaces then:
+
+    #+begin_quote
+The /Runnable/ interface is the same old interface that is used in
+threads and it does not allow to return a value.
+
+The /Supplier/ interface is a generic functional interface with a single
+method that has no arguments and returns a value of a parameterized
+type.
+    #+end_quote
+
+    So you see for instance that you can replicate the code above as
+    follows:
+
+    #+begin_src java
+    CompletableFuture<String> future
+	= CompletableFuture.supplyAsync(() -> "Hello");
+
+    // ...
+
+    assertEquals("Hello", future.get());
+    #+end_src
+    
+
+*** Processing Results of Asynchronous Computations
+
+    With =thenApply()= you can process the results of an *asynchoronous
+    computation* via a /Function/ (Or /Consumer/ if you do not need to
+    return a result) and return a /Future/.
+
+    #+begin_src java
+    CompletableFuture<String> completableFuture
+	= CompletableFuture.supplyAsync(() -> "Hello");
+
+    CompletableFuture<String> future = completableFuture
+	.thenApply(s -> s + " World");
+
+    assertEquals("Hello World", future.get());
+    #+end_src
+
+    Another way to chain results of asynchronous computation
+    immediately is by combining futures immediately. See the following
+    example. So depending on how you want to set up your code you
+    should choose one way or the other. 
+    
+
+*** Combining Futures
+
+    You can as well combine futures in a fucntional way. This design
+    approach is in fact ubiquitous in functional languages and is
+    often referred to as a monadic design pattern.
+
+    So you see that you are moving into the direction of data
+    processing pipelines.
+
+    #+begin_src java
+    CompletableFuture<String> completableFuture 
+	= CompletableFuture.supplyAsync(() -> "Hello")
+	.thenCompose(s -> CompletableFuture.supplyAsync(() -> s + " World"));
+
+    assertEquals("Hello World", completableFuture.get());    
+    #+end_src
+
+    Note that everything is pretty much interrelated in the functional
+    way of programming.
+
+    In order to see this understand the following:
+
+    #+begin_quote
+The thenCompose method, together with thenApply, implement basic
+building blocks of the monadic pattern. They closely relate to the map
+and flatMap methods of Stream and Optional classes also available in
+Java 8.
+
+Both methods receive a function and apply it to the computation
+result, but the thenCompose (flatMap) method receives a function that
+returns another object of the same type.
+    #+end_quote
+
+
+*** Running Multiple Futures in Parallel
+
+    When we need to execute multiple Futures in parallel, we usually
+    want to *wait for all of them to execute and then process their
+    combined results*.
+
+    In order to achieve this you can use the
+    =CompletableFuture.allOf()= method.
+
+    #+begin_src java
+    CompletableFuture<String> future1  
+	= CompletableFuture.supplyAsync(() -> "Hello");
+    CompletableFuture<String> future2  
+	= CompletableFuture.supplyAsync(() -> "Beautiful");
+    CompletableFuture<String> future3  
+	= CompletableFuture.supplyAsync(() -> "World");
+
+    CompletableFuture<Void> combinedFuture 
+	= CompletableFuture.allOf(future1, future2, future3);
+
+    // ...
+
+    combinedFuture.get();
+
+    assertTrue(future1.isDone());
+    assertTrue(future2.isDone());
+    assertTrue(future3.isDone());
+    #+end_src
+
+    Note the following now:
+
+    #+begin_quote
+    Notice that the return type of the CompletableFuture.allOf() is a
+    CompletableFuture<Void>. The limitation of this method is that it does
+    not return the combined results of all Futures. Instead, we have to
+    manually get results from Futures. Fortunately,
+    CompletableFuture.join() method and Java 8 Streams API makes it
+    simple:
+    #+end_quote
+
+    #+begin_src java
+    String combined = Stream.of(future1, future2, future3)
+	.map(CompletableFuture::join)
+	.collect(Collectors.joining(" "));
+
+    assertEquals("Hello Beautiful World", combined);
+    #+end_src
+
+
+*** Handling Errors
+
+    Instead of catching an exception in a syntactic block, the
+    CompletableFuture class allows us to handle it in a *special
+    handle method*.
+
+    This method receives two parameters: a /result of a computation/ (if
+    it finished successfully), and the /exception thrown/ (if some
+    computation step did not complete normally).
+
+    So understand now the following two use cases. It is tricky by
+    simply reading what is stated without trying that out yourself.
+
+    So understand that there are two ways, expsed in the article. The
+    first, that follows, essentially forces your to handle the error
+    directly and overrride it with a default value.
+
+    Note that an *InterrruptException* occurs when triggering the
+    =CompletableFuture= so that you have to catch it.  Note that it is
+    an InterruptException and not the Exception you raised in your
+    lambda. 
+
+    #+begin_src java :results output drawer :classname handle
+    import java.util.concurrent.CompletableFuture;
+
+    class handle {
+
+	public static void main(String args[]){
+
+	    String name = null;
+
+	    // ...
+
+	    CompletableFuture<String> completableFuture  
+		=  CompletableFuture.supplyAsync(() -> {
+
+			if (name == null) {
+			    throw new RuntimeException("Computation error!");
+			}
+
+			return "Hello, " + name;
+
+		    }).handle((s, t) -> s != null ? s : "RuntimeException");
+
+	    try {
+		System.out.println(completableFuture.get());
+	    }
+
+	    catch (Exception e) {
+
+		// Note you have to catch the exception but this chunck is
+		// never executed.
+
+		System.out.println("Here");
+
+	    }
+	} 
+
+    }
+    #+end_src
+
+    #+RESULTS:
+    :results:
+    RuntimeException
+    :end:
+
+    The second possibility is the one of actually raising the
+    Error. This is the one you are more interested in as it will make
+    it more easy to debug your programs.
+
+    I.e. here you want the /Future/ to have the possibility to
+    complete with an exception.
+
+    You can achieve this by the following schema.
+
+    #+begin_src java :results output drawer :classname handle
+    import java.util.concurrent.CompletableFuture;
+
+    class handle {
+
+	public static void main(String args[]){
+
+	    try{
+		CompletableFuture<String> completableFuture   = new CompletableFuture<>();
+
+		completableFuture.completeExceptionally(new RuntimeException("Calculation failed!"));
+
+		completableFuture.get();
+	    } catch (Exception e) {
+		System.out.println(e.getMessage());
+	    }
+
+	} 
+
+    }
+    #+end_src
+
+    #+RESULTS:
+    :results:
+    java.lang.RuntimeException: Calculation failed!
+    :end:
+
+    
+*** Async Methods
+
+    Most methods of the fluent API in CompletableFuture class have two
+    additional variants with the Async postfix. These methods are
+    usually intended for *running a corresponding step of execution in
+    another thread*.
+
+    #+begin_quote
+The methods without the Async postfix run the next execution stage
+using a calling thread.
+
+In contrast, the Async method without the Executor argument runs a
+step using the common fork/join pool implementation of Executor that
+is accessed with the ForkJoinPool.commonPool() method.
+    #+end_quote
+
+    A snippet example of it is:
+
+    #+begin_src java
+    CompletableFuture<String> completableFuture  
+	= CompletableFuture.supplyAsync(() -> "Hello");
+
+    CompletableFuture<String> future = completableFuture
+	.thenApplyAsync(s -> s + " World");
+
+    assertEquals("Hello World", future.get());
+    #+end_src
+    
+
+*** 101 Test on writing the relevant async Functionality
+
+    Note that these are snippets that perform part of the logic that
+    is already existing in some other pieces of the code.
+     
+
+**** 101 Example - the only issue is that it is blocking
+
+     Understand the example below. You do not run the task on the main
+     thread. The program running on the main thread ends before the
+     task on the other thread finishes. This is the reason why you do
+     not see the results.
+     
+     #+begin_src java :results output drawer :classname handle
+     import java.util.concurrent.CompletableFuture;
+     import java.util.concurrent.TimeUnit;
+
+     class handle {
+
+	 static CompletableFuture<Void> task = new CompletableFuture();
+
+	 private static void longRun() {
+
+	     try{
+
+		 TimeUnit.SECONDS.sleep(3);
+		 System.out.println("Hello World");
+
+	     }
+	     catch (InterruptedException e) {
+
+		 throw new IllegalStateException(e);
+
+	     }
+
+	 };
+
+	 public static void main(String args[]){
+
+	     System.out.println("Greetings, program started.");
+
+	     CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+		     // Simulate a long-running Job   
+		     try{
+
+			 System.out.println("Before triggering future");
+
+			 task.complete(null);
+
+			 System.out.println("Finished Processing");
+
+		     }
+		     catch(Exception e) {
+
+			 System.out.println("Exception Occurred");
+
+		     };
+		 });
+
+	     try{
+		 future.get();
+	     } catch (Exception e) {
+		 System.out.println("Exception Occurred");
+
+	     }
+
+	     task.thenAcceptAsync(result->{
+		     System.out.println("Triggering Task");
+		     longRun();
+		     System.out.println(task.isDone());
+		 }).exceptionally(e->{
+			 System.out.println("Some error");
+			 return null;
+		     });
+
+	 }
+
+     }
+     #+end_src
+
+     #+RESULTS:
+     :results:
+     Greetings, program started.
+     Before triggering future
+     Finished Processing
+     Triggering Task
+     :end:
+
+
+**** 101 Example - Continued
+
+     See that if you do not run on a separate thread but rather on the
+     main one, the entire code executes and you see the results accordingly.
+          
+     #+begin_src java :results output drawer :classname handle
+     import java.util.concurrent.CompletableFuture;
+     import java.util.concurrent.TimeUnit;
+
+     class handle {
+
+	 static CompletableFuture<Void> task = new CompletableFuture();
+
+	 private static void longRun() {
+
+	     try{
+
+		 TimeUnit.SECONDS.sleep(3);
+		 System.out.println("Hello World");
+
+	     }
+	     catch (InterruptedException e) {
+
+		 throw new IllegalStateException(e);
+
+	     }
+
+	 };
+
+	 public static void main(String args[]){
+
+	     System.out.println("Greetings, program started.");
+
+	     CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+		     // Simulate a long-running Job   
+		     try{
+
+			 System.out.println("Before triggering future");
+
+			 task.complete(null);
+
+			 System.out.println("Finished Processing");
+
+		     }
+		     catch(Exception e) {
+
+			 System.out.println("Exception Occurred");
+
+		     };
+		 });
+
+	     try{
+		 future.get();
+	     } catch (Exception e) {
+		 System.out.println("Exception Occurred");
+	     }
+
+	     task.thenAccept(result->{
+		     System.out.println("Triggering Task");
+		     longRun();
+		     System.out.println(task.isDone());
+		 }).exceptionally(e->{
+			 System.out.println("Some error");
+			 return null;
+		     });
+
+	 }
+
+     }
+     #+end_src
+
+     #+RESULTS:
+     :results:
+     Greetings, program started.
+     Before triggering future
+     Finished Processing
+     Triggering Task
+     Hello World
+     true
+     :end:
+
+
+**** 101 Simplified - here is the real key.
+
+     Note that all of the above is correct. It is a bit cumbersome
+     cause you did not understand the thing at 100%.
+
+     By now everything is clear and you can see below a very good
+     example of it.
+
+     So you see sometimes the experimental way of doing the things is
+     the only possibility.
+          
+     #+begin_src java :results output drawer :classname handle
+     import java.util.concurrent.CompletableFuture;
+     import java.util.concurrent.TimeUnit;
+
+     class handle {
+
+	 static CompletableFuture<Void> task = new CompletableFuture();
+
+	 private static void longRun() {
+
+	     try{
+
+		 TimeUnit.SECONDS.sleep(3);
+
+	     }
+	     catch (InterruptedException e) {
+
+		 throw new IllegalStateException(e);
+
+	     }
+
+	 };
+
+	 public static void main(String args[]){
+
+	     System.out.println("Greetings, program started.");
+
+	     task.runAsync(()->{
+
+		     System.out.println("Triggering Task");
+		     longRun();
+		     task.complete(null);
+		     System.out.println("The task is done: " + task.isDone());
+
+		 }).exceptionally(e->{
+
+			 System.out.println("Some error");
+			 return null;
+
+		     });
+
+	     // Set here a loop checking if the job finished
+	     while(!task.isDone()){
+
+		 System.out.println("Task Unfinished");
+
+		 try{
+
+		     TimeUnit.SECONDS.sleep(1);
+
+		 }
+		 catch (InterruptedException e) {
+
+		     throw new IllegalStateException(e);
+
+		 }
+
+	     };
+
+	     System.out.println("Finished Program.");
+	 }
+
+     }
+     #+end_src
+
+     #+RESULTS:
+     :results:
+     Greetings, program started.
+     Triggering Task
+     Task Unfinished
+     Task Unfinished
+     Task Unfinished
+     Task Unfinished
+     Hello World
+     The task is done: true
+     Finished Program.
+     :end:
+     
+     
+**** Very Simple Example to Show Ansynchronicity
+
+     The above example was based on the following resource found on
+     the internet. Essentially you can see here the idea of combining
+     the different CompletableFutures together. 
+
+     #+begin_src java :results output drawer :classname handle
+     import java.util.concurrent.CompletableFuture;
+
+     class handle {
+
+	 public static void main (String[] args) throws java.lang.Exception
+	 {
+	     CompletableFuture<Void> s = new CompletableFuture();
+	     CompletableFuture<Void> f = new CompletableFuture();
+
+	     CompletableFuture<Void> someContext =  CompletableFuture.supplyAsync(() ->{
+
+		     System.out.println("This thread ID is: " + Thread.currentThread().getId());
+
+		     CompletableFuture<String> update =
+			 CompletableFuture.supplyAsync(
+						       () -> {
+
+							   String ans = null;
+
+							   try {
+
+							       System.out.println("The thread ID is: " + Thread.currentThread().getId());
+							       ans = "Hello";
+
+							   } catch (Exception e) {
+
+							       ans = e.toString();
+
+							   } finally {
+
+							       s.complete(null); // completing s future. 
+							       return ans;
+
+							   }
+						       });
+
+		     // After s is complete
+		     s.thenAcceptAsync(result->{
+			     System.out.println(s.isDone());
+			 }).exceptionally(e->{
+				 System.out.println("Some error");
+				 return null;
+			     });
+
+		     return null;
+		 });
+
+	     someContext.get();
+
+	 }
+     }
+
+     #+end_src
+
+     #+RESULTS:
+     :results:
+     This thread ID is: 13
+     The thread ID is: 14
+     true
+     :end:
+
+     
+**** Same stuff using Functional Interface
+
+     You can implement similar logic in your backend when you want to
+     implement some particular asynchronous pattern. 
+    
+     #+begin_src java :results output drawer :classname handle
+     import java.util.concurrent.CompletableFuture;
+     import java.util.HashMap;
+     import java.util.concurrent.TimeUnit;
+
+     import java.time.format.DateTimeFormatter;  
+     import java.time.LocalDateTime;    
+
+     class handle {
+
+	 private static String string1 = "blah";
+	 private static String string2 = "baubab";
+	 private static String string3 = "stars";
+
+	 @FunctionalInterface
+	 interface FunctionalFour<One, Two, Three, Four, Five> {
+
+	     public Five apply(One one, Two two, Three three, Four four);
+
+	 };
+
+	 private static FunctionalFour<String, String, String, Integer, Void> LongRunningAsync = (string1, string2,
+												  string3, int1) -> {
+
+	     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+	     Integer x = int1;
+	     x = x + 10;
+
+	     try {
+		 LocalDateTime now = LocalDateTime.now();  
+		 System.out.println("Starting Long Running Task: " + dtf.format(now));
+		 TimeUnit.SECONDS.sleep(4);
+		 now = LocalDateTime.now();  
+		 System.out.println("Finished Long Running Task: " + dtf.format(now));
+
+	     } catch (Exception e) {
+
+		 System.out.println("Thread suspended");
+
+	     };
+
+	     return null;
+
+	 };
+
+	 public static void main(String args[]){
+
+	     System.out.println("Greetings, program started.");
+
+	     CompletableFuture<Void> jobTrigger = new CompletableFuture();
+
+	     CompletableFuture<Void> future
+		 = CompletableFuture.runAsync(() -> { 
+
+			 jobTrigger.complete(null);
+
+			 HashMap<String, Object> map = new HashMap<String, Object>();
+
+			 map.put("Response", "Started Processing the LongRunning job. " + string1 + " " + string2 + " " + string3 + ".");
+
+			 map.entrySet().forEach(entry -> {
+				 System.out.println(entry.getKey() + ": " + entry.getValue());
+			     });
+
+		     });
+
+
+	     try{
+
+		 future.get();
+
+	     } catch(Exception e) {
+		 System.out.println("Exception Occurred");
+	     }
+
+	     // Run with thenAcceptAsync if you do not want to see the results.
+	     jobTrigger.thenAccept(result -> {
+
+		     LongRunningAsync.apply(string1, string2, string3, 4);
+
+		 }).exceptionally(e->{
+			 System.out.println("Some error");
+			 return null;
+		     });
+
+	 }
+
+     }
+     #+end_src
+
+     #+RESULTS:
+     :results:
+     Greetings, program started.
+     Response: Started Processing the LongRunning job. blah baubab stars.
+     Starting Long Running Task: 2022/10/17 15:59:21
+     Finished Long Running Task: 2022/10/17 15:59:21
+     :end:
+
+
+*** Async Possibility in Spring Boot
+
+    Once you understand the above it will be straightforward to
+    understand as well how to write asynchronous calls from your
+    backend in Spring.
+
+    You can check [[https://spring.io/guides/gs/async-method/][the following]].
+
+    It makes the code much less complex. If you check this is a simple
+    function but it executes on a different thread. 
+
+     
 ** Python
 
    So as you know underneath Python there is a lot of C and the well
@@ -146,6 +969,7 @@ print('Time taken in seconds -', end - start)
    Problems that require heavy CPU computation and spend little time
    waiting for external events have in theory no advantage at all.
 
+
 *** Concepts of Python MultiThreading
 
     I remember that at some point I read an entire book about
@@ -217,7 +1041,9 @@ that you never forget to .join() the threads.
       you have to finish our operations. We both will be stuck
       forever.
 
+
 *** TODO Cap your thread amount
+
 
 *** On small experiments for using threading in rest-calls
 
