@@ -100,8 +100,8 @@ last section. There is interesting referenced material.
    So interesting to see is that much of the topics discussed that
    follow come from thinking in terms of objects and the respective
    shortcoming when going 
-
    
+
 *** Problem of Granularity
 
     The idea is that in the OOP world you have lots of level of
@@ -127,7 +127,7 @@ the object-oriented model, effectively flattening it.
     #+end_quote
 
 **** TODO the book claims for a solution to the above problem - find it and integrate it here then.
-   
+
 
 *** The problem of Subtypes
 
@@ -1578,7 +1578,6 @@ evolution is straightforward.
 
 **** TODO @OneToOne
 
-
 **** IN-PROGRESS @ManyToMany
 
      This is the concept of a *link table*. It is the M:N relationships
@@ -1829,7 +1828,7 @@ entity instance is already present in the persistence context.
 
       
 **** On the usage of the Life Cycle API
-
+     
      Here I refer to the book for the basic ones, experience will also
      teach you.
 
@@ -2781,17 +2780,17 @@ better solution* for this particular case.
       following reasons:
 
       #+begin_quote
-There is the potential for a race condition in between these two
-steps. If, in between reading the highest Bid and placing the new Bid,
-another Bid is made, you won’t see it.
+      There is the potential for a race condition in between these two
+      steps. If, in between reading the highest Bid and placing the new Bid,
+      another Bid is made, you won’t see it.
 
-This conflict isn’t visible; even enabling versioning of the Item
-doesn’t help. The Item is never modified during the procedure.
+      This conflict isn’t visible; even enabling versioning of the Item
+      doesn’t help. The Item is never modified during the procedure.
 
-[However, note that if you do the manual procedure above it is. Just
-do the math and the thought experiment and note that, due to the
-ManyToOne relation increasing the Bid version will also increase the
-Item]
+      [However, note that if you do the manual procedure above it is. Just
+      do the math and the thought experiment and note that, due to the
+      ManyToOne relation increasing the Bid version will also increase the
+      Item]
       #+end_quote
       
 
@@ -2891,6 +2890,85 @@ Item]
      #+end_quote
      
 
+*** On @Autowired vs. @PersistenceContext - for EntityManger injection
+
+    Note that it is important to get the difference among the two when
+    setting up your application.
+
+    Cause you might quite much mess things up otherwise.
+
+    The idea is that as mentioned when injecting the *same* EntityManager
+    in multiple Services across the applicaiton with =@Autowired= you
+    ultimately create multiple such managers. As each holds a cache
+    and manages a persistencecontext you might start to have very
+    inconsistent behaviour across your application.
+
+    This in contrast with =@PersistenceContext=. When you work with
+    this annotation what you ultimately get is the usage of the same
+    EntityManager across the entire applicaiton - even across threads.
+    
+
+*** On a programmatic approach vs. an annotation based approach
+
+    Note that all of the examples above are from the book /Java
+    Persistence with Hibernate - Second Edition/.
+
+    In the book everything is done programatically - i.e. at the
+    lowest possible level.
+
+    This gives you the highest degree of customizability. Meaning that
+    you can decide exactly where a transaction starts and commits - to
+    the database.
+
+    You can decide that pieces of the story are transactional or
+    not. You can perform explicitely the rollback strategy etc.
+
+    The other option is marking classes / or methods - if you want to
+    have finer grained control - as =@Transactional=.
+
+    You can see for instance the following method - using a qualified
+    TransactionManager.
+
+    When annotationg with transactional a method it basically means
+    that the transaction begins at the beginning of the method and
+    commits at the end of it. You can see that much of the code above
+    is abstracted away.
+
+    #+begin_src java
+    @Transactional("secondaryTransactionManager")
+    private String secondaryConnectionTest() {
+
+	List<Persons> tutorials = new ArrayList<>();
+
+	System.out.println("In the endpoint");
+
+	tutorials = repositoryPersons.findAllPeopleNative();
+
+	System.out.println("Successfully queried");
+
+	System.out.println("People found:");
+	System.out.println("-------------------------------");
+
+	for (Persons customer : tutorials) {
+	    System.out.println(customer.toString());
+	}
+
+	System.out.println("");
+
+	return "Check Console";
+
+    };
+    #+end_src
+
+    *Important Point:* note that when working with the JPA-APIs for
+    quering your database - by inferred queries [other technical
+    name] - you have syntax check when booting the spring application.
+
+    The same thing does happen when you work with JPQL queries. It
+    does not happen when working with native SQL queries. The question
+    is then how to work in this dimension.
+
+    
 ** Fetch Plan, Strategies and Profiles
 
    This section tackles the key concepts of: *cartesian product* and *n+1
@@ -3431,6 +3509,181 @@ Item]
 	#+end_src
 
 	
+
+** Creating different connections to different DBs
+
+   In an ideal setting you would have a single application working
+   with a single database.
+
+   In sub-optimal cases this might not be possible.
+
+   You might have to access different databases.
+
+   You can do that in the following way.
+
+
+   - Step 1: Create two different connectivity pools in your
+     Spring application settings.
+
+     #+begin_src 
+     ### Prime Database Details
+     app.datasource.prime.url=${db.urldev};database=${db.one};encrypt=true;authentication=ActiveDirectoryPassword;user=${db.username};password=${db.password}
+
+     ### Prime Database Connection Pool Details
+     app.datasource.prime.hikari.idle-timeout=10000
+     app.datasource.prime.hikari.maximum-pool-size=10
+     papp.datasource.prime.hikari.minimum-idle=5
+     app.datasource.prime.hikari.pool-name=PrimeHikariPool
+
+     ### Secondary Database Details
+     app.datasource.secondary.url=${db.urldev};database=${db.two};encrypt=true;authentication=ActiveDirectoryPassword;user=${db.username};password=${db.password}
+
+     ### Secondary Database Connection Pool Details
+     app.datasource.secondary.hikari.idle-timeout=10000
+     app.datasource.secondary.hikari.maximum-pool-size=10
+     app.datasource.secondary.hikari.minimum-idle=5
+     app.datasource.secondary.hikari.pool-name=SecondaryHikariPool
+     #+end_src
+     
+
+   - Step 2:
+
+     Extend the springboot configurations creating different
+     EntityMangers and TransactionManagers for the two different
+     connectivity pools.
+
+     An example of one such qualified connection is the following:
+
+     #+begin_src java
+     package com.example.springboot;
+
+     import java.util.HashMap;
+
+     import javax.sql.DataSource;
+
+     import org.springframework.beans.factory.annotation.Autowired;
+     import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+     import org.springframework.boot.context.properties.ConfigurationProperties;
+     import org.springframework.context.annotation.Bean;
+     import org.springframework.context.annotation.Configuration;
+     import org.springframework.context.annotation.Primary;
+     import org.springframework.core.env.Environment;
+     import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+     import org.springframework.orm.jpa.JpaTransactionManager;
+     import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+     import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+     import org.springframework.transaction.PlatformTransactionManager;
+
+     import com.zaxxer.hikari.HikariDataSource;
+
+     @Configuration
+     @EnableJpaRepositories(basePackages = "com.example.jpaRepositories",         // Where the JPA Repositories are
+			    entityManagerFactoryRef = "primeEntityManager",       // Qualifying the EntityManger - see below how it is constructed. 
+			    transactionManagerRef = "primeTransactionManager")    // Qualifying the TransactionManager - see below how it is constructed.
+      public class PrimaryConnection {
+
+	  // Get the environment variables. You specified over there the
+	  // variables for connection etc.
+	  @Autowired
+	  Environment env;
+
+	  @Bean
+	  @Primary
+	  @ConfigurationProperties(prefix = "app.datasource.prime")
+	  public DataSourceProperties primeDataSourceProperties() {
+	      return new DataSourceProperties();
+	  }
+
+	  @Bean
+	  @Primary
+	  public DataSource primeDataSource() {
+	      return primeDataSourceProperties().initializeDataSourceBuilder().type(HikariDataSource.class)
+					     .build();
+	  }
+
+	  @Bean
+	  @Primary
+	  public LocalContainerEntityManagerFactoryBean primeEntityManager() {
+	      LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+	      em.setDataSource(primeDataSource());
+	      em.setPackagesToScan("com.example.dataEntities");                  // Specifying the package with the Entities mapping to the existing DB.
+	      HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+	      em.setJpaVendorAdapter(vendorAdapter);
+
+	      // Below you set the relevant properties for your EntityManager. You can see how this was constructed.
+	      HashMap<String, Object> properties = new HashMap<>();
+	      // properties.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
+	      properties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
+
+	      em.setJpaPropertyMap(properties);
+	      return em;
+	  }
+
+	  @Bean
+	  @Primary
+	  public PlatformTransactionManager primeTransactionManager() {
+
+	      JpaTransactionManager transactionManager = new JpaTransactionManager();
+		     transactionManager.setEntityManagerFactory(primeEntityManager().getObject());
+		     return transactionManager;
+
+	  }
+
+      }
+
+     #+end_src
+     
+     - Step 3: Inject either programatically / or by Annotation the
+       EntityManager / TransactionManager of choice and perform your
+       relevant database operations.
+
+     In general you can as well refer to [[https://www.javachinna.com/spring-boot-multiple-data-sources/][the following demo]].
+	
+
+** On Integration Tests
+
+   This is an important topic in this space. Especially when working
+   with native queries as you are doing.
+
+   You should be able to immediately notice if something is going
+   wrong in such a case.
+
+   You can refer to [[https://reflectoring.io/spring-boot-data-jpa-test/][this arcticle]] in order to have an introduction in
+   it.
+
+   Undestand the idea of working with an in-memory database. Like this
+   you will remove all of the relevant failures due to possible
+   networking issues.
+
+   You will be just left with the programming itself. The question is
+   how you generate your database in memory etc.
+
+   A few options are mentioned in the post above. It is clear that
+   when you work on a green field application you should always work
+   in such a way as being the most robust one. The question is when
+   you are on a brown field. What are you doing then?
+
+   #+begin_quote
+   Important side note: it is important to appreciate as well that if
+   you work with JPQL or inferred queries you can work with two
+   different databases, in memory and on the actual cloud etc.
+
+   You would simply have to change the sql dialect that you are
+   setting in your application properties.
+
+   If you work with native queries as is our case now then the
+   situation looks more problematic. You have to make sure you do not
+   use any sql specific syntax of the particular database.
+
+   So you see it is a trade-off: /migration vs. performance/. Choose
+   wisely.
+   #+end_quote
+
+
+   
+
+   
+   
 
 * Footnotes
 

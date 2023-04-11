@@ -665,7 +665,7 @@ class question {
 
 	int x = 3;
 
-	x = h <= 4 ? 2 : 3;  // ok so note that you must
+	x = h <= 4 + 2 ? 2 : 3;  // ok so note that you must
 			     // return. cannot define it after
 			     // question mark.
 
@@ -738,6 +738,86 @@ class myClass {
    Not found
    :end:
 
+*** List of Optional elements
+
+    Note that you can as well create list of Optional Objects. This
+    might be important in your queries when writing them.    
+
+    #+BEGIN_SRC java :results output drawer :classname myClass
+    import java.util.Optional;
+    import java.util.List;
+    import java.util.ArrayList;
+
+    class myClass {
+
+	public static void main(String args[]) {
+
+	    List<Optional<String>> myList = new ArrayList<>();
+
+	    Optional<String> opt = Optional.empty();
+
+	    Optional<String> opt2 = Optional.of("baeldung");
+
+	    myList.add(opt); myList.add(opt2); 
+
+	    for (Optional<String> optional : myList) {
+
+		System.out.println(optional);
+
+	    }
+
+	};
+    }
+    #+END_SRC
+
+    #+RESULTS:
+    :results:
+    Optional.empty
+    Optional[baeldung]
+    :end:
+
+*** Count Occurrences in a List
+
+    Note that you can as well create list of Optional Objects. This
+    might be important in your queries when writing them.    
+
+    #+BEGIN_SRC java :results output drawer :classname myClass
+    import java.util.Optional;
+    import java.util.List;
+    import java.util.ArrayList;
+    import java.util.Collections;
+
+    class myClass {
+
+	public static void main(String args[]) {
+
+	    List<String> myList = new ArrayList<>();
+
+	    String opt = "hello";
+
+	    String opt2 = "world";
+
+	    String opt3 = "hello";
+
+	    myList.add(opt); myList.add(opt2); myList.add(opt3);
+
+	    int occurrences = Collections.frequency(myList, "hello");
+
+	    System.out.println(occurrences);
+
+	    // Just get the first - if not 5 then it is not what you want.
+
+
+	};
+    }
+    #+END_SRC
+
+    #+RESULTS:
+    :results:
+    2
+    :end:
+    
+    
 ** Switch
 
    Note that this is the usual stuff. On the top of it you have a
@@ -1374,7 +1454,6 @@ class InnerClassDemo {
    Outer.Inner= object. This is useful when you want to instantiate
    an object outside of the Outer class source file.
 
-
 ** Variable number of arguments
 
    That is also one of the classics in programming and is often
@@ -1446,7 +1525,6 @@ int doIt(int a, int b, double c, int ... vals) {
    to the first three arguments and the others go in the array
    =vals=.
     
-
 ** Inheritance
 
    Recall general terminology. Subclass -> class that is
@@ -1603,7 +1681,6 @@ class RefDemo {
     Note that you *cannot access members* of the referenced object that
     are not implemented in the superclass though. 
      
-
 ** on the super keyword
 
    This is useful in the case you would not want to expose the entire
@@ -1706,7 +1783,6 @@ class UseSuper {
    So you see that you can access the members of the superclass from
    the subclass which might be useful at times.
 
-
 ** Method overloading vs overwriting in class hierarchies
 
    Note that when you have subclasses you overwrite =methods= just
@@ -1757,7 +1833,6 @@ class Override {
    #+RESULTS:
    This is k: 3
    i and j: 1 2
-
 
 ** On overwritten Methods and dynamic method dispatch
 
@@ -1819,7 +1894,6 @@ class Dispatch {
    So you see that despite the reference variable is of type =A= the
    methods of the subclasses are called when the reference variable
    refer to them.
-
 
 ** Annotations
 
@@ -2024,7 +2098,6 @@ value3 = "world";
 
      - A method or constructor reference
 
-
 ** Abstract Classes
 
    *Important* Concrete methods are still /allowed in abstract classes/.
@@ -2144,7 +2217,6 @@ class AbstractAreas {
    Inside Area for Triangle.
    Area is 40.0
 
-
 ** Object Class
 
    There is one special class, Object, defined by Java. *All other
@@ -2154,7 +2226,6 @@ class AbstractAreas {
    that a *reference variable of type Object can refer to an object of
    any other class*. Also, since arrays are implemented as classes, a
    variable of type Object can also refer to any array.
-
 
 ** Interfaces
 
@@ -2529,7 +2600,6 @@ class IFExtend {
 }
     #+end_src 
 
-
 ** enumerations
 
    Created using ~enum~.
@@ -2742,18 +2812,6 @@ RedDel costs 12 cents.
 Winesap costs 15 cents.
 Cortland costs 8 cents.
 :end:
-
-
-** TODO Autoboxing                                                 :noexport:
-
-   Have to read it. It is important cause it happens multiple times
-   that you have Objects you work with that you need to compare with
-   primitives.
-
-   This essentially because most of the data-structures in Java cannot
-   store primitives but they rather have to work with the Objects
-   counterparties of them. 
-
 
 ** Generics
 
@@ -3344,7 +3402,6 @@ class GenConsDemo {
     check at it later again. reread the entire chapter one time that
     you have time.
      
-
 ** Text Blocks Feature
 
    This was your goto way to write longer query to be embedded in
@@ -3364,7 +3421,6 @@ class GenConsDemo {
    +       
    ""	
    #+end_src 
-
 
 ** Try with resource statements
 
@@ -3396,7 +3452,6 @@ objects which implement java.io.Closeable.
    is a ~close~ method implemented for it. This will be triggered by
    this try-with-resource statements.
    
-
 ** On Strings Parsing
 
    Have to structure the documentation more at some point and check at
@@ -3422,7 +3477,6 @@ objects which implement java.io.Closeable.
 
    in such a way you can pad with 0, the desired amount of times. This
    will be useful for instance to keep the RUC number consistent.
-
 
 ** On regex
 
@@ -3491,7 +3545,6 @@ class Regex {
 
    #+END_SRC
    
-
 ** F-strings similars
 
    Check at the below. This was your standard pyhton way of using
@@ -3501,28 +3554,15 @@ class Regex {
 System.out.println(String.format("Found %d names", startsWithN.size()));
    #+end_src 
    
+** TODO Autoboxing                                                 :noexport:
 
-** Java Beans
+   Have to read it. It is important cause it happens multiple times
+   that you have Objects you work with that you need to compare with
+   primitives.
 
-   You will have to make proper notes about it at some later
-   point. You come across it multiple times in the Java world
-   paradigm.
-
-   A JavaBean is just a standard
-
-   All properties are private (use getters/setters).
-
-   A public no-argument constructor Implements Serializable.
-
-   That's it. It's just a convention. Lots of libraries depend on it
-   though.
-
-   The standard allows libraries to programmatically do things with
-   class instances you define in a predefined way. For example, if a
-   library wants to stream any object you pass into it, it knows it
-   can because your object is serializable (assuming the library
-   requires your objects be proper JavaBeans).
-   
+   This essentially because most of the data-structures in Java cannot
+   store primitives but they rather have to work with the Objects
+   counterparties of them. 
 
 ** Intersting point - no parameter initialization
 
@@ -3530,10 +3570,10 @@ System.out.println(String.format("Found %d names", startsWithN.size()));
 
    Also interesting in there the thing about builder pattern.
 
-   there is a long post with all of the options where builder patterns
+   There is a long post with all of the options where builder patterns
    are outlined. Nothing too fancy. Try to keep it in the back of your
    mind but do not know if you will really use it.
-  
+
 
 * argument Passing
 
@@ -3617,10 +3657,43 @@ Test ob = new Test(15, 20);
   ob.a and ob.b after call - passing by reference - : 30 10
 
 
+* Java Beans
+
+  You will have to make proper notes about it at some later
+  point. You come across it multiple times in the Java world
+  paradigm.
+
+  A JavaBean is just a standard.
+
+  All properties are private (use getters/setters).
+
+  A public no-argument constructor Implements Serializable.
+
+  That's it. It's just a convention. Lots of libraries depend on it
+  though.
+
+  The standard allows libraries to programmatically do things with
+  class instances you define in a predefined way.
+
+  For example, if a library wants to stream any object you pass into
+  it, it knows it can because your object is serializable (assuming
+  the library requires your objects be proper JavaBeans).
+
+  
+** Beans in Spring
+
+   Do not confuse them with Spring beans. You see that these are by
+   nature quite different. 
+
+   Anyways the idea is that you can inject then these Beans throughout
+   the applicaiton.
+
+
 * Garbage Collection
 
   You can read about it in the newly separated tailored blog entry
-  that you created. 
+  that you created. It is nice how there is a lot biblical concepts
+  over there as well.
 
   Since objects are dynamically allocated by using the new operator,
   you might be wondering how such objects are destroyed and their
@@ -3832,6 +3905,21 @@ import pkg1[.pkg2].(classname|*);
 
    You can then refer to the specfic class simply by name after you
    imported it correctly.
+
+   
+** On Naming Convention
+
+   The point of naming convention is also interesting.
+
+   You will note when working on java projects that most start with
+   the com. Or that part of it is part of their package name.
+
+   The reason for it is [[https://stackoverflow.com/questions/4620045/why-is-the-root-package-in-source-code-called-com][explained here]]. You should use your
+   <domainname>.domain, in /reverse order/.
+
+   So for instance =com.zurich=.
+
+   
     
     
 * Frameworks 
@@ -4445,6 +4533,7 @@ class EnumSet<E extends Enum<E>>
  <img src="../../images/Screenshot 2021-10-25 105141.png" class="center">
 #+end_export    
 
+
 ** Maps Frameworks
 
    Note that these are the functions for performing the classical
@@ -4719,7 +4808,7 @@ class MapsValues {
 
    You can define the comporator yourself. 
 
-   
+
 ** Java Threading                                                  :noexport:
 
    This is important as it allows to work with multiple threads in
@@ -4800,7 +4889,7 @@ public class Reminder {
     a very neat way and the ultimate concept is the same here.
    
 
-* Important Libraries
+* Important Libraries / Frameworks
 
 ** Standard Classes
 
@@ -5751,26 +5840,6 @@ delimiter ;
 
 
 
-** IN-PROGRESS Hiberante
-
-   Do not actully open JDBC connections. Work with Hibernate and JPA
-   in general. 
-
-   The idea is to stay in the OOP logic when working with data tables
-   etc.
-
-   So basically here the idea is to extract information and place it
-   directly into Objects.
-
-   So basically all of your stack will be based on Object manipulation
-   then.
-
-   Note that you have a different blog entry for this. You should
-   [[https://marcohassan.github.io/bits-of-experience/posts/object-relational-mapping/][check at it]].
-
-   This goes a little bit hand in hand with what follows on JPA.  
-
-
 ** On Java Persistence API - JPA
 
    [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][Read this]]. The following notes are a simple copy and paste of that
@@ -5839,6 +5908,17 @@ delimiter ;
     the way the team is working. 
 
 
+
+
+
+
+
+** Hiberante
+
+   Note that you have a different blog entry for this. You should
+   [[https://marcohassan.github.io/bits-of-experience/posts/object-relational-mapping/][check at it]].
+
+   This goes a little bit hand in hand with what follows on JPA.  
 
 
 ** TODO Guava
@@ -6194,6 +6274,7 @@ public int addNum(int numA, int numB) {
     documentation. I.e. you separate different paragraphs and make
     everything more ordered.
     
+
 *** Package Documentation
 
     In general *always include a general documentation for each
@@ -6508,48 +6589,8 @@ class TimeMe {
 
 * TODO Profiling
 
+  It will be good to check at it at some point.
 
-* On the DataFrame issue
-
-  It is quite a funny thing that nobody managed to solve the issue so
-  far.
-
-  I mean you can create your dataframe internal representation pretty
-  quickly as with the libraries you have in here.
-
-  Still there are too big hurdles cause even when you have these
-  internal representations you will miss basics functionalities such
-  as joins etc.
-
-  So what I understand it is the classical way of working in java is
-  the following:
-
-  - you work with your internal representation of the table. you write
-    it to a staging table in the db - plenty of libraries for doing
-    it - 
-
-    you use a stored procedure to do your sql business logic in there.
-
-    you get back your transformed table - plenty of libraries to do
-    that - you continue to operate in your business. 
-
-  so this is basically the logic of java but you see it is pretty
-  rough and not that nice.
-
-  ---------------
-
-  Actually the idea of it is to work with OOP. So you should stop
-  thinking alltogether in terms of Data Frames in this language and
-  start thinking in terms of objects.
-
-  You should always map everything to Objects as per the ORM
-  frameworks and then just work with this first class citizen.
-
-** TODO data management libraries                                  :noexport:
-
-   Have as well still to understand what libraries are available for
-   data management in Java. Explore =poi=. Understand what other
-   libraries are available for managing data frames etc.
+  
 
 
-   

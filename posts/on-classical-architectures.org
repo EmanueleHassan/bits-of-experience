@@ -10,46 +10,6 @@
 
 #+END_COMMENT
 
-#+begin_export html
-<style>
-img {
-display: block;
-margin-top: 60px;
-margin-bottom: 60px;
-margin-left: auto;
-margin-right: auto;
-width: 70%;
-height: 100%;
-class: center;
-}
-
-.container {
-  position: relative;
-  left: 15%;
-  margin-top: 60px;
-  margin-bottom: 60px;
-  width: 70%;
-  overflow: hidden;
-  padding-top: 56.25%; /* 16:9 Aspect Ratio */
-  display:block;
-  overflow-y: hidden;
-}
-
-.responsive-iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-  display:block;
-  overflow-y: hidden;
-}
-</style>
-#+end_export
-
 
 #+begin_export html
 <style>
@@ -128,6 +88,7 @@ in your set.
 You will be able to easily abstract and get the general picture in
 such a way.
 
+
 * Architectural Patterns
 
   I found this [[https://towardsdatascience.com/10-common-software-architectural-patterns-in-a-nutshell-a0b47a1e9013][patterns here]]. Note that the application of such
@@ -204,6 +165,7 @@ such a way.
     embedd dynamic information in your html pages. I never went into the
     details of it as I was busy running the project. But that should
     have been the JSP equivalent. 
+
 
 ** Difference Layered and MVC
 
@@ -307,3 +269,107 @@ such a way.
 ** TODO Interpreter Pattern
 
    to search on the web the proper thing for it. 
+
+
+** On the API - Service - DAO Architecture
+
+   Understand the follwoing architectural pattern. This is the common
+   way to program your backend.
+
+   It is along the lines of the facade pattern in the design
+   patterns.
+
+   The idea is more or less the following.
+
+   #+begin_src plantuml :file ../images/API_SERVICE_DAO.png
+@startuml
+
+skinparam actorStyle awesome
+
+actor User
+
+interface RestApi
+
+node Services
+
+node DAO
+
+database Database
+
+
+User -right-> RestApi
+RestApi -right-> Services
+
+Services -right-> DAO
+DAO -right-> Database
+
+@enduml
+   #+end_src
+
+   #+RESULTS:
+   [[file:../images/API_SERVICE_DAO.png]]
+
+
+  #+begin_export html
+   <img src="../../images/API_SERVICE_DAO.png" class="center">
+  #+end_export
+
+
+   So you see there the concept of the facade.
+
+   The endpoints call the service, which calls the DAO.
+
+   The DAO is responsible for withdrawing and persisting the
+   information in the database.
+
+   The JPARepositories you are working for are implementing this Data
+   Access Object pattern so to say. So you should just change that
+   when you want to change the information withdrawal situation.
+
+   When you want to make changes to the way the information is
+   accessed, you should modify your endpoint.
+
+
+   Your application logic with the data is implemented in the Service
+   layer.
+
+   So when you want to change the way the inforamtion is processed you
+   just change the way your Service is set up.
+
+   
+
+
+
+   
+* On classical Enterprise Application Architecture
+
+  Here some notes about the Martin Flower Book.
+
+  You see essentially that here the patterns and logic implemented by
+  the most important frameworks is summarized.
+
+  You see essentially that if you get the book properly you would
+  essentially become a very proficient software engineer.
+
+  Then depending on the frameworks you would simply have different API
+  calls to memorize but in general the structure and what is happening
+  behind the scenes would be very clear.
+
+
+
+* TODO On the Overall strucutre of your applications
+
+  -> Make notes for this particular section.
+  
+*** Layered Architecure
+
+    
+
+*** Hexagonal Architecture
+
+    
+
+*** Microservice Architecture
+
+    
+
