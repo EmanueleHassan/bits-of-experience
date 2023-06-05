@@ -148,6 +148,7 @@ fully baked, which removes the thread-safety concerns
    your code and thereby you make that implicit type check that would
    not be there in Python. 
     
+
 *** TODO have to draw lines among the different components         :noexport:
 
     i.e. streams and functional interfaces through which you define
@@ -179,8 +180,6 @@ fully baked, which removes the thread-safety concerns
     serious way at some point.
 
     You can start reading into it in [[https://stackoverflow.com/questions/28319064/java-8-best-way-to-transform-a-list-map-or-foreach][here]].
-    
-
 
 
 *** Syntax
@@ -292,7 +291,46 @@ class StaticVsInstance_Method {
 
     This is in fact one of the [[https://www.geeksforgeeks.org/method-within-method-in-java/][three ways]] of specifying a nested
     method within another one.  
+
     
+*** TODO reformat post
+
+    Learn the basics [[https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html][interfaces]] implementing the functionalinterface
+    through which you can work in a functional way.
+
+    You can as well define your specific interfaces implementing the
+    functionalinterface in order to process things that do not fit the
+    existing frameworks. Think for instance of [[https://stackoverflow.com/questions/18198176/java-8-lambda-function-that-throws-exception][raising errors]], or the
+    following snippet I used in one of my classes.
+
+    #+begin_src java
+    @FunctionalInterface
+    public interface FunctionalFour<One, Two, Three, Four, Five> {
+	public Five apply(One one, Two two, Three three, Four four);
+
+    };
+
+    public static FunctionalFour<AsOf, String, String, Integer, HashMap<String, Object>> LongRunning = (asOf, source,
+													ticket, userId) -> {
+
+	// my complex logic triggering the relevant longrunning job using
+	// the four parameters provided of the specified type above
+
+	//  returning the last argument of the functional interface.
+	HashMap<String, Object> map = new HashMap<String, Object>();
+
+	map.put("Response", "Started Processing the LongRunning job.");
+
+	return map;
+
+    };
+
+
+    #+end_src
+
+    Once you understand the above everything else will be more
+    meaningful.
+
     
 *** On Design Choices
 
@@ -319,7 +357,7 @@ return name -> name.startsWith(letter);
     Note that in the above you do return a *function* as an
     expression.
 
-    Note the following:
+    Note the following: 
 
     #+begin_quote
     From within a lambda expression we can only access local variables
@@ -456,7 +494,7 @@ class CleanCodeFunctional2 {
      Number starting with N: 2
      Number starting with B: 1
 
-**** Important thing to consider - you use a method that has a throws an exception of some kind
+**** Important thing to consider - you use a method that throws an exception of some kind
 
      Then your method has to deal with that exception.
 
@@ -472,7 +510,38 @@ class CleanCodeFunctional2 {
      So keep for the moment as design choice: try-catch sandwich
      around the piece that you have to deal with.
 
+**** On Combining functional interafces
+
+
+    Note the following - try to keep code clean by writing lambda
+    functions and passing them as arguments.
+
+    See how clean the entire code then looks. I.e. do not clutter you
+    stream/ methods.
+
+    See the following example:
+    
+    #+BEGIN_SRC java :results output drawer :classname
+/** Lovely to see such stream of tests. Very nice way to program in a way 
+ ,*  where it is easy to keep the overview. Nice.
+ ,*/
+@TestFactory
+Stream<DynamicTest> dynamicTestsFromStreamFactoryMethod() {
+    // Stream of palindromes to check
+    Stream<String> inputStream = Stream.of("racecar", "radar", "mom", "dad");
+
+    // Generates display names like: racecar is a palindrome
+    Function<String, String> displayNameGenerator = text -> text + " is a palindrome";
+
+    // Executes tests based on the current input value.
+    ThrowingConsumer<String> testExecutor = text -> assertTrue(isPalindrome(text));
+
+    // Returns a stream of dynamic tests.
+    return DynamicTest.stream(inputStream, displayNameGenerator, testExecutor);
+}
+    #+END_SRC     
      
+
 *** On functional Interfaces
 
     You can use the annotation =@FunctionalInterface= to specify that
@@ -549,7 +618,7 @@ runWithinTransaction((Transaction transaction) -> {
     forgetting to perform the steps or about the exceptions being
     handled well.
 
-
+    
 *** On the forEach method
 
     This was introduced in Java 8 and I think it is one interesting
@@ -839,6 +908,8 @@ opt.ifPresentOrElse(
 
 *** TODO Collect                                                   :noexport:    
 
+    put here the various collectors... like toList etc...
+
 
 *** Nested lambda functions
 
@@ -1029,6 +1100,5 @@ class MySumTest {
      So note that the above myGenericMethod is nothing else than a
      normal fucntion. It has nothing to do with a stream etc. You just
      pass to the callback interface a lambda funciton.
-
 
 

@@ -73,11 +73,23 @@ Schildt)" publicly available on the world wide web at [[https://gfgc.kar.nic.in/
 
 {{{TEASER_END}}}
 
-
 * Reference
 
   A nice website to navigate some Java is [[https://www.javabrahman.com/category/java-8/][this]]. 
 
+
+* Making it Real
+
+  So when reading about project Lombok I have seen that lots of =jugs=
+  groups are mentioned as contributors.
+
+  I started to search for it then. I discovered that these are
+  generally java user groups around the world. You can find many in
+  different countries.
+
+  For instance this is the webpage of the one of switerzland. You
+  might want to have a [[https://www.jug.ch/members.php][glimpse on it]] once in a while.
+  
 
 * History
 
@@ -264,6 +276,23 @@ that has the .class extension.
    *always name your source code file after your class*.
 
 
+* Checked vs. Unchecked Exceptions
+
+  This is a theoretical thing you should keep in the back of your mind
+  when working.
+
+  It is important in order to understand in order to understand what
+  errors you might encounter at runtime destroying your applications:
+
+  #+begin_export html
+   <img src="../../images/Screenshot 2022-12-06 171803.png" class="center">
+  #+end_export
+
+  Think about what you want to catch and what not. Recall that with
+  unchecked exceptions, you will not get any compiling error if you do
+  not catch them.
+
+  That means that you should deal with them separately.
 
 
 * Syntax
@@ -546,7 +575,7 @@ class Matrix {
     int nums[], nums2[], nums3[]; // create three arrays
    #+end_src 
 
-** Math oprator
+** Math operator
 
    This is also fairly standard. All of the math operations can be
    performed with the usual shortcuts.
@@ -592,6 +621,25 @@ class Assign {
    | 100 |
    | 100 |
 
+   
+*** Modulo
+
+   #+begin_src java :classname modulo
+   class modulo {
+       public static void main(String args[]) {
+
+	int x = 10;
+
+	System.out.println(x % 3);	   
+
+
+       }
+   }
+   #+end_src 
+
+   #+RESULTS:
+   : 1
+    
 ** ? Operator
 
     The general idea is the following:
@@ -617,7 +665,7 @@ class question {
 
 	int x = 3;
 
-	x = h <= 4 ? 2 : 3;  // ok so note that you must
+	x = h <= 4 + 2 ? 2 : 3;  // ok so note that you must
 			     // return. cannot define it after
 			     // question mark.
 
@@ -650,6 +698,126 @@ class question {
    Alternatively, we could suggest a substitute value , using the
    method ~orElse()~.
 
+   #+BEGIN_SRC java :results output drawer :classname myClass
+import java.util.Optional;
+
+class myClass {
+
+    public static void main(String args[]) {
+
+	Optional<String> opt = Optional.empty();
+
+	opt.ifPresentOrElse(
+			    value -> System.out.println("Found: " + value),
+			    () -> System.out.println("Not found")
+			    );
+
+
+	opt =  Optional.of("baeldung");;
+
+	opt.ifPresentOrElse(
+			    value -> System.out.println("Found: " + value),
+			    () -> System.out.println("Not found")
+			    );
+
+	String name = null;
+	opt = Optional.ofNullable(name);
+	opt.ifPresentOrElse(
+			    value -> System.out.println("Found: " + value),
+			    () -> System.out.println("Not found")
+			    );
+	
+    }
+}
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   Not found
+   Found: baeldung
+   Not found
+   :end:
+
+*** List of Optional elements
+
+    Note that you can as well create list of Optional Objects. This
+    might be important in your queries when writing them.    
+
+    #+BEGIN_SRC java :results output drawer :classname myClass
+    import java.util.Optional;
+    import java.util.List;
+    import java.util.ArrayList;
+
+    class myClass {
+
+	public static void main(String args[]) {
+
+	    List<Optional<String>> myList = new ArrayList<>();
+
+	    Optional<String> opt = Optional.empty();
+
+	    Optional<String> opt2 = Optional.of("baeldung");
+
+	    myList.add(opt); myList.add(opt2); 
+
+	    for (Optional<String> optional : myList) {
+
+		System.out.println(optional);
+
+	    }
+
+	};
+    }
+    #+END_SRC
+
+    #+RESULTS:
+    :results:
+    Optional.empty
+    Optional[baeldung]
+    :end:
+
+*** Count Occurrences in a List
+
+    Note that you can as well create list of Optional Objects. This
+    might be important in your queries when writing them.    
+
+    #+BEGIN_SRC java :results output drawer :classname myClass
+    import java.util.Optional;
+    import java.util.List;
+    import java.util.ArrayList;
+    import java.util.Collections;
+
+    class myClass {
+
+	public static void main(String args[]) {
+
+	    List<String> myList = new ArrayList<>();
+
+	    String opt = "hello";
+
+	    String opt2 = "world";
+
+	    String opt3 = "hello";
+
+	    myList.add(opt); myList.add(opt2); myList.add(opt3);
+
+	    int occurrences = Collections.frequency(myList, "hello");
+
+	    System.out.println(occurrences);
+
+	    // Just get the first - if not 5 then it is not what you want.
+
+
+	};
+    }
+    #+END_SRC
+
+    #+RESULTS:
+    :results:
+    2
+    :end:
+    
+    
 ** Switch
 
    Note that this is the usual stuff. On the top of it you have a
@@ -1727,7 +1895,6 @@ class Dispatch {
    methods of the subclasses are called when the reference variable
    refer to them.
 
-
 ** Annotations
 
    Index :
@@ -1747,6 +1914,7 @@ class Dispatch {
    explore next.
    
 *** Built-in Annotations
+
 **** @Override
 
      This is powerful notation construct. Note that it is not mandatory
@@ -1897,9 +2065,6 @@ value3 = "world";
    #+end_src 
      
 **** @Retention
-
-     
-     
 **** @Documented
 **** @Target
 **** @Inherited
@@ -1923,13 +2088,15 @@ value3 = "world";
      pass the following:
 
      - An anonymous inner class, the old-fashioned way - meaning not
-       functional - (but why would we?). This is for instance the
-       example you have in these document in the =forEach= loop. 
+       functional - (but why would we?). See your notes on object
+       oriented programming in order to understand that better.
+
+       This is for instance the example you have in these document in
+       the =forEach= loop.
       
      - A lambda expression, like the map() method
 
      - A method or constructor reference
-
 
 ** Abstract Classes
 
@@ -2050,7 +2217,6 @@ class AbstractAreas {
    Inside Area for Triangle.
    Area is 40.0
 
-   
 ** Object Class
 
    There is one special class, Object, defined by Java. *All other
@@ -2060,7 +2226,6 @@ class AbstractAreas {
    that a *reference variable of type Object can refer to an object of
    any other class*. Also, since arrays are implemented as classes, a
    variable of type Object can also refer to any array.
-
 
 ** Interfaces
 
@@ -2434,9 +2599,6 @@ class IFExtend {
     }
 }
     #+end_src 
-     
-
-
 
 ** enumerations
 
@@ -2651,18 +2813,6 @@ Winesap costs 15 cents.
 Cortland costs 8 cents.
 :end:
 
-   
-** TODO Autoboxing                                                 :noexport:
-
-   Have to read it. It is important cause it happens multiple times
-   that you have Objects you work with that you need to compare with
-   primitives.
-
-   This essentially because most of the data-structures in Java cannot
-   store primitives but they rather have to work with the Objects
-   counterparties of them. 
-
-
 ** Generics
 
    Note that this is a very powerful element of the
@@ -2684,12 +2834,13 @@ Cortland costs 8 cents.
 
     Note that prior to Java 5 you used to implement algorithms working
     with multiple types of data by operating through references of
-    type Object. I.e. you were passing object references as
-    arguments. Given the fact that an Object could then contain
-    different types of data you had implemented your general algorithm
-    working with mulitple data types. The issue with such an approach
-    is that you could not have any *type safety*. This is what
-    Generics brought to the table.
+    type Object.
+
+    I.e. you were passing object references as arguments. Given the
+    fact that an Object could then contain different types of data you
+    had implemented your general algorithm working with mulitple data
+    types. The issue with such an approach is that you could not have
+    any *type safety*. This is what Generics brought to the table.
 
     Example of generic class
 
@@ -3251,7 +3402,6 @@ class GenConsDemo {
     check at it later again. reread the entire chapter one time that
     you have time.
      
-
 ** Text Blocks Feature
 
    This was your goto way to write longer query to be embedded in
@@ -3271,7 +3421,6 @@ class GenConsDemo {
    +       
    ""	
    #+end_src 
-
 
 ** Try with resource statements
 
@@ -3303,7 +3452,6 @@ objects which implement java.io.Closeable.
    is a ~close~ method implemented for it. This will be triggered by
    this try-with-resource statements.
    
-
 ** On Strings Parsing
 
    Have to structure the documentation more at some point and check at
@@ -3329,6 +3477,73 @@ objects which implement java.io.Closeable.
 
    in such a way you can pad with 0, the desired amount of times. This
    will be useful for instance to keep the RUC number consistent.
+
+** On regex
+
+   In order to check if a single regular expression matches you can
+   work directly with the convention
+
+   #+BEGIN_SRC java :results output drawer :classname 
+   "myString".matches(myCoolRegex)
+   #+END_SRC
+
+   In case you have multiple regex than the above will not be
+   sufficient. You have to start to work with the Pattern class.
+
+   Check at the methods on the official website. You can then either
+   get back the string that it matches as a string or a bool as in the
+   example below.
+
+   Then regex the same stuff as in all programming languages.
+
+   In order to check if a pattern matches some regular expressions you
+   can use the following:
+
+   #+BEGIN_SRC java :results output drawer :classname Regex
+import java.util.regex.Pattern;
+
+class Regex {
+    public static void main(String args[]) {
+
+	Pattern patternInclude = Pattern.compile("EM_(.*)|HELLO_(.*)");
+
+	System.out.println(patternInclude.matcher("HELLO_EM_CORP_DTS_AFRICA").matches());
+    }
+}
+   #+END_SRC
+
+   #+RESULTS:
+   :results:
+   true
+   :end:
+
+   Use the [[https://regex101.com/r/pW6oL2/2][following website]] when you have to do your regex.
+
+   Note that to create complex hierarchical logics it is not
+   recommended to do it whole in a single regex. That becomes much
+   complex quickly and you risk making mistakes.
+
+   It is much better to embedd the hierarchical structure in the
+   application code
+
+   #+BEGIN_SRC java :results output drawer :classname 
+import java.util.regex.Pattern;
+
+class Regex {
+    public static void main(String args[]) {
+
+
+	// i.e. say you want to include all regex and then exclude for the matching... some that fullfill some criteria...
+	
+	Pattern patternInclude = Pattern.compile("EM_(.*)|HELLO_(.*)"); // include all that you have to include
+
+	PatternExclude = Pattern.compile("myPatternToExclude");         // exclude all that you have to exclude
+
+	// then apply the two pattern filters sequentially.
+    }
+}
+
+   #+END_SRC
    
 ** F-strings similars
 
@@ -3339,32 +3554,15 @@ objects which implement java.io.Closeable.
 System.out.println(String.format("Found %d names", startsWithN.size()));
    #+end_src 
    
+** TODO Autoboxing                                                 :noexport:
 
-** Java Beans
+   Have to read it. It is important cause it happens multiple times
+   that you have Objects you work with that you need to compare with
+   primitives.
 
-   You will have to make proper notes about it at some later
-   point. You come across it multiple times in the Java world
-   paradigm.
-
-   A JavaBean is just a standard
-
-   All properties are private (use getters/setters).
-
-   A public no-argument constructor Implements Serializable.
-
-   That's it. It's just a convention. Lots of libraries depend on it
-   though.
-
-   The standard allows libraries to programmatically do things with
-   class instances you define in a predefined way. For example, if a
-   library wants to stream any object you pass into it, it knows it
-   can because your object is serializable (assuming the library
-   requires your objects be proper JavaBeans).
-   
-
-
-   
-
+   This essentially because most of the data-structures in Java cannot
+   store primitives but they rather have to work with the Objects
+   counterparties of them. 
 
 ** Intersting point - no parameter initialization
 
@@ -3372,10 +3570,11 @@ System.out.println(String.format("Found %d names", startsWithN.size()));
 
    Also interesting in there the thing about builder pattern.
 
-   there is a long post with all of the options where builder patterns
+   There is a long post with all of the options where builder patterns
    are outlined. Nothing too fancy. Try to keep it in the back of your
    mind but do not know if you will really use it.
-  
+
+
 * argument Passing
 
   Note that this is as well similar as with C++. When you pass
@@ -3395,26 +3594,26 @@ System.out.println(String.format("Found %d names", startsWithN.size()));
   In order to cristallize this consider the following example:
 
   #+begin_src java :classname CallByValue :results output raw
-// Primitive types are *passed by value*.
-class Test {
-    void meth(int i, int j) {
-	i *= 2;
-	j /= 2;
-    }
-}
-class CallByValue {
-    public static void main(String args[]) {
-	Test ob = new Test();
-	int a = 15, b = 20;
-	System.out.println("a and b before call: " +
-			   a + " " + b);
+      // Primitive types are *passed by value*.
+      class Test {
+	  void meth(int i, int j) {
+	      i *= 2;
+	      j /= 2;
+	  }
+      }
+      class CallByValue {
+	  public static void main(String args[]) {
+	      Test ob = new Test();
+	      int a = 15, b = 20;
+	      System.out.println("a and b before call: " +
+				 a + " " + b);
 
-	ob.meth(a, b);  // pass by value does not change the results.
+	      ob.meth(a, b);  // pass by value does not change the results.
 
-	System.out.println("a and b after call: " +
-			   a + " " + b);
-    }
-}
+	      System.out.println("a and b after call: " +
+				 a + " " + b);
+	  }
+      }
   #+end_src 
 
   #+RESULTS:
@@ -3458,7 +3657,43 @@ Test ob = new Test(15, 20);
   ob.a and ob.b after call - passing by reference - : 30 10
 
 
+* Java Beans
+
+  You will have to make proper notes about it at some later
+  point. You come across it multiple times in the Java world
+  paradigm.
+
+  A JavaBean is just a standard.
+
+  All properties are private (use getters/setters).
+
+  A public no-argument constructor Implements Serializable.
+
+  That's it. It's just a convention. Lots of libraries depend on it
+  though.
+
+  The standard allows libraries to programmatically do things with
+  class instances you define in a predefined way.
+
+  For example, if a library wants to stream any object you pass into
+  it, it knows it can because your object is serializable (assuming
+  the library requires your objects be proper JavaBeans).
+
+  
+** Beans in Spring
+
+   Do not confuse them with Spring beans. You see that these are by
+   nature quite different. 
+
+   Anyways the idea is that you can inject then these Beans throughout
+   the applicaiton.
+
+
 * Garbage Collection
+
+  You can read about it in the newly separated tailored blog entry
+  that you created. It is nice how there is a lot biblical concepts
+  over there as well.
 
   Since objects are dynamically allocated by using the new operator,
   you might be wondering how such objects are destroyed and their
@@ -3474,7 +3709,6 @@ Test ob = new Test(15, 20);
 
   Note that when Garbage collection is performed depend on the
   different Java run-times etc.
-        
 
 
 * Packages
@@ -3671,10 +3905,25 @@ import pkg1[.pkg2].(classname|*);
 
    You can then refer to the specfic class simply by name after you
    imported it correctly.
+
+   
+** On Naming Convention
+
+   The point of naming convention is also interesting.
+
+   You will note when working on java projects that most start with
+   the com. Or that part of it is part of their package name.
+
+   The reason for it is [[https://stackoverflow.com/questions/4620045/why-is-the-root-package-in-source-code-called-com][explained here]]. You should use your
+   <domainname>.domain, in /reverse order/.
+
+   So for instance =com.zurich=.
+
+   
     
     
 * Frameworks 
-  
+
 ** Iterator Interface
 
    THis is a very important one that you should understand. As you
@@ -4283,7 +4532,7 @@ class EnumSet<E extends Enum<E>>
 #+begin_export html
  <img src="../../images/Screenshot 2021-10-25 105141.png" class="center">
 #+end_export    
- 
+
 
 ** Maps Frameworks
 
@@ -4412,36 +4661,36 @@ interface Map.Entry<K,V>
      second one will overwrite the entry of the first.
 
      #+begin_src java :results output raw :classname MapsBasics :results drawer
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;    
+     import java.util.List;
+     import java.util.Map;
+     import java.util.HashMap;
+     import java.util.ArrayList;    
 
-class MapsBasics {
-    public static void main(String args[]) {
-        Map<String, List<Integer>> map = new HashMap<>();
+     class MapsBasics {
+	 public static void main(String args[]) {
+	     Map<String, <Integer>> map = new HashMap<>();
 
-	List<Integer> myList = new ArrayList<>();
+	     List<Integer> myList = new ArrayList<>();
 
-	myList.add(1); // add the desired value
-	    
-	map.put("hello", myList);
+	     myList.add(1); // add the desired value
 
-	if (map.containsKey("hello")) {
-		List<Integer> myTest = map.get("hello");
+	     map.put("hello", myList);
 
-		myTest.add(2);
+	     if (map.containsKey("hello")) {
+		     List<Integer> myTest = map.get("hello");
 
-		map.put("hello", myTest);
-	}
+		     myTest.add(2);
+
+		     map.put("hello", myTest);
+	     }
 
 
-	List<Integer> myTest = map.get("hello");
+	     List<Integer> myTest = map.get("hello");
 
-	myTest.stream().forEach(System.out::println);
+	     myTest.stream().forEach(System.out::println);
 
-    }
-}
+	 }
+     }
      #+end_src 
 
      #+RESULTS:
@@ -4551,7 +4800,6 @@ class MapsValues {
      specifically for use with keys of an =enum= type.
 
 
-
 ** Comparators
 
    that is an important class that will allow you to specify the
@@ -4560,7 +4808,7 @@ class MapsValues {
 
    You can define the comporator yourself. 
 
-   
+
 ** Java Threading                                                  :noexport:
 
    This is important as it allows to work with multiple threads in
@@ -4639,88 +4887,9 @@ public class Reminder {
     looked up in the recent past. You can check at that video in your
     Javascripts notes as it was explaining asynchronous programming in
     a very neat way and the ultimate concept is the same here.
-
-        
-
-*** 
-
-
-** Streaming - check as well resource you have there on java 8     :noexport:
-
-** Mustache                                                        :noexport:
-
-   Mustache is a web framework  that is *logicless*.
-
-   That is important. It means that there are no if-else statements
-   nor for loops.
-
-   Note that how the framework actually works is then in the following
-   way:
-
-   - you define a template with your ={{}}= - i.e. the mustaches
-     containing your variables that you will pass to the template
-     dynamically. 
-
-   - you compile the framework.
-
-   Note then the following schema for using the framework.
-
-   #+begin_src plantuml :file ../../images/mustache.png :exports none :results drawer
-@startuml
-(*) -right-> "Create template in the form <b>MYNAME.mustache</b>"
-
- -right->"Create a <b>MYNAME</b> class where you save the parameters 
-     you pass to the template.
-
-     The fields must be equivalent to the ones in the mustaches."
-
- -right-> "Compile the mustache template"
-
- -down-> "Execute the compiled mustache template passing it 
-           the necessary object containing the parameterized fields.
-
-	   Flush the results to a stringwriter.   
-	  "
-
-  --> (*)
-@enduml
-#+end_src
-
-#+RESULTS:
-:results:
-[[file:../../images/mustache.png]]
-:end:
-
-
-#+begin_export html
- <img src="../../images/mustache.png" class="center">
-#+end_export
-
-Note that this is just the basics but it is sufficient to get an
-idea for the moment.
-
-What you are missing then is the following:
-
-- passing a list of objects. then if setting properly tags you will
-  generate a template containing all of the entries for the objects in
-  the list.
-
-  I guess it is therefore the way to do dynamic allocation etc. 
-
-- tags that are triggered just when you pass an empty list, a
-  non-existing key of a map, a false or null.
-
-  i.e. you trigger this generally to display info for the case of
-  abnormal events.
-
-- tags processing lambda function. I.e you can for instance use a
-  =Function<Object, Object>= and the result from it will be passed to
-  to the appropriate tag.
-
-You can read more of the above cases [[https://www.baeldung.com/mustache][here]]. Let's leave it for now. 
    
 
-* Important Libraries
+* Important Libraries / Frameworks
 
 ** Standard Classes
 
@@ -4731,24 +4900,158 @@ You can read more of the above cases [[https://www.baeldung.com/mustache][here]]
    java package called /java.lang/. This is implicitly imported by
    the compiler for all programs.
    
-** TODO Strings and working with them                              :noexport:
 
-   check for instance the =StringBuilder= method.
-   
+
 ** Logger Package
 
    As you know, this is a quite fundamental component when writing
    your apps.
 
+   You can read quickly [[https://sematext.com/blog/java-logging-best-practices/][this]] in order to understand what you have to
+   keep in mind when developing the things.
+
+
+*** Choosing the logging library to use.
+
+    So this is the first choice.
+
+    This is a pretty easy one. Use an *abstraction layer*.
+
+    #+begin_quote
+    Abstraction layers such as SLF4J decouple the underlying logging
+    framework from your application, allowing you to change logging
+    frameworks on demand. The abstraction layer provides a generic API
+    and determines which logging framework to bind to at runtime based
+    on the frameworks available on the application's classpath. If a
+    framework is not available on the classpath, the abstraction layer
+    effectively disables log calls. Abstraction layers are useful for
+    when you plan on upgrading or switching frameworks down the road,
+    or if you are developing a library for use in other projects.
+    #+end_quote
+
+
+*** Configuration
+
+    Check at [[https://www.loggly.com/ultimate-guide/java-logging-basics/][this]].
+
+    It will give the right overview on the logging possibilities in the
+    Java world.
+
+    Basically, independently on the framework used you have three
+    different types of concepts:
+
+    - configuration: these you specify in sepearate properties files.
+
+    - appenders: here you specify where you write your logs to.
+
+      the concept is that you have a couple of appenders options:
+      files etc., but as well syslogs.
+
+      Syslog are services that runs on a device and collects logs from
+      the device’s operating system, processes, and services.
+
+    - layouts: these convert the contents of a log entry from one data
+      type into another. Logging frameworks provide Layouts for plain
+      text, HTML, syslog, XML, JSON, serialized, and other logs.
+
+      so that is good to knwo as you do not have to bother too much in
+      the format you specify all of your logs.
+
+      this is actually what you have to configure in order to have a
+      nicely readable logger. 
+
+    - markers: these are as well a very important concept.
+
+      The concept is the one of tag. You can then use this in order to
+      make queries and filter your logs.
+
+
+*** On the Abstraction Layer
+
+    So this section goes a bit into sl4j.
+
+    This is a useful tool as with it you can create an abstraction
+    layer such that you can just change the logging framework that is
+    behind keeping all of the rest.
+
+    The idea is the following:
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-06-01 132449.png" class="center">
+    #+end_export
+
+    Then you can simply choose the underlying framework by adding it
+    as a dependency to your project.
+
+    =Sl4j-api= will then know how to communicate with the respective
+    slf4j-framework interaction.
+
+    You can see examples of setting it up with the relevant frameworks
+    over [[https://examples.javacodegeeks.com/enterprise-java/slf4j/slf4j-configuration-file-example/][here]].
+    
+
+*** Properties
+
+    Here a brief snippet with the properties of the logger and how I
+    did set them up.
+
+    Note that I decided to go for log4j as it is quite a standard.
+
+    You should save it as follows:
+
+    #+begin_quote
+    The log4j.properties file is a log4j configuration file which
+    keeps properties in key-value pairs. By default, the LogManager
+    looks for a file named log4j.properties in the CLASSPATH.
+    #+end_quote
+
+    So basically you can put it into your resources folder which is in
+    your classpath after the gradle modification that you did before.
+
+    Check as well this one in order to see if you 
+    
+**** OUTDATED Levels
+
+     The module works the same way your logger in python used to
+     work. This means that you have multiple levels of logging.
+
+     - SEVERE (highest)
+     - WARNING
+     - INFO
+     - CONFIG
+     - FINE
+     - FINER
+     - FINEST
+     - OFF (turns the logger off)
+     - ALL (log everything)
+
+     You can choose the level of your log in the following way:
+
+     #+begin_src java :results output raw
+ // set logger at info level
+ LOGGER.setLevel(Level.INFO);
+     #+end_src 
+
+     In the case above log levels =INFO= and above will be automatically
+     written to the console. This in a very similar way to the logger in
+     python you have used multiple times.
+
+     Note that through the =LogManager= it is possible to set the
+     logging levels for a set of packages at once.
+
+     There is as well the configuration file. Check at it and set it up
+     properly.
+
+    
 *** Logger Object Configuration
 
-    In order to create a Logger object zou can use the following:
+    In order to create a Logger object you can use the following:
 
     #+begin_src java :results output raw 
-import java.util.logging.Logger;
+    import java.util.logging.Logger;
 
-// assumes the current class is called MyLogger
-private final static Logger LOGGER = Logger.getLogger(<ClassName>.class.getname());
+    // assumes the current class is called MyLogger
+    private final static Logger LOGGER = Logger.getLogger(<ClassName>.class.getname());
     #+end_src 
 
     What the above does is actually to implement a hierarchy of
@@ -4761,35 +5064,7 @@ private final static Logger LOGGER = Logger.getLogger(<ClassName>.class.getname(
     package, that logger would be a child of the =com= Logger, which
     is itself a child of the =String= Logger (default). 
    
-*** Levels
 
-    The module works the same way your logger in python used to
-    work. This means that you have multiple levels of logging.
-
-    - SEVERE (highest)
-    - WARNING
-    - INFO
-    - CONFIG
-    - FINE
-    - FINER
-    - FINEST
-    - OFF (turns the logger off)
-    - ALL (log everything)
-
-    You can choose the level of your log in the following way:
-
-    #+begin_src java :results output raw
-// set logger at info level
-LOGGER.setLevel(Level.INFO);
-    #+end_src 
-
-    In the case above log levels =INFO= and above will be automatically
-    written to the console. This in a very similar way to the logger in
-    python you have used multiple times.
-
-    Note that through the =LogManager= it is possible to set the
-    logging levels for a set of packages at once. 
-  
 *** Formatter
 
     Here again in a similar way than python you can specify the output
@@ -4801,7 +5076,69 @@ LOGGER.setLevel(Level.INFO);
     because this allows developers to fine-tune log settings for each
     class.
 
-    Make sure this is the case in your team.
+**** TODO [#A] So create a class for it with a proper formatter Logger and use it throughout your application
+
+     Do it next. Incredible that I have to do everything from
+     scratch. Omg. Anyways no time for complains.
+
+     Checked into the existing class. Better to forget about it. Again
+     a low level horror thing.
+
+
+*** How do you log errors
+
+    Here a few standards that I decided to use in my app development
+    experience.
+
+    The idea is the following:
+
+    #+BEGIN_SRC java :results output drawer :classname 
+    try {
+	throw new IOException("This is an I/O error");
+    } catch (IOException ioe) {
+	LOGGER.error("I/O error occurred during request processing", ioe);
+	throw ioe;
+    }
+    #+END_SRC
+
+    Which will produce logs of the following format:
+
+    #+begin_quote
+    11:30:17.527 ERROR - Error while executing main thread
+    java.io.IOException: This is an I/O error
+    at com.sematext.blog.logging.Log4JException.main(Log4JException.java:13) [main/:?]
+    #+end_quote
+
+    In such a way you can easily check what is going on.
+
+    In any case never log anything to the console. This to keep
+    things consistent. You should just always have a single source
+    of truth otherwise complexity will explode.
+
+*** On an Azure Note
+
+    Recall that we work with Azure Webapps and the following bit of
+    information is an important thing to know.
+
+    Essentially, the idea is to log under the =/home= path.
+
+    This because the files in there are not actually not saved on the
+    instance itself but rather on some Blob store.
+
+    This is the ultimate reason why your logs do not disappear even
+    if your instance crashes and a new one is created out of it.
+
+
+*** Application Insights
+
+    So the above focused on how to write all of the different
+    logs. The other bit is about monitoring them. This is where
+    application insights and similar (say Splunk or LogDNA come into
+    play).
+
+    You should use it in order to properly increase the analytics on
+    your logs and really understand what it is going on.
+
 
 
 ** Project Lombok
@@ -4811,19 +5148,489 @@ LOGGER.setLevel(Level.INFO);
    It is basically a way to short-circuit all of the getters, setters
    and equals stuff that you so often use in Java.
 
-   You can read about it online. Check how stable is the framework as
-   here you are dealing with code that has to survive over very long
-   periods of time.
+   This is a very solid piece of software.
 
-   I mean if it is stable it is quite handy as through it you will
-   manage Java-Beans quite easily and these will be very readable.
+   So start to use it slowly as it will help you quite much and you
+   will learn the important data structures through it - think for
+   instance at how you use the hashcode function in your data objects.
 
-   Nice as it also handles Logger and adds it to the class in case of
-   need.
+   This will be as well of paramount importance as in the moment you
+   start to be a solid Java programmer then you will be in the Object
+   world.
 
-*** TODO do documentation on lombok                                :noexport:   
+   And you will have to define tausend of classes holding the logic
+   for your data etc.
 
+   So this is the only logical solution. All of the other things would
+   ultimately be a killer to your performance.
+
+   This section continues as follows: first you will see how to
+   install it on your IDE. Then you have a list of intersting lombok annotations.
+
+*** Install it on IDE
+
+    Note that you will have to configure your IDE to properly read
+    Lombok. Otherwise you will have plenty of errors in your code as
+    you will not easily find your =getters= and =setters= and all of
+    the other stuff that you would ultimately implement through
+    annotators and less through the code itself.
+
+    Note that it is a trivial thing to install it. See in this sense
+    [[https://www.baeldung.com/lombok-ide][this guide]].
+
+*** Interesting Lombok Annotations
+
+    So note that it is worth to have a periodical look into it. As new
+    annoators will come or you might start to appreciate better lombok
+    components such as =val= or =var=. I do not like them as far as I
+    think that they are dangerous and might bring adverse
+    behaviour. Especially during the first periods where I cannot
+    surely call myself a Java expert yet.
+    
+    - @Data - that is cool and important. Here you have - getters,
+      setters, tostring and [[https://www.baeldung.com/java-hashcode][hashcode]].
+
+      Hashcode is important. Basically creating a hash of an
+      object. You can use it then to see if two are equal or not. 
+
+    - @NonNull - cool one
+
+      Basically adding a check to see if the object is null. If yes it
+      is raising a NullPointerException
+
+    - @Cleanup
+
+      Also a lovely one - check [[https://projectlombok.org/features/Cleanup][this]].
+
+    - @ToString
+
+      Cool for [[https://projectlombok.org/features/ToString][debugging]].
+    
+
+
+** Jackson
+
+   This is an important library as through it you can properly manage
+   Json in Java.
+
+   This will be of paramount importance in the event-driven,
+   microservices based world.
+
+   So let's quickly explore the library. You can find the set of
+   tutorials for it [[https://github.com/FasterXML/jackson][here]].
+   
+*** Serialization
+
+    There are multiple ways to serialize Java Objects into Json.
+
+    This section explores the different possibilities of doing it.
+
+    This will be important as in such a way you will be able to
+    quickly create your Jsons and parse them accordingly.
+    
+**** Default / Without annotation
+
+     This is the default option.
+
+     All of the *public* fields of the object will be properly
+     serialized.
+    
+**** @JsonAnyGetter
+
+     With it you can serialize a Map.
+
+     #+BEGIN_SRC java :results output drawer :classname 
+public class ExtendableBean {
+    public String name;
+    private Map<String, String> properties;
+
+    @JsonAnyGetter
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+}
+     #+END_SRC
+
+     The result of serializing an instance of this class, would be
+     something as the following
+
+     #+begin_src json
+{
+    "name":"My bean",
+    "attr2":"val2",
+    "attr1":"val1"
+}
+     #+end_src
+
+     You see the default component name, public field is added by
+     default as well as your map.
+
+**** @JsonGetter("<field>")
+
+     #+BEGIN_SRC java :results output drawer :classname 
+public class MyBean {
+    public int id;
+    private String name;
+
+    @JsonGetter("name")
+    public String getTheName() {
+        return name;
+    }
+}
+     #+END_SRC
+
+     In such a way you can say - hey dude even if the thing is private
+     there is a getter for it and you should include the thing when serializing.
+     
+**** @JsonPropertyOrder
+
+     Through it you specify how the fields of your Objects will be
+     written into a json.
+
+     You can also work with general conditions such as
+     ~@JsonPropertyOrder(alphabetic=true)~.
+
+     #+BEGIN_SRC java :results output drawer :classname 
+@JsonPropertyOrder({ "name", "id" })
+public class MyBean {
+    public int id;
+    public String name;
+}
+     #+END_SRC
+
+     Example result
+
+     #+begin_src json
+{
+    "id":1,
+    "name":"My bean"
+}
+     #+end_src
+
+**** @JsonValue
+
+     Here the idea is to have a single method that is marked in such a
+     way in the Object you wish to serialize.
+
+     The value returned by such a method will then be used in order to
+     construct your thing.
+
+     It is the true thing returned not the standard ="<field>" :
+     "<value>"=.
+
+     So I guess you will not use this thing too much. You will see
+     with time.
+
+**** @JsonRootName
+
+     Here you serialize as well the object name within the thing.
+
+     You pass the field that should represent the as a value attribute
+
+     #+BEGIN_SRC java :results output drawer :classname 
+@JsonRootName(value = "user")
+public class UserWithRoot {
+    public int id;
+    public String name;
+}
+     #+END_SRC
+
+     Result of serialization
+
+     #+begin_src json
+{
+    "user":{
+        "id":1,
+        "name":"John"
+    }
+}
+     #+end_src
+
+     Note that the value field is a *required attribute* in the
+     annotation.
+     
+**** TODO check the custom serializer
+
+     This is also an option. 
+
+**** TODO note that the serialization is actually implemented via ObjectMapper
+
+     Have to properly understand this.
+
+
+*** Deserialization
+    
+**** Default / Without annotation
+
+     This is the default option.
+
+     The idea here is that as long as all of the fields in the json
+     are present in the Object as *public variables*, you can unmarshall
+     the json without configuring too much your target Objects with
+     the deserialization Jackson annotations.
+
+     Note that your Object can encapsulate other fields that are not
+     present in the json.
+
+     In such a case the fields will be set to =null= in your object.
+
+     We will see next more important ways on how you can customize the
+     entire deserialization thing in order to adapt the json to your
+     Object without having to have a perfect 100% match.
+
+**** @JsonCreator
+
+     So the idea is to use this to tune the factory used in the
+     deserialization.
+
+     I.e. say for instance that you are still working with an Object
+     of the following form
+
+     #+BEGIN_SRC java :results output drawer :classname 
+@AllArgsConstructor
+public class User {
+    public int id;
+    public String name;
+}
+
+     #+END_SRC
+
+     And say that you receive the following json
+
+     #+begin_src json
+{
+    "id":1,
+    "theName":"My bean"
+}
+     #+end_src
+
+     So you see that you have a mismatch name <=> theName.
+
+     You can then use =@JsonCreator= to solve this.
+
+     #+BEGIN_SRC java :results output drawer :classname 
+public class UserWithCreator {
+    public int id;
+    public String name;
+
+    @JsonCreator
+    public UserWithCreator(
+      @JsonProperty("id") int id, 
+      @JsonProperty("theName") String name) {
+        this.id = id;
+        this.name = name;
+    } 
+}
+     #+END_SRC
+
+     So you see htat you have a constructor with the =@JsonCreator=
+     annotation. There you can actually see how the json-properties
+     are mapped. 
+     
+**** @JacksonInject
+
+     You can use this tag in order to specify that a field of the
+     Object will not be provided through the json but would rather be
+     injected.
+
+     You can find an example [[https://www.baeldung.com/jackson-annotations][here]]. Have to better understand that but
+     it is quite intuitive. 
+     
+**** @JsonAnySetter
+
+     This is the same principle as [[*@JsonAnyGetter][@JsonAnyGetter]]. So here the idea is
+     to enter the json entries into a map rather than into individual
+     variables encapsulated in the obejct.
+
+     See for instance the following 101 example
+
+     #+BEGIN_SRC java :results output drawer :classname 
+public class ExtendableBean {
+    public String name;
+    private Map<String, String> properties;
+
+    @JsonAnySetter
+    public void add(String key, String value) {
+        properties.put(key, value);
+    }
+}
+     #+END_SRC
+
+     And the following passing test
+
+     #+BEGIN_SRC java :results output drawer :classname 
+@Test
+public void whenDeserializingUsingJsonAnySetter_thenCorrect()
+  throws IOException {
+    String json
+      = "{\"name\":\"My bean\",\"attr2\":\"val2\",\"attr1\":\"val1\"}";
+
+    ExtendableBean bean = new ObjectMapper()
+      .readerFor(ExtendableBean.class)
+      .readValue(json);
+    
+    assertEquals("My bean", bean.name);
+    assertEquals("val2", bean.getProperties().get("attr2"));
+}
+     #+END_SRC
+
+**** @JsonSetter
+
+     This is again the counterpart of [[*@JsonGetter("<field>")][@JsonGetter("<field>")]]. Use it
+     in the same way in order to deal with setters for private
+     fields. 
+     
+**** @JsonDeserialize
+
+     You this in order to work with custom deserializer.
+
+     Here is some more specific logic, for instance converting a date
+     string into a date object in the proper way, with the proper
+     format.
+
+     Most likely will have to use it at some point. 
+          
+**** @JsonAlias
+
+     This is also important. Basically it is similar to =@JsonCreator=
+     in the sense that you make non perfect naming matching possible
+     and you unmarshall the things correctly.
+
+     While =@JsonCreator= allows more flexibility in that it allows
+     you to specify a proper constructor for a field, this annotation
+     is more simple and it basically says:
+
+     #+begin_quote
+hey dude, watch out cause the field might also be received in the json
+under these other alias names. 
+     #+end_quote
+    
+
+*** Ignoring Properties
+
+    So there is an entire suite of annotations that allows you to
+    specify thing you should ignore when marshalling/unmarshalling.
+
+    You can read it online at the moment of need.
+
+    The most interesting in any case, and the one you will use the
+    most at development time, is the one of excluding null variables.x
+
+    See the following
+
+    #+BEGIN_SRC java :results output drawer :classname 
+@JsonInclude(Include.NON_NULL)
+public class MyBean {
+    public int id;
+    public String name;
+}
+    #+END_SRC
+
+
+*** Reading and navigating the json tree
+
+    That is also quite handy should you want the textual information
+    from it without going through an Object. Note that this is not the
+    idea in Java: /always recall who is the first class citizen/.
+    
+
+*** Validation
+
+    A further important point consists in validating the json object
+    itself.
+
+    Essentially there are three options - see [[https://guillaumeblanchet.medium.com/three-ways-to-validate-json-in-java-4b38d95ba7c][here]].
+
+    Let's explore the first two and the pro and cons of them.
+    
+**** Jackson
+
+     This option essentially consists in parsing the json object withe
+     Jackson and mapping it to the desired object.
+
+     Then it obviously follows that if the field type of the json does
+     not match the one specified in the Object being mapped to you
+     will get errors.
+
+     On the top of it you can write all of the necessary logic you
+     desire. I.e. you can write the relevant logic for constraining
+     the field to be of a particular type. 
+
+**** Json Schema
+
+     This is a more readable way to validate your json.
+
+     This due to the property that the json format is more readable
+     than plain java code.
+
+     The idea is then essentially to write json objects specifying the
+     characteristics that your json objects should have.
+
+     An example could be the following:
+
+     #+begin_src json
+       {
+	   "$schema": "http://json-schema.org/draft-07/schema#",
+	   "$id": "#MyJsonClassSchema.json",
+	   "type": "object",
+	   "properties": {
+	       "myProperty": {
+		   "oneOf": [
+		       {
+		       "type": "string"
+		   },
+		       {
+		       "type": "array",
+		       "items": [
+			   {
+			   "type": "string"
+		       }
+		       ]
+		   }
+		   ]
+	       }
+	   }
+       }
+     #+end_src
+
+     You can then validate according to such schema for instance as
+     follows:
+
+     #+begin_src java
+     @Test
+     public void validateFromJsonSchema() throws JsonProcessingException {
+	 JsonSchema schema = getJsonSchema("#MyJsonClassSchema.json");
+	 String json =
+	     "{\n"
+	     + "  \"myProperty\": [\"a value\"]\n"
+	     + "}";
+	 Set<ValidationMessage> errors = schema.validate(new ObjectMapper().readTree(json));
+	 assertThat(errors).isEmpty();
+     }
+     #+end_src
+
+
+*** TODO Possible Readings
+
+    There is as well other interesting stuff in there.
+
+    You will use it a lot so it makes sense to have it well in your
+    mind.
+
+    Keep moving for now but come back to it at some point.
+
+    Check the following [[https://www.baeldung.com/jackson-annotations][101 on annotations]] and continue as well with
+    some [[https://www.baeldung.com/jackson][other tutorials]].
+
+
+
+    
 ** JDBC
+
+   Note that this is just an investigation at very high level.
+
+   I am not exporing this to the bone as I decided in any case to go
+   in the Hibernate direction.
 
 *** What is it?
 
@@ -4882,7 +5689,8 @@ database has its own specific protocol.
     condtions. 
 
     #+BEGIN_SRC java :results output drawer :classname
-    // basic example of working with it. 
+
+// basic example of working with it. 
     try (Statement stmt = con.createStatement()) {
       ResultSet rs = stmt.executeQuery(query);
       while (rs.next()) {
@@ -5023,36 +5831,115 @@ END //
 delimiter ;
     #+end_src
 
-*** TODO [#A] On batchadd - How that works
-    
-*** TODO write about the logic of committing the results and executing them :noexport:
-   
-** TODO Hiberante
+*** Note that your libraries for working with JDBC are in the following repo
 
-   Check at it. Everybody talks about it.
+    =com.zurich.im.lib.basics.sql=
 
-   The idea is to stay in the OOP logic when working with data tables
-   etc.
-
-   I must say that it is very funny to work with Java as it is not
-   simply another programming language. It is so far apart from Python
-   in the frameworks and ideas that it is a complete revolution in
-   terms of mental process.
+    consult them at development time to find the method that best fits
+    your use-case. 
 
 
 
+** On Java Persistence API - JPA
+
+   [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][Read this]]. The following notes are a simple copy and paste of that
+   article.
+
+   ------------------
   
-** TODO check at guava
+*** JPA in the historic context
 
-   [[https://github.com/google/guava][url]]
+    The core question here is about /persistence/, which loosely means any
+    mechanism by which Java objects outlive the application process that
+    created them.
+
+    The JPA specification lets you define which objects should be
+    persisted, and how those objects should be persisted in your Java
+    applications.
+
+    So this is more a styling-guide at the macro-level. You have then
+    all of the different frameworks through which you can implement such
+    theoretical construct.
+
+    So Java Persistence API is highly related with ORM. As this is the
+    old-school way of programming and was the norm the two developed
+    hand in hand. Today with the advent of NoSQL you have Java
+    Persistence API being developed and formed for the NoSQL databases. 
+
+    ORM - object-relational mapping. So through ORM you are able to work
+    through objects and stay within the first-class citizens of Java and
+    still, at the same time, interact with the relational tables of your
+    application.
+
+    Hibernate is the default ORM used across the industries as you
+    quickly learned after 2 months of exposure to the Java world.
+
+*** JPA in the application context
+
+    So this is how the JPA fits the application logic.
+   
+ #+begin_export html
+  <img src="../../images/Screenshot 2021-11-02 134907.png" class="center">
+ #+end_export
+
+    You can then quickly imagine how the picture would change to the
+    NoSQL space. Nothing big would change. Just the connector, the
+    general theoretical API specifications to interact with NoSQL etc.
+
+    But in general the high-level structure will persist.
+   
+*** On JPA Annotations
+
+    Note that here you specify as well all of the annotators to
+    properly interact with your relational model.
+
+    This is integral part of the JPA API. You can read more about it at
+    the same link in [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][here]].
+
+    Note that we do not work a lot through such JPA layer. We work
+    directly through SQL. I think this is not a bad idea as through it
+    you will be able to more quickly transition from one language to
+    the other in the future.
+
+    Moreover, I prefer SQL as being declarative it is much more
+    straightforward to understand what is needed.
+
+    So on this I prefer to keep one layer of abstraction and work in
+    the way the team is working. 
+
+
+
+
+
+
+
+** Hiberante
+
+   Note that you have a different blog entry for this. You should
+   [[https://marcohassan.github.io/bits-of-experience/posts/object-relational-mapping/][check at it]].
+
+   This goes a little bit hand in hand with what follows on JPA.  
+
+
+** TODO Guava
+
+   Check at this [[https://github.com/google/guava][url]].
 
    It seems to be a thing in the Java world.
 
    Already encountered it a couple of times.
 
    Check at it in a more thorough way when you have time. 
-      
-   
+
+
+** TODO Method Handles
+
+   Apparently introduced in Java 7.
+
+   You might want to [[https://www.baeldung.com/java-method-handles][check at it]].
+
+   Think of MethodHandle as a modern, more flexible, more typesafe way
+   of doing reflection.
 
 
 * On The RandomAcess Interface
@@ -5356,7 +6243,14 @@ public int addNum(int numA, int numB) {
 
        this is another javadoc rendering thing. this is not that
        important to me at this stage. check at it later in case of
-       interest. 
+       interest.
+
+   20. *See <a
+       href="https://docs.spring.io/spring-hateoas/docs/current/reference/html/#server.affordances">Affordances</a>*
+
+       Example of embedding an external link into docu.
+
+       Note that this is very html alike. 
 
 
 ** Working standards
@@ -5380,6 +6274,7 @@ public int addNum(int numA, int numB) {
     documentation. I.e. you separate different paragraphs and make
     everything more ordered.
     
+
 *** Package Documentation
 
     In general *always include a general documentation for each
@@ -5442,24 +6337,11 @@ package java.lang.applet;
   go deep into [[https://www.oracle.com/java/technologies/javase/codeconventions-introduction.html][this topic]]. Did put it in your calendar though. Go back
   to it at some point when you have time. 
    
-
-* Polymorphism
-
-  Overridden methods are another way that Java implements the “one
-  interface, multiple methods” aspect of polymorphism.
-
-  Part of the key to successfully applying polymorphism is understanding
-  that the superclasses and subclasses form a hierarchy which moves from
-  lesser to greater specialization.  Used correctly, the superclass
-  provides all elements that a subclass can use directly. It also
-  defines those methods that the derived class must implement on its
-  own. This allows the subclass the flexibility to define its own
-  methods, yet still enforces a consistent interface.
   
 
+
 * Encapsulation
-
-
+  
 *** Access Control
 
     There are as usual 3 specifiers. =public=, =private=, =protected=.
@@ -5642,74 +6524,8 @@ class B extends A { // ERROR! Can't subclass A
 }
     #+end_src 
     
-
-* On Java Persistence API - JPA
-
-  [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][Read this]]. The following notes are a simple copy and paste of that
-  article.
-
-  ------------------
   
-** JPA in the historic context
 
-   The core question here is about /persistence/, which loosely means any
-   mechanism by which Java objects outlive the application process that
-   created them.
-
-   The JPA specification lets you define which objects should be
-   persisted, and how those objects should be persisted in your Java
-   applications.
-
-   So this is more a styling-guide at the macro-level. You have then
-   all of the different frameworks through which you can implement such
-   theoretical construct.
-
-   So Java Persistence API is highly related with ORM. As this is the
-   old-school way of programming and was the norm the two developed
-   hand in hand. Today with the advent of NoSQL you have Java
-   Persistence API being developed and formed for the NoSQL databases. 
-
-   ORM - object-relational mapping. So through ORM you are able to work
-   through objects and stay within the first-class citizens of Java and
-   still, at the same time, interact with the relational tables of your
-   application.
-
-   Hibernate is the default ORM used across the industries as you
-   quickly learned after 2 months of exposure to the Java world.
-
-** JPA in the application context
-
-   So this is how the JPA fits the application logic.
-   
-#+begin_export html
- <img src="../../images/Screenshot 2021-11-02 134907.png" class="center">
-#+end_export
-
-   You can then quickly imagine how the picture would change to the
-   NoSQL space. Nothing big would change. Just the connector, the
-   general theoretical API specifications to interact with NoSQL etc.
-
-   But in general the high-level structure will persist.
-   
-** On JPA Annotations
-
-   Note that here you specify as well all of the annotators to
-   properly interact with your relational model.
-
-   This is integral part of the JPA API. You can read more about it at
-   the same link in [[https://www.infoworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html][here]].
-
-   Note that we do not work a lot through such JPA layer. We work
-   directly through SQL. I think this is not a bad idea as through it
-   you will be able to more quickly transition from one language to
-   the other in the future.
-
-   Moreover, I prefer SQL as being declarative it is much more
-   straightforward to understand what is needed.
-
-   So on this I prefer to keep one layer of abstraction and work in
-   the way the team is working. 
-  
 
 
 * Snippets
@@ -5772,42 +6588,9 @@ class TimeMe {
 
 
 * TODO Profiling
-   
 
-* On the DataFrame issue
+  It will be good to check at it at some point.
 
-  Ok so this is a *huge huge* issue in Java.
-
-  It is quite a funny thing that nobody managed to solve the issue so
-  far.
-
-  I mean you can create your dataframe internal representation pretty
-  quickly as with the libraries you have in here.
-
-  Still there are too big hurdles cause even when you have these
-  internal representations you will miss basics functionalities such
-  as joins etc.
-
-  So what I understand it is the classical way of working in java is
-  the following:
-
-  - you work with your internal representation of the table. you write
-    it to a staging table in the db - plenty of libraries for doing
-    it - 
-
-    you use a stored procedure to do your sql business logic in there.
-
-    you get back your transformed table - plenty of libraries to do
-    that - you continue to operate in your business. 
-
-  so this is basically the logic of java but you see it is pretty
-  rough and not that nice. 
-
-** TODO data management libraries                                  :noexport:
-
-   Have as well still to understand what libraries are available for
-   data management in Java. Explore =poi=. Understand what other
-   libraries are available for managing data frames etc.
+  
 
 
-   

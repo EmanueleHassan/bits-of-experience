@@ -81,6 +81,48 @@ deployment.
 
 {{{TEASER_END}}}
 
+* Resoruces
+
+  So basically this post is not the best written.
+
+  I was doing a lot at the time together. It works and I was able to
+  keep on moving on a lots of fronts. /Concurrently/.
+
+  Though, I am aware that this post is not the most well written. It
+  is ok. You will have the time to restructure the thing. In general
+  this section should give you this sum-up understanding of a proper
+  use of the tool.
+
+  I would just have to take the time to restructure the entire post
+  but this is likely never gonna happen given the amount of things I
+  have to work on.
+
+  In any case now you understand that this is pretty much a
+  programming language. It is like the emacs config you
+  program.
+
+  Conceptually a similar way of programming, which makes actually
+  sense given that the ultimate program goal.
+  
+  Note now that essentially you have to understand that there are a
+  couple of basics api - the repositories, plugin etc. These are
+  written in groovy which is the language behind it. It is like lisp
+  in the emacs counterpart. 
+
+  Then given the fact that you use a plugin, it will give you a futher
+  set of api that you can leverage in order to perform the relevant
+  tasks and leverage the power of the functions behind it.
+
+  You can find a list of all of the available plugins [[https://plugins.gradle.org/][here]].
+
+  This is handy as you might find sometimes in books etc. outdated
+  stuff. You can then search there the relevant plugins if existing
+  etc.
+
+  You can then see the api referece there once you select the relevant
+  package. 
+
+
 * General Idea
 
   So basically this is nothing else than a tool that is system and OS
@@ -128,8 +170,8 @@ deployment.
 
    So basically once you have in mind your desired build workflow, you
    can specify it into a build-file. 
-
    
+
 ** Build Engine
 
    The build-engine is the engine that takes the declarations of the
@@ -155,86 +197,72 @@ deployment.
    Next we will explore some build-tools in more depth. 
    
 
-* On Ant and Maven
+** Basics Concepts that must well sit in your mind
 
-   So I keep it short here but you can find in the book in the
-   introductory chapter some quick introduction to Ant and Maven. It
-   is well written and in a few pages you will get the overview of
-   it. 
+   So basically understand now that the engine compiles and packages
+   your code in the =./build= repository.
 
-   So I was wondering why in Java you always work with very long
-   chains of empty repositories. The answer lies in such build tools.
+   By default all of the code is packaged into a single =.war/.jar=
+   visible in there.
 
-   While the Ant built-tool provides you with the flexibility of your
-   choice when building your project, maven started to impose some
-   standards. I.e. if you structure your project in adherence with
-   these standards, your build-tool will know out of the box where to
-   find the relevant pieces of your projects.
+   This follows the convention properties that you set in the gradle
+   set up.
 
-   So basically you can then have minimal configuration and
-   consistency across your enterprise on how such projects are
-   managed. Note that such standard is to have code in the
-   =src/main/java= repo.
+   I.e. the standard
 
-   Moreover maven started to introduce a default build lifecyle that
-   would consist of the follwoing:
+   #+begin_src json
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+   #+end_src
 
-   - Compiling source code
+   you specify in your gradle build file.
 
-   - Running unit and integration tests
+   You can inspect such pacakged binary files with the usual:
 
-   - Assembling the artifact (for example, a JAR file)
+   #+begin_src sh
+jar tvf <pacakged-binary>
+   #+end_src
 
-   - Deploying the artifact to a local repository 
+   You will find there the usual structure of your packaged binary code.
+   
 
-   - Releasing the artifact to a remote repository
+** Source Compatibility vs. Target Compatibility
 
-   so the workflow is now given.
+   This will be especially important when your projects grow over
+   time.
 
-   Now you can call in maven the execution of a given =phase=
-   (i.e. step in the build lifecycle above) and all of the previous
-   steps will be performed.
+   It might happen at some point that you have to adapt your Java
+   version.
 
-   Now this - obviously biased - book suggests the following
-   key-element to choose gradle over the other mentioned built-tools:
+   So understand the difference between the source compatibility and
+   the target compatibility. This is important in order to strcture
+   your gradle projects accordingly. 
+
+   So understand the following - according to the [[https://www.baeldung.com/gradle-sourcecompatiblity-vs-targetcompatibility][following source]] -:
+
+   #+begin_src groov
+java {
+    sourceCompatibility = "1.6"
+    targetCompatibility = "1.8"
+}
+   #+end_src
 
    #+begin_quote
-Either you choose full flexibility and extensibility but get weak
-project standardization, tons of boiler-plate code, and no support for
-dependency management by picking Ant; or you go with Maven, which
-offers a convention over configuration approach and a seamlessly
-integrated dependency manager, but an overly restrictive mindset and
-cumbersome plugin system.
+   =sourceCompatibility=: this is higher-capping the versions of
+   java that you can use for compiling your project.
+   Meaning you can just use features available up to that version.
 
-Wouldn’t it be great if a build tool could cover a middle ground? Here are some
-features that an evolved build tool should provide:
-
-- Expressive, declarative, and maintainable build language.
-
-- Standardized project layout and lifecycle, but full flexibility and
-  the option to fully configure the defaults.
-
-- Easy-to-use and flexible ways to implement custom logic.
-
-- Support for project structures that consist of more than one project
-  to build deliverable.
-
-- Support for dependency management.
-
-- Good integration and migration of existing build infrastructure,
-  including the ability to import existing Ant build scripts and tools
-  to translate existing Ant/ Maven logic into its own rule set.
-
-- Emphasis on scalable and high-performance builds. This will matter
-  if you have long-running builds (for example, two hours or longer),
-  which is the case for some big enterprise projects.
+   =targetCompatibility=: note that the compatibility above specifies
+   the compiling properties.
+   This parameter is different in that it specifies the version of the
+   generated classes. This ultimately means that by it you specify the
+   *lowest* Java Version the program can run on.
+   It specifies therefore the lowest version of the JVM.
    #+end_quote
-
-   I will see in time if I agree or not with the above.
    
 
 * Gradle Syntax and Specifics
-
 
   #+begin_quote
   Following a build-by-convention approach, Gradle allows for
@@ -259,7 +287,160 @@ features that an evolved build tool should provide:
 
   Note that the DSL is written in Groovy. Given that this is a flare
   of Java, you can even extend the DSL language in plain Java.
+
   
+*** On the most important gradle files.
+
+    You can find all of the relevant files that you can specifiy in
+    your gradle projects in the following [[https://stackoverflow.com/questions/45387971/when-to-use-gradle-properties-vs-settings-gradle][URL]].
+
+    Below an example of a multi-project build. This is the most
+    complex one and through it you can properly understand the
+    different file types:
+
+    #+begin_example
+(root)
+  +- settings.gradle       
+  +- build.gradle          # optional (commonly present)
+  +- gradle.properties     # optional
+  +-- buildSrc/            # optional
+  |     +- build.gradle    
+  |     +-- src/...
+  +-- build-conventions/   # optional
+  |     +- settings.gradle # empty
+  |     +- build.gradle
+  |     +-- src/
+  |           +-- myconvention.gradle
+  +-- my-gradle-stuff/     # optional
+  |     +- utils.gradle    # optional
+  +-- sub-a/
+  |     +- build.gradle
+  |     +- src/
+  +-- sub-b/
+        +- build.gradle
+        +- src/
+    #+end_example
+  
+    Among the others there are the following.
+
+    
+**** settings.gradle
+
+     The main role of settings.gradle is to define all included
+     submodules and to mark the directory root of a tree of modules,
+     so you can only have one settings.gradle file in a multi-module
+     project.
+
+     #+begin_src gradle
+rootProject.name = 'project-x'
+
+include 'sub-a', 'sub-b'
+     #+end_src
+
+     The settings file is also written in groovy, and submodule lookup
+     can be customized.
+
+     Note that some people leverage the following property in order to
+     make a bit of different things (abusing a bit of the prop.) -
+     like setting project related properties for downloading the
+     relevant dependencies -:
+
+     #+begin_quote
+settings.gradle script will be executed in each build (in comparison
+to multiple build.gradle scripts in multi-project builds). The
+settings.gradle script will be executed before any build.gradle script
+and even before the Project instances are created.
+
+As a consequence, use settings.gradle if your settings are
+build-related and not necessarily project-related or require logic
+before possible subprojects are included.
+     #+end_quote
+
+
+**** build.gradle
+
+     This is the one you generally use as you are mostly working in a
+     sinlge project setting.
+
+     There is one such file per module, it contains the build logic
+     for this module.
+
+     In the build.gradle file of the main module, you can use
+     allprojects {} or subprojects {} to define settings for all other
+     modules.
+
+     In the build.gradle file of the submodules, you can use compile
+     project(':sub-a') to make one submodule depend on the other.
+
+
+**** gradle.properties
+
+     This is optional, its main purpose is to provide startup options
+     to use for running gradle itself, e.g.
+
+     You can think for instance at
+
+     #+begin_quote
+org.gradle.jvmargs=-Xmx=... -Dfile.encoding=UTF-8 ...
+org.gradle.configureondemand=true
+     #+end_quote
+
+     These values can be overridden by a file
+     USER_HOME/.gradle/gradle.properties, and overriden by gradle
+     command line arguments. Also it is possible to set environment
+     variables for the build in this file using systemProp. as prefix.
+
+
+**** my-gradle-stuff/utils.gradle
+
+     (Any name of folder or file is possible.) You can define
+     additional custom gradle files to reuse definitions, and include
+     them in other gradle files via:
+
+     #+begin_quote
+     apply from: "$rootDir/gradle/utils.gradle"
+     #+end_quote
+
+     other places to put this might be src/gradle or src/build/gradle.
+     
+     In such a way you can write general gradle scripts that you can
+     apply across your projects.
+
+     It is effectively a way to properly structure the thing.
+     
+     
+**** buildSrc
+
+     This folder is special, it is *like a separate gradle project in
+     itself*. It is built before doing anything else, and can provide
+     function to use in any other gradle file.
+
+     Because of technical reasons, IDE support for references to this
+     folder work much better than any other way of extracting common
+     code from multiple build.gradle files to a separate location.
+
+     So you see from the previous paragraph it looks as if this is a
+     better substitute for the things mentioned in the previous
+     sub-chapter.
+
+     You can define complex custom build logic in java, groovy or
+     kotlin, instead of writing and deploying a plugin. This is also
+     useful for unit-testing your custom build code, as you can have
+     unit tests. The source folder structure in buildSrc can be
+     adapted like for any java/groovy/kotlin project.
+
+
+**** build-conventions/
+
+     This element is optional and used as a replacement for buildSrc
+     when the logic to be shared is simple, like version numbers, and
+     should not necessarily trigger a full rebuild of a large project
+     for just changing one version of one dependency.
+
+     This sounds interesting as it actually what you want to achieve.
+     
+
+
 
 ** Gradle Conventions
 
@@ -282,7 +463,7 @@ features that an evolved build tool should provide:
  <img src="../../images/Screenshot 2021-10-20 135837.png" class="center">
 #+end_export
 
-   
+
 ** On Scalable Builds - Incremental Builds
 
    For some companies, a large project with hundreds of modules is
@@ -310,7 +491,7 @@ features that an evolved build tool should provide:
 
    You will probably not need it in the near future but keep it in
    mind should it become necessary.
-   
+
 
 ** Continouos Delivery.
 
@@ -324,7 +505,8 @@ features that an evolved build tool should provide:
 
    We are half way there in our team. Go back to it at some point when
    you have time.
-   
+
+
 ** Syntax
 
    #+begin_src java :results output raw 
@@ -499,12 +681,13 @@ groupTherapy
 ** Java Project - The Java Plug-ins
 
     A plugin extends your project by introducing domain-specific
-    conventions and tasks with sensible defaults. One of the plugins
-    that Gradle ships with is the Java plugin. The /Java plugin/ goes
-    far beyond the basic functionality of source code compilation and
-    packaging. It establishes a standard layout for your project and
-    makes sure that tasks are executed in the correct order so they
-    make sense in the context of a Java project.
+    conventions and tasks with sensible defaults.
+
+    One of the plugins that Gradle ships with is the Java plugin. The
+    /Java plugin/ goes far beyond the basic functionality of source
+    code compilation and packaging. It establishes a standard layout
+    for your project and makes sure that tasks are executed in the
+    correct order so they make sense in the context of a Java project.
 
     In order to leverage such a plug-in and start to interact with
     your java project you need to specify the plug-in in your
@@ -576,10 +759,14 @@ apply plugin: 'java'
 
     #+begin_src java :results output raw 
 version = 0.1 
-sourceCompatibility = 1.6 
+sourceCompatibility = 1.6 // that is as well nice in order to manage
+			  // your projects.
 jar {
  manifest { 
- attributes 'Main-Class': 'com.manning.gia.todo.ToDoApp'   // specify main class in header
+ attributes 'Main-Class': 'com.manning.gia.todo.ToDoApp'   // specify
+							   // main
+							   // class in
+							   // header
  }
 }
     #+end_src 
@@ -634,7 +821,7 @@ dependencies {
    application as a war file that you can then run on your
    web-application servers.
 
-   Note that by applying the plug-in you will have at your
+   Note that by applying the plug-in, you will have at your
    availability new dependency configuration groups.
 
    - =providedCompile=: here you specify the dependency you use for
@@ -648,7 +835,7 @@ dependencies {
    - =runtime=: this is the tag to reach exactly the opposite logic of
      the above. Runtime dependencies like the JSTL library aren’t
      needed for the compilation process, but are needed at
-     runtime. They’ll become part of the WAR file.
+     runtime. They’ll become part of the WAR file
 
      When you run ~gradle build~ you will have a packaged =.war=
      file. You can then run your webapplication with it.
@@ -656,21 +843,21 @@ dependencies {
 
 ** Running in an Embedded web-container
 
-  So basically the book is written with the example of the =Jetty=
-  webserver. I can imagine that the same holds for similar concepts
-  for =tomcat=.
+   So basically the book is written with the example of the =Jetty=
+   webserver. I can imagine that the same holds for similar concepts
+   for =tomcat=.
 
-  Basically the idea is that you apply the plug-in:
+   Basically the idea is that you apply the plug-in:
 
-  #+begin_src 
+   #+begin_src 
 apply plugin: 'jetty'
-  #+end_src
+   #+end_src
 
-  Then you can run the web-app server via:
+   Then you can run the web-app server via:
 
-  #+begin_example
+   #+begin_example
 gradle jettyRun
-  #+end_example
+   #+end_example
 
    Internally, the Jetty plugin does know all of the relevant
    dependencies and is able to find and execute the =war=. As the War
@@ -680,14 +867,14 @@ gradle jettyRun
    You can finally set some tasks and change the relevant deployment
    statndards by specifying the following:
    
-  #+begin_src java :results output raw 
+   #+begin_src java :results output raw 
 jettyRun { 
- httpPort = 9090
- contextPath = 'todo'
-}
-  #+end_src 
-
+    httpPort = 9090
+	contextPath = 'todo'
+	}
+   #+end_src
    
+
 ** Gradle Wrapper
 
    This is useful as it guarantees that you run your gradle build with
@@ -730,6 +917,9 @@ $ gradle wrapper
    Finally, note that you can costumize the wrapper to download the
    zipped gradle files from a specific location.
 
+   A good reference in case you would need to make modifications on it
+   in time would be [[https://docs.gradle.org/current/userguide/gradle_wrapper.html][the following]].
+   
 
 ** Gradle Configurations
 
@@ -739,7 +929,9 @@ $ gradle wrapper
 
    Recall that the idea of configurations is to provide logical groups
    through which you can scope your dependencies.
-   
+
+   I.e. think for instance in terms of dependencies that you just need
+   when =testing=, =compile= time, =runtime=.
 
 *** On Configuration
 
@@ -783,7 +975,66 @@ configurations {
     There is then a section in the book that specfies how you can get
     all of the dependencies for a particular configuration. Package
     them into a =.war= get a specific container - say Tomcat-7x - and
-    run the =.war= into it. 
+    run the =.war= into it.
+    
+*** The basics java plug-in configurations
+
+    These you should learn and properly undestand cause when you set
+    up your projects in Gradle it is annoying that you are missing all
+    of that.
+
+    One of the major confusion when checking at the basics java
+    plug-in is the difference between =implementation= and =api=.
+
+    This should well sit in your understanding.
+
+    - The =api= configuration should be used to declare dependencies
+      which are exported by the library API
+
+    - The =implementation= configuration should be used to declare
+      dependencies which are internal to the component.
+
+    Dependencies appearing in the api configurations will be
+    /transitively exposed/ to consumers of the library, and as such
+    will appear on the compile classpath of consumers.
+
+    Dependencies found in the implementation configuration will, on
+    the other hand, not be exposed to consumers, and therefore not
+    leak into the consumers' compile classpath.
+
+    So understand that everything is basically around the concept of
+    *transitivity*. If you get that right you get everything right.
+
+    An example will make the point cristal clear and then your job
+    will simply be to memorize it. It is based on [[https://stackoverflow.com/questions/44493378/whats-the-difference-between-implementation-api-and-compile-in-gradle][this]].
+    
+    In order to understand that even better check at the following:
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-03-14 121016.png" class="center">
+    #+end_export
+
+    Then the basic idea is that depending on the configuration you
+    define different transitive rules will apply.
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-03-14 121551.png" class="center">
+    #+end_export
+
+    In the above MySecret is an object of the =myjavalibrary=
+    class. So with the =compile/api= option you are able to see it
+    with the =implementation= one (Option #1) not.
+
+    For the other compile options check at [[https://docs.gradle.org/current/userguide/java_library_plugin.html][the following]].
+
+    There is a nice table there with all of the different components.
+
+    However, note that apart from that tricky little bit the rest is
+    quite standard.
+
+    Just recall that for testing you specify the dependencies through
+    =testimplementation= and cousins. This is a bit different but
+    fine. 
 
 
 ** Gradle Dependencies Management
@@ -950,18 +1201,243 @@ org.hibernate:hibernate-core:3.6.3-Final
     provided metadata and instate your own transitive dependency
     definition. This is most likely what Dave was talking about
     today.
+   
+*** Checking at the dependency tree for your project
 
+    That might be extremly useful.
 
+    With the following command you can inspect the entire depedency
+    tree in your projects
 
+    #+begin_src sh
+gradlew.bat -q dependencies 
+    #+end_src
+
+    In such a way you should as well be able to see if a given thing
+    is in the =classpath= or not.
     
 
+** Multi-projects
+
+   So this is another important piece of the cake in gradle.
+
+   This is of paramount importance when your project grow larger.
+
+   The idea is to work in a modularized way via seperation of
+   concerns.
+
+   You should not work on the highest level.It is not recommended and
+   sooner or later the code will be too cluttered. On the top of it
+   when projects will grow very large, the build time will grow too
+   large.
+
+   So from here the idea of multi-projects set-up. See for instance
+   [[https://marcohassan.github.io/bits-of-experience/posts/spring/][spring as a good example]] of a large well constructed
+   multi-project. 
+
+   So the first thing to understand is that you register different
+   projects in the =settings.gradle= file.
+
+   Once you do so, you should be able to see the registered projects
+   via the following command:
+
+   #+begin_src sh
+gradle projects
+   #+end_src
+
+*** How to register new projects
+
+    Consider the following 101 example:
     
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-22 100435.png" class="center">
+    #+end_export
 
-        
-   
+    Consider as well the following dependency structure among the
+    different projects:
 
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-22 100742.png" class="center">
+    #+end_export
 
-   
+    Note that the process for understanding multi-projects set ups in
+    gradle is the follwoing:
+
+    #+begin_quote
+In step 1, Gradle searches for a settings file in a *directory called
+master* with the same nesting level as the current directory.
+
+If no settings file is found in step 1, Gradle searches for a settings
+file *in the parent directories, starting from the current directory*.
+
+In the case of subproject2, the search would be suproject1 > root.
+
+If one of the steps finds a settings file and the project is included
+in its definition, the project is considered part of a multiproject
+build.
+    #+end_quote
+    
+    The question is then about how to write the =settings.gradle= file
+    in order to specify the project structure.
+
+    You can induce the projects in the follwoing way (see that below
+    is just illustrative, could have written everything in the same
+    line - note that you could also specify more fine grade properites
+    such as build files naming conventions in the projects etc.; see
+    the book if interested):
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-22 100954.png" class="center">
+    #+end_export
+
+    Finally note that there are two ways for structuring your
+    projects; one is hierarchical the other is flat. I am going for
+    the hierarchical one.
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-22 102502.png" class="center">
+    #+end_export
+
+*** Project Interface
+
+    This is the interface when working with your projects. Meaning
+    that here are the methods for working with your projects when
+    setting up the multi-project build process.
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-09-22 103647.png" class="center">
+    #+end_export
+
+    We will check at them sequentially in general understand that the
+    first chunck represents the specific project configurations,
+    i.e. just applied at project level.
+
+    The second chunck represent build set up that should be shared
+    across all projects (including root) / sub-projects (without root). 
+    
+    The last chunck controls the build lifecycle - which project
+    should be built first, which second etc.
+
+**** Example
+
+     Note the following example, nothing fancy. There is as well a lot
+     of repetition that could be avoided by using the =subproject=
+     api.
+
+     What is important to see is that you specify per project
+     configuration by passing the relevant path to the project you
+     wish to configure as a /path/ parameter in the project interface.
+
+     Example:
+     
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-09-22 105752.png" class="center">
+     #+end_export
+
+     Note that it is possible now to compile individual sub-projects
+     without having to recompile the entire project.
+
+     I.e. from the root project you can point to the relevant
+     sub-project and compile with build.
+
+     Thik for instance in the example at =$ gradle :model:build=.
+
+     Finally important is to specify the relevant project
+     dependencies. Meaning if you a project is dependent on another
+     you should specify this compile time dependency and add the
+     relevant classes and transitive dependencies to your build.
+
+     You can do this in the relevant dependencies section within the
+     relevant project. Say for instance in the example discussed:
+
+     #+begin_src groovy
+project(':repository') {
+ ...
+
+ dependencies {
+ compile project(':model') 
+ }
+
+}
+     #+end_src
+
+     Note now that in multi-projects you might have tons of
+     dependencies. You might not want to rebuild the entire project
+     together will all of its dependencies.
+
+     The idea is the following:
+
+     #+begin_quote
+During development, often times you know which source files have been
+changed in what subproject.
+
+You don’t need to rebuild a *subproject that you didn’t change*.
+
+For these situations, Gradle provides a feature called partial
+builds.
+
+Partial builds are enabled through the command-line option –a or
+--no-rebuild.
+     #+end_quote
+
+     So this is essentially it: =gradle :repository:build -a=
+
+     Note now the following two commands:
+
+     #+begin_src sh
+
+     gradle :repository:buildNeeded           ## To ensure that code didn’t
+					      ## break by accident, you’ll
+					      ## want to rebuild and test
+					      ## the projects your current
+					      ## project **depends on**.
+
+     gradle :repository:buildDependents       ## you can verify the impact
+					      ## of your code change by
+					      ## building and testing
+					      ## **dependent** projects
+
+     #+end_src
+
+     You can even set *task dependencies*:
+
+     #+begin_src groovy
+project(':model') {
+ task hello(dependsOn: ':repository:hello') << { 
+ println 'Hello from model project'
+ }
+}
+     #+end_src
+
+**** Example improvements
+
+     So basically the above was the general set up.
+
+     Common practice is to set the relevant properties that apply
+     across all of the projects - think for instance at the groupid
+     variable - with the =allprojects= variable.
+
+     The relevant properties that apply at subproject level with the
+     =subproject= variable at root level.
+
+     You can then create nested =build.gradle= files at the different
+     subprojects levels.
+     
+     #+begin_export html
+      <img src="../../images/Screenshot 2022-09-22 134244.png" class="center">
+     #+end_export
+
+     Important is to understand that:
+
+     #+begin_quote
+Having a dedicated Gradle file per project indicates that you’re
+dealing with a specific project.
+
+Therefore, enclosing your code into a project closure becomes
+optional.
+     #+end_quote
+
+     
 ** Testing
 
    Recall the three types of tests:
@@ -1125,18 +1601,24 @@ project(':repository') {
 
     In order to run tests by pattern you can use the following:
 
-    #+begin_example
-$ gradle -Dtest.single=**/*Spec :repository:test
+    #+begin_example sh
+## Note that the below is outdated. It worked for gradle versions <= 5
+## $ gradle -Dtest.single=**/*Spec :repository:test
+
+## Gradle 7
+
+# Testing a specific class.
+$ gradle test --tests "<Name of Test Class you want to test>"
+
+# Testing a specific repository
+$ gradle test --tests "<specific.package.blabla.*>"
+
     #+end_example
 
-    I.e. note the notation: =<taskName>.single =
-    <testNamePattern>=. Note that other options are as well
-    available. Check at the documentation for it, should you be
-    interested.
-
     Note that for this reason you should structure your test naming
-    conventions in the proper way, meaning with the suffix
-    =IntegTest=.
+    conventions in the proper way, meaning with the suffix =IntegTest=
+    etc. You can then run different types of tests according to your
+    development needs.
 
     You can then set up the testing of the different components  in
     different tasks. See for instance the following:
@@ -1241,29 +1723,34 @@ task integrationTest(type: Test) {
 
     For illustrative purposes:
     
-#+begin_export html
- <img src="../../images/Screenshot 2021-10-22 140729.png" class="center">
-#+end_export
+    #+begin_export html
+     <img src="../../images/Screenshot 2021-10-22 140729.png" class="center">
+    #+end_export
 
+    --------
+
+    All of the testing possibilities above are very important.
     
-*** On remote debugging
 
-    *Important:* this is probably very important to you. As this is
-    the way emacs operates most of the time. I can well imagine that
-    lots of integration have been constructed on the top of it.
+*** On remote debugging 
 
-     Being able to remotely debug your tests with an IDE is an
-     invaluable tool to have in your toolbox. Gradle provides a
-     convenient shortcut for enabling remote debugging:
-     =<taskName>.debug=, which means you can use it for other tasks as
-     well. Using this startup parameter will start a server socket on
-     port 5005 and block task execution until you actually connect to
-     it with your IDE.
+    Being able to remotely debug your tests with an IDE is an
+    invaluable tool to have in your toolbox. 
 
-     I.e. you can for instance run
+    Gradle provides a convenient shortcut for enabling remote
+    debugging: =gradle test --debug-jvm=, which means you can use it
+    for other tasks as well. In fact it is the same flag that you use
+    when launching your spring application in debugging mode.
+
+    Using this startup parameter will start a server socket on port
+    5005 and block task execution until you actually connect to it
+    with your IDE - or in emacs by launching the dap debugger on that
+    specific port.
+
+    I.e. you can for instance run
 
      #+begin_example
-$ gradle -Dtest.debug :repository:test
+$ gradle test --debug-jvm <other tests properties of interest - for instance restricting tests to some repo etc.>
      #+end_example
      
 
@@ -1351,49 +1838,48 @@ test {
 #+end_export
 
 
+** On checking the dependencies of a project
 
+   This is fundamental in order to properly refactor the code.
 
+   You can use this command.
 
-* Hands On
+   It will expose the general tree with all of the relevant
+   dependencies in your project.
 
-  Ok so the above notes will help you to gain a high level overview of
-  gradle.
+   #+begin_src sh
+ gradle -q dependencies --configuration testRuntimeClasspath
+   #+end_src
 
-  In this way you were able to understand at the high-level the
-  general structure and life-cycle of a Java project.
+   With this you will be able to quickly isolate the relevant
+   dependencies and create compact gradle scripts for your code. 
 
-  But as the germans always say: /übugng macht den Meister/.
+  
+** Gradle Increasing the version
 
-  So let's practice.
+   So basically this is a thing that you need when developing.
 
-  This is a good way to strat writing your Java projects and start to
-  gain your independence in that language.
+   Especially when everything is integrated in a CI/CD pipeline.
 
-  Plus our testing and productive environment is too large to proper
-  understand the language. It is too complex to start it.
+   You implemented a groovy script in order to increase the version of
+   the project according to your need.
 
-  You have to gain the understanding of the Java environments bottom
-  up. You need a playground. There you can start to set up different
-  projects etc. 
+   The solution borrows heavily from [[https://stackoverflow.com/questions/39824574/version-increment-using-gradle-task][here]].
 
-  In order to get my playground I installed gradle =7.1.1=, same
-  version we use for the productive env.
+   You can then check your 101 for the way you set it up there. You
+   essentially have two groovy scripts. You apply the second one
+   importing the first.
 
-  It is nice that in gradle you can set up a project with ~gradle
-  init~ command.
+   You can then call the relevant increase in build version before
+   building the project.
 
-  Then you can enter a few decisions and you will have your skeleton
-  for your project.
+   Say for instance:
 
-  This is very similar to the way you set up spring projects with the
-  online spring initializer. So basically there is a tendency to work
-  in such a way in Java, and for freshies of the environment like me
-  it is ok - use it until you will be able to properly stand on your
-  feet.
+   #+begin_src sh
+ gradle bumpPatchVersion build
+   #+end_src
 
-  So started a project. This is on your Desktop. Try to test the
-  Java-LSP on emacs seriously over there.
+   In such a way you would increase the patch version before building
+   the project. The last digit would then represent the build version
+   of interest.
 
-  Start to write a parser application over there.
-
-    

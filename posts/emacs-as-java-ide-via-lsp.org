@@ -10,6 +10,46 @@
 
 #+END_COMMENT
 
+#+begin_export html
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+#+end_export
+
 So I will work quite a lot with Java in the next couple of years. So I
 have to properly set up a strong IDE and workflow for working in it.
 
@@ -80,6 +120,122 @@ Check as well [[https://xpressrazor.wordpress.com/2020/11/04/java-programming-in
 java-lsp. 
 
 
+* Issues when installing the server
+
+  So recently I migrated laptop. I am having issues with the
+  installation of the new jdtls server.
+
+  So here some notes in the case that you should work with it again in
+  the future.
+
+  So essentially the material is as well expressed [[https://www.reddit.com/r/emacs/comments/ilucsy/lsp_java_server_cannot_start/][here]].
+
+  So basically the first steps you have to take are the removal of
+  the important libaries:
+
+  - =.lsp-session-v1=
+
+  - =.cache/lsp/eclipse.jdt.ls/=
+
+  Then when you restart your emacs and open a java file, with your
+  current configuration you will automatically be prompted to install
+  the jdts server.
+
+  You can do that and should you not be able to run the server it is
+  worthwhile to check at the logs available at
+  =.emacs.d/.cache/lsp/eclipse.jdt.ls/config_win=.
+
+  
+** ISSUE try this as the next step
+
+   In this case it seems that the new lsp server that you download
+   out-of-the box requires Java-17 to properly run.
+
+   - download java 17 and see if that manages to fix the issue.
+
+   - changing the path and java_home variable to Java 17. Change it
+     back should you run into problems.
+
+     Got some improvement at some point it seems to work. Then
+     restarted emacs and got an error. Cannot find java in there for
+     some reason.
+
+   So essentially with both you have issues. There is something wrong
+   your java setup.
+
+   Check at the following errors:
+
+
+      1. In the case of running with Java 17 - you seem to be able to
+         connect to the eclipse.jdts lsp server. You get the following
+         error when trying to build the project though.
+
+	 #+begin_quote
+         Unsupported class file major version 61
+	 #+end_quote
+
+	 According to [[https://mkyong.com/java/java-unsupported-class-file-major-version-61/][this source]]: so it looks as if the runtime of
+         java is below java 17 - the version you used to compile the classes.
+
+
+      2. If you are using java 11 as your java_home and set the jdk
+         properly in your path you get the following error:
+
+	 #+begin_quote
+	 Unresolved requirement: Require-Capability: osgi.ee; filter:="(&(osgi.ee=JavaSE)(version=17))"
+	 #+end_quote	 
+
+	 This ultimately means that: the runtime shipped by efxclipse
+         does not know Java-17. Please lower that to 11 for the
+         moment. See [[https://www.eclipse.org/forums/index.php/t/1110558/][the following source]].
+
+
+      So the two problems look quite similar. In fact they are in fact
+      connected. The question is then where these runtime are that are
+      causing mess.
+
+      So fix this issue it is quite annoying. Try to clear all of the
+      files containing the Java metadata and make order over there.
+
+*** Inspect the following
+
+       I think this might be the issue - check at the java -version of
+       your installed openjdk:
+
+       #+begin_quote
+ openjdk version "17.0.6" 2023-01-17 LTS
+ OpenJDK Runtime Environment Microsoft-7209853 (build 17.0.6+10-LTS)
+ OpenJDK 64-Bit Server VM Microsoft-7209853 (build 17.0.6+10-LTS, mixed mode, sharing)
+       #+end_quote
+
+       So you see the runtime environment is higher than the JDK
+       version. Check the message of Dave. Maybe this is the issue.
+
+       Note that LTS stands for /Long-Term-Support (LTS)/ in the
+       above. It means that the provider plans to support such versions
+       for long time after their release.
+
+       -----------------------------------------------------------------
+
+       You have to understand how you can go down from that =+10=
+       version. I think this is what might cause confusion when
+       building the project with Java 17.
+
+       Otherwise try to restrict the source and target in your gradle
+       project at the specific =17.0.6=.
+
+       -----------------------------------------------------------------
+
+       Note that the following holds for the Java version 11:
+
+       #+begin_src
+openjdk version "11.0.12" 2021-07-20
+OpenJDK Runtime Environment Microsoft-25199 (build 11.0.12+7)
+OpenJDK 64-Bit Server VM Microsoft-25199 (build 11.0.12+7, mixed mode)
+       #+end_src
+
+       And it builds perfectly. So it must be something different.
+
 * Find reference
 
   =lsp-find-references=:  For an object visualize where it is used in
@@ -102,7 +258,7 @@ java-lsp.
 
 
 * peek references
-
+  
   basically the same as finding by reference. it will display more
   information in the same buffer though.
 
@@ -113,34 +269,101 @@ java-lsp.
 
   I might even like this better. it is not bad as you see on the code
   and then if you select it you actually jump to that piece of code as
-  in the normal way. 
+  in the normal way.
+  
+
+* IN-PROGRESS Alternative to the Reference possibilities
+
+  Note that I am having currently some problems with the reference
+  methods above, apparently the project is too big and everzthing
+  eventually crashes.
+
+  I guess that the issue will eventually be fixed in future versions.
+
+  In the meanwhile I have a quite handy solution. This involves in
+  leveraging =ripgrep= in combination with projectile.
+
+  It is in this sense possible to search for keywords, text and
+  regular expressions across your project.
+
+  You will then see where the thing is used across the project.
+
+  This is pretty much the same functionality of the above. Peek
+  reference would be cooler if it would be properly working.
+
+  As you could see on the fly the different references and could make
+  sense of them on the fly. I guess that you will have to ask a lot to
+  your emacs for working in such a way. Especially in these larger
+  projects. 
 
 
 * Refactor
+  
+** general refactoring - naming etc
 
-  when you call the rename option through the =lsp= server you should
-  actually rename all of the variables across all of the source files
-  in the project. this is actually not happening in my case so there
-  must still be some minor error.
+   when you call the rename option through the =lsp= server you should
+   actually rename all of the variables across all of the source files
+   in the project. this is actually not happening in my case so there
+   must still be some minor error.
 
-** TODO check if it refactors across projects
+** refactoring of parameters
+
+   note that in Java you can not assign default to parameters.
+
+   this is a big drawback to my mind.. it was pretty useful as a
+   feature.
+
+   now you have the option to implement the default parameters either
+   by overloading the stuff, or by encapsulating some information into
+   some object or finally by using the option of eclipse of
+   refactoring.
+
+   Depending on the circumstances one might be better than the
+   other. It is a question of experience and of checking how different
+   things work.
+
+   So the idea is that if you enter the refactoring view, you will
+   have the option of *changing method signature*.
+
+   This is a nice way to set a default. You can in fact add a
+   parameter and specify over there the default such that eclipse will
+   actually change all of the existing methods by adding the parameter
+   of choice with the *default* value of choice.
 
 
 * Flycheck
 
-  Activate it. Then with =lsp-ui-flycheck-list= you will get a list
-  with all of the errors and inconsistencies you have in your source
-  files.
+  With =lsp-ui-flycheck-list= you will get a list with all of the
+  errors and inconsistencies you have in your source files.
 
-  that is good.
+  that is good and it corresponds to your eclipse way of seeing your
+  errors etc.
 
-  Have to compare as well to the =sonarqube= that Sergio mentioned.
+  Note that there you see as well the todos as in eclipse so there is
+  a 1:1 in this sense.
 
-  Note that there are issues with the last stable release of Melpa. It
-  is still not working. This is emacs. Have to deal with the dirty
-  world of software development. Check at [[https://github.com/flycheck/flycheck/issues/1754][this thread]] and implement
-  that dirty workaround as it is more than 1 year that they are
-  promising a stable release but nothing is moving.
+  See for instance the following on the 101 spring application I am
+  working on:
+
+  #+begin_export html
+   <img src="../../images/Screenshot 2022-02-03 164053.png" class="center">
+  #+end_export
+
+  /Update 01/05/2022:/
+
+  Flycheck 32 was finally released. This solved the flycheck issues I
+  was experiencing with the lsp-java interaction.
+
+  Was good to subscribing to the issue where this was being
+  discussed. It kept me up to date for the release.
+
+  Now it is cool cause you can have a per buffer list of your
+  errors. You can also quickly navigate the errors with all of the
+  available flycheck commands.
+
+  Finally you will have the highlighted TODOs and errors.
+
+  So cool - you have a better set up than eclipse in this sense now.
 
 
 * lsp format buffer
@@ -150,24 +373,44 @@ java-lsp.
 
   =lsp-format-buffer=.
 
-  not that recommendned. use different packages that are tailored to
+  not that recommended. use different packages that are tailored to
   the language for doing code-formatting.
 
   usually it works better. 
-  
+
 
 * Projectile
 
   this is strong as it gives you all of the options to navigate your
   project and code.
 
-  i.e. jump to the test files etc.
+  i.e. jump to the test files etc. I mean this is a non-specific lsp
+  thing, so you can understand it online and is out of scope for this
+  entry.
 
+  Here you have as well all of the functions that keep track how you
+  moved across buffers and files in your project and you can then move
+  back and forth in a fast way with all of the shortcuts that you have available.
 
-* Debugging
+** Building and Testing
 
-  have to properly set-up the dap debugger. it looks as broken right
-  now.
+  Ok that is not properly lsp-related but let's put it in here. Maybe
+  I will then write some separate notes on projectile later.
+
+  You can run your projects from emacs with the =projectile
+  run-project= command.
+
+  Here you can then pass for instance your =gradlew.bat build=
+  command.
+
+  However, note that you might as well not work in such a way. This
+  for instance when you are working with your stack with Spring. 
+
+  You can even run the unit-root tests for your project by running
+  =projectile test-project=.
+
+  Working as a charm now. Just have to configure it with =gradle= for
+  your actual project but then you are good to go.
 
 
 * class hierarchy
@@ -175,10 +418,10 @@ java-lsp.
   you can visualize the class hierachy with =lsp-ui-imenu=
 
   this is essentially the same information as you can have with the
-  *lsp-header-breadcrumb* below.
+  [[*lsp-header-breadcrumb][lsp-header-breadcrumb]] below.
 
   so I would not recommend it too much.
-  
+
 
 * lsp-header-breadcrumb
 
@@ -189,7 +432,7 @@ java-lsp.
 
   this will adapt as you cycle through your code and it should help
   you a bit to keep the visibility over your entire code. 
-  
+
 
 * Project Root
 
@@ -228,7 +471,7 @@ java-lsp.
   infer all of your relations for your entire project and you can jump
   to *implementations* and *definitions* for all of your methods,
   classes and variables across your entire projects.
-  
+
 
 * On checking the hierarchy and dependencies
 
@@ -256,7 +499,24 @@ java-lsp.
   In such a way you will be able to visualize the anchestors of your
   file and explore what sits around that source file in the
   hierarchy. That is pretty much informative already and will help you
-  to quickly make sense of your code.
+  to quickly make sense of your code.  
+
+  -------
+
+  /Update 01/05/2022:/ For the point I set up dired-sidebar to
+  function in the same way.
+
+  Probably it is better to work with it. You have now shortcuts to
+  open and close it in a very fast way across your buffers.
+
+  In the sense that you save yourself the time to edit the treemacs
+  workspaces etc.
+
+  You will have to explore in time though. Might be that for
+  programming itself is better as it is more standard and better
+  integrated. 
+
+  -------
 
   Note that in a similar way to lsp there is quite annoying story with
   the set up. I.e. once you select a root/workspace every time you
@@ -272,26 +532,6 @@ java-lsp.
 
   Look at this [[https://emacs-lsp.github.io/lsp-mode/page/troubleshooting/][troubleshooting]] url when you have issues and want to
   debug stuff.  
-
-
-* Building and Testing
-
-  Ok that is not properly lsp-related but let's put it in here. Maybe
-  I will then write some separate notes on projectile later.
-
-  You have your build and test configuration set-up by David.
-
-  You have to understand where the commands for such builds and push
-  are.
-
-  Then you can run your projects from emacs with the =projectile
-  run-project= command.
-
-  You can even run the unit-root tests for your project by running
-  =projectile test-project=.
-
-  Working as a charm now. Just have to configure it with =gradle= for
-  your actual project but then you are good to go.
 
 
 * Debugging
@@ -329,6 +569,24 @@ java-lsp.
   some keys that will be useful for debugging. You can then hide it or
   open it via =M-<f5>=.
 
+  You can then start the debugger with =dap-debug= mapped to =<f5>=.
+  
+** Dap REPL
+
+   Note that this is important as this is the space where you would
+   ultimately run your code in order to understand properly what is
+   going on.
+
+   I.e. you can make all of your experiments and check at the
+   results.
+
+   It is much better done than the respective Eclipse counterpart (the
+   debug shell in there).
+
+   Resembles a bit the python console in this sense.
+
+   You can open it via =dap-ui-repl=
+
 
 * Auto-completion
 
@@ -344,9 +602,48 @@ java-lsp.
   Note that there is still a lot of confusion around that topic in
   lsp for emacs and the way that things are done there at UI level. In
   order to understand this, check [[https://github.com/emacs-lsp/lsp-java/issues/201][this]].
+  
+** TODO autocompleting as well with the return type
+
+   This is suboptimal as you have to cancel it then every time.
+
+   Fix it as it can be quite annoying. 
 
 
-* Note that it will take me some time to completely migrate to Emacs for Java development
+* Lsp java deps list
+
+  In such a way it is possible to quickly navigate all of the
+  necessary dependencies for your projects in your workspace.
+
+  It opens kind of a treemacs thing where you would set the stuff.
+
+
+* Organize Imports
+
+  Use this. I.e. type =C-c l a-a= and organize imports.
+
+  It will clear all of the imports you do not have to use.
+
+  It will as well import all of the stuff you are using in the file.
+
+  So neat. You see that each day you are closing to working better
+  with it. 
+    
+
+* Some Eclipse Notes
+
+  This were a backlog as I could not immediately migrarte to my
+  project.
+
+  Plus, on the top of it much of the functionalities are shared across
+  the two ways of developing.
+
+  Such that understanding how the Eclipse IDE works will help you to
+  make the best out of the lsp experience as you know all of the
+  features that you could possilbly leverage.
+
+  /Update 02/05/2022:/ fully migrated into emacs - space of choice for
+  development purposes. 
 
   This because emacs is not the most easy way you start from scratch
   in a new environment. Especially for larger projects like this.
@@ -354,16 +651,18 @@ java-lsp.
   In order to switch I will have to properly understand how =gradle=
   works at some point.
 
-  Moreover, I will have to understand all of the testing suites that
-  interface with Java and how to properly do the debugging in emacs.
+  So understood it, to this stage and in fact I was able to migrate.
 
+  Moreover, I will have to understand all of the testing suites that
+  interface with Java and how to properly do the debugging in
+  emacs. Also understood.
+  
   From what I could see it is nonetheless theoretically possible to
   eventually reach a stage with a much stronger development setting in
-  emacs in comparison to standard IDEs.
+  emacs in comparison to standard IDEs. Reached that stage as well.
 
   In the meanwhile while this process is ongoing check at the
   following notes for using more classical IDEs.
-
   
 ** On branch
 
@@ -477,8 +776,6 @@ public void insert() {
 
    https://stackoverflow.com/questions/5375538/debugging-multiple-threads-in-eclipse/5375589
 
-
-
    -------
 
    note that I always have an issue of deployment. the jar goes in the
@@ -491,8 +788,6 @@ public void insert() {
 
    Then basically your marks in eclipse complain about it tells you
    that you have errors in your html etc.
-
-   
 
 ** On the Eclipse Debugger
 
@@ -541,7 +836,6 @@ there are a few Eclipse-based tools that could be used to "go back" in
    taskkill /F /IM java.exe
    #+end_quote
 
-   
 
 * ISSUES
 
@@ -555,27 +849,79 @@ there are a few Eclipse-based tools that could be used to "go back" in
 
    this is an error and issue that you need to fix if you want to work
    with it in a solid way.
+
+   - all solved. this is simply a matter of setting your lsp-session
+     correctly. 
+
+*** Note that you manage all of the existing lsp-sessions
+
+    with the =workspace= keyword. check at the the functions involving
+    it in there.
    
+*** Solution
+
+    At the time the workaround was removing the highlighting at global
+    level for lsp. Now it is starting to improve as an IDE.
+
+
+** DONE On Multi-project builds
+   CLOSED: [2022-05-02 Mo. 11:06]
+
+   See your note in your emacs configuration:
+
+   ------------------------
+   
+   Check at the [[https://issueexplorer.com/issue/emacs-lsp/lsp-java/320][following url]] to understand the issue.
+
+   #+BEGIN_SRC emacs-lisp
+(advice-add 'lsp :before (lambda (&rest _args) (eval '(setf (lsp-session-server-id->folders (lsp-session)) (ht)))))
+   #+END_SRC
+
+   #+RESULTS:
+
+   It is working now. Check also at the [[https://github.com/emacs-lsp/lsp-mode/discussions/3095][following discussion]] to
+   understand more.
+
+   Just the single project that you open is shown there in the erros
+   sections now in the =lsp-ui-flycheck-list=. If you add a second one
+   this is also added to the list in the sense that is managed by the
+   same server connection. The only issue is that if you close the
+   file it stays in the server connection. This is not ideal and would
+   have to sort it somehow. 
+
+   But basically now you have all of the features you desired. Just
+   have to check the last thing with the debugger but basically you
+   are there. 
+
+   You can now start to run your smaller projects in emacs and start
+   to get up and running with it.
+
+   ------------
+
+   Note that this is important to navigate as across project it will
+   be important to deal with it in the correct way.
+
+** DONE Lsp-treemacs error list
+   CLOSED: [2022-05-03 Di. 10:23]
+
+   That would be the final killer.
+
+   The issue is that it is not unfolding.
+
+   Again probably mostly a Windows OS issue.
+
+   Crazy how much this OS system is less supported by the emacs
+   community.
+
+   ----
+
+   Solved it check at your emacs config file.
+
+   That is indeed helping you a lot to keep everything properly in
+   order.
+
+   Note that after updating the package you will miss that bit of
+   code. You would have to refactor it into a more solid solution in
+   this sense.
 
    
-
-** Note that you manage all of the existing lsp-sessions
-
-   with the =workspace= keyword. check at the the functions involving
-   it in there.
-   
-** Solution
-
-   At the time the workaround was removing the highlighting at global
-   level for lsp. Now it is starting to improve as an IDE.
-
-   
-
-
-  
-    
-
-
-
-
-
