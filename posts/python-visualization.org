@@ -1,5 +1,5 @@
 #+BEGIN_COMMENT
-.. title: Python EDA
+.. title: Python Exploratory Data Analysis and Plotting
 .. slug: python-eda
 .. date: 2020-03-19 14:02:40 UTC+02:00
 .. tags: Python
@@ -30,503 +30,650 @@ form and visualization dummy scripts are saved.
 <br>
 #+END_EXPORT
 
-* Data
-   :properties:
-   :header-args:ein-python: :session http://127.0.0.1:8888/visualization.ipynb  :results output
-   :end:
-   
+* Libraries
+:properties:
+:header-args:ein-python: :session http://127.0.0.1:8888/visualization.ipynb  :results output
+:end:
 
-#+NAME: 34EAA941-EAD4-468F-8FED-B9E16FDF0717
-#+begin_src python :results output
+#+NAME: 4f73f15f-1fcd-4b87-8541-4210055dc9eb
+#+begin_src ein-python :results output
 import matplotlib.pyplot as plt
 %matplotlib inline 
 %config InlineBackend.figure_format = 'png'
 import numpy as np
-#+end_src
-
-#+NAME: F7E22CAC-CB72-4675-A4E3-E543629F59D9
-#+begin_src python :results output
-N = 30
-x_1 = np.random.randn(N) * 3
-x_2 = np.random.randn(N) * 3 + 2
-x_3 = np.random.randn(N) * 3 + -2
-#+end_src
-
-* Work with pandas
-   :properties:
-   :header-args:ein-python: :session http://127.0.0.1:8888/visualization.ipynb  :results output
-   :end:
-
-#+NAME: 75F79485-A875-4FE1-82A3-C97987A8104B
-#+begin_src python :results output
 import pandas as pd
 #+end_src
+
+#+RESULTS: 4f73f15f-1fcd-4b87-8541-4210055dc9eb
+
+#+RESULTS: 75F79485-A875-4FE1-82A3-C97987A8104B
 
 First of all you should display the default way through which Ipython
 Notebooks should display pandas dataframes
 
-#+begin_src python
+#+NAME: a86cdf27-ef1b-4a78-a6e1-b3957c770367
+#+begin_src ein-python
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 #+end_src
 
+#+RESULTS: a86cdf27-ef1b-4a78-a6e1-b3957c770367
+
+#+RESULTS:
+
 Analogously when working with numpy you could reach that by
 
-#+begin_src python
+#+NAME: a79938ea-e060-4eb4-a58f-98792773a29c
+#+begin_src ein-python
 np.set_printoptions(threshold=np.inf)
 #+end_src
 
-** create data from numpy matrix
+#+RESULTS: a79938ea-e060-4eb4-a58f-98792773a29c
+
+
+* Data Wrangling
+   :properties:
+   :header-args:ein-python: :session http://127.0.0.1:8888/visualization.ipynb  :results output :exports both
+   :end:
+
+
+** Creating data
+
+*** Create data from numpy matrix
+
+    #+NAME: F7E22CAC-CB72-4675-A4E3-E543629F59D9
+    #+begin_src ein-python :results output
+    N = 30
+    x_1 = np.random.randn(N) * 3
+    x_2 = np.random.randn(N) * 3 + 2
+    x_3 = np.random.randn(N) * 3 + -2
+    #+end_src
+
+    #+RESULTS: F7E22CAC-CB72-4675-A4E3-E543629F59D9
+
+    #+NAME: B4B1951C-33E1-4583-BC59-8A5A1FD88259
+    #+begin_src ein-python :results output
+    mydat = pd.DataFrame (np.matrix ([x_1,x_2,x_3]).transpose ()) ## Without
+								  ## transpose
+								  ## it
+								  ## will
+								  ## simply
+								  ## be
+								  ## three
+								  ## rows
+								  ## with
+								  ## tons
+								  ## of
+								  ## column
+    #+end_src
 
- #+NAME: B4B1951C-33E1-4583-BC59-8A5A1FD88259
- #+begin_src python :results output
-mydat = pd.DataFrame (np.matrix ([x_1,x_2,x_3]).transpose ())
- #+end_src
+    #+RESULTS: B4B1951C-33E1-4583-BC59-8A5A1FD88259
 
-** create data from two numpy arrays
+    #+NAME: 4856c5ba-508d-4eb3-8a31-426f9b737326
+    #+begin_src ein-python :results output
+    mydat.head (5)
+    #+end_src
+
+    #+RESULTS: 4856c5ba-508d-4eb3-8a31-426f9b737326
+    :           0         1         2
+    : 0 -0.391372  1.431659 -3.723554
+    : 1 -4.663749  2.916761 -5.312962
+    : 2 -5.138210  1.138734 -5.352694
+    : 3  5.594435  0.292630 -6.738569
+    : 4  2.328718  1.475208 -1.835453
 
- here you need to flatten the arrays first
+*** Create data from two numpy arrays
 
- #+begin_src python :results output
-X = 2 * np.random.rand(100,1)
-y = 4 +3 * X+np.random.randn(100,1)
+    here you need to flatten the arrays first
+
+    #+NAME: 56698755-8cbf-4da1-bb60-2aa198a31833
+    #+begin_src ein-python :results output
+    X = 2 * np.random.rand(100,1)
+    y = 4 +3 * X+np.random.randn(100,1)
+
+    mydat2 = pd.DataFrame ({'x':X.flatten(), 'y': y.flatten()})
+    #+end_src
+
+    #+RESULTS: 56698755-8cbf-4da1-bb60-2aa198a31833
+
+    #+NAME: a790f65d-f456-485d-ba7c-efc3b0b8647d
+    #+begin_src ein-python
+    mydat2.head(5)
+    #+end_src
 
-mydat = pd.DataFrame ({'x':X.flatten(), 'y': y.flatten()})
- #+end_src
+    #+RESULTS: a790f65d-f456-485d-ba7c-efc3b0b8647d
+    :           x         y
+    : 0  0.470371  3.531411
+    : 1  0.615700  8.621742
+    : 2  0.129762  5.510843
+    : 3  1.202375  8.534827
+    : 4  1.119286  5.962337
 
-** on reshape -1
+*** Create from List - You will use these basic dataframes in the following sections
 
- The criterion to satisfy for providing the new shape is that *The new
- shape should be compatible with the original shape*
+    #+NAME: b08a221e-6f10-41c0-a22d-10eba75b8046
+    #+begin_src ein-python
+    df1 = pd.DataFrame([[1, 2, 3, 4],
+			[5, 6, 7, 8],
+			[9, 10, 11, 12]],
+		       columns= ['a', 'b', 'c', 'd'])
 
- Numpy allow us to give one of new shape parameter as -1 (eg: (2,-1) or
- (-1,3) but not (-1, -1)). It simply means that it is an unknown
- dimension and we want numpy to figure it out. And numpy will figure
- tchis by looking at the 'length of the array and remaining dimensions'
- and making sure it satisfies the above mentioned criteria
+    df2 = pd.DataFrame([[1, 2, 3, 4],
+			[5, 6, 7, 8],
+			[9, 10, 11, 12]],
+		       columns= ['e', 'f', 'g', 'h'])
+    #+end_src
 
- Now see the example.
+    #+RESULTS: b08a221e-6f10-41c0-a22d-10eba75b8046
 
- #+begin_src python :results output :exports both
-import numpy as np
+    #+NAME: 67a9e115-61c7-4fa6-bd3c-97a3ed06b22d
+    #+begin_src ein-python
+    df2.head(5)
+    #+end_src
 
-z = np.array([[1, 2, 3, 4],
-         [5, 6, 7, 8],
-         [9, 10, 11, 12]])
+    #+RESULTS: 67a9e115-61c7-4fa6-bd3c-97a3ed06b22d
+    :    e   f   g   h
+    : 0  1   2   3   4
+    : 1  5   6   7   8
+    : 2  9  10  11  12
 
-print (z.shape)
+*** Dataframe with NaN
 
 
-print (z.reshape (-1).shape)
+    #+NAME: 99b071d3-48a1-4b54-a064-3ffe64a0796a
+    #+begin_src ein-python
+    dfNaN = pd.DataFrame([[1, 2, 3, 4],
+			  [5, np.nan, 7, 8],
+			  [9, 10, np.nan, 12]],
+			 columns= ['e', 'f', 'g', 'h'])
 
-print (z.reshape (-1,2).shape)
- #+end_src
+    dfNaN.head(5)
+    #+end_src
 
- #+RESULTS:
- : (3, 4)
- : (12,)
- : (6, 2)
+    #+RESULTS: 99b071d3-48a1-4b54-a064-3ffe64a0796a
+    :    e     f    g   h
+    : 0  1   2.0  3.0   4
+    : 1  5   NaN  7.0   8
+    : 2  9  10.0  NaN  12
 
-** describe the data
 
- #+NAME: 62E7CBD5-4D53-4C5E-A1AC-70E42CBA1F0A
- #+begin_src python :results output
-mydat.describe ()
- #+end_src
+** Work With SQL on top of Pandas
 
-** sort multiple variables in pandas data frames.
+   Note that it is possible to work with SQL on the top of pandas.
 
- #+begin_src python
-df.sort_values(['Year', "Happiness_Score"], ascending=[True, False], inplace=True)
- #+end_src
+   Check at  the example below. 
 
- - Set the name of the columns
+   This is handy as you will see how to compute things both through
+   pandas APIs and via plain SQL. 
 
- #+NAME: DDDA7E5F-FC2A-4A7D-BC7B-D7CF473D3C49
- #+begin_src python :results output
-mydat.columns = ["nomean", "posmean", "negmean"]
- #+end_src
+   What follows is a 101 example of the thing.
 
- #+NAME: A30028B2-C614-406C-AF97-2DF4F99E1648
- #+begin_src python :results output
-mydat.columns
- #+end_src
+   #+NAME: 07F6B5FF-C726-4A80-B258-2A41D4360F00
+   #+begin_src ein-python :results output
+   from pandasql import sqldf
+   nba = lambda q: sqldf(q, globals())
+   #+end_src
 
- #+NAME: 665F633A-521D-4384-84FF-677EF7633056
- #+begin_src python :results file
-plt.plot(mydat.nomean, c = "lightblue", ls = '--', marker = "o",
-         ms = 6, label ="nomean")
-plt.plot(mydat.posmean, c = "darkorange", ls = '--', marker = "s",
-         ms = 6, label ="posmean") # ms = marker size
-plt.plot(mydat.negmean, c = "lightgreen", ls = '--', marker = "^",
-         ms = 6, label ="negmean")
-plt.legend(loc = 'upper right',bbox_to_anchor = (1,1))
-plt.xticks(list(range(20)), rotation = 'vertical') # sets the ticks on
-                                                   # x-axis and puts
-                                                   # them vertically.
- #+end_src
+   #+RESULTS: 07F6B5FF-C726-4A80-B258-2A41D4360F00
 
-** get the entry (x,y) in your relational table
 
- #+NAME: D3530789-6ACE-490F-A62F-1F738ABE00D3
- #+begin_src python :results output
-mydat.head (5)
- #+end_src
+   #+NAME: 57015F06-859F-466A-8DE6-EA0D92FB8A7D
+   #+begin_src ein-python :results output
+   q = \
+   """
+   SELECT *
+   FROM df1 
+   """
+   #+end_src
 
- #+NAME: E45EF453-DF18-4DA7-8510-1E6B2480F4A7
- #+begin_src python :results output
-mydat.iloc[2,1]
- #+end_src
+   #+RESULTS: 57015F06-859F-466A-8DE6-EA0D92FB8A7D
+   
+   #+NAME: E14A7CBB-FE59-4A7B-BF7E-98A0F3DE5F20
+   #+begin_src ein-python
+   nba (q)
+   #+end_src
 
-** slicing the data
+   #+RESULTS: E14A7CBB-FE59-4A7B-BF7E-98A0F3DE5F20
+   :    a   b   c   d
+   : 0  1   2   3   4
+   : 1  5   6   7   8
+   : 2  9  10  11  12
 
- #+NAME: 392E582F-AFE3-4B9A-BF7A-18B9D55B15F6
- #+begin_src python :results output
-mydat[0:4]
- #+end_src
-
-** get by column
-
- #+NAME: 72EFF5A5-8589-4813-A918-91547491D259
- #+begin_src python :results output
-mydat[['nomean', 'posmean']].head (3)
- #+end_src
-
-** Get by column through numerical index
-
-This is a thing that I noticed I use quite much when coding. 
-
-In the specific I want often to be able to select the columns as in
-=R= with the syntax ~df[, c (1,3,4)]~.
-
-Up to now I used some different methods. However I forget them all the
-time and it took me this 5 min. each time.
-
-Now with this syntax it is easy to do 
- 
-#+begin_src ein-python :results output
-res_test.iloc[:, np.r_[2:6,res_test.shape[1] - 1]]
-#+end_src
-
-#+begin_example
-         ph potassium sodium   ffp  tod72h
-130       1      1001   1002    16    1020
-131    1000      1001   1002    16    1020
-132    1000      1001   1002    16    1020
-133    1000      1001   1002    16    1020
-134    1000      1001   1002    16    1020
-...     ...       ...    ...   ...     ...
-18494     1        10     11    16    1020
-18495  1000        10     11    16    1020
-18496  1000        10     11  1003    1020
-18497  1000      1001   1002  1003    1020
-18498  1000      1001   1002  1003    1021
-
-[981 rows x 5 columns]
-#+end_example
-
-** get by row and column
-
- #+NAME: D0ECAD01-5802-45DE-B009-8C0ED8926068
- #+begin_src python :results output
-mydat[['nomean', 'posmean']][::2]
- #+end_src
-
- #+NAME: 7EE3C177-63AE-46F2-80AE-6FC33912E63E
- #+begin_src python :results output
-print(mydat[['nomean', 'posmean']].iloc [0,1])
- #+end_src
-
-** new column
-
- #+NAME: C7AEAA0C-FE4F-44F1-B4E2-941105BD1F9C
- #+begin_src python :results output
-mydat['sum'] = mydat['nomean'] + mydat['posmean'] + mydat['negmean']
- #+end_src
-
- #+NAME: E676C563-E1E9-43EB-8C63-8EA4C417C995
- #+begin_src python :results output
-mydat.columns
- #+end_src
-
- #+NAME: 74B65603-E9C1-4760-82AA-780263961A4C
- #+begin_src python :results output
-mydat2 = mydat
-mydat.head ()
- #+end_src
-
-** drop a column
 
- #+NAME: 4C89C61A-D2C8-4720-9357-021883EC97FE
- #+begin_src python :results output
-mydat2.drop ('sum', axis = 1).head ()
- #+end_src
+** Reshaping data
 
-** filter through booleans
+*** on numpy reshape -1
 
- #+NAME: FE3A32A6-A5AD-41B5-A156-A8FF68D0BE85
- #+begin_src python :results output
-filt = mydat.nomean < 0
+    The criterion to satisfy for providing the new shape is that *The new
+    shape should be compatible with the original shape*
 
-print (mydat[['sum', 'negmean']][filt])
- #+end_src
-
-** filter through regex
-
-#+begin_src ein-python :results output
-df.filter(regex='ing|Date')
-#+end_src
-
-#+begin_example
-        Date	        Running Chasing	Climbing 	Foraging
-0	10142018	False	False	False		False
-1	10062018	True	False	False		False
-2	10102018	False	False	True		False
-3	10182018	False	False	True		False
-4	10182018	False	False	False		False
-…	…	…	…	…	…	
-3018	10072018	False	False	False		True
-3019	10132018	False	False	False		True
-3020	10122018	False	False	False		True
-3021	10102018	False	False	False		False
-3022	10122018	False	False	False		True
-#+end_example
-
-** filter through lambda in iloc
-:Properties:
-:header-args:ein-python: :session http://127.0.0.1:8888/usz_marco.ipynb :tangle ~/Desktop/IBM_projects/USZ_development/USZ_Medical_Decision_Support/scripts/data_processing.py
-:end:
-
-
-#+NAME: 6F11E092-26F3-40CA-955D-32452E1A11AF
-#+begin_src ein-python :results output
-# reading the data
-series = [('Stranger Things', 3, 'Millie'),
-          ('Game of Thrones', 8, 'Emilia'), ('La Casa De Papel', 4, 'Sergio'),
-          ('Westworld', 3, 'Evan Rachel'), ('Stranger Things', 3, 'Millie'),
-         ('La Casa De Papel', 4, 'Sergio')]
-
-# Create a DataFrame object
-dfObj = pd.DataFrame(series, columns=['Name', 'Seasons', 'Actor'])
-
-df = pd.DataFrame(dfObj)
-
-df.iloc[np.array (df.Seasons.apply (lambda x: x % 2 == 0)), :]
-#+end_src
-
-#+RESULTS: 6F11E092-26F3-40CA-955D-32452E1A11AF
-:                Name  Seasons   Actor
-: 1   Game of Thrones        8  Emilia
-: 2  La Casa De Papel        4  Sergio
-: 5  La Casa De Papel        4  Sergio
-
-
-
-#+NAME: C6372628-2DC1-46C0-A214-20782B8D8DEC
-#+BEGIN_SRC ein-python  :results output
-dfObj
-#+END_SRC
-
-#+RESULTS: C6372628-2DC1-46C0-A214-20782B8D8DEC
-:                Name  Seasons        Actor
-: 0   Stranger Things        3       Millie
-: 1   Game of Thrones        8       Emilia
-: 2  La Casa De Papel        4       Sergio
-: 3         Westworld        3  Evan Rachel
-: 4   Stranger Things        3       Millie
-: 5  La Casa De Papel        4       Sergio
-
-** Notice
-
-   Often it makes sense to create a dictionary for selecting the
-   columns of the dataframes by index and get the corresponding name
-
-** remove duplicates
-
- #+NAME: 66AC1B55-FDF1-496A-9A1C-EC03BDFDC01A
- #+begin_src python :results output
-print (np.matrix ([[1,2,1],[3,3,3]]).transpose ())
-
-pd.DataFrame (np.matrix ([[1,2,1],[3,3,3]]).transpose ()).iloc[:,1].unique ()
- #+end_src
-
- another possibility that addresses data frame wide duplicates and not
- simply column duplicates is by leveraging =.duplicated ()= method:
-
- #+begin_src python :results output
-import pandas as pd
-
-romeo = pd.DataFrame({'a': [1,1,3], 'b' : [2,2,3]})
-
-print(romeo)
-print(romeo.duplicated())
-
-romeo = pd.DataFrame({'a': [1,1,3], 'b' : [2,4,3]})
-print(romeo)
-print(romeo.duplicated())
- #+end_src
-
-** Remove Columns
-
-  Use the ~df.drop~ function for that
-
-#+begin_src python :results output
-df = pd.DataFrame(np.arange(12).reshape(3, 4),
-                  columns=['A', 'B', 'C', 'D'])
-
-df.drop(columns=['B', 'C'])
-#+end_src
-
-#+RESULTS:
-:    A   D
-: 0  0   3
-: 1  4   7
-: 2  8  11
-
-
-** on the difference between =.iloc= and =.loc=
-
- notice by the way that this are outdated. by now you should use =.iat=
- and =.at=.
-
- The difference is the following.
-
- =.iat= : uses the strict position in the matrix
-
- =.at= : search by index and column names
-
-
- #+NAME: 9F6C4632-2087-4EF2-BE4D-6C4E948FA712
- #+begin_src python :results output
-print (mydat)
-mydat.at[0, 'negmean']
- #+end_src
-
- #+NAME: A0ABCC18-127A-4686-ADC1-E131136EE271
- #+begin_src python :results output
-mydat.iat[0,2]
- #+end_src
-
- To further understand the thing consider
-
- #+NAME: 67DEF99A-FF5E-4AFC-8F45-C713CDBE0A4F
- #+begin_src python :results output
-mydat2 = mydat[::2]
-mydat2
- #+end_src
-
- #+NAME: 50340226-FF1D-4B09-BDE9-7CE3DF62C058
- #+begin_src python :results output
-print (mydat2.at[6, 'nomean']) ## this by real index independent of the axis
-print (mydat2.iat[6, 0]) ## this sixth row in the matrix
- #+end_src
-
-** categorical variables
-
- This is important for treating them as dummies in regression as well
- for facet_wraps. 
-
- #+NAME: 7BCD560B-E1CB-4B0C-B8A6-92B4D3BFC054
- #+begin_src python :results output
-mydat.head ()
- #+end_src
-
-
- #+NAME: B5E0FFC5-18B4-421C-AB89-9A83A3FD8FBD
- #+begin_src python :results output
-mydat["category"] = np.repeat (range (4), 5)
-mydat.info ()
- #+end_src
-
- To transform this into a category use
-
- #+NAME: 3C08E5B6-01FF-4D91-9F28-7BB440385BB5
- #+begin_src python :results output
-mydat.category = mydat.category.astype ('category')
-mydat.info ()
- #+end_src
+    Numpy allow us to give one of new shape parameter as -1 (eg: (2,-1) or
+    (-1,3) but not (-1, -1)). It simply means that it is an unknown
+    dimension and we want numpy to figure it out. And numpy will figure
+    tchis by looking at the 'length of the array and remaining dimensions'
+    and making sure it satisfies the above mentioned criteria
+
+    Now see the example.
+
+    #+NAME: 1c4b0c9f-a5cc-4586-959a-fe113f975126
+    #+begin_src ein-python :results output :exports both
+    import numpy as np
+
+    z = np.array([[1, 2, 3, 4],
+		  [5, 6, 7, 8],
+		  [9, 10, 11, 12]])
+
+    print (z.shape)
+    print (z.reshape (-1).shape)
+    print (z.reshape (-1,2).shape)
+    #+end_src
+
+    #+RESULTS: 1c4b0c9f-a5cc-4586-959a-fe113f975126
+    : (3, 4)
+    : (12,)
+    : (6, 2)
+
+
+*** On melting
+
+    Note that by melting you always remove all of the existing columns
+    and you move to a two columned data frame. One containing the
+    variables names and the other containing the values.
+
+    #+NAME: eaa26a65-8d03-4421-a10d-f5a48b06279d
+    #+begin_src ein-python
+    print (df1.head (5))
+    print (df2.head (5))
+
+    # See below. Melting always goes in 2 D
+    print()
+    print("Melted the previous 2 tables\n" + "-"*30)
+    print (pd.melt (df1).head (5)) 
+    #+end_src
+
+    #+RESULTS: eaa26a65-8d03-4421-a10d-f5a48b06279d
+    #+begin_example
+       a   b   c   d
+    0  1   2   3   4
+    1  5   6   7   8
+    2  9  10  11  12
+       e   f   g   h
+    0  1   2   3   4
+    1  5   6   7   8
+    2  9  10  11  12
+
+    Melted the previous 2 tables
+    ------------------------------
+      variable  value
+    0        a      1
+    1        a      5
+    2        a      9
+    3        b      2
+    4        b      6
+    #+end_example
+
+
+*** On Pivoting
+
+    It spreads rows to columns.
+
+    This is the goes a bit in the opposite direction of melting. 
+
+    The difference is though that each entry holds its spot and NaN
+    for the other values are created. 
+
+    So the indexing is quite different than the original as you might see
+    from the below.
+
+    #+NAME: 16a843a9-0ecd-40c1-8fd9-384c93a57672
+    #+begin_src ein-python
+    df3 = pd.melt (df1)
+
+    print("Melted Table\n" + "-"*30)
+    print (df3.head (20))
+
+    print("Pivoted Melted Table\n" + "-"*30)
+    print (df3.pivot(columns = 'variable', values = 'value').head (10)) 
+    #+end_src
+
+    #+RESULTS: 16a843a9-0ecd-40c1-8fd9-384c93a57672
+    #+begin_example
+    Melted Table
+    ------------------------------
+       variable  value
+    0         a      1
+    1         a      5
+    2         a      9
+    3         b      2
+    4         b      6
+    5         b     10
+    6         c      3
+    7         c      7
+    8         c     11
+    9         d      4
+    10        d      8
+    11        d     12
+    Pivoted Melted Table
+    ------------------------------
+    variable    a     b     c    d
+    0         1.0   NaN   NaN  NaN
+    1         5.0   NaN   NaN  NaN
+    2         9.0   NaN   NaN  NaN
+    3         NaN   2.0   NaN  NaN
+    4         NaN   6.0   NaN  NaN
+    5         NaN  10.0   NaN  NaN
+    6         NaN   NaN   3.0  NaN
+    7         NaN   NaN   7.0  NaN
+    8         NaN   NaN  11.0  NaN
+    9         NaN   NaN   NaN  4.0
+    #+end_example
+
+
+*** On Concatenating
+
+    We tackle now column-based and row based concatenation. 
+
+    It is the *full outer join* in SQL.
+
+    #+NAME: b6b5a47a-a78b-4260-b01f-70a7e08b69a7
+    #+begin_src ein-python
+    df3 = pd.concat ([df1, df2], axis = 0)
+
+    ## This equals the Union Operator in SQL
+    print("Concat Along Row Axis\n" + "-"*48)
+    print (df3.head (6)) 
+
+
+    print("Full outer Join\n" + "-"*48)
+
+    ## In SQL
+    q = \
+	"""
+    SELECT *
+    FROM df1
+    FULL OUTER JOIN df2 ON df1.a = df2.f
+    """
+
+    print (nba (q)) 
+
+
+    ## This adds data by column
+    print("Concat Along Column Axis\n" + "-"*48)
+    df3 = pd.concat ([df1, df2], axis = 1)
+    print (df3.head (6)) 
+
+    #+end_src
+
+    #+RESULTS: b6b5a47a-a78b-4260-b01f-70a7e08b69a7
+    #+begin_example
+    Concat Along Row Axis
+    ------------------------------------------------
+	 a     b     c     d    e     f     g     h
+    0  1.0   2.0   3.0   4.0  NaN   NaN   NaN   NaN
+    1  5.0   6.0   7.0   8.0  NaN   NaN   NaN   NaN
+    2  9.0  10.0  11.0  12.0  NaN   NaN   NaN   NaN
+    0  NaN   NaN   NaN   NaN  1.0   2.0   3.0   4.0
+    1  NaN   NaN   NaN   NaN  5.0   6.0   7.0   8.0
+    2  NaN   NaN   NaN   NaN  9.0  10.0  11.0  12.0
+    Full outer Join
+    ------------------------------------------------
+	 a     b     c     d    e     f     g     h
+    0  1.0   2.0   3.0   4.0  NaN   NaN   NaN   NaN
+    1  5.0   6.0   7.0   8.0  NaN   NaN   NaN   NaN
+    2  9.0  10.0  11.0  12.0  NaN   NaN   NaN   NaN
+    3  NaN   NaN   NaN   NaN  1.0   2.0   3.0   4.0
+    4  NaN   NaN   NaN   NaN  5.0   6.0   7.0   8.0
+    5  NaN   NaN   NaN   NaN  9.0  10.0  11.0  12.0
+    Concat Along Column Axis
+    ------------------------------------------------
+       a   b   c   d  e   f   g   h
+    0  1   2   3   4  1   2   3   4
+    1  5   6   7   8  5   6   7   8
+    2  9  10  11  12  9  10  11  12
+    #+end_example
+
+*** New column
+
+    #+NAME: C7AEAA0C-FE4F-44F1-B4E2-941105BD1F9C
+    #+begin_src ein-python :results output
+    df2['i'] = df1['a'] + df2['e'] 
+    #+end_src
+
+    #+RESULTS: C7AEAA0C-FE4F-44F1-B4E2-941105BD1F9C
+
+    #+NAME: E676C563-E1E9-43EB-8C63-8EA4C417C995
+    #+begin_src ein-python :results output
+    df2.columns
+    #+end_src
+
+    #+RESULTS: E676C563-E1E9-43EB-8C63-8EA4C417C995
+    : Index(['e', 'f', 'g', 'h', 'i'], dtype='object')
+
+    #+NAME: 74B65603-E9C1-4760-82AA-780263961A4C
+    #+begin_src ein-python :results output
+    df2.head ()
+    #+end_src
+
+    #+RESULTS: 74B65603-E9C1-4760-82AA-780263961A4C
+    :    e   f   g   h   i
+    : 0  1   2   3   4   2
+    : 1  5   6   7   8  10
+    : 2  9  10  11  12  18
+
+*** Remove Columns
+
+    #+NAME: 4C89C61A-D2C8-4720-9357-021883EC97FE
+    #+begin_src ein-python :results output
+    df2.drop ('i', axis = 1).head ()
+    #+end_src
+
+    #+RESULTS: 4C89C61A-D2C8-4720-9357-021883EC97FE
+    :    e   f   g   h
+    : 0  1   2   3   4
+    : 1  5   6   7   8
+    : 2  9  10  11  12
+
+
+    Use the ~df.drop~ function for that
+
+    #+NAME: 143db746-00c9-4f31-b00c-39244c3fe281
+    #+begin_src ein-python :results output
+    df2.drop(columns=['h', 'i']).head ()
+    #+end_src
+
+    #+RESULTS: 143db746-00c9-4f31-b00c-39244c3fe281
+    :    e   f   g
+    : 0  1   2   3
+    : 1  5   6   7
+    : 2  9  10  11
+
+    #+RESULTS:
+
+*** Column Renaming
+
+    #+NAME: bd130c44-ea7e-4f20-a75c-b8aa41c51653
+    #+begin_src ein-python
+    df2.rename(columns = {'i':'sum'}).head ()
+    #+end_src
+
+    #+RESULTS: bd130c44-ea7e-4f20-a75c-b8aa41c51653
+    :    e   f   g   h  sum
+    : 0  1   2   3   4    2
+    : 1  5   6   7   8   10
+    : 2  9  10  11  12   18
+
+
+** Categorical Variables
+
+   Categorical data appear often. It is necessary for you to tackle
+   them down correctly.
+
+   This is important for treating them as dummies in regression as well
+   for plotting with facet_wraps. 
+
+   #+NAME: 7BCD560B-E1CB-4B0C-B8A6-92B4D3BFC054
+   #+begin_src ein-python :results output
+   print(mydat.shape)
+
+   mydat.head ()
+   #+end_src
+
+   #+RESULTS: 7BCD560B-E1CB-4B0C-B8A6-92B4D3BFC054
+   : (30, 3)
+   :           0         1         2
+   : 0  3.285809  1.292891 -4.087278
+   : 1 -4.393832  0.898429 -9.398311
+   : 2 -0.959970  0.936827 -3.816866
+   : 3  3.423767  1.705746  2.511616
+   : 4 -3.398694  2.665577 -1.063232
+
+
+   #+NAME: B5E0FFC5-18B4-421C-AB89-9A83A3FD8FBD
+   #+begin_src ein-python :results output
+   mydat["category"] = np.repeat (range (6), 5)
+   mydat.info ()
+   #+end_src
+
+   #+RESULTS: B5E0FFC5-18B4-421C-AB89-9A83A3FD8FBD
+   #+begin_example
+   <class 'pandas.core.frame.DataFrame'>
+   RangeIndex: 30 entries, 0 to 29
+   Data columns (total 4 columns):
+    #   Column    Non-Null Count  Dtype  
+   ---  ------    --------------  -----  
+    0   0         30 non-null     float64
+    1   1         30 non-null     float64
+    2   2         30 non-null     float64
+    3   category  30 non-null     int32  
+   dtypes: float64(3), int32(1)
+   memory usage: 972.0 bytes
+   #+end_example
+
+   To *transform this into a category* use:
+
+   #+NAME: 3C08E5B6-01FF-4D91-9F28-7BB440385BB5
+   #+begin_src ein-python :results output
+   mydat.category = mydat.category.astype ('category')
+   mydat.info ()
+   #+end_src
+
+   #+RESULTS: 3C08E5B6-01FF-4D91-9F28-7BB440385BB5
+   #+begin_example
+   <class 'pandas.core.frame.DataFrame'>
+   RangeIndex: 30 entries, 0 to 29
+   Data columns (total 4 columns):
+    #   Column    Non-Null Count  Dtype   
+   ---  ------    --------------  -----   
+    0   0         30 non-null     float64 
+    1   1         30 non-null     float64 
+    2   2         30 non-null     float64 
+    3   category  30 non-null     category
+   dtypes: category(1), float64(3)
+   memory usage: 1.0 KB
+   #+end_example
 
 *** To view the category types
 
-  #+NAME: 6A930BF7-8560-4027-B1A6-D105861E9B24
-  #+begin_src python :results output
-mydat.category.cat.categories
-  #+end_src
+    Inspect the relevant categorical variables. I.e. check what
+    categories exists as values.
 
-*** Cut with the same bins
+    #+NAME: 6A930BF7-8560-4027-B1A6-D105861E9B24
+    #+begin_src ein-python :results output
+    mydat.category.cat.categories
+    #+end_src
+
+    #+RESULTS: 6A930BF7-8560-4027-B1A6-D105861E9B24
+    : Index([0, 1, 2, 3, 4, 5], dtype='int32')
+
+*** Create Categories with the Cut Operator - Create Categorical Ranges
+
+    Notice dataset not here... just pasted
+
+    The idea is to create categories out of the data bins as follows:
+
+    #+begin_src ein-python :results output
+    Bins = pd.cut(data_seq.r_platelet_admission, bins  = 5).cat.categories
+
+    inspect = pd.concat([data_seq.loc[:, ['r_platelet_admission', 'r_platelet_24h']], 
+			 data_seq.loc[:, ['r_platelet_admission', 'r_platelet_24h']].apply(pd.cut, bins=Bins)],
+			 axis = 1)
 
 
-Notice dataset not here... just pasted
+    ## so you see... very different intervals... 
 
-#+begin_src ein-python :results output
-Bins = pd.cut(data_seq.r_platelet_admission, bins  = 5).cat.categories
-#+end_src
+    #+end_src
 
-#+RESULTS: DA1CF17C-7F32-44A3-B57D-2B6BFFE90562
+    #+RESULTS: 1E66AD8E-FDA5-4E35-9FAE-960C70D54D19
 
-Ok so  idea  working.
+    Notice however the issue that then at 24h you have just survivals on
+    given categories
 
-#+NAME: 1E66AD8E-FDA5-4E35-9FAE-960C70D54D19
-#+begin_src ein-python :results output
-inspect = pd.concat([data_seq.loc[:, ['r_platelet_admission', 'r_platelet_24h']], 
-                     data_seq.loc[:, ['r_platelet_admission', 'r_platelet_24h']].apply(pd.cut, bins=Bins)],
-                    axis = 1)
+    #+NAME: 4C28D75C-EFFE-45BF-9584-6CB4FFB7993F
+    #+begin_src ein-python :results output
+    inspect.iloc[:,-1].value_counts()
+    #+end_src
+
+    #+RESULTS: 4C28D75C-EFFE-45BF-9584-6CB4FFB7993F
+    : (13.401, 535.8]     1217
+    : (535.8, 1055.6]        1
+    : (2095.2, 2615.0]       0
+    : (1575.4, 2095.2]       0
+    : (1055.6, 1575.4]       0
+    : Name: r_platelet_24h, dtype: int64
 
 
-## so you see... very different intervals... 
-
-#+end_src
-
-#+RESULTS: 1E66AD8E-FDA5-4E35-9FAE-960C70D54D19
-
-Notice however the issue that then at 24h you have just survivals on
-given categories
-
-#+NAME: 4C28D75C-EFFE-45BF-9584-6CB4FFB7993F
-#+begin_src ein-python :results output
-inspect.iloc[:,-1].value_counts()
-#+end_src
-
-#+RESULTS: 4C28D75C-EFFE-45BF-9584-6CB4FFB7993F
-: (13.401, 535.8]     1217
-: (535.8, 1055.6]        1
-: (2095.2, 2615.0]       0
-: (1575.4, 2095.2]       0
-: (1055.6, 1575.4]       0
-: Name: r_platelet_24h, dtype: int64
-
-** Conversion dataframe into series
-
-   For pandas you can use some of the functions just on pandas
-   =Series= but not on pandas =DataFrames=.
-
-   One such function is =cut=. Interesting the ~df.column_name~ gives you
-   a =Series= while the ~df.loc[: [column_name]]~, gives you a dataframe.
-
-   You can convert between the two with the following:
-
-#+begin_src ein-python :results output
-pd.qcut(data_seq.loc[:,['r_hematocrite_admission']].squeeze(), 5).cat.categories
-#+end_src
 
 ** Missing data
 
 *** To check for missing values =NaN= 
 
-  #+begin_src python :exports both
-## check if there are null values for stream_id column
-df_streams[['stream_id']].isnull().values.any()
+    In order to check for NaN use the following
 
-## get the null values
-df_streams[np.array(df_streams[['stream_id']].isnull())]
-  #+end_src
+    #+NAME: d922607a-9476-42c2-b6fe-d57e02d8719d
+    #+begin_src ein-python :exports both
+    print (dfNaN.head ())
 
-*** deleting missing data
+    ## check if there are null values for stream_id column
+    print ("\nContaining Null Entries: " + 
+           str(dfNaN.isnull().values.any()) + "\n") 
+
+    ## get the null values
+    print("Get the Rows with Null Values:\n" + "-"*35)
+    print (dfNaN[np.array(dfNaN.isnull())]) 
+
+    ## 
+    print("\nGet Null Rows in specific Column:\n" + "-"*35)
+    print (dfNaN[np.array(dfNaN[['g']].isnull())]) 
+   #+end_src
+
+   #+RESULTS: d922607a-9476-42c2-b6fe-d57e02d8719d
+   #+begin_example
+      e     f    g   h
+   0  1   2.0  3.0   4
+   1  5   NaN  7.0   8
+   2  9  10.0  NaN  12
+
+   Containing Null Entries: True
+
+   Get the Rows with Null Values:
+   -----------------------------------
+      e     f    g   h
+   1  5   NaN  7.0   8
+   2  9  10.0  NaN  12
+
+   Get Null Rows in specific Column:
+   -----------------------------------
+      e     f   g   h
+   2  9  10.0 NaN  12
+   #+end_example
+
+*** Remove Rows/Columns with Missing Data
 
   In order to delete missing data you can simply rely on the 
 
-  #+begin_src python :results output :exports both :session hello
+  #+NAME: b07feb55-f06e-4d30-ae08-558d876e3e7c
+  #+begin_src ein-python :results output :exports both
 import pandas as pd
 from numpy import nan
 
@@ -536,9 +683,20 @@ df = pd.DataFrame({'name':['apple','banana','orange'],
 
 print(df)
 
-print ("\nAfter deleting missing values:")
+print ("\nAfter deleting Rows with missing values:\n" + "-"*35)
 print(df.dropna())
   #+end_src
+
+  #+RESULTS: b07feb55-f06e-4d30-ae08-558d876e3e7c
+  :      name  price  inventory
+  : 0   apple   1.95        NaN
+  : 1  banana   3.00       12.0
+  : 2  orange    NaN       23.0
+  : 
+  : After deleting missing values:
+  : -----------------------------------
+  :      name  price  inventory
+  : 1  banana    3.0       12.0
 
   In the above you eliminate the entire *row* where the missing value
   occurred.
@@ -551,244 +709,991 @@ print(df.dropna())
   deleting entire features (i.e. columns). You can do that by setting
   the argument ='columns'= in your =.dropna ()= method
 
-  #+begin_src python :results output :exports both :session hello
+  #+NAME: 9c17c702-35a2-459a-a1c7-6d6c91d960a5
+  #+begin_src ein-python :results output :exports both
 print(df)
 
-print ("\nAfter deleting missing values:")
+print ("\nAfter deleting Columns with missing values:\n" + "-"*45)
 
 print(df.dropna(axis = 'columns'))
+
+# Alternative - same effect
+# print(df.dropna(axis = 1)) ## same as selecting columns
+
   #+end_src
 
-*** impute missing data
+  #+RESULTS: 9c17c702-35a2-459a-a1c7-6d6c91d960a5
+  #+begin_example
+       name  price  inventory
+  0   apple   1.95        NaN
+  1  banana   3.00       12.0
+  2  orange    NaN       23.0
 
-  a different approach on handling missing data is to *impute* missing
-  data. This means that instead of removing the data observations you
-  try to replace them with some meaningful information.
+  After deleting Columns with missing values:
+  ---------------------------------------------
+       name
+  0   apple
+  1  banana
+  2  orange
+  #+end_example
 
-  This might be useful for instance when understanding that data are not
-  missing at random and you might use the dependency on other features -
-  i.e. a predictive model based on that - to impute missing variables. 
+*** Impute missing data
 
-  Other simpler methods might involve taking simple features means as a
-  data-filler or some simple analogous measure. An example in this sense
-  might be 
+    A different approach on handling missing data is to *impute* missing
+    data. This means that instead of removing the data observations you
+    try to replace them with some meaningful information.
 
-  #+begin_src python :results output :exports both :session hello
-from sklearn.impute import SimpleImputer
+    This might be useful for instance when understanding that data are not
+    missing at random and you might use the dependency on other features -
+    i.e. a predictive model based on that - to impute missing
+    variables. 
 
-print (df)
+    Note that there is an entire class of method for performing that
+    task. The performed interpolation might be more complex or less. 
+    I will possibly write a different notebook with the different
+    imputation techniques.
 
-features = ['price', 'inventory']
-imp = SimpleImputer()
+    Other simpler methods might involve taking simple features means as a
+    data-filler or some simple analogous measure. An example in this sense
+    might be:
 
-# Use .values attribute bc sklearn works with arrays rather than DataFrames
-imp.fit(df[features].values)
+    #+NAME: f97d4160-7669-4e28-9ee7-1b3d87ac0342
+    #+begin_src ein-python :results output :exports both 
+    from sklearn.impute import SimpleImputer
 
-print(imp.transform(df[features].values))
+    print("Original Data:\n" + "-" *35)
+    print (df)
+
+    features = ['price', 'inventory']
+    imp = SimpleImputer()
+
+    # Use .values attribute bc sklearn works with arrays rather than DataFrames
+    print("\nImputed Values:\n" + "-" *35)
+    imp.fit(df[features].values)
+    print(imp.transform(df[features].values))
+
+    print("\nReassign the Features with the Imputed Values:\n" + "-" *35)
+    df [['price', 'inventory']] = imp.transform(df[features].values)
+
+    print (df)
+    #+end_src
+
+    #+RESULTS: f97d4160-7669-4e28-9ee7-1b3d87ac0342
+    #+begin_example
+    Original Data:
+    -----------------------------------
+	 name  price  inventory
+    0   apple   1.95        NaN
+    1  banana   3.00       12.0
+    2  orange    NaN       23.0
+
+    Imputed Values:
+    -----------------------------------
+    [[ 1.95  17.5  ]
+     [ 3.    12.   ]
+     [ 2.475 23.   ]]
+
+    Reassign the Features with the Imputed Values:
+    -----------------------------------
+	 name  price  inventory
+    0   apple  1.950       17.5
+    1  banana  3.000       12.0
+    2  orange  2.475       23.0
+    #+end_example
+
+    Notice that in the above the simple average was taken to replace
+    missing values. 
+
+    Notice moreover how the standard sklearn API applies - i.e. the
+    =.fit ()= and =.transform ()= methods.
+
+    Check your specific sklearn post for it.
+
+*** Treat Null Values in Categorical Variables
+
+    First of all adjust the data to include missing categorical data:
+
+    #+NAME: e391cc91-8222-48c6-8f70-08e06d99ce23
+    #+begin_src ein-python
+    mydat['category'][0] = nan
+    mydat['category'][9] = nan
+
+    print("New Data:\n" + "-"*35)
+    print(mydat)
+ 
+    print("\nCategorical Data Mantained:\n")
+    print(mydat.info())
+
+    print("\nCategorical Data Does Not Include NaN:\n")
+    print(mydat.category.cat.categories)
+    #+end_src
+
+    #+RESULTS: e391cc91-8222-48c6-8f70-08e06d99ce23
+    #+begin_example
+    New Data:
+    -----------------------------------
+	       0         1         2 category
+    0   3.285809  1.292891 -4.087278      NaN
+    1  -4.393832  0.898429 -9.398311        0
+    2  -0.959970  0.936827 -3.816866        0
+    3   3.423767  1.705746  2.511616        0
+    4  -3.398694  2.665577 -1.063232        0
+    5  -5.981978 -2.330365  4.513986        1
+    6   3.563627  1.282886 -1.558001        1
+    7   3.911721  5.435864 -2.521728        1
+    8  -3.365184  5.509441  2.166765        1
+    9   4.376495  5.948424 -0.899942      NaN
+    10  0.711004  0.991445 -0.707667        2
+    11 -5.525879  7.641149 -1.207696        2
+    12 -2.263607  4.011692 -2.416089        2
+    13 -2.303355  2.281748 -3.973166        2
+    14  0.541773  7.803575 -8.016219        2
+    15 -2.086906  0.447170 -3.786559        3
+    16 -1.917900  3.561826 -2.660550        3
+    17  0.629063  1.705416  0.088963        3
+    18  3.571641  2.428314 -1.800404        3
+    19 -1.645434 -2.878642 -3.169414        3
+    20 -1.574994  0.464397 -3.304629        4
+    21 -5.727603  2.299280 -3.615124        4
+    22  0.815686  0.375027  1.368671        4
+    23  4.712558  1.563259 -3.259274        4
+    24 -5.063074 -4.301082 -3.433244        4
+    25 -1.914395 -4.043507  0.256975        5
+    26 -2.458269  5.153733 -1.631465        5
+    27 -0.858224  0.300057 -1.761264        5
+    28 -2.248453  0.772280 -1.619120        5
+    29 -0.326246  3.584091 -4.607798        5
+
+    Categorical Data Mantained:
+
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 30 entries, 0 to 29
+    Data columns (total 4 columns):
+     #   Column    Non-Null Count  Dtype   
+    ---  ------    --------------  -----   
+     0   0         30 non-null     float64 
+     1   1         30 non-null     float64 
+     2   2         30 non-null     float64 
+     3   category  28 non-null     category
+    dtypes: category(1), float64(3)
+    memory usage: 1.0 KB
+    None
+
+    Categorical Data Does Not Include NaN:
+
+    Index([0, 1, 2, 3, 4, 5], dtype='int32')
+    #+end_example
+
+    When data are categorical mathematical strategies for imputing the
+    data are not effective.
+
+    A solution is the one of creating a separate category for it.
+
+    #+NAME: 635a3cb7-79c9-41a6-bbee-81608f8fe0ee
+    #+begin_src ein-python
+    # Note you have to add the category first; before filling up the nan.
+    mydat.category = mydat.category.cat.add_categories('no_category')
+
+    mydat.loc[mydat.category[mydat.category.isnull()].index, "category"] = 'no_category'
+
+
+    print("New Data with new Category:\n" + "-" *35)
+    print(mydat)
+
+    print(mydat.category.cat.categories)
+    #+end_src
+
+    #+RESULTS: 635a3cb7-79c9-41a6-bbee-81608f8fe0ee
+    #+begin_example
+    New Data with new Category:
+    -----------------------------------
+	       0         1         2     category
+    0   3.285809  1.292891 -4.087278  no_category
+    1  -4.393832  0.898429 -9.398311            0
+    2  -0.959970  0.936827 -3.816866            0
+    3   3.423767  1.705746  2.511616            0
+    4  -3.398694  2.665577 -1.063232            0
+    5  -5.981978 -2.330365  4.513986            1
+    6   3.563627  1.282886 -1.558001            1
+    7   3.911721  5.435864 -2.521728            1
+    8  -3.365184  5.509441  2.166765            1
+    9   4.376495  5.948424 -0.899942  no_category
+    10  0.711004  0.991445 -0.707667            2
+    11 -5.525879  7.641149 -1.207696            2
+    12 -2.263607  4.011692 -2.416089            2
+    13 -2.303355  2.281748 -3.973166            2
+    14  0.541773  7.803575 -8.016219            2
+    15 -2.086906  0.447170 -3.786559            3
+    16 -1.917900  3.561826 -2.660550            3
+    17  0.629063  1.705416  0.088963            3
+    18  3.571641  2.428314 -1.800404            3
+    19 -1.645434 -2.878642 -3.169414            3
+    20 -1.574994  0.464397 -3.304629            4
+    21 -5.727603  2.299280 -3.615124            4
+    22  0.815686  0.375027  1.368671            4
+    23  4.712558  1.563259 -3.259274            4
+    24 -5.063074 -4.301082 -3.433244            4
+    25 -1.914395 -4.043507  0.256975            5
+    26 -2.458269  5.153733 -1.631465            5
+    27 -0.858224  0.300057 -1.761264            5
+    28 -2.248453  0.772280 -1.619120            5
+    29 -0.326246  3.584091 -4.607798            5
+    Index([0, 1, 2, 3, 4, 5, 'no_category'], dtype='object')
+    #+end_example
+
+    Or, more elegantly.
+
+    #+NAME: 189450c0-6a61-48bc-bf0e-3380259af07e
+    #+begin_src ein-python
+    mydat.category = mydat.category.cat.add_categories('no_category').fillna('no_category')
+    #+end_src
+
+
+    This will be useful as you create a new feature and that might
+    reveal some patterns in null values. 
+
+
+** Duplicates Handling
+
+   You can generate an array of duplicates boolean by leveraging =.duplicated ()= method:
+
+   #+NAME: 545305a8-283a-4718-806f-080150eb05da
+   #+begin_src ein-python :results output
+   romeo = pd.DataFrame({'a': [1,1,1,3], 'b' : [2,2,2,3]})
+
+   print(romeo)
+
+   print("\nCheck if records already existing:\n" + "-" *40)
+   print(romeo.duplicated())
+
+   print("\nSelect all duplicated Rows:\n" + "-" *40)
+   print(romeo[romeo.duplicated()])
+   #+end_src
+
+   #+RESULTS: 545305a8-283a-4718-806f-080150eb05da
+   #+begin_example
+      a  b
+   0  1  2
+   1  1  2
+   2  1  2
+   3  3  3
+
+   Check if records already existing:
+   ----------------------------------------
+   0    False
+   1     True
+   2     True
+   3    False
+   dtype: bool
+
+   Select all duplicated Rows:
+   ----------------------------------------
+      a  b
+   1  1  2
+   2  1  2
+   #+end_example
+
+
+** Summarize the data
+
+*** Describe the Data
+
+  #+NAME: 62E7CBD5-4D53-4C5E-A1AC-70E42CBA1F0A
+  #+begin_src ein-python :results output
+ df1.describe ()
   #+end_src
 
-  where notice that in the above the simple average was taken to replace
-  missing values. Notice moreover how the standard sklearn API applies -
-  i.e. the =.fit ()= and =.transform ()= methods.
+  #+RESULTS: 62E7CBD5-4D53-4C5E-A1AC-70E42CBA1F0A
+  :          a     b     c     d
+  : count  3.0   3.0   3.0   3.0
+  : mean   5.0   6.0   7.0   8.0
+  : std    4.0   4.0   4.0   4.0
+  : min    1.0   2.0   3.0   4.0
+  : 25%    3.0   4.0   5.0   6.0
+  : 50%    5.0   6.0   7.0   8.0
+  : 75%    7.0   8.0   9.0  10.0
+  : max    9.0  10.0  11.0  12.0
 
 
+** Data Wrangling
 
-*** to replace the nulls by a string in case of categorical variables
+*** General Note
 
-  #+begin_src python
-df.loc[df.Description[df.Description.isnull()].index, "Description"] = 'no_description'
+    Often it makes sense to create a dictionary for selecting the
+    columns of the dataframes by index and get the corresponding name.
+
+    It is just one among the many options in order to work in an
+    ordered way.
+
+
+*** Sort Multiple Variables in Data Frames
+
+    #+NAME: c9cd7cf6-2e65-4303-bada-b75b3188dabd
+    #+begin_src ein-python
+    print (df1) 
+
+    print (df1.sort_values(['c', "d"], ascending=[False, False], inplace=False)) 
+
+    print (df1) 
+
+    df1.sort_values(['c', "d"], ascending=[False, False], inplace=True) ## you
+                                                                        ## see
+									## that
+									## with
+									## inplace
+									## you
+									## overwrite
+									## the
+									## existing
+									## table
+
+    print (df1) 
+
+    df1.sort_values(['c', "d"], ascending=[True, True], inplace=True)
+
+    #+end_src
+
+    #+RESULTS: c9cd7cf6-2e65-4303-bada-b75b3188dabd
+    #+begin_example
+       a   b   c   d
+    0  1   2   3   4
+    1  5   6   7   8
+    2  9  10  11  12
+       a   b   c   d
+    2  9  10  11  12
+    1  5   6   7   8
+    0  1   2   3   4
+       a   b   c   d
+    0  1   2   3   4
+    1  5   6   7   8
+    2  9  10  11  12
+       a   b   c   d
+    2  9  10  11  12
+    1  5   6   7   8
+    0  1   2   3   4
+    #+end_example
+
+
+*** Column Naming
+
+    - Set the name of the columns
+
+
+    #+NAME: DDDA7E5F-FC2A-4A7D-BC7B-D7CF473D3C49
+    #+begin_src ein-python :results output
+    mydat.columns = ["nomean", "posmean", "negmean"]
+    #+end_src
+
+    #+RESULTS: DDDA7E5F-FC2A-4A7D-BC7B-D7CF473D3C49
+
+    #+NAME: A30028B2-C614-406C-AF97-2DF4F99E1648
+    #+begin_src ein-python :results output
+    mydat.columns
+    #+end_src
+
+    #+RESULTS: A30028B2-C614-406C-AF97-2DF4F99E1648
+    : Index(['nomean', 'posmean', 'negmean'], dtype='object')
+
+
+*** on the difference between =.iloc= and =.loc= and =at=
+
+**** .at
+
+     This searches for a very specific entry.
+
+     =.iat= : uses the *strict position* in the matrix. I.e. it takes
+     numeric values.
+
+     =.at= : search by index and column *names*. I.e. you enter the
+     names.
+
+     #+NAME: 9F6C4632-2087-4EF2-BE4D-6C4E948FA712
+     #+begin_src ein-python :results output
+     print (df1)
+     print (df1.at[0, 'd']) 
+     #+end_src
+
+     #+RESULTS: 9F6C4632-2087-4EF2-BE4D-6C4E948FA712
+     :    a   b   c   d
+     : 2  9  10  11  12
+     : 1  5   6   7   8
+     : 0  1   2   3   4
+     : 4
+
+     Note that you can get the same entry by numeric value by the
+     following:
+
+     #+NAME: A0ABCC18-127A-4686-ADC1-E131136EE271
+     #+begin_src ein-python :results output
+     df1.iat[2,3]
+     #+end_src
+
+     #+RESULTS: A0ABCC18-127A-4686-ADC1-E131136EE271
+     : 4
+
+
+**** .iloc
+
+     This works along the lines of the =.iat=, i.e. you work by
+     index. The difference is that you can select multiple
+     indices. I.e. an array of them.
+
+     #+NAME: D3530789-6ACE-490F-A62F-1F738ABE00D3
+     #+begin_src ein-python :results output
+     df.head (5)
+     #+end_src
+
+     #+NAME: E45EF453-DF18-4DA7-8510-1E6B2480F4A7
+     #+begin_src ein-python :results output
+     ## Some examples for slicing the data
+     print (df.iloc[0,1:])
+     print (df.iloc[:,1:])
+     print (df.iloc[:2,1:])
+     #+end_src
+
+     #+RESULTS: E45EF453-DF18-4DA7-8510-1E6B2480F4A7
+     #+begin_example
+     price        1.95
+     inventory    17.5
+     Name: 0, dtype: object
+	price  inventory
+     0  1.950       17.5
+     1  3.000       12.0
+     2  2.475       23.0
+	price  inventory
+     0   1.95       17.5
+     1   3.00       12.0
+     #+end_example
+
+
+**** .loc
+
+     #+NAME: D3530789-6ACE-490F-A62F-1F738ABE00D3
+     #+begin_src ein-python :results output
+     df.head (5)
+     #+end_src
+
+     #+RESULTS: D3530789-6ACE-490F-A62F-1F738ABE00D3
+     :      name  price  inventory
+     : 0   apple  1.950       17.5
+     : 1  banana  3.000       12.0
+     : 2  orange  2.475       23.0
+
+     #+NAME: bedf4a09-bf70-4bbb-9c2e-8a45870e5249
+     #+begin_src ein-python
+     df.loc [[0,2], ['price', 'name']]
+     #+end_src
+
+     #+RESULTS: bedf4a09-bf70-4bbb-9c2e-8a45870e5249
+     :    price    name
+     : 0  1.950   apple
+     : 2  2.475  orange
+
+     Note that the following works as well:
+
+     #+NAME: 886a2cbc-0341-4572-82a2-fd34cf4d939d
+     #+begin_src ein-python
+     print (df.loc [:, ['price', 'name']])
+     print (df.loc [[0,2], :])
+
+     ## The following would throw an error.
+     ## print (df.at [0, ['price', 'name']]) ## Note that multi-entries slicing is not possible with at
+     #+end_src
+
+     #+RESULTS: 886a2cbc-0341-4572-82a2-fd34cf4d939d
+     :    price    name
+     : 0  1.950   apple
+     : 1  3.000  banana
+     : 2  2.475  orange
+     :      name  price  inventory
+     : 0   apple  1.950       17.5
+     : 2  orange  2.475       23.0
+
+
+**** slicing the data without helper api method
+
+***** get by row
+
+      You can use numerical entries for slicing the data.
+
+      #+NAME: 392E582F-AFE3-4B9A-BF7A-18B9D55B15F6
+      #+begin_src ein-python :results output
+      print (df1)
+
+      print (df1 [0:3]) ## it works on the axis = 0. Can just slice like this.
+      #+end_src
+
+      #+RESULTS: 392E582F-AFE3-4B9A-BF7A-18B9D55B15F6
+      :    a   b   c   d
+      : 2  9  10  11  12
+      : 1  5   6   7   8
+      : 0  1   2   3   4
+      :    a   b   c   d
+      : 2  9  10  11  12
+      : 1  5   6   7   8
+      : 0  1   2   3   4
+
+
+***** get by column
+
+    #+NAME: 72EFF5A5-8589-4813-A918-91547491D259
+    #+begin_src ein-python :results output
+    print (df1[['a', 'b']].head (3)) 
+
+    ## The below does not work.
+    ## Natively you can just slice between one of the two dimensions
+    ## there is a different syntax explained in the next session for it. 
+
+    ## print (df1[0:3, ['a', 'b']].head (3)) 
+    #+end_src
+
+    #+RESULTS: 72EFF5A5-8589-4813-A918-91547491D259
+    :    a   b
+    : 2  9  10
+    : 1  5   6
+    : 0  1   2
+
+
+***** get by row and column
+
+      The way to select rows and columns is to simply apply
+      sequentially the built-in methods.
+
+      It is nothing else than a chain rule. 
+
+      #+NAME: D0ECAD01-5802-45DE-B009-8C0ED8926068
+      #+begin_src ein-python :results output
+      print (df1)
+      # mydat[['nomean', 'posmean']][::2]
+      #+end_src
+
+      #+RESULTS: D0ECAD01-5802-45DE-B009-8C0ED8926068
+      :    a   b   c   d
+      : 2  9  10  11  12
+      : 1  5   6   7   8
+      : 0  1   2   3   4
+
+      #+NAME: 7EE3C177-63AE-46F2-80AE-6FC33912E63E
+      #+begin_src ein-python :results output
+      print(df1[['a', 'b']] [0:1]) ## note that the row indexing works by
+				   ## position not name, in that case you
+				   ## would have to work with the .loc
+				   ## method
+      #+end_src
+
+      #+RESULTS: 7EE3C177-63AE-46F2-80AE-6FC33912E63E
+      :    a   b
+      : 2  9  10
+
+
+** Filtering Data
+
+*** filter through booleans
+
+  #+NAME: FE3A32A6-A5AD-41B5-A156-A8FF68D0BE85
+  #+begin_src ein-python :results output
+  print (df1)
+
+  filt = df1.b >= 6
+
+  print ()
+  print (df1[['a', 'b']][filt]) ## You can pass a boolean
+				## condition on the row
+				## indeces
+
+  ## The following raises an error
+  ## print (df1.iloc[filt, 0]) ## You can pass a boolean
+    
   #+end_src
 
-*** Missing data on categorical series
+  #+RESULTS: FE3A32A6-A5AD-41B5-A156-A8FF68D0BE85
+  :    a   b   c   d
+  : 2  9  10  11  12
+  : 1  5   6   7   8
+  : 0  1   2   3   4
+  : 
+  :    a   b
+  : 2  9  10
+  : 1  5   6
 
-    Assume m is a categorical  series  with 5 categories and 'Nan'
-    then you can just replace =Nan= with one of the existing
-    categories. If you want to create a new category for it you should
-    work through
+  Note that you can work with =iloc= and a =boolean= filtering condition
+  by passing it to the =iloc= operator.
 
-#+begin_src ein-python :results output
-m = m.cat.add_categories(0).fillna(0)
-#+end_src
+  #+NAME: 094c44ef-47d4-4f82-b9cc-5d026dfa9991
+  #+begin_src ein-python
+  print (np.array (filt))
 
-** To make row-wise modification - Apply Function
+  print (df1.iloc[np.array (filt) , 0]) ## You can pass a boolean
+  #+end_src
 
- In order to apply a function sequentially to each entry in a column
- dataframe you can use the =apply= function on pandas dataframe.
+  #+RESULTS: 094c44ef-47d4-4f82-b9cc-5d026dfa9991
+  : [ True  True False]
+  : 2    9
+  : 1    5
+  : Name: a, dtype: int64
 
- For instance for the following dataframe
+  You can as well create the boolean conditions with an apply function.
 
- #+begin_src python :session sparse :results output
-cust_id.head()
- #+end_src
+  #+NAME: 6F11E092-26F3-40CA-955D-32452E1A11AF
+  #+begin_src ein-python :results output
+  # reading the data
+  series = [('Stranger Things', 3, 'Millie'),
+	    ('Game of Thrones', 8, 'Emilia'), 
+	    ('La Casa De Papel', 4, 'Sergio'),
+	    ('Westworld', 3, 'Evan Rachel'), 
+	    ('Stranger Things', 3, 'Millie'),
+	    ('La Casa De Papel', 4, 'Sergio')]
 
- Then you could specify a function return the years since the date in
- column dob
+  # Create a DataFrame object
+  dfObj = pd.DataFrame(series, columns=['Name', 'Seasons', 'Actor'])
 
- #+begin_src python
-def age(x):
-    datetime_object = datetime.strptime(x, '%m/%d/%y')
+  df = pd.DataFrame(dfObj)
 
-    datetime_now = datetime.today()
+  df.iloc[np.array (df.Seasons.apply (lambda x: x % 2 == 0)), :]
+  #+end_src
 
-    return datetime_now.year - datetime_object.year
- #+end_src
+  #+RESULTS: 6F11E092-26F3-40CA-955D-32452E1A11AF
+  :                Name  Seasons   Actor
+  : 1   Game of Thrones        8  Emilia
+  : 2  La Casa De Papel        4  Sergio
+  : 5  La Casa De Papel        4  Sergio
 
- Finally you can pass the =apply= function to each row of your
- pandas dataframe column by
 
- #+begin_src python
-print(cust_id['dob'].apply (lambda row: age(row)))
+*** filter through regex
 
-cust_id['age'] = cust_id['dob'].apply (lambda row: age(row))
-
-cust_id.head()
+ #+begin_src ein-python :results output
+ df.filter(regex='ing|Date')
  #+end_src
 
  #+begin_example
-        dob  1            2        3               4  5              6  \
-0  07/30/98  1         Todd    Kasen  South Carolina  m  united_states  
-1  04/12/89  2        Garza   Ensley            None  f      singapore
-2  09/12/97  3        Carey  Lillian         Alabama  f  united_states
-3  01/28/99  4  Christensen     Beau        New York  m  united_states
-4  03/23/98  5       Gibson  Ernesto            None  m      singapore 
-
-age  
-22  
-31  
-23  
-21  
-22  
+         Date	        Running Chasing	Climbing 	Foraging
+ 0	10142018	False	False	False		False
+ 1	10062018	True	False	False		False
+ 2	10102018	False	False	True		False
+ 3	10182018	False	False	True		False
+ 4	10182018	False	False	False		False
+ …	…	…	…	…	…	
+ 3018	10072018	False	False	False		True
+ 3019	10132018	False	False	False		True
+ 3020	10122018	False	False	False		True
+ 3021	10102018	False	False	False		False
+ 3022	10122018	False	False	False		True
  #+end_example
 
-** New dataset
+
+** Group By Operations
+
+   Create fictitious groups
+
+   #+NAME: 0335713a-a7a0-4f46-9739-04f837ec1fce
+   #+begin_src ein-python
+   lis = [[5]*10, [0] * 10, [-5] * 10] 
+
+   mydat ['group'] =  list (np.concatenate(lis).flat) 
+
+   print(mydat.head (30))
+
+   print(mydat.info()) ## note that the above is not a category.
+   #+end_src
+
+   #+RESULTS: 0335713a-a7a0-4f46-9739-04f837ec1fce
+   #+begin_example
+	      0         1         2     category  group
+   0   3.285809  1.292891 -4.087278  no_category      5
+   1  -4.393832  0.898429 -9.398311            0      5
+   2  -0.959970  0.936827 -3.816866            0      5
+   3   3.423767  1.705746  2.511616            0      5
+   4  -3.398694  2.665577 -1.063232            0      5
+   5  -5.981978 -2.330365  4.513986            1      5
+   6   3.563627  1.282886 -1.558001            1      5
+   7   3.911721  5.435864 -2.521728            1      5
+   8  -3.365184  5.509441  2.166765            1      5
+   9   4.376495  5.948424 -0.899942  no_category      5
+   10  0.711004  0.991445 -0.707667            2      0
+   11 -5.525879  7.641149 -1.207696            2      0
+   12 -2.263607  4.011692 -2.416089            2      0
+   13 -2.303355  2.281748 -3.973166            2      0
+   14  0.541773  7.803575 -8.016219            2      0
+   15 -2.086906  0.447170 -3.786559            3      0
+   16 -1.917900  3.561826 -2.660550            3      0
+   17  0.629063  1.705416  0.088963            3      0
+   18  3.571641  2.428314 -1.800404            3      0
+   19 -1.645434 -2.878642 -3.169414            3      0
+   20 -1.574994  0.464397 -3.304629            4     -5
+   21 -5.727603  2.299280 -3.615124            4     -5
+   22  0.815686  0.375027  1.368671            4     -5
+   23  4.712558  1.563259 -3.259274            4     -5
+   24 -5.063074 -4.301082 -3.433244            4     -5
+   25 -1.914395 -4.043507  0.256975            5     -5
+   26 -2.458269  5.153733 -1.631465            5     -5
+   27 -0.858224  0.300057 -1.761264            5     -5
+   28 -2.248453  0.772280 -1.619120            5     -5
+   29 -0.326246  3.584091 -4.607798            5     -5
+   <class 'pandas.core.frame.DataFrame'>
+   RangeIndex: 30 entries, 0 to 29
+   Data columns (total 5 columns):
+    #   Column    Non-Null Count  Dtype   
+   ---  ------    --------------  -----   
+    0   0         30 non-null     float64 
+    1   1         30 non-null     float64 
+    2   2         30 non-null     float64 
+    3   category  30 non-null     category
+    4   group     30 non-null     int32   
+   dtypes: category(1), float64(3), int32(1)
+   memory usage: 1.3 KB
+   None
+   #+end_example
+
+   Compute the sum for each group / category. Both work with the
+   groupby method. 
+
+   #+NAME: 718be318-057d-4d67-a971-8369ad7a1917
+   #+begin_src ein-python
+   print("Sum per Group:\n" + "-"*40)
+   print(mydat.iloc[:, [0, 1, 2, 4]].groupby('group').sum())
+
+   print("Median per Group:\n" + "-"*40)
+   print(mydat.iloc[:, [0, 1, 2, 4]].groupby('group').median())
+
+
+   print("Median per Category:\n" + "-"*40)
+   print(mydat.iloc[:, [0, 1, 2, 3]].groupby('category').median())
+   #+end_src
+
+   #+RESULTS: 718be318-057d-4d67-a971-8369ad7a1917
+   #+begin_example
+   Sum per Group:
+   ----------------------------------------
+		  0          1          2
+   group                                 
+   -5    -14.643014   6.167534 -21.606271
+    0    -10.289600  27.993692 -27.648801
+    5      0.461761  23.345720 -14.152991
+   Median per Group:
+   ----------------------------------------
+		 0         1         2
+   group                              
+   -5    -1.744694  0.618339 -2.510269
+    0    -1.781667  2.355031 -2.538320
+    5     1.162920  1.499319 -1.310616
+   Median per Category:
+   ----------------------------------------
+		       0         1         2
+   category                                 
+   0           -2.179332  1.321287 -2.440049
+   1            0.099221  3.359375  0.304382
+   2           -2.263607  4.011692 -2.416089
+   3           -1.645434  1.705416 -2.660550
+   4           -1.574994  0.464397 -3.304629
+   5           -1.914395  0.772280 -1.631465
+   no_category  3.831152  3.620658 -2.493610
+   #+end_example
+
+
+   
+** Side note: Series vs. Dataframe
+
+   Interesting the ~df.column_name~ gives you a =Series= while the
+   ~df.loc[: [column_name]]~, gives you a =dataframe=.
+
+   Keep this data type difference in mind. It will allow you to move
+   faster across the data.
+
+   
+** Cut vs. qcut
+
+   Note that the difference is well explained in [[https://stackoverflow.com/questions/30211923/what-is-the-difference-between-pandas-qcut-and-pandas-cut][this post]].
+
+   I.e. the =cut= creates the bins for the categorical assignment with
+   equally distanced bins across the value ranges.
+
+   In contrast with =qcut=, the bins will be chosen so that you have
+   the same number of records in each bin. You have 30 records, so
+   should have 6 in each bin.
+
+   #+begin_src ein-python :results output
+   pd.qcut(data_seq.loc[:,['r_hematocrite_admission']].squeeze(), 5).cat.categories
+   #+end_src
+
+
+** To make row-wise modification - Apply Function
+
+   In order to apply a function sequentially to each entry in a column
+   dataframe you can use the =apply= function on pandas dataframe.
+
+   For instance for the following dataframe
+
+   #+begin_src ein-python :session sparse :results output
+   cust_id.head()
+   #+end_src
+
+   Then you could specify a function return the years since the date in
+   column dob
+
+   #+begin_src ein-python
+   def age(x):
+       datetime_object = datetime.strptime(x, '%m/%d/%y')
+
+       datetime_now = datetime.today()
+
+       return datetime_now.year - datetime_object.year
+   #+end_src
+
+   Finally you can pass the =apply= function to each row of your
+   pandas dataframe column by
+
+   #+begin_src ein-python
+   print(cust_id['dob'].apply (lambda row: age(row)))
+
+   cust_id['age'] = cust_id['dob'].apply (lambda row: age(row))
+
+   cust_id.head()
+   #+end_src
+
+   #+begin_example
+	  dob  1            2        3               4  5              6  \
+  0  07/30/98  1         Todd    Kasen  South Carolina  m  united_states  
+  1  04/12/89  2        Garza   Ensley            None  f      singapore
+  2  09/12/97  3        Carey  Lillian         Alabama  f  united_states
+  3  01/28/99  4  Christensen     Beau        New York  m  united_states
+  4  03/23/98  5       Gibson  Ernesto            None  m      singapore 
+
+  age  
+  22  
+  31  
+  23  
+  21  
+  22  
+   #+end_example
+
+
+** General Way to Tackle Down the Dataset
    :properties:
    :header-args:python: :session pandas
    :end:
 
-For the next sections I will use the following new dataset
-
-#+begin_src python
-import re
-import numpy as np
-import pandas as pd
-#+end_src
-
-#+NAME: D5E71680-E3E5-4FBD-B754-061941C9C71D
-#+begin_src python
-df = pd.read_csv("~/Desktop/Learning/AI_workflow_Coursera/Visualization/world-happiness.csv",index_col=0)
-print("df: {} x {}".format(df.shape[0],df.shape[1]))
-
-## clean up the column names and remove some
-df.columns = [re.sub("\s+","_",col) for col in df.columns.tolist()]
-df.head(n=4)
-#+end_src
-
-#+RESULTS:
-:        Country                           Region  Happiness_Rank  ...  Generosity  Dystopia_Residual  Year
-: 0  Afghanistan                    Southern Asia           153.0  ...     0.36510            1.95210  2015
-: 1      Albania       Central and Eastern Europe            95.0  ...     0.14272            1.89894  2015
-: 2      Algeria  Middle East and Northern Africa            68.0  ...     0.07822            2.43209  2015
-: 3       Angola               Sub-Saharan Africa           137.0  ...     0.12344            1.94939  2015
-: 
-: [4 rows x 12 columns]
-
-
- - view a review of all of the null values
-
- #+begin_src python
-## missing values summary
-print("Missing Value Summary\n{}".format("-"*35))
-print(df.isnull().sum(axis = 0))
- #+end_src
-
- #+begin_example
-Missing Value Summary
------------------------------------
-Country                           0
-Region                            0
-Happiness_Rank                   25
-Happiness_Score                  25
-Economy_(GDP_per_Capita)         25
-Family                           25
-Health_(Life_Expectancy)         25
-Freedom                          25
-Trust_(Government_Corruption)    25
-Generosity                       25
-Dystopia_Residual                25
-Year                              0
-dtype: int64
- #+end_example
-
-
-- pivot data frame and create aggregate measures for them (similar to
-  mutate in =dplyr=)
-
-  #+begin_src python
-columns_to_show = ["Happiness_Score","Health_(Life_Expectancy)"]
-pd.pivot_table(df, index= 'Year',values=columns_to_show,aggfunc='mean').round(3)
-  #+end_src
-
-- select all columns but one
-
-#+begin_src ein-python :results output
-df = data.loc[ : , data.columns != 'student_gender'] 
-#+end_src
-
-
-- groupby
-
-analogously to the previous version one can compute aggregated
-measures using the groupby command
+   For the next sections I will use the following new dataset
 
    #+begin_src python
+   import re
+   import numpy as np
+   import pandas as pd
+   #+end_src
+
+   #+NAME: D5E71680-E3E5-4FBD-B754-061941C9C71D
+   #+begin_src python
+   df = pd.read_csv("~/Desktop/Learning/AI_workflow_Coursera/Visualization/world-happiness.csv",index_col=0)
+   print("df: {} x {}".format(df.shape[0],df.shape[1]))
+
+   ## clean up the column names and remove some
+   df.columns = [re.sub("\s+","_",col) for col in df.columns.tolist()]
+   df.head(n=4)
+   #+end_src
+
+   #+RESULTS:
+   :        Country                           Region  Happiness_Rank  ...  Generosity  Dystopia_Residual  Year
+   : 0  Afghanistan                    Southern Asia           153.0  ...     0.36510            1.95210  2015
+   : 1      Albania       Central and Eastern Europe            95.0  ...     0.14272            1.89894  2015
+   : 2      Algeria  Middle East and Northern Africa            68.0  ...     0.07822            2.43209  2015
+   : 3       Angola               Sub-Saharan Africa           137.0  ...     0.12344            1.94939  2015
+   : 
+   : [4 rows x 12 columns]
+
+
+   - view a review of all of the null values
+
+   #+begin_src ein-python
+   ## missing values summary
+   print("Missing Value Summary\n{}".format("-"*35))
+   print(df.isnull().sum(axis = 0))
+   #+end_src
+
+   #+begin_example
+  Missing Value Summary
+  -----------------------------------
+  Country                           0
+  Region                            0
+  Happiness_Rank                   25
+  Happiness_Score                  25
+  Economy_(GDP_per_Capita)         25
+  Family                           25
+  Health_(Life_Expectancy)         25
+  Freedom                          25
+  Trust_(Government_Corruption)    25
+  Generosity                       25
+  Dystopia_Residual                25
+  Year                              0
+  dtype: int64
+   #+end_example
+
+
+   - pivot data frame and create aggregate measures for them (similar to
+     mutate in =dplyr=)
+
+     #+begin_src ein-python
+     columns_to_show = ["Happiness_Score","Health_(Life_Expectancy)"]
+     pd.pivot_table(df, index= 'Year',values=columns_to_show,aggfunc='mean').round(3)
+     #+end_src
+
+   - select all columns but one
+
+   #+begin_src ein-python :results output
+   df = data.loc[ : , data.columns != 'student_gender'] 
+   #+end_src
+
+
+   - groupby
+
+   analogously to the previous version one can compute aggregated
+   measures using the groupby command
+
+   #+begin_src ein-python
    df.groupby(['Year'])[columns_to_show].mean().round(3)
    #+end_src
 
 
-Aggregating by multiple columns is straightforward.
+   Aggregating by multiple columns is straightforward.
 
-#+begin_src python 
-pd.pivot_table(df, index = ['Region', 'Year'], values=columns_to_show).round(3)
-## or
-# df.groupby(['Region', 'Year'])[columns_to_show].mean().round(3)
-#+end_src
+   #+begin_src python 
+   pd.pivot_table(df, index = ['Region', 'Year'], values=columns_to_show).round(3)
+   ## or
+   # df.groupby(['Region', 'Year'])[columns_to_show].mean().round(3)
+   #+end_src
 
-Finally you can pass a column entry instead of displaying the results
-as above. This is more user friendly in case you might have to merge
-the results into other data frames.
+   Finally you can pass a column entry instead of displaying the results
+   as above. This is more user friendly in case you might have to merge
+   the results into other data frames.
 
-#+begin_src python
-pd.pivot_table(df,index='Region',columns='Year',values="Happiness_Score")
-#+end_src
+   #+begin_src python
+   pd.pivot_table(df,index='Region',columns='Year',values="Happiness_Score")
+   #+end_src
 
 
-- create factor variables out of continuous variables through the
-  =cut= method.
+   - create factor variables out of continuous variables through the
+     =cut= method.
 
-#+begin_src python 
-pd.cut (df['Happiness_Rank'], bins = 4)
-#+end_src
+   #+begin_src python 
+   pd.cut (df['Happiness_Rank'], bins = 4)
+   #+end_src
 
-- append a column to a dataframe
+   - append a column to a dataframe
 
-#+begin_src python 
-pd.concat(objs = [df, pd.cut (df['Happiness_Rank'], bins = 4)], 
-          axis = 1)
-#+end_src
+   #+begin_src python 
+   pd.concat(objs = [df, pd.cut (df['Happiness_Rank'], bins = 4)], 
+	     axis = 1)
+   #+end_src
 
-** Work With SQL on top of Pandas
-   :properties:
-   :header-args:python: :session pandas :exports both
-   :end:
 
+
+
+** Example of SQL for getting the sum of the price in each Country
+   
 
 #+NAME: 07F6B5FF-C726-4A80-B258-2A41D4360F00
 #+begin_src python :results output
 from pandasql import sqldf
 nba = lambda q: sqldf(q, globals())
 #+end_src
-
-#+RESULTS: 07F6B5FF-C726-4A80-B258-2A41D4360F00
 
 
 #+NAME: 57015F06-859F-466A-8DE6-EA0D92FB8A7D
@@ -801,61 +1706,12 @@ GROUP BY country
 ORDER BY tot_revenue DESC
 """
 #+end_src
-
-#+RESULTS: 57015F06-859F-466A-8DE6-EA0D92FB8A7D
    
 #+NAME: E14A7CBB-FE59-4A7B-BF7E-98A0F3DE5F20
 #+begin_src python :results output 
 nba (q)
 #+end_src
 
-#+RESULTS: E14A7CBB-FE59-4A7B-BF7E-98A0F3DE5F20
-#+begin_example
-                 country   tot_revenue
-0         United Kingdom  3.521514e+06
-1                   EIRE  1.070692e+05
-2                Germany  4.927182e+04
-3                 France  4.056514e+04
-4                 Norway  3.849475e+04
-5                  Spain  1.604099e+04
-6              Hong Kong  1.445257e+04
-7               Portugal  1.352867e+04
-8              Singapore  1.317592e+04
-9            Netherlands  1.232280e+04
-10               Belgium  1.119061e+04
-11           Switzerland  9.284050e+03
-12                Sweden  7.876760e+03
-13       Channel Islands  7.610120e+03
-14             Australia  6.872630e+03
-15                 Malta  6.085340e+03
-16                 Italy  5.910190e+03
-17                Cyprus  4.976300e+03
-18               Austria  3.390890e+03
-19               Finland  3.364650e+03
-20                   RSA  3.105750e+03
-21           Unspecified  3.045360e+03
-22                Greece  2.437370e+03
-23  United Arab Emirates  2.400210e+03
-24               Denmark  1.818510e+03
-25                Poland  1.510710e+03
-26                   USA  1.185100e+03
-27                 Japan  1.083120e+03
-28                Canada  1.053100e+03
-29               Iceland  5.098600e+02
-30             Lithuania  4.944100e+02
-31                Israel  4.575900e+02
-32               Bahrain  4.394900e+02
-33               Lebanon  3.586100e+02
-34    European Community  2.940500e+02
-35                Brazil  2.563100e+02
-36              Thailand  2.279700e+02
-37                 Korea  1.502400e+02
-38           West Indies  1.227700e+02
-39               Nigeria  1.092800e+02
-40               Bermuda  8.470000e+01
-41        Czech Republic  3.183000e+01
-42          Saudi Arabia  2.411000e+01
-#+end_example
 
 
 * Sparse Matrices
@@ -1231,14 +2087,14 @@ adding vertically
  [0 0 0 0 0 0 0 0 4 1]]
 #+end_example
 
+
 * MatplotLib
    :properties:
    :header-args:ein-python: :session http://127.0.0.1:8888/visualization.ipynb  :results output
    :end:
 
-
 #+NAME: 7B605A9A-38A5-40A9-991B-EE6B0A394437
-#+begin_src python :results output
+#+begin_src ein-python :results output
 plt.plot(x_1, c = "lightblue", ls = '--', marker = "o",
          ms = 6, label ="nomean")
 plt.plot(x_2, c = "darkorange", ls = '--', marker = "s",
@@ -1250,6 +2106,7 @@ plt.xticks(list(range(20)), rotation = 'vertical') # sets the ticks on
                                                    # x-axis and puts
                                                    # them vertically.
 #+end_src
+
 
 #+BEGIN_EXPORT html
 <br>
@@ -1308,6 +2165,7 @@ plt.hist([mydat[mydat.bitwise == True].nomean,
 <br>
 #+END_EXPORT
 
+
 * Seaborn
    :properties:
    :header-args:ein-python: :session http://127.0.0.1:8888/visualization.ipynb  :results output
@@ -1318,6 +2176,13 @@ plt.hist([mydat[mydat.bitwise == True].nomean,
 #+begin_src python :results output
 sns.distplot (mydat['nomean'])
 #+end_src
+
+#+RESULTS: 05C46A89-D1D4-4DFE-9E2A-01CEC3634EAE
+: Python 3.11.3 (tags/v3.11.3:f3909b8, Apr  4 2023, 23:49:59) [MSC v.1934 64 bit (AMD64)] on win32
+: Type "help", "copyright", "credits" or "license" for more information.
+: Traceback (most recent call last):
+:   File "<stdin>", line 1, in <module>
+: NameError: name 'sns' is not defined
 
 #+BEGIN_EXPORT html
 <br>
