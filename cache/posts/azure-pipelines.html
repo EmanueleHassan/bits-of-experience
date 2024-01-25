@@ -1,0 +1,253 @@
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+<p>
+So write here a bit of documentation about how to create your DevOps
+pipelines.
+</p>
+
+<p>
+That will be important as in such a way you can finally abstract from
+the lower level stuff.
+</p>
+
+<p>
+You just deployed your first webapps on Azure. You did that through a
+single gradle command through the gradle plug in.
+</p>
+
+<p>
+So in this sense it is easy now to deploy your changes via such
+pipelines. You can embedd this over there as a task theoretically.
+</p>
+
+<p>
+Other people are taking the lead in this dimension and know much
+better how to set up proper env integrated with Jira or similar
+boards, so will not spend too much time with it.
+</p>
+
+<p>
+This is not interesting to this stage for me. It is just a small test
+in order to read pipelines and understand properly what is going on
+over there such that you can understand the general workflow.
+</p>
+
+<p>
+Note that obviously all of the notes under this page stems directly
+from the official Microsoft documentation.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org854c265" class="outline-2">
+<h2 id="org854c265">General Concepts</h2>
+<div class="outline-text-2" id="text-org854c265">
+<p>
+So understand the following basic concepts - see <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops">here</a>.
+</p>
+
+<p>
+Check as well here in order to get a proper overview of the thing:
+</p>
+
+<img src="../../images/Screenshot 2022-03-23 132355.png" class="center">
+
+<p>
+So understand that it is essentially a hierarchy.
+</p>
+
+<img src="../../images/pipelineHierarchy.png" class="center">
+
+<p>
+All of the keywords you read into a pipeline refer to these
+first-class citizens of the webapp.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5fc8e14" class="outline-2">
+<h2 id="org5fc8e14">CI/CD</h2>
+<div class="outline-text-2" id="text-org5fc8e14">
+<p>
+So all good.
+</p>
+
+<p>
+Now with the above concepts you can easily set up your pipeline.
+</p>
+
+<p>
+CI -&gt; here you put all of the different constraints that ultimately
+lead you to the artifact creation if successful.
+</p>
+
+<p>
+You can then assemble the artifact and publish it.    
+</p>
+
+<p>
+CD -&gt; deploy artifact if CI successful upon - each git pull into
+master etc.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6d8c8d4" class="outline-2">
+<h2 id="org6d8c8d4">Tasks</h2>
+<div class="outline-text-2" id="text-org6d8c8d4">
+<p>
+So the above is pretty it. Quite ok. You should be able to read
+pipelines to this stage.
+</p>
+
+<p>
+It is just a question of deciding what you want to do in there and
+properly setting up a workflow but the operations are
+clear. Especially in our not so big environment.
+</p>
+
+<p>
+Now understand this last bit and you will have more less a complete
+understanding of what is going on in the pipelines.
+</p>
+
+<p>
+You can pass your user defined tasks or use already packaged tasks
+that Azure make available to you.
+</p>
+</div>
+
+<div id="outline-container-org7a162b6" class="outline-3">
+<h3 id="org7a162b6">Passing user defined tasks</h3>
+<div class="outline-text-3" id="text-org7a162b6">
+<p>
+Note that this functions a bit like the image marketplace on K8s.
+</p>
+
+<p>
+You have a container registry there where you publish your images
+etc. Here is the same there is a VS-Marketplace where you publish
+your tasks.
+</p>
+
+<p>
+Ok - so weird stuff over there. Have a look ath <a href="https://docs.microsoft.com/en-us/azure/devops/extend/develop/add-build-task?view=azure-devops">here</a>.
+</p>
+
+<p>
+Did not loose too much time checking at it. Just by having a very
+quick look at it I understood it must not be that trivial.
+</p>
+
+<p>
+Plus it starts to talk about node etc. Well not my beer. I guess I
+will live with the packaged tasks as long as possible. Should be
+enough.
+</p>
+
+<p>
+Plus not in my focus point that bit of our tech stack.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc87a2b2" class="outline-3">
+<h3 id="orgc87a2b2">Using packaged tasks</h3>
+<div class="outline-text-3" id="text-orgc87a2b2">
+<p>
+In order to make your life easy Azure arrived a further level of
+abstraction providing you the possibility to leverage on already
+packaged tasks.
+</p>
+
+<p>
+You follow then a bit of DSL and you are done.
+</p>
+
+<p>
+Note that the <code>@&lt;Nbr.&gt;</code> are the versions of such packaged tasks.
+</p>
+
+<p>
+You can find the packaged tasks available <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/process/stages?view=azure-devops&amp;tabs=yaml">here</a>.
+</p>
+
+<p>
+You see that what we used in the pipeline you have for your
+projects is mainly these.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfe842e3" class="outline-2">
+<h2 id="orgfe842e3">Using templates</h2>
+<div class="outline-text-2" id="text-orgfe842e3">
+<p>
+I am developing now the general setup for the Python stack. The
+essential idea is to create everything as code and have a complete
+build and release strategy for it. It goes more less along <a href="https://faun.pub/azure-devops-build-release-with-yaml-templates-d55f25a4928c">these lines</a>.
+</p>
+
+<p>
+You can read about parameter and how to consume them in the
+following two resources: <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops">one</a>, <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/process/runtime-parameters?view=azure-devops&amp;tabs=script">two</a>.
+</p>
+
+<p>
+Check as well the existing project. There is a pipeline as well
+published there for the python projects. Note that there you do not
+publish artifacts. You rather archive things. So you can use it as
+reference but the solution is sub-optimal.
+</p>
+
+<p>
+Note that there you have <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&amp;tabs=yaml">the service connection parameter</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdfc33a1" class="outline-2">
+<h2 id="orgdfc33a1">Python</h2>
+<div class="outline-text-2" id="text-orgdfc33a1">
+<p>
+Check at <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/python?view=azure-devops">this reference</a>. Quite general and good.
+</p>
+</div>
+</div>

@@ -1,0 +1,416 @@
+<style>
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+
+
+<p>
+So it is time to start some serious post and exploration on Java
+debugging.
+</p>
+
+<p>
+Note that I believe that having the right tooling is paramount of
+performing a job well. It can save you a lot of time that is worth.
+</p>
+
+<p>
+So this post will contain all of the concepts in order to properly
+work with the debugger.
+</p>
+
+<p>
+Cause yeah&#x2026; we all know about breakpoints&#x2026; but you better start to
+properly work with conditional breakpoints, trace-points, watchpoints,
+time-reversion features etc.
+</p>
+
+<p>
+As always in the IT world, lots of heads worked on a thing, so you
+start to dig and you will never end. You simply open a pandora box.
+</p>
+
+<p>
+I will start easy withe the basics and then I will start to dig a
+little bit deeper into more advanced stuff.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-orgb99f55e" class="outline-2">
+<h2 id="orgb99f55e">Conditional Breakpoints</h2>
+<div class="outline-text-2" id="text-orgb99f55e">
+<p>
+This is nothing new under the sun you already used it extensively -
+especially back in the days when you coded yourself that genrealized
+tree method in your Master Thesis at the end of your first Masters.
+</p>
+
+<p>
+In Eclipse you just open the breakpoint conditions, write then a
+boolean condition and the execution stops there when the condition
+evalues to <code>TRUE</code>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org8ca3d46" class="outline-2">
+<h2 id="org8ca3d46">Step Filters</h2>
+<div class="outline-text-2" id="text-org8ca3d46">
+<p>
+This is not related to breakpoints but rather to individual steps
+you do after the breakpoint is hit.
+</p>
+
+<p>
+It is helpful to continue iterating over needless stuff like a fool.
+</p>
+
+<p>
+Basically in the step-filters you can define what to ignore when
+doing your steps in debug mode.
+</p>
+
+<p>
+You can for instance ignore entire things belonging to a given
+package etc. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgaff6629" class="outline-2">
+<h2 id="orgaff6629">Exception Breakpoints</h2>
+<div class="outline-text-2" id="text-orgaff6629">
+<p>
+Can also be handy - <a href="https://medium.com/@sanketmeghani/eclipse-tips-exception-breakpoints-e36634f1579b">quite intuitive</a>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgc5aaa37" class="outline-2">
+<h2 id="orgc5aaa37">Tracepoint</h2>
+<div class="outline-text-2" id="text-orgc5aaa37">
+<p>
+This is a nice feature.
+</p>
+
+<p>
+Allows users to <b>creates conditional breakpoints</b> to <b>print out
+messages</b> without halting at the breakpoints and cluttering the code
+base.
+</p>
+
+<p>
+You could theoretically do everthing by changing your code base.
+</p>
+
+<p>
+This clutters the code and requires yourself to recall then to
+remove all of the code.
+</p>
+
+<p>
+Check at the functionality when you have time. In any case it is
+nothing big if there is not.
+</p>
+
+<p>
+Note that you can achieve exactly the same by defining a function
+that returns a boolean and before returning you can execute all of
+the logic you desire there.
+</p>
+
+<p>
+See for instance <a href="https://stackoverflow.com/questions/14937363/tracepoints-in-eclipse/14937367">this</a>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org2b4aad6" class="outline-2">
+<h2 id="org2b4aad6">Trigger points</h2>
+<div class="outline-text-2" id="text-org2b4aad6">
+<p>
+This is nice&#x2026; especially if you have recursive code.
+</p>
+
+<p>
+The idea is the following:
+</p>
+
+<ul class="org-ul">
+<li>you set 1 or multiple trigger points - these are also
+breakpoints.</li>
+
+<li>you set other "normal" breakpoints. Note that these can belong to
+the types of breakpoints mentioned above.</li>
+</ul>
+
+<p>
+Then all of the breakpoints that <b>are not trigger points</b> will be
+ignored until the first trigger point is hit and activates all of
+the breakpoints friends.
+</p>
+
+<img src="../../images/Screenshot 2021-12-12 145916.png" class="center">
+
+<p>
+You could do everthing by just setting a frist breakpoint, ignoring
+all of the others - i.e. deactivating them manually - and then
+activating them again as soon as the first breakpoint is hit&#x2026;. you
+see the pain involved in it in comparison to standard trigger
+points.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org5c74161" class="outline-2">
+<h2 id="org5c74161">Time reversion</h2>
+<div class="outline-text-2" id="text-org5c74161">
+<p>
+Ok so this is a thing that I would especially like to have well
+sorted out.
+</p>
+
+<p>
+Cause with these compiled languages you loose a ton of time if you
+cannot do proper testing of stuff on the fly as you go along.
+</p>
+
+<p>
+So basically once you are in the debugging mode and you are trying
+to understand the proper working of a given mechanism it is easy to
+go over a step get some knew understanding then go back to the
+previous step in order to actually test smth and check if the
+mechanism is really as intended.
+</p>
+</div>
+
+<div id="outline-container-org3a9c00f" class="outline-3">
+<h3 id="org3a9c00f">Drop to Frame</h3>
+<div class="outline-text-3" id="text-org3a9c00f">
+<p>
+In order to do that there is the <code>drop to frame</code> option in the
+Eclipse IDE. Check at <a href="https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.jdt.doc.user/reference/views/debug/ref-droptoframe.htm">this</a>. You should also check at the other pages
+in it to properly get a sense of the IDE.
+</p>
+
+<p>
+Your migration to Emacs-lsp is still ongoing but according to plan
+it should not last too long. Have now overcome runtime issues,
+understand better gradle working&#x2026; but that is a side note and a
+different discussion.
+</p>
+
+<p>
+<b>Important Note:</b> it won't unroll any state changes that have
+happened, so it may not work depending on the sort of method you're
+in.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0a2197e" class="outline-3">
+<h3 id="org0a2197e">More intersting stuff</h3>
+<div class="outline-text-3" id="text-org0a2197e">
+<p>
+Note that the research always pays off. You should explore the
+following as found in <a href="https://stackoverflow.com/questions/4331336/how-to-step-back-in-eclipse-debugger">this thread</a>:
+</p>
+
+<blockquote>
+<p>
+there are a few Eclipse-based tools that could be used to "go back" in
+(run)time:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://cse.buffalo.edu/jive/">JIVE</a>: Java Interactive Visualization Environment</li>
+
+<li>Chronon: A “flight data recorder” for Java programs</li>
+
+<li>Diver (discontinued): Dynamic Interactive Views For Reverse
+Engineering &#x2013; not nice that it has been <b>discontinued</b></li>
+
+<li>Halik: Only for <b>IntelliJ</b> for now, but porting to Eclipse is
+mentioned on the roadmap. - so also out of my list</li>
+</ul>
+</blockquote>
+
+<p>
+Check at JIVE next week when you have time as it apparently also
+provides the UML features you are looking forward to, in order to
+write proper software that can be easily managed and migrated.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0bf4154" class="outline-2">
+<h2 id="org0bf4154">Execution of Stuff</h2>
+<div class="outline-text-2" id="text-org0bf4154">
+<p>
+One of the things you can do is change the value of a variable - see
+<a href="https://stackoverflow.com/questions/11646999/change-variable-value-eclipse-in-debug-perspective-at-run-time">here</a>. Check then how that works.
+</p>
+
+<p>
+You can also inspect and execute chuncks of code to see what they
+would be evaluated to.
+</p>
+
+<p>
+Still too poor developing experience. Have to understand better how
+to solve this bottleneck. Would be nice to have more developing
+experience in this domain.
+</p>
+
+<p>
+Explore other Java debuggers in this sense. I think that this is
+highly a non-solvable issue due to the way Java was set up. Check
+especially the jdb. I think this is a well used IDE agonostic
+debugger. 
+</p>
+
+<p>
+But you never know. Give it a research try.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org18a5b4f" class="outline-2">
+<h2 id="org18a5b4f">On viewing the stacktrace of an Throwable</h2>
+<div class="outline-text-2" id="text-org18a5b4f">
+<p>
+I do not understand yet the entire set-up of the multiple
+applications we have.
+</p>
+
+<p>
+For some when debugging you do not manage to see the stacktrace of
+errors, i.e. they are not returned to the console where your TOMCAT
+is running.
+</p>
+
+<p>
+I guess this is normal as that web-server theoretically deals with
+multiple applications and so there just erros regarding the smooth
+working of the server itself are logged + plus connection errors
+etc. that hamper the general availability of the system.
+</p>
+
+<p>
+On some applications I was able to identify a log file where all of
+the errors are redirected. There you can see the logs for a
+particular application, its state, errors, stacktrace etc. So all
+good.
+</p>
+
+<p>
+On other applications the situation is still not that clear. Dig
+into them and check where the issue is and how the set-up is. In the
+meanwhile when you encounter an error in Debug mode - there is
+always the method <code>printStackTrace ()</code>. Use this method of
+<code>Throwable</code> objects and keep going.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc966263" class="outline-2">
+<h2 id="orgc966263">On one useful thing</h2>
+<div class="outline-text-2" id="text-orgc966263">
+<p>
+So basically as you are working on a single huge monolith, all of
+the different components run on a single process.
+</p>
+
+<p>
+Now there is the use to work on different applications concurrently
+as maybe you are debugging something but it needs a bit to process
+the application and you would like to work in the meanwhile on a
+different application.
+</p>
+
+<p>
+You understand how crucial the above is not to get stuck all of the
+time when programming as you have to wait for some longer
+computation etc.
+</p>
+
+<p>
+Now there is an easy way to do it. You can refer to <a href="https://stackoverflow.com/questions/8409943/remote-debug-multiple-eclipse-projects-at-the-same-time">this post</a>. The
+essential idea is the following:
+</p>
+
+<ul class="org-ul">
+<li>you have bounded your debugger at the beginning to some specific
+project.</li>
+
+<li><p>
+now if you start debugging into another project the source code
+might not be visible there.
+</p>
+
+<p>
+the solution is simply to edit the <i>"Change Source Attachment"</i> as
+following.
+</p></li>
+</ul>
+
+<img src="../../images/Screenshot 2022-01-20 112317.png" class="center">
+
+<p>
+you can then select there the project which source code should be
+included. Do not forget to tick the mark to also include
+sub-folders. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7841f72" class="outline-2">
+<h2 id="org7841f72"><span class="todo TODO">TODO</span> JFR files</h2>
+<div class="outline-text-2" id="text-org7841f72">
+<p>
+check <a href="https://docs.oracle.com/javacomponents/jmc-5-4/jfr-runtime-guide/about.htm#JFRUH170">here</a>.
+</p>
+</div>
+</div>
