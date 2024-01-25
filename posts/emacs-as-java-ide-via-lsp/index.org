@@ -68,6 +68,7 @@ productivity with it in the long-term.
 
 {{{TEASER_END}}}
 
+
 * Resources
 
 Look at the following [[https://code.visualstudio.com/blogs/2018/08/07/debug-adapter-protocol-website][blog entry]] and [[https://microsoft.github.io/language-server-protocol/overviews/lsp/overview/][this entry]].
@@ -118,6 +119,123 @@ server protocol and how the infor is displayed in the emacs UI.
 Check as well [[https://xpressrazor.wordpress.com/2020/11/04/java-programming-in-emacs/][this tutorial]] that shows some basics functioning of
 java-lsp. 
 
+
+* Issues when installing the server
+
+  So recently I migrated laptop. I am having issues with the
+  installation of the new jdtls server.
+
+  So here some notes in the case that you should work with it again in
+  the future.
+
+  So essentially the material is as well expressed [[https://www.reddit.com/r/emacs/comments/ilucsy/lsp_java_server_cannot_start/][here]].
+
+  So basically the first steps you have to take are the removal of
+  the important libaries:
+
+  - =.lsp-session-v1=
+
+  - =.cache/lsp/eclipse.jdt.ls/=
+
+  Then when you restart your emacs and open a java file, with your
+  current configuration you will automatically be prompted to install
+  the jdts server.
+
+  You can do that and should you not be able to run the server it is
+  worthwhile to check at the logs available at
+  =.emacs.d/.cache/lsp/eclipse.jdt.ls/config_win=.
+
+  
+** ISSUE try this as the next step
+
+   In this case it seems that the new lsp server that you download
+   out-of-the box requires Java-17 to properly run.
+
+   - download java 17 and see if that manages to fix the issue.
+
+   - changing the path and java_home variable to Java 17. Change it
+     back should you run into problems.
+
+     Got some improvement at some point it seems to work. Then
+     restarted emacs and got an error. Cannot find java in there for
+     some reason.
+
+   So essentially with both you have issues. There is something wrong
+   your java setup.
+
+   Check at the following errors:
+
+
+      1. In the case of running with Java 17 - you seem to be able to
+         connect to the eclipse.jdts lsp server. You get the following
+         error when trying to build the project though.
+
+	 #+begin_quote
+         Unsupported class file major version 61
+	 #+end_quote
+
+	 According to [[https://mkyong.com/java/java-unsupported-class-file-major-version-61/][this source]]: so it looks as if the runtime of
+         java is below java 17 - the version you used to compile the classes.
+
+
+      2. If you are using java 11 as your java_home and set the jdk
+         properly in your path you get the following error:
+
+	 #+begin_quote
+	 Unresolved requirement: Require-Capability: osgi.ee; filter:="(&(osgi.ee=JavaSE)(version=17))"
+	 #+end_quote	 
+
+	 This ultimately means that: the runtime shipped by efxclipse
+         does not know Java-17. Please lower that to 11 for the
+         moment. See [[https://www.eclipse.org/forums/index.php/t/1110558/][the following source]].
+
+
+      So the two problems look quite similar. In fact they are in fact
+      connected. The question is then where these runtime are that are
+      causing mess.
+
+      So fix this issue it is quite annoying. Try to clear all of the
+      files containing the Java metadata and make order over there.
+
+*** Inspect the following
+
+       I think this might be the issue - check at the java -version of
+       your installed openjdk:
+
+       #+begin_quote
+ openjdk version "17.0.6" 2023-01-17 LTS
+ OpenJDK Runtime Environment Microsoft-7209853 (build 17.0.6+10-LTS)
+ OpenJDK 64-Bit Server VM Microsoft-7209853 (build 17.0.6+10-LTS, mixed mode, sharing)
+       #+end_quote
+
+       So you see the runtime environment is higher than the JDK
+       version. Check the message of Dave. Maybe this is the issue.
+
+       Note that LTS stands for /Long-Term-Support (LTS)/ in the
+       above. It means that the provider plans to support such versions
+       for long time after their release.
+
+       -----------------------------------------------------------------
+
+       You have to understand how you can go down from that =+10=
+       version. I think this is what might cause confusion when
+       building the project with Java 17.
+
+       Otherwise try to restrict the source and target in your gradle
+       project at the specific =17.0.6=.
+
+       -----------------------------------------------------------------
+
+       Note that the following holds for the Java version 11:
+
+       #+begin_src
+openjdk version "11.0.12" 2021-07-20
+OpenJDK Runtime Environment Microsoft-25199 (build 11.0.12+7)
+OpenJDK 64-Bit Server VM Microsoft-25199 (build 11.0.12+7, mixed mode)
+       #+end_src
+
+       And it builds perfectly. So it must be something different.
+
 * Find reference
 
   =lsp-find-references=:  For an object visualize where it is used in
@@ -138,8 +256,9 @@ java-lsp.
 
   you search for implementations of classes and interfaces.
 
-* peek references
 
+* peek references
+  
   basically the same as finding by reference. it will display more
   information in the same buffer though.
 
@@ -152,10 +271,11 @@ java-lsp.
   and then if you select it you actually jump to that piece of code as
   in the normal way.
   
+
 * IN-PROGRESS Alternative to the Reference possibilities
 
   Note that I am having currently some problems with the reference
-  methods above, apparentlz the project is too big and everzthing
+  methods above, apparently the project is too big and everzthing
   eventually crashes.
 
   I guess that the issue will eventually be fixed in future versions.
@@ -175,6 +295,7 @@ java-lsp.
   sense of them on the fly. I guess that you will have to ask a lot to
   your emacs for working in such a way. Especially in these larger
   projects. 
+
 
 * Refactor
   
@@ -208,6 +329,7 @@ java-lsp.
    parameter and specify over there the default such that eclipse will
    actually change all of the existing methods by adding the parameter
    of choice with the *default* value of choice.
+
 
 * Flycheck
 
@@ -243,6 +365,7 @@ java-lsp.
 
   So cool - you have a better set up than eclipse in this sense now.
 
+
 * lsp format buffer
 
   reformat the buffer based on what the language server thinks it
@@ -254,6 +377,7 @@ java-lsp.
   the language for doing code-formatting.
 
   usually it works better. 
+
 
 * Projectile
 
@@ -288,6 +412,7 @@ java-lsp.
   Working as a charm now. Just have to configure it with =gradle= for
   your actual project but then you are good to go.
 
+
 * class hierarchy
 
   you can visualize the class hierachy with =lsp-ui-imenu=
@@ -296,6 +421,7 @@ java-lsp.
   [[*lsp-header-breadcrumb][lsp-header-breadcrumb]] below.
 
   so I would not recommend it too much.
+
 
 * lsp-header-breadcrumb
 
@@ -306,6 +432,7 @@ java-lsp.
 
   this will adapt as you cycle through your code and it should help
   you a bit to keep the visibility over your entire code. 
+
 
 * Project Root
 
@@ -345,6 +472,7 @@ java-lsp.
   to *implementations* and *definitions* for all of your methods,
   classes and variables across your entire projects.
 
+
 * On checking the hierarchy and dependencies
 
   For visualizing the dependencies and get a general overview of a
@@ -353,6 +481,7 @@ java-lsp.
   There you can quickly visualize the pacakges structures and
   visualize the classes available in a given file together with the
   methods of them.
+
 
 * treemacs
 
@@ -398,10 +527,12 @@ java-lsp.
   [[https://github.com/Alexander-Miller/treemacs][online]]. You can basically call =treemacs-edit-workspaces= and edit
   there your workspaces.
 
+
 * Troubleshooting
 
   Look at this [[https://emacs-lsp.github.io/lsp-mode/page/troubleshooting/][troubleshooting]] url when you have issues and want to
   debug stuff.  
+
 
 * Debugging
 
@@ -456,6 +587,7 @@ java-lsp.
 
    You can open it via =dap-ui-repl=
 
+
 * Auto-completion
 
   Note that auto-completion is also working now. I think that before
@@ -477,12 +609,14 @@ java-lsp.
 
    Fix it as it can be quite annoying. 
 
+
 * Lsp java deps list
 
   In such a way it is possible to quickly navigate all of the
   necessary dependencies for your projects in your workspace.
 
   It opens kind of a treemacs thing where you would set the stuff.
+
 
 * Organize Imports
 
@@ -495,6 +629,7 @@ java-lsp.
   So neat. You see that each day you are closing to working better
   with it. 
     
+
 * Some Eclipse Notes
 
   This were a backlog as I could not immediately migrarte to my
@@ -700,6 +835,7 @@ there are a few Eclipse-based tools that could be used to "go back" in
    #+begin_quote
    taskkill /F /IM java.exe
    #+end_quote
+
 
 * ISSUES
 

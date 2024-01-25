@@ -10,13 +10,13 @@
 <meta name="theme-color" content="#5670d4">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
-<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/emacs-as-java-ide-via-lsp/">
+<link rel="canonical" href="https://emanuelehassan.github.io/bits-of-experience/posts/emacs-as-java-ide-via-lsp/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
 <link rel="prev" href="../java-notes-history-syntax-and-tricks/" title="Java Notes - History, Syntax and Tricks" type="text/html">
 <link rel="next" href="../on-encryption/" title="On encryption" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="Emacs as Java IDE via LSP">
-<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/emacs-as-java-ide-via-lsp/">
+<meta property="og:url" content="https://emanuelehassan.github.io/bits-of-experience/posts/emacs-as-java-ide-via-lsp/">
 <meta property="og:description" content="img {
 display: block;
 margin-top: 60px;
@@ -143,9 +143,10 @@ productivity with it in the long-term.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org79f7512" class="outline-2">
-<h2 id="org79f7512">Resources</h2>
-<div class="outline-text-2" id="text-org79f7512">
+
+<div id="outline-container-orgd308f73" class="outline-2">
+<h2 id="orgd308f73">Resources</h2>
+<div class="outline-text-2" id="text-orgd308f73">
 <p>
 Look at the following <a href="https://code.visualstudio.com/blogs/2018/08/07/debug-adapter-protocol-website">blog entry</a> and <a href="https://microsoft.github.io/language-server-protocol/overviews/lsp/overview/">this entry</a>.
 </p>
@@ -194,7 +195,7 @@ I tried then to find the process on my local laptop. On windows
 systems you can do that with the following command.
 </p>
 
-<div class="highlight"><pre><span></span>netstat -aon
+<div class="highlight"><pre><span></span>netstat<span class="w"> </span>-aon
 </pre></div>
 
 <p>
@@ -216,9 +217,194 @@ java-lsp.
 </div>
 </div>
 
-<div id="outline-container-orgc48b64d" class="outline-2">
-<h2 id="orgc48b64d">Find reference</h2>
-<div class="outline-text-2" id="text-orgc48b64d">
+
+<div id="outline-container-org7dfb9b7" class="outline-2">
+<h2 id="org7dfb9b7">Issues when installing the server</h2>
+<div class="outline-text-2" id="text-org7dfb9b7">
+<p>
+So recently I migrated laptop. I am having issues with the
+installation of the new jdtls server.
+</p>
+
+<p>
+So here some notes in the case that you should work with it again in
+the future.
+</p>
+
+<p>
+So essentially the material is as well expressed <a href="https://www.reddit.com/r/emacs/comments/ilucsy/lsp_java_server_cannot_start/">here</a>.
+</p>
+
+<p>
+So basically the first steps you have to take are the removal of
+the important libaries:
+</p>
+
+<ul class="org-ul">
+<li><code>.lsp-session-v1</code></li>
+
+<li><code>.cache/lsp/eclipse.jdt.ls/</code></li>
+</ul>
+<p>
+Then when you restart your emacs and open a java file, with your
+current configuration you will automatically be prompted to install
+the jdts server.
+</p>
+
+<p>
+You can do that and should you not be able to run the server it is
+worthwhile to check at the logs available at
+<code>.emacs.d/.cache/lsp/eclipse.jdt.ls/config_win</code>.
+</p>
+</div>
+
+
+<div id="outline-container-org74812af" class="outline-3">
+<h3 id="org74812af">ISSUE try this as the next step</h3>
+<div class="outline-text-3" id="text-org74812af">
+<p>
+In this case it seems that the new lsp server that you download
+out-of-the box requires Java-17 to properly run.
+</p>
+
+<ul class="org-ul">
+<li>download java 17 and see if that manages to fix the issue.</li>
+
+<li>
+<p>
+changing the path and java<sub>home</sub> variable to Java 17. Change it
+back should you run into problems.
+</p>
+
+<p>
+Got some improvement at some point it seems to work. Then
+restarted emacs and got an error. Cannot find java in there for
+some reason.
+</p>
+</li>
+</ul>
+<p>
+So essentially with both you have issues. There is something wrong
+your java setup.
+</p>
+
+<p>
+Check at the following errors:
+</p>
+
+
+<ol class="org-ol">
+<li>
+<p>
+In the case of running with Java 17 - you seem to be able to
+connect to the eclipse.jdts lsp server. You get the following
+error when trying to build the project though.
+</p>
+
+<blockquote>
+<p>
+Unsupported class file major version 61
+</p>
+</blockquote>
+
+<p>
+According to <a href="https://mkyong.com/java/java-unsupported-class-file-major-version-61/">this source</a>: so it looks as if the runtime of
+java is below java 17 - the version you used to compile the classes.
+</p>
+</li>
+</ol>
+<ol class="org-ol">
+<li>
+<p>
+If you are using java 11 as your java<sub>home</sub> and set the jdk
+properly in your path you get the following error:
+</p>
+
+<blockquote>
+<p>
+Unresolved requirement: Require-Capability: osgi.ee; filter:="(&amp;(osgi.ee=JavaSE)(version=17))"
+</p>
+</blockquote>
+
+<p>
+This ultimately means that: the runtime shipped by efxclipse
+does not know Java-17. Please lower that to 11 for the
+moment. See <a href="https://www.eclipse.org/forums/index.php/t/1110558/">the following source</a>.
+</p>
+</li>
+</ol>
+<p>
+So the two problems look quite similar. In fact they are in fact
+connected. The question is then where these runtime are that are
+causing mess.
+</p>
+
+<p>
+So fix this issue it is quite annoying. Try to clear all of the
+files containing the Java metadata and make order over there.
+</p>
+</div>
+
+<div id="outline-container-orgb02b15b" class="outline-4">
+<h4 id="orgb02b15b">Inspect the following</h4>
+<div class="outline-text-4" id="text-orgb02b15b">
+<p>
+I think this might be the issue - check at the java -version of
+your installed openjdk:
+</p>
+
+<blockquote>
+<p>
+openjdk version "17.0.6" 2023-01-17 LTS
+OpenJDK Runtime Environment Microsoft-7209853 (build 17.0.6+10-LTS)
+OpenJDK 64-Bit Server VM Microsoft-7209853 (build 17.0.6+10-LTS, mixed mode, sharing)
+</p>
+</blockquote>
+
+<p>
+So you see the runtime environment is higher than the JDK
+version. Check the message of Dave. Maybe this is the issue.
+</p>
+
+<p>
+Note that LTS stands for <i>Long-Term-Support (LTS)</i> in the
+above. It means that the provider plans to support such versions
+for long time after their release.
+</p>
+
+<hr>
+<p>
+You have to understand how you can go down from that <code>+10</code>
+version. I think this is what might cause confusion when
+building the project with Java 17.
+</p>
+
+<p>
+Otherwise try to restrict the source and target in your gradle
+project at the specific <code>17.0.6</code>.
+</p>
+
+<hr>
+<p>
+Note that the following holds for the Java version 11:
+</p>
+
+<div class="highlight"><pre><span></span>       openjdk version "11.0.12" 2021-07-20
+       OpenJDK Runtime Environment Microsoft-25199 (build 11.0.12+7)
+       OpenJDK 64-Bit Server VM Microsoft-25199 (build 11.0.12+7, mixed mode)
+</pre></div>
+
+<p>
+And it builds perfectly. So it must be something different.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4c1aa55" class="outline-2">
+<h2 id="org4c1aa55">Find reference</h2>
+<div class="outline-text-2" id="text-org4c1aa55">
 <p>
 <code>lsp-find-references</code>:  For an object visualize where it is used in
 your project. I.e. it searches across all of your files in the
@@ -251,9 +437,10 @@ you search for implementations of classes and interfaces.
 </div>
 </div>
 
-<div id="outline-container-orge2f6fd5" class="outline-2">
-<h2 id="orge2f6fd5">peek references</h2>
-<div class="outline-text-2" id="text-orge2f6fd5">
+
+<div id="outline-container-orga0e5d8b" class="outline-2">
+<h2 id="orga0e5d8b">peek references</h2>
+<div class="outline-text-2" id="text-orga0e5d8b">
 <p>
 basically the same as finding by reference. it will display more
 information in the same buffer though.
@@ -274,12 +461,13 @@ in the normal way.
 </div>
 </div>
 
-<div id="outline-container-org84d3b9f" class="outline-2">
-<h2 id="org84d3b9f">IN-PROGRESS Alternative to the Reference possibilities</h2>
-<div class="outline-text-2" id="text-org84d3b9f">
+
+<div id="outline-container-org9e46ffb" class="outline-2">
+<h2 id="org9e46ffb">IN-PROGRESS Alternative to the Reference possibilities</h2>
+<div class="outline-text-2" id="text-org9e46ffb">
 <p>
 Note that I am having currently some problems with the reference
-methods above, apparentlz the project is too big and everzthing
+methods above, apparently the project is too big and everzthing
 eventually crashes.
 </p>
 
@@ -315,13 +503,14 @@ projects.
 </div>
 </div>
 
-<div id="outline-container-org678b265" class="outline-2">
-<h2 id="org678b265">Refactor</h2>
-<div class="outline-text-2" id="text-org678b265">
+
+<div id="outline-container-org2b8c562" class="outline-2">
+<h2 id="org2b8c562">Refactor</h2>
+<div class="outline-text-2" id="text-org2b8c562">
 </div>
-<div id="outline-container-org267ca34" class="outline-3">
-<h3 id="org267ca34">general refactoring - naming etc</h3>
-<div class="outline-text-3" id="text-org267ca34">
+<div id="outline-container-org1df6d8d" class="outline-3">
+<h3 id="org1df6d8d">general refactoring - naming etc</h3>
+<div class="outline-text-3" id="text-org1df6d8d">
 <p>
 when you call the rename option through the <code>lsp</code> server you should
 actually rename all of the variables across all of the source files
@@ -331,9 +520,9 @@ must still be some minor error.
 </div>
 </div>
 
-<div id="outline-container-orgd7d892b" class="outline-3">
-<h3 id="orgd7d892b">refactoring of parameters</h3>
-<div class="outline-text-3" id="text-orgd7d892b">
+<div id="outline-container-orge823db3" class="outline-3">
+<h3 id="orge823db3">refactoring of parameters</h3>
+<div class="outline-text-3" id="text-orge823db3">
 <p>
 note that in Java you can not assign default to parameters.
 </p>
@@ -371,9 +560,10 @@ of choice with the <b>default</b> value of choice.
 </div>
 </div>
 
-<div id="outline-container-orgc8849c8" class="outline-2">
-<h2 id="orgc8849c8">Flycheck</h2>
-<div class="outline-text-2" id="text-orgc8849c8">
+
+<div id="outline-container-org0a98077" class="outline-2">
+<h2 id="org0a98077">Flycheck</h2>
+<div class="outline-text-2" id="text-org0a98077">
 <p>
 With <code>lsp-ui-flycheck-list</code> you will get a list with all of the
 errors and inconsistencies you have in your source files.
@@ -424,9 +614,10 @@ So cool - you have a better set up than eclipse in this sense now.
 </div>
 </div>
 
-<div id="outline-container-orgf46df29" class="outline-2">
-<h2 id="orgf46df29">lsp format buffer</h2>
-<div class="outline-text-2" id="text-orgf46df29">
+
+<div id="outline-container-orgd9f59c2" class="outline-2">
+<h2 id="orgd9f59c2">lsp format buffer</h2>
+<div class="outline-text-2" id="text-orgd9f59c2">
 <p>
 reformat the buffer based on what the language server thinks it
 makes sense.
@@ -447,9 +638,10 @@ usually it works better.
 </div>
 </div>
 
-<div id="outline-container-orgbbc8d02" class="outline-2">
-<h2 id="orgbbc8d02">Projectile</h2>
-<div class="outline-text-2" id="text-orgbbc8d02">
+
+<div id="outline-container-orgc6fccf7" class="outline-2">
+<h2 id="orgc6fccf7">Projectile</h2>
+<div class="outline-text-2" id="text-orgc6fccf7">
 <p>
 this is strong as it gives you all of the options to navigate your
 project and code.
@@ -468,9 +660,9 @@ back and forth in a fast way with all of the shortcuts that you have available.
 </p>
 </div>
 
-<div id="outline-container-org2c484d5" class="outline-3">
-<h3 id="org2c484d5">Building and Testing</h3>
-<div class="outline-text-3" id="text-org2c484d5">
+<div id="outline-container-org896554c" class="outline-3">
+<h3 id="org896554c">Building and Testing</h3>
+<div class="outline-text-3" id="text-org896554c">
 <p>
 Ok that is not properly lsp-related but let's put it in here. Maybe
 I will then write some separate notes on projectile later.
@@ -504,16 +696,17 @@ your actual project but then you are good to go.
 </div>
 </div>
 
-<div id="outline-container-orgae969ef" class="outline-2">
-<h2 id="orgae969ef">class hierarchy</h2>
-<div class="outline-text-2" id="text-orgae969ef">
+
+<div id="outline-container-orgc07f32b" class="outline-2">
+<h2 id="orgc07f32b">class hierarchy</h2>
+<div class="outline-text-2" id="text-orgc07f32b">
 <p>
 you can visualize the class hierachy with <code>lsp-ui-imenu</code>
 </p>
 
 <p>
 this is essentially the same information as you can have with the
-<a href="#orgd781205">lsp-header-breadcrumb</a> below.
+<a href="#org95345ce">lsp-header-breadcrumb</a> below.
 </p>
 
 <p>
@@ -522,9 +715,10 @@ so I would not recommend it too much.
 </div>
 </div>
 
-<div id="outline-container-orgd781205" class="outline-2">
-<h2 id="orgd781205">lsp-header-breadcrumb</h2>
-<div class="outline-text-2" id="text-orgd781205">
+
+<div id="outline-container-org95345ce" class="outline-2">
+<h2 id="org95345ce">lsp-header-breadcrumb</h2>
+<div class="outline-text-2" id="text-org95345ce">
 <p>
 search it. will show you on the top of your buffer the hierarchy for
 where you are at in your buffer.
@@ -541,9 +735,10 @@ you a bit to keep the visibility over your entire code.
 </div>
 </div>
 
-<div id="outline-container-org3ae34b5" class="outline-2">
-<h2 id="org3ae34b5">Project Root</h2>
-<div class="outline-text-2" id="text-org3ae34b5">
+
+<div id="outline-container-orge288c08" class="outline-2">
+<h2 id="orge288c08">Project Root</h2>
+<div class="outline-text-2" id="text-orge288c08">
 <p>
 That is important as from there the lsp starts and make all of the
 connections.
@@ -598,9 +793,10 @@ classes and variables across your entire projects.
 </div>
 </div>
 
-<div id="outline-container-org93c231c" class="outline-2">
-<h2 id="org93c231c">On checking the hierarchy and dependencies</h2>
-<div class="outline-text-2" id="text-org93c231c">
+
+<div id="outline-container-org71b119a" class="outline-2">
+<h2 id="org71b119a">On checking the hierarchy and dependencies</h2>
+<div class="outline-text-2" id="text-org71b119a">
 <p>
 For visualizing the dependencies and get a general overview of a
 package I like to use the <code>lsp-treemacs-java-deps-list</code> function.
@@ -614,9 +810,10 @@ methods of them.
 </div>
 </div>
 
-<div id="outline-container-orgc063b92" class="outline-2">
-<h2 id="orgc063b92">treemacs</h2>
-<div class="outline-text-2" id="text-orgc063b92">
+
+<div id="outline-container-org3130cf2" class="outline-2">
+<h2 id="org3130cf2">treemacs</h2>
+<div class="outline-text-2" id="text-org3130cf2">
 <p>
 Note that this is a different module but I also like this a lot and
 the integration with lsp mode.
@@ -679,9 +876,10 @@ there your workspaces.
 </div>
 </div>
 
-<div id="outline-container-orga744f3e" class="outline-2">
-<h2 id="orga744f3e">Troubleshooting</h2>
-<div class="outline-text-2" id="text-orga744f3e">
+
+<div id="outline-container-org93ec262" class="outline-2">
+<h2 id="org93ec262">Troubleshooting</h2>
+<div class="outline-text-2" id="text-org93ec262">
 <p>
 Look at this <a href="https://emacs-lsp.github.io/lsp-mode/page/troubleshooting/">troubleshooting</a> url when you have issues and want to
 debug stuff.  
@@ -689,9 +887,10 @@ debug stuff.
 </div>
 </div>
 
-<div id="outline-container-org81bce57" class="outline-2">
-<h2 id="org81bce57">Debugging</h2>
-<div class="outline-text-2" id="text-org81bce57">
+
+<div id="outline-container-org6aefa35" class="outline-2">
+<h2 id="org6aefa35">Debugging</h2>
+<div class="outline-text-2" id="text-org6aefa35">
 <p>
 Basically Debugging is based once more on a protocol that
 communicates with a server. In order to understand this properly
@@ -723,12 +922,12 @@ instantiate a connection at that port.
 You can do that for instance by specifying the following template.
 </p>
 
-<div class="highlight"><pre><span></span>  <span class="p">(</span><span class="n">dap</span><span class="o">-</span><span class="n">register</span><span class="o">-</span><span class="n">debug</span><span class="o">-</span><span class="n">template</span>
-   <span class="s">"localhost:8000"</span>
-   <span class="p">(</span><span class="n">list</span> <span class="p">:</span><span class="n">type</span> <span class="s">"java"</span>
-    <span class="p">:</span><span class="n">request</span> <span class="s">"attach"</span>
-    <span class="p">:</span><span class="n">hostName</span> <span class="s">"localhost"</span>
-    <span class="p">:</span><span class="n">port</span> <span class="mi">8000</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><span class="w">  </span><span class="p">(</span><span class="n">dap</span><span class="o">-</span><span class="n">register</span><span class="o">-</span><span class="n">debug</span><span class="o">-</span><span class="n">template</span>
+<span class="w">   </span><span class="s">"localhost:8000"</span>
+<span class="w">   </span><span class="p">(</span><span class="n">list</span><span class="w"> </span><span class="p">:</span><span class="n">type</span><span class="w"> </span><span class="s">"java"</span>
+<span class="w">    </span><span class="p">:</span><span class="n">request</span><span class="w"> </span><span class="s">"attach"</span>
+<span class="w">    </span><span class="p">:</span><span class="n">hostName</span><span class="w"> </span><span class="s">"localhost"</span>
+<span class="w">    </span><span class="p">:</span><span class="n">port</span><span class="w"> </span><span class="mi">8000</span><span class="p">))</span>
 </pre></div>
 
 <p>
@@ -743,9 +942,9 @@ You can then start the debugger with <code>dap-debug</code> mapped to <code>&lt;
 </p>
 </div>
 
-<div id="outline-container-org6aefce8" class="outline-3">
-<h3 id="org6aefce8">Dap REPL</h3>
-<div class="outline-text-3" id="text-org6aefce8">
+<div id="outline-container-orgc5a7d46" class="outline-3">
+<h3 id="orgc5a7d46">Dap REPL</h3>
+<div class="outline-text-3" id="text-orgc5a7d46">
 <p>
 Note that this is important as this is the space where you would
 ultimately run your code in order to understand properly what is
@@ -773,9 +972,10 @@ You can open it via <code>dap-ui-repl</code>
 </div>
 </div>
 
-<div id="outline-container-org0f4c316" class="outline-2">
-<h2 id="org0f4c316">Auto-completion</h2>
-<div class="outline-text-2" id="text-org0f4c316">
+
+<div id="outline-container-org87b20d4" class="outline-2">
+<h2 id="org87b20d4">Auto-completion</h2>
+<div class="outline-text-2" id="text-org87b20d4">
 <p>
 Note that auto-completion is also working now. I think that before
 something was broken at configuration level.
@@ -798,10 +998,10 @@ order to understand this, check <a href="https://github.com/emacs-lsp/lsp-java/i
 </p>
 </div>
 
-<div id="outline-container-org73980d0" class="outline-3">
-<h3 id="org73980d0">
+<div id="outline-container-org028a42d" class="outline-3">
+<h3 id="org028a42d">
 <span class="todo TODO">TODO</span> autocompleting as well with the return type</h3>
-<div class="outline-text-3" id="text-org73980d0">
+<div class="outline-text-3" id="text-org028a42d">
 <p>
 This is suboptimal as you have to cancel it then every time.
 </p>
@@ -813,9 +1013,10 @@ Fix it as it can be quite annoying.
 </div>
 </div>
 
-<div id="outline-container-orgbaa3c1b" class="outline-2">
-<h2 id="orgbaa3c1b">Lsp java deps list</h2>
-<div class="outline-text-2" id="text-orgbaa3c1b">
+
+<div id="outline-container-orgaa6efc9" class="outline-2">
+<h2 id="orgaa6efc9">Lsp java deps list</h2>
+<div class="outline-text-2" id="text-orgaa6efc9">
 <p>
 In such a way it is possible to quickly navigate all of the
 necessary dependencies for your projects in your workspace.
@@ -827,9 +1028,10 @@ It opens kind of a treemacs thing where you would set the stuff.
 </div>
 </div>
 
-<div id="outline-container-org187b77f" class="outline-2">
-<h2 id="org187b77f">Organize Imports</h2>
-<div class="outline-text-2" id="text-org187b77f">
+
+<div id="outline-container-org03a6375" class="outline-2">
+<h2 id="org03a6375">Organize Imports</h2>
+<div class="outline-text-2" id="text-org03a6375">
 <p>
 Use this. I.e. type <code>C-c l a-a</code> and organize imports.
 </p>
@@ -849,9 +1051,10 @@ with it.
 </div>
 </div>
 
-<div id="outline-container-org591e73f" class="outline-2">
-<h2 id="org591e73f">Some Eclipse Notes</h2>
-<div class="outline-text-2" id="text-org591e73f">
+
+<div id="outline-container-orgf66caca" class="outline-2">
+<h2 id="orgf66caca">Some Eclipse Notes</h2>
+<div class="outline-text-2" id="text-orgf66caca">
 <p>
 This were a backlog as I could not immediately migrarte to my
 project.
@@ -905,9 +1108,9 @@ following notes for using more classical IDEs.
 </p>
 </div>
 
-<div id="outline-container-org45a8fe9" class="outline-3">
-<h3 id="org45a8fe9">On branch</h3>
-<div class="outline-text-3" id="text-org45a8fe9">
+<div id="outline-container-orgeaab192" class="outline-3">
+<h3 id="orgeaab192">On branch</h3>
+<div class="outline-text-3" id="text-orgeaab192">
 <p>
 One thing that irritates me for instance in the Eclipse IDE is that
 it does not automatically switch branch for my projects when I
@@ -921,9 +1124,9 @@ and referesh it. Then the change of branch will be performed.
 </div>
 </div>
 
-<div id="outline-container-orgd61d9dc" class="outline-3">
-<h3 id="orgd61d9dc">Debugging</h3>
-<div class="outline-text-3" id="text-orgd61d9dc">
+<div id="outline-container-org608cd2f" class="outline-3">
+<h3 id="org608cd2f">Debugging</h3>
+<div class="outline-text-3" id="text-org608cd2f">
 <p>
 For eclipse you can read <a href="https://www.vogella.com/tutorials/EclipseDebugging/article.html">this</a> documentation.
 </p>
@@ -935,9 +1138,9 @@ local-server is started in your <code>LOCAL-tomcat</code> command file.
 </div>
 </div>
 
-<div id="outline-container-org20d603e" class="outline-3">
-<h3 id="org20d603e">On problems of references in Eclipse</h3>
-<div class="outline-text-3" id="text-org20d603e">
+<div id="outline-container-org67231ee" class="outline-3">
+<h3 id="org67231ee">On problems of references in Eclipse</h3>
+<div class="outline-text-3" id="text-org67231ee">
 <p>
 Eclipse does not manage to properly get all of the relations when
 you git pull from the shell.
@@ -955,9 +1158,9 @@ instructions there and you can rebuild and it should work.
 </div>
 </div>
 
-<div id="outline-container-org7622751" class="outline-3">
-<h3 id="org7622751">Note that in eclipse you have a way to write TODOs and search them then.</h3>
-<div class="outline-text-3" id="text-org7622751">
+<div id="outline-container-org315b926" class="outline-3">
+<h3 id="org315b926">Note that in eclipse you have a way to write TODOs and search them then.</h3>
+<div class="outline-text-3" id="text-org315b926">
 <p>
 Looks like an interesting feature. Check at it later. 
 </p>
@@ -966,7 +1169,7 @@ Looks like an interesting feature. Check at it later.
 Note that in many of my tasks are noted by the follwoing tags
 </p>
 
-<pre class="example" id="org7fa483e">
+<pre class="example">
 //TODO auto-generated method stub
 </pre>
 
@@ -976,11 +1179,11 @@ as in the following example.
 </p>
 
 
-<div class="highlight"><pre><span></span>   <span class="nd">@Override</span>
-   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">insert</span><span class="p">()</span> <span class="p">{</span>
-       <span class="c1">// TODO Auto-generated method stub</span>
+<div class="highlight"><pre><span></span><span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">insert</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">       </span><span class="c1">// TODO Auto-generated method stub</span>
 
-   <span class="p">}</span>
+<span class="w">   </span><span class="p">}</span>
 </pre></div>
 
 <p>
@@ -997,9 +1200,9 @@ return.
 </div>
 </div>
 
-<div id="outline-container-org8e188fd" class="outline-3">
-<h3 id="org8e188fd">Autogenerated doc-comment schema</h3>
-<div class="outline-text-3" id="text-org8e188fd">
+<div id="outline-container-orgbe4de15" class="outline-3">
+<h3 id="orgbe4de15">Autogenerated doc-comment schema</h3>
+<div class="outline-text-3" id="text-orgbe4de15">
 <p>
 This is useful as it will give you the skeleton of the doc-comment
 and will save you quite some time.
@@ -1013,9 +1216,9 @@ expected though.
 </div>
 </div>
 
-<div id="outline-container-org56feab8" class="outline-3">
-<h3 id="org56feab8">Broken Eclipse - not understanding project correctly - restart</h3>
-<div class="outline-text-3" id="text-org56feab8">
+<div id="outline-container-orgd1235c4" class="outline-3">
+<h3 id="orgd1235c4">Broken Eclipse - not understanding project correctly - restart</h3>
+<div class="outline-text-3" id="text-orgd1235c4">
 <p>
 Especially now at the beginning, without having a proper
 understanding of the entire thing, I am messing things up a bit.
@@ -1077,9 +1280,9 @@ You wait until the built is done. -&gt; you build and deploy.
 </div>
 </div>
 
-<div id="outline-container-org4b59b66" class="outline-3">
-<h3 id="org4b59b66">Multi-Threading Debugging</h3>
-<div class="outline-text-3" id="text-org4b59b66">
+<div id="outline-container-org5a7b84b" class="outline-3">
+<h3 id="org5a7b84b">Multi-Threading Debugging</h3>
+<div class="outline-text-3" id="text-org5a7b84b">
 <p>
 this is not a trivial thing. you can read about it in the following
 post.
@@ -1102,9 +1305,9 @@ wrong folder. i.e. the things are packaged in the wrong directory.
 </div>
 </div>
 
-<div id="outline-container-org28c497b" class="outline-3">
-<h3 id="org28c497b">On the validation issue</h3>
-<div class="outline-text-3" id="text-org28c497b">
+<div id="outline-container-org34c95b4" class="outline-3">
+<h3 id="org34c95b4">On the validation issue</h3>
+<div class="outline-text-3" id="text-org34c95b4">
 <p>
 So basically we work with the mustache framework for embedding some
 logic in the html files.
@@ -1117,9 +1320,9 @@ that you have errors in your html etc.
 </div>
 </div>
 
-<div id="outline-container-org8dfb44b" class="outline-3">
-<h3 id="org8dfb44b">On the Eclipse Debugger</h3>
-<div class="outline-text-3" id="text-org8dfb44b">
+<div id="outline-container-org4776ee9" class="outline-3">
+<h3 id="org4776ee9">On the Eclipse Debugger</h3>
+<div class="outline-text-3" id="text-org4776ee9">
 <p>
 Have to find the option to go back in time - i.e. of steps.
 </p>
@@ -1163,9 +1366,9 @@ point.
 </div>
 </div>
 
-<div id="outline-container-org2a764df" class="outline-3">
-<h3 id="org2a764df">Remove all of the imports that are not used.</h3>
-<div class="outline-text-3" id="text-org2a764df">
+<div id="outline-container-org79c0d46" class="outline-3">
+<h3 id="org79c0d46">Remove all of the imports that are not used.</h3>
+<div class="outline-text-3" id="text-org79c0d46">
 <p>
 This is also quite handy as Eclipse automatically adds lots of
 imports at development time.
@@ -1178,9 +1381,9 @@ You can then remove all of the ones you are not needing with
 </div>
 </div>
 
-<div id="outline-container-org36d60ec" class="outline-3">
-<h3 id="org36d60ec">How to kill all existing java related excutions</h3>
-<div class="outline-text-3" id="text-org36d60ec">
+<div id="outline-container-org36e97b7" class="outline-3">
+<h3 id="org36e97b7">How to kill all existing java related excutions</h3>
+<div class="outline-text-3" id="text-org36e97b7">
 <p>
 This works on windows. You might need it at some point.
 </p>
@@ -1194,14 +1397,15 @@ taskkill /F /IM java.exe
 </div>
 </div>
 
-<div id="outline-container-org0c967f3" class="outline-2">
-<h2 id="org0c967f3">ISSUES</h2>
-<div class="outline-text-2" id="text-org0c967f3">
+
+<div id="outline-container-org616252a" class="outline-2">
+<h2 id="org616252a">ISSUES</h2>
+<div class="outline-text-2" id="text-org616252a">
 </div>
-<div id="outline-container-org53f52fa" class="outline-3">
-<h3 id="org53f52fa">
+<div id="outline-container-org37aa654" class="outline-3">
+<h3 id="org37aa654">
 <span class="done DONE">DONE</span> Issue 1 - LSP; Server not connecting when switching files</h3>
-<div class="outline-text-3" id="text-org53f52fa">
+<div class="outline-text-3" id="text-org37aa654">
 <p>
 i.e. if you reference from one file to the other it works but you
 cannot change to a file with other methods such as projectile.
@@ -1222,9 +1426,9 @@ correctly.</li>
 </ul>
 </div>
 
-<div id="outline-container-org14c117b" class="outline-4">
-<h4 id="org14c117b">Note that you manage all of the existing lsp-sessions</h4>
-<div class="outline-text-4" id="text-org14c117b">
+<div id="outline-container-org99da982" class="outline-4">
+<h4 id="org99da982">Note that you manage all of the existing lsp-sessions</h4>
+<div class="outline-text-4" id="text-org99da982">
 <p>
 with the <code>workspace</code> keyword. check at the the functions involving
 it in there.
@@ -1232,9 +1436,9 @@ it in there.
 </div>
 </div>
 
-<div id="outline-container-orgfa748f6" class="outline-4">
-<h4 id="orgfa748f6">Solution</h4>
-<div class="outline-text-4" id="text-orgfa748f6">
+<div id="outline-container-orgab0f1a4" class="outline-4">
+<h4 id="orgab0f1a4">Solution</h4>
+<div class="outline-text-4" id="text-orgab0f1a4">
 <p>
 At the time the workaround was removing the highlighting at global
 level for lsp. Now it is starting to improve as an IDE.
@@ -1244,10 +1448,10 @@ level for lsp. Now it is starting to improve as an IDE.
 </div>
 
 
-<div id="outline-container-org7dd22c4" class="outline-3">
-<h3 id="org7dd22c4">
+<div id="outline-container-orgd46161a" class="outline-3">
+<h3 id="orgd46161a">
 <span class="done DONE">DONE</span> On Multi-project builds</h3>
-<div class="outline-text-3" id="text-org7dd22c4">
+<div class="outline-text-3" id="text-orgd46161a">
 <p>
 See your note in your emacs configuration:
 </p>
@@ -1257,7 +1461,7 @@ See your note in your emacs configuration:
 Check at the <a href="https://issueexplorer.com/issue/emacs-lsp/lsp-java/320">following url</a> to understand the issue.
 </p>
 
-<div class="highlight"><pre><span></span>   <span class="p">(</span><span class="nf">advice-add</span> <span class="ss">'lsp</span> <span class="nv">:before</span> <span class="p">(</span><span class="k">lambda </span><span class="p">(</span><span class="nf">&amp;rest</span> <span class="nv">_args</span><span class="p">)</span> <span class="p">(</span><span class="nb">eval </span><span class="o">'</span><span class="p">(</span><span class="nv">setf</span> <span class="p">(</span><span class="nf">lsp-session-server-id-&gt;folders</span> <span class="p">(</span><span class="nf">lsp-session</span><span class="p">))</span> <span class="p">(</span><span class="nf">ht</span><span class="p">)))))</span>
+<div class="highlight"><pre><span></span><span class="w">   </span><span class="p">(</span><span class="nf">advice-add</span><span class="w"> </span><span class="ss">'lsp</span><span class="w"> </span><span class="nv">:before</span><span class="w"> </span><span class="p">(</span><span class="k">lambda</span><span class="w"> </span><span class="p">(</span><span class="nf">&amp;rest</span><span class="w"> </span><span class="nv">_args</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">eval</span><span class="w"> </span><span class="o">'</span><span class="p">(</span><span class="nv">setf</span><span class="w"> </span><span class="p">(</span><span class="nf">lsp-session-server-id-&gt;folders</span><span class="w"> </span><span class="p">(</span><span class="nf">lsp-session</span><span class="p">))</span><span class="w"> </span><span class="p">(</span><span class="nf">ht</span><span class="p">)))))</span>
 </pre></div>
 
 <p>
@@ -1293,10 +1497,10 @@ be important to deal with it in the correct way.
 </div>
 </div>
 
-<div id="outline-container-orgac9c8a6" class="outline-3">
-<h3 id="orgac9c8a6">
+<div id="outline-container-orga393f52" class="outline-3">
+<h3 id="orga393f52">
 <span class="done DONE">DONE</span> Lsp-treemacs error list</h3>
-<div class="outline-text-3" id="text-orgac9c8a6">
+<div class="outline-text-3" id="text-orga393f52">
 <p>
 That would be the final killer.
 </p>
@@ -1343,7 +1547,7 @@ this sense.
             <li class="next">
                 <a href="../on-encryption/" rel="next" title="On encryption">Next post</a>
             </li>
-        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2024         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
         </footer>
 </div>

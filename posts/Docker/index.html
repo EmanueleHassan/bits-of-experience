@@ -12,7 +12,7 @@
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
 <link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/Docker/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
-<link rel="prev" href="../git-useful-commands/" title="Git Useful Commands" type="text/html">
+<link rel="prev" href="../spark-session-initalization/" title="Spark Session Initialization, RDD and DataFrames" type="text/html">
 <link rel="next" href="../Microservices/" title="Microservices" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="Docker">
@@ -96,9 +96,9 @@ as defined in the docker image.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org8e72df0" class="outline-3">
-<h3 id="org8e72df0">General theory</h3>
-<div class="outline-text-3" id="text-org8e72df0">
+<div id="outline-container-orga29deb3" class="outline-3">
+<h3 id="orga29deb3">General theory</h3>
+<div class="outline-text-3" id="text-orga29deb3">
 <p>
 Lifecycle: build, ship, run. -&gt; build ur application. Wrap it up in a
 container and ship it. Run it and scale it then. This allows portability. 
@@ -109,9 +109,9 @@ Parts of docker:
 </p>
 </div>
 
-<div id="outline-container-orgcac5b8e" class="outline-4">
-<h4 id="orgcac5b8e">Image</h4>
-<div class="outline-text-4" id="text-orgcac5b8e">
+<div id="outline-container-orgb608185" class="outline-4">
+<h4 id="orgb608185">Image</h4>
+<div class="outline-text-4" id="text-orgb608185">
 <p>
 Read only. It is a snapshot of a container stored on a registry. U use
 it as a template for creating containers.
@@ -119,36 +119,36 @@ it as a template for creating containers.
 </div>
 </div>
 
-<div id="outline-container-orga92fad6" class="outline-4">
-<h4 id="orga92fad6">Container</h4>
-<div class="outline-text-4" id="text-orga92fad6">
+<div id="outline-container-orgaa3c675" class="outline-4">
+<h4 id="orgaa3c675">Container</h4>
+<div class="outline-text-4" id="text-orgaa3c675">
 <p>
 This is the runtime instance of the image. A running copy of that.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgbbde4d3" class="outline-4">
-<h4 id="orgbbde4d3">Registry</h4>
-<div class="outline-text-4" id="text-orgbbde4d3">
+<div id="outline-container-org83ceea6" class="outline-4">
+<h4 id="org83ceea6">Registry</h4>
+<div class="outline-text-4" id="text-org83ceea6">
 <p>
 This is essentially a repository where docker images are stored.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org0d2cfba" class="outline-4">
-<h4 id="org0d2cfba">Docker Engine</h4>
-<div class="outline-text-4" id="text-org0d2cfba">
+<div id="outline-container-org7cc8df8" class="outline-4">
+<h4 id="org7cc8df8">Docker Engine</h4>
+<div class="outline-text-4" id="text-org7cc8df8">
 <p>
 This effectively run the containers. 
 </p>
 </div>
 </div>
 
-<div id="outline-container-org1ad2367" class="outline-4">
-<h4 id="org1ad2367">Difference with VM</h4>
-<div class="outline-text-4" id="text-org1ad2367">
+<div id="outline-container-orgd5cb1cc" class="outline-4">
+<h4 id="orgd5cb1cc">Difference with VM</h4>
+<div class="outline-text-4" id="text-orgd5cb1cc">
 <p>
 With virtual machine you leverage hypervisors that runs virtual
 machines. It is what virtualizes resources and makes them sharable.
@@ -173,13 +173,13 @@ instance of this exact lower layer and will ultimately save resources.
 </div>
 
 
-<div id="outline-container-orgcd66222" class="outline-3">
-<h3 id="orgcd66222">Create Images with Dockerfiles</h3>
-<div class="outline-text-3" id="text-orgcd66222">
+<div id="outline-container-org0f129e3" class="outline-3">
+<h3 id="org0f129e3">Create Images with Dockerfiles</h3>
+<div class="outline-text-3" id="text-org0f129e3">
 </div>
-<div id="outline-container-org0774aa0" class="outline-4">
-<h4 id="org0774aa0">General Workflow</h4>
-<div class="outline-text-4" id="text-org0774aa0">
+<div id="outline-container-orgf11432c" class="outline-4">
+<h4 id="orgf11432c">General Workflow</h4>
+<div class="outline-text-4" id="text-orgf11432c">
 <p>
 The first thing to do is to create your working directory. Don't use
 the root directory as it will expose your container to security
@@ -204,9 +204,9 @@ Finally use the <code>docker build</code> command to create the image.
 </div>
 
 
-<div id="outline-container-org5787c2a" class="outline-4">
-<h4 id="org5787c2a">Commands for Dockerfile image</h4>
-<div class="outline-text-4" id="text-org5787c2a">
+<div id="outline-container-orgd119fbf" class="outline-4">
+<h4 id="orgd119fbf">Commands for Dockerfile image</h4>
+<div class="outline-text-4" id="text-orgd119fbf">
 <p>
 Writing a Dockerfile is the first step to containerizing an
 application. You can think of these Dockerfile commands as a
@@ -214,7 +214,7 @@ step-by-step recipe on how to build up our image. This one takes the
 following steps:
 </p>
 
-<pre class="example" id="org3584bb6">
+<pre class="example">
 ## Example of a Dockerfile
 
 FROM node:6.11.5    
@@ -325,9 +325,9 @@ Docker image.
 </div>
 </div>
 
-<div id="outline-container-org8f2a333" class="outline-3">
-<h3 id="org8f2a333">Image Layering</h3>
-<div class="outline-text-3" id="text-org8f2a333">
+<div id="outline-container-orga0d3d25" class="outline-3">
+<h3 id="orga0d3d25">Image Layering</h3>
+<div class="outline-text-3" id="text-orga0d3d25">
 <p>
 Notice that each time you <code>RUN</code> a Dockerfile it will create a further
 layer. If the image has too many layers the image will rapidly grow in
@@ -344,9 +344,9 @@ lightweight. You can use the split line <code>\</code> to increase readability.
 </div>
 </div>
 
-<div id="outline-container-orgf6c9ac1" class="outline-3">
-<h3 id="orgf6c9ac1">Docker images Management</h3>
-<div class="outline-text-3" id="text-orgf6c9ac1">
+<div id="outline-container-org3f7213c" class="outline-3">
+<h3 id="org3f7213c">Docker images Management</h3>
+<div class="outline-text-3" id="text-org3f7213c">
 <p>
 Below a short list of commands. This is however just a way to write
 them down one time and start to memorize it. A convenient approach
@@ -355,7 +355,7 @@ search for the keyword of interest. You can then further inspect with
 <code>docker &lt;command&gt; --help</code>.
 </p>
 
-<div class="highlight"><pre><span></span><span class="c1"># To build an image from a Dockerfile and a context. The build s</span>
+<div class="highlight"><pre><span></span><span class="c1"># To build an image from a Dockerfile and a context. The build’s</span>
 <span class="c1"># context is the set of files at a specified location PATH or URL (git</span>
 <span class="c1"># repository location).</span>
 
@@ -439,9 +439,9 @@ $  docker push marcohassan/publicrepomahass:coursera_workflow_01
 </div>
 
 
-<div id="outline-container-org706134d" class="outline-2">
-<h2 id="org706134d">Literature</h2>
-<div class="outline-text-2" id="text-org706134d">
+<div id="outline-container-org75a7eba" class="outline-2">
+<h2 id="org75a7eba">Literature</h2>
+<div class="outline-text-2" id="text-org75a7eba">
 <p>
 <a href="https://docs.docker.com/get-started/">https://docs.docker.com/get-started/</a>
 </p>
@@ -454,12 +454,12 @@ $  docker push marcohassan/publicrepomahass:coursera_workflow_01
     </div>
     <aside class="postpromonav"><nav><ul class="pager hidden-print">
 <li class="previous">
-                <a href="../git-useful-commands/" rel="prev" title="Git Useful Commands">Previous post</a>
+                <a href="../spark-session-initalization/" rel="prev" title="Spark Session Initialization, RDD and DataFrames">Previous post</a>
             </li>
             <li class="next">
                 <a href="../Microservices/" rel="next" title="Microservices">Next post</a>
             </li>
-        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2021         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
         </footer>
 </div>

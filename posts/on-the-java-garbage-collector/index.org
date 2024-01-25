@@ -1,0 +1,184 @@
+#+BEGIN_COMMENT
+.. title: On the Java Garbage Collector
+.. slug: on-the-java-garbage-collector
+.. date: 2022-11-15 10:47:24 UTC+01:00
+.. tags: java, software-engineering
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+This post contains some information around Garbage Collectors.
+
+It is important to understand this as this has important consequences
+when writing your code.
+
+Think for instance about the ORM and how the instances are garbage
+collected in JPA.
+
+{{{TEASER_END}}}
+
+
+* Basic Structure of the JVM
+
+  So starting with the basic structure of the JVM, the thing looks as
+  follows:
+
+  #+begin_export html
+   <img src="../../images/Screenshot 2022-11-15 105403.png" class="center">
+  #+end_export
+
+  So it is important that you understand this basics JVM set up.
+
+
+* On automatic Garbage Collection
+
+  So understand the following:
+
+  #+begin_quote
+Automatic garbage collection is the process of *looking at heap
+memory*, identifying which objects are in use and which are not, and
+*deleting the unused objects*.
+
+An *in use object*, or a referenced object, means that some part of your
+program still *maintains a pointer to that object*.
+
+An unused object, or unreferenced object, is no longer referenced by
+any part of your program. So the /memory used by an unreferenced object
+can be reclaimed/.
+  #+end_quote
+
+  So the above is essentially the idea.
+
+  We look next how this process of garbage collection takes ultimately
+  place.
+  
+
+** Step 1: Marking
+
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-11-15 130658.png" class="center">
+   #+end_export
+
+
+** Step 2: Deletion
+
+   After the marking the process of deletion takes place.
+
+   There are essentially two types of deletion:
+
+
+*** Option 1 - Normal Deletion
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-11-15 130930.png" class="center">
+    #+end_export
+
+
+*** Option 2 - Deletion with Compacting
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-11-15 131022.png" class="center">
+    #+end_export
+
+    Note that this will be more efficient in the new memory
+    allocation.
+
+
+** Generational Garbage Collection
+
+   The question here is about the marking component.
+
+   How are the different pieces of memory marked?
+
+   Here is the concept of /generations/. This makes garbage collection
+   especially handy.
+
+   The core idea of it is essentially the one that newly instantiated
+   objects are generally short living.
+
+   Think for instance at how many times you assign a variable and just
+   use it in a specific very limited context.
+
+   In this sense it makes sense to limit the amount of objects
+   checked in the garbage collection sense depending on the life span
+   of the object.
+
+   The idea is backed up by empirical data on the life span of Object
+   as visible in the following image:
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2022-11-15 140350.png" class="center">
+   #+end_export
+
+
+*** On the Concept of Generation
+
+    This brings directly to the point of generations.
+
+    Essentially the objects are assigned to different generations in
+    the memory heap.
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-11-15 140823.png" class="center">
+    #+end_export
+
+    So watch out and read very carefully the above.
+
+    You should fix the following concepts:
+
+    - *stop the world*
+
+    - *difference between minor garbage collection and major garbage
+      collection*:
+
+      this essentially talkes about whether the garbage collection
+      takes place in the young generation or in the old
+      generation. Note that major garbage collections are very large
+      events. In this sense, the responsiveness of the application
+      would be reduced.
+
+      So you try to reduce these larger garbage collection processes
+      checking at the state of the Objects troughout the entire
+      application. 
+
+
+*** On the Generational Assignment
+
+    This goes hand in hand with the previous thoughts and explains a
+    bit the Object allocation in the different spaces.
+
+    We will check about the process next:
+
+    Newly created Objects are always assigned to the Eden space. Then
+    when the Eden space is filled up, the allocated objects are moved
+    to S0 or S1 - you always start with S0 then you transition among
+    the two at each /minor garbage collection/ increasing the survivor
+    age which will determine the ultimate promotion in an older
+    category group.
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-11-15 143822.png" class="center">
+    #+end_export
+
+    The promotion happens after a given level of maturity is reached.
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2022-11-15 144143.png" class="center">
+    #+end_export
+
+    Finally eventually the older generation heap space also fills up
+    and a major garbage collection event is triggered in order to
+    compact the data and free up disk space. 
+
+
+*** Performance Parameter
+
+    Given that you properly understand the concept of garbage
+    collection, you can read about the different garbage collection
+    tuning parameters for your Java applications.
+
+    
+

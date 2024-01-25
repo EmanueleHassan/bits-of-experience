@@ -10,13 +10,13 @@
 <meta name="theme-color" content="#5670d4">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
-<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/on-multithreading/">
+<link rel="canonical" href="https://emanuelehassan.github.io/bits-of-experience/posts/on-multithreading/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
 <link rel="prev" href="../solvency-ii/" title="Solvency II" type="text/html">
 <link rel="next" href="../proper-rest-api/" title="Proper REST API" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="On Multithreading">
-<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/on-multithreading/">
+<meta property="og:url" content="https://emanuelehassan.github.io/bits-of-experience/posts/on-multithreading/">
 <meta property="og:description" content="So apparently this is a thing that I will have to master sooner or
 later.
 
@@ -134,20 +134,937 @@ inception.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org720451a" class="outline-2">
-<h2 id="org720451a">
-<span class="todo TODO">TODO</span> Java</h2>
-<div class="outline-text-2" id="text-org720451a">
+<div id="outline-container-orgec79862" class="outline-2">
+<h2 id="orgec79862">Java</h2>
+<div class="outline-text-2" id="text-orgec79862">
 <p>
-Will come at a later stage. Good is that the theoretical
-fundamental is the same. 
+So in Java you have the possibility to generate true threads in
+order to start the relevant computations. I.e. have proper
+concurrency without having to switch the asynchronous computation
+running on a single computing unit.
+</p>
+
+<p>
+In simple words can properly leverage the multi-threaded
+architecture with mulitple CPU cores.
+</p>
+
+<p>
+There are multiple frameworks in order to program in a
+multi-threaded way in Java. You can read more about it in <a href="https://www.baeldung.com/java-asynchronous-programming">this
+post</a>.
+</p>
+
+<p>
+In this post, I will explore the built in frameworks available
+since java 8 and especially the <a href="https://www.baeldung.com/java-completablefuture">CompletableFuture class</a>.
+</p>
+
+<p>
+Important is to understand that this class leverage multiple
+existing interfaces such as the <i>Future interface</i> that were
+introduced in previous Java versions. So you see the usual pattern
+of building of giant shoulders in time.
+</p>
+
+<blockquote>
+<p>
+CompletableFuture is at the same time a building block and a
+framework, with about 50 different methods for composing, combining,
+and executing asynchronous computation steps and handling errors.
+</p>
+</blockquote>
+
+<p>
+The next sections go a little bit into how to leverage such class
+and its large API and methods in a simple way.
+</p>
+</div>
+
+
+<div id="outline-container-orgac3ead7" class="outline-3">
+<h3 id="orgac3ead7">Future and the most basic Interfaces in order to work in Asynchronous Way</h3>
+<div class="outline-text-3" id="text-orgac3ead7">
+<p>
+First of all understand the general idea behind a future:
+</p>
+
+<blockquote>
+<p>
+A <i>Future</i> represents a future result of an asynchronous
+computation.
+</p>
+
+<p>
+If a class implements this interface it effectively manages to
+create a data structure that is ready to save a result to be
+computed.
+</p>
+</blockquote>
+
+<p>
+Then esssentially when you work with the following two interfaces.
+</p>
+
+<p>
+You work with the Callable interface, i.e. you should create an
+Object implementing the interface and embedd it into the Future
+object. In such a way you define the way the Future Object will be
+defined.
+</p>
+
+<p>
+Finally, you need the interface in order to trigger the Callable
+object (usually a <i>lambda</i> expression); this is the
+<i>ExecutorService</i> - if a single thread should be spawned next to
+the main one - or <i>Thread Pools</i> - if you need more threads.
+</p>
+
+<p>
+You can then reference the relevant interfaces in order to see how
+to trigger the Callable Object from the <i>ExecutorService or
+Thread</i> Pools in a multi-threaded way, in order to see if the
+Future task was completed and the Object populated etc.
+</p>
+
+<p>
+I skip it here as I will likely use the <i>CompletableFuture</i>
+interface which is an evolution around the concepts above
+abstracting away part of the complexity.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org962b1ff" class="outline-2">
-<h2 id="org962b1ff">Python</h2>
-<div class="outline-text-2" id="text-org962b1ff">
+
+<div id="outline-container-org34b59c8" class="outline-3">
+<h3 id="org34b59c8">Using CompletableFuture as a Simple <i>Future</i>
+</h3>
+<div class="outline-text-3" id="text-org34b59c8">
+<p>
+CompletableFuture class <i>implements the Future interface</i>, so we
+can use it as a Future implementation, but with additional
+completion logic.
+</p>
+
+<blockquote>
+<p>
+For example, we can create an instance of this class with a <b>no-arg
+constructor</b> to represent some future result, hand it out to the
+consumers, and complete it at some time in the future using the
+<b>complete method</b>.
+</p>
+</blockquote>
+
+<p>
+An example of using this API is the following:
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">calculateAsync</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">InterruptedException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">	</span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">completableFuture</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">	</span><span class="n">Executors</span><span class="p">.</span><span class="na">newCachedThreadPool</span><span class="p">().</span><span class="na">submit</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">		</span><span class="n">Thread</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
+<span class="w">		</span><span class="n">completableFuture</span><span class="p">.</span><span class="na">complete</span><span class="p">(</span><span class="s">"Hello"</span><span class="p">);</span>
+<span class="w">		</span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">	    </span><span class="p">});</span>
+
+<span class="w">	</span><span class="k">return</span><span class="w"> </span><span class="n">completableFuture</span><span class="p">;</span>
+
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// For using it //</span>
+<span class="w">    </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">completableFuture</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calculateAsync</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// ... </span>
+
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">completableFuture</span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
+<span class="w">    </span><span class="n">assertEquals</span><span class="p">(</span><span class="s">"Hello"</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org8c2ee83" class="outline-3">
+<h3 id="org8c2ee83">CompletableFuture with Encapsulated Computation Logic</h3>
+<div class="outline-text-3" id="text-org8c2ee83">
+<p>
+This is a way of running the above with less boilerplate.
+</p>
+
+<p>
+It essentially consists in the following:
+</p>
+
+<blockquote>
+<p>
+Static methods <i>runAsync</i> and <i>supplyAsync</i> allow us to create a
+CompletableFuture instance out of <i>Runnable</i> and <i>Supplier</i> functional
+types correspondingly.
+</p>
+
+<p>
+Both Runnable and Supplier are functional interfaces that allow
+passing lambda expressions.
+</p>
+</blockquote>
+
+<p>
+Understand the difference among the two interfaces then:
+</p>
+
+<blockquote>
+<p>
+The <i>Runnable</i> interface is the same old interface that is used in
+threads and it does not allow to return a value.
+</p>
+
+<p>
+The <i>Supplier</i> interface is a generic functional interface with a single
+method that has no arguments and returns a value of a parameterized
+type.
+</p>
+</blockquote>
+
+<p>
+So you see for instance that you can replicate the code above as
+follows:
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">future</span>
+<span class="w">	</span><span class="o">=</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">supplyAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">"Hello"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// ...</span>
+
+<span class="w">    </span><span class="n">assertEquals</span><span class="p">(</span><span class="s">"Hello"</span><span class="p">,</span><span class="w"> </span><span class="n">future</span><span class="p">.</span><span class="na">get</span><span class="p">());</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbb6cb3f" class="outline-3">
+<h3 id="orgbb6cb3f">Processing Results of Asynchronous Computations</h3>
+<div class="outline-text-3" id="text-orgbb6cb3f">
+<p>
+With <code>thenApply()</code> you can process the results of an <b>asynchoronous
+computation</b> via a <i>Function</i> (Or <i>Consumer</i> if you do not need to
+return a result) and return a <i>Future</i>.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">completableFuture</span>
+<span class="w">	</span><span class="o">=</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">supplyAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">"Hello"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">future</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">completableFuture</span>
+<span class="w">	</span><span class="p">.</span><span class="na">thenApply</span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" World"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">assertEquals</span><span class="p">(</span><span class="s">"Hello World"</span><span class="p">,</span><span class="w"> </span><span class="n">future</span><span class="p">.</span><span class="na">get</span><span class="p">());</span>
+</pre></div>
+
+<p>
+Another way to chain results of asynchronous computation
+immediately is by combining futures immediately. See the following
+example. So depending on how you want to set up your code you
+should choose one way or the other. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org1e43bcc" class="outline-3">
+<h3 id="org1e43bcc">Combining Futures</h3>
+<div class="outline-text-3" id="text-org1e43bcc">
+<p>
+You can as well combine futures in a fucntional way. This design
+approach is in fact ubiquitous in functional languages and is
+often referred to as a monadic design pattern.
+</p>
+
+<p>
+So you see that you are moving into the direction of data
+processing pipelines.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">completableFuture</span><span class="w"> </span>
+<span class="w">	</span><span class="o">=</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">supplyAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">"Hello"</span><span class="p">)</span>
+<span class="w">	</span><span class="p">.</span><span class="na">thenCompose</span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">supplyAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" World"</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">assertEquals</span><span class="p">(</span><span class="s">"Hello World"</span><span class="p">,</span><span class="w"> </span><span class="n">completableFuture</span><span class="p">.</span><span class="na">get</span><span class="p">());</span><span class="w">    </span>
+</pre></div>
+
+<p>
+Note that everything is pretty much interrelated in the functional
+way of programming.
+</p>
+
+<p>
+In order to see this understand the following:
+</p>
+
+<blockquote>
+<p>
+The thenCompose method, together with thenApply, implement basic
+building blocks of the monadic pattern. They closely relate to the map
+and flatMap methods of Stream and Optional classes also available in
+Java 8.
+</p>
+
+<p>
+Both methods receive a function and apply it to the computation
+result, but the thenCompose (flatMap) method receives a function that
+returns another object of the same type.
+</p>
+</blockquote>
+</div>
+</div>
+
+
+<div id="outline-container-orgfa0689e" class="outline-3">
+<h3 id="orgfa0689e">Running Multiple Futures in Parallel</h3>
+<div class="outline-text-3" id="text-orgfa0689e">
+<p>
+When we need to execute multiple Futures in parallel, we usually
+want to <b>wait for all of them to execute and then process their
+combined results</b>.
+</p>
+
+<p>
+In order to achieve this you can use the
+<code>CompletableFuture.allOf()</code> method.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">future1</span><span class="w">  </span>
+<span class="w">	</span><span class="o">=</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">supplyAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">"Hello"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">future2</span><span class="w">  </span>
+<span class="w">	</span><span class="o">=</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">supplyAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">"Beautiful"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">future3</span><span class="w">  </span>
+<span class="w">	</span><span class="o">=</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">supplyAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">"World"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">combinedFuture</span><span class="w"> </span>
+<span class="w">	</span><span class="o">=</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">allOf</span><span class="p">(</span><span class="n">future1</span><span class="p">,</span><span class="w"> </span><span class="n">future2</span><span class="p">,</span><span class="w"> </span><span class="n">future3</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// ...</span>
+
+<span class="w">    </span><span class="n">combinedFuture</span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">assertTrue</span><span class="p">(</span><span class="n">future1</span><span class="p">.</span><span class="na">isDone</span><span class="p">());</span>
+<span class="w">    </span><span class="n">assertTrue</span><span class="p">(</span><span class="n">future2</span><span class="p">.</span><span class="na">isDone</span><span class="p">());</span>
+<span class="w">    </span><span class="n">assertTrue</span><span class="p">(</span><span class="n">future3</span><span class="p">.</span><span class="na">isDone</span><span class="p">());</span>
+</pre></div>
+
+<p>
+Note the following now:
+</p>
+
+<blockquote>
+<p>
+Notice that the return type of the CompletableFuture.allOf() is a
+CompletableFuture&lt;Void&gt;. The limitation of this method is that it does
+not return the combined results of all Futures. Instead, we have to
+manually get results from Futures. Fortunately,
+CompletableFuture.join() method and Java 8 Streams API makes it
+simple:
+</p>
+</blockquote>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">combined</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stream</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">future1</span><span class="p">,</span><span class="w"> </span><span class="n">future2</span><span class="p">,</span><span class="w"> </span><span class="n">future3</span><span class="p">)</span>
+<span class="w">	</span><span class="p">.</span><span class="na">map</span><span class="p">(</span><span class="n">CompletableFuture</span><span class="p">::</span><span class="n">join</span><span class="p">)</span>
+<span class="w">	</span><span class="p">.</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">joining</span><span class="p">(</span><span class="s">" "</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">assertEquals</span><span class="p">(</span><span class="s">"Hello Beautiful World"</span><span class="p">,</span><span class="w"> </span><span class="n">combined</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orga2ab6c2" class="outline-3">
+<h3 id="orga2ab6c2">Handling Errors</h3>
+<div class="outline-text-3" id="text-orga2ab6c2">
+<p>
+Instead of catching an exception in a syntactic block, the
+CompletableFuture class allows us to handle it in a <b>special
+handle method</b>.
+</p>
+
+<p>
+This method receives two parameters: a <i>result of a computation</i> (if
+it finished successfully), and the <i>exception thrown</i> (if some
+computation step did not complete normally).
+</p>
+
+<p>
+So understand now the following two use cases. It is tricky by
+simply reading what is stated without trying that out yourself.
+</p>
+
+<p>
+So understand that there are two ways, expsed in the article. The
+first, that follows, essentially forces your to handle the error
+directly and overrride it with a default value.
+</p>
+
+<p>
+Note that an <b>InterrruptException</b> occurs when triggering the
+<code>CompletableFuture</code> so that you have to catch it.  Note that it is
+an InterruptException and not the Exception you raised in your
+lambda. 
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.concurrent.CompletableFuture</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">class</span> <span class="nc">handle</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	</span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">args</span><span class="o">[]</span><span class="p">){</span>
+
+<span class="w">	    </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+
+<span class="w">	    </span><span class="c1">// ...</span>
+
+<span class="w">	    </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">completableFuture</span><span class="w">  </span>
+<span class="w">		</span><span class="o">=</span><span class="w">  </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">supplyAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">			</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">			    </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RuntimeException</span><span class="p">(</span><span class="s">"Computation error!"</span><span class="p">);</span>
+<span class="w">			</span><span class="p">}</span>
+
+<span class="w">			</span><span class="k">return</span><span class="w"> </span><span class="s">"Hello, "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+
+<span class="w">		    </span><span class="p">}).</span><span class="na">handle</span><span class="p">((</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">"RuntimeException"</span><span class="p">);</span>
+
+<span class="w">	    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">		</span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">completableFuture</span><span class="p">.</span><span class="na">get</span><span class="p">());</span>
+<span class="w">	    </span><span class="p">}</span>
+
+<span class="w">	    </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">		</span><span class="c1">// Note you have to catch the exception but this chunck is</span>
+<span class="w">		</span><span class="c1">// never executed.</span>
+
+<span class="w">		</span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Here"</span><span class="p">);</span>
+
+<span class="w">	    </span><span class="p">}</span>
+<span class="w">	</span><span class="p">}</span><span class="w"> </span>
+
+<span class="w">    </span><span class="p">}</span>
+</pre></div>
+
+<p>
+The second possibility is the one of actually raising the
+Error. This is the one you are more interested in as it will make
+it more easy to debug your programs.
+</p>
+
+<p>
+I.e. here you want the <i>Future</i> to have the possibility to
+complete with an exception.
+</p>
+
+<p>
+You can achieve this by the following schema.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.concurrent.CompletableFuture</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">class</span> <span class="nc">handle</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	</span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">args</span><span class="o">[]</span><span class="p">){</span>
+
+<span class="w">	    </span><span class="k">try</span><span class="p">{</span>
+<span class="w">		</span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">completableFuture</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">		</span><span class="n">completableFuture</span><span class="p">.</span><span class="na">completeExceptionally</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">RuntimeException</span><span class="p">(</span><span class="s">"Calculation failed!"</span><span class="p">));</span>
+
+<span class="w">		</span><span class="n">completableFuture</span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
+<span class="w">	    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">		</span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="na">getMessage</span><span class="p">());</span>
+<span class="w">	    </span><span class="p">}</span>
+
+<span class="w">	</span><span class="p">}</span><span class="w"> </span>
+
+<span class="w">    </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org228f19c" class="outline-3">
+<h3 id="org228f19c">Async Methods</h3>
+<div class="outline-text-3" id="text-org228f19c">
+<p>
+Most methods of the fluent API in CompletableFuture class have two
+additional variants with the Async postfix. These methods are
+usually intended for <b>running a corresponding step of execution in
+another thread</b>.
+</p>
+
+<blockquote>
+<p>
+The methods without the Async postfix run the next execution stage
+using a calling thread.
+</p>
+
+<p>
+In contrast, the Async method without the Executor argument runs a
+step using the common fork/join pool implementation of Executor that
+is accessed with the ForkJoinPool.commonPool() method.
+</p>
+</blockquote>
+
+<p>
+A snippet example of it is:
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">completableFuture</span><span class="w">  </span>
+<span class="w">	</span><span class="o">=</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">supplyAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">"Hello"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">future</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">completableFuture</span>
+<span class="w">	</span><span class="p">.</span><span class="na">thenApplyAsync</span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" World"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">assertEquals</span><span class="p">(</span><span class="s">"Hello World"</span><span class="p">,</span><span class="w"> </span><span class="n">future</span><span class="p">.</span><span class="na">get</span><span class="p">());</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org6c66e30" class="outline-3">
+<h3 id="org6c66e30">101 Test on writing the relevant async Functionality</h3>
+<div class="outline-text-3" id="text-org6c66e30">
+<p>
+Note that these are snippets that perform part of the logic that
+is already existing in some other pieces of the code.
+</p>
+</div>
+
+
+<div id="outline-container-org9d36ff0" class="outline-4">
+<h4 id="org9d36ff0">101 Example - the only issue is that it is blocking</h4>
+<div class="outline-text-4" id="text-org9d36ff0">
+<p>
+Understand the example below. You do not run the task on the main
+thread. The program running on the main thread ends before the
+task on the other thread finishes. This is the reason why you do
+not see the results.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">     </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.concurrent.CompletableFuture</span><span class="p">;</span>
+<span class="w">     </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.concurrent.TimeUnit</span><span class="p">;</span>
+
+<span class="w">     </span><span class="kd">class</span> <span class="nc">handle</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	 </span><span class="kd">static</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">task</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">();</span>
+
+<span class="w">	 </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">longRun</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	     </span><span class="k">try</span><span class="p">{</span>
+
+<span class="w">		 </span><span class="n">TimeUnit</span><span class="p">.</span><span class="na">SECONDS</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="w">		 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Hello World"</span><span class="p">);</span>
+
+<span class="w">	     </span><span class="p">}</span>
+<span class="w">	     </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InterruptedException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">		 </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+
+<span class="w">	     </span><span class="p">}</span>
+
+<span class="w">	 </span><span class="p">};</span>
+
+<span class="w">	 </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">args</span><span class="o">[]</span><span class="p">){</span>
+
+<span class="w">	     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Greetings, program started."</span><span class="p">);</span>
+
+<span class="w">	     </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">future</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">runAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">		     </span><span class="c1">// Simulate a long-running Job   </span>
+<span class="w">		     </span><span class="k">try</span><span class="p">{</span>
+
+<span class="w">			 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Before triggering future"</span><span class="p">);</span>
+
+<span class="w">			 </span><span class="n">task</span><span class="p">.</span><span class="na">complete</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+<span class="w">			 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Finished Processing"</span><span class="p">);</span>
+
+<span class="w">		     </span><span class="p">}</span>
+<span class="w">		     </span><span class="k">catch</span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">			 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Exception Occurred"</span><span class="p">);</span>
+
+<span class="w">		     </span><span class="p">};</span>
+<span class="w">		 </span><span class="p">});</span>
+
+<span class="w">	     </span><span class="k">try</span><span class="p">{</span>
+<span class="w">		 </span><span class="n">future</span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
+<span class="w">	     </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">		 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Exception Occurred"</span><span class="p">);</span>
+
+<span class="w">	     </span><span class="p">}</span>
+
+<span class="w">	     </span><span class="n">task</span><span class="p">.</span><span class="na">thenAcceptAsync</span><span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="p">{</span>
+<span class="w">		     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Triggering Task"</span><span class="p">);</span>
+<span class="w">		     </span><span class="n">longRun</span><span class="p">();</span>
+<span class="w">		     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">task</span><span class="p">.</span><span class="na">isDone</span><span class="p">());</span>
+<span class="w">		 </span><span class="p">}).</span><span class="na">exceptionally</span><span class="p">(</span><span class="n">e</span><span class="o">-&gt;</span><span class="p">{</span>
+<span class="w">			 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Some error"</span><span class="p">);</span>
+<span class="w">			 </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">		     </span><span class="p">});</span>
+
+<span class="w">	 </span><span class="p">}</span>
+
+<span class="w">     </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org0832069" class="outline-4">
+<h4 id="org0832069">101 Example - Continued</h4>
+<div class="outline-text-4" id="text-org0832069">
+<p>
+See that if you do not run on a separate thread but rather on the
+main one, the entire code executes and you see the results accordingly.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">     </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.concurrent.CompletableFuture</span><span class="p">;</span>
+<span class="w">     </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.concurrent.TimeUnit</span><span class="p">;</span>
+
+<span class="w">     </span><span class="kd">class</span> <span class="nc">handle</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	 </span><span class="kd">static</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">task</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">();</span>
+
+<span class="w">	 </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">longRun</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	     </span><span class="k">try</span><span class="p">{</span>
+
+<span class="w">		 </span><span class="n">TimeUnit</span><span class="p">.</span><span class="na">SECONDS</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="w">		 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Hello World"</span><span class="p">);</span>
+
+<span class="w">	     </span><span class="p">}</span>
+<span class="w">	     </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InterruptedException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">		 </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+
+<span class="w">	     </span><span class="p">}</span>
+
+<span class="w">	 </span><span class="p">};</span>
+
+<span class="w">	 </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">args</span><span class="o">[]</span><span class="p">){</span>
+
+<span class="w">	     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Greetings, program started."</span><span class="p">);</span>
+
+<span class="w">	     </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">future</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">runAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">		     </span><span class="c1">// Simulate a long-running Job   </span>
+<span class="w">		     </span><span class="k">try</span><span class="p">{</span>
+
+<span class="w">			 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Before triggering future"</span><span class="p">);</span>
+
+<span class="w">			 </span><span class="n">task</span><span class="p">.</span><span class="na">complete</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+<span class="w">			 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Finished Processing"</span><span class="p">);</span>
+
+<span class="w">		     </span><span class="p">}</span>
+<span class="w">		     </span><span class="k">catch</span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">			 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Exception Occurred"</span><span class="p">);</span>
+
+<span class="w">		     </span><span class="p">};</span>
+<span class="w">		 </span><span class="p">});</span>
+
+<span class="w">	     </span><span class="k">try</span><span class="p">{</span>
+<span class="w">		 </span><span class="n">future</span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
+<span class="w">	     </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">		 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Exception Occurred"</span><span class="p">);</span>
+<span class="w">	     </span><span class="p">}</span>
+
+<span class="w">	     </span><span class="n">task</span><span class="p">.</span><span class="na">thenAccept</span><span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="p">{</span>
+<span class="w">		     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Triggering Task"</span><span class="p">);</span>
+<span class="w">		     </span><span class="n">longRun</span><span class="p">();</span>
+<span class="w">		     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">task</span><span class="p">.</span><span class="na">isDone</span><span class="p">());</span>
+<span class="w">		 </span><span class="p">}).</span><span class="na">exceptionally</span><span class="p">(</span><span class="n">e</span><span class="o">-&gt;</span><span class="p">{</span>
+<span class="w">			 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Some error"</span><span class="p">);</span>
+<span class="w">			 </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">		     </span><span class="p">});</span>
+
+<span class="w">	 </span><span class="p">}</span>
+
+<span class="w">     </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org8ab110b" class="outline-4">
+<h4 id="org8ab110b">101 Simplified - here is the real key.</h4>
+<div class="outline-text-4" id="text-org8ab110b">
+<p>
+Note that all of the above is correct. It is a bit cumbersome
+cause you did not understand the thing at 100%.
+</p>
+
+<p>
+By now everything is clear and you can see below a very good
+example of it.
+</p>
+
+<p>
+So you see sometimes the experimental way of doing the things is
+the only possibility.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">     </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.concurrent.CompletableFuture</span><span class="p">;</span>
+<span class="w">     </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.concurrent.TimeUnit</span><span class="p">;</span>
+
+<span class="w">     </span><span class="kd">class</span> <span class="nc">handle</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	 </span><span class="kd">static</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">task</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">();</span>
+
+<span class="w">	 </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">longRun</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	     </span><span class="k">try</span><span class="p">{</span>
+
+<span class="w">		 </span><span class="n">TimeUnit</span><span class="p">.</span><span class="na">SECONDS</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+
+<span class="w">	     </span><span class="p">}</span>
+<span class="w">	     </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InterruptedException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">		 </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+
+<span class="w">	     </span><span class="p">}</span>
+
+<span class="w">	 </span><span class="p">};</span>
+
+<span class="w">	 </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">args</span><span class="o">[]</span><span class="p">){</span>
+
+<span class="w">	     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Greetings, program started."</span><span class="p">);</span>
+
+<span class="w">	     </span><span class="n">task</span><span class="p">.</span><span class="na">runAsync</span><span class="p">(()</span><span class="o">-&gt;</span><span class="p">{</span>
+
+<span class="w">		     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Triggering Task"</span><span class="p">);</span>
+<span class="w">		     </span><span class="n">longRun</span><span class="p">();</span>
+<span class="w">		     </span><span class="n">task</span><span class="p">.</span><span class="na">complete</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+<span class="w">		     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"The task is done: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">task</span><span class="p">.</span><span class="na">isDone</span><span class="p">());</span>
+
+<span class="w">		 </span><span class="p">}).</span><span class="na">exceptionally</span><span class="p">(</span><span class="n">e</span><span class="o">-&gt;</span><span class="p">{</span>
+
+<span class="w">			 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Some error"</span><span class="p">);</span>
+<span class="w">			 </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+
+<span class="w">		     </span><span class="p">});</span>
+
+<span class="w">	     </span><span class="c1">// Set here a loop checking if the job finished</span>
+<span class="w">	     </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">task</span><span class="p">.</span><span class="na">isDone</span><span class="p">()){</span>
+
+<span class="w">		 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Task Unfinished"</span><span class="p">);</span>
+
+<span class="w">		 </span><span class="k">try</span><span class="p">{</span>
+
+<span class="w">		     </span><span class="n">TimeUnit</span><span class="p">.</span><span class="na">SECONDS</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">		 </span><span class="p">}</span>
+<span class="w">		 </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InterruptedException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">		     </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+
+<span class="w">		 </span><span class="p">}</span>
+
+<span class="w">	     </span><span class="p">};</span>
+
+<span class="w">	     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Finished Program."</span><span class="p">);</span>
+<span class="w">	 </span><span class="p">}</span>
+
+<span class="w">     </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgeca7473" class="outline-4">
+<h4 id="orgeca7473">Very Simple Example to Show Ansynchronicity</h4>
+<div class="outline-text-4" id="text-orgeca7473">
+<p>
+The above example was based on the following resource found on
+the internet. Essentially you can see here the idea of combining
+the different CompletableFutures together. 
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">     </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.concurrent.CompletableFuture</span><span class="p">;</span>
+
+<span class="w">     </span><span class="kd">class</span> <span class="nc">handle</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	 </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Exception</span>
+<span class="w">	 </span><span class="p">{</span>
+<span class="w">	     </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">();</span>
+<span class="w">	     </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">();</span>
+
+<span class="w">	     </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">someContext</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">supplyAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="p">{</span>
+
+<span class="w">		     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"This thread ID is: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Thread</span><span class="p">.</span><span class="na">currentThread</span><span class="p">().</span><span class="na">getId</span><span class="p">());</span>
+
+<span class="w">		     </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">update</span><span class="w"> </span><span class="o">=</span>
+<span class="w">			 </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">supplyAsync</span><span class="p">(</span>
+<span class="w">						       </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">							   </span><span class="n">String</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+
+<span class="w">							   </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">							       </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"The thread ID is: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Thread</span><span class="p">.</span><span class="na">currentThread</span><span class="p">().</span><span class="na">getId</span><span class="p">());</span>
+<span class="w">							       </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Hello"</span><span class="p">;</span>
+
+<span class="w">							   </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">							       </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span>
+
+<span class="w">							   </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">							       </span><span class="n">s</span><span class="p">.</span><span class="na">complete</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span><span class="w"> </span><span class="c1">// completing s future. </span>
+<span class="w">							       </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+
+<span class="w">							   </span><span class="p">}</span>
+<span class="w">						       </span><span class="p">});</span>
+
+<span class="w">		     </span><span class="c1">// After s is complete</span>
+<span class="w">		     </span><span class="n">s</span><span class="p">.</span><span class="na">thenAcceptAsync</span><span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="p">{</span>
+<span class="w">			     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="na">isDone</span><span class="p">());</span>
+<span class="w">			 </span><span class="p">}).</span><span class="na">exceptionally</span><span class="p">(</span><span class="n">e</span><span class="o">-&gt;</span><span class="p">{</span>
+<span class="w">				 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Some error"</span><span class="p">);</span>
+<span class="w">				 </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">			     </span><span class="p">});</span>
+
+<span class="w">		     </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">		 </span><span class="p">});</span>
+
+<span class="w">	     </span><span class="n">someContext</span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
+
+<span class="w">	 </span><span class="p">}</span>
+<span class="w">     </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org7c89729" class="outline-4">
+<h4 id="org7c89729">Same stuff using Functional Interface</h4>
+<div class="outline-text-4" id="text-org7c89729">
+<p>
+You can implement similar logic in your backend when you want to
+implement some particular asynchronous pattern. 
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">     </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.concurrent.CompletableFuture</span><span class="p">;</span>
+<span class="w">     </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.HashMap</span><span class="p">;</span>
+<span class="w">     </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.concurrent.TimeUnit</span><span class="p">;</span>
+
+<span class="w">     </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.time.format.DateTimeFormatter</span><span class="p">;</span><span class="w">  </span>
+<span class="w">     </span><span class="kn">import</span><span class="w"> </span><span class="nn">java.time.LocalDateTime</span><span class="p">;</span><span class="w">    </span>
+
+<span class="w">     </span><span class="kd">class</span> <span class="nc">handle</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	 </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">string1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"blah"</span><span class="p">;</span>
+<span class="w">	 </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">string2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"baubab"</span><span class="p">;</span>
+<span class="w">	 </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">string3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"stars"</span><span class="p">;</span>
+
+<span class="w">	 </span><span class="nd">@FunctionalInterface</span>
+<span class="w">	 </span><span class="kd">interface</span> <span class="nc">FunctionalFour</span><span class="o">&lt;</span><span class="n">One</span><span class="p">,</span><span class="w"> </span><span class="n">Two</span><span class="p">,</span><span class="w"> </span><span class="n">Three</span><span class="p">,</span><span class="w"> </span><span class="n">Four</span><span class="p">,</span><span class="w"> </span><span class="n">Five</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	     </span><span class="kd">public</span><span class="w"> </span><span class="n">Five</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="n">One</span><span class="w"> </span><span class="n">one</span><span class="p">,</span><span class="w"> </span><span class="n">Two</span><span class="w"> </span><span class="n">two</span><span class="p">,</span><span class="w"> </span><span class="n">Three</span><span class="w"> </span><span class="n">three</span><span class="p">,</span><span class="w"> </span><span class="n">Four</span><span class="w"> </span><span class="n">four</span><span class="p">);</span>
+
+<span class="w">	 </span><span class="p">};</span>
+
+<span class="w">	 </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">FunctionalFour</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">LongRunningAsync</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">string1</span><span class="p">,</span><span class="w"> </span><span class="n">string2</span><span class="p">,</span>
+<span class="w">												  </span><span class="n">string3</span><span class="p">,</span><span class="w"> </span><span class="n">int1</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	     </span><span class="n">DateTimeFormatter</span><span class="w"> </span><span class="n">dtf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DateTimeFormatter</span><span class="p">.</span><span class="na">ofPattern</span><span class="p">(</span><span class="s">"yyyy/MM/dd HH:mm:ss"</span><span class="p">);</span><span class="w">  </span>
+<span class="w">	     </span><span class="n">Integer</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">int1</span><span class="p">;</span>
+<span class="w">	     </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+
+<span class="w">	     </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">		 </span><span class="n">LocalDateTime</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LocalDateTime</span><span class="p">.</span><span class="na">now</span><span class="p">();</span><span class="w">  </span>
+<span class="w">		 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Starting Long Running Task: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dtf</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="n">now</span><span class="p">));</span>
+<span class="w">		 </span><span class="n">TimeUnit</span><span class="p">.</span><span class="na">SECONDS</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+<span class="w">		 </span><span class="n">now</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LocalDateTime</span><span class="p">.</span><span class="na">now</span><span class="p">();</span><span class="w">  </span>
+<span class="w">		 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Finished Long Running Task: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dtf</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="n">now</span><span class="p">));</span>
+
+<span class="w">	     </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">		 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Thread suspended"</span><span class="p">);</span>
+
+<span class="w">	     </span><span class="p">};</span>
+
+<span class="w">	     </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+
+<span class="w">	 </span><span class="p">};</span>
+
+<span class="w">	 </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">args</span><span class="o">[]</span><span class="p">){</span>
+
+<span class="w">	     </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Greetings, program started."</span><span class="p">);</span>
+
+<span class="w">	     </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">jobTrigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">();</span>
+
+<span class="w">	     </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">future</span>
+<span class="w">		 </span><span class="o">=</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">runAsync</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+
+<span class="w">			 </span><span class="n">jobTrigger</span><span class="p">.</span><span class="na">complete</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+<span class="w">			 </span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">			 </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"Response"</span><span class="p">,</span><span class="w"> </span><span class="s">"Started Processing the LongRunning job. "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">string1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">string2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">string3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">"."</span><span class="p">);</span>
+
+<span class="w">			 </span><span class="n">map</span><span class="p">.</span><span class="na">entrySet</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">entry</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">				 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="na">getKey</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">": "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">());</span>
+<span class="w">			     </span><span class="p">});</span>
+
+<span class="w">		     </span><span class="p">});</span>
+
+
+<span class="w">	     </span><span class="k">try</span><span class="p">{</span>
+
+<span class="w">		 </span><span class="n">future</span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
+
+<span class="w">	     </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">		 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Exception Occurred"</span><span class="p">);</span>
+<span class="w">	     </span><span class="p">}</span>
+
+<span class="w">	     </span><span class="c1">// Run with thenAcceptAsync if you do not want to see the results.</span>
+<span class="w">	     </span><span class="n">jobTrigger</span><span class="p">.</span><span class="na">thenAccept</span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">		     </span><span class="n">LongRunningAsync</span><span class="p">.</span><span class="na">apply</span><span class="p">(</span><span class="n">string1</span><span class="p">,</span><span class="w"> </span><span class="n">string2</span><span class="p">,</span><span class="w"> </span><span class="n">string3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+
+<span class="w">		 </span><span class="p">}).</span><span class="na">exceptionally</span><span class="p">(</span><span class="n">e</span><span class="o">-&gt;</span><span class="p">{</span>
+<span class="w">			 </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Some error"</span><span class="p">);</span>
+<span class="w">			 </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">		     </span><span class="p">});</span>
+
+<span class="w">	 </span><span class="p">}</span>
+
+<span class="w">     </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc9e19f7" class="outline-3">
+<h3 id="orgc9e19f7">Async Possibility in Spring Boot</h3>
+<div class="outline-text-3" id="text-orgc9e19f7">
+<p>
+Once you understand the above it will be straightforward to
+understand as well how to write asynchronous calls from your
+backend in Spring.
+</p>
+
+<p>
+You can check <a href="https://spring.io/guides/gs/async-method/">the following</a>.
+</p>
+
+<p>
+It makes the code much less complex. If you check this is a simple
+function but it executes on a different thread. 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org14d281a" class="outline-2">
+<h2 id="org14d281a">Python</h2>
+<div class="outline-text-2" id="text-org14d281a">
 <p>
 So as you know underneath Python there is a lot of C and the well
 known CPyhton which actually manages the implementation of Python
@@ -271,9 +1188,10 @@ waiting for external events have in theory no advantage at all.
 </p>
 </div>
 
-<div id="outline-container-org58341e1" class="outline-3">
-<h3 id="org58341e1">Concepts of Python MultiThreading</h3>
-<div class="outline-text-3" id="text-org58341e1">
+
+<div id="outline-container-orgd780ff5" class="outline-3">
+<h3 id="orgd780ff5">Concepts of Python MultiThreading</h3>
+<div class="outline-text-3" id="text-orgd780ff5">
 <p>
 I remember that at some point I read an entire book about
 concurrent programming in C++. Many notions are already sitting
@@ -381,14 +1299,16 @@ forever.
 </div>
 </div>
 
-<div id="outline-container-orga70a0c5" class="outline-3">
-<h3 id="orga70a0c5">
+
+<div id="outline-container-org96e93ca" class="outline-3">
+<h3 id="org96e93ca">
 <span class="todo TODO">TODO</span> Cap your thread amount</h3>
 </div>
 
-<div id="outline-container-orgbb7f997" class="outline-3">
-<h3 id="orgbb7f997">On small experiments for using threading in rest-calls</h3>
-<div class="outline-text-3" id="text-orgbb7f997">
+
+<div id="outline-container-org347f944" class="outline-3">
+<h3 id="org347f944">On small experiments for using threading in rest-calls</h3>
+<div class="outline-text-3" id="text-org347f944">
 <p>
 So basically I did a lot of small experiments in order to properly
 understand the solution along the lines mentioned at the
@@ -401,9 +1321,9 @@ communication.
 </p>
 </div>
 
-<div id="outline-container-org7bc0ad6" class="outline-4">
-<h4 id="org7bc0ad6">On the number of threads</h4>
-<div class="outline-text-4" id="text-org7bc0ad6">
+<div id="outline-container-org88735ea" class="outline-4">
+<h4 id="org88735ea">On the number of threads</h4>
+<div class="outline-text-4" id="text-org88735ea">
 <p>
 In order to understand this component I did a little bit of
 detective work along these lines.
@@ -452,9 +1372,9 @@ So basically that is good and the design is effective.
 </div>
 </div>
 
-<div id="outline-container-org6c372ca" class="outline-4">
-<h4 id="org6c372ca">On the type of job</h4>
-<div class="outline-text-4" id="text-org6c372ca">
+<div id="outline-container-org536bba8" class="outline-4">
+<h4 id="org536bba8">On the type of job</h4>
+<div class="outline-text-4" id="text-org536bba8">
 <p>
 The thing you should note than is that you cannot use this
 multi-threading solution for intensive CPU bounded jobs.
@@ -480,7 +1400,7 @@ bounded case
 </p>
 
 <div class="highlight"><pre><span></span>     <span class="k">def</span> <span class="nf">process_data</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">Id</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
-	 <span class="sd">"""This is the function to be called by the multiple threads.</span>
+<span class="w">	 </span><span class="sd">"""This is the function to be called by the multiple threads.</span>
 
 <span class="sd">	 As discussed it will be either this one or the Queue Solution.</span>
 
@@ -515,10 +1435,10 @@ avoid the race conditions and set your total time properly.
 </div>
 
 
-<div id="outline-container-orgf83f3b0" class="outline-3">
-<h3 id="orgf83f3b0">
+<div id="outline-container-org85f8dc1" class="outline-3">
+<h3 id="org85f8dc1">
 <span class="todo TODO">TODO</span> Multi-processing</h3>
-<div class="outline-text-3" id="text-orgf83f3b0">
+<div class="outline-text-3" id="text-org85f8dc1">
 <p>
 This starts an entire new process with a new interpreter.
 </p>
@@ -546,7 +1466,7 @@ endpoints.
             <li class="next">
                 <a href="../proper-rest-api/" rel="next" title="Proper REST API">Next post</a>
             </li>
-        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2024         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
         </footer>
 </div>

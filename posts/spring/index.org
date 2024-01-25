@@ -192,19 +192,38 @@ public class DataSourceConfiguration {
    This is also interesting:
 
    #+begin_quote
-Autowiring can update a configuration as your objects evolve. For
-example, if you need to add a dependency to a class, that dependency
-can be satisfied automatically without you needing to modify the
-configuration. Thus autowiring can be especially useful during
-development, without negating the option of switching to explicit
-wiring when the code base becomes more stable.
+Autowiring can update a configuration as your objects evolve.
+
+For example, if you need to add a dependency to a class, that
+dependency can be satisfied automatically without you needing to
+modify the configuration.
+
+Thus autowiring can be especially useful during development, without
+negating the option of switching to explicit wiring when the code base
+becomes more stable.
    #+end_quote
 
-   Note that you would wire then manually as you would eventually make
+   Note that you would wire them manually as you would eventually make
    everything more stable, i.e. less random as less automatic - where
    things can go wrong without you ever noticing it.
+
+   ------------------------------------------------
+
+   Note that the above is quite technical.
+
+   Understand that ultimately what you are trying to achieve with it
+   is Bean injection across your application.
+
+   Essentially the schema is the following. You create beans with the
+   relevant annotation. These are added to the ApplicationContext.
+
+   Then you can inject such Beans with the =@Autowired= annotation.
+
+   Note that with Autowired you can create multiple instances of the
+   beans and inject them across your application.
    
-  
+
+   
 * General Idea - Container
 
 
@@ -379,6 +398,7 @@ public class TacoCloudApplication {
    We will see that in fact the larger the projects - the more you
    usually work with separate classes.
    
+
 ** MVC - through it you write your back-end endpoints
 
    This is a web-framework. Again check the more detail section [[*Web-applications with
@@ -422,6 +442,7 @@ public class HomeController {
    The =@GetMapping= is there to note that the endpoint will work with
    GET requests. 
 
+
 ** Endpoints Testing
 
    You can check in the book. This will be a quite big waste of time
@@ -462,6 +483,7 @@ public class HomeController {
 
    - Spring WebFlux (for *reactive* programming)
 
+
 ** Spring Boot
 
    This is what makes autoconfiguration and starter-depencies
@@ -495,6 +517,7 @@ public class HomeController {
    is used for both specifying things in Gradle as well as here in
    Spring at macro-level.
 
+
 ** Spring Data
 
    What’s more, Spring Data is capable of working with a /several
@@ -508,6 +531,7 @@ public class HomeController {
    these are quite stable and will provide the necessary portability
    across languages.
 
+
 ** Spring Security
 
    Through it you can manage a broad range of application security
@@ -517,6 +541,7 @@ public class HomeController {
    thing. Was never a fun of it. I hope I will not have to dig too
    much into it. However, with the Zero-trust Architecture paradigm I
    might have to do that at some point. 
+
 
 ** Spring Integration and Spring Batch
 
@@ -532,6 +557,7 @@ public class HomeController {
     will be very important in this sense to master functional
     programming and these frameworks in order to have a proper baby. 
    
+
 ** Spring Cloud
 
     Microservices are a hot topic, addressing several practical
@@ -706,6 +732,7 @@ greeting:
    spring. This is a different story.
 
    This is what is actully handeled in the next section.   
+
 
 ** Creating your own configuration properties
 
@@ -1560,7 +1587,6 @@ asynchronous fashion.
      #+end_quote
 
 
-
 * Spring Data
 
   So we will treat here how to interact with JDBC and JPA in Spring.
@@ -2024,6 +2050,7 @@ Streams.
      represents a pipeline of zero, one, or many (potentially
      infinite) data items.
      #+end_quote
+
 
 ** Basic APIs for working on Flux and Mono
 

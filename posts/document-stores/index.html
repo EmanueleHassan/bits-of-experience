@@ -119,9 +119,9 @@ of HDFS. I.e. you they scale just up to handful of machines.
 
 <!-- TEASER_END -->
 
-<br><br><div id="outline-container-orgfde9029" class="outline-2">
-<h2 id="orgfde9029">Architecture</h2>
-<div class="outline-text-2" id="text-orgfde9029">
+<br><br><div id="outline-container-org22fd152" class="outline-2">
+<h2 id="org22fd152">Architecture</h2>
+<div class="outline-text-2" id="text-org22fd152">
 <p>
 The idea behind document stores is similar to the one behind the one
 of HDFS. 
@@ -173,9 +173,9 @@ members of the cluster continues in the background.
 </div>
 
 
-<div id="outline-container-orgb9ff3b5" class="outline-2">
-<h2 id="orgb9ff3b5">On the Physical Layer</h2>
-<div class="outline-text-2" id="text-orgb9ff3b5">
+<div id="outline-container-orgb8db0b7" class="outline-2">
+<h2 id="orgb8db0b7">On the Physical Layer</h2>
+<div class="outline-text-2" id="text-orgb8db0b7">
 <p>
 Document stores makes heavy use of indices for storing the data and
 accessing/querying them in a fast and efficient way.
@@ -247,9 +247,9 @@ data that fulfill your range query.
 <br><br>
 </div>
 
-<div id="outline-container-org51343d0" class="outline-3">
-<h3 id="org51343d0">Pymongo Indices</h3>
-<div class="outline-text-3" id="text-org51343d0">
+<div id="outline-container-org7095fae" class="outline-3">
+<h3 id="org7095fae">Pymongo Indices</h3>
+<div class="outline-text-3" id="text-org7095fae">
 <p>
 An <code>explain()</code> operator provides information on the query plan. It
 returns a document that describes the process and indexes used to
@@ -296,12 +296,12 @@ To remove all indexes, you can use <code>db.collection.drop_indexes()</code>.
 Example:
 </p>
 
-<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Before drop_indexes():"</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">"Before drop_indexes():"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">restaurants</span><span class="o">.</span><span class="n">list_indexes</span><span class="p">():</span>
     <span class="n">pprint</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Now we drop all indexes..."</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">"Now we drop all indexes..."</span><span class="p">)</span>
 <span class="n">db</span><span class="o">.</span><span class="n">restaurants</span><span class="o">.</span><span class="n">drop_indexes</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"After drop_indexes():"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">"After drop_indexes():"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">restaurants</span><span class="o">.</span><span class="n">list_indexes</span><span class="p">():</span>
     <span class="n">pprint</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 </pre></div>
@@ -315,7 +315,7 @@ To remove a specific index you can use
 Example:
 </p>
 
-<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'Create some indexes first...'</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">'Create some indexes first...'</span><span class="p">)</span>
 
 <span class="c1">## notice that as in the below case when you have two variables you</span>
 <span class="c1">## index over the index is a compound index being formed by the two</span>
@@ -333,13 +333,13 @@ Example:
 								<span class="c1">## for</span>
 								<span class="c1">## ASC</span>
 <span class="n">index_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">restaurants</span><span class="o">.</span><span class="n">create_index</span><span class="p">(</span><span class="s1">'address.building'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Now we have these indexes:'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Now we have these indexes:'</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">restaurants</span><span class="o">.</span><span class="n">list_indexes</span><span class="p">():</span>
     <span class="n">pprint</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Then drop_index()...'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Then drop_index()...'</span><span class="p">)</span>
 <span class="n">db</span><span class="o">.</span><span class="n">restaurants</span><span class="o">.</span><span class="n">drop_index</span><span class="p">(</span><span class="n">index_name</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">The remaining indexes are:'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">The remaining indexes are:'</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">restaurants</span><span class="o">.</span><span class="n">list_indexes</span><span class="p">():</span>
     <span class="n">pprint</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 </pre></div>
@@ -348,9 +348,9 @@ Example:
 </div>
 
 
-<div id="outline-container-orgf2b11e4" class="outline-2">
-<h2 id="orgf2b11e4">Pymongo Query Syntax and exercises</h2>
-<div class="outline-text-2" id="text-orgf2b11e4">
+<div id="outline-container-orgb895c08" class="outline-2">
+<h2 id="orgb895c08">Pymongo Query Syntax and exercises</h2>
+<div class="outline-text-2" id="text-orgb895c08">
 <p>
 For the <code>db.collection.find()</code> method, you can specify the following
 optional fields: 
@@ -366,7 +366,7 @@ MongoDB returns to the client over the network)</li>
 <li>optionally, a <b>cursor modifier</b> to impose limits, skips, and sort
 orders</li>
 </ul>
-<br><br><div id="org4ec0ffa" class="figure">
+<br><br><div class="figure">
 <p><object type="image/svg+xml" data="https://docs.mongodb.com/manual/_images/crud-annotated-mongodb-find.bakedsvg.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
@@ -397,7 +397,7 @@ Sorry, your browser does not support SVG.</object>
 <div class="highlight"><pre><span></span><span class="c1"># Insert more documents</span>
 <span class="n">doc_list</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span><span class="s2">"Name"</span><span class="p">:</span><span class="s2">"Einstein"</span><span class="p">,</span> <span class="s2">"Profession"</span><span class="p">:</span><span class="s2">"Physicist"</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">"Name"</span><span class="p">:</span><span class="s2">"Go del"</span><span class="p">,</span> <span class="s2">"Profession"</span><span class="p">:</span><span class="s2">"Mathematician"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"Name"</span><span class="p">:</span><span class="s2">"Gödel"</span><span class="p">,</span> <span class="s2">"Profession"</span><span class="p">:</span><span class="s2">"Mathematician"</span><span class="p">},</span>
     <span class="p">{</span><span class="s2">"Name"</span><span class="p">:</span><span class="s2">"Ramanujan"</span><span class="p">,</span> <span class="s2">"Profession"</span><span class="p">:</span><span class="s2">"Mathematician"</span><span class="p">},</span>
     <span class="p">{</span><span class="s2">"Name"</span><span class="p">:</span><span class="s2">"Pythagoras"</span><span class="p">,</span> <span class="s2">"Profession"</span><span class="p">:</span><span class="s2">"Mathematician"</span><span class="p">},</span>
     <span class="p">{</span><span class="s2">"Name"</span><span class="p">:</span><span class="s2">"Turing"</span><span class="p">,</span> <span class="s2">"Profession"</span><span class="p">:</span><span class="s2">"Computer Scientist"</span><span class="p">},</span>
@@ -414,11 +414,11 @@ Sorry, your browser does not support SVG.</object>
 </pre></div>
 
 <div class="highlight"><pre><span></span><span class="c1"># Using cursor modifiers</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Using sort:"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">"Using sort:"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">scientists</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s2">"Profession"</span><span class="p">:</span> <span class="s2">"Mathematician"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"_id"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Name"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"Name"</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
     <span class="n">pprint</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Using skip:"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">"Using skip:"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">scientists</span><span class="o">.</span><span class="n">find</span><span class="p">(</span>
 	<span class="p">{</span><span class="s2">"Profession"</span><span class="p">:</span> <span class="s2">"Mathematician"</span><span class="p">},</span> 
 	<span class="p">{</span><span class="s2">"_id"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Name"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"Name"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> \  <span class="c1">## notice in sort: 1</span>
@@ -427,7 +427,7 @@ Sorry, your browser does not support SVG.</object>
 		     <span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>  <span class="c1">## skip the first result</span>
     <span class="n">pprint</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Using limit:"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">"Using limit:"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">scientists</span><span class="o">.</span><span class="n">find</span><span class="p">(</span>
 	<span class="p">{</span><span class="s2">"Profession"</span><span class="p">:</span> <span class="s2">"Mathematician"</span><span class="p">},</span> 
 	<span class="p">{</span><span class="s2">"_id"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Name"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span> \
@@ -490,9 +490,9 @@ Sorry, your browser does not support SVG.</object>
 </pre></div>
 </div>
 
-<div id="outline-container-org777bc51" class="outline-3">
-<h3 id="org777bc51">Exercises</h3>
-<div class="outline-text-3" id="text-org777bc51">
+<div id="outline-container-orgdb33b59" class="outline-3">
+<h3 id="orgdb33b59">Exercises</h3>
+<div class="outline-text-3" id="text-orgdb33b59">
 <p>
 <b>1)</b> All restaurants in borough (a town) "Brooklyn" and cuisine (a
 style of cooking) "Hamburgers".
@@ -651,7 +651,7 @@ that grade at the same time.
             <li class="next">
                 <a href="../on-data-idependence-querying-trees/" rel="next" title="On Data Idependence - Querying Trees. ">Next post</a>
             </li>
-        </ul></nav></aside></article><footer id="footer"><p>Contents © 2022         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2021         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
         </footer>
 </div>
