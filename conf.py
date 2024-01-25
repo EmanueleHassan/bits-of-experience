@@ -20,7 +20,7 @@ BLOG_AUTHOR = "Marco Hassan"  # (translatable)
 BLOG_TITLE = "Bits of Experience"  # (translatable)
 # This is the main URL for your site. It will be used
 # in a prominent link. Don't forget the protocol (http/https)!
-SITE_URL = "https://marcohassan.github.io/bits-of-experience/"
+SITE_URL = "https://emanuelehassan.github.io/bits-of-experience/"
 # This is the URL where Nikola's output will be deployed.
 # If not set, defaults to SITE_URL
 # BASE_URL = "https://example.com/"
@@ -667,7 +667,7 @@ REDIRECTIONS = []
 # For more details, read the manual:
 # https://getnikola.com/handbook.html#deploying-to-github
 # You will need to configure the deployment branch on GitHub.
-GITHUB_SOURCE_BRANCH = 'windows_OS'
+GITHUB_SOURCE_BRANCH = 'master'
 GITHUB_DEPLOY_BRANCH = 'gh-pages'
 
 # The name of the remote where you wish to push to, using github_deploy.
