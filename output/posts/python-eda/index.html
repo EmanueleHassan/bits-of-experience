@@ -1,0 +1,2621 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Python Exploratory Data Analysis and Plotting | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://emanuelehassan.github.io/bits-of-experience/posts/python-eda/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../useful-network-debugging-tools/" title="Useful Network debugging Tools" type="text/html">
+<link rel="next" href="../accessing-protected-content-via-get-requests/" title="Accessing protected content via GET requests" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Python Exploratory Data Analysis and Plotting">
+<meta property="og:url" content="https://emanuelehassan.github.io/bits-of-experience/posts/python-eda/">
+<meta property="og:description" content="img {
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+
+
+
+Here some python introduction on how to work with data in the tabular
+form and visualization dummy scripts are saved.
+
+
+
+
+
+
+
+
+Librarie">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-03-19T14:02:40+02:00">
+<meta property="article:tag" content="Python">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Python Exploratory Data Analysis and Plotting</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2020-03-19T14:02:40+02:00" itemprop="datePublished" title="2020-03-19 14:02">2020-03-19 14:02</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/python/" rel="tag">Python</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <style>
+img {
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+</style>
+<p>
+Here some python introduction on how to work with data in the tabular
+form and visualization dummy scripts are saved.
+</p>
+
+<!-- TEASER_END -->
+
+<br><br><div id="outline-container-org4ea1e7c" class="outline-2">
+<h2 id="org4ea1e7c">Libraries</h2>
+<div class="outline-text-2" id="text-org4ea1e7c">
+<div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
+%matplotlib inline 
+%config InlineBackend.figure_format = 'png'
+import numpy as np
+import pandas as pd
+</pre></div>
+
+<p>
+First of all you should display the default way through which Ipython
+Notebooks should display pandas dataframes
+</p>
+
+<div class="highlight"><pre><span></span>pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
+</pre></div>
+
+<p>
+Analogously when working with numpy you could reach that by
+</p>
+
+<div class="highlight"><pre><span></span>np.set_printoptions(threshold=np.inf)
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf234430" class="outline-2">
+<h2 id="orgf234430">Data Wrangling</h2>
+<div class="outline-text-2" id="text-orgf234430">
+</div>
+
+
+<div id="outline-container-org040ae07" class="outline-3">
+<h3 id="org040ae07">Creating data</h3>
+<div class="outline-text-3" id="text-org040ae07">
+</div>
+<div id="outline-container-org557fb9c" class="outline-4">
+<h4 id="org557fb9c">Create data from numpy matrix</h4>
+<div class="outline-text-4" id="text-org557fb9c">
+<div class="highlight"><pre><span></span>    N = 30
+    x_1 = np.random.randn(N) * 3
+    x_2 = np.random.randn(N) * 3 + 2
+    x_3 = np.random.randn(N) * 3 + -2
+</pre></div>
+
+<div class="highlight"><pre><span></span>    mydat = pd.DataFrame (np.matrix ([x_1,x_2,x_3]).transpose ()) ## Without
+								  ## transpose
+								  ## it
+								  ## will
+								  ## simply
+								  ## be
+								  ## three
+								  ## rows
+								  ## with
+								  ## tons
+								  ## of
+								  ## column
+</pre></div>
+
+<div class="highlight"><pre><span></span>    mydat.head (5)
+</pre></div>
+
+<pre class="example">
+          0         1         2
+0 -0.391372  1.431659 -3.723554
+1 -4.663749  2.916761 -5.312962
+2 -5.138210  1.138734 -5.352694
+3  5.594435  0.292630 -6.738569
+4  2.328718  1.475208 -1.835453
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org34ad03c" class="outline-4">
+<h4 id="org34ad03c">Create data from two numpy arrays</h4>
+<div class="outline-text-4" id="text-org34ad03c">
+<p>
+here you need to flatten the arrays first
+</p>
+
+<div class="highlight"><pre><span></span>    X = 2 * np.random.rand(100,1)
+    y = 4 +3 * X+np.random.randn(100,1)
+
+    mydat2 = pd.DataFrame ({'x':X.flatten(), 'y': y.flatten()})
+</pre></div>
+
+<div class="highlight"><pre><span></span>    mydat2.head(5)
+</pre></div>
+
+<pre class="example">
+          x         y
+0  0.470371  3.531411
+1  0.615700  8.621742
+2  0.129762  5.510843
+3  1.202375  8.534827
+4  1.119286  5.962337
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org6b81d7d" class="outline-4">
+<h4 id="org6b81d7d">Create from List - You will use these basic dataframes in the following sections</h4>
+<div class="outline-text-4" id="text-org6b81d7d">
+<div class="highlight"><pre><span></span>    df1 = pd.DataFrame([[1, 2, 3, 4],
+			[5, 6, 7, 8],
+			[9, 10, 11, 12]],
+		       columns= ['a', 'b', 'c', 'd'])
+
+    df2 = pd.DataFrame([[1, 2, 3, 4],
+			[5, 6, 7, 8],
+			[9, 10, 11, 12]],
+		       columns= ['e', 'f', 'g', 'h'])
+</pre></div>
+
+<div class="highlight"><pre><span></span>    df2.head(5)
+</pre></div>
+
+<pre class="example">
+   e   f   g   h
+0  1   2   3   4
+1  5   6   7   8
+2  9  10  11  12
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgac5c485" class="outline-4">
+<h4 id="orgac5c485">Dataframe with NaN</h4>
+<div class="outline-text-4" id="text-orgac5c485">
+<div class="highlight"><pre><span></span>    dfNaN = pd.DataFrame([[1, 2, 3, 4],
+			  [5, np.nan, 7, 8],
+			  [9, 10, np.nan, 12]],
+			 columns= ['e', 'f', 'g', 'h'])
+
+    dfNaN.head(5)
+</pre></div>
+
+<pre class="example">
+   e     f    g   h
+0  1   2.0  3.0   4
+1  5   NaN  7.0   8
+2  9  10.0  NaN  12
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org6ab2e10" class="outline-3">
+<h3 id="org6ab2e10">Work With SQL on top of Pandas</h3>
+<div class="outline-text-3" id="text-org6ab2e10">
+<p>
+Note that it is possible to work with SQL on the top of pandas.
+</p>
+
+<p>
+Check at  the example below. 
+</p>
+
+<p>
+This is handy as you will see how to compute things both through
+pandas APIs and via plain SQL. 
+</p>
+
+<p>
+What follows is a 101 example of the thing.
+</p>
+
+<div class="highlight"><pre><span></span>   from pandasql import sqldf
+   nba = lambda q: sqldf(q, globals())
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>   q = \
+   """
+   SELECT *
+   FROM df1 
+   """
+</pre></div>
+
+<div class="highlight"><pre><span></span>   nba (q)
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org040293c" class="outline-3">
+<h3 id="org040293c">Reshaping data</h3>
+<div class="outline-text-3" id="text-org040293c">
+</div>
+<div id="outline-container-orgb75358e" class="outline-4">
+<h4 id="orgb75358e">on numpy reshape -1</h4>
+<div class="outline-text-4" id="text-orgb75358e">
+<p>
+The criterion to satisfy for providing the new shape is that <b>The new
+shape should be compatible with the original shape</b>
+</p>
+
+<p>
+Numpy allow us to give one of new shape parameter as -1 (eg: (2,-1) or
+(-1,3) but not (-1, -1)). It simply means that it is an unknown
+dimension and we want numpy to figure it out. And numpy will figure
+tchis by looking at the 'length of the array and remaining dimensions'
+and making sure it satisfies the above mentioned criteria
+</p>
+
+<p>
+Now see the example.
+</p>
+
+<div class="highlight"><pre><span></span>    import numpy as np
+
+    z = np.array([[1, 2, 3, 4],
+		  [5, 6, 7, 8],
+		  [9, 10, 11, 12]])
+
+    print (z.shape)
+    print (z.reshape (-1).shape)
+    print (z.reshape (-1,2).shape)
+</pre></div>
+
+<pre class="example">
+(3, 4)
+(12,)
+(6, 2)
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org374e089" class="outline-4">
+<h4 id="org374e089">On melting</h4>
+<div class="outline-text-4" id="text-org374e089">
+<p>
+Note that by melting you always remove all of the existing columns
+and you move to a two columned data frame. One containing the
+variables names and the other containing the values.
+</p>
+
+<div class="highlight"><pre><span></span>    print (df1.head (5))
+    print (df2.head (5))
+
+    # See below. Melting always goes in 2 D
+    print()
+    print("Melted the previous 2 tables\n" + "-"*30)
+    print (pd.melt (df1).head (5)) 
+</pre></div>
+
+<pre class="example">
+   a   b   c   d
+0  1   2   3   4
+1  5   6   7   8
+2  9  10  11  12
+   e   f   g   h
+0  1   2   3   4
+1  5   6   7   8
+2  9  10  11  12
+
+Melted the previous 2 tables
+------------------------------
+  variable  value
+0        a      1
+1        a      5
+2        a      9
+3        b      2
+4        b      6
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-orgfd09c94" class="outline-4">
+<h4 id="orgfd09c94">On Pivoting</h4>
+<div class="outline-text-4" id="text-orgfd09c94">
+<p>
+It spreads rows to columns.
+</p>
+
+<p>
+This is the goes a bit in the opposite direction of melting. 
+</p>
+
+<p>
+The difference is though that each entry holds its spot and NaN
+for the other values are created. 
+</p>
+
+<p>
+So the indexing is quite different than the original as you might see
+from the below.
+</p>
+
+<div class="highlight"><pre><span></span>    df3 = pd.melt (df1)
+
+    print("Melted Table\n" + "-"*30)
+    print (df3.head (20))
+
+    print("Pivoted Melted Table\n" + "-"*30)
+    print (df3.pivot(columns = 'variable', values = 'value').head (10)) 
+</pre></div>
+
+<pre class="example">
+Melted Table
+------------------------------
+   variable  value
+0         a      1
+1         a      5
+2         a      9
+3         b      2
+4         b      6
+5         b     10
+6         c      3
+7         c      7
+8         c     11
+9         d      4
+10        d      8
+11        d     12
+Pivoted Melted Table
+------------------------------
+variable    a     b     c    d
+0         1.0   NaN   NaN  NaN
+1         5.0   NaN   NaN  NaN
+2         9.0   NaN   NaN  NaN
+3         NaN   2.0   NaN  NaN
+4         NaN   6.0   NaN  NaN
+5         NaN  10.0   NaN  NaN
+6         NaN   NaN   3.0  NaN
+7         NaN   NaN   7.0  NaN
+8         NaN   NaN  11.0  NaN
+9         NaN   NaN   NaN  4.0
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org9b4087e" class="outline-4">
+<h4 id="org9b4087e">On Concatenating</h4>
+<div class="outline-text-4" id="text-org9b4087e">
+<p>
+We tackle now column-based and row based concatenation. 
+</p>
+
+<p>
+It is the <b>full outer join</b> in SQL.
+</p>
+
+<div class="highlight"><pre><span></span>    df3 = pd.concat ([df1, df2], axis = 0)
+
+    ## This equals the Union Operator in SQL
+    print("Concat Along Row Axis\n" + "-"*48)
+    print (df3.head (6)) 
+
+
+    print("Full outer Join\n" + "-"*48)
+
+    ## In SQL
+    q = \
+	"""
+    SELECT *
+    FROM df1
+    FULL OUTER JOIN df2 ON df1.a = df2.f
+    """
+
+    print (nba (q)) 
+
+
+    ## This adds data by column
+    print("Concat Along Column Axis\n" + "-"*48)
+    df3 = pd.concat ([df1, df2], axis = 1)
+    print (df3.head (6)) 
+</pre></div>
+
+<pre class="example">
+Concat Along Row Axis
+------------------------------------------------
+     a     b     c     d    e     f     g     h
+0  1.0   2.0   3.0   4.0  NaN   NaN   NaN   NaN
+1  5.0   6.0   7.0   8.0  NaN   NaN   NaN   NaN
+2  9.0  10.0  11.0  12.0  NaN   NaN   NaN   NaN
+0  NaN   NaN   NaN   NaN  1.0   2.0   3.0   4.0
+1  NaN   NaN   NaN   NaN  5.0   6.0   7.0   8.0
+2  NaN   NaN   NaN   NaN  9.0  10.0  11.0  12.0
+Full outer Join
+------------------------------------------------
+     a     b     c     d    e     f     g     h
+0  1.0   2.0   3.0   4.0  NaN   NaN   NaN   NaN
+1  5.0   6.0   7.0   8.0  NaN   NaN   NaN   NaN
+2  9.0  10.0  11.0  12.0  NaN   NaN   NaN   NaN
+3  NaN   NaN   NaN   NaN  1.0   2.0   3.0   4.0
+4  NaN   NaN   NaN   NaN  5.0   6.0   7.0   8.0
+5  NaN   NaN   NaN   NaN  9.0  10.0  11.0  12.0
+Concat Along Column Axis
+------------------------------------------------
+   a   b   c   d  e   f   g   h
+0  1   2   3   4  1   2   3   4
+1  5   6   7   8  5   6   7   8
+2  9  10  11  12  9  10  11  12
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org9e312c7" class="outline-4">
+<h4 id="org9e312c7">New column</h4>
+<div class="outline-text-4" id="text-org9e312c7">
+<div class="highlight"><pre><span></span>    df2['i'] = df1['a'] + df2['e'] 
+</pre></div>
+
+<div class="highlight"><pre><span></span>    df2.columns
+</pre></div>
+
+<pre class="example">
+Index(['e', 'f', 'g', 'h', 'i'], dtype='object')
+</pre>
+
+
+<div class="highlight"><pre><span></span>    df2.head ()
+</pre></div>
+
+<pre class="example">
+   e   f   g   h   i
+0  1   2   3   4   2
+1  5   6   7   8  10
+2  9  10  11  12  18
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org4e7f492" class="outline-4">
+<h4 id="org4e7f492">Remove Columns</h4>
+<div class="outline-text-4" id="text-org4e7f492">
+<div class="highlight"><pre><span></span>    df2.drop ('i', axis = 1).head ()
+</pre></div>
+
+<pre class="example">
+   e   f   g   h
+0  1   2   3   4
+1  5   6   7   8
+2  9  10  11  12
+</pre>
+
+
+
+<p>
+Use the <code>df.drop</code> function for that
+</p>
+
+<div class="highlight"><pre><span></span>    df2.drop(columns=['h', 'i']).head ()
+</pre></div>
+
+<pre class="example">
+   e   f   g
+0  1   2   3
+1  5   6   7
+2  9  10  11
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org6b2fd3e" class="outline-4">
+<h4 id="org6b2fd3e">Column Renaming</h4>
+<div class="outline-text-4" id="text-org6b2fd3e">
+<div class="highlight"><pre><span></span>    df2.rename(columns = {'i':'sum'}).head ()
+</pre></div>
+
+<pre class="example">
+   e   f   g   h  sum
+0  1   2   3   4    2
+1  5   6   7   8   10
+2  9  10  11  12   18
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1a5060e" class="outline-3">
+<h3 id="org1a5060e">Categorical Variables</h3>
+<div class="outline-text-3" id="text-org1a5060e">
+<p>
+Categorical data appear often. It is necessary for you to tackle
+them down correctly.
+</p>
+
+<p>
+This is important for treating them as dummies in regression as well
+for plotting with facet<sub>wraps</sub>. 
+</p>
+
+<div class="highlight"><pre><span></span>   print(mydat.shape)
+
+   mydat.head ()
+</pre></div>
+
+<pre class="example">
+(30, 3)
+          0         1         2
+0  3.285809  1.292891 -4.087278
+1 -4.393832  0.898429 -9.398311
+2 -0.959970  0.936827 -3.816866
+3  3.423767  1.705746  2.511616
+4 -3.398694  2.665577 -1.063232
+</pre>
+
+
+
+<div class="highlight"><pre><span></span>   mydat["category"] = np.repeat (range (6), 5)
+   mydat.info ()
+</pre></div>
+
+<pre class="example">
+&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 30 entries, 0 to 29
+Data columns (total 4 columns):
+ #   Column    Non-Null Count  Dtype  
+---  ------    --------------  -----  
+ 0   0         30 non-null     float64
+ 1   1         30 non-null     float64
+ 2   2         30 non-null     float64
+ 3   category  30 non-null     int32  
+dtypes: float64(3), int32(1)
+memory usage: 972.0 bytes
+</pre>
+
+<p>
+To <b>transform this into a category</b> use:
+</p>
+
+<div class="highlight"><pre><span></span>   mydat.category = mydat.category.astype ('category')
+   mydat.info ()
+</pre></div>
+
+<pre class="example">
+&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 30 entries, 0 to 29
+Data columns (total 4 columns):
+ #   Column    Non-Null Count  Dtype   
+---  ------    --------------  -----   
+ 0   0         30 non-null     float64 
+ 1   1         30 non-null     float64 
+ 2   2         30 non-null     float64 
+ 3   category  30 non-null     category
+dtypes: category(1), float64(3)
+memory usage: 1.0 KB
+</pre>
+</div>
+
+<div id="outline-container-orge2c7d36" class="outline-4">
+<h4 id="orge2c7d36">To view the category types</h4>
+<div class="outline-text-4" id="text-orge2c7d36">
+<p>
+Inspect the relevant categorical variables. I.e. check what
+categories exists as values.
+</p>
+
+<div class="highlight"><pre><span></span>    mydat.category.cat.categories
+</pre></div>
+
+<pre class="example">
+Index([0, 1, 2, 3, 4, 5], dtype='int32')
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org5cd74da" class="outline-4">
+<h4 id="org5cd74da">Create Categories with the Cut Operator - Create Categorical Ranges</h4>
+<div class="outline-text-4" id="text-org5cd74da">
+<p>
+Notice dataset not here… just pasted
+</p>
+
+<p>
+The idea is to create categories out of the data bins as follows:
+</p>
+
+<div class="highlight"><pre><span></span>    Bins = pd.cut(data_seq.r_platelet_admission, bins  = 5).cat.categories
+
+    inspect = pd.concat([data_seq.loc[:, ['r_platelet_admission', 'r_platelet_24h']], 
+			 data_seq.loc[:, ['r_platelet_admission', 'r_platelet_24h']].apply(pd.cut, bins=Bins)],
+			 axis = 1)
+
+
+    ## so you see... very different intervals... 
+</pre></div>
+
+<p>
+Notice however the issue that then at 24h you have just survivals on
+given categories
+</p>
+
+<div class="highlight"><pre><span></span>    inspect.iloc[:,-1].value_counts()
+</pre></div>
+
+<pre class="example">
+(13.401, 535.8]     1217
+(535.8, 1055.6]        1
+(2095.2, 2615.0]       0
+(1575.4, 2095.2]       0
+(1055.6, 1575.4]       0
+Name: r_platelet_24h, dtype: int64
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org23550b8" class="outline-3">
+<h3 id="org23550b8">Missing data</h3>
+<div class="outline-text-3" id="text-org23550b8">
+</div>
+<div id="outline-container-org8b1b1d5" class="outline-4">
+<h4 id="org8b1b1d5">To check for missing values <code>NaN</code>
+</h4>
+<div class="outline-text-4" id="text-org8b1b1d5">
+<p>
+In order to check for NaN use the following
+</p>
+
+<div class="highlight"><pre><span></span>    print (dfNaN.head ())
+
+    ## check if there are null values for stream_id column
+    print ("\nContaining Null Entries: " + 
+	   str(dfNaN.isnull().values.any()) + "\n") 
+
+    ## get the null values
+    print("Get the Rows with Null Values:\n" + "-"*35)
+    print (dfNaN[np.array(dfNaN.isnull())]) 
+
+    ## 
+    print("\nGet Null Rows in specific Column:\n" + "-"*35)
+    print (dfNaN[np.array(dfNaN[['g']].isnull())]) 
+</pre></div>
+
+<pre class="example">
+   e     f    g   h
+0  1   2.0  3.0   4
+1  5   NaN  7.0   8
+2  9  10.0  NaN  12
+
+Containing Null Entries: True
+
+Get the Rows with Null Values:
+-----------------------------------
+   e     f    g   h
+1  5   NaN  7.0   8
+2  9  10.0  NaN  12
+
+Get Null Rows in specific Column:
+-----------------------------------
+   e     f   g   h
+2  9  10.0 NaN  12
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org659e0b2" class="outline-4">
+<h4 id="org659e0b2">Remove Rows/Columns with Missing Data</h4>
+<div class="outline-text-4" id="text-org659e0b2">
+<p>
+In order to delete missing data you can simply rely on the 
+</p>
+
+<div class="highlight"><pre><span></span>  import pandas as pd
+  from numpy import nan
+
+  df = pd.DataFrame({'name':['apple','banana','orange'],
+		     'price':[1.95, 3.00, nan], 'inventory':[nan, 12, 23]})
+
+
+  print(df)
+
+  print ("\nAfter deleting Rows with missing values:\n" + "-"*35)
+  print(df.dropna())
+</pre></div>
+
+<pre class="example">
+     name  price  inventory
+0   apple   1.95        NaN
+1  banana   3.00       12.0
+2  orange    NaN       23.0
+
+After deleting missing values:
+-----------------------------------
+     name  price  inventory
+1  banana    3.0       12.0
+</pre>
+
+
+<p>
+In the above you eliminate the entire <b>row</b> where the missing value
+occurred.
+</p>
+
+<p>
+The above is particular important when missing observations occurs
+randomly such that you might safely ignore individual observations
+without increasing the bias of your analysis given your data.
+</p>
+
+<p>
+A second possibility, when dealing with missing data consists in
+deleting entire features (i.e. columns). You can do that by setting
+the argument <code>'columns'</code> in your <code>.dropna ()</code> method
+</p>
+
+<div class="highlight"><pre><span></span>  print(df)
+
+  print ("\nAfter deleting Columns with missing values:\n" + "-"*45)
+
+  print(df.dropna(axis = 'columns'))
+
+  # Alternative - same effect
+  # print(df.dropna(axis = 1)) ## same as selecting columns
+</pre></div>
+
+<pre class="example">
+     name  price  inventory
+0   apple   1.95        NaN
+1  banana   3.00       12.0
+2  orange    NaN       23.0
+
+After deleting Columns with missing values:
+---------------------------------------------
+     name
+0   apple
+1  banana
+2  orange
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org14d4395" class="outline-4">
+<h4 id="org14d4395">Impute missing data</h4>
+<div class="outline-text-4" id="text-org14d4395">
+<p>
+A different approach on handling missing data is to <b>impute</b> missing
+data. This means that instead of removing the data observations you
+try to replace them with some meaningful information.
+</p>
+
+<p>
+This might be useful for instance when understanding that data are not
+missing at random and you might use the dependency on other features -
+i.e. a predictive model based on that - to impute missing
+variables. 
+</p>
+
+<p>
+Note that there is an entire class of method for performing that
+task. The performed interpolation might be more complex or less. 
+I will possibly write a different notebook with the different
+imputation techniques.
+</p>
+
+<p>
+Other simpler methods might involve taking simple features means as a
+data-filler or some simple analogous measure. An example in this sense
+might be:
+</p>
+
+<div class="highlight"><pre><span></span>    from sklearn.impute import SimpleImputer
+
+    print("Original Data:\n" + "-" *35)
+    print (df)
+
+    features = ['price', 'inventory']
+    imp = SimpleImputer()
+
+    # Use .values attribute bc sklearn works with arrays rather than DataFrames
+    print("\nImputed Values:\n" + "-" *35)
+    imp.fit(df[features].values)
+    print(imp.transform(df[features].values))
+
+    print("\nReassign the Features with the Imputed Values:\n" + "-" *35)
+    df [['price', 'inventory']] = imp.transform(df[features].values)
+
+    print (df)
+</pre></div>
+
+<pre class="example">
+Original Data:
+-----------------------------------
+     name  price  inventory
+0   apple   1.95        NaN
+1  banana   3.00       12.0
+2  orange    NaN       23.0
+
+Imputed Values:
+-----------------------------------
+[[ 1.95  17.5  ]
+ [ 3.    12.   ]
+ [ 2.475 23.   ]]
+
+Reassign the Features with the Imputed Values:
+-----------------------------------
+     name  price  inventory
+0   apple  1.950       17.5
+1  banana  3.000       12.0
+2  orange  2.475       23.0
+</pre>
+
+<p>
+Notice that in the above the simple average was taken to replace
+missing values. 
+</p>
+
+<p>
+Notice moreover how the standard sklearn API applies - i.e. the
+<code>.fit ()</code> and <code>.transform ()</code> methods.
+</p>
+
+<p>
+Check your specific sklearn post for it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbe4f390" class="outline-4">
+<h4 id="orgbe4f390">Treat Null Values in Categorical Variables</h4>
+<div class="outline-text-4" id="text-orgbe4f390">
+<p>
+First of all adjust the data to include missing categorical data:
+</p>
+
+<div class="highlight"><pre><span></span>    mydat['category'][0] = nan
+    mydat['category'][9] = nan
+
+    print("New Data:\n" + "-"*35)
+    print(mydat)
+
+    print("\nCategorical Data Mantained:\n")
+    print(mydat.info())
+
+    print("\nCategorical Data Does Not Include NaN:\n")
+    print(mydat.category.cat.categories)
+</pre></div>
+
+<pre class="example">
+New Data:
+-----------------------------------
+	   0         1         2 category
+0   3.285809  1.292891 -4.087278      NaN
+1  -4.393832  0.898429 -9.398311        0
+2  -0.959970  0.936827 -3.816866        0
+3   3.423767  1.705746  2.511616        0
+4  -3.398694  2.665577 -1.063232        0
+5  -5.981978 -2.330365  4.513986        1
+6   3.563627  1.282886 -1.558001        1
+7   3.911721  5.435864 -2.521728        1
+8  -3.365184  5.509441  2.166765        1
+9   4.376495  5.948424 -0.899942      NaN
+10  0.711004  0.991445 -0.707667        2
+11 -5.525879  7.641149 -1.207696        2
+12 -2.263607  4.011692 -2.416089        2
+13 -2.303355  2.281748 -3.973166        2
+14  0.541773  7.803575 -8.016219        2
+15 -2.086906  0.447170 -3.786559        3
+16 -1.917900  3.561826 -2.660550        3
+17  0.629063  1.705416  0.088963        3
+18  3.571641  2.428314 -1.800404        3
+19 -1.645434 -2.878642 -3.169414        3
+20 -1.574994  0.464397 -3.304629        4
+21 -5.727603  2.299280 -3.615124        4
+22  0.815686  0.375027  1.368671        4
+23  4.712558  1.563259 -3.259274        4
+24 -5.063074 -4.301082 -3.433244        4
+25 -1.914395 -4.043507  0.256975        5
+26 -2.458269  5.153733 -1.631465        5
+27 -0.858224  0.300057 -1.761264        5
+28 -2.248453  0.772280 -1.619120        5
+29 -0.326246  3.584091 -4.607798        5
+
+Categorical Data Mantained:
+
+&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 30 entries, 0 to 29
+Data columns (total 4 columns):
+ #   Column    Non-Null Count  Dtype   
+---  ------    --------------  -----   
+ 0   0         30 non-null     float64 
+ 1   1         30 non-null     float64 
+ 2   2         30 non-null     float64 
+ 3   category  28 non-null     category
+dtypes: category(1), float64(3)
+memory usage: 1.0 KB
+None
+
+Categorical Data Does Not Include NaN:
+
+Index([0, 1, 2, 3, 4, 5], dtype='int32')
+</pre>
+
+<p>
+When data are categorical mathematical strategies for imputing the
+data are not effective.
+</p>
+
+<p>
+A solution is the one of creating a separate category for it.
+</p>
+
+<div class="highlight"><pre><span></span>    # Note you have to add the category first; before filling up the nan.
+    mydat.category = mydat.category.cat.add_categories('no_category')
+
+    mydat.loc[mydat.category[mydat.category.isnull()].index, "category"] = 'no_category'
+
+
+    print("New Data with new Category:\n" + "-" *35)
+    print(mydat)
+
+    print(mydat.category.cat.categories)
+</pre></div>
+
+<pre class="example">
+New Data with new Category:
+-----------------------------------
+	   0         1         2     category
+0   3.285809  1.292891 -4.087278  no_category
+1  -4.393832  0.898429 -9.398311            0
+2  -0.959970  0.936827 -3.816866            0
+3   3.423767  1.705746  2.511616            0
+4  -3.398694  2.665577 -1.063232            0
+5  -5.981978 -2.330365  4.513986            1
+6   3.563627  1.282886 -1.558001            1
+7   3.911721  5.435864 -2.521728            1
+8  -3.365184  5.509441  2.166765            1
+9   4.376495  5.948424 -0.899942  no_category
+10  0.711004  0.991445 -0.707667            2
+11 -5.525879  7.641149 -1.207696            2
+12 -2.263607  4.011692 -2.416089            2
+13 -2.303355  2.281748 -3.973166            2
+14  0.541773  7.803575 -8.016219            2
+15 -2.086906  0.447170 -3.786559            3
+16 -1.917900  3.561826 -2.660550            3
+17  0.629063  1.705416  0.088963            3
+18  3.571641  2.428314 -1.800404            3
+19 -1.645434 -2.878642 -3.169414            3
+20 -1.574994  0.464397 -3.304629            4
+21 -5.727603  2.299280 -3.615124            4
+22  0.815686  0.375027  1.368671            4
+23  4.712558  1.563259 -3.259274            4
+24 -5.063074 -4.301082 -3.433244            4
+25 -1.914395 -4.043507  0.256975            5
+26 -2.458269  5.153733 -1.631465            5
+27 -0.858224  0.300057 -1.761264            5
+28 -2.248453  0.772280 -1.619120            5
+29 -0.326246  3.584091 -4.607798            5
+Index([0, 1, 2, 3, 4, 5, 'no_category'], dtype='object')
+</pre>
+
+<p>
+Or, more elegantly.
+</p>
+
+<div class="highlight"><pre><span></span>    mydat.category = mydat.category.cat.add_categories('no_category').fillna('no_category')
+</pre></div>
+
+
+<p>
+This will be useful as you create a new feature and that might
+reveal some patterns in null values. 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7b6e9d7" class="outline-3">
+<h3 id="org7b6e9d7">Duplicates Handling</h3>
+<div class="outline-text-3" id="text-org7b6e9d7">
+<p>
+You can generate an array of duplicates boolean by leveraging <code>.duplicated ()</code> method:
+</p>
+
+<div class="highlight"><pre><span></span>   romeo = pd.DataFrame({'a': [1,1,1,3], 'b' : [2,2,2,3]})
+
+   print(romeo)
+
+   print("\nCheck if records already existing:\n" + "-" *40)
+   print(romeo.duplicated())
+
+   print("\nSelect all duplicated Rows:\n" + "-" *40)
+   print(romeo[romeo.duplicated()])
+</pre></div>
+
+<pre class="example">
+   a  b
+0  1  2
+1  1  2
+2  1  2
+3  3  3
+
+Check if records already existing:
+----------------------------------------
+0    False
+1     True
+2     True
+3    False
+dtype: bool
+
+Select all duplicated Rows:
+----------------------------------------
+   a  b
+1  1  2
+2  1  2
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org398edee" class="outline-3">
+<h3 id="org398edee">Summarize the data</h3>
+<div class="outline-text-3" id="text-org398edee">
+</div>
+<div id="outline-container-org0fdd02c" class="outline-4">
+<h4 id="org0fdd02c">Describe the Data</h4>
+<div class="outline-text-4" id="text-org0fdd02c">
+<div class="highlight"><pre><span></span>  df1.describe ()
+</pre></div>
+
+<pre class="example">
+         a     b     c     d
+count  3.0   3.0   3.0   3.0
+mean   5.0   6.0   7.0   8.0
+std    4.0   4.0   4.0   4.0
+min    1.0   2.0   3.0   4.0
+25%    3.0   4.0   5.0   6.0
+50%    5.0   6.0   7.0   8.0
+75%    7.0   8.0   9.0  10.0
+max    9.0  10.0  11.0  12.0
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc15778b" class="outline-3">
+<h3 id="orgc15778b">Data Wrangling</h3>
+<div class="outline-text-3" id="text-orgc15778b">
+</div>
+<div id="outline-container-org29c62d7" class="outline-4">
+<h4 id="org29c62d7">General Note</h4>
+<div class="outline-text-4" id="text-org29c62d7">
+<p>
+Often it makes sense to create a dictionary for selecting the
+columns of the dataframes by index and get the corresponding name.
+</p>
+
+<p>
+It is just one among the many options in order to work in an
+ordered way.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgf383dcc" class="outline-4">
+<h4 id="orgf383dcc">Sort Multiple Variables in Data Frames</h4>
+<div class="outline-text-4" id="text-orgf383dcc">
+<div class="highlight"><pre><span></span>    print (df1) 
+
+    print (df1.sort_values(['c', "d"], ascending=[False, False], inplace=False)) 
+
+    print (df1) 
+
+    df1.sort_values(['c', "d"], ascending=[False, False], inplace=True) ## you
+									## see
+									## that
+									## with
+									## inplace
+									## you
+									## overwrite
+									## the
+									## existing
+									## table
+
+    print (df1) 
+
+    df1.sort_values(['c', "d"], ascending=[True, True], inplace=True)
+</pre></div>
+
+<pre class="example">
+   a   b   c   d
+0  1   2   3   4
+1  5   6   7   8
+2  9  10  11  12
+   a   b   c   d
+2  9  10  11  12
+1  5   6   7   8
+0  1   2   3   4
+   a   b   c   d
+0  1   2   3   4
+1  5   6   7   8
+2  9  10  11  12
+   a   b   c   d
+2  9  10  11  12
+1  5   6   7   8
+0  1   2   3   4
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org2bb91f2" class="outline-4">
+<h4 id="org2bb91f2">Column Naming</h4>
+<div class="outline-text-4" id="text-org2bb91f2">
+<ul class="org-ul">
+<li>Set the name of the columns</li>
+</ul>
+<div class="highlight"><pre><span></span>    mydat.columns = ["nomean", "posmean", "negmean"]
+</pre></div>
+
+<div class="highlight"><pre><span></span>    mydat.columns
+</pre></div>
+
+<pre class="example">
+Index(['nomean', 'posmean', 'negmean'], dtype='object')
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-orgbe03040" class="outline-4">
+<h4 id="orgbe03040">on the difference between <code>.iloc</code> and <code>.loc</code> and <code>at</code>
+</h4>
+<div class="outline-text-4" id="text-orgbe03040">
+</div>
+<ul class="org-ul">
+<li>
+<a id="org1736864"></a>.at<br><div class="outline-text-5" id="text-org1736864">
+<p>
+This searches for a very specific entry.
+</p>
+
+<p>
+<code>.iat</code> : uses the <b>strict position</b> in the matrix. I.e. it takes
+numeric values.
+</p>
+
+<p>
+<code>.at</code> : search by index and column <b>names</b>. I.e. you enter the
+names.
+</p>
+
+<div class="highlight"><pre><span></span>     print (df1)
+     print (df1.at[0, 'd']) 
+</pre></div>
+
+<pre class="example">
+   a   b   c   d
+2  9  10  11  12
+1  5   6   7   8
+0  1   2   3   4
+4
+</pre>
+
+
+<p>
+Note that you can get the same entry by numeric value by the
+following:
+</p>
+
+<div class="highlight"><pre><span></span>     df1.iat[2,3]
+</pre></div>
+
+<pre class="example">
+4
+</pre>
+</div>
+</li>
+
+
+<li>
+<a id="orgd2de181"></a>.iloc<br><div class="outline-text-5" id="text-orgd2de181">
+<p>
+This works along the lines of the <code>.iat</code>, i.e. you work by
+index. The difference is that you can select multiple
+indices. I.e. an array of them.
+</p>
+
+<div class="highlight"><pre><span></span>     df.head (5)
+</pre></div>
+
+<div class="highlight"><pre><span></span>     ## Some examples for slicing the data
+     print (df.iloc[0,1:])
+     print (df.iloc[:,1:])
+     print (df.iloc[:2,1:])
+</pre></div>
+
+<pre class="example">
+price        1.95
+inventory    17.5
+Name: 0, dtype: object
+   price  inventory
+0  1.950       17.5
+1  3.000       12.0
+2  2.475       23.0
+   price  inventory
+0   1.95       17.5
+1   3.00       12.0
+</pre>
+</div>
+</li>
+
+
+<li>
+<a id="orge343b53"></a>.loc<br><div class="outline-text-5" id="text-orge343b53">
+<div class="highlight"><pre><span></span>     df.head (5)
+</pre></div>
+
+<pre class="example">
+     name  price  inventory
+0   apple  1.950       17.5
+1  banana  3.000       12.0
+2  orange  2.475       23.0
+</pre>
+
+
+<div class="highlight"><pre><span></span>     df.loc [[0,2], ['price', 'name']]
+</pre></div>
+
+<pre class="example">
+   price    name
+0  1.950   apple
+2  2.475  orange
+</pre>
+
+
+<p>
+Note that the following works as well:
+</p>
+
+<div class="highlight"><pre><span></span>     print (df.loc [:, ['price', 'name']])
+     print (df.loc [[0,2], :])
+
+     ## The following would throw an error.
+     ## print (df.at [0, ['price', 'name']]) ## Note that multi-entries slicing is not possible with at
+</pre></div>
+
+<pre class="example">
+   price    name
+0  1.950   apple
+1  3.000  banana
+2  2.475  orange
+     name  price  inventory
+0   apple  1.950       17.5
+2  orange  2.475       23.0
+</pre>
+</div>
+</li>
+
+
+<li>
+<a id="orgf00cf56"></a>slicing the data without helper api method<br><ul class="org-ul">
+<li>
+<a id="org98dc211"></a>get by row<br><div class="outline-text-6" id="text-org98dc211">
+<p>
+You can use numerical entries for slicing the data.
+</p>
+
+<div class="highlight"><pre><span></span>      print (df1)
+
+      print (df1 [0:3]) ## it works on the axis = 0. Can just slice like this.
+</pre></div>
+
+<pre class="example">
+   a   b   c   d
+2  9  10  11  12
+1  5   6   7   8
+0  1   2   3   4
+   a   b   c   d
+2  9  10  11  12
+1  5   6   7   8
+0  1   2   3   4
+</pre>
+</div>
+</li>
+
+
+<li>
+<a id="org7f7c6ea"></a>get by column<br><div class="outline-text-6" id="text-org7f7c6ea">
+<div class="highlight"><pre><span></span>    print (df1[['a', 'b']].head (3)) 
+
+    ## The below does not work.
+    ## Natively you can just slice between one of the two dimensions
+    ## there is a different syntax explained in the next session for it. 
+
+    ## print (df1[0:3, ['a', 'b']].head (3)) 
+</pre></div>
+
+<pre class="example">
+   a   b
+2  9  10
+1  5   6
+0  1   2
+</pre>
+</div>
+</li>
+
+
+<li>
+<a id="org053409c"></a>get by row and column<br><div class="outline-text-6" id="text-org053409c">
+<p>
+The way to select rows and columns is to simply apply
+sequentially the built-in methods.
+</p>
+
+<p>
+It is nothing else than a chain rule. 
+</p>
+
+<div class="highlight"><pre><span></span>      print (df1)
+      # mydat[['nomean', 'posmean']][::2]
+</pre></div>
+
+<pre class="example">
+   a   b   c   d
+2  9  10  11  12
+1  5   6   7   8
+0  1   2   3   4
+</pre>
+
+
+<div class="highlight"><pre><span></span>      print(df1[['a', 'b']] [0:1]) ## note that the row indexing works by
+				   ## position not name, in that case you
+				   ## would have to work with the .loc
+				   ## method
+</pre></div>
+
+<pre class="example">
+   a   b
+2  9  10
+</pre>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org3e81a00" class="outline-3">
+<h3 id="org3e81a00">Filtering Data</h3>
+<div class="outline-text-3" id="text-org3e81a00">
+</div>
+<div id="outline-container-org771af92" class="outline-4">
+<h4 id="org771af92">filter through booleans</h4>
+<div class="outline-text-4" id="text-org771af92">
+<div class="highlight"><pre><span></span>  print (df1)
+
+  filt = df1.b &gt;= 6
+
+  print ()
+  print (df1[['a', 'b']][filt]) ## You can pass a boolean
+				## condition on the row
+				## indeces
+
+  ## The following raises an error
+  ## print (df1.iloc[filt, 0]) ## You can pass a boolean
+</pre></div>
+
+<pre class="example">
+   a   b   c   d
+2  9  10  11  12
+1  5   6   7   8
+0  1   2   3   4
+
+   a   b
+2  9  10
+1  5   6
+</pre>
+
+
+<p>
+Note that you can work with <code>iloc</code> and a <code>boolean</code> filtering condition
+by passing it to the <code>iloc</code> operator.
+</p>
+
+<div class="highlight"><pre><span></span>  print (np.array (filt))
+
+  print (df1.iloc[np.array (filt) , 0]) ## You can pass a boolean
+</pre></div>
+
+<pre class="example">
+[ True  True False]
+2    9
+1    5
+Name: a, dtype: int64
+</pre>
+
+
+<p>
+You can as well create the boolean conditions with an apply function.
+</p>
+
+<div class="highlight"><pre><span></span>  # reading the data
+  series = [('Stranger Things', 3, 'Millie'),
+	    ('Game of Thrones', 8, 'Emilia'), 
+	    ('La Casa De Papel', 4, 'Sergio'),
+	    ('Westworld', 3, 'Evan Rachel'), 
+	    ('Stranger Things', 3, 'Millie'),
+	    ('La Casa De Papel', 4, 'Sergio')]
+
+  # Create a DataFrame object
+  dfObj = pd.DataFrame(series, columns=['Name', 'Seasons', 'Actor'])
+
+  df = pd.DataFrame(dfObj)
+
+  df.iloc[np.array (df.Seasons.apply (lambda x: x % 2 == 0)), :]
+</pre></div>
+
+<pre class="example">
+               Name  Seasons   Actor
+1   Game of Thrones        8  Emilia
+2  La Casa De Papel        4  Sergio
+5  La Casa De Papel        4  Sergio
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org989498f" class="outline-4">
+<h4 id="org989498f">filter through regex</h4>
+<div class="outline-text-4" id="text-org989498f">
+<div class="highlight"><pre><span></span> df.filter(regex='ing|Date')
+</pre></div>
+
+<pre class="example">
+        Date	        Running Chasing	Climbing 	Foraging
+0	10142018	False	False	False		False
+1	10062018	True	False	False		False
+2	10102018	False	False	True		False
+3	10182018	False	False	True		False
+4	10182018	False	False	False		False
+…	…	…	…	…	…	
+3018	10072018	False	False	False		True
+3019	10132018	False	False	False		True
+3020	10122018	False	False	False		True
+3021	10102018	False	False	False		False
+3022	10122018	False	False	False		True
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge6b2989" class="outline-3">
+<h3 id="orge6b2989">Group By Operations</h3>
+<div class="outline-text-3" id="text-orge6b2989">
+<p>
+Create fictitious groups
+</p>
+
+<div class="highlight"><pre><span></span>   lis = [[5]*10, [0] * 10, [-5] * 10] 
+
+   mydat ['group'] =  list (np.concatenate(lis).flat) 
+
+   print(mydat.head (30))
+
+   print(mydat.info()) ## note that the above is not a category.
+</pre></div>
+
+<pre class="example">
+	   0         1         2     category  group
+0   3.285809  1.292891 -4.087278  no_category      5
+1  -4.393832  0.898429 -9.398311            0      5
+2  -0.959970  0.936827 -3.816866            0      5
+3   3.423767  1.705746  2.511616            0      5
+4  -3.398694  2.665577 -1.063232            0      5
+5  -5.981978 -2.330365  4.513986            1      5
+6   3.563627  1.282886 -1.558001            1      5
+7   3.911721  5.435864 -2.521728            1      5
+8  -3.365184  5.509441  2.166765            1      5
+9   4.376495  5.948424 -0.899942  no_category      5
+10  0.711004  0.991445 -0.707667            2      0
+11 -5.525879  7.641149 -1.207696            2      0
+12 -2.263607  4.011692 -2.416089            2      0
+13 -2.303355  2.281748 -3.973166            2      0
+14  0.541773  7.803575 -8.016219            2      0
+15 -2.086906  0.447170 -3.786559            3      0
+16 -1.917900  3.561826 -2.660550            3      0
+17  0.629063  1.705416  0.088963            3      0
+18  3.571641  2.428314 -1.800404            3      0
+19 -1.645434 -2.878642 -3.169414            3      0
+20 -1.574994  0.464397 -3.304629            4     -5
+21 -5.727603  2.299280 -3.615124            4     -5
+22  0.815686  0.375027  1.368671            4     -5
+23  4.712558  1.563259 -3.259274            4     -5
+24 -5.063074 -4.301082 -3.433244            4     -5
+25 -1.914395 -4.043507  0.256975            5     -5
+26 -2.458269  5.153733 -1.631465            5     -5
+27 -0.858224  0.300057 -1.761264            5     -5
+28 -2.248453  0.772280 -1.619120            5     -5
+29 -0.326246  3.584091 -4.607798            5     -5
+&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 30 entries, 0 to 29
+Data columns (total 5 columns):
+ #   Column    Non-Null Count  Dtype   
+---  ------    --------------  -----   
+ 0   0         30 non-null     float64 
+ 1   1         30 non-null     float64 
+ 2   2         30 non-null     float64 
+ 3   category  30 non-null     category
+ 4   group     30 non-null     int32   
+dtypes: category(1), float64(3), int32(1)
+memory usage: 1.3 KB
+None
+</pre>
+
+<p>
+Compute the sum for each group / category. Both work with the
+groupby method. 
+</p>
+
+<div class="highlight"><pre><span></span>   print("Sum per Group:\n" + "-"*40)
+   print(mydat.iloc[:, [0, 1, 2, 4]].groupby('group').sum())
+
+   print("Median per Group:\n" + "-"*40)
+   print(mydat.iloc[:, [0, 1, 2, 4]].groupby('group').median())
+
+
+   print("Median per Category:\n" + "-"*40)
+   print(mydat.iloc[:, [0, 1, 2, 3]].groupby('category').median())
+</pre></div>
+
+<pre class="example">
+Sum per Group:
+----------------------------------------
+	       0          1          2
+group                                 
+-5    -14.643014   6.167534 -21.606271
+ 0    -10.289600  27.993692 -27.648801
+ 5      0.461761  23.345720 -14.152991
+Median per Group:
+----------------------------------------
+	      0         1         2
+group                              
+-5    -1.744694  0.618339 -2.510269
+ 0    -1.781667  2.355031 -2.538320
+ 5     1.162920  1.499319 -1.310616
+Median per Category:
+----------------------------------------
+		    0         1         2
+category                                 
+0           -2.179332  1.321287 -2.440049
+1            0.099221  3.359375  0.304382
+2           -2.263607  4.011692 -2.416089
+3           -1.645434  1.705416 -2.660550
+4           -1.574994  0.464397 -3.304629
+5           -1.914395  0.772280 -1.631465
+no_category  3.831152  3.620658 -2.493610
+</pre>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgb9a17c8" class="outline-3">
+<h3 id="orgb9a17c8">Side note: Series vs. Dataframe</h3>
+<div class="outline-text-3" id="text-orgb9a17c8">
+<p>
+Interesting the <code>df.column_name</code> gives you a <code>Series</code> while the
+<code>df.loc[: [column_name]]</code>, gives you a <code>dataframe</code>.
+</p>
+
+<p>
+Keep this data type difference in mind. It will allow you to move
+faster across the data.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org3b0bb30" class="outline-3">
+<h3 id="org3b0bb30">Cut vs. qcut</h3>
+<div class="outline-text-3" id="text-org3b0bb30">
+<p>
+Note that the difference is well explained in <a href="https://stackoverflow.com/questions/30211923/what-is-the-difference-between-pandas-qcut-and-pandas-cut">this post</a>.
+</p>
+
+<p>
+I.e. the <code>cut</code> creates the bins for the categorical assignment with
+equally distanced bins across the value ranges.
+</p>
+
+<p>
+In contrast with <code>qcut</code>, the bins will be chosen so that you have
+the same number of records in each bin. You have 30 records, so
+should have 6 in each bin.
+</p>
+
+<div class="highlight"><pre><span></span>   pd.qcut(data_seq.loc[:,['r_hematocrite_admission']].squeeze(), 5).cat.categories
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org61ea3a8" class="outline-3">
+<h3 id="org61ea3a8">To make row-wise modification - Apply Function</h3>
+<div class="outline-text-3" id="text-org61ea3a8">
+<p>
+In order to apply a function sequentially to each entry in a column
+dataframe you can use the <code>apply</code> function on pandas dataframe.
+</p>
+
+<p>
+For instance for the following dataframe
+</p>
+
+<div class="highlight"><pre><span></span>   cust_id.head()
+</pre></div>
+
+<p>
+Then you could specify a function return the years since the date in
+column dob
+</p>
+
+<div class="highlight"><pre><span></span>   def age(x):
+       datetime_object = datetime.strptime(x, '%m/%d/%y')
+
+       datetime_now = datetime.today()
+
+       return datetime_now.year - datetime_object.year
+</pre></div>
+
+<p>
+Finally you can pass the <code>apply</code> function to each row of your
+pandas dataframe column by
+</p>
+
+<div class="highlight"><pre><span></span>   print(cust_id['dob'].apply (lambda row: age(row)))
+
+   cust_id['age'] = cust_id['dob'].apply (lambda row: age(row))
+
+   cust_id.head()
+</pre></div>
+
+<pre class="example">
+	dob  1            2        3               4  5              6  \
+0  07/30/98  1         Todd    Kasen  South Carolina  m  united_states  
+1  04/12/89  2        Garza   Ensley            None  f      singapore
+2  09/12/97  3        Carey  Lillian         Alabama  f  united_states
+3  01/28/99  4  Christensen     Beau        New York  m  united_states
+4  03/23/98  5       Gibson  Ernesto            None  m      singapore 
+
+age  
+22  
+31  
+23  
+21  
+22  
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-orgf0d7531" class="outline-3">
+<h3 id="orgf0d7531">General Way to Tackle Down the Dataset</h3>
+<div class="outline-text-3" id="text-orgf0d7531">
+<p>
+For the next sections I will use the following new dataset
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="kn">import</span> <span class="nn">re</span>
+   <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+   <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span>   <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"~/Desktop/Learning/AI_workflow_Coursera/Visualization/world-happiness.csv"</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="s2">"df: </span><span class="si">{}</span><span class="s2"> x </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+   <span class="c1">## clean up the column names and remove some</span>
+   <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">"\s+"</span><span class="p">,</span><span class="s2">"_"</span><span class="p">,</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+   <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example">
+       Country                           Region  Happiness_Rank  ...  Generosity  Dystopia_Residual  Year
+0  Afghanistan                    Southern Asia           153.0  ...     0.36510            1.95210  2015
+1      Albania       Central and Eastern Europe            95.0  ...     0.14272            1.89894  2015
+2      Algeria  Middle East and Northern Africa            68.0  ...     0.07822            2.43209  2015
+3       Angola               Sub-Saharan Africa           137.0  ...     0.12344            1.94939  2015
+
+[4 rows x 12 columns]
+</pre>
+
+
+
+<ul class="org-ul">
+<li>view a review of all of the null values</li>
+</ul>
+<div class="highlight"><pre><span></span>   ## missing values summary
+   print("Missing Value Summary\n{}".format("-"*35))
+   print(df.isnull().sum(axis = 0))
+</pre></div>
+
+<pre class="example">
+Missing Value Summary
+-----------------------------------
+Country                           0
+Region                            0
+Happiness_Rank                   25
+Happiness_Score                  25
+Economy_(GDP_per_Capita)         25
+Family                           25
+Health_(Life_Expectancy)         25
+Freedom                          25
+Trust_(Government_Corruption)    25
+Generosity                       25
+Dystopia_Residual                25
+Year                              0
+dtype: int64
+</pre>
+
+
+<ul class="org-ul">
+<li>
+<p>
+pivot data frame and create aggregate measures for them (similar to
+mutate in <code>dplyr</code>)
+</p>
+
+<div class="highlight"><pre><span></span>     columns_to_show = ["Happiness_Score","Health_(Life_Expectancy)"]
+     pd.pivot_table(df, index= 'Year',values=columns_to_show,aggfunc='mean').round(3)
+</pre></div>
+</li>
+
+<li>select all columns but one</li>
+</ul>
+<div class="highlight"><pre><span></span>   df = data.loc[ : , data.columns != 'student_gender'] 
+</pre></div>
+
+
+<ul class="org-ul">
+<li>groupby</li>
+</ul>
+<p>
+analogously to the previous version one can compute aggregated
+measures using the groupby command
+</p>
+
+<div class="highlight"><pre><span></span>   df.groupby(['Year'])[columns_to_show].mean().round(3)
+</pre></div>
+
+
+<p>
+Aggregating by multiple columns is straightforward.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="n">pd</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Region'</span><span class="p">,</span> <span class="s1">'Year'</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="n">columns_to_show</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+   <span class="c1">## or</span>
+   <span class="c1"># df.groupby(['Region', 'Year'])[columns_to_show].mean().round(3)</span>
+</pre></div>
+
+<p>
+Finally you can pass a column entry instead of displaying the results
+as above. This is more user friendly in case you might have to merge
+the results into other data frames.
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="n">pd</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="s1">'Region'</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="s1">'Year'</span><span class="p">,</span><span class="n">values</span><span class="o">=</span><span class="s2">"Happiness_Score"</span><span class="p">)</span>
+</pre></div>
+
+
+<ul class="org-ul">
+<li>create factor variables out of continuous variables through the
+<code>cut</code> method.</li>
+</ul>
+<div class="highlight"><pre><span></span>   <span class="n">pd</span><span class="o">.</span><span class="n">cut</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'Happiness_Rank'</span><span class="p">],</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+<ul class="org-ul">
+<li>append a column to a dataframe</li>
+</ul>
+<div class="highlight"><pre><span></span>   <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">objs</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'Happiness_Rank'</span><span class="p">],</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)],</span> 
+	     <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org23160f2" class="outline-3">
+<h3 id="org23160f2">Example of SQL for getting the sum of the price in each Country</h3>
+<div class="outline-text-3" id="text-org23160f2">
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pandasql</span> <span class="kn">import</span> <span class="n">sqldf</span>
+<span class="n">nba</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">sqldf</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">q</span> <span class="o">=</span> \
+<span class="sd">"""</span>
+<span class="sd">SELECT country, sum(price) as tot_revenue</span>
+<span class="sd">FROM df </span>
+<span class="sd">GROUP BY country</span>
+<span class="sd">ORDER BY tot_revenue DESC</span>
+<span class="sd">"""</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="n">nba</span> <span class="p">(</span><span class="n">q</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orge4b9568" class="outline-2">
+<h2 id="orge4b9568">Sparse Matrices</h2>
+<div class="outline-text-2" id="text-orge4b9568">
+<p>
+It is essential for data engineers and data scientists to know how to
+work with sparse matrices. This are matrices with many <code>0</code> entries and
+just a few non-zero entries. 
+</p>
+
+<p>
+Instead of representing these kind of matrices in their <code>dense
+representation</code> i.e. with a bunch of <code>0</code> entries you might save the
+information in a more compressed way. This will allow to save on
+memory on your machines and to effectively work with huge matrices.
+</p>
+
+<p>
+Sparse matrices are moreover important for the development of ML
+jobs. The idea is that once you found a well performing ML model you
+might create data pipelines that extract transform and load data to
+your ML model in the desired shape.
+</p>
+
+<p>
+At the beginning, when you are exploring the data and trying to come
+up with a meaningful model it does not make sense to create such data
+pipelines as the job of coming up with them might be time-consuming
+and you might end up with no business value added from your ML
+application. 
+</p>
+
+<p>
+It is therefore important to postpone the creation of such time
+consuming tasks at the end. when you have a production ready ML
+model. 
+</p>
+
+<p>
+Before of that it is advisable to leverage dumps of data and to
+explore your system through them. In this sense sparse matrices are
+especially beneficial when data can be efficiently represented through
+them. These allow you to store a huge amount of data due to their
+efficient memory management - i.e. by saving just the relevant portion
+of your data -.
+</p>
+
+<p>
+In python you can work with sparse matrices via:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">sparse</span>
+</pre></div>
+
+<p>
+Notice that a matrix, is said to be sparse if more than 50% of its
+entries are 0.
+</p>
+
+<p>
+For instance the following matrix is sparse
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">100000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">sparcity</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">/</span> <span class="n">A</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">sparcity</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+
+<pre class="example">
+0.4974
+</pre>
+
+
+<p>
+There are essentially four types of sparse matrices used for
+computation.
+</p>
+
+<p>
+CSC (Compressed Sparse Column) and CSR (Compressed Sparse Row) are
+more compact and efficient, but difficult to construct "from
+scratch". 
+</p>
+
+<p>
+Coo (Coordinate) and DOK (Dictionary of Keys) are easier to construct,
+and can then be converted to CSC or CSR via matrix.tocsc() or
+matrix.tocsr().
+</p>
+
+<p>
+CSC is more efficient at accessing <b>column-vectors or column
+operations</b>, generally, as it is stored as arrays of columns and their
+value at each row.
+</p>
+
+<p>
+CSR matrices are the opposite; stored as arrays of rows and their
+values at each column, and are <b>more efficient at accessing row-vectors
+or row operations</b>.
+</p>
+
+<p>
+<a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.coo_matrix.html#scipy.sparse.coo_matrix">coo matrix</a>
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"A"</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">A</span><span class="p">),</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+      <span class="s2">"B"</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">B</span><span class="p">),</span><span class="n">B</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+      <span class="s2">"C"</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">C</span><span class="p">),</span><span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example">
+A &lt;class 'numpy.ndarray'&gt; (10, 100) 
+B &lt;class 'scipy.sparse.coo.coo_matrix'&gt; (10, 100) 
+C &lt;class 'numpy.matrix'&gt; (10, 100)
+</pre>
+
+
+<p>
+You see that you can transform back and forth from dense matrices to
+sparse matrices.
+</p>
+
+<p>
+Coo sparse matrix built from the COOrdinates and values of the
+non-zero entries.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example">
+(0, 1)	2
+  (0, 2)	1
+  (0, 6)	1
+  (0, 8)	1
+  (0, 9)	1
+  (0, 10)	1
+  (0, 13)	1
+  (0, 18)	1
+  (0, 19)	2
+  (0, 21)	1
+  (0, 23)	1
+  (0, 24)	2
+  (0, 29)	1
+  (0, 31)	1
+  (0, 34)	1
+  (0, 42)	1
+  (0, 50)	1
+  (0, 51)	1
+  (0, 62)	3
+  (0, 69)	1
+  (0, 70)	1
+  (0, 71)	2
+  (0, 72)	1
+  (0, 78)	1
+  (0, 80)	1
+  :	:
+  (9, 8)	1
+  (9, 9)	2
+  (9, 11)	1
+  (9, 24)	2
+  (9, 26)	2
+  (9, 27)	1
+  (9, 37)	1
+  (9, 38)	1
+  (9, 44)	1
+  (9, 45)	1
+  (9, 49)	1
+  (9, 50)	1
+  (9, 51)	1
+  (9, 55)	1
+  (9, 57)	1
+  (9, 58)	1
+  (9, 59)	1
+  (9, 62)	1
+  (9, 66)	1
+  (9, 74)	1
+  (9, 79)	3
+  (9, 80)	1
+  (9, 82)	1
+  (9, 92)	1
+  (9, 96)	1
+</pre>
+
+
+<p>
+<a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html#scipy.sparse.csc_matrix">csc<sub>matrix</sub></a>
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example">
+(6, 0)	2
+  (0, 1)	2
+  (3, 1)	1
+  (0, 2)	1
+  (8, 2)	1
+  (5, 3)	1
+  (1, 4)	1
+  (9, 4)	1
+  (5, 5)	1
+  (6, 5)	1
+  (0, 6)	1
+  (1, 6)	1
+  (6, 6)	1
+  (9, 6)	1
+  (3, 7)	1
+  (5, 7)	1
+  (7, 7)	1
+  (8, 7)	1
+  (9, 7)	1
+  (0, 8)	1
+  (6, 8)	1
+  (9, 8)	1
+  (0, 9)	1
+  (1, 9)	1
+  (3, 9)	2
+  :	:
+  (3, 90)	2
+  (6, 90)	1
+  (7, 90)	1
+  (8, 90)	1
+  (0, 91)	1
+  (2, 91)	1
+  (4, 91)	1
+  (5, 91)	1
+  (6, 92)	1
+  (7, 92)	1
+  (9, 92)	1
+  (8, 93)	1
+  (0, 94)	1
+  (1, 94)	1
+  (4, 94)	1
+  (0, 95)	1
+  (1, 95)	1
+  (3, 95)	1
+  (5, 95)	1
+  (5, 96)	1
+  (9, 96)	1
+  (1, 97)	1
+  (4, 98)	1
+  (1, 99)	1
+  (3, 99)	1
+</pre>
+
+<p>
+See that the above respects the column array storage. I.e. the
+non-zero coordinates are returned column by column.
+</p>
+
+<p>
+<a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix">csr<sub>matrix</sub></a>
+</p>
+
+<p>
+Like the CSC format there is a CSR format to account for data that
+repeat along the rows
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+</pre></div>
+
+<pre class="example">
+(0, 1)	2
+  (0, 2)	1
+  (0, 6)	1
+  (0, 8)	1
+  (0, 9)	1
+  (0, 10)	1
+  (0, 13)	1
+  (0, 18)	1
+  (0, 19)	2
+  (0, 21)	1
+  (0, 23)	1
+  (0, 24)	2
+  (0, 29)	1
+  (0, 31)	1
+  (0, 34)	1
+  (0, 42)	1
+  (0, 50)	1
+  (0, 51)	1
+  (0, 62)	3
+  (0, 69)	1
+  (0, 70)	1
+  (0, 71)	2
+  (0, 72)	1
+  (0, 78)	1
+  (0, 80)	1
+  :	:
+  (9, 8)	1
+  (9, 9)	2
+  (9, 11)	1
+  (9, 24)	2
+  (9, 26)	2
+  (9, 27)	1
+  (9, 37)	1
+  (9, 38)	1
+  (9, 44)	1
+  (9, 45)	1
+  (9, 49)	1
+  (9, 50)	1
+  (9, 51)	1
+  (9, 55)	1
+  (9, 57)	1
+  (9, 58)	1
+  (9, 59)	1
+  (9, 62)	1
+  (9, 66)	1
+  (9, 74)	1
+  (9, 79)	3
+  (9, 80)	1
+  (9, 82)	1
+  (9, 92)	1
+  (9, 96)	1
+</pre>
+
+<p>
+See that the above respects the row array storage. I.e. the
+non-zero coordinates are returned row by row.
+</p>
+
+<p>
+<b>Notice:</b> that many np.&lt;methods&gt; used for performing matrix operations
+do not work on sparse matrices. You might refer to <a href="https://docs.scipy.org/doc/scipy/reference/sparse.html">this link</a> for
+checking on how to deal with that. A solution proposed is to
+transform the sparse matrix in an array.
+</p>
+
+<p>
+Finally, it is easy to populate a sparse matrix by
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">rows</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span> <span class="c1">## coodinates</span>
+<span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+
+<span class="n">A</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">((</span><span class="n">vals</span><span class="p">,</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">tocsr</span><span class="p">())</span>
+</pre></div>
+
+<pre class="example">
+[[0 1 0 0 0 0 0 0 0]
+ [2 0 0 0 0 0 0 0 0]
+ [0 0 0 0 1 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 4]]
+
+  (0, 1)	1
+  (1, 0)	2
+  (2, 4)	1
+  (8, 8)	4
+</pre>
+
+<p>
+you can finally stack two sparse matrices, be it horizontally or
+vertically together.
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">C</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">9</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"adding horizontally/by row"</span><span class="p">)</span> 
+<span class="n">D</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">A</span><span class="p">,</span><span class="n">C</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"adding vertically/by column"</span><span class="p">)</span> 
+<span class="n">D</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">A</span><span class="p">,</span><span class="n">C</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">1</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+</pre></div>
+
+<pre class="example">
+(9, 9) (1, 9)
+adding horizontally
+[[0 1 0 0 0 0 0 0 0]
+ [2 0 0 0 0 0 0 0 0]
+ [0 0 0 0 1 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 4]
+ [0 1 0 0 2 0 0 0 1]]
+adding vertically
+[[0 1 0 0 0 0 0 0 0 0]
+ [2 0 0 0 0 0 0 0 0 1]
+ [0 0 0 0 1 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0 2]
+ [0 0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 4 1]]
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org3691545" class="outline-2">
+<h2 id="org3691545">MatplotLib</h2>
+<div class="outline-text-2" id="text-org3691545">
+<div class="highlight"><pre><span></span>plt.plot(x_1, c = "lightblue", ls = '--', marker = "o",
+	 ms = 6, label ="nomean")
+plt.plot(x_2, c = "darkorange", ls = '--', marker = "s",
+	 ms = 6, label ="posmean") # ms = marker size
+plt.plot(x_3, c = "lightgreen", ls = '--', marker = "^",
+	 ms = 6, label ="negmean")
+plt.legend(loc = 'upper right',bbox_to_anchor = (1,1))
+plt.xticks(list(range(20)), rotation = 'vertical') # sets the ticks on
+						   # x-axis and puts
+						   # them vertically.
+</pre></div>
+
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-e4d60f65359faf963dc9edc65a3851e0.png" class="center"><br><br><ul class="org-ul">
+<li>stacked histograms via matplotlib</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">([</span><span class="n">mydat</span><span class="p">[</span><span class="n">mydat</span><span class="o">.</span><span class="n">bitwise</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span>
+	  <span class="n">mydat</span><span class="p">[</span><span class="n">mydat</span><span class="o">.</span><span class="n">bitwise</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span><span class="o">.</span><span class="n">posmean</span><span class="p">])</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-4e5223a40dc5aad0bb91fba3fb97f4c6.png" class="center"><br><br><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">([</span><span class="n">mydat</span><span class="p">[</span><span class="n">mydat</span><span class="o">.</span><span class="n">bitwise</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span>
+	  <span class="n">mydat</span><span class="p">[</span><span class="n">mydat</span><span class="o">.</span><span class="n">bitwise</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span><span class="o">.</span><span class="n">posmean</span><span class="p">],</span>
+	 <span class="n">stacked</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-a029aa36eeb77d6b33e123c2a7023261.png" class="center"><br><br>
+</div>
+</div>
+
+
+<div id="outline-container-orga4956af" class="outline-2">
+<h2 id="orga4956af">Seaborn</h2>
+<div class="outline-text-2" id="text-orga4956af">
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">distplot</span> <span class="p">(</span><span class="n">mydat</span><span class="p">[</span><span class="s1">'nomean'</span><span class="p">])</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-6b9e2671be86b00c00b82558a0c879f3.png" class="center"><br><br><div class="highlight"><pre><span></span><span class="n">mydat</span><span class="o">.</span><span class="n">head</span> <span class="p">()</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"posmean"</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">"sum"</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">)</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-fdb6afb1310d32cd9d7ab3e7504bdc14.png" class="center"><br><br><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">statsmodels</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"posmean"</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">"sum"</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">"bitwise"</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s2">"bitwise"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">mydat</span><span class="p">,</span>
+	       <span class="n">y_jitter</span><span class="o">=</span><span class="mf">.02</span><span class="p">,</span>  <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-bd913d592aa2ad7d32dda045f217c4b5.png" class="center"><br><br><p>
+To further inspect different visualization techniques check at the
+<a href="https://seaborn.pydata.org/examples/index.html">seaborn page</a>.
+</p>
+
+
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"posmean"</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">"sum"</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">,</span> 
+	       <span class="n">hue</span> <span class="o">=</span> <span class="s1">'bitwise'</span><span class="p">,</span> <span class="n">fit_reg</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-ffa4f4a083eb7753d04349001d0af209.png" class="center"><br><br><ul class="org-ul">
+<li>joinplot for inspecting the density of two functions</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">jointplot</span> <span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s1">'posmean'</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">'negmean'</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">jointplot</span> <span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s1">'posmean'</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">'negmean'</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">'hex'</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">jointplot</span> <span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s1">'posmean'</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">'negmean'</span><span class="p">)</span><span class="o">.</span> \
+    <span class="n">plot_joint</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_levels</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="c1">## add isolines</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-9fcf615aed09e4928c87ae2b4b547b4e.png" class="center"><br><br><ul class="org-ul">
+<li>kdeplot without data</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span> <span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">)</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-c31fe9f7c879bc265853bd1dc9039845.png" class="center"><br><br><p>
+To draw the isolines via colour scale use the shade bool
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span> <span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span>
+	     <span class="n">shade</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-2b28d7b239bb2b2c97d91ddec01caab4.png" class="center"><br><br><p>
+To still see the grids
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span> <span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span>
+	     <span class="n">shade</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">shade_lowest</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-9a36b78d9df73e73b323e41e10582027.png" class="center"><br><br><ul class="org-ul">
+<li>change the background style</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">"darkgrid"</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span> <span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">)</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-7ff3fea35de715f49145204980aeb263.png" class="center"><br><br><ul class="org-ul">
+<li>create subplots</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="c1">## specify your R par(mfrow=c(x,y))</span>
+<span class="n">f</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">k1</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'Greens'</span><span class="p">)</span>
+<span class="n">k2</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">negmean</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'Greens'</span><span class="p">)</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-76f47b1626f35945ac24a2fdb16cd94b.png" class="center"><br><br><p>
+with more columns the axis index becomes more complex.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## specify your R par(mfrow=c(x,y))</span>
+<span class="n">f</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">k1</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">nomean</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'Greens'</span><span class="p">)</span>
+<span class="n">k2</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">mydat</span><span class="o">.</span><span class="n">posmean</span><span class="p">,</span> <span class="n">mydat</span><span class="o">.</span><span class="n">negmean</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'Greens'</span><span class="p">)</span>
+</pre></div>
+
+<img width="60%" height="100%" src="../../images/ob-ein-67a82e7e06d0dbde403da30e12915fb0.png" class="center"><br><br><ul class="org-ul">
+<li>violinplot</li>
+</ul>
+<p>
+same information as boxplot. on top of it you have the width that
+tells you how many datapoints falls into each level for each category
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">k1</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s1">'bitwise'</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">'nomean'</span><span class="p">)</span>
+</pre></div>
+
+<img width="60%" height="100%" src="../../images/ob-ein-76e27ae206053454189960ae1872c755.png" class="center"><br><br><ul class="org-ul">
+<li>facet grids</li>
+</ul>
+<p>
+this is useful when plotting many variables and inspecting their
+properties for different categories.
+</p>
+
+<p>
+you might do that as follows
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">## create some more categories</span>
+<span class="n">rand</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">category</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'2008'</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">'2009'</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rand</span><span class="p">]</span>
+<span class="n">mydat</span><span class="p">[</span><span class="s1">'year'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">category</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'category'</span><span class="p">)</span>
+<span class="n">category</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'posExtreme'</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s1">'normal'</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s1">'negExtreme'</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rand</span><span class="p">]</span>
+<span class="n">mydat</span><span class="p">[</span><span class="s1">'extreme'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">category</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'category'</span><span class="p">)</span>
+
+<span class="n">mydat</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">([</span><span class="s1">'posExtreme'</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s1">'normal'</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">2</span> <span class="k">else</span> <span class="s1">'negExtreme'</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rand</span><span class="p">])</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span>  <span class="n">sns</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">mydat</span><span class="p">,</span> <span class="n">row</span> <span class="o">=</span> <span class="s1">'year'</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="s1">'extreme'</span><span class="p">,</span> <span class="n">hue</span> <span class="o">=</span> <span class="s1">'year'</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s1">'nomean'</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">'posmean'</span><span class="p">)</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-0b867ca8bdca2f2900ea9cfed8557013.png" class="center"><br><br><ul class="org-ul">
+<li>pairs plot</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">"ticks"</span><span class="p">,</span> <span class="n">color_codes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1">## make a pair plot</span>
+<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Happiness_Score'</span><span class="p">,</span><span class="s1">'Economy_(GDP_per_Capita)'</span><span class="p">,</span> <span class="s1">'Family'</span><span class="p">,</span> <span class="s1">'Health_(Life_Expectancy)'</span><span class="p">,</span>
+	   <span class="s1">'Freedom'</span><span class="p">,</span> <span class="s1">'Trust_(Government_Corruption)'</span><span class="p">]</span>
+
+<span class="n">axes</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="nb">vars</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span><span class="n">hue</span><span class="o">=</span><span class="s2">"Year"</span><span class="p">,</span><span class="n">palette</span><span class="o">=</span><span class="s2">"husl"</span><span class="p">)</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-3a2a26107ad61803388d9c611a423e28.png" class="center"><br><br><ul class="org-ul">
+<li>correlation matrix plot</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="c1"># Compute the correlation matrix</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+
+<span class="c1"># Generate a mask for the upper triangle</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">))</span>
+
+<span class="c1"># Set up the matplotlib figure</span>
+<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+
+<span class="c1"># Generate a custom diverging colormap</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">diverging_palette</span><span class="p">(</span><span class="mi">220</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">as_cmap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Draw the heatmap with the mask and correct aspect ratio</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">.3</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+	    <span class="n">square</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span> <span class="n">cbar_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">"shrink"</span><span class="p">:</span> <span class="mf">.5</span><span class="p">})</span>
+</pre></div>
+
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-bd9b1dfc192e85b5422d813cc082a59d.png" class="center"><br><br><ul class="org-ul">
+<li>On PairGrid</li>
+</ul>
+<p>
+This is a very interesting option to compute different visualization
+according to pair plots
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"~/Desktop/Learning/AI_workflow_Coursera/Visualization/Visualization_2.csv"</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">PairGrid</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s1">'age'</span><span class="p">,</span> <span class="s1">'num_streams'</span><span class="p">,</span> <span class="s1">'is_subscriber'</span><span class="p">]],</span> <span class="n">hue</span> <span class="o">=</span> <span class="s1">'is_subscriber'</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">map_upper</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">map_lower</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s2">"C0"</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">map_diag</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">add_legend</span><span class="p">()</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-6d0a3dbe8709898e545dbecff8afb91b.png" class="center"><br><br><p>
+You can then specify pretty much everything that you want on the upper
+and lower diagonal matrix entries. Check at this link to <a href="https://seaborn.pydata.org/generated/seaborn.PairGrid.html">get inspiration</a>.
+</p>
+
+<p>
+You might even combine pyplot and seaborn elements
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">PairGrid</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s1">'age'</span><span class="p">,</span> <span class="s1">'num_streams'</span><span class="p">,</span> <span class="s1">'is_subscriber'</span><span class="p">]],</span> <span class="n">hue</span> <span class="o">=</span> <span class="s1">'is_subscriber'</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">map_upper</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">map_lower</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">map_diag</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+
+<br><br><img width="60%" height="100%" src="../../images/ob-ein-6d61b403db2296406af36083af76f80a.png" class="center"><br><br><ul class="org-ul">
+<li>ordered categorical plot</li>
+</ul>
+<p>
+In case that you have a category that you want to keep ordered when
+plotting you can achieve this as follows
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">cat_dtype</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">CategoricalDtype</span><span class="p">(</span>
+   <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">13</span><span class="p">)],</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># notice the conversion to int first as the dtype was object and the</span>
+<span class="c1"># assignment to the int in the provided list was not functioning</span>
+<span class="c1"># automatically</span>
+<span class="n">df_rev_year</span><span class="p">[</span><span class="s2">"month"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_rev_year</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'int'</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">cat_dtype</span><span class="p">)</span>
+</pre></div>
+
+
+<ul class="org-ul">
+<li>insert easily a plot with single index in order to plot quickly via
+looping</li>
+</ul>
+<div class="highlight"><pre><span></span>## specify your R par(mfrow=c(x,y))
+f, axes = plt.subplots(figsize = (12, 6))
+
+idx = 1
+
+for country in max_countries:
+    plt.subplot (2, tot_countries/2, idx)
+    k1 = sns.distplot(df_aggregate[df_aggregate.country == country][["revenue"]], 
+		      kde = False ,fit = stats.lognorm)
+    k1.title.set_text(country)
+    idx += 1
+
+plt.show ()
+</pre></div>
+
+<img width="60%" height="100%" src="../../images/ob-ein-a219c53734d648b70a33b9b20ae607cf.png" class="center">
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../useful-network-debugging-tools/" rel="prev" title="Useful Network debugging Tools">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../accessing-protected-content-via-get-requests/" rel="next" title="Accessing protected content via GET requests">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2024         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

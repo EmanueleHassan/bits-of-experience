@@ -1,0 +1,149 @@
+<br>
+<br>
+
+<p>
+This entry contains some notes about setting up a CI pipeline. I will
+explore especially the <code>Jenkins</code> option and I will integrate it with
+Python.
+</p>
+
+<p>
+After setting up the architecture for a project it is important now to
+set up such processes such that we will work with the proper tooling
+and will not loose too much time integrating versions over time.
+</p>
+
+<p>
+Please note that some of this material comes from <a href="https://www.amazon.com/Python-Continuous-Integration-Delivery-Examples/dp/1484242807">Python Continuous
+Integration and Delivery: A Concise Guide with Examples</a>.
+</p>
+
+<p>
+You can refer to this book should you want a more in depth discussion
+of the material covered here.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-orgb1218ec" class="outline-2">
+<h2 id="orgb1218ec">On CI Infra &amp; Architecture</h2>
+<div class="outline-text-2" id="text-orgb1218ec">
+<p>
+Note that the CI software will run on a server. This server must have
+access to your code base. It is therefore standard for companies to
+have the CI software run on on-premise servers such that the precious
+code-base will never leave the company.
+</p>
+
+<p>
+Interesting in this sense would be to see how that integrates in
+cloud-native environments. 
+</p>
+
+<p>
+Most CI software has a central server component that can poll source
+code repositories for changes and that can also be triggered by
+hooks. If a change in the source code repository is detected, this
+triggers a job. The job can either be configured centrally in the
+server or in the source code repository.
+</p>
+
+<p>
+This is the general idea of CI pipeline. Trigger jobs that check if
+you manage to build your application and that checks whether the
+different tests pass. All of this in an automatic way such that you
+will immediately notified if when changing some of your code base you
+trigger changes that are not in line and disrupt the different tests.
+</p>
+
+<p>
+Once the CI server knows <code>which tests to execute</code>, and in <code>which
+environments</code>, it typically delegates the actual test runs to worker
+nodes. The worker nodes then report their results back to the server,
+which takes care of sending notifications and making the outputs and
+results available for inspection through a web interface.
+</p>
+
+<p>
+Usually, in a production environment, you’d run the Jenkins server on
+one machine and have several build workers on different (virtual)
+machines. For the sake of easy setup, we’ll forego this sensible
+distinction and run the server and all build jobs within the same
+Docker container, just to have fewer docker containers to manage.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga54c3fb" class="outline-2">
+<h2 id="orga54c3fb">Setting up Jenkins in Docker</h2>
+<div class="outline-text-2" id="text-orga54c3fb">
+<p>
+This is fairly standard. Just create your docker image for it and
+deploy it.
+</p>
+
+<p>
+One such image could be for instance:
+</p>
+
+<pre class="example">
+FROM jenkins/jenkins:lts
+USER root
+RUN apt-get update \
+    &amp;&amp; apt-get install -y python-pip python3.5 \
+    &amp;&amp; rm -rf /var/lib/apt/lists/*
+RUN pip install tox
+</pre>
+
+
+<p>
+Then simply build the image
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">  </span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>jenkins-python<span class="w"> </span>.
+</pre></div>
+
+<p>
+Make sure it is then listed on your docker engine
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">  </span>docker<span class="w"> </span>image<span class="w"> </span>ls
+</pre></div>
+
+
+<p>
+And finally deploy it
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">  </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:8080<span class="w"> </span>-p<span class="w"> </span><span class="m">50000</span>:50000<span class="w"> </span><span class="se">\ </span><span class="w">    </span>
+<span class="w">    </span>-v<span class="w"> </span>jenkins_home:/var/jenkins_home<span class="w"> </span>jenkins-python
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org5604b84" class="outline-2">
+<h2 id="org5604b84">First Jenkins Job</h2>
+<div class="outline-text-2" id="text-org5604b84">
+<p>
+Jenkins jobs are where you specify your integration triggers.
+</p>
+
+<p>
+The idea is that once you specify your jenkins triggers - these can
+be for instance a push to the github branch etc. -, and the build
+configuration i.e. what you perform when a job is triggered - this
+can be for instance a python command.
+</p>
+
+<p>
+Check at <a href="https://learning.oreilly.com/library/view/Python+Continuous+Integration+and+Delivery:+A+Concise+Guide+with+Examples/9781484242810/html/456760_1_En_3_Chapter.xhtml#Fig2">this</a> for the exact command argument.
+</p>
+
+<p>
+Check also <a href="https://www.youtube.com/watch?v=kW_bADC2fFM&amp;t=834s">this</a> video to see how to complete the pipeline in the
+using a <code>Jenkinsfile</code>. I liked this video better as there is a clear
+structure in there and on how to proceed.
+</p>
+</div>
+</div>

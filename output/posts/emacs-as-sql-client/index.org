@@ -1,0 +1,243 @@
+#+BEGIN_COMMENT
+.. title: Emacs as SQL Client
+.. slug: emacs-as-sql-client
+.. date: 2022-05-11 16:56:33 UTC+02:00
+.. tags: emacs, software-engineering
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+So now that I have both application languages covered by emacs and
+properly set up with lsp it is time to start working on the DB in my
+emacs.
+
+This will help me to work via literate programming and have a very
+well documented space where to work. On the top of it is nice cause
+you can checkout everything properly in git, leverage magit,
+projectile, org-mode etc... The usual emacs power so to say. 
+
+In this sense I could already work through jupyter notebooks through
+emacs-ein.
+
+You have already set up your connection to the DBs in the language.
+
+You can start working in there in order to explore and combine the
+data etc. You can then leverage as well the pandas and other
+functionalities in there.
+
+Note that this is also interesting as a working solution. Have to
+double check that with Valerio but theoretically you can then generate
+ipython notebook out of it and make them run with ADF for the periodic jobs.
+
+Otherwise as mentioned above the other solution is to properly tangle
+everything and finally insert everything in scripts to run in your
+webapps or wherever you want. 
+
+It would essentially break
+
+The other option is to work via sql client. In any case continue for a
+bit to use Azure Management Studio, in such a way you will see what
+are the features you are interested in over there etc. and it will
+help you to properly set up a client interface with all of the
+features you need. 
+
+{{{TEASER_END}}}
+
+** EIN
+  :properties:
+  :header-args:python: :session sqlClient 
+  :end:
+
+   This one you already know.
+
+   You worked quite a bit with it at times at IBM. You just have to
+   refresh a bit and test the set-up on this new computer.
+
+   Ok as always with transitions there are issues - EIN is not running
+   on not-WSL Windows machines. So you are basically out of it at the
+   moment. A pity.
+
+   So check on your old laptop. There you had a working ob-ipython set
+   up.
+   
+*** Use with plain python chuncks in the meantime
+
+    Simply leverage =org-babel= to this stage and work in such a way.
+
+    Note that I had used as well a method in order to convert all of
+    my python chuncks written into jupyter notebooks.
+
+    This might be helpful in order for you to share such scripts and
+    for your peers to work with them.
+
+    Also nice was the option to tangle the results to specific files.
+
+    Such that you can start to write proper SQL queries and tangle all
+    of the results in specific files.
+
+    So basically you would work as follows - first add to the system
+    path used by your python runtime your specific modules where you
+    abstract a bit of the logic for connecting to the DBs etc.
+
+    Or in general use the packages that you are developing and expose
+    them in order to properly work in your scripts
+    
+#+BEGIN_SRC python :tangle yes
+import sys
+
+sys.path.append('c:/Dev/pythonWorkspace/relationaloperations/')
+    #+END_SRC
+
+    #+RESULTS:
+    : None
+
+    Then you can actually work as follows:
+
+    #+BEGIN_SRC python
+from src.connectionUtils import connectionString
+from src.connectionUtils import create_mssql_engine
+    #+END_SRC
+
+    #+RESULTS:
+
+    #+BEGIN_SRC python
+json_conn_info = connectionString(data["driver"],
+                                  conn_par["server"],
+                                  conn_par["database"],
+                                  conn_par["is_cloud"])
+    #+END_SRC
+
+    Then once you get your connection string together with your
+    tokenstruct, you can instantiate sql-alchemy engines and work with
+    them in the following way:
+
+    #+BEGIN_SRC python
+# Work with SQL Alchemy
+params = urllib.parse.quote_plus(json_conn_info["connstr"])
+
+engine_compare = create_mssql_engine(is_cloud=conn_par["is_cloud"],
+				     param_url=params,
+				     tokenstruct=
+				     json_conn_info["tokenstruct"])
+
+    #+END_SRC
+
+    Then you are actually good to go - say for instance
+
+    #+BEGIN_SRC python
+engine.execute("SELECT TOP (3) * from map.EU").fetchall()
+    #+END_SRC
+
+    You can then read directly into pandas and do the relevant
+    exploratory analysis over here.
+
+    Or continue with SQL and perform all of the different operations
+    in your literate programming way.
+
+    In such a way it will as well be possible to properly version
+    control everything.
+
+    This was actually a pain point that I was noticing. Writing a ton
+    of queries in mulitple tabs. Not really having the things well
+    ordered or under control.
+
+*** Test connection across server DBs
+
+    /Bottom line:/ it is working. Rewrite your methods in order to
+    work in such a way.
+
+    See the following 101 example that worked smoohtly.
+
+    I mean ideally that would not be the case but with the given
+    set-up it likely is.
+
+    #+BEGIN_SRC python
+server = "MySecretOnPremServer"
+driver = "DRIVER={ODBC Driver 17 for SQL Server};"
+AUTHENTICATION = "Trusted_Connection=yes"
+    #+END_SRC
+
+    #+RESULTS:
+
+    #+BEGIN_SRC python
+connstr = "{}{}{}".format(driver, "SERVER=" + server, AUTHENTICATION)
+    #+END_SRC
+
+    #+RESULTS:
+
+    #+BEGIN_SRC python
+params = urllib.parse.quote_plus(connstr)
+
+engine_compare = create_mssql_engine(is_cloud=False,
+                                     param_url=params,
+                                     tokenstruct= '')
+    #+END_SRC
+
+    #+RESULTS:
+
+    #+BEGIN_SRC python
+engine_compare.execute("SELECT TOP (3) * from MRS_Feeds.logging.Load").fetchall()
+    #+END_SRC
+
+    Lovely works like a charm.
+    
+*** Development time
+
+    Ok, now note that you already installed sql-lite as well in the
+    past. That is also very good and important to have. In such a way
+    you can develop as well when you travel and are disconnected from
+    the internet.
+
+    This is good as with it you can get your third space and you can
+    use it for making your experiments at development time.
+
+    This is an in-memory database. You should really use it in order
+    to test basics sql statements, testing some edits etc.
+
+    It has quite some differences in terms of performance, network and
+    hardware so it makes no sense to use this in this space.
+
+    You can test it as follows - 101 example:
+
+    #+BEGIN_SRC python
+    from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
+    engine = create_engine('sqlite:///college.db', echo = True)   # will create college.db in local repo
+    meta = MetaData()
+
+    students = Table(
+       'students', meta, 
+       Column('id', Integer, primary_key = True), 
+       Column('name', String), 
+       Column('lastname', String),
+    )
+    meta.create_all(engine)
+
+    engine.execute("insert into students (id, name, lastname) values (1, 'Marco', 'Hassan')")
+    #+END_SRC
+
+    You can as well execute your DDL scripts directly via SQL. This is
+    the choice and the difference of using an ORM language vs. plain
+    vanilla SQL statements.
+
+    Note as well that with the above and your scripts what you can
+    basically do is, copy tables from your DB, insert the tables into
+    your in-memory sql-lite DB and move on.
+
+
+** QUESTION SQL client
+
+   This would probably be the most clean solution. Might be
+   interesting as you need a better client in order to explore the
+   structure etc. of your DB.
+
+   Skipped for now. 
+   
+   Put it in my agenda. explore it during the week but in any case it
+   is not prioritary.
+
+   Can very well stay within the SQL-Alchemy and python and make this
+   workflow the new client and way of working with it. At least for now.
+   
