@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Nikola Port to Windows | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://emanuelehassan.github.io/bits-of-experience/posts/nikola%20port%20to%20windows/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../some-notes-about-uml-and-plantuml/" title="Some Notes about UML and PlantUml" type="text/html">
+<link rel="next" href="../some-thoughts-on-microservices/" title="Some Thoughts on Microservices" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Nikola Port to Windows">
+<meta property="og:url" content="https://emanuelehassan.github.io/bits-of-experience/posts/nikola%20port%20to%20windows/">
+<meta property="og:description" content="Wow… everything is a fight on this new system.
+
+
+
+even with nikola there were some issues. first of all I was getting an
+execute-error concerining some zipped-function defined in the markdown
+file. th">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-10-07T15:06:55+02:00">
+<meta property="article:tag" content="blogging">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="../nikola%20port%20to%20windows/" class="u-url">Nikola Port to Windows</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="../nikola%20port%20to%20windows/" rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2021-10-07T15:06:55+02:00" itemprop="datePublished" title="2021-10-07 15:06">2021-10-07 15:06</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="../nikola%20port%20to%20windows/index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/blogging/" rel="tag">blogging</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+Wow… everything is a fight on this new system.
+</p>
+
+<p>
+even with nikola there were some issues. first of all I was getting an
+execute-error concerining some zipped-function defined in the markdown
+file. the solution for it was to downgrade to a <a href="https://forum.drawbot.com/topic/247/markdown-syntax-for-formattedstring">previous version of
+markdown</a>. Actually it turned out that was not that important in the
+first place as the very root cause was not cause by some missing/malfunctioning
+python packages but rather by the following.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org11eda7a" class="outline-2">
+<h2 id="org11eda7a">Issue with .smth files</h2>
+<div class="outline-text-2" id="text-org11eda7a">
+<p>
+The issue is created as you imported the nikola project that was built
+on unix OS. Now I did not go into the internal mechanism of Nikola in
+a deep way… Though, what I think is that you use a <code>sqllite</code> alike
+way to operate in an RDMS like way with files on your file system -
+i.e. you have an RDMS alike interface without the need to set up and
+use a proper database.
+</p>
+
+<p>
+Nonethess the way the files through which you manage such SQL
+compability are named (in terms of file extension) and the way they
+operate on different OS is different. Hence when you port your blog
+from one OS to the next you should pay attention to such detail.
+</p>
+
+<p>
+The solution is to generate a dummy blog with the command
+</p>
+
+<div class="highlight"><pre><span></span>nikola<span class="w"> </span>init<span class="w"> </span>--demo<span class="w"> </span>mysite
+</pre></div>
+
+<p>
+Then you will find the basic structure with the necessary DB-alike
+files.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org17c4ac6" class="outline-2">
+<h2 id="org17c4ac6">How to deploy in my new workflow.</h2>
+<div class="outline-text-2" id="text-org17c4ac6">
+<p>
+Not having a native bash language on my laptop I could not use the
+bash scripts I wrote in order to automate the deployment of my
+blog.
+</p>
+
+<p>
+What I did in order to solve that is to write some lisp function in
+order to trigger some <code>eshell</code> functions that operates in an bash
+alike way.
+</p>
+
+<p>
+The workflow is not that smooth that far but it should be fine.
+</p>
+
+<p>
+Here the steps you need to perform for the deployment. Automate even
+further when you have time.
+</p>
+</div>
+
+<div id="outline-container-org8fe5c31" class="outline-3">
+<h3 id="org8fe5c31">For local deployment</h3>
+<div class="outline-text-3" id="text-org8fe5c31">
+<p>
+trigger the <code>blog/move_blog_files()</code> function you defined. this
+will copy all of the static resources of your blog to
+<code>blog/output/images</code>.
+</p>
+
+<p>
+note that it is not important from where you trigger such function
+in your file system as I specified the correct change of directory
+in there.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4311d57" class="outline-3">
+<h3 id="org4311d57">For github deployment</h3>
+<div class="outline-text-3" id="text-org4311d57">
+<p>
+First deploy via <code>nikola github_deploy</code>. Then call the
+<code>blog/push_resources_to_blog()</code> function to copy all of the static
+files used by the blog into the deployed branch.
+</p>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../some-notes-about-uml-and-plantuml/" rel="prev" title="Some Notes about UML and PlantUml">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../some-thoughts-on-microservices/" rel="next" title="Some Thoughts on Microservices">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2024         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

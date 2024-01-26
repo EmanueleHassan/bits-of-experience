@@ -1,0 +1,69 @@
+<p>
+Today I came accross a nice way to write and append information to a
+document. This is particularly useful when making tutorial and
+writing instructions for folks that do work with emacs or any proper
+text editor.
+</p>
+
+<p>
+Instead of working with <code>nano</code> you can simply write multiple lines
+directly in your shell leveraging the <code>&lt;&lt;</code> delimiter condition and
+passing the input to a document of interest.
+</p>
+
+<!-- TEASER_END -->
+
+<p>
+In this sense instead of changing for instance your <code>.bashrc</code>
+configuration file by running
+</p>
+
+<div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;export NVM_DIR=&#39;</span><span class="nv">$HOME</span><span class="s2">/.nvm&#39;&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[ -s &#39;</span><span class="nv">$NVM_DIR</span><span class="s2">/nvm.sh&#39; ] &amp;&amp; \. &#39;</span><span class="nv">$NVM_DIR</span><span class="s2">/nvm.sh&#39;  # This loads nvm&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[ -s &#39;</span><span class="nv">$NVM_DIR</span><span class="s2">/bash_completion&#39; ] &amp;&amp; \. &#39;</span><span class="nv">$NVM_DIR</span><span class="s2">/bash_completion&#39;  # This loads nvm bash_completion&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+</pre></div>
+
+<p>
+You can change it in one go through the use of the delimiter
+condition. 
+</p>
+
+<p>
+To understand this consider the following.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;#!/bin/sh&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/Desktop/example.txt
+
+cat<span class="w"> </span>~/Desktop/example.txt
+</pre></div>
+
+<div class="highlight"><pre><span></span>cat<span class="w"> </span><span class="s">&lt;&lt; &#39;Change_File&#39; &gt;&gt; ~/Desktop/example.txt</span>
+<span class="s">echo &quot;I like this new feature.</span>
+<span class="s">It is quite handy for modifiying </span>
+<span class="s">documents directly from the shell.&quot;</span>
+<span class="s">Change_File</span>
+</pre></div>
+
+<p>
+You will see now that the entire echo command was appended to the
+shell script. You can now run it after changing the permission of the
+file to an executable file.
+</p>
+
+<div class="highlight"><pre><span></span>chmod<span class="w"> </span>u+x<span class="w"> </span>~/Desktop/example.txt
+
+~/Desktop/example.txt
+</pre></div>
+
+<p>
+In the example above you can then change the above multiline command
+with lots of redundancy to the more straightforward command
+</p>
+
+<div class="highlight"><pre><span></span>cat<span class="w"> </span><span class="s">&lt;&lt; &#39;Append_Bash&#39; &gt;&gt; ~/.bashrc</span>
+
+<span class="s">export NVM_DIR=&#39;$HOME/.nvm&#39;</span>
+<span class="s">[ -s &#39;$NVM_DIR/nvm.sh&#39; ] &amp;&amp; \. &#39;$NVM_DIR/nvm.sh&#39;  # This loads nvm </span>
+<span class="s">[ -s &#39;$NVM_DIR/bash_completion&#39; ] &amp;&amp; \. &#39;$NVM_DIR/bash_completion&#39;  # This loads nvm bash_completion</span>
+<span class="s">Append_Bash</span>
+</pre></div>

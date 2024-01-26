@@ -1,0 +1,806 @@
+<p>
+So starting to make a little bit of order and starting to deploy
+directly to Azure.
+</p>
+
+<p>
+That is nothing fancy at all. Just basics stuff. With it you can start
+to properly experiment in your Sandbox. 
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org584c8e4" class="outline-2">
+<h2 id="org584c8e4">Choosing the right subscription</h2>
+<div class="outline-text-2" id="text-org584c8e4">
+<p>
+Ok so had a little bit of an hiccup at the beginning. Could not find
+the new subscription to the sandbox environment I could get for
+experimenting on the cloud.
+</p>
+
+<p>
+Turns out that I had to make a new login to my account. With the
+previous login there was no update.
+</p>
+
+<p>
+Weird stuff.
+</p>
+
+<p>
+Anyways after doing that I could see both of my subscriptions - to
+the secure env and to the sandbox
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">  </span>az<span class="w"> </span>account<span class="w"> </span>list<span class="w"> </span>-o<span class="w"> </span>table
+</pre></div>
+
+<p>
+Now it is possible to specify the subscriptionId of that table and
+the resource group and directly set up stuff over there.  
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgf8d220e" class="outline-2">
+<h2 id="orgf8d220e">One Good tool to monitor your application - Kudu</h2>
+<div class="outline-text-2" id="text-orgf8d220e">
+<p>
+This is an open source project you would need to understand more if
+you will work a lot with webapps.
+</p>
+
+<p>
+You can read it over <a href="https://azure.microsoft.com/en-us/blog/windows-azure-websites-online-tools-you-should-know-about/">here</a>. Or <a href="https://docs.microsoft.com/en-us/azure/app-service/resources-kudu">here</a>. And <a href="https://github.com/projectkudu/kudu/wiki">here</a>.
+</p>
+
+<p>
+Note that when deploying your apps there is always a runtime of such
+Kudu suite. You can understand better how to work with it.
+</p>
+
+<p>
+To this stage I just understand that this is a project that makes it
+possible to manage and monitor your webapps.
+</p>
+
+<p>
+In this sense the Kudu API that is often mentioned as a possibility
+on the microsoft webpage is interacting with that deployed project
+that will steer your app.
+</p>
+
+<p>
+See for instance <a href="https://docs.microsoft.com/en-us/azure/app-service/configure-language-java?pivots=platform-linux#starting-jar-apps">here</a>. You see that you are actually deploying your
+war to that endpoint. There a bit of magic must also happen.
+</p>
+
+<p>
+<b>Note</b> there you have as well a bash shell which has a much higher
+response time in comparison to the ssh option.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org71dbe5b" class="outline-2">
+<h2 id="org71dbe5b">Java</h2>
+<div class="outline-text-2" id="text-org71dbe5b">
+</div>
+<div id="outline-container-orgcb5945c" class="outline-3">
+<h3 id="orgcb5945c">Choosing the runtime</h3>
+<div class="outline-text-3" id="text-orgcb5945c">
+<p>
+So the first thing is to choose the right config for your
+applications.
+</p>
+
+<p>
+You can check at the available runtimes with the following:
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">   </span>az<span class="w"> </span>webapp<span class="w"> </span>list-runtimes<span class="w"> </span>--os<span class="w"> </span>linux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;JAVA\|TOMCAT\|JBOSSEAP&quot;</span>
+</pre></div>
+
+<p>
+Interesting is that there is for instance no <code>Jetty</code> server. Given
+your recent exploration into async programming and the power of such
+server in that dimension I am struck that azure did not offer such
+an option yet.
+</p>
+
+<p>
+Note that different runtimes need different packaging of the
+underlying bytecode. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orge186a7e" class="outline-3">
+<h3 id="orge186a7e">Gradle Deployment</h3>
+<div class="outline-text-3" id="text-orge186a7e">
+<p>
+There is a nice plug-in in both gradle and maven that will handle
+the deployment and set up of webapps resources.
+</p>
+
+<p>
+You can check it <a href="https://docs.microsoft.com/en-us/azure/app-service/configure-language-java?pivots=platform-linux#deploying-your-app">here</a>.
+</p>
+
+<p>
+Then basically through the plug-in you will have a new command that
+will create your webapp with the given specifications of your
+choice.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">   </span><span class="n">azurewebapp</span><span class="w"> </span><span class="p">{</span>
+<span class="w">       </span><span class="n">subscription</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="o">&lt;</span><span class="n">your</span><span class="w"> </span><span class="n">subscription</span><span class="w"> </span><span class="n">id</span><span class="o">&gt;</span><span class="err">&#39;</span>
+<span class="w">       </span><span class="n">resourceGroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="o">&lt;</span><span class="n">your</span><span class="w"> </span><span class="n">resource</span><span class="w"> </span><span class="n">group</span><span class="o">&gt;</span><span class="err">&#39;</span>
+<span class="w">       </span><span class="n">appName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="o">&lt;</span><span class="n">your</span><span class="w"> </span><span class="n">app</span><span class="w"> </span><span class="n">name</span><span class="o">&gt;</span><span class="err">&#39;</span>
+<span class="w">       </span><span class="n">pricingTier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="o">&lt;</span><span class="n">price</span><span class="w"> </span><span class="n">tier</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="err">&#39;</span><span class="n">P1v2</span><span class="sc">&#39;&gt;&#39;</span><span class="w"> </span><span class="c1">// check here https://azure.microsoft.com/en-us/pricing/details/app-service/linux/#purchase-options</span>
+<span class="w">       </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="o">&lt;</span><span class="n">region</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="err">&#39;</span><span class="n">westus</span><span class="sc">&#39;&gt;&#39;</span><span class="w"> </span><span class="c1">// view locations with az account list-locations -o table</span>
+<span class="w">       </span><span class="n">runtime</span><span class="w"> </span><span class="p">{</span>
+<span class="w">	 </span><span class="n">os</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="n">Linux</span><span class="err">&#39;</span>
+<span class="w">	 </span><span class="n">webContainer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="n">Tomcat</span><span class="w"> </span><span class="mf">9.0</span><span class="err">&#39;</span><span class="w">     </span><span class="c1">// or &#39;Java SE&#39; if you want to run an executable jar</span>
+<span class="w">	 </span><span class="n">javaVersion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="n">Java</span><span class="w"> </span><span class="mi">8</span><span class="err">&#39;</span>
+<span class="w">       </span><span class="p">}</span>
+<span class="w">       </span><span class="c1">// appSettings {</span>
+<span class="w">       </span><span class="c1">//     &lt;key&gt; = &lt;value&gt;               // here you can pass specific parameter settings for your application</span>
+<span class="w">       </span><span class="c1">// }</span>
+<span class="w">       </span><span class="n">auth</span><span class="w"> </span><span class="p">{</span>
+<span class="w">	   </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="n">azure_cli</span><span class="err">&#39;</span><span class="w">            </span><span class="c1">// support azure_cli, oauth2, device_code and service_principal</span>
+<span class="w">       </span><span class="p">}</span>
+<span class="w">   </span><span class="p">}</span>
+</pre></div>
+
+<p>
+Good.
+</p>
+
+<p>
+Note that in general the above is good but should be now embedded in
+a bigger devOps logic. Otherwise it makes little sense.
+</p>
+
+<p>
+The other option is to abstract in the DevOps from all of this. Just
+create a proper environment with all of the relevant
+resources. Deploy then to that targeted resources. 
+</p>
+
+<p>
+Anyways that is a different topic that will just come in time. Back
+to it. Will be useful in any case for my sandbox env. I will have to
+decide soon how I want to work over there.
+</p>
+
+<p>
+Now there is a bit of a distinction you have to do depending on the
+server you are using for your deployment.
+</p>
+</div>
+
+<div id="outline-container-orge20895a" class="outline-4">
+<h4 id="orge20895a">JAVA SE</h4>
+<div class="outline-text-4" id="text-orge20895a">
+<p>
+This should be the way to run SpringBoot on Linux. It is clearly
+stated by one person of the App service team on the Microsoft
+blogs.
+</p>
+
+<p>
+See <a href="https://social.msdn.microsoft.com/Forums/azure/en-US/fe9e80d4-7263-46d4-891c-bf38ca4fcc25/azure-webapp-http-status-404-8211-not-found?forum=windowsazurewebsitespreview">here</a>.
+</p>
+
+<p>
+So start to work through such server if there is no strong point
+for continuing along the way of TOMCAT.
+</p>
+
+<p>
+Would need to talk with the team.
+</p>
+
+<p>
+If you work with such server everything is straightforward; you
+just
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span>gradle<span class="w"> </span>azureWebAppDeploy
+</pre></div>
+
+<p>
+and badaboom. Everything will work smoothly.
+</p>
+
+<p>
+Your application is converted to an <code>app.jar</code> in
+<code>/home/site/wwwroot</code> and everything will be unpackaged and run
+correctly.
+</p>
+
+<p>
+It just may take a while.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org05d2bc2" class="outline-4">
+<h4 id="org05d2bc2">TOMCAT</h4>
+<div class="outline-text-4" id="text-org05d2bc2">
+<p>
+So here the thing is a bit different as your TOMCAT reads and works
+with <code>.war</code>.
+</p>
+
+<p>
+So the first step is to build a <code>.war</code> and pass it to the TOMCAT
+within the WebApp in the proper way. 
+</p>
+
+<p>
+Note now that if you deploy a Spring application things are slightly
+more tricky.
+</p>
+
+<p>
+This is because by default Spring packages everything into a
+<code>.jar</code>. You can then execute that <code>.jar</code> in gradle via the standard
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span>./gradlew.bat<span class="w"> </span>bootRun
+</pre></div>
+
+<p>
+If you want to understand more about that concept check at your
+notes <a href="https://marcohassan.github.io/bits-of-experience/posts/spring/">here</a> in the deployment section.
+</p>
+
+<p>
+Now understand that under the hood when you deploy with the plug-in
+above the thing will not simply start the server but will start as
+well to deploy the artifact of your application.
+</p>
+
+<p>
+Now understand that the TOMCAT server is set up to deploy
+applications packaged as <code>.war</code> not as <code>.jar</code>.
+</p>
+
+<p>
+In this sense is of paramount importance when deploying spring
+applications to apply as well the <code>war</code> plugin such that everything
+will be packaged as a <code>war</code> in the correct default location and your
+webapp with your TOMCAT runtime can boot the application correctly.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">	</span><span class="c1">// Spring Plug-ins</span>
+<span class="w">	</span><span class="n">id</span><span class="w"> </span><span class="err">&#39;</span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">boot</span><span class="err">&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="err">&#39;</span><span class="mf">2.4.2</span><span class="err">&#39;</span>
+<span class="w">	</span><span class="n">id</span><span class="w"> </span><span class="err">&#39;</span><span class="n">io</span><span class="p">.</span><span class="na">spring</span><span class="p">.</span><span class="na">dependency</span><span class="o">-</span><span class="n">management</span><span class="err">&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="err">&#39;</span><span class="mf">1.0.11</span><span class="p">.</span><span class="na">RELEASE</span><span class="err">&#39;</span>
+
+<span class="w">	</span><span class="n">id</span><span class="w"> </span><span class="err">&#39;</span><span class="n">java</span><span class="err">&#39;</span>
+<span class="w">	</span><span class="n">id</span><span class="w"> </span><span class="err">&#39;</span><span class="n">war</span><span class="err">&#39;</span><span class="w">  </span><span class="c1">// very important</span>
+
+<span class="w">	</span><span class="c1">// Microsoft Webapp Plug-in</span>
+<span class="w">	</span><span class="n">id</span><span class="w"> </span><span class="s">&quot;com.microsoft.azure.azurewebapp&quot;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">&quot;1.2.0&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+</pre></div>
+
+<p>
+Then with it you can deploy your application in the following way
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span>gradle<span class="w"> </span>azureWebAppDeploy
+</pre></div>
+
+<p>
+Note that in such a case you deploy a <code>.war</code> to the
+<code>/home/site/wwwroot</code>.
+</p>
+
+<p>
+So not good enough as you should live in the
+<code>/home/site/wwwroot/webapps</code>.
+</p>
+
+<p>
+Check now the following testing etc.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org979d743" class="outline-4">
+<h4 id="org979d743"><span class="todo TODO">TODO</span> open issues</h4>
+<div class="outline-text-4" id="text-org979d743">
+<p>
+Not working correctly. The application seems to be deployed but I
+cannot hit the endpoint. Get 404 error.
+</p>
+
+<p>
+See the <a href="https://social.msdn.microsoft.com/Forums/azure/en-US/fe9e80d4-7263-46d4-891c-bf38ca4fcc25/azure-webapp-http-status-404-8211-not-found?forum=windowsazurewebsitespreview">following issue</a>. This actually put me off the road. Weird
+stuff&#x2026;. should work according to my mind.
+</p>
+
+<p>
+So not clear to this stage.
+</p>
+
+<p>
+This is a bit what happens in my team. No idea where to put the
+<code>.war</code> so weird pipelines are being created that finally reproduce
+the structure of a TOMCAT.
+</p>
+
+<p>
+You could then force everything in a similar way along these lines
+by following the thing over <a href="https://www.baeldung.com/spring-boot-war-tomcat-deploy">here</a>.
+</p>
+
+<p>
+What is weird that in such a case you are not leveraging the magic
+of PaaS and for what is worth you could then well go for IaaS in
+this sense.
+</p>
+
+<p>
+So makes totally no sense.
+</p>
+
+<p>
+So will need to fix that at some point when the right moment will
+come. 
+</p>
+
+<p>
+Giving up for now as it is taking too much time and I have to move
+on with other work. Posted a Question on StackOverflow. Try to
+check what answers you get over there. <a href="https://stackoverflow.com/questions/71584566/deploying-a-war-on-azure-webapps-tomcat-server">Monitor it</a>.
+</p>
+
+<hr />
+
+<p>
+Talked with Valerio. It seems that everything I am doing is
+correct.
+</p>
+
+<p>
+So I really do not understand what is going on. Try not with the
+free tier.
+</p>
+
+<p>
+Note that you can as well use the <a href="https://github.com/projectkudu/kudu/wiki/Deploying-WAR-files-using-wardeploy">Kudu API</a>. Good reference as well
+to understand what is happening under the hood.
+</p>
+
+<p>
+For these you need your webapp credentials. You can get them <a href="https://docs.microsoft.com/en-us/azure/app-service/deploy-configure-credentials?tabs=cli">like
+that</a>.
+</p>
+
+
+<div class="highlight"><pre><span></span><span class="w">    </span>az<span class="w"> </span>webapp<span class="w"> </span>deployment<span class="w"> </span>list-publishing-profiles<span class="w"> </span>--resource-group<span class="w"> </span>&lt;group-name&gt;<span class="w"> </span>--name<span class="w"> </span>&lt;app-name&gt;
+</pre></div>
+
+<p>
+This is actually what you did the first time when deploying your
+applications to the cloud. Had to go there via UI and get that
+info and store it in a config file.
+</p>
+
+<p>
+Obviously not the best. I guess in any case that is really the same
+as deploying with the <code>az webapp deploy</code> command directly which is
+already integrated with your credentials.
+</p>
+
+<p>
+So that cannot be it.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc063fd7" class="outline-2">
+<h2 id="orgc063fd7">Python</h2>
+<div class="outline-text-2" id="text-orgc063fd7">
+<p>
+This section deals with the deployment of python runtimes.
+</p>
+
+<p>
+I am still considering some best of breed approach. I still have to
+consider as managing two stacks concurrently will not be a trivial
+task.
+</p>
+
+<p>
+If you manage to properly set up a devOps pipeline for it, it might
+be easier then. Check with the team to see at what point we are in
+this dimension.
+</p>
+
+<p>
+In any case the way to do it is well outlined <a href="https://medium.com/@nikovrdoljak/deploy-your-flask-app-on-azure-in-3-easy-steps-b2fe388a589e">here</a>.
+</p>
+
+<p>
+Note this way of interacting with Kudu. This is a little bit
+different to the one you explored so far.
+</p>
+
+<p>
+It is nonetheless the way through which we interact with AzureWebapp
+so far in the Java stack in your team in production. The way to work
+directly with gradle and specify all of the pipelines in there is not
+the way decided by the team. So check at how the situation develops
+across time.
+</p>
+</div>
+
+<div id="outline-container-org1c0aebb" class="outline-3">
+<h3 id="org1c0aebb">Creating an Application</h3>
+<div class="outline-text-3" id="text-org1c0aebb">
+<p>
+You can do it with the <code>az webapp up [args]</code> command.
+</p>
+
+<p>
+So for instance you can specify
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">   </span>az<span class="w"> </span>webapp<span class="w"> </span>up--runtime<span class="w"> </span>PYTHON:3.7<span class="w"> </span><span class="se">\</span>
+<span class="w">       </span>--sku<span class="w"> </span>F1<span class="w"> </span><span class="se">\</span>
+<span class="w">       </span>--os<span class="w"> </span>Linux<span class="w"> </span><span class="se">\</span>
+<span class="w">       </span>--subscription<span class="w"> </span>&lt;blabla&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">       </span>--resource-group<span class="w"> </span>&lt;blabla&gt;<span class="w"> </span><span class="se">\ </span>
+<span class="w">       </span>--logs
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc57e5ed" class="outline-3">
+<h3 id="orgc57e5ed">Deploying</h3>
+<div class="outline-text-3" id="text-orgc57e5ed">
+<p>
+So note that this section will be relevant as well for understand
+the general set up and how you currently deploy the applications on
+azure.
+</p>
+
+<p>
+So basically what you can do it to set a user specific crendential
+to deploy to the webapps.
+</p>
+
+<p>
+You can start in such a way for your sandbox, then again in devOps
+with the pipelines everything will be integrated.
+</p>
+
+<p>
+The idea is that there is an application specific <code>user</code> and
+<code>password</code> that you can theoretically use to deploy over there.
+</p>
+
+<p>
+Once you set your options for a specific subscription you can as
+well use this. This is actually better as you can then see who did
+what.
+</p>
+
+<p>
+You can view your user configurations for depoying to a webapp
+under a specific subscription in the following way:
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">   </span>az<span class="w"> </span>webapp<span class="w"> </span>deployment<span class="w"> </span>user<span class="w"> </span>show<span class="w"> </span>--subscription<span class="w"> </span>&lt;blabla&gt;
+</pre></div>
+
+<p>
+Note that I think that the password parameter is not displayed even
+when it is set.
+</p>
+
+<p>
+You can set it via shell for a specific subscription via:
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">   </span>az<span class="w"> </span>webapp<span class="w"> </span>deployment<span class="w"> </span>user<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--subscription<span class="w"> </span>&lt;blabla&gt;<span class="w"> </span>--password<span class="w"> </span><span class="o">{</span>password<span class="o">}</span><span class="w"> </span>--user-name<span class="w"> </span>MyUserName
+</pre></div>
+
+<p>
+Then with it it will be possible for you to deploy your code on a
+given application.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org5247afd" class="outline-3">
+<h3 id="org5247afd">Set up the startup script</h3>
+<div class="outline-text-3" id="text-org5247afd">
+<p>
+Note that in order to correctly deploy the thing you must follow
+some given standards.
+</p>
+
+<p>
+This is the ugly thing of working with such services instead of
+going with Docker directly.
+</p>
+
+<p>
+You do not really undestand what is going on and I must say that
+the official documentation abstracts a little bit too much away.
+</p>
+
+<p>
+In any case this is my current set-up and in such a way it works.
+</p>
+
+<p>
+Check <a href="https://docs.microsoft.com/en-us/azure/app-service/configure-language-python">here</a> the section: Custom Flask main module.
+</p>
+
+<p>
+See <a href="https://github.com/microsoft/python-sample-vscode-flask-tutorial">this</a> as an example. Implemented a similar logic with
+<code>__init__.py</code> actually implementing the application logic and
+another one importing it. So basically have ultimately a
+<code>startup.py</code> importing the app.
+</p>
+
+<p>
+So note now that everything works with a <code>startup.py</code> script and a
+<code>requirements.txt</code> file in the higher level of the application
+repository you are passing to the webapp.
+</p>
+
+<p>
+I have something in this setting
+</p>
+
+<blockquote>
+<p>
+├───app<sub>init</sub>
+├───azurestorage
+├───deploymentFiles
+├───etl
+├───forms
+├───log
+├───migrations
+│   └───versions
+├───models
+├───postman
+├───routes
+├───swaggerui
+│   ├───css
+│   ├───fonts
+│   ├───images
+│   ├───lang
+│   └───lib
+├───templates
+└───test
+</p>
+</blockquote>
+
+<p>
+Note that the structure has to be refined. 
+</p>
+
+<p>
+The only thing you have to add is a strartup command to your app -
+see setting -&gt; configuration -&gt; .
+</p>
+
+<p>
+In my case:
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">   </span>gunicorn<span class="w"> </span>--bind<span class="o">=</span><span class="m">0</span>.0.0.0<span class="w"> </span>--timeout<span class="w"> </span><span class="m">600</span><span class="w"> </span>startup:app
+</pre></div>
+
+<p>
+Just recall the last part which is
+<code>&lt;file_you_run_as_script&gt;:&lt;app_name_defined_within&gt;</code>.
+</p>
+
+<p>
+You are ready to push then to your app through git and the PaaS
+will then start to read and unpackage everything in the right way. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgd968205" class="outline-3">
+<h3 id="orgd968205">Note that the inner architecture of Azure is complex</h3>
+<div class="outline-text-3" id="text-orgd968205">
+<p>
+Here the functioning and the hidden inner structrues are more
+complex in comparison to the deployment of a Java app.
+</p>
+
+<p>
+What you actually get in the <code>/home/site/wwwroot</code> is a packaged
+Oryx file.
+</p>
+
+<p>
+So basically that is the piece of software that manages the thing.
+</p>
+
+<p>
+Then what basically happens is that a directory is created in
+<code>/tmp</code>.
+</p>
+
+<p>
+There a virtual environment will be instantiated, you will download
+all of the needed dependencies there and start the app.
+</p>
+
+<p>
+This will be then the source and the space where your app moves
+in. You can see it cause if you log to a file in the project, you
+will find the added log of the application over there. 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbf5116b" class="outline-2">
+<h2 id="orgbf5116b">Debugging</h2>
+<div class="outline-text-2" id="text-orgbf5116b">
+</div>
+<div id="outline-container-orgce5e883" class="outline-3">
+<h3 id="orgce5e883">Java</h3>
+<div class="outline-text-3" id="text-orgce5e883">
+<p>
+So you have to get used to the things in life.
+</p>
+
+<p>
+So basically by deploying via the gradle plugin you do not get a lot
+of logged info.
+</p>
+
+<p>
+So as mentioned it might seem that everything is working properly
+when it is not.
+</p>
+
+<p>
+Or at least will have to understand better how to properly log
+everything. In this sense it makes sense to start with the Azure
+certification soon. Will help you to gain that knowledge and it will
+be a guided tour instead of an unstructured go and conquer.
+</p>
+
+<p>
+In any case here you will have little info but if the applicaiton
+is not able to boot despite the successfuly deployment of the
+<code>.jar</code> on the webapp, then you will get an application error
+response when trying to hit one of your endpoints.
+</p>
+
+<p>
+If you then go on the diagnostic tools you should be able to have
+an option where you can ultimately see the spring boot application
+logs and there you will find the root cause of the issue.
+</p>
+
+<p>
+Or at least will help you to understand what is going on wrong over
+there. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org830ca32" class="outline-3">
+<h3 id="org830ca32">Python</h3>
+<div class="outline-text-3" id="text-org830ca32">
+<p>
+In the way you deploy via git integration you will get a lot of
+feedback.
+</p>
+
+<p>
+So basically in this way of deploying your can check your
+log-stream and you will get a good idea of the issues.
+</p>
+</div>
+
+<div id="outline-container-orgedebaf1" class="outline-4">
+<h4 id="orgedebaf1">Use log-stream for debugging</h4>
+<div class="outline-text-4" id="text-orgedebaf1">
+<p>
+This is nice way to check about what is happening in your deployed
+webapp.
+</p>
+
+<p>
+You will see there if the application did not start and it will
+give you some hints on what went wrong.
+</p>
+
+<p>
+This is actually quite annoying of these webapps. I was used to
+work in a different way.
+</p>
+
+<p>
+Either everything started or you would get a failure message.
+</p>
+
+<p>
+Here you do not necessarily get a failure. Cause if you manage to
+upload the files to AzureWebApps then you get a success message.
+</p>
+
+<p>
+Whether then the PaaS service manages to correcly unpack everything
+and start the application out of the box is a different question
+for this you would actually have to check at the logs.
+</p>
+
+<p>
+You can use is it as well to check at your logs for the
+application.
+</p>
+
+<p>
+Note that I was used to write the logs to a file. I have to explore
+all of the logging monitoring services more into detail. It is
+clear nonetheless that with all of the log services and log queries
+services it probably makes sense to log everything directly into
+the console.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgd849eb4" class="outline-2">
+<h2 id="orgd849eb4">Understand pricing tiers in Azure</h2>
+<div class="outline-text-2" id="text-orgd849eb4">
+<p>
+How are they constrcuted? What are the specifics?
+</p>
+
+<p>
+You can find them <a href="https://azure.microsoft.com/en-us/pricing/details/app-service/windows/">here</a>.
+</p>
+
+<p>
+Now for testing on the sandbox env that I finally managed to get you
+can go with the free tier without any issue.
+</p>
+
+<p>
+In any case should you in the future need an overview you can check
+there cause it is not convenient to fake the mock creation via
+web-UI and then exploring there.
+</p>
+
+<p>
+Note as well <a href="https://docs.microsoft.com/en-us/answers/questions/285699/is-there-a-way-to-get-the-sku-for-a-list-of-web-ap.html">the following option</a> if you want to do that via CLI as
+you mostly work and live in there.
+</p>
+</div>
+</div>

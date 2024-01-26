@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Anova - Model Assumptions Check | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://emanuelehassan.github.io/bits-of-experience/posts/anova-model-assumptions-check/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="Anova - Model Assumptions Check">
+<meta property="og:url" content="https://emanuelehassan.github.io/bits-of-experience/posts/anova-model-assumptions-check/">
+<meta property="og:description" content="This third post of the ANOVA series explores the different
+assumptions that are required in order for the asymptotic inference on the
+significance of group means to be true.
+
+
+
+In the specific the mod">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-10-09T16:53:11+02:00">
+<meta property="article:tag" content="ANOVA">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Anova - Model Assumptions Check</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2019-10-09T16:53:11+02:00" itemprop="datePublished" title="2019-10-09 16:53">2019-10-09 16:53</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/anova/" rel="tag">ANOVA</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <br><br><p>
+This third post of the <i>ANOVA</i> series explores the different
+assumptions that are required in order for the asymptotic inference on the
+significance of group means to be true.
+</p>
+
+<p>
+In the specific the model assumptions for which the group specific
+means are properly estimated and the ratio of the mean squared errors
+converges to the F-distribution depends on the following assumptions:
+</p>
+
+<ul class="org-ul">
+<li><i>errors are independent</i></li>
+
+<li><i>errors are normally distributed</i></li>
+
+<li><i>homoscedasticity of the variance</i></li>
+
+<li><i>zero mean error expectation</i></li>
+</ul>
+<p>
+I will next explore and test the four based on a toy dataset.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-orgd9f00dd" class="outline-2">
+<h2 id="orgd9f00dd">QQ-Plot</h2>
+<div class="outline-text-2" id="text-orgd9f00dd">
+<p>
+This compares the empirical quantiles to the theoretical quantiles of
+a normal. If the empirical quantiles of the error term are in line
+with the normality assumption we should observe the data points to lie
+on the 45 degree line.
+</p>
+
+<div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
+<span class="nf">data </span><span class="p">(</span><span class="n">PlantGrowth</span><span class="p">)</span>
+<span class="nf">str </span><span class="p">(</span><span class="n">PlantGrowth</span><span class="p">)</span>
+<span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">aov </span><span class="p">(</span><span class="n">weight</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">group</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PlantGrowth</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="c1"># Open a svg file</span>
+<span class="nf">png</span><span class="p">(</span><span class="s">"../images/qqplot.png"</span><span class="p">)</span><span class="w"> </span>
+
+<span class="c1"># 2. Create a plot</span>
+<span class="nf">plot </span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+
+<span class="c1"># Close the pdf file</span>
+<span class="nf">dev.off</span><span class="p">()</span><span class="w">  </span>
+</pre></div>
+
+<p>
+<img src="../../images/qqplot.png" alt="nil"></p>
+
+
+<p>
+Notice that you can address the issue of the normality distribution by
+transforming your variables; moreover a failure of normality is will
+imply that the OLS estimation will not be BLUE, however the majority
+of the results will still hold for the estimation.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd90e581" class="outline-2">
+<h2 id="orgd90e581">Tukey-Anscombe Plot</h2>
+<div class="outline-text-2" id="text-orgd90e581">
+<p>
+This plots the residuals \eplison{ij} vs. the fitted values
+\hat{\mu + \alpha_i}. The idea is to check if there is any systematic
+relation among the fitted values and the residuals. If this is the
+case the independence of the errors is not given. 
+</p>
+
+<p>
+Moreover the plot might help to assess, whether we observe
+homoscedasticity of the errors or rather if heteroscedasticity is
+present.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1"># Open a svg file</span>
+<span class="nf">png</span><span class="p">(</span><span class="s">"../images/tukey.png"</span><span class="p">)</span><span class="w"> </span>
+
+<span class="c1"># 2. Create a plot</span>
+<span class="nf">plot </span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+
+<span class="c1"># Close the pdf file</span>
+<span class="nf">dev.off</span><span class="p">()</span><span class="w">  </span>
+</pre></div>
+
+<p>
+<img src="../../images/tukey.png" alt="nil"></p>
+
+<p>
+Notice that the red line represents the LOESS estimator. It is hence a
+smoother and a local parametric fit.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2c7ce17" class="outline-2">
+<h2 id="org2c7ce17">Literature</h2>
+<div class="outline-text-2" id="text-org2c7ce17">
+<p>
+<a href="https://stat.ethz.ch/lectures/as19/anova.php#course_materials">Applied Anaysis of Variance - ETH Lecture Notes - Autumn 2019</a>
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav></nav></aside></article><footer id="footer"><p>Contents © 2024         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
