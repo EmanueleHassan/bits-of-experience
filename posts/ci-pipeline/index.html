@@ -10,13 +10,13 @@
 <meta name="theme-color" content="#5670d4">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
-<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/ci-pipeline/">
+<link rel="canonical" href="https://emanuelehassan.github.io/bits-of-experience/posts/ci-pipeline/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
 <link rel="prev" href="../rdf-graphs-sparql-turtle/" title="RDF Graphs - SPARQL - Turtle" type="text/html">
 <link rel="next" href="../istio/" title="Istio" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="CI Pipeline">
-<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/ci-pipeline/">
+<meta property="og:url" content="https://emanuelehassan.github.io/bits-of-experience/posts/ci-pipeline/">
 <meta property="og:description" content="This entry contains some notes about setting up a CI pipeline. I will
 explore especially the Jenkins option and I will integrate it with
 Python.
@@ -86,9 +86,9 @@ of the material covered here.
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org5fdb883" class="outline-2">
-<h2 id="org5fdb883">On CI Infra &amp; Architecture</h2>
-<div class="outline-text-2" id="text-org5fdb883">
+<div id="outline-container-orgf1ec4f7" class="outline-2">
+<h2 id="orgf1ec4f7">On CI Infra &amp; Architecture</h2>
+<div class="outline-text-2" id="text-orgf1ec4f7">
 <p>
 Note that the CI software will run on a server. This server must have
 access to your code base. It is therefore standard for companies to
@@ -135,9 +135,9 @@ Docker container, just to have fewer docker containers to manage.
 </div>
 </div>
 
-<div id="outline-container-orge8e3df9" class="outline-2">
-<h2 id="orge8e3df9">Setting up Jenkins in Docker</h2>
-<div class="outline-text-2" id="text-orge8e3df9">
+<div id="outline-container-orgd8d3827" class="outline-2">
+<h2 id="orgd8d3827">Setting up Jenkins in Docker</h2>
+<div class="outline-text-2" id="text-orgd8d3827">
 <p>
 This is fairly standard. Just create your docker image for it and
 deploy it.
@@ -147,7 +147,7 @@ deploy it.
 One such image could be for instance:
 </p>
 
-<pre class="example" id="orgd5daefc">
+<pre class="example">
 FROM jenkins/jenkins:lts
 USER root
 RUN apt-get update \
@@ -161,14 +161,14 @@ RUN pip install tox
 Then simply build the image
 </p>
 
-<div class="highlight"><pre><span></span>  docker build -t jenkins-python .
+<div class="highlight"><pre><span></span><span class="w">  </span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>jenkins-python<span class="w"> </span>.
 </pre></div>
 
 <p>
 Make sure it is then listed on your docker engine
 </p>
 
-<div class="highlight"><pre><span></span>  docker image ls
+<div class="highlight"><pre><span></span><span class="w">  </span>docker<span class="w"> </span>image<span class="w"> </span>ls
 </pre></div>
 
 
@@ -176,16 +176,16 @@ Make sure it is then listed on your docker engine
 And finally deploy it
 </p>
 
-<div class="highlight"><pre><span></span>  docker run --rm -p <span class="m">8080</span>:8080 -p <span class="m">50000</span>:50000 <span class="se">\ </span>    
-    -v jenkins_home:/var/jenkins_home jenkins-python
+<div class="highlight"><pre><span></span><span class="w">  </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:8080<span class="w"> </span>-p<span class="w"> </span><span class="m">50000</span>:50000<span class="w"> </span><span class="se">\ </span><span class="w">    </span>
+<span class="w">    </span>-v<span class="w"> </span>jenkins_home:/var/jenkins_home<span class="w"> </span>jenkins-python
 </pre></div>
 </div>
 </div>
 
 
-<div id="outline-container-org4c329ed" class="outline-2">
-<h2 id="org4c329ed">First Jenkins Job</h2>
-<div class="outline-text-2" id="text-org4c329ed">
+<div id="outline-container-orgb801d4e" class="outline-2">
+<h2 id="orgb801d4e">First Jenkins Job</h2>
+<div class="outline-text-2" id="text-orgb801d4e">
 <p>
 Jenkins jobs are where you specify your integration triggers.
 </p>
@@ -216,7 +216,7 @@ structure in there and on how to proceed.
             <li class="next">
                 <a href="../istio/" rel="next" title="Istio">Next post</a>
             </li>
-        </ul></nav></aside></article><footer id="footer"><p>Contents © 2021         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2024         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
         </footer>
 </div>

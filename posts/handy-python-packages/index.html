@@ -10,13 +10,13 @@
 <meta name="theme-color" content="#5670d4">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
-<link rel="canonical" href="https://marcohassan.github.io/bits-of-experience/posts/handy-python-packages/">
+<link rel="canonical" href="https://emanuelehassan.github.io/bits-of-experience/posts/handy-python-packages/">
 <!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
 <link rel="prev" href="../nikola-set-up-do-it-the-simple-way/" title="Nikola Set Up - Do it the Simple Way." type="text/html">
 <link rel="next" href="../embedding-watson-assistant-into-a-client-webpage/" title="Embedding Watson Assistant into a Client Webpage" type="text/html">
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="Some Handy Python Tricks ">
-<meta property="og:url" content="https://marcohassan.github.io/bits-of-experience/posts/handy-python-packages/">
+<meta property="og:url" content="https://emanuelehassan.github.io/bits-of-experience/posts/handy-python-packages/">
 <meta property="og:description" content="This is a general file where I keep some useful tricks when
 programming in Python / new things I learn in the language that helps
 me to be more productive or write better code
@@ -25,7 +25,7 @@ me to be more productive or write better code
 
 
 
-Save local Environm">
+Anonymous Functions">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2020-04-14T15:15:50+02:00">
 <meta property="article:tag" content="programming">
@@ -82,9 +82,95 @@ me to be more productive or write better code
 
 <!-- TEASER_END -->
 
-<div id="outline-container-org859c762" class="outline-2">
-<h2 id="org859c762">Save local Environment in Ipython and continue from where you left</h2>
-<div class="outline-text-2" id="text-org859c762">
+<div id="outline-container-org29ce9af" class="outline-2">
+<h2 id="org29ce9af">Anonymous Functions</h2>
+<div class="outline-text-2" id="text-org29ce9af">
+<p>
+So basically you can do the following:
+</p>
+
+<ul class="org-ul">
+<li>you can specify lambda functions, save them into variables and
+call them.</li>
+</ul>
+<p>
+The above is cool but it is not the ultimate result. In such a way
+you would pretty much work as in a function. You would simply write
+a bit less of code. Nothing game-changer.
+</p>
+
+<p>
+What is more interesting is the use of anonymous functions.
+</p>
+
+<p>
+This can be helpful for checking complex statements where you would
+need to clutter extensively your code.
+</p>
+
+<p>
+Then you can simply define them and call htem on the fly as
+follows:
+</p>
+
+<div class="highlight"><pre><span></span>   <span class="c1"># anonymous function in order to bypass quality check on database</span>
+   <span class="c1"># in case it is not provided</span>
+   <span class="n">qc</span> <span class="o">=</span> <span class="p">[(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">database</span> <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="s2">";"</span><span class="p">)(),</span>
+	 <span class="n">driver</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">server</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+</pre></div>
+
+<p>
+You can think of similar logics in there if it is interesting.
+</p>
+
+<p>
+Finally, note and it is important - the lambda function must have a
+return entry for each of the possible inputs.
+</p>
+
+<p>
+In this sense, you cannot have an if statement without an else one
+in lambda functions.
+</p>
+
+<p>
+Finally, note that you were using a lot such functions when working
+with spark.
+</p>
+
+<p>
+Double check your notes in there.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org262ed0b" class="outline-2">
+<h2 id="org262ed0b">How to write to Microsoft SQL Server Directly from Pandas</h2>
+<div class="outline-text-2" id="text-org262ed0b">
+<p>
+So the idea is that in pandas you have cool ways to directly write
+to DBs and interact with them.
+</p>
+
+<p>
+For it you rather use the <code>sqlAlchemy</code> module in Python.
+</p>
+
+<p>
+You can then read about how to create an engine depending on the
+different databases you aim at connecting to <a href="https://docs.sqlalchemy.org/en/14/dialects/mssql.html#module-sqlalchemy.dialects.mssql.pyodbc">here</a>.
+</p>
+
+<p>
+So that is basically it. Once you have your sqlAlchemy engine you
+can use standard pandas functions such as <code>pandas.to_sql</code>
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd2cfff6" class="outline-2">
+<h2 id="orgd2cfff6">Save local Environment in Ipython and continue from where you left</h2>
+<div class="outline-text-2" id="text-orgd2cfff6">
 <p>
 How to save your local environment and continue from where you left on
 Ipython:
@@ -96,9 +182,9 @@ Ipython:
 </div>
 </div>
 
-<div id="outline-container-orgae62a7b" class="outline-2">
-<h2 id="orgae62a7b">Clear local environment</h2>
-<div class="outline-text-2" id="text-orgae62a7b">
+<div id="outline-container-org8386a92" class="outline-2">
+<h2 id="org8386a92">Clear local environment</h2>
+<div class="outline-text-2" id="text-org8386a92">
 <p>
 When using <code>Ipython</code> you can simply use the handy <code>%reset</code> magic
 command.
@@ -115,9 +201,9 @@ When using a <code>Python</code> interpreter you can use the following snippet
 </div>
 </div>
 
-<div id="outline-container-orgfb37f73" class="outline-2">
-<h2 id="orgfb37f73">Check at the source code of a function you are using in Python</h2>
-<div class="outline-text-2" id="text-orgfb37f73">
+<div id="outline-container-orgc09f4f0" class="outline-2">
+<h2 id="orgc09f4f0">Check at the source code of a function you are using in Python</h2>
+<div class="outline-text-2" id="text-orgc09f4f0">
 <div class="highlight"><pre><span></span> import dill
  import cProfile
  print(dill.source.getsource(cProfile.Profile.print_stats))
@@ -129,13 +215,13 @@ When using a <code>Python</code> interpreter you can use the following snippet
 </div>
 </div>
 
-<div id="outline-container-org7edc11a" class="outline-2">
-<h2 id="org7edc11a">Debugging Python within Emacs</h2>
-<div class="outline-text-2" id="text-org7edc11a">
+<div id="outline-container-org79ae608" class="outline-2">
+<h2 id="org79ae608">Debugging Python within Emacs</h2>
+<div class="outline-text-2" id="text-org79ae608">
 </div>
-<div id="outline-container-org574477d" class="outline-3">
-<h3 id="org574477d">Python</h3>
-<div class="outline-text-3" id="text-org574477d">
+<div id="outline-container-orgebbac6e" class="outline-3">
+<h3 id="orgebbac6e">Python</h3>
+<div class="outline-text-3" id="text-orgebbac6e">
 <p>
 <a href="https://www.masteringemacs.org/article/compiling-running-scripts-emacs">https://www.masteringemacs.org/article/compiling-running-scripts-emacs</a>
 </p>
@@ -163,9 +249,9 @@ available options for it.
 </div>
 </div>
 
-<div id="outline-container-org0689484" class="outline-3">
-<h3 id="org0689484">Ipython</h3>
-<div class="outline-text-3" id="text-org0689484">
+<div id="outline-container-orgd31f50d" class="outline-3">
+<h3 id="orgd31f50d">Ipython</h3>
+<div class="outline-text-3" id="text-orgd31f50d">
 <p>
 Interesting is the option to debug in <code>ipython notebooks</code>. This
 can be done again with a magic command <code>%debug</code>. I use <code>ein</code> and
@@ -177,7 +263,7 @@ commands. For more look at <a href="https://paris-swc.github.io/python-testing-d
 Example:
 </p>
 
-<pre class="example" id="org70ab4f6">
+<pre class="example">
 In [532]:
 %debug
 for i in range(10):
@@ -189,9 +275,9 @@ for i in range(10):
 </div>
 </div>
 
-<div id="outline-container-org333370f" class="outline-2">
-<h2 id="org333370f">If condition on data type</h2>
-<div class="outline-text-2" id="text-org333370f">
+<div id="outline-container-orgc8cd71b" class="outline-2">
+<h2 id="orgc8cd71b">If condition on data type</h2>
+<div class="outline-text-2" id="text-orgc8cd71b">
 <p>
 So far I was using
 </p>
@@ -214,9 +300,9 @@ More elegant is in this sense
 </div>
 </div>
 
-<div id="outline-container-org62bae53" class="outline-2">
-<h2 id="org62bae53">Doctest</h2>
-<div class="outline-text-2" id="text-org62bae53">
+<div id="outline-container-org35cb0f6" class="outline-2">
+<h2 id="org35cb0f6">Doctest</h2>
+<div class="outline-text-2" id="text-org35cb0f6">
 <p>
 This is a very funny way to work. It is an interesting alternative
 to <code>unittests</code>. I do not think that it makes too much sense as
@@ -234,11 +320,11 @@ You can have a look at them if you are interested here.
 </div>
 </div>
 
-<div id="outline-container-org63b6735" class="outline-2">
-<h2 id="org63b6735">Good annotation - function annotations</h2>
-<div class="outline-text-2" id="text-org63b6735">
+<div id="outline-container-org907206f" class="outline-2">
+<h2 id="org907206f">Good annotation - function annotations</h2>
+<div class="outline-text-2" id="text-org907206f">
 <div class="highlight"><pre><span></span>   <span class="k">def</span> <span class="nf">handle_entity_intent</span><span class="p">(</span><span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">entity</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text_response</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">neo4j</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-       <span class="sd">"""Process intent and entity of Watson Assistant and query Knowledge Graph for content</span>
+<span class="w">       </span><span class="sd">"""Process intent and entity of Watson Assistant and query Knowledge Graph for content</span>
 
 <span class="sd">       :param intent: returned intent from Watson Assistant</span>
 <span class="sd">       :param entity: returned entity from Watson Assistant</span>
@@ -266,9 +352,9 @@ with this. see in the video the last part. <a href="https://www.youtube.com/watc
 </div>
 </div>
 
-<div id="outline-container-org3cb33f1" class="outline-2">
-<h2 id="org3cb33f1">Good to know data types</h2>
-<div class="outline-text-2" id="text-org3cb33f1">
+<div id="outline-container-orgf884abf" class="outline-2">
+<h2 id="orgf884abf">Good to know data types</h2>
+<div class="outline-text-2" id="text-orgf884abf">
 <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 
 <span class="n">a</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span> <span class="c1">## creates a dictionary with a default option if</span>
@@ -296,7 +382,7 @@ vs.
 <span class="n">b</span><span class="p">[</span><span class="s2">"bar"</span><span class="p">]</span>
 </pre></div>
 
-<pre class="example" id="orgf1de204">
+<pre class="example">
 Traceback (most recent call last):
   File "&lt;stdin&gt;", line 3, in &lt;module&gt;
 KeyError: 'bar'
@@ -304,9 +390,9 @@ KeyError: 'bar'
 </div>
 </div>
 
-<div id="outline-container-org77363b7" class="outline-2">
-<h2 id="org77363b7">Reload changed module</h2>
-<div class="outline-text-2" id="text-org77363b7">
+<div id="outline-container-org2eea3cd" class="outline-2">
+<h2 id="org2eea3cd">Reload changed module</h2>
+<div class="outline-text-2" id="text-org2eea3cd">
 <div class="highlight"><pre><span></span>    <span class="kn">import</span> <span class="nn">importlib</span>
     <span class="n">importlib</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">prova</span><span class="p">)</span>
 </pre></div>
@@ -355,9 +441,9 @@ delete all of the modules maintained by the interpreter.
 </div>
 </div>
 
-<div id="outline-container-orgd5287d7" class="outline-2">
-<h2 id="orgd5287d7">Creating a variable and assigning it via a string</h2>
-<div class="outline-text-2" id="text-orgd5287d7">
+<div id="outline-container-org773ef5b" class="outline-2">
+<h2 id="org773ef5b">Creating a variable and assigning it via a string</h2>
+<div class="outline-text-2" id="text-org773ef5b">
 <div class="highlight"><pre><span></span><span class="n">x</span><span class="o">=</span><span class="s1">'buffalo'</span>    
 <span class="n">exec</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> = </span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">buffalo</span><span class="p">)</span>
@@ -365,9 +451,9 @@ delete all of the modules maintained by the interpreter.
 </div>
 </div>
 
-<div id="outline-container-orgd470107" class="outline-2">
-<h2 id="orgd470107">Profiling in Python</h2>
-<div class="outline-text-2" id="text-orgd470107">
+<div id="outline-container-org3722420" class="outline-2">
+<h2 id="org3722420">Profiling in Python</h2>
+<div class="outline-text-2" id="text-org3722420">
 <p>
 <a href="https://docs.python.org/3.2/library/profile.html">https://docs.python.org/3.2/library/profile.html</a>
 </p>
@@ -396,9 +482,9 @@ calls that are probably not interesting to your analysis.
 </div>
 </div>
 
-<div id="outline-container-orgd5d3f37" class="outline-2">
-<h2 id="orgd5d3f37">Loops with tqdm</h2>
-<div class="outline-text-2" id="text-orgd5d3f37">
+<div id="outline-container-org6f099dc" class="outline-2">
+<h2 id="org6f099dc">Loops with tqdm</h2>
+<div class="outline-text-2" id="text-org6f099dc">
 <p>
 Displays progress on the loop; time taken of average per loop and
 iteration.
@@ -411,16 +497,16 @@ iteration.
     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
-<pre class="example" id="orgd0a7f7a">
+<pre class="example">
  25%|████████████████████████████▎                                                                                    | 5/20 [00:05&lt;00:15,  1.00s/it]
 C^
 </pre>
 </div>
 </div>
 
-<div id="outline-container-orga26156c" class="outline-2">
-<h2 id="orga26156c">Passing Parameters through a dictionary</h2>
-<div class="outline-text-2" id="text-orga26156c">
+<div id="outline-container-org84c79f9" class="outline-2">
+<h2 id="org84c79f9">Passing Parameters through a dictionary</h2>
+<div class="outline-text-2" id="text-org84c79f9">
 <div class="highlight"><pre><span></span>    <span class="c1">## Specify parameters and model</span>
     <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'C'</span><span class="p">:</span><span class="mf">1.0</span><span class="p">,</span><span class="s1">'kernel'</span><span class="p">:</span><span class="s1">'linear'</span><span class="p">,</span><span class="s1">'gamma'</span><span class="p">:</span><span class="mf">0.5</span><span class="p">}</span>
 
@@ -465,9 +551,9 @@ number of extra named parameters.
 </div>
 </div>
 
-<div id="outline-container-orgeecdbc7" class="outline-2">
-<h2 id="orgeecdbc7">Staticmethod for Class calls</h2>
-<div class="outline-text-2" id="text-orgeecdbc7">
+<div id="outline-container-org94e161a" class="outline-2">
+<h2 id="org94e161a">Staticmethod for Class calls</h2>
+<div class="outline-text-2" id="text-org94e161a">
 <p>
 with staticmethod you do not have to refer to an class object. The
 argument self is omitted as a variable and you simply call it by
@@ -488,15 +574,15 @@ immutable via inheritance.
 </div>
 </div>
 
-<div id="outline-container-org1036b6d" class="outline-2">
-<h2 id="org1036b6d">Use pseudo code to keep track of what you do</h2>
-<div class="outline-text-2" id="text-org1036b6d">
+<div id="outline-container-org62b55bf" class="outline-2">
+<h2 id="org62b55bf">Use pseudo code to keep track of what you do</h2>
+<div class="outline-text-2" id="text-org62b55bf">
 <p>
 When you write docstrings use pseudo code to document the logical
 structure
 </p>
 
-<pre class="example" id="orge382daf">
+<pre class="example">
 for ec in len(dict_levenshtein):
     for path in ec:
 	for question in path:
@@ -507,9 +593,9 @@ for ec in len(dict_levenshtein):
 </div>
 </div>
 
-<div id="outline-container-orgbab3a9f" class="outline-2">
-<h2 id="orgbab3a9f">Difference of variable with or without self. in the <span class="underline"><span class="underline">init</span></span> method.</h2>
-<div class="outline-text-2" id="text-orgbab3a9f">
+<div id="outline-container-orgf2761da" class="outline-2">
+<h2 id="orgf2761da">Difference of variable with or without self. in the <span class="underline"><span class="underline">init</span></span> method.</h2>
+<div class="outline-text-2" id="text-orgf2761da">
 <p>
 View the second answer for the best of the explanation.
 </p>
@@ -520,18 +606,18 @@ View the second answer for the best of the explanation.
 </div>
 </div>
 
-<div id="outline-container-org57106e6" class="outline-2">
-<h2 id="org57106e6">On python path for importing packages and how the interpreter works with files</h2>
-<div class="outline-text-2" id="text-org57106e6">
+<div id="outline-container-orgbb8bd20" class="outline-2">
+<h2 id="orgbb8bd20">On python path for importing packages and how the interpreter works with files</h2>
+<div class="outline-text-2" id="text-orgbb8bd20">
 <p>
 Read <a href="https://www.devdungeon.com/content/python-import-syspath-and-pythonpath-tutorial">this post</a>.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org6ce38fd" class="outline-2">
-<h2 id="org6ce38fd">Access global variable within a function / a flask route</h2>
-<div class="outline-text-2" id="text-org6ce38fd">
+<div id="outline-container-org302c86e" class="outline-2">
+<h2 id="org302c86e">Access global variable within a function / a flask route</h2>
+<div class="outline-text-2" id="text-org302c86e">
 <div class="highlight"><pre><span></span>  <span class="n">first_call</span> <span class="o">=</span> <span class="kc">True</span>
 
   <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -549,9 +635,9 @@ Read <a href="https://www.devdungeon.com/content/python-import-syspath-and-pytho
 </div>
 </div>
 
-<div id="outline-container-org4a0a990" class="outline-2">
-<h2 id="org4a0a990">Web server</h2>
-<div class="outline-text-2" id="text-org4a0a990">
+<div id="outline-container-org0543c04" class="outline-2">
+<h2 id="org0543c04">Web server</h2>
+<div class="outline-text-2" id="text-org0543c04">
 <p>
 When working with flask always double check that you are not using
 the built-in <code>Werkzeug</code> server that is not suited for
@@ -574,9 +660,9 @@ endpoint and analyzing the headers.
 </div>
 </div>
 
-<div id="outline-container-orga7b2fe8" class="outline-2">
-<h2 id="orga7b2fe8">Low level memory issues</h2>
-<div class="outline-text-2" id="text-orga7b2fe8">
+<div id="outline-container-orge5e2f17" class="outline-2">
+<h2 id="orge5e2f17">Low level memory issues</h2>
+<div class="outline-text-2" id="text-orge5e2f17">
 <p>
 I recently incurred into a very low level issue. When you want to
 inspect how python manages objects and when an object simply points
@@ -596,6 +682,7 @@ to another one or when a new variable is created you can use the
 
 <pre class="example">
 4531254984
+
 4531254984
 </pre>
 
@@ -609,6 +696,7 @@ to another one or when a new variable is created you can use the
 
 <pre class="example">
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1]
+
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1]
 </pre>
 
@@ -624,6 +712,7 @@ to another one or when a new variable is created you can use the
 
 <pre class="example">
 4530999096
+
 4531254984
 </pre>
 
@@ -637,14 +726,15 @@ to another one or when a new variable is created you can use the
 
 <pre class="example">
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1]
+
 [0, 1, 2, 3, 4, 5, 6, 7, 1]
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org2c48ee1" class="outline-2">
-<h2 id="org2c48ee1">Package Implementation and <span class="underline"><span class="underline">init</span></span>.py</h2>
-<div class="outline-text-2" id="text-org2c48ee1">
+<div id="outline-container-org2fae74d" class="outline-2">
+<h2 id="org2fae74d">Package Implementation and <span class="underline"><span class="underline">init</span></span>.py</h2>
+<div class="outline-text-2" id="text-org2fae74d">
 <p>
 Refer to <a href="https://towardsdatascience.com/whats-init-for-me-d70a312da583">this</a> article.
 </p>
@@ -655,9 +745,9 @@ Also <a href="https://docs.python-guide.org/writing/structure/">this</a> is a qu
 </div>
 </div>
 
-<div id="outline-container-org6ef8058" class="outline-2">
-<h2 id="org6ef8058">Environment variables</h2>
-<div class="outline-text-2" id="text-org6ef8058">
+<div id="outline-container-org72b3712" class="outline-2">
+<h2 id="org72b3712">Environment variables</h2>
+<div class="outline-text-2" id="text-org72b3712">
 <p>
 This one I found already a couple of times in other projects.
 </p>
@@ -675,9 +765,9 @@ Then you import what is in there via the module <code>dotenv</code>
 </div>
 </div>
 
-<div id="outline-container-org09977cd" class="outline-2">
-<h2 id="org09977cd">Function Wraps</h2>
-<div class="outline-text-2" id="text-org09977cd">
+<div id="outline-container-org292c978" class="outline-2">
+<h2 id="org292c978">Function Wraps</h2>
+<div class="outline-text-2" id="text-org292c978">
 <p>
 This is a nice tool. You can wrap and augment functions with
 it. It is a standard Python module so that it should already be in
@@ -697,9 +787,9 @@ input to your function respecting such an input format)
 </div>
 </div>
 
-<div id="outline-container-org7378116" class="outline-2">
-<h2 id="org7378116">Abort error messages on Flask</h2>
-<div class="outline-text-2" id="text-org7378116">
+<div id="outline-container-orgb181289" class="outline-2">
+<h2 id="orgb181289">Abort error messages on Flask</h2>
+<div class="outline-text-2" id="text-orgb181289">
 <p>
 This comes handy when you specify an endpoint and you receive bad
 requests etc.
@@ -724,7 +814,7 @@ requests etc.
             <li class="next">
                 <a href="../embedding-watson-assistant-into-a-client-webpage/" rel="next" title="Embedding Watson Assistant into a Client Webpage">Next post</a>
             </li>
-        </ul></nav></aside></article><footer id="footer"><p>Contents © 2021         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2024         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
         </footer>
 </div>

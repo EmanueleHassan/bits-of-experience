@@ -161,6 +161,7 @@ class: center;
 
   - Operational Risk
   
+
 * Quantitative Risk
 
   At city they have the following divisions:
@@ -177,6 +178,244 @@ class: center;
 
   - Model Governance and Stress Testing
 
+
+* On tail dependency
+
+*** Copula 
+
+    Here are some quick and dirty notes about the copulas. 
+
+    These are handy when modeling the dependency of data in that they
+    allow to come to the multivariate distribution of data by working
+    sequentially with the individual marginal distributions and with
+    the copula (cumulative) distribution, the distribution expressing the
+    CDF (and therefore the dependency) among the marginal CDF distributions. 
+
+    More formally you can state:
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2023-06-08 151139.png" class="center">
+    #+end_export
+
+    So you see that the copula focuses on the dependency structure by
+    focusing on the joint distribution of the CDFs. 
+
+    In this sense you can generate a sample for the dependency of the
+    CDFs by generating a sample via the marginal of choice and then
+    through the marginal obtaining uniformly distributed RV.
+
+    You can then compute the following:
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2023-06-09 140418.png" class="center">
+    #+end_export
+
+    You would have then a set of probabilities for the event that you
+    can compare with existing copulas. Or through which you can
+    estimate the parameters of a given copula.
+
+
+**** Sklar's Theorem
+
+     This theorem is the one that proves that the approach above is
+     correct. 
+
+     In fact it states the following:
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2023-06-09 142825.png" class="center">
+     #+end_export
+
+     
+**** Families of Copulas
+
+     You can then work with different families of copulas in order to
+     model the dependency across your data.
+
+     The common parameteric families are the following:
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2023-06-09 143211.png" class="center">
+     #+end_export
+     
+     From the discussion above it is clear how you can estimate such
+     parameters and work with such families in order to inspect
+     general dependencies (and possibly tail dependencies) in the
+     data.
+
+
+* Derivatives Pricing - Black Scholes
+
+  So this seems to be another quite interesting topic when they make
+  you interview questions for different jobs. 
+
+  So it is worth going over them again and make some notes here such
+  that you can quickly go over them again when necessary. 
+
+  The notes are mainly based on Hull book about derivatives, options etc.
+
+
+*** Brownian Motion / Wiener Process
+
+    This has been originally been defined in physics in order to model
+    the motion of a particle that is subject to a large number of
+    small molecular shocks.
+
+    The characteristics of such process are a mean of zero and
+    =variance= 1 per unit of time. 
+
+    The shocks are i.i.d. and hence the variance sums in time. 
+
+    This essentially mean that the =standard deviation= is /one per
+    square root of time/.
+
+    Now note that the process follows a normal distribution such that,
+    the process can be generally described as follows.
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2023-06-09 152450.png" class="center">
+    #+end_export
+
+    Now this process works well for describing the returns, these are
+    i.i.d. and their variance is expected to increase in time.
+
+    We also know that assuming a normal distribution for the expected
+    price in the future is not a bad assumption. 
+
+    On the top of it we know that there is no free lunch in financial
+    markets such that the price in the future should be Markov -
+    i.e. only the present state is important for predicting the
+    future, the path taken is not.
+
+    However there is the beta of the market and that should somehow be
+    registered in the way we model stock prices. 
+
+    This brings us to the geometrical brownian motion. 
+
+
+*** Geometric Brownian Motion / Generalized Wiener Process
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2023-06-09 153443.png" class="center">
+    #+end_export
+
+    So you see you essentially have two components: a drift component
+    and a variance component. 
+
+    In this new generalized process you have the following
+    characteristics:
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2023-06-09 153648.png" class="center">
+    #+end_export
+
+
+*** Ito Process
+
+    Finally you have the Ito process that adds the condition that the
+    drift parameter =a= and the variance parameter =b= can be a
+    function of the underlying =x= and time =t=. They are not static
+    in this sense.
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2023-06-09 154433.png" class="center">
+    #+end_export
+
+
+*** Ito's Lemma
+
+    Ito's Lemma state the following and how we will shortly see it is
+    the basis of arriving through the Black Scholes Formula that will
+    give a tool of analytically pricing some types of derivatives. 
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2023-06-11 194724.png" class="center">
+    #+end_export
+
+    The Lemma is quite easy to prove. It consists simply of taking a
+    Taylor Expansion of the dG/dx. 
+
+    If you consider then the limit case dx -> 0 and dt -> 0 and ignore
+    higher terms in the Taylor expansion (cause they decay
+    sufficiently fast) you will get to the result.
+
+    The only part where you have to pay attention is the in the
+    following: =dx^2 = b^2 epsilon^2 * dt=. And therefore it is not
+    ignored. 
+
+    This is due to underlying ito process (and the fact that you
+    ignore higher order terms) where dx depends on the square root of
+    time as mentioned.
+
+*** Example of using Ito's Lemma
+
+**** Ito process for modeling Securities prices
+
+     The standard way you model a stock price is the following.
+
+     This is quite an intuitive process. You have a drift and variance
+     and both increase with the size of the investment.
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2023-06-09 164514.png" class="center">
+     #+end_export
+
+     Note however that when taking the *expected returns* the parameters
+     of Ito's process are ultimately not more dependent on the stock
+     level itself.
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2023-06-09 164613.png" class="center">
+     #+end_export
+
+**** Forward
+
+     If you leverage Ito's lemma for pricing the forward you have:
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2023-06-09 165159.png" class="center">
+     #+end_export
+
+**** LogNoraml 
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2023-06-09 165255.png" class="center">
+     #+end_export
+
+     #+begin_export html
+      <img src="../../images/Screenshot 2023-06-09 165325.png" class="center">
+     #+end_export
+
+*** Black Scholes
+
+    Black Scholes is then nothing else of an application of the above.
+
+    The idea is basically the one of creating a risk neutral portfolio
+    given a stock and a derivative on that security.
+
+    From Ito's lemma we know that the underlying uncertainty is the
+    same in the stock and in the derivative. 
+
+    Than given that the underlying uncertainty is the same we can
+    construct a risk-free portfolio that should earn the risk free
+    rate in infinitesimal amount of time.
+    
+    This is what we are going to do next and the result will be the
+    Black-Scholes solution for pricing derivatives on stocks.
+    
+    #+begin_export html
+     <img src="../../images/Screenshot 2023-06-11 193210.png" class="center">
+    #+end_export
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2023-06-11 193337.png" class="center">
+    #+end_export
+
+    #+begin_export html
+     <img src="../../images/Screenshot 2023-06-11 193427.png" class="center">
+    #+end_export
+
+    
 * Questions
   
 ** Risk Measures
@@ -384,6 +623,7 @@ class: center;
     Then with Arrow-Debreu prices you can get to the risk-neutral
     expected payoff and price pay-off according to the risk-free rate.
     
+
 ** Yield Curve
 
 
@@ -477,8 +717,8 @@ class: center;
 
       I think this is key-rate duration.
 
-** Quantitative Concepts
 
+** Quantitative Concepts
    - assumptions behind Black Scholes?
 
      1. stock follows a GBM with *constant* drift and volatility.
@@ -602,6 +842,7 @@ class: center;
      current market conditions?
 
      You can delta hedge the risk.
+
 
 ** Products
    
@@ -783,24 +1024,8 @@ class: center;
 <img src="../../images/Bildschirmfoto_2021-05-17_um_08.37.28.png" class="center">
 #+end_export
 
+
+
    
-* What are your key strengths
-
-  - say extensive exposure to stochastic simulation. especially
-    MCMC-Monte carlo methods, importance sampling, rejection sampling
-    etc.
-
-  - like also non-linear times series models. at the time of my thesis
-    I explored GTS trees. but also threshold VAR models. also read
-    some literature with MC-regimes switching VAR - of Guidolin and
-    others. Would love to expand on these.
-
-  - could refine my programming knowledge in the last 2 years and
-    collect best practices in programming and software development
-    which will surely be useful in the long run, for developing
-    quality software.
-
-  
-
-
+    
 
