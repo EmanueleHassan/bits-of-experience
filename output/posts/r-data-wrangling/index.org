@@ -1,0 +1,703 @@
+#+BEGIN_COMMENT
+.. title: R Data Wrangling
+.. slug: r-data-wrangling
+.. date: 2024-02-11 19:27:51 UTC+01:00
+.. tags: 
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+begin_export html
+<style>
+
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+  position: relative;
+  left: 15%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 70%;
+  overflow: hidden;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  display:block;
+  overflow-y: hidden;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display:block;
+  overflow-y: hidden;
+}
+</style>
+ #+end_export
+
+
+This is a post where I hold some notes about data wrangling in R.
+
+In general so far you always used the dplyr package. Check at the
+project you did for Expedia in this sense. There you can refresh the
+dplyr methods. 
+
+In this post you will mainly check at the native data wrangling in R.
+
+This will be useful for the coding exercise you will have to do. 
+
+On the top it will be useful as a repository for refreshing the
+material when you need it.
+
+{{{TEASER_END}}}
+
+** Data Slicing
+#+begin_comment
+ :Properties:
+ :header-args:R: :session anova :results output drawer :exports both
+ :end:
+#+end_comment
+
+
+   Note that there is a difference when 
+
+*** Import data from the dataset package and play with them
+
+    #+begin_src R
+
+    ## It is in the base package - do not necessarily have to download it
+    ## library ("datasets")
+    data (mtcars)
+
+    head(mtcars, 10)
+    #+end_src
+
+    #+RESULTS:
+    |   21 | 6 |   160 | 110 |  3.9 |  2.62 | 16.46 | 0 | 1 | 4 | 4 |
+    |   21 | 6 |   160 | 110 |  3.9 | 2.875 | 17.02 | 0 | 1 | 4 | 4 |
+    | 22.8 | 4 |   108 |  93 | 3.85 |  2.32 | 18.61 | 1 | 1 | 4 | 1 |
+    | 21.4 | 6 |   258 | 110 | 3.08 | 3.215 | 19.44 | 1 | 0 | 3 | 1 |
+    | 18.7 | 8 |   360 | 175 | 3.15 |  3.44 | 17.02 | 0 | 0 | 3 | 2 |
+    | 18.1 | 6 |   225 | 105 | 2.76 |  3.46 | 20.22 | 1 | 0 | 3 | 1 |
+    | 14.3 | 8 |   360 | 245 | 3.21 |  3.57 | 15.84 | 0 | 0 | 3 | 4 |
+    | 24.4 | 4 | 146.7 |  62 | 3.69 |  3.19 |    20 | 1 | 0 | 4 | 2 |
+    | 22.8 | 4 | 140.8 |  95 | 3.92 |  3.15 |  22.9 | 1 | 0 | 4 | 2 |
+    | 19.2 | 6 | 167.6 | 123 | 3.92 |  3.44 |  18.3 | 1 | 0 | 4 | 4 |
+
+
+    #+begin_src R
+    summary(mtcars) ## get summary statistics of the datasets
+    #+end_src
+
+    #+RESULTS:
+    | Min.   :10.40 | Min.   :4.000 | Min.   : 71.1 | Min.   : 52.0 | Min.   :2.760 | Min.   :1.513 | Min.   :14.50 | Min.   :0.0000 | Min.   :0.0000 | Min.   :3.000 | Min.   :1.000 |
+    | 1st Qu.:15.43 | 1st Qu.:4.000 | 1st Qu.:120.8 | 1st Qu.: 96.5 | 1st Qu.:3.080 | 1st Qu.:2.581 | 1st Qu.:16.89 | 1st Qu.:0.0000 | 1st Qu.:0.0000 | 1st Qu.:3.000 | 1st Qu.:2.000 |
+    | Median :19.20 | Median :6.000 | Median :196.3 | Median :123.0 | Median :3.695 | Median :3.325 | Median :17.71 | Median :0.0000 | Median :0.0000 | Median :4.000 | Median :2.000 |
+    | Mean   :20.09 | Mean   :6.188 | Mean   :230.7 | Mean   :146.7 | Mean   :3.597 | Mean   :3.217 | Mean   :17.85 | Mean   :0.4375 | Mean   :0.4062 | Mean   :3.688 | Mean   :2.812 |
+    | 3rd Qu.:22.80 | 3rd Qu.:8.000 | 3rd Qu.:326.0 | 3rd Qu.:180.0 | 3rd Qu.:3.920 | 3rd Qu.:3.610 | 3rd Qu.:18.90 | 3rd Qu.:1.0000 | 3rd Qu.:1.0000 | 3rd Qu.:4.000 | 3rd Qu.:4.000 |
+    | Max.   :33.90 | Max.   :8.000 | Max.   :472.0 | Max.   :335.0 | Max.   :4.930 | Max.   :5.424 | Max.   :22.90 | Max.   :1.0000 | Max.   :1.0000 | Max.   :5.000 | Max.   :8.000 |
+
+    #+begin_src R
+    str(mtcars)     ## get the structure of the data
+                    ## all numerical variables here
+    #+end_src
+
+    #+RESULTS:
+
+*** Select by row
+
+    #+begin_src R
+    mtcars[c(1:5),] 
+
+    ## same as
+    head(mtcars, 5)
+    #+end_src
+
+    #+RESULTS:
+    |   21 | 6 | 160 | 110 |  3.9 |  2.62 | 16.46 | 0 | 1 | 4 | 4 |
+    |   21 | 6 | 160 | 110 |  3.9 | 2.875 | 17.02 | 0 | 1 | 4 | 4 |
+    | 22.8 | 4 | 108 |  93 | 3.85 |  2.32 | 18.61 | 1 | 1 | 4 | 1 |
+    | 21.4 | 6 | 258 | 110 | 3.08 | 3.215 | 19.44 | 1 | 0 | 3 | 1 |
+    | 18.7 | 8 | 360 | 175 | 3.15 |  3.44 | 17.02 | 0 | 0 | 3 | 2 |
+
+
+    Select based on condition
+
+    #+begin_src R
+    mtcars[mtcars$wt > 3, ]
+    #+end_src
+
+    #+RESULTS:
+    | 21.4 | 6 |   258 | 110 | 3.08 | 3.215 | 19.44 | 1 | 0 | 3 | 1 |
+    | 18.7 | 8 |   360 | 175 | 3.15 |  3.44 | 17.02 | 0 | 0 | 3 | 2 |
+    | 18.1 | 6 |   225 | 105 | 2.76 |  3.46 | 20.22 | 1 | 0 | 3 | 1 |
+    | 14.3 | 8 |   360 | 245 | 3.21 |  3.57 | 15.84 | 0 | 0 | 3 | 4 |
+    | 24.4 | 4 | 146.7 |  62 | 3.69 |  3.19 |    20 | 1 | 0 | 4 | 2 |
+    | 22.8 | 4 | 140.8 |  95 | 3.92 |  3.15 |  22.9 | 1 | 0 | 4 | 2 |
+    | 19.2 | 6 | 167.6 | 123 | 3.92 |  3.44 |  18.3 | 1 | 0 | 4 | 4 |
+    | 17.8 | 6 | 167.6 | 123 | 3.92 |  3.44 |  18.9 | 1 | 0 | 4 | 4 |
+    | 16.4 | 8 | 275.8 | 180 | 3.07 |  4.07 |  17.4 | 0 | 0 | 3 | 3 |
+    | 17.3 | 8 | 275.8 | 180 | 3.07 |  3.73 |  17.6 | 0 | 0 | 3 | 3 |
+    | 15.2 | 8 | 275.8 | 180 | 3.07 |  3.78 |    18 | 0 | 0 | 3 | 3 |
+    | 10.4 | 8 |   472 | 205 | 2.93 |  5.25 | 17.98 | 0 | 0 | 3 | 4 |
+    | 10.4 | 8 |   460 | 215 |    3 | 5.424 | 17.82 | 0 | 0 | 3 | 4 |
+    | 14.7 | 8 |   440 | 230 | 3.23 | 5.345 | 17.42 | 0 | 0 | 3 | 4 |
+    | 15.5 | 8 |   318 | 150 | 2.76 |  3.52 | 16.87 | 0 | 0 | 3 | 2 |
+    | 15.2 | 8 |   304 | 150 | 3.15 | 3.435 |  17.3 | 0 | 0 | 3 | 2 |
+    | 13.3 | 8 |   350 | 245 | 3.73 |  3.84 | 15.41 | 0 | 0 | 3 | 4 |
+    | 19.2 | 8 |   400 | 175 | 3.08 | 3.845 | 17.05 | 0 | 0 | 3 | 2 |
+    | 15.8 | 8 |   351 | 264 | 4.22 |  3.17 |  14.5 | 0 | 1 | 5 | 4 |
+    |   15 | 8 |   301 | 335 | 3.54 |  3.57 |  14.6 | 0 | 1 | 5 | 8 |
+
+
+    Select on multiple filter condition
+
+    #+begin_src R
+    # mtcars[c(mtcars$wt > 3, mtcars$carb > 2), ] ## does not yield error
+						  ## but result is wrong
+
+    # You can work with & and or operators
+    mtcars[mtcars$wt > 3 & mtcars$carb > 2,]
+    #+end_src
+
+    #+RESULTS:
+    | 14.3 | 8 |   360 | 245 | 3.21 |  3.57 | 15.84 | 0 | 0 | 3 | 4 |
+    | 19.2 | 6 | 167.6 | 123 | 3.92 |  3.44 |  18.3 | 1 | 0 | 4 | 4 |
+    | 17.8 | 6 | 167.6 | 123 | 3.92 |  3.44 |  18.9 | 1 | 0 | 4 | 4 |
+    | 16.4 | 8 | 275.8 | 180 | 3.07 |  4.07 |  17.4 | 0 | 0 | 3 | 3 |
+    | 17.3 | 8 | 275.8 | 180 | 3.07 |  3.73 |  17.6 | 0 | 0 | 3 | 3 |
+    | 15.2 | 8 | 275.8 | 180 | 3.07 |  3.78 |    18 | 0 | 0 | 3 | 3 |
+    | 10.4 | 8 |   472 | 205 | 2.93 |  5.25 | 17.98 | 0 | 0 | 3 | 4 |
+    | 10.4 | 8 |   460 | 215 |    3 | 5.424 | 17.82 | 0 | 0 | 3 | 4 |
+    | 14.7 | 8 |   440 | 230 | 3.23 | 5.345 | 17.42 | 0 | 0 | 3 | 4 |
+    | 13.3 | 8 |   350 | 245 | 3.73 |  3.84 | 15.41 | 0 | 0 | 3 | 4 |
+    | 15.8 | 8 |   351 | 264 | 4.22 |  3.17 |  14.5 | 0 | 1 | 5 | 4 |
+    |   15 | 8 |   301 | 335 | 3.54 |  3.57 |  14.6 | 0 | 1 | 5 | 8 |
+
+*** Select by column Name
+
+
+    #+begin_src R
+    mtcars$wt
+    mtcars$"wt"   ## it works in both ways -> good.
+    #+end_src
+
+    #+RESULTS:
+    |  2.62 |
+    | 2.875 |
+    |  2.32 |
+    | 3.215 |
+    |  3.44 |
+    |  3.46 |
+    |  3.57 |
+    |  3.19 |
+    |  3.15 |
+    |  3.44 |
+    |  3.44 |
+    |  4.07 |
+    |  3.73 |
+    |  3.78 |
+    |  5.25 |
+    | 5.424 |
+    | 5.345 |
+    |   2.2 |
+    | 1.615 |
+    | 1.835 |
+    | 2.465 |
+    |  3.52 |
+    | 3.435 |
+    |  3.84 |
+    | 3.845 |
+    | 1.935 |
+    |  2.14 |
+    | 1.513 |
+    |  3.17 |
+    |  2.77 |
+    |  3.57 |
+    |  2.78 |
+
+#+begin_src R
+mtcars["wt"]   ## works as well in the following way
+#+end_src
+
+#+RESULTS:
+|  2.62 |
+| 2.875 |
+|  2.32 |
+| 3.215 |
+|  3.44 |
+|  3.46 |
+|  3.57 |
+|  3.19 |
+|  3.15 |
+|  3.44 |
+|  3.44 |
+|  4.07 |
+|  3.73 |
+|  3.78 |
+|  5.25 |
+| 5.424 |
+| 5.345 |
+|   2.2 |
+| 1.615 |
+| 1.835 |
+| 2.465 |
+|  3.52 |
+| 3.435 |
+|  3.84 |
+| 3.845 |
+| 1.935 |
+|  2.14 |
+| 1.513 |
+|  3.17 |
+|  2.77 |
+|  3.57 |
+|  2.78 |
+
+#+begin_src R
+mtcars[, c("mpg", "hp", "drat")]
+
+## same as column binding with $ operator
+cbind(mtcars$mpg, mtcars$hp, mtcars$drat) 
+#+end_src
+
+#+RESULTS:
+|   21 | 110 |  3.9 |
+|   21 | 110 |  3.9 |
+| 22.8 |  93 | 3.85 |
+| 21.4 | 110 | 3.08 |
+| 18.7 | 175 | 3.15 |
+| 18.1 | 105 | 2.76 |
+| 14.3 | 245 | 3.21 |
+| 24.4 |  62 | 3.69 |
+| 22.8 |  95 | 3.92 |
+| 19.2 | 123 | 3.92 |
+| 17.8 | 123 | 3.92 |
+| 16.4 | 180 | 3.07 |
+| 17.3 | 180 | 3.07 |
+| 15.2 | 180 | 3.07 |
+| 10.4 | 205 | 2.93 |
+| 10.4 | 215 |    3 |
+| 14.7 | 230 | 3.23 |
+| 32.4 |  66 | 4.08 |
+| 30.4 |  52 | 4.93 |
+| 33.9 |  65 | 4.22 |
+| 21.5 |  97 |  3.7 |
+| 15.5 | 150 | 2.76 |
+| 15.2 | 150 | 3.15 |
+| 13.3 | 245 | 3.73 |
+| 19.2 | 175 | 3.08 |
+| 27.3 |  66 | 4.08 |
+|   26 |  91 | 4.43 |
+| 30.4 | 113 | 3.77 |
+| 15.8 | 264 | 4.22 |
+| 19.7 | 175 | 3.62 |
+|   15 | 335 | 3.54 |
+| 21.4 | 109 | 4.11 |
+
+*** Select by column number
+
+#+begin_src R
+## mtcars[, c(1:3, 5:)] ## Note unlike python R does not get to fill
+                        ## up until the existing numbers of columns.
+                        ## You have to manually specify the argument as 
+                        ## follows
+
+mtcars[, c(1:3, 5:length(colnames(mtcars)))]
+#+end_src
+
+#+RESULTS:
+|   21 | 6 |   160 |  3.9 |  2.62 | 16.46 | 0 | 1 | 4 | 4 |
+|   21 | 6 |   160 |  3.9 | 2.875 | 17.02 | 0 | 1 | 4 | 4 |
+| 22.8 | 4 |   108 | 3.85 |  2.32 | 18.61 | 1 | 1 | 4 | 1 |
+| 21.4 | 6 |   258 | 3.08 | 3.215 | 19.44 | 1 | 0 | 3 | 1 |
+| 18.7 | 8 |   360 | 3.15 |  3.44 | 17.02 | 0 | 0 | 3 | 2 |
+| 18.1 | 6 |   225 | 2.76 |  3.46 | 20.22 | 1 | 0 | 3 | 1 |
+| 14.3 | 8 |   360 | 3.21 |  3.57 | 15.84 | 0 | 0 | 3 | 4 |
+| 24.4 | 4 | 146.7 | 3.69 |  3.19 |    20 | 1 | 0 | 4 | 2 |
+| 22.8 | 4 | 140.8 | 3.92 |  3.15 |  22.9 | 1 | 0 | 4 | 2 |
+| 19.2 | 6 | 167.6 | 3.92 |  3.44 |  18.3 | 1 | 0 | 4 | 4 |
+| 17.8 | 6 | 167.6 | 3.92 |  3.44 |  18.9 | 1 | 0 | 4 | 4 |
+| 16.4 | 8 | 275.8 | 3.07 |  4.07 |  17.4 | 0 | 0 | 3 | 3 |
+| 17.3 | 8 | 275.8 | 3.07 |  3.73 |  17.6 | 0 | 0 | 3 | 3 |
+| 15.2 | 8 | 275.8 | 3.07 |  3.78 |    18 | 0 | 0 | 3 | 3 |
+| 10.4 | 8 |   472 | 2.93 |  5.25 | 17.98 | 0 | 0 | 3 | 4 |
+| 10.4 | 8 |   460 |    3 | 5.424 | 17.82 | 0 | 0 | 3 | 4 |
+| 14.7 | 8 |   440 | 3.23 | 5.345 | 17.42 | 0 | 0 | 3 | 4 |
+| 32.4 | 4 |  78.7 | 4.08 |   2.2 | 19.47 | 1 | 1 | 4 | 1 |
+| 30.4 | 4 |  75.7 | 4.93 | 1.615 | 18.52 | 1 | 1 | 4 | 2 |
+| 33.9 | 4 |  71.1 | 4.22 | 1.835 |  19.9 | 1 | 1 | 4 | 1 |
+| 21.5 | 4 | 120.1 |  3.7 | 2.465 | 20.01 | 1 | 0 | 3 | 1 |
+| 15.5 | 8 |   318 | 2.76 |  3.52 | 16.87 | 0 | 0 | 3 | 2 |
+| 15.2 | 8 |   304 | 3.15 | 3.435 |  17.3 | 0 | 0 | 3 | 2 |
+| 13.3 | 8 |   350 | 3.73 |  3.84 | 15.41 | 0 | 0 | 3 | 4 |
+| 19.2 | 8 |   400 | 3.08 | 3.845 | 17.05 | 0 | 0 | 3 | 2 |
+| 27.3 | 4 |    79 | 4.08 | 1.935 |  18.9 | 1 | 1 | 4 | 1 |
+|   26 | 4 | 120.3 | 4.43 |  2.14 |  16.7 | 0 | 1 | 5 | 2 |
+| 30.4 | 4 |  95.1 | 3.77 | 1.513 |  16.9 | 1 | 1 | 5 | 2 |
+| 15.8 | 8 |   351 | 4.22 |  3.17 |  14.5 | 0 | 1 | 5 | 4 |
+| 19.7 | 6 |   145 | 3.62 |  2.77 |  15.5 | 0 | 1 | 5 | 6 |
+|   15 | 8 |   301 | 3.54 |  3.57 |  14.6 | 0 | 1 | 5 | 8 |
+| 21.4 | 4 |   121 | 4.11 |  2.78 |  18.6 | 1 | 1 | 4 | 2 |
+
+*** Exclude Column / Row by Names
+
+    #+begin_src R
+    # mtcars[, -"carb"] ## Does not work with name
+
+    mtcars[, !(names(mtcars) %in% "carb")] ## But you can use a logical
+					   ## vector to achieve this
+
+    #+end_src
+
+    #+RESULTS:
+    |   21 | 6 |   160 | 110 |  3.9 |  2.62 | 16.46 | 0 | 1 | 4 |
+    |   21 | 6 |   160 | 110 |  3.9 | 2.875 | 17.02 | 0 | 1 | 4 |
+    | 22.8 | 4 |   108 |  93 | 3.85 |  2.32 | 18.61 | 1 | 1 | 4 |
+    | 21.4 | 6 |   258 | 110 | 3.08 | 3.215 | 19.44 | 1 | 0 | 3 |
+    | 18.7 | 8 |   360 | 175 | 3.15 |  3.44 | 17.02 | 0 | 0 | 3 |
+    | 18.1 | 6 |   225 | 105 | 2.76 |  3.46 | 20.22 | 1 | 0 | 3 |
+    | 14.3 | 8 |   360 | 245 | 3.21 |  3.57 | 15.84 | 0 | 0 | 3 |
+    | 24.4 | 4 | 146.7 |  62 | 3.69 |  3.19 |    20 | 1 | 0 | 4 |
+    | 22.8 | 4 | 140.8 |  95 | 3.92 |  3.15 |  22.9 | 1 | 0 | 4 |
+    | 19.2 | 6 | 167.6 | 123 | 3.92 |  3.44 |  18.3 | 1 | 0 | 4 |
+    | 17.8 | 6 | 167.6 | 123 | 3.92 |  3.44 |  18.9 | 1 | 0 | 4 |
+    | 16.4 | 8 | 275.8 | 180 | 3.07 |  4.07 |  17.4 | 0 | 0 | 3 |
+    | 17.3 | 8 | 275.8 | 180 | 3.07 |  3.73 |  17.6 | 0 | 0 | 3 |
+    | 15.2 | 8 | 275.8 | 180 | 3.07 |  3.78 |    18 | 0 | 0 | 3 |
+    | 10.4 | 8 |   472 | 205 | 2.93 |  5.25 | 17.98 | 0 | 0 | 3 |
+    | 10.4 | 8 |   460 | 215 |    3 | 5.424 | 17.82 | 0 | 0 | 3 |
+    | 14.7 | 8 |   440 | 230 | 3.23 | 5.345 | 17.42 | 0 | 0 | 3 |
+    | 32.4 | 4 |  78.7 |  66 | 4.08 |   2.2 | 19.47 | 1 | 1 | 4 |
+    | 30.4 | 4 |  75.7 |  52 | 4.93 | 1.615 | 18.52 | 1 | 1 | 4 |
+    | 33.9 | 4 |  71.1 |  65 | 4.22 | 1.835 |  19.9 | 1 | 1 | 4 |
+    | 21.5 | 4 | 120.1 |  97 |  3.7 | 2.465 | 20.01 | 1 | 0 | 3 |
+    | 15.5 | 8 |   318 | 150 | 2.76 |  3.52 | 16.87 | 0 | 0 | 3 |
+    | 15.2 | 8 |   304 | 150 | 3.15 | 3.435 |  17.3 | 0 | 0 | 3 |
+    | 13.3 | 8 |   350 | 245 | 3.73 |  3.84 | 15.41 | 0 | 0 | 3 |
+    | 19.2 | 8 |   400 | 175 | 3.08 | 3.845 | 17.05 | 0 | 0 | 3 |
+    | 27.3 | 4 |    79 |  66 | 4.08 | 1.935 |  18.9 | 1 | 1 | 4 |
+    |   26 | 4 | 120.3 |  91 | 4.43 |  2.14 |  16.7 | 0 | 1 | 5 |
+    | 30.4 | 4 |  95.1 | 113 | 3.77 | 1.513 |  16.9 | 1 | 1 | 5 |
+    | 15.8 | 8 |   351 | 264 | 4.22 |  3.17 |  14.5 | 0 | 1 | 5 |
+    | 19.7 | 6 |   145 | 175 | 3.62 |  2.77 |  15.5 | 0 | 1 | 5 |
+    |   15 | 8 |   301 | 335 | 3.54 |  3.57 |  14.6 | 0 | 1 | 5 |
+    | 21.4 | 4 |   121 | 109 | 4.11 |  2.78 |  18.6 | 1 | 1 | 4 |
+
+    You can as well pass an entire vector that you aim to exclude and
+    select your variables that way.
+
+    In a similar way you can as well select the relevant rows if they
+    are named
+
+    #+begin_src R
+    mtcars[rownames(mtcars) %in% "Hornet 4 Drive", (names(mtcars) %in% c("carb", "drat"))]
+
+    #+end_src
+
+    #+RESULTS:
+    | 3.08 | 1 |
+
+*** Replace NA
+
+    Create the relevant NA in your dataset and then clean them up
+
+    #+begin_src R :session anova
+    mtcars[mtcars$am < 0.4, c("drat", "qsec")] <- NA
+    #+end_src
+
+    #+RESULTS:
+    : nil
+
+    Count the number of NA in the dataset
+
+    #+begin_src R :session anova
+    sum(is.na(mtcars)) 
+    #+end_src
+
+    #+RESULTS:
+    : 38
+
+    Replace the NA is at simple as passing a boolean matrix selecting
+    the NA and replacing them with the relevant value.
+
+    #+begin_src R :session anova
+    mtcars[is.na(mtcars)] <- 10000 
+    #+end_src
+
+    #+RESULTS:
+    : 10000
+
+    In order to replace based on a condition you can work as follows.
+
+    I.e. create the relevant matrix of booleans and replace them with
+    what you want.
+
+    #+begin_src R :session anova
+    mtcars[mtcars$gear > 4 | is.na(mtcars)] <- NA
+    #+end_src
+
+
+*** Work with the major data types
+#+begin_comment
+ :Properties:
+ :header-args:R: :session anova :results output drawer :exports both
+ :end:
+#+end_comment
+
+    Recall the major data types in R
+
+    #+begin_quote
+    - numeric
+    - integer
+    - double (decimal point)
+    - logical (TRUE/FALSE)
+    - character (text/string)
+    - factor (categorical/qualitative)
+    - date/time
+    #+end_quote
+
+    In this section we will quickly see how to work with these major
+    datatypes and how to convert from one into the other.
+
+    #+begin_src R :session anova
+    num_data <- c(3, 7, 2)
+    num_data
+    #+end_src
+
+    #+RESULTS:
+    | 3 |
+    | 7 |
+    | 2 |
+
+    #+begin_src R :session anova
+    class(num_data)
+    #+end_src
+
+    #+RESULTS:
+    : numeric
+
+
+    #+begin_src R :session anova
+    num_data <- as.double(num_data)
+
+    class(num_data)
+    #+end_src
+
+    #+RESULTS:
+    : numeric
+
+    Append to a vector
+
+    #+begin_src R :session anova
+    num_data[length(num_data) + 1] <- 3.0   
+    #+end_src
+
+    #+RESULTS:
+    : 3
+
+    Convert from double to character.
+
+    #+begin_src R :session anova
+    num_data <- as.character(num_data)
+    #+end_src
+
+    #+RESULTS:
+    | 3 |
+    | 7 |
+    | 2 |
+    | 3 |
+    | 3 |
+
+    Next we will inspect factor variables. These are as well important
+    as you can quickly play with them in order to create summary
+    statistics and features for modeling your statistical case. 
+
+    This is the exercise that you were given on quanthub. basically
+    you have to convert factors of dates in dates and then compute the
+    distance to a date - say "02/22/96"
+
+    #+begin_src R :session anova
+    dates <- factor(c("03/19/92", "06/23/89", "12/01/83", "01/01/95", "09/30/78"))
+    #+end_src
+
+    #+RESULTS:
+    | 03/19/92 |
+    | 06/23/89 |
+    | 12/01/83 |
+    | 01/01/95 |
+    | 09/30/78 |
+
+    You can now check the levels of the factors with the =levels=
+    method
+
+    #+begin_src R :session anova
+    levels(dates)
+    #+end_src
+
+    #+RESULTS:
+    | 01/01/95 |
+    | 03/19/92 |
+    | 06/23/89 |
+    | 09/30/78 |
+    | 12/01/83 |
+
+    And you can obtain the distance in dates to a given date as
+    follows
+
+    #+begin_src R :session anova
+    as.Date("02/22/96", format = "%m/%d/%y") - as.Date(levels(dates), format = "%m/%d/%y")
+    #+end_src
+
+    #+RESULTS:
+    |  417 |
+    | 1435 |
+    | 2435 |
+    | 6354 |
+    | 4466 |
+
+
+** Apply methods    
+
+*** TODO search the airbnb dataset online and work on this example
+
+    #+begin_src R :session anova
+    ## Exercise - count the number of NA per column
+
+    ## Use the sapply function
+
+    ## create the function that has to be triggered for each row.
+    map_function <- function(column) {
+
+      return (sum(is.na(column)))
+
+    }
+
+    a <- sapply(mtcars, FUN = map_function)
+
+    print(a)
+
+    #+end_src
+
+    #+RESULTS:
+    | 0 |
+    | 0 |
+    | 0 |
+    | 0 |
+    | 0 |
+    | 0 |
+    | 0 |
+    | 0 |
+    | 0 |
+    | 0 |
+    | 0 |
+
+
+** TODO Machine Learning with R
+
+   Double check [[https://www.geeksforgeeks.org/machine-learning-with-r/?ref=lbp][this URL]] and make notes about it.
+
+   So there is the entire list of algorithms for working with R on
+   supervised/unsupervised methods. 
+
+   Understand here if there is a general API you use as the =fit=,
+   =transform= API in sklearn. The other option would be to have many
+   different packages you would have to work with.
+
+   Checking at the URL above it seems that the algorithm have not been
+   standardized in a single package with consistent methods as is the
+   case in python. There will be more manual intervention necessary in
+   this sense and more thing to memorize. Skip it at the moment and
+   search for it when performing the exercise should you be asked
+   about it.
+      
+
+** TODO cover quickly as well the dplyr package.
+
+   make a refresher here when you have time.
+
+   Will not have time to check at it before the task. Do it later when
+   you have time.
+
+
+** TODO cover a bit of performance evaluation metrics
+
+   - Sensitivity / Recall
+
+     True Positive / (True Positive + False Negative)
+
+     Meaning true Positves among all of the actual positives.
+
+   - Specificity
+
+     True Negative / (True Negative + False Positive)
+
+   - Precision
+
+     True Positive / (True Positive + False Positive)
+
+     I.e. the share of truly characterized positive cases to all of
+     the characterized (categorized) cases.
+
+
+   Note that the above are just two summary statistics. Based on the
+   idea of True Postive, False Negative, True Negative and False
+   Positive a lot of statistics are created. You can find them [[https://en.wikipedia.org/wiki/Sensitivity_and_specificity][here]].
+
+
+   - F1 Score
+
+     This is a harmonic mean of precision and sensitivity.
+
+     It is therefore a measure of true positive among all positive and
+     true positive among all of the categorized positive.
+
+     The higher the better. 1 best.
+
+   In general keep the following into your mind.
+
+   
+   #+begin_export html
+    <img src="../../images/Screenshot 2024-02-13 140349.png" class="center">
+   #+end_export
+
+
+
+   - ROC curve:
+
+     A receiver operating characteristic curve, or ROC curve, is a
+     graphical plot that illustrates the performance of a binary
+     classifier model.
+
+     The ROC curve is the plot of the *true positive rate (TPR) / Sensititivy* against
+     the *false positive rate (FPR) / Specificity* at each threshold setting.
+
+
+   - R^2:
+
+     
+
+   - Mean Squared Error:
+
+   - Mean Absolute Error:
+
+
+** TODO go over different join types again
+
+   make sure you know your SQL - before taking the exam.

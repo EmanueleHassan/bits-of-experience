@@ -1,0 +1,521 @@
+<p>
+This is a repository where I hold some notes about the major sklearn
+analytics algorithm in order to perform your data science. 
+</p>
+
+
+<!-- TEASER_END -->
+
+
+<div id="outline-container-org94f30b9" class="outline-2">
+<h2 id="org94f30b9">General Pattern</h2>
+<div class="outline-text-2" id="text-org94f30b9">
+<p>
+The standard way of working with your data is first performing the
+relevant exploratory data.
+</p>
+
+<p>
+For it you can refer to the relevant separate post.
+</p>
+
+<p>
+There you would inspect the data both analytically as well as
+visually.
+</p>
+
+<p>
+The goal is to understand what is available in the data.
+</p>
+
+<p>
+The distribution of the data etc. 
+</p>
+
+<p>
+In such a way it would be possible for you to create the relevant
+features from the data. 
+</p>
+
+<p>
+When creating the features it will be important to <b>transform</b> the
+data such that they take a meaningful shape. You might need to
+one-hot-encode, standardize, impute etc.  Note that you might fit
+data as well in order to get to the transform the data
+accordingly. In this sense, you will find a <code>fit_transform</code> API in
+sklearn.
+</p>
+
+<p>
+After the data have been properly transformed it is time to fit the
+actual analytical model. Here you would take one of the relevant <b>supervised</b> /
+<b>unsupervised</b> models and you would ultimately fit them to the
+main chunck of the data. 
+</p>
+
+<p>
+Finally, you would estimate / predict a new existing chunck of the
+data given your fitted model and its parameters.
+</p>
+</div>
+
+
+<div id="outline-container-org1aadfef" class="outline-3">
+<h3 id="org1aadfef"><span class="todo TODO">TODO</span> Fit</h3>
+<div class="outline-text-3" id="text-org1aadfef">
+<p>
+Double check why this is empty and fill it up.
+</p>
+
+<p>
+This is just the beginning of a post. Did not continue it. Work a
+bit on it now that you have the time.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org11c70bb" class="outline-3">
+<h3 id="org11c70bb">Transform</h3>
+<div class="outline-text-3" id="text-org11c70bb">
+<p>
+Here are mentioned some of the classical techniques for tranforming
+your data in order to make them meaningful / well behaved.
+</p>
+</div>
+
+
+<div id="outline-container-orgd1aa5c0" class="outline-4">
+<h4 id="orgd1aa5c0">The preprocessor object</h4>
+<div class="outline-text-4" id="text-orgd1aa5c0">
+<p>
+In order to pre-process the data sklearn offers the preprocessor
+object class.
+</p>
+
+<p>
+There you have many different APIs that are useful in order to
+process the data.
+</p>
+
+<p>
+We will explore them next.
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="orgcac7a36"></a>Dataset<br />
+<div class="outline-text-5" id="text-orgcac7a36">
+<p>
+In this section I will work with the datasets shipped with the
+sklearn package.
+</p>
+
+<p>
+In order to use the data use the following:
+</p>
+
+<div class="highlight"><pre><span></span>     from sklearn.datasets import fetch_california_housing as fdh
+     import pandas as pd
+     import numpy as np
+</pre></div>
+
+<div class="highlight"><pre><span></span>     df_housing = fdh (as_frame=1) [&#39;data&#39;]
+
+     df_housingValue = fdh (as_frame=1)[&#39;target&#39;]
+
+     df_housing.head (5)
+</pre></div>
+</div>
+</li>
+
+
+
+<li><a id="org55c46da"></a>Binarizer<br />
+<div class="outline-text-5" id="text-org55c46da">
+<p>
+This converts data into binary given a certain threshold. 
+</p>
+
+<p>
+You could for instance create a future in the above for checking
+whether the data are in the northern hemisphere or in the
+southern one in the following way:
+</p>
+
+<div class="highlight"><pre><span></span>     from sklearn.preprocessing import Binarizer
+</pre></div>
+
+<div class="highlight"><pre><span></span>     binary = Binarizer () ## note that it holds a parameter threshold. The
+			   ## default is 0 and is good for the exercise of
+			   ## Northern and Southern Hemisphere.
+
+     binary.fit (np.array (df_housing [&quot;Latitude&quot;]).reshape (-1,1)) ## Note
+								    ## that
+								    ## the
+								    ## Binarizer
+								    ## takes
+								    ## a 2D
+								    ## array
+								    ## as
+								    ## input. You
+								    ## therefore
+								    ## need
+								    ## to
+								    ## reshape
+								    ## your
+								    ## data
+								    ## and
+								    ## wrap
+								    ## your
+								    ## array
+								    ## into
+								    ## a
+								    ## list.
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>     df_housing [&quot;Northern Hemisphere&quot;] = binary.transform (np.array (df_housing [&quot;Latitude&quot;]).reshape (-1,1)).flatten () ## Flatten
+															  ## out
+															  ## back
+															  ## to
+															  ## a
+															  ## 1D
+															  ## array
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>     df_housing.head (5)
+</pre></div>
+
+
+
+<p>
+Note that you can specify the threshold yourself. Think about the
+case of Housing age. You want to create a binary if older than
+the age or not.
+</p>
+
+<p>
+You can then use the following:
+</p>
+
+<div class="highlight"><pre><span></span>     df_housing [&quot;OldHouse&quot;] = Binarizer (threshold= df_housing.HouseAge.mean ()) \
+			       .fit_transform (np.array (df_housing [&quot;HouseAge&quot;]).reshape (-1,1)).flatten ()
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>     df_housing.head (10)
+</pre></div>
+</div>
+</li>
+
+
+<li><a id="org1d29690"></a>QuantileTransformer<br />
+<div class="outline-text-5" id="text-org1d29690">
+<p>
+Note that this estimates the quantiles according to a parameteric
+distribution that you impose on the data. 
+</p>
+
+<p>
+It does not compute the quantiles based on the empirical
+distribution of the data. Check in this sense the <code>qcut</code> method.
+</p>
+
+<p>
+Note that this preprocessor function allows to estimate and fit
+the quantiles of a uniform and normal distribution.
+</p>
+
+<div class="highlight"><pre><span></span>     from sklearn.preprocessing import QuantileTransformer
+</pre></div>
+
+<p>
+So note that the exercise is different in comparison to the
+quantile cut.
+</p>
+
+<p>
+The idea is to compute <code>n_quantiles</code> quantiles from the actual
+data. And then interpolate across them according to a
+distribution of choice - be uniform or normal - in order to
+compute the rest of the quantiles.
+</p>
+</div>
+
+
+<ul class="org-ul">
+<li><a id="orgbf20455"></a>Plot histogram of the data<br />
+<div class="outline-text-6" id="text-orgbf20455">
+<p>
+In order to properly understand the operation we first plot the
+histogram.
+</p>
+
+<p>
+From it you can immediately infer that the data is log-normally
+distributed.
+</p>
+
+<div class="highlight"><pre><span></span>      import matplotlib.pyplot as plt
+      %matplotlib inline 
+      %config InlineBackend.figure_format = &#39;png&#39;
+</pre></div>
+
+<div class="highlight"><pre><span></span>      plt.hist(df_housingValue, bins = 20)
+</pre></div>
+
+<img src="../../images/HistogramHousing.png" class="center">
+
+<p>
+We check next to the quantiles and the QuantileTransformer in
+order to properly understand what operations the two perform on
+the data.
+</p>
+</div>
+</li>
+
+<li><a id="org91762b6"></a>Quantile Transformation<br />
+<div class="outline-text-6" id="text-org91762b6">
+<p>
+Note that weird distribution with heavy outliers or skewed
+distribution might be sub-optimal in order to fit statistical
+models to your data.
+</p>
+
+<p>
+This because they the parameter estimation might be biased by
+such properties of the data.
+</p>
+
+<p>
+In this sense it makes often sense to inspect the data and
+create new features that are less likely to bias your results.
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="org4b6c5a0"></a>Plot the relevant transformer<br />
+<ul class="org-ul">
+<li><a id="orgf6271a0"></a><span class="todo TODO">TODO</span> go over again in a better fashion over the data.<br />
+<div class="outline-text-8" id="text-orgf6271a0">
+<p>
+It imposes a distribution on the data. It estimates the
+parameters of the distribution, given the empirical
+distribution.
+</p>
+
+<p>
+It then computes the quantiles for the data values given that
+assumed distribution. 
+</p>
+
+<p>
+If you plug then the values in the quantile transforming
+function you would get back normalized values.
+</p>
+
+
+<p>
+It transforms the data x in quantiles such that they fit the
+relevant distribution.
+</p>
+
+<p>
+Note that even such transformation has limits. See the
+histogram plot that you created.
+</p>
+
+
+
+<p>
+It is a transformation that tries to achieve a uniform
+distribution of the assigned quantiles.
+</p>
+
+<div class="highlight"><pre><span></span>	plt.hist (QuantileTransformer(n_quantiles=5, random_state=0).fit_transform (np.array (df_housingValue).reshape (-1,1)).flatten (), 20) 
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+
+
+<li><a id="org06c799c"></a>Standard Scaler<br /></li>
+
+
+
+<li><a id="org5e8f88a"></a>MaxAbsScalerp<br /></li>
+
+
+
+<li><a id="orgce13618"></a>LabelEncoder<br /></li>
+
+
+
+<li><a id="org425905f"></a>OneHotEncoder<br /></li>
+
+
+
+<li><a id="orgef5e9a8"></a>KernelCenterer<br /></li>
+
+
+
+<li><a id="org8915ecb"></a>FunctionTransformer<br /></li>
+
+
+
+<li><a id="org549f48e"></a>FunctionTransformer<br /></li>
+</ul>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org19380b9" class="outline-3">
+<h3 id="org19380b9">Predict</h3>
+</div>
+
+
+<div id="outline-container-org915b469" class="outline-3">
+<h3 id="org915b469"><span class="todo TODO">TODO</span> create a different posts listing the different fitting metrics</h3>
+</div>
+
+
+<div id="outline-container-orgad5a05d" class="outline-3">
+<h3 id="orgad5a05d"><span class="todo TODO">TODO</span> adjust the post on pipelines</h3>
+<div class="outline-text-3" id="text-orgad5a05d">
+<p>
+Not 100% clear in its current form how that works. 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org5ab6c26" class="outline-2">
+<h2 id="org5ab6c26">Imputer</h2>
+</div>
+
+
+
+
+<div id="outline-container-orgd65bd7a" class="outline-2">
+<h2 id="orgd65bd7a">Linear Regression</h2>
+<div class="outline-text-2" id="text-orgd65bd7a">
+</div>
+
+<div id="outline-container-org72cc169" class="outline-3">
+<h3 id="org72cc169">Data</h3>
+<div class="outline-text-3" id="text-org72cc169">
+<div class="highlight"><pre><span></span>   import pandas as pd
+   import numpy as np
+   from matplotlib import pyplot as plt
+
+   # Generate &#39;random&#39; data
+   np.random.seed(0)
+   X = 2.5 * np.random.randn(100) + 1.5   # Array of 100 values with mean = 1.5, stddev = 2.5
+   res = 0.5 * np.random.randn(100)       # Generate 100 residual terms
+   y = 2 + 0.3 * X + res                  # Actual values of Y
+
+   # Create pandas dataframe to store our X and y values
+   df = pd.DataFrame(
+       {&#39;X&#39;: X,
+	&#39;y&#39;: y}
+   )
+
+   # Show the first five rows of our dataframe
+   df.head()
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf8a59ef" class="outline-3">
+<h3 id="orgf8a59ef">Getting the Regression Coefficients Manually via Analytical Solution</h3>
+<div class="outline-text-3" id="text-orgf8a59ef">
+<p>
+Get the relevant coefficients of the regression:
+</p>
+
+<div class="highlight"><pre><span></span>   # Calculate the mean of X and y
+   xmean = np.mean(X)
+   ymean = np.mean(y)
+
+   # Calculate the terms needed for the numator and denominator of beta
+   df[&#39;xycov&#39;] = (df[&#39;X&#39;] - xmean) * (df[&#39;y&#39;] - ymean)
+   df[&#39;xvar&#39;] = (df[&#39;X&#39;] - xmean)**2
+
+   # Calculate beta and alpha
+   beta = df[&#39;xycov&#39;].sum() / df[&#39;xvar&#39;].sum()
+   alpha = ymean - (beta * xmean)
+   print(f&#39;alpha = {alpha}&#39;)
+   print(f&#39;beta = {beta}&#39;)
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>   ypred = alpha + beta * X
+</pre></div>
+</div>
+
+<div id="outline-container-orgcb7f841" class="outline-4">
+<h4 id="orgcb7f841">Matplotlib of regression</h4>
+<div class="outline-text-4" id="text-orgcb7f841">
+<p>
+Plot the relevant results:
+</p>
+
+<div class="highlight"><pre><span></span>    import matplotlib.pyplot as plt
+    %matplotlib inline 
+    %config InlineBackend.figure_format = &#39;png&#39;
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>    # Plot regression against actual data
+    plt.figure(figsize=(12, 6))
+    plt.plot(X, ypred)     # regression line
+    plt.plot(X, y, &#39;ro&#39;)   # scatter plot showing actual data
+    plt.title(&#39;Actual vs Predicted&#39;)
+    plt.xlabel(&#39;X&#39;)
+    plt.ylabel(&#39;y&#39;)
+
+    plt.show()
+</pre></div>
+
+<img src="../../images/Regression.png" class="center">
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org023d1c6" class="outline-3">
+<h3 id="org023d1c6">Model Fit and Prediction</h3>
+<div class="outline-text-3" id="text-org023d1c6">
+</div>
+<div id="outline-container-orgb9fa0ea" class="outline-4">
+<h4 id="orgb9fa0ea">The standard way to fit and predict in skit-learn</h4>
+<div class="outline-text-4" id="text-orgb9fa0ea">
+<div class="highlight"><pre><span></span>    from sklearn.linear_model import LinearRegression
+
+    # Initialise and fit model
+    lm = LinearRegression()
+    model = lm.fit(X.reshape(-1, 1), y)
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>    print(f&#39;alpha = {model.intercept_}&#39;)
+    print(f&#39;betas = {model.coef_}&#39;)
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>    model.predict(X.reshape(-1, 1))
+</pre></div>
+</div>
+</div>
+</div>
+</div>

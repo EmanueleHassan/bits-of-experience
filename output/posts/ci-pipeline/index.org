@@ -1,0 +1,124 @@
+#+BEGIN_COMMENT
+.. title: CI Pipeline
+.. slug: ci-pipeline
+.. date: 2021-04-21 09:46:02 UTC+02:00
+.. tags: 
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+#+BEGIN_EXPORT html
+<br>
+<br>
+#+END_EXPORT
+
+This entry contains some notes about setting up a CI pipeline. I will
+explore especially the =Jenkins= option and I will integrate it with
+Python.
+
+After setting up the architecture for a project it is important now to
+set up such processes such that we will work with the proper tooling
+and will not loose too much time integrating versions over time.
+
+Please note that some of this material comes from [[https://www.amazon.com/Python-Continuous-Integration-Delivery-Examples/dp/1484242807][Python Continuous
+Integration and Delivery: A Concise Guide with Examples]].
+
+You can refer to this book should you want a more in depth discussion
+of the material covered here.
+
+{{{TEASER_END}}}
+
+* On CI Infra & Architecture
+
+Note that the CI software will run on a server. This server must have
+access to your code base. It is therefore standard for companies to
+have the CI software run on on-premise servers such that the precious
+code-base will never leave the company.
+
+Interesting in this sense would be to see how that integrates in
+cloud-native environments. 
+
+Most CI software has a central server component that can poll source
+code repositories for changes and that can also be triggered by
+hooks. If a change in the source code repository is detected, this
+triggers a job. The job can either be configured centrally in the
+server or in the source code repository.
+
+This is the general idea of CI pipeline. Trigger jobs that check if
+you manage to build your application and that checks whether the
+different tests pass. All of this in an automatic way such that you
+will immediately notified if when changing some of your code base you
+trigger changes that are not in line and disrupt the different tests.
+
+Once the CI server knows =which tests to execute=, and in =which
+environments=, it typically delegates the actual test runs to worker
+nodes. The worker nodes then report their results back to the server,
+which takes care of sending notifications and making the outputs and
+results available for inspection through a web interface.
+
+Usually, in a production environment, you’d run the Jenkins server on
+one machine and have several build workers on different (virtual)
+machines. For the sake of easy setup, we’ll forego this sensible
+distinction and run the server and all build jobs within the same
+Docker container, just to have fewer docker containers to manage.
+
+* Setting up Jenkins in Docker
+
+  This is fairly standard. Just create your docker image for it and
+  deploy it.
+
+  One such image could be for instance:
+
+  #+begin_example
+FROM jenkins/jenkins:lts
+USER root
+RUN apt-get update \
+    && apt-get install -y python-pip python3.5 \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip install tox
+  #+end_example
+
+
+  Then simply build the image
+
+  #+BEGIN_SRC sh
+docker build -t jenkins-python .
+  #+END_SRC
+
+  Make sure it is then listed on your docker engine
+
+  #+BEGIN_SRC sh
+docker image ls
+  #+END_SRC
+
+
+  And finally deploy it
+
+  #+BEGIN_SRC sh
+  docker run --rm -p 8080:8080 -p 50000:50000 \     
+    -v jenkins_home:/var/jenkins_home jenkins-python
+  #+END_SRC
+
+   
+* First Jenkins Job
+
+  Jenkins jobs are where you specify your integration triggers.
+
+  The idea is that once you specify your jenkins triggers - these can
+  be for instance a push to the github branch etc. -, and the build
+  configuration i.e. what you perform when a job is triggered - this
+  can be for instance a python command.
+
+  Check at [[https://learning.oreilly.com/library/view/Python+Continuous+Integration+and+Delivery:+A+Concise+Guide+with+Examples/9781484242810/html/456760_1_En_3_Chapter.xhtml#Fig2][this]] for the exact command argument.
+
+  Check also [[https://www.youtube.com/watch?v=kW_bADC2fFM&t=834s][this]] video to see how to complete the pipeline in the
+  using a =Jenkinsfile=. I liked this video better as there is a clear
+  structure in there and on how to proceed.
+
+
+
+
+

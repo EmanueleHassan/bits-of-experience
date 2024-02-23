@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>On the Java Garbage Collector | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://emanuelehassan.github.io/bits-of-experience/posts/on-the-java-garbage-collector/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../architecture-template/" title="Architecture Template" type="text/html">
+<link rel="next" href="../on-algorithms/" title="On Algorithms" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="On the Java Garbage Collector">
+<meta property="og:url" content="https://emanuelehassan.github.io/bits-of-experience/posts/on-the-java-garbage-collector/">
+<meta property="og:description" content="This post contains some information around Garbage Collectors.
+
+
+
+It is important to understand this as this has important consequences
+when writing your code.
+
+
+
+Think for instance about the ORM and ">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-11-15T10:47:24+01:00">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="software-engineering">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">On the Java Garbage Collector</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2022-11-15T10:47:24+01:00" itemprop="datePublished" title="2022-11-15 10:47">2022-11-15 10:47</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/java/" rel="tag">java</a></li>
+            <li><a class="tag p-category" href="../../categories/software-engineering/" rel="tag">software-engineering</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+This post contains some information around Garbage Collectors.
+</p>
+
+<p>
+It is important to understand this as this has important consequences
+when writing your code.
+</p>
+
+<p>
+Think for instance about the ORM and how the instances are garbage
+collected in JPA.
+</p>
+
+<!-- TEASER_END -->
+
+
+<div id="outline-container-org853e335" class="outline-2">
+<h2 id="org853e335">Basic Structure of the JVM</h2>
+<div class="outline-text-2" id="text-org853e335">
+<p>
+So starting with the basic structure of the JVM, the thing looks as
+follows:
+</p>
+
+<img src="../../images/Screenshot%202022-11-15%20105403.png" class="center"><p>
+So it is important that you understand this basics JVM set up.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgf41f83d" class="outline-2">
+<h2 id="orgf41f83d">On automatic Garbage Collection</h2>
+<div class="outline-text-2" id="text-orgf41f83d">
+<p>
+So understand the following:
+</p>
+
+<blockquote>
+<p>
+Automatic garbage collection is the process of <b>looking at heap
+memory</b>, identifying which objects are in use and which are not, and
+<b>deleting the unused objects</b>.
+</p>
+
+<p>
+An <b>in use object</b>, or a referenced object, means that some part of your
+program still <b>maintains a pointer to that object</b>.
+</p>
+
+<p>
+An unused object, or unreferenced object, is no longer referenced by
+any part of your program. So the <i>memory used by an unreferenced object
+can be reclaimed</i>.
+</p>
+</blockquote>
+
+<p>
+So the above is essentially the idea.
+</p>
+
+<p>
+We look next how this process of garbage collection takes ultimately
+place.
+</p>
+</div>
+
+
+<div id="outline-container-orgd261bfb" class="outline-3">
+<h3 id="orgd261bfb">Step 1: Marking</h3>
+<div class="outline-text-3" id="text-orgd261bfb">
+<img src="../../images/Screenshot%202022-11-15%20130658.png" class="center">
+</div>
+</div>
+
+
+<div id="outline-container-orgf6bee24" class="outline-3">
+<h3 id="orgf6bee24">Step 2: Deletion</h3>
+<div class="outline-text-3" id="text-orgf6bee24">
+<p>
+After the marking the process of deletion takes place.
+</p>
+
+<p>
+There are essentially two types of deletion:
+</p>
+</div>
+
+
+<div id="outline-container-org6a15944" class="outline-4">
+<h4 id="org6a15944">Option 1 - Normal Deletion</h4>
+<div class="outline-text-4" id="text-org6a15944">
+<img src="../../images/Screenshot%202022-11-15%20130930.png" class="center">
+</div>
+</div>
+
+
+<div id="outline-container-orgad6d42b" class="outline-4">
+<h4 id="orgad6d42b">Option 2 - Deletion with Compacting</h4>
+<div class="outline-text-4" id="text-orgad6d42b">
+<img src="../../images/Screenshot%202022-11-15%20131022.png" class="center"><p>
+Note that this will be more efficient in the new memory
+allocation.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org9cbe8bd" class="outline-3">
+<h3 id="org9cbe8bd">Generational Garbage Collection</h3>
+<div class="outline-text-3" id="text-org9cbe8bd">
+<p>
+The question here is about the marking component.
+</p>
+
+<p>
+How are the different pieces of memory marked?
+</p>
+
+<p>
+Here is the concept of <i>generations</i>. This makes garbage collection
+especially handy.
+</p>
+
+<p>
+The core idea of it is essentially the one that newly instantiated
+objects are generally short living.
+</p>
+
+<p>
+Think for instance at how many times you assign a variable and just
+use it in a specific very limited context.
+</p>
+
+<p>
+In this sense it makes sense to limit the amount of objects
+checked in the garbage collection sense depending on the life span
+of the object.
+</p>
+
+<p>
+The idea is backed up by empirical data on the life span of Object
+as visible in the following image:
+</p>
+
+<img src="../../images/Screenshot%202022-11-15%20140350.png" class="center">
+</div>
+
+
+<div id="outline-container-org4921969" class="outline-4">
+<h4 id="org4921969">On the Concept of Generation</h4>
+<div class="outline-text-4" id="text-org4921969">
+<p>
+This brings directly to the point of generations.
+</p>
+
+<p>
+Essentially the objects are assigned to different generations in
+the memory heap.
+</p>
+
+<img src="../../images/Screenshot%202022-11-15%20140823.png" class="center"><p>
+So watch out and read very carefully the above.
+</p>
+
+<p>
+You should fix the following concepts:
+</p>
+
+<ul class="org-ul">
+<li><b>stop the world</b></li>
+
+<li>
+<p>
+<b>difference between minor garbage collection and major garbage
+collection</b>:
+</p>
+
+<p>
+this essentially talkes about whether the garbage collection
+takes place in the young generation or in the old
+generation. Note that major garbage collections are very large
+events. In this sense, the responsiveness of the application
+would be reduced.
+</p>
+
+<p>
+So you try to reduce these larger garbage collection processes
+checking at the state of the Objects troughout the entire
+application. 
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org5f43ba6" class="outline-4">
+<h4 id="org5f43ba6">On the Generational Assignment</h4>
+<div class="outline-text-4" id="text-org5f43ba6">
+<p>
+This goes hand in hand with the previous thoughts and explains a
+bit the Object allocation in the different spaces.
+</p>
+
+<p>
+We will check about the process next:
+</p>
+
+<p>
+Newly created Objects are always assigned to the Eden space. Then
+when the Eden space is filled up, the allocated objects are moved
+to S0 or S1 - you always start with S0 then you transition among
+the two at each <i>minor garbage collection</i> increasing the survivor
+age which will determine the ultimate promotion in an older
+category group.
+</p>
+
+<img src="../../images/Screenshot%202022-11-15%20143822.png" class="center"><p>
+The promotion happens after a given level of maturity is reached.
+</p>
+
+<img src="../../images/Screenshot%202022-11-15%20144143.png" class="center"><p>
+Finally eventually the older generation heap space also fills up
+and a major garbage collection event is triggered in order to
+compact the data and free up disk space. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org0f8d406" class="outline-4">
+<h4 id="org0f8d406">Performance Parameter</h4>
+<div class="outline-text-4" id="text-org0f8d406">
+<p>
+Given that you properly understand the concept of garbage
+collection, you can read about the different garbage collection
+tuning parameters for your Java applications.
+</p>
+</div>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../architecture-template/" rel="prev" title="Architecture Template">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../on-algorithms/" rel="next" title="On Algorithms">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2024         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

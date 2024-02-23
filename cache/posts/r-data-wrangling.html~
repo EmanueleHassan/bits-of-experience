@@ -1,0 +1,330 @@
+<p>
+This is a post where I hold some notes about data wrangling in R.
+</p>
+
+<p>
+In general so far you always used the dplyr package. Check at the
+project you did for Expedia in this sense. There you can refresh the
+dplyr methods. 
+</p>
+
+<p>
+In this post you will mainly check at the native data wrangling in R.
+</p>
+
+<p>
+This will be useful for the coding exercise you will have to do. 
+</p>
+
+<p>
+On the top it will be useful as a repository for refreshing the
+material when you need it.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org69d28e8" class="outline-2">
+<h2 id="org69d28e8">Data Slicing</h2>
+<div class="outline-text-2" id="text-org69d28e8">
+<p>
+Note that there is a difference when 
+</p>
+</div>
+
+<div id="outline-container-org009a598" class="outline-3">
+<h3 id="org009a598">Import data from the dataset package and play with them</h3>
+<div class="outline-text-3" id="text-org009a598">
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="c1">## It is in the base package - do not necessarily have to download it</span>
+<span class="w">    </span><span class="c1">## library (&quot;datasets&quot;)</span>
+<span class="w">    </span><span class="nf">data </span><span class="p">(</span><span class="n">mtcars</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nf">head</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="nf">summary</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)</span><span class="w"> </span><span class="c1">## get summary statistics of the datasets</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="nf">str</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)</span><span class="w">     </span><span class="c1">## get the structure of the data</span>
+<span class="w">		    </span><span class="c1">## all numerical variables here</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-orgd82c56a" class="outline-3">
+<h3 id="orgd82c56a">Select by row</h3>
+<div class="outline-text-3" id="text-orgd82c56a">
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">mtcars</span><span class="p">[</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">5</span><span class="p">),]</span><span class="w"> </span>
+
+<span class="w">    </span><span class="c1">## same as</span>
+<span class="w">    </span><span class="nf">head</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">)</span>
+</pre></div>
+
+
+<p>
+Select based on condition
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">mtcars</span><span class="p">[</span><span class="n">mtcars</span><span class="o">$</span><span class="n">wt</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="p">]</span>
+</pre></div>
+
+
+<p>
+Select on multiple filter condition
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="c1"># mtcars[c(mtcars$wt &gt; 3, mtcars$carb &gt; 2), ] ## does not yield error</span>
+<span class="w">						  </span><span class="c1">## but result is wrong</span>
+
+<span class="w">    </span><span class="c1"># You can work with &amp; and or operators</span>
+<span class="w">    </span><span class="n">mtcars</span><span class="p">[</span><span class="n">mtcars</span><span class="o">$</span><span class="n">wt</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mtcars</span><span class="o">$</span><span class="n">carb</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">2</span><span class="p">,]</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org517b33c" class="outline-3">
+<h3 id="org517b33c">Select by column Name</h3>
+<div class="outline-text-3" id="text-org517b33c">
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">mtcars</span><span class="o">$</span><span class="n">wt</span>
+<span class="w">    </span><span class="n">mtcars</span><span class="o">$</span><span class="s">&quot;wt&quot;</span><span class="w">   </span><span class="c1">## it works in both ways -&gt; good.</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="n">mtcars</span><span class="p">[</span><span class="s">&quot;wt&quot;</span><span class="p">]</span><span class="w">   </span><span class="c1">## works as well in the following way</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="n">mtcars</span><span class="p">[,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;mpg&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;drat&quot;</span><span class="p">)]</span>
+
+<span class="c1">## same as column binding with $ operator</span>
+<span class="nf">cbind</span><span class="p">(</span><span class="n">mtcars</span><span class="o">$</span><span class="n">mpg</span><span class="p">,</span><span class="w"> </span><span class="n">mtcars</span><span class="o">$</span><span class="n">hp</span><span class="p">,</span><span class="w"> </span><span class="n">mtcars</span><span class="o">$</span><span class="n">drat</span><span class="p">)</span><span class="w"> </span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org30bb536" class="outline-3">
+<h3 id="org30bb536">Select by column number</h3>
+<div class="outline-text-3" id="text-org30bb536">
+<div class="highlight"><pre><span></span><span class="c1">## mtcars[, c(1:3, 5:)] ## Note unlike python R does not get to fill</span>
+<span class="w">			</span><span class="c1">## up until the existing numbers of columns.</span>
+<span class="w">			</span><span class="c1">## You have to manually specify the argument as </span>
+<span class="w">			</span><span class="c1">## follows</span>
+
+<span class="n">mtcars</span><span class="p">[,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="o">:</span><span class="nf">length</span><span class="p">(</span><span class="nf">colnames</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)))]</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org68802b0" class="outline-3">
+<h3 id="org68802b0">Exclude Column / Row by Names</h3>
+<div class="outline-text-3" id="text-org68802b0">
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="c1"># mtcars[, -&quot;carb&quot;] ## Does not work with name</span>
+
+<span class="w">    </span><span class="n">mtcars</span><span class="p">[,</span><span class="w"> </span><span class="o">!</span><span class="p">(</span><span class="nf">names</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="s">&quot;carb&quot;</span><span class="p">)]</span><span class="w"> </span><span class="c1">## But you can use a logical</span>
+<span class="w">					   </span><span class="c1">## vector to achieve this</span>
+</pre></div>
+
+<p>
+You can as well pass an entire vector that you aim to exclude and
+select your variables that way.
+</p>
+
+<p>
+In a similar way you can as well select the relevant rows if they
+are named
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">mtcars</span><span class="p">[</span><span class="nf">rownames</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="s">&quot;Hornet 4 Drive&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nf">names</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;carb&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;drat&quot;</span><span class="p">))]</span>
+</pre></div>
+</div>
+</div>
+
+<div id="outline-container-org0a00388" class="outline-3">
+<h3 id="org0a00388">Replace NA</h3>
+<div class="outline-text-3" id="text-org0a00388">
+<p>
+Create the relevant NA in your dataset and then clean them up
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">mtcars</span><span class="p">[</span><span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">0.4</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;drat&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;qsec&quot;</span><span class="p">)]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NA</span>
+</pre></div>
+
+<p>
+Count the number of NA in the dataset
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="nf">sum</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">mtcars</span><span class="p">))</span><span class="w"> </span>
+</pre></div>
+
+<p>
+Replace the NA is at simple as passing a boolean matrix selecting
+the NA and replacing them with the relevant value.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">mtcars</span><span class="p">[</span><span class="nf">is.na</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">10000</span><span class="w"> </span>
+</pre></div>
+
+<p>
+In order to replace based on a condition you can work as follows.
+</p>
+
+<p>
+I.e. create the relevant matrix of booleans and replace them with
+what you want.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">mtcars</span><span class="p">[</span><span class="n">mtcars</span><span class="o">$</span><span class="n">gear</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nf">is.na</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NA</span>
+</pre></div>
+</div>
+</div>
+
+
+<div id="outline-container-org09f276d" class="outline-3">
+<h3 id="org09f276d">Work with the major data types</h3>
+<div class="outline-text-3" id="text-org09f276d">
+<p>
+Recall the major data types in R
+</p>
+
+<blockquote>
+<ul class="org-ul">
+<li>numeric</li>
+<li>integer</li>
+<li>double (decimal point)</li>
+<li>logical (TRUE/FALSE)</li>
+<li>character (text/string)</li>
+<li>factor (categorical/qualitative)</li>
+<li>date/time</li>
+</ul>
+</blockquote>
+
+<p>
+In this section we will quickly see how to work with these major
+datatypes and how to convert from one into the other.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">num_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<span class="w">    </span><span class="n">num_data</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="nf">class</span><span class="p">(</span><span class="n">num_data</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">num_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.double</span><span class="p">(</span><span class="n">num_data</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nf">class</span><span class="p">(</span><span class="n">num_data</span><span class="p">)</span>
+</pre></div>
+
+<p>
+Append to a vector
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">num_data</span><span class="p">[</span><span class="nf">length</span><span class="p">(</span><span class="n">num_data</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">3.0</span><span class="w">   </span>
+</pre></div>
+
+<p>
+Convert from double to character.
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">num_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.character</span><span class="p">(</span><span class="n">num_data</span><span class="p">)</span>
+</pre></div>
+
+<p>
+Next we will inspect factor variables. These are as well important
+as you can quickly play with them in order to create summary
+statistics and features for modeling your statistical case. 
+</p>
+
+<p>
+This is the exercise that you were given on quanthub. basically
+you have to convert factors of dates in dates and then compute the
+distance to a date - say "02/22/96"
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">dates</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">factor</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;03/19/92&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;06/23/89&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;12/01/83&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;01/01/95&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;09/30/78&quot;</span><span class="p">))</span>
+</pre></div>
+
+<p>
+You can now check the levels of the factors with the <code>levels</code>
+method
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="nf">levels</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span>
+</pre></div>
+
+<p>
+And you can obtain the distance in dates to a given date as
+follows
+</p>
+
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="nf">as.Date</span><span class="p">(</span><span class="s">&quot;02/22/96&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;%m/%d/%y&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nf">as.Date</span><span class="p">(</span><span class="nf">levels</span><span class="p">(</span><span class="n">dates</span><span class="p">),</span><span class="w"> </span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;%m/%d/%y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8f23ecc" class="outline-2">
+<h2 id="org8f23ecc">Apply methods</h2>
+<div class="outline-text-2" id="text-org8f23ecc">
+</div>
+<div id="outline-container-org3f978ae" class="outline-3">
+<h3 id="org3f978ae"><span class="todo TODO">TODO</span> search the airbnb dataset online and work on this example</h3>
+<div class="outline-text-3" id="text-org3f978ae">
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="c1">## Exercise - count the number of NA per column</span>
+
+<span class="w">    </span><span class="c1">## Use the sapply function</span>
+
+<span class="w">    </span><span class="c1">## create the function that has to be triggered for each row.</span>
+<span class="w">    </span><span class="n">map_function</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">column</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">      </span><span class="nf">return </span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">column</span><span class="p">)))</span>
+
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sapply</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">FUN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map_function</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nf">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org807f517" class="outline-2">
+<h2 id="org807f517"><span class="todo TODO">TODO</span> Machine Learning with R</h2>
+<div class="outline-text-2" id="text-org807f517">
+<p>
+Double check <a href="https://www.geeksforgeeks.org/machine-learning-with-r/?ref=lbp">this URL</a> and make notes about it.
+</p>
+
+<p>
+So there is the entire list of algorithms for working with R on
+supervised/unsupervised methods. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org64aaf13" class="outline-2">
+<h2 id="org64aaf13"><span class="todo TODO">TODO</span> cover quickly as well the dplyr package.</h2>
+<div class="outline-text-2" id="text-org64aaf13">
+<p>
+make a refresher here when you have time.
+</p>
+
+<p>
+Will not have time to check at it before the task. Do it later when
+you have time.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orge248d72" class="outline-2">
+<h2 id="orge248d72"><span class="todo TODO">TODO</span> go over different join types again</h2>
+<div class="outline-text-2" id="text-orge248d72">
+<p>
+make sure you know your SQL - before taking the exam.
+</p>
+</div>
+</div>
