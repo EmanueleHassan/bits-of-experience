@@ -46,6 +46,9 @@ import pandas as pd
 
 #+RESULTS: 4f73f15f-1fcd-4b87-8541-4210055dc9eb
 
+
+
+
 #+RESULTS: 75F79485-A875-4FE1-82A3-C97987A8104B
 
 First of all you should display the default way through which Ipython
@@ -76,6 +79,112 @@ np.set_printoptions(threshold=np.inf)
    :properties:
    :header-args:ein-python: :session http://127.0.0.1:8888/visualization.ipynb  :results output :exports both
    :end:
+
+
+** Numpy
+
+   This is the numeric library in python. It allows to efficiently
+   work with multidimensional arrays in python.
+
+   It is therefore required that you hold a strong understanding of
+   the library.
+
+   I will keep this section short as I will use later numpies objects
+   where you can see general methods for working with them as well as
+   general data wrangling exercises with them.
+
+   The notes in this section are based on [[https://numpy.org/doc/stable/user/quickstart.html][this]]. I will focus here on
+   stacking operations.
+
+   #+begin_src python :session numpy :results output :exports both
+   import numpy as np
+
+   rg = np.random.default_rng(1)
+
+   a = np.floor(10 * rg.random((2, 2)))
+  
+   print(a)
+
+   b = rg.random((2, 2))
+
+   print(b)
+
+   ## Stands for Vertical Stacking
+   print("Vertical Stacking\n" + "="*35)
+   print(np.vstack((a, b))) ## adds as rows
+
+   print("Horizontally Stacking\n" + "="*35)
+   print(np.hstack((a, b))) ## adds as columns
+
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   [[5. 9.]
+    [1. 9.]]
+   [[0.31183145 0.42332645]
+    [0.82770259 0.40919914]]
+   Vertical Stacking
+   ===================================
+   [[5.         9.        ]
+    [1.         9.        ]
+    [0.31183145 0.42332645]
+    [0.82770259 0.40919914]]
+   Horizontally Stacking
+   ===================================
+   [[5.         9.         0.31183145 0.42332645]
+    [1.         9.         0.82770259 0.40919914]]
+   #+end_example
+
+   Note that there are also column_stack and row_stack methods. But
+   they are tricky in the sense that column_stack just works in the
+   common way sense in 2D arrays. When working with 1D arrays it does
+   row-based stacking. 
+
+   You can as well split an existing numpy array with the =hsplit=
+   method.
+
+   Using =hsplit=, you can split an array along its horizontal axis,
+   either by specifying the number of equally shaped arrays to return,
+   or by specifying the columns after which the division should occur:
+
+   #+begin_src python :session numpy :results output :exports both
+   a = np.floor(10 * rg.random((2, 12)))
+
+   print(a)
+
+   print("Split into 3 equally shaped arrays\n" + "="*35)
+   print(np.hsplit(a, 3))
+
+   print("Split after column 3 and after column 4\n" + "="*35)
+   print(np.hsplit(a, (3, 4)))
+
+   ## Note how the input array to be split is of 2 dimensions. So will be
+   ## splitted arrays.
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   [[6. 7. 6. 9. 0. 5. 4. 0. 6. 8. 5. 2.]
+    [8. 5. 5. 7. 1. 8. 6. 7. 1. 8. 1. 0.]]
+   Split into 3 equally shaped arrays
+   ===================================
+   [array([[6., 7., 6., 9.],
+	  [8., 5., 5., 7.]]), array([[0., 5., 4., 0.],
+	  [1., 8., 6., 7.]]), array([[6., 8., 5., 2.],
+	  [1., 8., 1., 0.]])]
+   Split after column 3 and after column 4
+   ===================================
+   [array([[6., 7., 6.],
+	  [8., 5., 5.]]), array([[9.],
+	  [7.]]), array([[0., 5., 4., 0., 6., 8., 5., 2.],
+	  [1., 8., 6., 7., 1., 8., 1., 0.]])]
+   #+end_example
+
+   Finally when working with numpy understand the difference between a
+   =view= and a =copy=. It is the same difference in databases so you
+   are familiar with it. Same idea as copy by reference and not in OOP
+   so to say.
 
 
 ** Creating data
@@ -198,6 +307,7 @@ np.set_printoptions(threshold=np.inf)
     : 2  9  10.0  NaN  12
 
 
+
 ** Work With SQL on top of Pandas
 
    Note that it is possible to work with SQL on the top of pandas.
@@ -239,6 +349,7 @@ np.set_printoptions(threshold=np.inf)
    : 0  1   2   3   4
    : 1  5   6   7   8
    : 2  9  10  11  12
+
 
 
 ** Reshaping data
@@ -504,6 +615,7 @@ np.set_printoptions(threshold=np.inf)
     : 2  9  10  11  12   18
 
 
+
 ** Categorical Variables
 
    Categorical data appear often. It is necessary for you to tackle
@@ -621,6 +733,7 @@ np.set_printoptions(threshold=np.inf)
     : (1575.4, 2095.2]       0
     : (1055.6, 1575.4]       0
     : Name: r_platelet_24h, dtype: int64
+
 
 
 
@@ -809,6 +922,32 @@ print(df.dropna(axis = 'columns'))
 
     Check your specific sklearn post for it.
 
+**** TODO Manually Replace NaN values with fixed value
+
+     #+begin_src python :session numpy :exports both :results output
+     import pandas as pd
+     from numpy import nan
+
+     df = pd.DataFrame({'name':['apple','banana','orange'],
+			'price':[1.95, 3.00, nan], 'inventory':[nan, 12, nan]})
+
+
+     #+end_src
+
+     #+RESULTS:
+     
+     #+begin_src python :session numpy :exports both :results output
+     df['inventory'][df['inventory'].isnull()] = 15.0
+     #+end_src
+
+     #+RESULTS:
+     : <stdin>:1: SettingWithCopyWarning: 
+     : A value is trying to be set on a copy of a slice from a DataFrame
+     : 
+     : See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+
+
 *** Treat Null Values in Categorical Variables
 
     First of all adjust the data to include missing categorical data:
@@ -953,6 +1092,7 @@ print(df.dropna(axis = 'columns'))
     reveal some patterns in null values. 
 
 
+
 ** Duplicates Handling
 
    You can generate an array of duplicates boolean by leveraging =.duplicated ()= method:
@@ -994,6 +1134,7 @@ print(df.dropna(axis = 'columns'))
    #+end_example
 
 
+
 ** Summarize the data
 
 *** Describe the Data
@@ -1013,6 +1154,7 @@ print(df.dropna(axis = 'columns'))
   : 50%    5.0   6.0   7.0   8.0
   : 75%    7.0   8.0   9.0  10.0
   : max    9.0  10.0  11.0  12.0
+
 
 
 ** Data Wrangling
@@ -1286,6 +1428,7 @@ print(df.dropna(axis = 'columns'))
       : 2  9  10
 
 
+
 ** Filtering Data
 
 *** filter through booleans
@@ -1381,6 +1524,7 @@ print(df.dropna(axis = 'columns'))
  #+end_example
 
 
+
 ** Group By Operations
 
    Create fictitious groups
@@ -1445,7 +1589,8 @@ print(df.dropna(axis = 'columns'))
    #+end_example
 
    Compute the sum for each group / category. Both work with the
-   groupby method. 
+   groupby method. So you see that for grouping by you do not have to
+   have categorical variables. String values work as well.
 
    #+NAME: 718be318-057d-4d67-a971-8369ad7a1917
    #+begin_src ein-python
@@ -1491,6 +1636,7 @@ print(df.dropna(axis = 'columns'))
 
 
    
+
 ** Side note: Series vs. Dataframe
 
    Interesting the ~df.column_name~ gives you a =Series= while the
@@ -1500,6 +1646,7 @@ print(df.dropna(axis = 'columns'))
    faster across the data.
 
    
+
 ** Cut vs. qcut
 
    Note that the difference is well explained in [[https://stackoverflow.com/questions/30211923/what-is-the-difference-between-pandas-qcut-and-pandas-cut][this post]].
@@ -1514,6 +1661,7 @@ print(df.dropna(axis = 'columns'))
    #+begin_src ein-python :results output
    pd.qcut(data_seq.loc[:,['r_hematocrite_admission']].squeeze(), 5).cat.categories
    #+end_src
+
 
 
 ** To make row-wise modification - Apply Function
@@ -1565,6 +1713,7 @@ print(df.dropna(axis = 'columns'))
   21  
   22  
    #+end_example
+
 
 
 ** General Way to Tackle Down the Dataset
@@ -1686,6 +1835,7 @@ print(df.dropna(axis = 'columns'))
 
 
 
+
 ** Example of SQL for getting the sum of the price in each Country
    
 
@@ -1711,6 +1861,151 @@ ORDER BY tot_revenue DESC
 #+begin_src python :results output 
 nba (q)
 #+end_src
+
+
+
+** Upsampling / Downsampling
+
+   If you have an imbalanced DataFrame and you want to upsample it to
+   balance the classes, you can use techniques such as resampling. 
+
+   One common approach is to use the resample function from the
+   sklearn.utils module. Here's an example:
+
+   #+begin_src python :session upsampling :results output :exports both
+   import pandas as pd
+   from sklearn.utils import resample
+
+   # Sample imbalanced DataFrame
+   data = {'Feature1': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+	   'Feature2': ['A', 'B', 'A', 'B', 'A', 'A', 'B', 'B', 'B'],
+	   'Target': [0, 0, 0, 1, 0, 0, 1, 1, 1]}
+   df = pd.DataFrame(data)
+
+   zero_class = df[df['Target'] == 0]
+   one_class = df[df['Target'] == 1]
+
+   # Separate the majority and minority classes
+   if len(zero_class) > len(one_class):
+       majority_class = zero_class 
+       minority_class = one_class
+   else:
+       majority_class = one_class
+       minority_class = zero_class
+
+   # Upsample the minority class to match the majority class
+   upsampled_minority = resample(minority_class, replace=True,
+				 n_samples=len(majority_class), random_state=42)
+
+   # Combine the majority class with the upsampled minority class
+   upsampled_df = pd.concat([majority_class, upsampled_minority])
+
+   # Display the upsampled DataFrame
+   print(upsampled_df)
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   Feature1 Feature2  Target
+   0         1        A       0
+   1         2        B       0
+   2         3        A       0
+   4         5        A       0
+   5         6        A       0
+   7         8        B       1
+   8         9        B       1
+   3         4        B       1
+   7         8        B       1
+   7         8        B       1
+   #+end_example
+
+   A similar procedure might be used for downsampling:
+
+   #+begin_src python :session upsampling :results output :exports both
+   import pandas as pd
+   from sklearn.utils import resample
+
+   # Sample imbalanced DataFrame
+   data = {'Feature1': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+	   'Feature2': ['A', 'B', 'A', 'B', 'A', 'A', 'B', 'B', 'B'],
+	   'Target': [0, 0, 0, 1, 0, 0, 1, 1, 1]}
+   df = pd.DataFrame(data)
+
+   zero_class = df[df['Target'] == 0]
+   one_class = df[df['Target'] == 1]
+
+   # Separate the majority and minority classes
+   if len(zero_class) > len(one_class):
+       majority_class = zero_class 
+       minority_class = one_class
+   else:
+       majority_class = one_class
+       minority_class = zero_class
+
+   # Upsample the minority class to match the majority class
+   downsampled_majority = resample(majority_class, replace=True,
+				   n_samples=len(minority_class), random_state=42)
+
+   # Combine the majority class with the upsampled minority class
+   downsampled_df = pd.concat([minority_class, downsampled_majority])
+
+   # Display the upsampled DataFrame
+   print(downsampled_df)
+   #+end_src
+
+   #+RESULTS:
+   : Feature1 Feature2  Target
+   : 3         4        B       1
+   : 6         7        B       1
+   : 7         8        B       1
+   : 8         9        B       1
+   : 4         5        A       0
+   : 5         6        A       0
+   : 2         3        A       0
+   : 5         6        A       0
+
+
+** Replace values based on Dictionary Values
+
+   You can replace the values 
+
+   #+begin_src python :results output
+   import pandas as pd
+
+   # Sample DataFrame
+   data = {'A': [1, 2, 3, 4],
+	   'B': ['apple', 'banana', 'orange', 'grape']}
+   df = pd.DataFrame(data)
+
+   print(df.head(5))
+   print()
+
+   # Dictionary to replace values
+   replace_dict = {'apple': 'red', 'banana': 'yellow', 'orange':
+		   'orange', 'grape': 'purple'}
+
+   # Replace values in DataFrame
+   df.replace(replace_dict, inplace=True)
+
+   # Display the updated DataFrame
+   print(df)
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+      A       B
+   0  1   apple
+   1  2  banana
+   2  3  orange
+   3  4   grape
+
+      A       B
+   0  1     red
+   1  2  yellow
+   2  3  orange
+   3  4  purple
+   #+end_example
+
 
 
 
@@ -2094,7 +2389,7 @@ adding vertically
    :end:
 
 #+NAME: 7B605A9A-38A5-40A9-991B-EE6B0A394437
-#+begin_src ein-python :results output
+#+begin_src ein-python
 plt.plot(x_1, c = "lightblue", ls = '--', marker = "o",
          ms = 6, label ="nomean")
 plt.plot(x_2, c = "darkorange", ls = '--', marker = "s",
@@ -2105,8 +2400,12 @@ plt.legend(loc = 'upper right',bbox_to_anchor = (1,1))
 plt.xticks(list(range(20)), rotation = 'vertical') # sets the ticks on
                                                    # x-axis and puts
                                                    # them vertically.
+
+plt.show()
 #+end_src
 
+#+RESULTS: 7B605A9A-38A5-40A9-991B-EE6B0A394437
+[[file:ein-images/ob-ein-0981cb6eb06a116538db54914e4480a0.png]]
 
 #+BEGIN_EXPORT html
 <br>
