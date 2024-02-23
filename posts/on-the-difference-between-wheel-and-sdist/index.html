@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>On the difference between wheel and sdist | Bits of Experience</title>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://emanuelehassan.github.io/bits-of-experience/posts/on-the-difference-between-wheel-and-sdist/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="Marco Hassan">
+<link rel="prev" href="../r-data-wrangling/" title="R Data Wrangling" type="text/html">
+<link rel="next" href="../but-at-least-we-stole-the-show/" title="But at least we stole the show" type="text/html">
+<meta property="og:site_name" content="Bits of Experience">
+<meta property="og:title" content="On the difference between wheel and sdist">
+<meta property="og:url" content="https://emanuelehassan.github.io/bits-of-experience/posts/on-the-difference-between-wheel-and-sdist/">
+<meta property="og:description" content="img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+position: relative;
+left: 15%;
+margin-top: ">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2024-02-19T22:03:32+01:00">
+<meta property="article:tag" content="Python">
+</head>
+<body>
+    <a href="#page-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    
+    <section class="social"><ul>
+<li><a href="../../pages/aboutme/" title="About me"><i class="fa fa-user-circle"></i></a></li>
+            <li><a href="../../pages/bits-of-experience-a-readable-view-on-my-study-adventures/" title="Home"><i class="fa fa-home"></i></a></li>
+            <li><a href="../../index.html" title="Blog"><i class="fa fa-edit"></i></a></li>
+            <li><a href="../../pages/emacs/" title="A life Configuring Emacs"><i class="fa fa-code"></i></a></li>
+            <li><a href="../../pages/papers/" title="Term and Research Papers"><i class="fa fa-university"></i></a></li>
+            <li><a href="../../pages/foto-blog/" title="Foto Blog"><i class="fa fa-camera-retro"></i></a></li>
+            <li><a href="https://github.com/MarcoHassan" title="My Github"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://stackoverflow.com/users/9731177/mhass" title="My Stack"><i class="fab fa-stack-overflow"></i></a></li>
+            <li><a href="../../rss.xml" title="RSS"><i class="fa fa-rss"></i></a></li>
+            <li><a href="../../categories/index.html" title="Tags"><i class="fa fa-tags"></i></a></li>
+    
+    
+
+        </ul></section><section class="page-content"><div class="content" rel="main">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">On the difference between wheel and sdist</a></h1>
+
+        <div class="metadata">
+            <p class="dateline"><a href="." rel="bookmark"><i class="fa fa-clock"></i> <time class="published dt-published" datetime="2024-02-19T22:03:32+01:00" itemprop="datePublished" title="2024-02-19 22:03">2024-02-19 22:03</time></a></p>
+            <p class="byline author vcard"> <i class="fa fa-user"></i> <span class="byline-name fn" itemprop="author">
+                    Marco Hassan
+            </span></p>
+            
+        <p class="sourceline"><a href="index.org" class="sourcelink"><i class="fa fa-file-code"></i> Source</a></p>
+
+            
+
+            
+    <div class="tags">
+<h3 class="metadata-title">
+<i class="fa fa-tags"></i> Tags:</h3>
+        <ul itemprop="keywords" class="tags-ul">
+<li><a class="tag p-category" href="../../categories/python/" rel="tag">Python</a></li>
+        </ul>
+</div>
+
+        </div>
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <style>
+
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+position: relative;
+left: 15%;
+margin-top: 60px;
+margin-bottom: 60px;
+width: 70%;
+overflow: hidden;
+padding-top: 56.25%; /* 16:9 Aspect Ratio */
+display:block;
+overflow-y: hidden;
+}
+
+.responsive-iframe {
+position: absolute;
+top: 0;
+left: 0;
+bottom: 0;
+right: 0;
+width: 100%;
+height: 100%;
+border: none;
+display:block;
+overflow-y: hidden;
+}
+</style>
+<p>
+So I am using the time off to properly package my python code.
+</p>
+
+<p>
+In order to do that I am writing a series of posts: <a href="https://emanuelehassan.github.io/bits-of-experience/posts/packaging-python-apps/">one</a>.
+</p>
+
+<p>
+I came across poetry recently. This is a one tool for managing python
+packages. 
+</p>
+
+<p>
+Before that a step back to the python internals and a brief post in
+order to properly understand wheels and sdist - these are two
+different builds of your python package.
+</p>
+
+<!-- TEASER_END -->
+
+<div id="outline-container-org9cb7fc8" class="outline-2">
+<h2 id="org9cb7fc8">Sdist</h2>
+<div class="outline-text-2" id="text-org9cb7fc8">
+<p>
+You can check what happens when installing a source distribution
+package, for instance uwsgi.
+</p>
+
+<div class="highlight"><pre><span></span>   $ python -m pip install 'uwsgi==2.0.*'
+</pre></div>
+
+<pre class="example">
+Collecting uwsgi==2.0.*
+   Downloading uwsgi-2.0.18.tar.gz (801 kB)
+      |████████████████████████████████| 801 kB 1.1 MB/s
+Building wheels for collected packages: uwsgi
+   Building wheel for uwsgi (setup.py) ... done
+   Created wheel for uwsgi ... uWSGI-2.0.18-cp38-cp38-macosx_10_15_x86_64.whl
+   Stored in directory: /private/var/folders/jc/8_hqsz0x1tdbp05 ...
+Successfully built uwsgi
+Installing collected packages: uwsgi
+Successfully installed uwsgi-2.0.18
+</pre>
+
+<p>
+What happens is the following:
+</p>
+
+<p>
+On line 3, it downloads a TAR file (tarball) named
+uwsgi-2.0.18.tar.gz that’s been compressed with gzip.  
+</p>
+
+<p>
+On line 6, it takes the tarball and builds a .whl file through a
+call to setup.py.  
+</p>
+
+<p>
+On line 7, it labels the wheel
+uWSGI-2.0.18-cp38-cp38-macosx<sub>10</sub><sub>15</sub><sub>x86</sub><sub>64.whl</sub>.
+</p>
+
+<p>
+On line 10, it installs the actual package after having built the
+wheel.
+</p>
+
+<p>
+The <b>tar.gz</b> tarball that pip retrieves <b>is a source
+distribution</b>, or sdist, rather than a wheel. In some ways, a
+sdist is the opposite of a wheel. 
+</p>
+
+<p>
+It <b>contains source code</b>. That includes not only Python code but
+also the source code of any extension modules (usually in C or
+C++) bundled with the package. With source distributions,
+<b>extension modules are compiled on the user’s side rather than the
+developer’s</b>.
+</p>
+
+<p>
+From the developer’s perspective, a source distribution is what
+gets created when you run the following command:
+</p>
+
+<div class="highlight"><pre><span></span>    $ python setup.py sdist
+</pre></div>
+
+<p>
+setup.py sdist creates a source distribution: it contains
+setup.py, the source files of your module/script (.py files or
+.c/.cpp for binary modules), your data files, etc. The result is
+an <b>archive that can then be used to recompile everything on any
+platform</b>.
+</p>
+
+<p>
+Note that the setup.py file is the file where you specify how your
+package should be built. A source distribution gives you more
+flexibility in the sense that you can specify in a more precise
+way the way the package build is constructed. On the negative side
+the end user should make sure it has all of the necessary software
+requirements that will make the building of the package possible.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org300acb5" class="outline-2">
+<h2 id="org300acb5">Wheel</h2>
+<div class="outline-text-2" id="text-org300acb5">
+<p>
+Python wheels are:
+</p>
+
+<blockquote>
+<p>
+A component of the Python ecosystem that helps to make package
+installs just work. They allow for faster installations and more
+stability in the package distribution process.
+</p>
+</blockquote>
+
+<p>
+In this sense compare installing a wheel to a source distribution
+as above.
+</p>
+
+<div class="highlight"><pre><span></span>   $ python -m pip install 'chardet==3.*'
+</pre></div>
+
+<pre class="example">
+Collecting chardet
+  Downloading chardet-3.0.4-py2.py3-none-any.whl (133 kB)
+     |████████████████████████████████| 133 kB 1.5 MB/s
+Installing collected packages: chardet
+Successfully installed chardet-3.0.4
+</pre>
+
+<p>
+You can see here that from the user’s perspective is that there’s
+<b>no build stage when pip finds a compatible wheel on PyPI</b>.
+</p>
+
+<p>
+From the developer’s side, a wheel is the result of running the
+following command:
+</p>
+
+<div class="highlight"><pre><span></span>   $ python setup.py bdist_wheel
+</pre></div>
+
+<p>
+From this you can easily understand that:
+</p>
+
+<blockquote>
+<ol class="org-ol">
+<li>All else being equal, wheels are typically smaller in size than</li>
+</ol>
+<p>
+source distributions, meaning they can move faster across a
+network.
+</p>
+
+<ol class="org-ol">
+<li>Installing from wheels directly avoids the intermediate step of</li>
+</ol>
+<p>
+building packages off of the source distribution.
+</p>
+</blockquote>
+
+<p>
+In essence a wheel is the following:
+</p>
+
+<blockquote>
+<p>
+A Python .whl file is essentially a ZIP (.zip) archive with a
+specially crafted filename that tells installers what Python
+versions and platforms the wheel will support.
+</p>
+
+<p>
+A wheel is a type of built distribution. In this case, built means
+that the wheel comes in a ready-to-install format and allows you to
+skip the build stage required with source distributions.
+</p>
+</blockquote>
+
+<p>
+A wheel filename is broken down into parts separated by hyphens:
+</p>
+
+<pre class="example">
+{dist}-{version}(-{build})?-{python}-{abi}-{platform}.whl
+</pre>
+
+<p>
+Summing up creates wheels are <b>built distribution</b>: it includes
+.pyc files, .so/.dll/.dylib for binary modules, .exe if using
+py2exe on Windows, your data files… but no setup.py. The result
+is an archive that is specific to a platform (for example
+linux-x86<sub>64</sub>) and to a version of Python, and that can be installed
+simply by extracting it into the root of your filesystem
+(executables are in <i>usr/bin (or equivalent), data files in
+/usr/share, modules in /usr/lib/pythonX.X/site-packages</i>…).
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org6140694" class="outline-2">
+<h2 id="org6140694">References</h2>
+<div class="outline-text-2" id="text-org6140694">
+<p>
+This post is mainly constructed following <a href="https://realpython.com/python-wheels/">this other post</a> and <a href="https://stackoverflow.com/questions/6292652/what-is-the-difference-between-an-sdist-tar-gz-distribution-and-an-python-egg">this question</a>.
+</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../r-data-wrangling/" rel="prev" title="R Data Wrangling">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../but-at-least-we-stole-the-show/" rel="next" title="But at least we stole the show">Next post</a>
+            </li>
+        </ul></nav></aside></article><footer id="footer"><p>Contents © 2024         <a href="mailto:marco.hassan30@gmail.com">Marco Hassan</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            
+        </footer>
+</div>
+    </section><script src="../../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

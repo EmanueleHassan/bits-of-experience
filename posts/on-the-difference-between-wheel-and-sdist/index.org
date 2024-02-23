@@ -1,0 +1,215 @@
+#+BEGIN_COMMENT
+.. title: On the difference between wheel and sdist
+.. slug: on-the-difference-between-wheel-and-sdist
+.. date: 2024-02-19 22:03:32 UTC+01:00
+.. tags: Python
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+
+#+END_COMMENT
+
+
+#+begin_export html
+<style>
+
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+position: relative;
+left: 15%;
+margin-top: 60px;
+margin-bottom: 60px;
+width: 70%;
+overflow: hidden;
+padding-top: 56.25%; /* 16:9 Aspect Ratio */
+display:block;
+overflow-y: hidden;
+}
+
+.responsive-iframe {
+position: absolute;
+top: 0;
+left: 0;
+bottom: 0;
+right: 0;
+width: 100%;
+height: 100%;
+border: none;
+display:block;
+overflow-y: hidden;
+}
+</style>
+#+end_export
+
+
+So I am using the time off to properly package my python code.
+
+In order to do that I am writing a series of posts: [[https://emanuelehassan.github.io/bits-of-experience/posts/packaging-python-apps/][one]].
+
+I came across poetry recently. This is a one tool for managing python
+packages. 
+
+Before that a step back to the python internals and a brief post in
+order to properly understand wheels and sdist - these are two
+different builds of your python package.
+
+{{{TEASER_END}}}
+
+** Sdist
+
+   You can check what happens when installing a source distribution
+   package, for instance uwsgi.
+
+   #+BEGIN_SRC shell
+   $ python -m pip install 'uwsgi==2.0.*'
+   #+END_SRC
+
+    #+begin_example
+    Collecting uwsgi==2.0.*
+       Downloading uwsgi-2.0.18.tar.gz (801 kB)
+          |████████████████████████████████| 801 kB 1.1 MB/s
+    Building wheels for collected packages: uwsgi
+       Building wheel for uwsgi (setup.py) ... done
+       Created wheel for uwsgi ... uWSGI-2.0.18-cp38-cp38-macosx_10_15_x86_64.whl
+       Stored in directory: /private/var/folders/jc/8_hqsz0x1tdbp05 ...
+    Successfully built uwsgi
+    Installing collected packages: uwsgi
+    Successfully installed uwsgi-2.0.18
+    #+end_example
+
+    What happens is the following:
+
+    On line 3, it downloads a TAR file (tarball) named
+    uwsgi-2.0.18.tar.gz that’s been compressed with gzip.  
+
+    On line 6, it takes the tarball and builds a .whl file through a
+    call to setup.py.  
+
+    On line 7, it labels the wheel
+    uWSGI-2.0.18-cp38-cp38-macosx_10_15_x86_64.whl.
+
+    On line 10, it installs the actual package after having built the
+    wheel.
+
+    The *tar.gz* tarball that pip retrieves *is a source
+    distribution*, or sdist, rather than a wheel. In some ways, a
+    sdist is the opposite of a wheel. 
+
+    It *contains source code*. That includes not only Python code but
+    also the source code of any extension modules (usually in C or
+    C++) bundled with the package. With source distributions,
+    *extension modules are compiled on the user’s side rather than the
+    developer’s*.
+
+    From the developer’s perspective, a source distribution is what
+    gets created when you run the following command:
+
+    #+BEGIN_SRC shell
+    $ python setup.py sdist
+    #+END_SRC
+
+    setup.py sdist creates a source distribution: it contains
+    setup.py, the source files of your module/script (.py files or
+    .c/.cpp for binary modules), your data files, etc. The result is
+    an *archive that can then be used to recompile everything on any
+    platform*.
+
+    Note that the setup.py file is the file where you specify how your
+    package should be built. A source distribution gives you more
+    flexibility in the sense that you can specify in a more precise
+    way the way the package build is constructed. On the negative side
+    the end user should make sure it has all of the necessary software
+    requirements that will make the building of the package possible.
+
+
+** Wheel
+
+   Python wheels are:
+
+   #+begin_quote
+   A component of the Python ecosystem that helps to make package
+   installs just work. They allow for faster installations and more
+   stability in the package distribution process.
+   #+end_quote
+
+   In this sense compare installing a wheel to a source distribution
+   as above.
+
+   #+begin_src shell
+   $ python -m pip install 'chardet==3.*'
+   #+end_src
+
+   #+begin_example
+   Collecting chardet
+     Downloading chardet-3.0.4-py2.py3-none-any.whl (133 kB)
+	|████████████████████████████████| 133 kB 1.5 MB/s
+   Installing collected packages: chardet
+   Successfully installed chardet-3.0.4
+   #+end_example
+
+   You can see here that from the user’s perspective is that there’s
+   *no build stage when pip finds a compatible wheel on PyPI*.
+   
+   From the developer’s side, a wheel is the result of running the
+   following command:
+
+   #+begin_src shell
+   $ python setup.py bdist_wheel
+   #+end_src
+
+   From this you can easily understand that:
+
+   #+begin_quote
+   1. All else being equal, wheels are typically smaller in size than
+   source distributions, meaning they can move faster across a
+   network.
+
+   2. Installing from wheels directly avoids the intermediate step of
+   building packages off of the source distribution.
+   #+end_quote
+
+   In essence a wheel is the following:
+
+   #+begin_quote
+   A Python .whl file is essentially a ZIP (.zip) archive with a
+   specially crafted filename that tells installers what Python
+   versions and platforms the wheel will support.
+
+   A wheel is a type of built distribution. In this case, built means
+   that the wheel comes in a ready-to-install format and allows you to
+   skip the build stage required with source distributions.
+   #+end_quote
+
+   A wheel filename is broken down into parts separated by hyphens:
+
+   #+begin_example
+   {dist}-{version}(-{build})?-{python}-{abi}-{platform}.whl
+   #+end_example
+
+   Summing up creates wheels are *built distribution*: it includes
+   .pyc files, .so/.dll/.dylib for binary modules, .exe if using
+   py2exe on Windows, your data files... but no setup.py. The result
+   is an archive that is specific to a platform (for example
+   linux-x86_64) and to a version of Python, and that can be installed
+   simply by extracting it into the root of your filesystem
+   (executables are in /usr/bin (or equivalent), data files in
+   /usr/share, modules in /usr/lib/pythonX.X/site-packages/...).
+
+
+** References
+
+   This post is mainly constructed following [[https://realpython.com/python-wheels/][this other post]] and [[https://stackoverflow.com/questions/6292652/what-is-the-difference-between-an-sdist-tar-gz-distribution-and-an-python-egg][this question]].
+
+
+   

@@ -22,14 +22,11 @@ analytics algorithm in order to perform your data science.
 
 
 
+It is essentially an exercise into the sklearn API. 
 
 
 
-
-General Pattern
-
-
-The standard way of working with your data is ">
+If you have ">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2023-06-06T16:38:45+02:00">
 <meta property="article:tag" content="Analytics">
@@ -83,13 +80,23 @@ This is a repository where I hold some notes about the major sklearn
 analytics algorithm in order to perform your data science. 
 </p>
 
+<p>
+It is essentially an exercise into the <a href="https://scikit-learn.org/stable/modules/classes.html">sklearn API</a>. 
+</p>
+
+<p>
+If you have it well in mind than you have well in mind the major ML
+algorithms, the way to preprocess the data and the way create robust
+pipelines.
+</p>
+
 
 <!-- TEASER_END -->
 
 
-<div id="outline-container-org432bc8a" class="outline-2">
-<h2 id="org432bc8a">General Pattern</h2>
-<div class="outline-text-2" id="text-org432bc8a">
+<div id="outline-container-org6c02428" class="outline-2">
+<h2 id="org6c02428">General Pattern</h2>
+<div class="outline-text-2" id="text-org6c02428">
 <p>
 The standard way of working with your data is first performing the
 relevant exploratory data.
@@ -119,18 +126,24 @@ features from the data.
 
 <p>
 When creating the features it will be important to <b>transform</b> the
-data such that they take a meaningful shape. You might need to
-one-hot-encode, standardize, impute etc.  Note that you might fit
-data as well in order to get to the transform the data
-accordingly. In this sense, you will find a <code>fit_transform</code> API in
-sklearn.
+data such that they take a meaningful shape. 
+</p>
+
+<p>
+You might need to one-hot-encode, standardize, impute etc.  
+</p>
+
+<p>
+Note that you might fit data as well in order to get to the
+transform the data accordingly. In this sense, you will find a
+<code>fit_transform</code> API in sklearn.
 </p>
 
 <p>
 After the data have been properly transformed it is time to fit the
-actual analytical model. Here you would take one of the relevant <b>supervised</b> /
-<b>unsupervised</b> models and you would ultimately fit them to the
-main chunck of the data. 
+actual analytical model. Here you would take one of the relevant
+<b>supervised</b> / <b>unsupervised</b> models and you would ultimately fit
+them to the main chunck of the data.
 </p>
 
 <p>
@@ -138,33 +151,16 @@ Finally, you would estimate / predict a new existing chunck of the
 data given your fitted model and its parameters.
 </p>
 </div>
-
-
-<div id="outline-container-orgced6508" class="outline-3">
-<h3 id="orgced6508">Fit</h3>
 </div>
 
 
-
-
-<div id="outline-container-orgdd964d5" class="outline-3">
-<h3 id="orgdd964d5">Transform</h3>
-<div class="outline-text-3" id="text-orgdd964d5">
-<p>
-Here are mentioned some of the classical techniques for tranforming
-your data in order to make them meaningful / well behaved.
-</p>
-</div>
-
-
-<div id="outline-container-org3ecf776" class="outline-4">
-<h4 id="org3ecf776">The preprocessor object</h4>
-<div class="outline-text-4" id="text-org3ecf776">
+<div id="outline-container-org53e2906" class="outline-2">
+<h2 id="org53e2906">The preprocessor object</h2>
+<div class="outline-text-2" id="text-org53e2906">
 <p>
 In order to pre-process the data sklearn offers the preprocessor
 object class.
 </p>
-
 
 <p>
 There you have many different APIs that are useful in order to
@@ -176,9 +172,9 @@ We will explore them next.
 </p>
 </div>
 
-<ul class="org-ul">
-<li>
-<a id="org0fe29e0"></a>Dataset<br><div class="outline-text-5" id="text-org0fe29e0">
+<div id="outline-container-orga0207d3" class="outline-3">
+<h3 id="orga0207d3">Dataset</h3>
+<div class="outline-text-3" id="text-orga0207d3">
 <p>
 In this section I will work with the datasets shipped with the
 sklearn package.
@@ -188,24 +184,25 @@ sklearn package.
 In order to use the data use the following:
 </p>
 
-<div class="highlight"><pre><span></span>     from sklearn.datasets import fetch_california_housing as fdh
-     import pandas as pd
-     import numpy as np
+<div class="highlight"><pre><span></span>   from sklearn.datasets import fetch_california_housing as fdh
+   import pandas as pd
+   import numpy as np
 </pre></div>
 
-<div class="highlight"><pre><span></span>     df_housing = fdh (as_frame=1) ['data']
+<div class="highlight"><pre><span></span>   df_housing = fdh (as_frame=1) ['data']
 
-     df_housingValue = fdh (as_frame=1)['target']
+   df_housingValue = fdh (as_frame=1)['target']
 
-     df_housing.head (5)
+   df_housing.head (5)
 </pre></div>
 </div>
-</li>
+</div>
 
 
 
-<li>
-<a id="orge92c352"></a>Binarizer<br><div class="outline-text-5" id="text-orge92c352">
+<div id="outline-container-org8979009" class="outline-3">
+<h3 id="org8979009">Binarizer</h3>
+<div class="outline-text-3" id="text-org8979009">
 <p>
 This converts data into binary given a certain threshold. 
 </p>
@@ -216,49 +213,48 @@ whether the data are in the northern hemisphere or in the
 southern one in the following way:
 </p>
 
-<div class="highlight"><pre><span></span>     from sklearn.preprocessing import Binarizer
+<div class="highlight"><pre><span></span>   from sklearn.preprocessing import Binarizer
 </pre></div>
 
-<div class="highlight"><pre><span></span>     binary = Binarizer () ## note that it holds a parameter threshold. The
-			   ## default is 0 and is good for the exercise of
-			   ## Northern and Southern Hemisphere.
+<div class="highlight"><pre><span></span>   binary = Binarizer () ## note that it holds a parameter threshold. The
+			 ## default is 0 and is good for the exercise of
+			 ## Northern and Southern Hemisphere.
 
-     binary.fit (np.array (df_housing ["Latitude"]).reshape (-1,1)) ## Note
-								    ## that
-								    ## the
-								    ## Binarizer
-								    ## takes
-								    ## a 2D
-								    ## array
-								    ## as
-								    ## input. You
-								    ## therefore
-								    ## need
-								    ## to
-								    ## reshape
-								    ## your
-								    ## data
-								    ## and
-								    ## wrap
-								    ## your
-								    ## array
-								    ## into
-								    ## a
-								    ## list.
-</pre></div>
-
-
-<div class="highlight"><pre><span></span>     df_housing ["Northern Hemisphere"] = binary.transform (np.array (df_housing ["Latitude"]).reshape (-1,1)).flatten () ## Flatten
-															  ## out
-															  ## back
-															  ## to
-															  ## a
-															  ## 1D
-															  ## array
+   binary.fit (np.array (df_housing ["Latitude"]).reshape (-1,1)) ## Note
+								  ## that
+								  ## the
+								  ## Binarizer
+								  ## takes
+								  ## a 2D
+								  ## array
+								  ## as
+								  ## input. You
+								  ## therefore
+								  ## need
+								  ## to
+								  ## reshape
+								  ## your
+								  ## data
+								  ## and
+								  ## wrap
+								  ## your
+								  ## array
+								  ## into
+								  ## a
+								  ## list.
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>     df_housing.head (5)
+<div class="highlight"><pre><span></span>   df_housing ["Northern Hemisphere"] = 
+      binary.transform (np.array
+			(df_housing
+			 ["Latitude"]).reshape
+			(-1,1)).
+      flatten() ## Flatten out back to a 1D array
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>   df_housing.head (5)
 </pre></div>
 
 
@@ -273,19 +269,20 @@ the age or not.
 You can then use the following:
 </p>
 
-<div class="highlight"><pre><span></span>     df_housing ["OldHouse"] = Binarizer (threshold= df_housing.HouseAge.mean ()) \
-			       .fit_transform (np.array (df_housing ["HouseAge"]).reshape (-1,1)).flatten ()
+<div class="highlight"><pre><span></span>   df_housing ["OldHouse"] = Binarizer (threshold= df_housing.HouseAge.mean ()) \
+			     .fit_transform (np.array (df_housing ["HouseAge"]).reshape (-1,1)).flatten ()
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>     df_housing.head (10)
+<div class="highlight"><pre><span></span>   df_housing.head (10)
 </pre></div>
 </div>
-</li>
+</div>
 
 
-<li>
-<a id="org130c60b"></a>QuantileTransformer<br><div class="outline-text-5" id="text-org130c60b">
+<div id="outline-container-org9b61b2b" class="outline-3">
+<h3 id="org9b61b2b">QuantileTransformer</h3>
+<div class="outline-text-3" id="text-org9b61b2b">
 <p>
 Note that this estimates the quantiles according to a parameteric
 distribution that you impose on the data. 
@@ -301,7 +298,7 @@ Note that this preprocessor function allows to estimate and fit
 the quantiles of a uniform and normal distribution.
 </p>
 
-<div class="highlight"><pre><span></span>     from sklearn.preprocessing import QuantileTransformer
+<div class="highlight"><pre><span></span>   from sklearn.preprocessing import QuantileTransformer
 </pre></div>
 
 <p>
@@ -318,9 +315,9 @@ compute the rest of the quantiles.
 </div>
 
 
-<ul class="org-ul">
-<li>
-<a id="org0a759c7"></a>Plot histogram of the data<br><div class="outline-text-6" id="text-org0a759c7">
+<div id="outline-container-org97450bf" class="outline-4">
+<h4 id="org97450bf">Plot histogram of the data</h4>
+<div class="outline-text-4" id="text-org97450bf">
 <p>
 In order to properly understand the operation we first plot the
 histogram.
@@ -331,12 +328,12 @@ From it you can immediately infer that the data is log-normally
 distributed.
 </p>
 
-<div class="highlight"><pre><span></span>      import matplotlib.pyplot as plt
-      %matplotlib inline 
-      %config InlineBackend.figure_format = 'png'
+<div class="highlight"><pre><span></span>    import matplotlib.pyplot as plt
+    %matplotlib inline 
+    %config InlineBackend.figure_format = 'png'
 </pre></div>
 
-<div class="highlight"><pre><span></span>      plt.hist(df_housingValue, bins = 20)
+<div class="highlight"><pre><span></span>    plt.hist(df_housingValue, bins = 20)
 </pre></div>
 
 <img src="../../images/HistogramHousing.png" class="center"><p>
@@ -345,10 +342,11 @@ order to properly understand what operations the two perform on
 the data.
 </p>
 </div>
-</li>
+</div>
 
-<li>
-<a id="orga9b74e1"></a>Quantile Transformation<br><div class="outline-text-6" id="text-orga9b74e1">
+<div id="outline-container-org4bdf516" class="outline-4">
+<h4 id="org4bdf516">Quantile Transformation</h4>
+<div class="outline-text-4" id="text-org4bdf516">
 <p>
 Note that weird distribution with heavy outliers or skewed
 distribution might be sub-optimal in order to fit statistical
@@ -368,9 +366,9 @@ create new features that are less likely to bias your results.
 
 <ul class="org-ul">
 <li>
-<a id="orgc8e73ae"></a>Plot the relevant transformer<br><ul class="org-ul">
+<a id="org377be04"></a>Plot the relevant transformer<br><ul class="org-ul">
 <li>
-<a id="org416a74a"></a><span class="todo TODO">TODO</span> go over again in a better fashion over the data.<br><div class="outline-text-8" id="text-org416a74a">
+<a id="org0adf917"></a><span class="todo TODO">TODO</span> go over again in a better fashion over the data.<br><div class="outline-text-6" id="text-org0adf917">
 <p>
 It imposes a distribution on the data. It estimates the
 parameters of the distribution, given the empirical
@@ -387,7 +385,6 @@ If you plug then the values in the quantile transforming
 function you would get back normalized values.
 </p>
 
-
 <p>
 It transforms the data x in quantiles such that they fit the
 relevant distribution.
@@ -399,107 +396,78 @@ histogram plot that you created.
 </p>
 
 
-
 <p>
 It is a transformation that tries to achieve a uniform
 distribution of the assigned quantiles.
 </p>
 
-<div class="highlight"><pre><span></span>	plt.hist (QuantileTransformer(n_quantiles=5, random_state=0).fit_transform (np.array (df_housingValue).reshape (-1,1)).flatten (), 20) 
+<div class="highlight"><pre><span></span>      plt.hist (QuantileTransformer(n_quantiles=5,
+				    random_state=0).
+		fit_transform (np.array (df_housingValue).
+			       reshape(-1,1)).
+		flatten (), 20) 
 </pre></div>
 </div>
 </li>
 </ul>
 </li>
 </ul>
-</li>
-</ul>
-</li>
+</div>
+</div>
 
 
-<li>
-<a id="org852b9f2"></a>Standard Scaler<br>
-</li>
-
-
-
-<li>
-<a id="org586df75"></a>MaxAbsScalerp<br>
-</li>
+<div id="outline-container-orga85edfa" class="outline-3">
+<h3 id="orga85edfa">Standard Scaler</h3>
+</div>
 
 
 
-<li>
-<a id="org1b38e4c"></a>LabelEncoder<br>
-</li>
+<div id="outline-container-orgde165fc" class="outline-3">
+<h3 id="orgde165fc">MaxAbsScalerp</h3>
+</div>
 
 
 
-<li>
-<a id="orgbf99646"></a>OneHotEncoder<br>
-</li>
+<div id="outline-container-org9079094" class="outline-3">
+<h3 id="org9079094">LabelEncoder</h3>
+</div>
 
 
 
-<li>
-<a id="org3b20268"></a>KernelCenterer<br>
-</li>
+<div id="outline-container-org5c721e3" class="outline-3">
+<h3 id="org5c721e3">OneHotEncoder</h3>
+</div>
 
 
 
-<li>
-<a id="orga584bea"></a>FunctionTransformer<br>
-</li>
+<div id="outline-container-orgaf23dbf" class="outline-3">
+<h3 id="orgaf23dbf">KernelCenterer</h3>
+</div>
 
 
 
-<li>
-<a id="org94f2884"></a>FunctionTransformer<br>
-</li>
-</ul>
+<div id="outline-container-org87eef9c" class="outline-3">
+<h3 id="org87eef9c">FunctionTransformer</h3>
+</div>
+
+
+
+<div id="outline-container-orgad15fd8" class="outline-3">
+<h3 id="orgad15fd8">FunctionTransformer</h3>
 </div>
 </div>
 
 
 
 
-<div id="outline-container-org670f299" class="outline-3">
-<h3 id="org670f299">Predict</h3>
+<div id="outline-container-org673b432" class="outline-2">
+<h2 id="org673b432">Linear Regression</h2>
+<div class="outline-text-2" id="text-org673b432">
 </div>
 
-
-<div id="outline-container-org9137f4c" class="outline-3">
-<h3 id="org9137f4c">
-<span class="todo TODO">TODO</span> create a different posts listing the different fitting metrics</h3>
-</div>
-
-
-<div id="outline-container-orgf618698" class="outline-3">
-<h3 id="orgf618698">
-<span class="todo TODO">TODO</span> adjust the post on pipelines</h3>
-<div class="outline-text-3" id="text-orgf618698">
-<p>
-Not 100% clear in its current form how that works. 
-</p>
-</div>
-</div>
-</div>
-
-<div id="outline-container-orga37dc54" class="outline-2">
-<h2 id="orga37dc54">Imputer</h2>
-</div>
-
-
-
-
-<div id="outline-container-orgd0df6ec" class="outline-2">
-<h2 id="orgd0df6ec">Linear Regression</h2>
-<div class="outline-text-2" id="text-orgd0df6ec">
-</div>
-
-<div id="outline-container-org48e9488" class="outline-3">
-<h3 id="org48e9488">Data</h3>
-<div class="outline-text-3" id="text-org48e9488">
+<div id="outline-container-org157c158" class="outline-3">
+<h3 id="org157c158">Data</h3>
+<div class="outline-text-3" id="text-org157c158">
 <div class="highlight"><pre><span></span>   import pandas as pd
    import numpy as np
    from matplotlib import pyplot as plt
@@ -523,9 +491,9 @@ Not 100% clear in its current form how that works.
 </div>
 
 
-<div id="outline-container-org1cf1e5c" class="outline-3">
-<h3 id="org1cf1e5c">Getting the Regression Coefficients Manually via Analytical Solution</h3>
-<div class="outline-text-3" id="text-org1cf1e5c">
+<div id="outline-container-org0ef5b9c" class="outline-3">
+<h3 id="org0ef5b9c">Getting the Regression Coefficients Manually via Analytical Solution</h3>
+<div class="outline-text-3" id="text-org0ef5b9c">
 <p>
 Get the relevant coefficients of the regression:
 </p>
@@ -550,9 +518,9 @@ Get the relevant coefficients of the regression:
 </pre></div>
 </div>
 
-<div id="outline-container-org7a8e34d" class="outline-4">
-<h4 id="org7a8e34d">Matplotlib of regression</h4>
-<div class="outline-text-4" id="text-org7a8e34d">
+<div id="outline-container-org02e1520" class="outline-4">
+<h4 id="org02e1520">Matplotlib of regression</h4>
+<div class="outline-text-4" id="text-org02e1520">
 <p>
 Plot the relevant results:
 </p>
@@ -580,13 +548,13 @@ Plot the relevant results:
 </div>
 
 
-<div id="outline-container-org3ab58c6" class="outline-3">
-<h3 id="org3ab58c6">Model Fit and Prediction</h3>
-<div class="outline-text-3" id="text-org3ab58c6">
+<div id="outline-container-org6d61a5f" class="outline-3">
+<h3 id="org6d61a5f">Model Fit and Prediction</h3>
+<div class="outline-text-3" id="text-org6d61a5f">
 </div>
-<div id="outline-container-orgbf08fe5" class="outline-4">
-<h4 id="orgbf08fe5">The standard way to fit and predict in skit-learn</h4>
-<div class="outline-text-4" id="text-orgbf08fe5">
+<div id="outline-container-org421103d" class="outline-4">
+<h4 id="org421103d">The standard way to fit and predict in skit-learn</h4>
+<div class="outline-text-4" id="text-org421103d">
 <div class="highlight"><pre><span></span>    from sklearn.linear_model import LinearRegression
 
     # Initialise and fit model

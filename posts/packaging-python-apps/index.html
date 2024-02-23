@@ -17,17 +17,21 @@
 <meta property="og:site_name" content="Bits of Experience">
 <meta property="og:title" content="Packaging Python Apps">
 <meta property="og:url" content="https://emanuelehassan.github.io/bits-of-experience/posts/packaging-python-apps/">
-<meta property="og:description" content="So this post holds some information around the packaging of python
-applications.
+<meta property="og:description" content="img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
 
-
-
-This will be handy to enter in the serious development world of the
-language.
-
-
-
-This touches a lot as well the poin">
+.container {
+position: relative;
+left: 15%;
+margin-top: ">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2022-05-13T09:49:38+02:00">
 <meta property="article:tag" content="Python">
@@ -74,7 +78,45 @@ This touches a lot as well the poin">
 
         </div>
     </header><div class="e-content entry-content" itemprop="articleBody text">
-    <p>
+    <style>
+
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+position: relative;
+left: 15%;
+margin-top: 60px;
+margin-bottom: 60px;
+width: 70%;
+overflow: hidden;
+padding-top: 56.25%; /* 16:9 Aspect Ratio */
+display:block;
+overflow-y: hidden;
+}
+
+.responsive-iframe {
+position: absolute;
+top: 0;
+left: 0;
+bottom: 0;
+right: 0;
+width: 100%;
+height: 100%;
+border: none;
+display:block;
+overflow-y: hidden;
+}
+</style>
+<p>
 So this post holds some information around the packaging of python
 applications.
 </p>
@@ -98,15 +140,15 @@ your packages from.
 </p>
 
 <p>
-It is always the same story. In docekr you have the docker registry,
+It is always the same story. In docker you have the docker registry,
 in emacs you have MELPA, in java you have MavenCentral, in python you
 have <code>PyPi</code>.
 </p>
 
 
-<div id="outline-container-orgfff5956" class="outline-2">
-<h2 id="orgfff5956">PyPi</h2>
-<div class="outline-text-2" id="text-orgfff5956">
+<div id="outline-container-org0a66dfd" class="outline-2">
+<h2 id="org0a66dfd">PyPi</h2>
+<div class="outline-text-2" id="text-org0a66dfd">
 <p>
 (Python Package Index)- is the official repository for third-party
 Python software packages. Every time you use e.g. pip to install a
@@ -122,9 +164,9 @@ you upload your own package then <i>anybody can start using it</i>.
 </div>
 
 
-<div id="outline-container-orgf4e63ba" class="outline-2">
-<h2 id="orgf4e63ba">DevPi</h2>
-<div class="outline-text-2" id="text-orgf4e63ba">
+<div id="outline-container-org2fcf7d7" class="outline-2">
+<h2 id="org2fcf7d7">DevPi</h2>
+<div class="outline-text-2" id="text-org2fcf7d7">
 <p>
 Check into <a href="https://doc.devpi.net/">this</a> for more. 
 </p>
@@ -150,13 +192,18 @@ I guess, that such private repositories are nothing else than DevPi
 instances provided by the cloud providers that you can use for
 storing your artifacts and fetching them.
 </p>
+
+<p>
+In my workflow I will use <a href="https://test.pypi.org/account/register/">TestPyPI</a>, which is the official testing
+website for PyPI.
+</p>
 </div>
 </div>
 
 
-<div id="outline-container-orgb6aaa93" class="outline-2">
-<h2 id="orgb6aaa93">Root Modules for packaging your Python projects</h2>
-<div class="outline-text-2" id="text-orgb6aaa93">
+<div id="outline-container-org599bf73" class="outline-2">
+<h2 id="org599bf73">Root Modules for packaging your Python projects</h2>
+<div class="outline-text-2" id="text-org599bf73">
 <p>
 Here the understanding is not 100% complete yet. You are getting
 closer to it. Would need more time. As long as you do not
@@ -220,9 +267,9 @@ common command.
 <span class="w">						   </span><span class="c1"># similar to compile</span>
 <span class="w">						   </span><span class="c1"># the C code etc.</span>
 
-<span class="w">    </span>python<span class="w"> </span>-m<span class="w"> </span>build<span class="w"> </span>--wheel<span class="w"> </span>&lt;source-tree-directory&gt;<span class="w"> </span><span class="c1"># creates a wheel that</span>
-<span class="w">						    </span><span class="c1"># is ready to run in</span>
-<span class="w">						    </span><span class="c1"># binary</span>
+<span class="w">   </span>python<span class="w"> </span>-m<span class="w"> </span>build<span class="w"> </span>--wheel<span class="w"> </span>&lt;source-tree-directory&gt;<span class="w"> </span><span class="c1"># creates a wheel that</span>
+<span class="w">						   </span><span class="c1"># is ready to run in</span>
+<span class="w">						   </span><span class="c1"># binary</span>
 </pre></div>
 
 <p>
@@ -258,9 +305,9 @@ it is not that clear.</li>
 </div>
 
 
-<div id="outline-container-orgd23f03a" class="outline-2">
-<h2 id="orgd23f03a">Twine</h2>
-<div class="outline-text-2" id="text-orgd23f03a">
+<div id="outline-container-orgc7a6a21" class="outline-2">
+<h2 id="orgc7a6a21">Twine</h2>
+<div class="outline-text-2" id="text-orgc7a6a21">
 <p>
 Note that this is in general the recommended way for publishing
 python artifacts to either PyPi or DevPi. This due to the secure
@@ -304,9 +351,9 @@ following dependency:
 </div>
 
 
-<div id="outline-container-org3aad195" class="outline-2">
-<h2 id="org3aad195">Tox</h2>
-<div class="outline-text-2" id="text-org3aad195">
+<div id="outline-container-orgc92fa0e" class="outline-2">
+<h2 id="orgc92fa0e">Tox</h2>
+<div class="outline-text-2" id="text-orgc92fa0e">
 <p>
 So you can embedd in your tox pipeline the project packaging as
 well.
@@ -328,17 +375,29 @@ idea and general concept.
 </div>
 
 
-<div id="outline-container-org1dc2077" class="outline-3">
-<h3 id="org1dc2077">
-<span class="todo TODO">TODO</span> understand how you can</h3>
+<div id="outline-container-org129436e" class="outline-3">
+<h3 id="org129436e">
+<span class="todo TODO">TODO</span> Create your CI-CD pipeline</h3>
 </div>
 </div>
 
 
-<div id="outline-container-org80364d5" class="outline-2">
-<h2 id="org80364d5">
+<div id="outline-container-orgc3c64eb" class="outline-2">
+<h2 id="orgc3c64eb">
+<span class="todo TODO">TODO</span> Poetry</h2>
+<div class="outline-text-2" id="text-orgc3c64eb">
+<p>
+I will follow <a href="https://py-pkgs.org/03-how-to-package-a-python">this tutorial</a>. It has everything you need.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgd0ea239" class="outline-2">
+<h2 id="orgd0ea239">
 <span class="todo TODO">TODO</span> spline</h2>
-<div class="outline-text-2" id="text-org80364d5">
+<div class="outline-text-2" id="text-orgd0ea239">
 <p>
 This is the bonus section. Also go deeper into <a href="https://spline.readthedocs.io/en/latest/example.html">this</a>.
 </p>

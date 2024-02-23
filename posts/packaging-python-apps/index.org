@@ -10,6 +10,48 @@
 
 #+END_COMMENT
 
+#+begin_export html
+<style>
+
+img {
+display: block;
+margin-top: 60px;
+margin-bottom: 60px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+height: 100%;
+class: center;
+}
+
+.container {
+position: relative;
+left: 15%;
+margin-top: 60px;
+margin-bottom: 60px;
+width: 70%;
+overflow: hidden;
+padding-top: 56.25%; /* 16:9 Aspect Ratio */
+display:block;
+overflow-y: hidden;
+}
+
+.responsive-iframe {
+position: absolute;
+top: 0;
+left: 0;
+bottom: 0;
+right: 0;
+width: 100%;
+height: 100%;
+border: none;
+display:block;
+overflow-y: hidden;
+}
+</style>
+#+end_export
+
+
 So this post holds some information around the packaging of python
 applications.
 
@@ -25,7 +67,7 @@ So the first piece that will be important to understand in this space
 is the one of the central repositories where you publish and fetch
 your packages from.
 
-It is always the same story. In docekr you have the docker registry,
+It is always the same story. In docker you have the docker registry,
 in emacs you have MELPA, in java you have MavenCentral, in python you
 have =PyPi=.
 
@@ -58,6 +100,9 @@ have =PyPi=.
    I guess, that such private repositories are nothing else than DevPi
    instances provided by the cloud providers that you can use for
    storing your artifacts and fetching them.
+
+   In my workflow I will use [[https://test.pypi.org/account/register/][TestPyPI]], which is the official testing
+   website for PyPI.
 
    
 ** Root Modules for packaging your Python projects
@@ -111,9 +156,9 @@ have =PyPi=.
 						   # similar to compile
 						   # the C code etc.
 
-    python -m build --wheel <source-tree-directory> # creates a wheel that
-						    # is ready to run in
-						    # binary
+   python -m build --wheel <source-tree-directory> # creates a wheel that
+ 					           # is ready to run in
+						   # binary
    #+end_src
 
    So you have to understand the difference with twine when you use
@@ -182,7 +227,13 @@ pip install twine keyring artifacts-keyring
    idea and general concept.
 
    
-*** TODO understand how you can 
+*** TODO Create your CI-CD pipeline
+   
+
+** TODO Poetry
+
+   I will follow [[https://py-pkgs.org/03-how-to-package-a-python][this tutorial]]. It has everything you need.
+
    
 
 ** TODO spline

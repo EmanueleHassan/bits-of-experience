@@ -14,6 +14,12 @@
 This is a repository where I hold some notes about the major sklearn
 analytics algorithm in order to perform your data science. 
 
+It is essentially an exercise into the [[https://scikit-learn.org/stable/modules/classes.html][sklearn API]]. 
+
+If you have it well in mind than you have well in mind the major ML
+algorithms, the way to preprocess the data and the way create robust
+pipelines.
+
 
 {{{TEASER_END}}}
 
@@ -40,370 +46,346 @@ analytics algorithm in order to perform your data science.
   features from the data. 
 
   When creating the features it will be important to *transform* the
-  data such that they take a meaningful shape. You might need to
-  one-hot-encode, standardize, impute etc.  Note that you might fit
-  data as well in order to get to the transform the data
-  accordingly. In this sense, you will find a =fit_transform= API in
-  sklearn.
+  data such that they take a meaningful shape. 
+
+  You might need to one-hot-encode, standardize, impute etc.  
+
+  Note that you might fit data as well in order to get to the
+  transform the data accordingly. In this sense, you will find a
+  =fit_transform= API in sklearn.
 
   After the data have been properly transformed it is time to fit the
-  actual analytical model. Here you would take one of the relevant *supervised* /
-  *unsupervised* models and you would ultimately fit them to the
-  main chunck of the data. 
+  actual analytical model. Here you would take one of the relevant
+  *supervised* / *unsupervised* models and you would ultimately fit
+  them to the main chunck of the data.
 
   Finally, you would estimate / predict a new existing chunck of the
   data given your fitted model and its parameters.
 
 
-** Fit
+* The preprocessor object
 
-   
+  In order to pre-process the data sklearn offers the preprocessor
+  object class.
 
+  There you have many different APIs that are useful in order to
+  process the data.
 
-** Transform
+  We will explore them next.
 
-   Here are mentioned some of the classical techniques for tranforming
-   your data in order to make them meaningful / well behaved.
+** Dataset
 
-   
-*** The preprocessor object
+   In this section I will work with the datasets shipped with the
+   sklearn package.
 
-    In order to pre-process the data sklearn offers the preprocessor
-    object class.
+   In order to use the data use the following:
 
+   #+NAME: 87f87de0-fcdc-483a-a400-2b6fa82af4fa
+   #+begin_src ein-python
+   from sklearn.datasets import fetch_california_housing as fdh
+   import pandas as pd
+   import numpy as np
+   #+end_src
 
-    There you have many different APIs that are useful in order to
-    process the data.
+   #+RESULTS: 87f87de0-fcdc-483a-a400-2b6fa82af4fa
 
-    We will explore them next.
+   #+NAME: a31fbf10-1899-4744-aeb3-989fd423ac6f
+   #+begin_src ein-python
+   df_housing = fdh (as_frame=1) ['data']
 
-**** Dataset
+   df_housingValue = fdh (as_frame=1)['target']
 
-     In this section I will work with the datasets shipped with the
-     sklearn package.
+   df_housing.head (5)
+   #+end_src
 
-     In order to use the data use the following:
+   #+RESULTS: a31fbf10-1899-4744-aeb3-989fd423ac6f
+   #+begin_example
+      MedInc  HouseAge  AveRooms  AveBedrms  Population  AveOccup  Latitude  \
+   0  8.3252      41.0  6.984127   1.023810       322.0  2.555556     37.88   
+   1  8.3014      21.0  6.238137   0.971880      2401.0  2.109842     37.86   
+   2  7.2574      52.0  8.288136   1.073446       496.0  2.802260     37.85   
+   3  5.6431      52.0  5.817352   1.073059       558.0  2.547945     37.85   
+   4  3.8462      52.0  6.281853   1.081081       565.0  2.181467     37.85   
 
-     #+NAME: 87f87de0-fcdc-483a-a400-2b6fa82af4fa
-     #+begin_src ein-python
-     from sklearn.datasets import fetch_california_housing as fdh
-     import pandas as pd
-     import numpy as np
-     #+end_src
-
-     #+RESULTS: 87f87de0-fcdc-483a-a400-2b6fa82af4fa
-
-     #+NAME: a31fbf10-1899-4744-aeb3-989fd423ac6f
-     #+begin_src ein-python
-     df_housing = fdh (as_frame=1) ['data']
-
-     df_housingValue = fdh (as_frame=1)['target']
-
-     df_housing.head (5)
-     #+end_src
-
-     #+RESULTS: a31fbf10-1899-4744-aeb3-989fd423ac6f
-     #+begin_example
-	MedInc  HouseAge  AveRooms  AveBedrms  Population  AveOccup  Latitude  \
-     0  8.3252      41.0  6.984127   1.023810       322.0  2.555556     37.88   
-     1  8.3014      21.0  6.238137   0.971880      2401.0  2.109842     37.86   
-     2  7.2574      52.0  8.288136   1.073446       496.0  2.802260     37.85   
-     3  5.6431      52.0  5.817352   1.073059       558.0  2.547945     37.85   
-     4  3.8462      52.0  6.281853   1.081081       565.0  2.181467     37.85   
-
-	Longitude  
-     0    -122.23  
-     1    -122.22  
-     2    -122.24  
-     3    -122.25  
-     4    -122.25  
-     #+end_example
+      Longitude  
+   0    -122.23  
+   1    -122.22  
+   2    -122.24  
+   3    -122.25  
+   4    -122.25  
+   #+end_example
 
 
     
-**** Binarizer
+** Binarizer
 
-     This converts data into binary given a certain threshold. 
+   This converts data into binary given a certain threshold. 
 
-     You could for instance create a future in the above for checking
-     whether the data are in the northern hemisphere or in the
-     southern one in the following way:
+   You could for instance create a future in the above for checking
+   whether the data are in the northern hemisphere or in the
+   southern one in the following way:
 
-     #+NAME: 1ce8fb40-36fb-497d-8775-beb6ca97c69d
-     #+begin_src ein-python
-     from sklearn.preprocessing import Binarizer
-     #+end_src
+   #+NAME: 1ce8fb40-36fb-497d-8775-beb6ca97c69d
+   #+begin_src ein-python
+   from sklearn.preprocessing import Binarizer
+   #+end_src
 
-     #+RESULTS: 1ce8fb40-36fb-497d-8775-beb6ca97c69d
+   #+RESULTS: 1ce8fb40-36fb-497d-8775-beb6ca97c69d
 
-     #+NAME: d1830c22-8602-4450-9478-3d4cac05d8e9
-     #+begin_src ein-python
-     binary = Binarizer () ## note that it holds a parameter threshold. The
-			   ## default is 0 and is good for the exercise of
-			   ## Northern and Southern Hemisphere.
+   #+NAME: d1830c22-8602-4450-9478-3d4cac05d8e9
+   #+begin_src ein-python
+   binary = Binarizer () ## note that it holds a parameter threshold. The
+			 ## default is 0 and is good for the exercise of
+			 ## Northern and Southern Hemisphere.
 
-     binary.fit (np.array (df_housing ["Latitude"]).reshape (-1,1)) ## Note
-								    ## that
-								    ## the
-								    ## Binarizer
-								    ## takes
-								    ## a 2D
-								    ## array
-								    ## as
-								    ## input. You
-								    ## therefore
-								    ## need
-								    ## to
-								    ## reshape
-								    ## your
-								    ## data
-								    ## and
-								    ## wrap
-								    ## your
-								    ## array
-								    ## into
-								    ## a
-								    ## list.
-     #+end_src
+   binary.fit (np.array (df_housing ["Latitude"]).reshape (-1,1)) ## Note
+								  ## that
+								  ## the
+								  ## Binarizer
+								  ## takes
+								  ## a 2D
+								  ## array
+								  ## as
+								  ## input. You
+								  ## therefore
+								  ## need
+								  ## to
+								  ## reshape
+								  ## your
+								  ## data
+								  ## and
+								  ## wrap
+								  ## your
+								  ## array
+								  ## into
+								  ## a
+								  ## list.
+   #+end_src
 
-     #+RESULTS: d1830c22-8602-4450-9478-3d4cac05d8e9
-     : Binarizer()
-
-
-     #+NAME: a9acb8b3-2502-455f-97ac-6a1274fa99cf
-     #+begin_src ein-python
-     df_housing ["Northern Hemisphere"] = binary.transform (np.array (df_housing ["Latitude"]).reshape (-1,1)).flatten () ## Flatten
-															  ## out
-															  ## back
-															  ## to
-															  ## a
-															  ## 1D
-															  ## array
-     #+end_src
-
-     #+RESULTS: a9acb8b3-2502-455f-97ac-6a1274fa99cf
+   #+RESULTS: d1830c22-8602-4450-9478-3d4cac05d8e9
+   : Binarizer()
 
 
-     #+NAME: e48ed517-58b9-401d-9635-81e5c61c87e6
-     #+begin_src ein-python
-     df_housing.head (5)
-     #+end_src
+   #+NAME: a9acb8b3-2502-455f-97ac-6a1274fa99cf
+   #+begin_src ein-python
+   df_housing ["Northern Hemisphere"] = 
+      binary.transform (np.array
+			(df_housing
+			 ["Latitude"]).reshape
+			(-1,1)).
+      flatten() ## Flatten out back to a 1D array
+   #+end_src
 
-     #+RESULTS: e48ed517-58b9-401d-9635-81e5c61c87e6
-     #+begin_example
-	MedInc  HouseAge  AveRooms  AveBedrms  Population  AveOccup  Latitude  \
-     0  8.3252      41.0  6.984127   1.023810       322.0  2.555556     37.88   
-     1  8.3014      21.0  6.238137   0.971880      2401.0  2.109842     37.86   
-     2  7.2574      52.0  8.288136   1.073446       496.0  2.802260     37.85   
-     3  5.6431      52.0  5.817352   1.073059       558.0  2.547945     37.85   
-     4  3.8462      52.0  6.281853   1.081081       565.0  2.181467     37.85   
-
-	Longitude  Northern Hemisphere  
-     0    -122.23                  1.0  
-     1    -122.22                  1.0  
-     2    -122.24                  1.0  
-     3    -122.25                  1.0  
-     4    -122.25                  1.0  
-     #+end_example
+   #+RESULTS: a9acb8b3-2502-455f-97ac-6a1274fa99cf
 
 
+   #+NAME: e48ed517-58b9-401d-9635-81e5c61c87e6
+   #+begin_src ein-python
+   df_housing.head (5)
+   #+end_src
 
-     Note that you can specify the threshold yourself. Think about the
-     case of Housing age. You want to create a binary if older than
-     the age or not.
+   #+RESULTS: e48ed517-58b9-401d-9635-81e5c61c87e6
+   #+begin_example
+      MedInc  HouseAge  AveRooms  AveBedrms  Population  AveOccup  Latitude  \
+   0  8.3252      41.0  6.984127   1.023810       322.0  2.555556     37.88   
+   1  8.3014      21.0  6.238137   0.971880      2401.0  2.109842     37.86   
+   2  7.2574      52.0  8.288136   1.073446       496.0  2.802260     37.85   
+   3  5.6431      52.0  5.817352   1.073059       558.0  2.547945     37.85   
+   4  3.8462      52.0  6.281853   1.081081       565.0  2.181467     37.85   
 
-     You can then use the following:
-
-     #+NAME: d8c07ee6-c88e-461b-8233-6147d0639d3d
-     #+begin_src ein-python
-     df_housing ["OldHouse"] = Binarizer (threshold= df_housing.HouseAge.mean ()) \
-                               .fit_transform (np.array (df_housing ["HouseAge"]).reshape (-1,1)).flatten ()
-     #+end_src
-
-     #+RESULTS: d8c07ee6-c88e-461b-8233-6147d0639d3d
-
-
-     #+NAME: 0a64fcf6-c533-4afc-bd11-737f2c0d6052
-     #+begin_src ein-python
-     df_housing.head (10)
-     #+end_src
-
-     #+RESULTS: 0a64fcf6-c533-4afc-bd11-737f2c0d6052
-     #+begin_example
-	MedInc  HouseAge  AveRooms  AveBedrms  Population  AveOccup  Latitude  \
-     0  8.3252      41.0  6.984127   1.023810       322.0  2.555556     37.88   
-     1  8.3014      21.0  6.238137   0.971880      2401.0  2.109842     37.86   
-     2  7.2574      52.0  8.288136   1.073446       496.0  2.802260     37.85   
-     3  5.6431      52.0  5.817352   1.073059       558.0  2.547945     37.85   
-     4  3.8462      52.0  6.281853   1.081081       565.0  2.181467     37.85   
-     5  4.0368      52.0  4.761658   1.103627       413.0  2.139896     37.85   
-     6  3.6591      52.0  4.931907   0.951362      1094.0  2.128405     37.84   
-     7  3.1200      52.0  4.797527   1.061824      1157.0  1.788253     37.84   
-     8  2.0804      42.0  4.294118   1.117647      1206.0  2.026891     37.84   
-     9  3.6912      52.0  4.970588   0.990196      1551.0  2.172269     37.84   
-
-	Longitude  Northern Hemisphere  OldHouse  
-     0    -122.23                  1.0       1.0  
-     1    -122.22                  1.0       0.0  
-     2    -122.24                  1.0       1.0  
-     3    -122.25                  1.0       1.0  
-     4    -122.25                  1.0       1.0  
-     5    -122.25                  1.0       1.0  
-     6    -122.25                  1.0       1.0  
-     7    -122.25                  1.0       1.0  
-     8    -122.26                  1.0       1.0  
-     9    -122.25                  1.0       1.0  
-     #+end_example
+      Longitude  Northern Hemisphere  
+   0    -122.23                  1.0  
+   1    -122.22                  1.0  
+   2    -122.24                  1.0  
+   3    -122.25                  1.0  
+   4    -122.25                  1.0  
+   #+end_example
 
 
-**** QuantileTransformer
 
-     Note that this estimates the quantiles according to a parameteric
-     distribution that you impose on the data. 
+   Note that you can specify the threshold yourself. Think about the
+   case of Housing age. You want to create a binary if older than
+   the age or not.
 
-     It does not compute the quantiles based on the empirical
-     distribution of the data. Check in this sense the =qcut= method.
+   You can then use the following:
 
-     Note that this preprocessor function allows to estimate and fit
-     the quantiles of a uniform and normal distribution.
+   #+NAME: d8c07ee6-c88e-461b-8233-6147d0639d3d
+   #+begin_src ein-python
+   df_housing ["OldHouse"] = Binarizer (threshold= df_housing.HouseAge.mean ()) \
+                             .fit_transform (np.array (df_housing ["HouseAge"]).reshape (-1,1)).flatten ()
+   #+end_src
 
-     #+NAME: 15414542-d55a-4bb3-b0f5-9b69acdd78ce
-     #+begin_src ein-python
-     from sklearn.preprocessing import QuantileTransformer
-     #+end_src
-
-     #+RESULTS: 15414542-d55a-4bb3-b0f5-9b69acdd78ce
-
-     So note that the exercise is different in comparison to the
-     quantile cut.
-
-     The idea is to compute =n_quantiles= quantiles from the actual
-     data. And then interpolate across them according to a
-     distribution of choice - be uniform or normal - in order to
-     compute the rest of the quantiles.
+   #+RESULTS: d8c07ee6-c88e-461b-8233-6147d0639d3d
 
 
-***** Plot histogram of the data
+   #+NAME: 0a64fcf6-c533-4afc-bd11-737f2c0d6052
+   #+begin_src ein-python
+   df_housing.head (10)
+   #+end_src
 
-      In order to properly understand the operation we first plot the
-      histogram.
+   #+RESULTS: 0a64fcf6-c533-4afc-bd11-737f2c0d6052
+   #+begin_example
+      MedInc  HouseAge  AveRooms  AveBedrms  Population  AveOccup  Latitude  \
+   0  8.3252      41.0  6.984127   1.023810       322.0  2.555556     37.88   
+   1  8.3014      21.0  6.238137   0.971880      2401.0  2.109842     37.86   
+   2  7.2574      52.0  8.288136   1.073446       496.0  2.802260     37.85   
+   3  5.6431      52.0  5.817352   1.073059       558.0  2.547945     37.85   
+   4  3.8462      52.0  6.281853   1.081081       565.0  2.181467     37.85   
+   5  4.0368      52.0  4.761658   1.103627       413.0  2.139896     37.85   
+   6  3.6591      52.0  4.931907   0.951362      1094.0  2.128405     37.84   
+   7  3.1200      52.0  4.797527   1.061824      1157.0  1.788253     37.84   
+   8  2.0804      42.0  4.294118   1.117647      1206.0  2.026891     37.84   
+   9  3.6912      52.0  4.970588   0.990196      1551.0  2.172269     37.84   
 
-      From it you can immediately infer that the data is log-normally
-      distributed.
+      Longitude  Northern Hemisphere  OldHouse  
+   0    -122.23                  1.0       1.0  
+   1    -122.22                  1.0       0.0  
+   2    -122.24                  1.0       1.0  
+   3    -122.25                  1.0       1.0  
+   4    -122.25                  1.0       1.0  
+   5    -122.25                  1.0       1.0  
+   6    -122.25                  1.0       1.0  
+   7    -122.25                  1.0       1.0  
+   8    -122.26                  1.0       1.0  
+   9    -122.25                  1.0       1.0  
+   #+end_example
 
-      #+NAME: eef5c3a1-28ca-4c8a-8dfc-d15c09f076c1
-      #+begin_src ein-python
-      import matplotlib.pyplot as plt
-      %matplotlib inline 
-      %config InlineBackend.figure_format = 'png'
-      #+end_src
 
-      #+RESULTS: eef5c3a1-28ca-4c8a-8dfc-d15c09f076c1
+** QuantileTransformer
 
-      #+begin_src ein-python
-      plt.hist(df_housingValue, bins = 20)
-      #+end_src
+   Note that this estimates the quantiles according to a parameteric
+   distribution that you impose on the data. 
 
-      #+begin_export html
-       <img src="../../images/HistogramHousing.png" class="center">
-      #+end_export
+   It does not compute the quantiles based on the empirical
+   distribution of the data. Check in this sense the =qcut= method.
 
-      We check next to the quantiles and the QuantileTransformer in
-      order to properly understand what operations the two perform on
-      the data.
+   Note that this preprocessor function allows to estimate and fit
+   the quantiles of a uniform and normal distribution.
 
-***** Quantile Transformation
+   #+NAME: 15414542-d55a-4bb3-b0f5-9b69acdd78ce
+   #+begin_src ein-python
+   from sklearn.preprocessing import QuantileTransformer
+   #+end_src
+
+   #+RESULTS: 15414542-d55a-4bb3-b0f5-9b69acdd78ce
+
+   So note that the exercise is different in comparison to the
+   quantile cut.
+
+   The idea is to compute =n_quantiles= quantiles from the actual
+   data. And then interpolate across them according to a
+   distribution of choice - be uniform or normal - in order to
+   compute the rest of the quantiles.
+
+
+*** Plot histogram of the data
+
+    In order to properly understand the operation we first plot the
+    histogram.
+
+    From it you can immediately infer that the data is log-normally
+    distributed.
+
+    #+NAME: eef5c3a1-28ca-4c8a-8dfc-d15c09f076c1
+    #+begin_src ein-python
+    import matplotlib.pyplot as plt
+    %matplotlib inline 
+    %config InlineBackend.figure_format = 'png'
+    #+end_src
+
+    #+RESULTS: eef5c3a1-28ca-4c8a-8dfc-d15c09f076c1
+
+    #+begin_src ein-python
+    plt.hist(df_housingValue, bins = 20)
+    #+end_src
+
+    #+begin_export html
+     <img src="../../images/HistogramHousing.png" class="center">
+    #+end_export
+
+    We check next to the quantiles and the QuantileTransformer in
+    order to properly understand what operations the two perform on
+    the data.
+
+*** Quantile Transformation
      
-      Note that weird distribution with heavy outliers or skewed
-      distribution might be sub-optimal in order to fit statistical
-      models to your data.
+    Note that weird distribution with heavy outliers or skewed
+    distribution might be sub-optimal in order to fit statistical
+    models to your data.
 
-      This because they the parameter estimation might be biased by
-      such properties of the data.
+    This because they the parameter estimation might be biased by
+    such properties of the data.
 
-      In this sense it makes often sense to inspect the data and
-      create new features that are less likely to bias your results.
+    In this sense it makes often sense to inspect the data and
+    create new features that are less likely to bias your results.
 
-****** Plot the relevant transformer
-
-
-******* TODO go over again in a better fashion over the data.
-
-	It imposes a distribution on the data. It estimates the
-	parameters of the distribution, given the empirical
-	distribution.
-
-	It then computes the quantiles for the data values given that
-	assumed distribution. 
-
-	If you plug then the values in the quantile transforming
-	function you would get back normalized values.
+**** Plot the relevant transformer
 
 
-	It transforms the data x in quantiles such that they fit the
-	relevant distribution.
+***** TODO go over again in a better fashion over the data.
 
-	Note that even such transformation has limits. See the
-	histogram plot that you created.
+      It imposes a distribution on the data. It estimates the
+      parameters of the distribution, given the empirical
+      distribution.
 
+      It then computes the quantiles for the data values given that
+      assumed distribution. 
+
+      If you plug then the values in the quantile transforming
+      function you would get back normalized values.
+
+      It transforms the data x in quantiles such that they fit the
+      relevant distribution.
+
+      Note that even such transformation has limits. See the
+      histogram plot that you created.
        
 
-	It is a transformation that tries to achieve a uniform
-	distribution of the assigned quantiles.
+      It is a transformation that tries to achieve a uniform
+      distribution of the assigned quantiles.
        
-	#+NAME: bad26289-edea-4cdf-8eba-21f037c92b6c
-	#+begin_src ein-python
-	plt.hist (QuantileTransformer(n_quantiles=5, random_state=0).fit_transform (np.array (df_housingValue).reshape (-1,1)).flatten (), 20) 
-	#+end_src
+      #+NAME: bad26289-edea-4cdf-8eba-21f037c92b6c
+      #+begin_src ein-python
+      plt.hist (QuantileTransformer(n_quantiles=5,
+				    random_state=0).
+		fit_transform (np.array (df_housingValue).
+			       reshape(-1,1)).
+		flatten (), 20) 
+      #+end_src
 
-	#+RESULTS: bad26289-edea-4cdf-8eba-21f037c92b6c
-	: array([0.94939597, 0.84893734, 0.84210487, ..., 0.18568402, 0.16742813,
-	:        0.17871796])
-
-
-**** Standard Scaler
-
-
-
-**** MaxAbsScalerp
+      #+RESULTS: bad26289-edea-4cdf-8eba-21f037c92b6c
+      : array([0.94939597, 0.84893734, 0.84210487, ..., 0.18568402, 0.16742813,
+      :        0.17871796])
 
 
-
-**** LabelEncoder
+** Standard Scaler
 
 
 
-**** OneHotEncoder
+** MaxAbsScalerp
 
 
 
-**** KernelCenterer
+** LabelEncoder
 
 
 
-**** FunctionTransformer
+** OneHotEncoder
 
 
 
-**** FunctionTransformer
+** KernelCenterer
+
+
+
+** FunctionTransformer
+
+
+
+** FunctionTransformer
 
 
    
-
-** Predict
-
-   
-** TODO create a different posts listing the different fitting metrics 
-
-
-** TODO adjust the post on pipelines
-
-   Not 100% clear in its current form how that works. 
-
-* Imputer 
-
-
-
 
 * Linear Regression
    :properties:
